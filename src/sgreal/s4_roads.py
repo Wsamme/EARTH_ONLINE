@@ -1,0 +1,213 @@
+# stage 4: roads, paths, runways, rail: merged polylines with classes, widths and flyover heights
+import sys; sys.path.insert(0, '.')
+from common import *
+import collections
+from shapely.geometry import LineString, MultiLineString, Point
+from shapely.ops import linemerge, unary_union
+from shapely.strtree import STRtree
+B = pickle.load(open(SGD + 'base15.pkl', 'rb'))
+L = load('land.pkl'); F = load('fresh.pkl')
+CLS = {('highway','motorway'):0, ('highway','motorway_link'):1, ('major_road','trunk'):2, ('major_road','trunk_link'):3, ('major_road','primary'):4, ('major_road','primary_link'):5,
+       ('major_road','secondary'):6, ('major_road','secondary_link'):7, ('major_road','tertiary'):8, ('major_road','tertiary_link'):9,
+       ('minor_road','residential'):10, ('minor_road','unclassified'):10, ('other','living_street'):10, ('minor_road','road'):10, ('minor_road','alley'):11, ('minor_road','service'):11,
+       ('path','footway'):12, ('path','cycleway'):12, ('path','path'):12, ('path','pedestrian'):12, ('path','track'):12, ('path','steps'):12, ('path','bridleway'):12,
+       ('aeroway','runway'):13, ('aeroway','taxiway'):14, ('rail','rail'):15, ('rail','monorail'):16, ('rail','light_rail'):16, ('path','pier'):17, ('minor_road','raceway'):18}
+# widths: (two-way, one-way)
+WID = {0:(26, 13), 1:(6.5, 6.5), 2:(20, 11), 3:(6.5, 6.5), 4:(15, 10), 5:(6, 6), 6:(12, 8), 7:(5.5, 5.5), 8:(9.5, 7), 9:(5, 5), 10:(7, 5.5), 11:(4.5, 4), 12:(2.5, 2.5), 13:(60, 60), 14:(23, 23), 15:(4, 4), 16:(3, 3), 17:(4, 4), 18:(12, 12)}
+groups = collections.defaultdict(list)
+for p, g in B['roads']:
+    k = (p.get('kind'), p.get('kind_detail')); c = CLS.get(k)
+    if c is None or p.get('is_tunnel'): continue
+    if g.geom_type not in ('LineString', 'MultiLineString'): continue
+    kd = p.get('kind_detail')
+    name = p.get('name'); zh = p.get('name:zh-Hans') or p.get('name:zh')
+    key = (c, kd, name, zh, p.get('ref'), bool(p.get('is_bridge')), p.get('oneway') in ('yes', '-1'))
+    for ln in (g.geoms if g.geom_type == 'MultiLineString' else [g]): groups[key].append(proj(ln))
+def tmerge(parts, tol=1.2):
+    # merge pieces whose ends meet within tol metres (tile clipping leaves sub-metre gaps)
+    P = [list(p.coords) for p in parts if len(p.coords) >= 2]
+    key = lambda q: (int(math.floor(q[0]/tol)), int(math.floor(q[1]/tol)))
+    idx = collections.defaultdict(list)
+    for i, c in enumerate(P):
+        for e, q in ((0, c[0]), (1, c[-1])): idx[key(q)].append((i, e))
+    def near(q):
+        k = key(q); out = []
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for (i, e) in idx.get((k[0] + dx, k[1] + dy), []):
+                    r = P[i][0] if e == 0 else P[i][-1]
+                    if abs(r[0] - q[0]) <= tol and abs(r[1] - q[1]) <= tol: out.append((i, e))
+        return out
+    used = [False]*len(P); out = []
+    def extend(chain, i, e):
+        # walk from piece i's end e onwards while the node has exactly one other unused piece
+        while True:
+            q = P[i][-1] if e == 1 else P[i][0]
+            nb = [(j, f) for (j, f) in near(q) if j != i]
+            if len(nb) != 1 or used[nb[0][0]]: return chain
+            j, f = nb[0]; used[j] = True
+            seg = P[j] if f == 0 else P[j][::-1]
+            chain.extend(seg[1:]); i, e = j, (1 if f == 0 else 0)
+    for i in range(len(P)):
+        if used[i]: continue
+        used[i] = True
+        fwd = extend(list(P[i]), i, 1)
+        back = extend(list(P[i][::-1]), i, 0)
+        chain = back[::-1][:-len(P[i])] + fwd if len(back) > len(P[i]) else fwd
+        out.append(LineString(chain))
+    return out
+lines = []
+for key, parts in groups.items():
+    for ln in tmerge(parts):
+        if ln.length < 2: continue
+        tol = 0.6 if key[0] <= 11 or key[0] in (13, 14) else 1.2
+        ln = ln.simplify(tol)
+        lines.append({'c':key[0], 'kd':key[1], 'name':key[2], 'zh':key[3], 'ref':key[4], 'br':key[5], 'ow':key[6], 'g':ln})
+print('lines', len(lines), collections.Counter(l['c'] for l in lines))
+# ---------- flyover heights ----------
+road_idx = [i for i, l in enumerate(lines) if l['c'] <= 18]
+tree = STRtree([l['g'] for l in lines])
+sea_land = L['sg']                                   # land; water = not land
+fresh = unary_union(F['sig'])
+PRI = lambda l: (0 if l['c'] in (0, 2) else 1 if l['c'] in (4, 6, 8, 10, 15, 13, 14) else 2 if l['c'] in (1, 3, 5, 7, 9, 11, 18) else 3)   # 0 main carriageways stay lowest
+bridges = [i for i, l in enumerate(lines) if l['br']]
+cross = collections.defaultdict(set)   # bridge -> crossed lines
+for i in bridges:
+    g = lines[i]['g']
+    for j in tree.query(g):
+        j = int(j)
+        if j == i: continue
+        h = lines[j]['g']
+        if not g.crosses(h): continue
+        x = g.intersection(h)
+        pts = [x] if x.geom_type == 'Point' else [q for q in getattr(x, 'geoms', []) if q.geom_type == 'Point']
+        # ignore touches at the ends of either line
+        ok = [q for q in pts if g.project(q) > 3 and g.project(q) < g.length - 3]
+        if ok: cross[i].add(j)
+level = {i: 0 for i in bridges}
+for it in range(6):
+    ch = 0
+    for i in bridges:
+        lv = 1 if any((not lines[j]['br']) and lines[j]['c'] != 12 for j in cross[i]) else 0
+        for j in cross[i]:
+            if lines[j]['br'] and (PRI(lines[j]), -lines[j]['g'].length) < (PRI(lines[i]), -lines[i]['g'].length):
+                lv = max(lv, level[j] + 1)
+        if any(lines[j]['c'] == 12 for j in cross[i]) and lv == 0 and lines[i]['c'] <= 11: lv = 0
+        if lv != level[i]: level[i] = lv; ch += 1
+    if not ch: break
+# bridges over water: rise with the span over water
+water_any = None
+def over_water(g):
+    seg = g.difference(sea_land.buffer(0.5)) if g.intersects(sea_land) else g
+    a = seg.length if not seg.is_empty else 0.0
+    b = g.intersection(fresh).length if g.intersects(fresh) else 0.0
+    return a, b
+H_LEVEL = 6.6
+wls = [g2 for p2, gg in L['wlines'] for g2 in (gg.geoms if hasattr(gg, 'geoms') else [gg])]
+wtree = STRtree(wls)
+def wtree_q(g): return [wls[int(k)] for k in wtree.query(g)]
+nf = collections.Counter()
+for i in bridges:
+    l = lines[i]; g = l['g']
+    sea_len, fresh_len = over_water(g)
+    if level[i] > 0:
+        h = H_LEVEL*level[i] + (0.6 if l['c'] in (0, 2) else 0)
+        kind = 'fly'
+    elif sea_len > 40:
+        h = min(26.0, 3.0 + sea_len*0.03); kind = 'sea'
+    elif fresh_len > 25:
+        h = min(9.0, 1.5 + fresh_len*0.05); kind = 'river'
+    elif g.length > 220 and l['c'] <= 11:
+        h = 6.0; kind = 'viaduct'
+    elif l['c'] == 12 and g.length > 18 and not any(wl.crosses(g) for wl in wtree_q(g)):
+        h = 5.6; kind = 'footbridge'        # overhead pedestrian bridges
+    else:
+        h = 0.0; kind = 'flat'
+    if l['name'] == 'Benjamin Sheares Bridge': h = 28.0
+    l['hmax'] = h; l['bkind'] = kind; nf[kind] += 1
+print('bridge kinds', nf, 'levels', collections.Counter(level.values()))
+# per-vertex elevation: bridges have their own profile; elevated ends lift the connected approach roads (ramps)
+GR = 0.055
+ends = collections.defaultdict(list)   # endpoint key -> [(line index, which end)]
+def qk(p): return (round(p[0]/1.5), round(p[1]/1.5))
+def ends_at(p):
+    k = qk(p); out = []
+    for dx in (-1, 0, 1):
+        for dy in (-1, 0, 1): out += ends.get((k[0] + dx, k[1] + dy), [])
+    return out
+for i, l in enumerate(lines):
+    if l['c'] > 12 and l['c'] != 17: continue
+    cs = list(l['g'].coords); ends[qk(cs[0])].append((i, 0)); ends[qk(cs[-1])].append((i, 1))
+def arc(cs):
+    d = [0.0]
+    for a, b in zip(cs, cs[1:]): d.append(d[-1] + math.hypot(b[0] - a[0], b[1] - a[1]))
+    return d
+contrib = collections.defaultdict(list)     # line -> [(kind, ...)]
+for i in bridges:
+    l = lines[i]
+    if l['hmax'] <= 0.5: continue
+    contrib[i].append(('own',))
+def lift(j, e, h0, hops, seen):
+    # approach line j, its end e touches an elevated end at height h0: ramp down along j
+    if hops > 3 or j in seen or h0 < 0.3: return
+    m = lines[j]
+    if m['br'] and m.get('hmax', 0) > 0.5: return
+    contrib[j].append(('ramp', e, h0))
+    Lj = m['g'].length; rl = h0/GR
+    if Lj < rl:   # ramp continues past the far end
+        cs = list(m['g'].coords); far = cs[-1] if e == 0 else cs[0]; rest = h0*(1 - Lj/rl)
+        for (k, f) in ends_at(far):
+            if k != j and lines[k]['c'] <= 12 and lines[k]['c'] != 12 or (k != j and m['c'] == 12 and lines[k]['c'] == 12):
+                lift(k, f, rest, hops + 1, seen | {j})
+own_prof = {}
+for i in list(contrib):
+    l = lines[i]; cs = list(l['g'].coords); d = arc(cs); Lt = d[-1]; hm = l['hmax']
+    conn = []
+    for e, p in ((0, cs[0]), (1, cs[-1])):
+        others = [(j, f) for (j, f) in ends_at(p) if j != i]
+        nb_br = any(lines[j]['br'] and lines[j].get('hmax', 0) > 0.5 for j, f in others)
+        appr = [(j, f) for (j, f) in others if not (lines[j]['br'] and lines[j].get('hmax', 0) > 0.5) and (lines[j]['c'] != 12 or l['c'] == 12) and lines[j]['c'] not in (13, 14, 15, 16)]
+        conn.append((nb_br, appr))
+    if l['bkind'] in ('river', 'sea', 'viaduct'):
+        k = 2.2 if l['bkind'] == 'river' else 1.2
+        own_prof[i] = lambda s, hm=hm, Lt=Lt, k=k: min(hm, 0.6 + min(s, Lt - s)*GR*k)
+        continue
+    ramp0 = not conn[0][0] and not conn[0][1]; ramp1 = not conn[1][0] and not conn[1][1]
+    own_prof[i] = lambda s, hm=hm, Lt=Lt, r0=ramp0, r1=ramp1: min(hm, 0.4 + s*GR*1.6 if r0 else 1e9, 0.4 + (Lt - s)*GR*1.6 if r1 else 1e9)
+    for e in (0, 1):
+        h0 = own_prof[i](0 if e == 0 else Lt)
+        for (j, f) in conn[e][1]: lift(j, f, h0, 0, {i})
+elev = {}
+for j, cl in contrib.items():
+    m = lines[j]; cs = list(m['g'].coords); d = arc(cs); Lt = d[-1]
+    # breakpoints where ramps end
+    br = set()
+    for c in cl:
+        if c[0] == 'ramp':
+            rl = c[2]/GR
+            if rl < Lt: br.add(rl if c[1] == 0 else Lt - rl)
+    # insert breakpoints and densify elevated parts to 25 m
+    P = [cs[0]]; S = [0.0]
+    for k in range(1, len(cs)):
+        a, b, s0, s1 = cs[k-1], cs[k], d[k-1], d[k]
+        cuts = sorted([x for x in br if s0 + 0.5 < x < s1 - 0.5])
+        step = max(1, int(math.ceil((s1 - s0)/25)))
+        cuts = sorted(set(cuts + [s0 + (s1 - s0)*t/step for t in range(1, step)]))
+        for x in cuts:
+            f = (x - s0)/(s1 - s0); P.append((a[0] + (b[0] - a[0])*f, a[1] + (b[1] - a[1])*f)); S.append(x)
+        P.append(b); S.append(s1)
+    hs = []
+    for s in S:
+        h = 0.0
+        for c in cl:
+            if c[0] == 'own': h = max(h, own_prof[j](s))
+            else:
+                e, h0 = c[1], c[2]; rl = h0/GR; t = s if e == 0 else Lt - s
+                if t < rl: h = max(h, h0*(1 - t/rl))
+        hs.append(round(h, 2))
+    m['g'] = LineString(P); elev[j] = hs
+print('elevated lines', len(elev), 'ramps', sum(1 for cl in contrib.values() for c in cl if c[0] == 'ramp'))
+nv = collections.Counter(); ln = collections.Counter()
+for l in lines: nv[l['c']] += len(l['g'].coords); ln[l['c']] += l['g'].length
+print('vertices', sum(nv.values()), dict(nv)); print('km', {k: round(v/1000) for k, v in ln.items()})
+save({'lines':lines, 'elev':elev}, 'roads.pkl')

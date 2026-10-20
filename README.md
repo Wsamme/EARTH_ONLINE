@@ -1,4 +1,4 @@
-# City Brush 城市笔刷
+# EARTH ONLINE · City Brush 城市笔刷
 
 Five real cities at 1:1 in the browser, built with three.js r128 and OpenStreetMap:
 浏览器里 1:1 的五座真实城市，用 three.js r128 和 OpenStreetMap 做成：

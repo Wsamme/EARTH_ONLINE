@@ -61,12 +61,9 @@ T(g, 'tyasahitower', '隅田川畔啤酒总部大楼', 'Sumida riverside brewery
 # ---- Shibuya, Harajuku, the Olympic district
 g = 'shibuya'
 T(g, 'tyscramble', '涩谷SCRAMBLE SQUARE', 'Shibuya Scramble Square', 'tower', 'b:w617560918', 230, 'Tower (2019), 230 m, over Shibuya Station with the open-air Shibuya Sky rooftop deck')
-T(g, 'tycrossing', '涩谷十字路口', 'Shibuya Crossing', 'site', 'n:35.65950,139.70050', None, 'The scramble crossing in front of the Hachikō exit: zebra stripes in every direction, the big video screens on the surrounding buildings (abstract content, no ads)', r=140)
 T(g, 'tymeijiotorii', '明治神宫大鸟居', 'Meiji Jingū Ōtorii', 'heritage', 'b:w469908912', 12, 'The great wooden torii (cypress) on the north approach; 12 m high')
-T(g, 'tymeijijingu', '明治神宫', 'Meiji Jingū', 'site', 'a:w469908925', None, 'The shrine forest (~70 ha) with the gravel approaches, torii and the main shrine compound (cypress halls with copper roofs) (SITE)')
 T(g, 'tyyoyogi1', '国立代代木竞技场第一体育馆', 'Yoyogi National Gymnasium (first gymnasium)', 'building', 'b:w101925760', None, 'Tange Kenzō\'s 1964 suspension-roof arena: the two cables between concrete masts, the swooping roof in two crescents')
 T(g, 'tyyoyogi2', '国立代代木竞技场第二体育馆', 'Yoyogi National Gymnasium (second gymnasium)', 'building', 'b:w72541058', None, 'The smaller round arena with its single-mast spiral roof')
-T(g, 'tystadium', '国立竞技场', 'Japan National Stadium', 'site', 'a:w499552719', None, 'The 2019 stadium (Kuma Kengo): layered timber eaves around the bowl, planted terraces (model on the stadium\'s footprint inside this sports area)')
 # ---- Shinjuku
 g = 'shinjuku'
 T(g, 'tytmg1', '东京都厅第一本厅舍', 'Tokyo Metropolitan Government Building No. 1', 'tower', 'b:w89877471', 243, 'Tange Kenzō\'s twin-tower city hall (1991), 243 m, the towers split at the 33rd floor; granite grid façade')
@@ -74,7 +71,6 @@ T(g, 'tytmg2', '东京都厅第二本厅舍', 'Tokyo Metropolitan Government Bui
 T(g, 'tycocoon', '东京MODE学园蚕茧大厦', 'Mode Gakuen Cocoon Tower', 'tower', 'b:w145495557', 204, 'Elliptical school tower (2008), 204 m, wrapped in a crossing white lattice (the "cocoon")')
 T(g, 'typarktower', '新宿柏悦大厦', 'Shinjuku Park Tower', 'tower', 'b:w153148303', None, 'Three stepped granite / glass towers (1994, Tange) with pyramid tops')
 T(g, 'tysumitomo', '新宿住友大厦', 'Shinjuku Sumitomo Building', 'tower', 'b:r2266005', None, 'Triangular office tower (1974) with the glass-roofed triangle plaza at its foot')
-T(g, 'tygyoen', '新宿御苑', 'Shinjuku Gyoen National Garden', 'site', 'a:w15772074', None, 'Former imperial garden: French formal, English landscape and Japanese gardens, ponds, the greenhouse (SITE)')
 # ---- Ueno, Akihabara, Bunkyō
 g = 'ueno'
 T(g, 'tytnm', '东京国立博物馆本馆', 'Tokyo National Museum, Honkan', 'heritage', 'b:r2737745', None, 'Imperial-crown-style museum hall (1938): Western concrete building with a tiled Japanese roof')
@@ -115,6 +111,41 @@ T(g, 'tyhikawamaru', '冰川丸', 'Hikawa Maru', 'heritage', 'b:w130991780', Non
 T(g, 'tychinatown', '横滨中华街', 'Yokohama Chinatown', 'site', 'a:w445258887', None, 'The district with its decorated paifang gates (Zenrin-mon, Chōyō-mon, Suzaku-mon, Genbu-mon, Enpei-mon ...) and the Kanteibyō temple (SITE: gates and lanterns, no shop names)')
 T(g, 'tybaybridge', '横滨港湾大桥', 'Yokohama Bay Bridge', 'bridge', 'a:w552391549', None, 'Cable-stayed bridge (1989), 460 m main span, double deck (upper Shuto Bayshore Route, lower Route 357), H-shaped towers; deck heights in BRIEF', r=900)
 T(g, 'tytsubasa', '鹤见翼桥', 'Tsurumi Tsubasa Bridge', 'bridge', 'a:w1059145032', None, 'Single-tower cable-stayed bridge (1994), 510 m main span, inverted-Y tower 183 m; road 57 m above the sea (BRIEF)', r=1100)
+# ---- v38: more landmarks (to 100 distinct per city); targets of v37 never built moved here
+gx = 'tyx_central'
+T(gx, 'tyforum', '东京国际论坛', 'Tokyo International Forum', 'building', 'b:w144508545', None, 'Rafael Viñoly 1996: the glass hall, a 207 m ship-hull-shaped atrium with a steel roof truss, beside four cubic hall blocks')
+T(gx, 'tyboj', '日本银行本店', 'Bank of Japan Head Office', 'heritage', 'b:r3069611', None, 'Neo-baroque stone building (1896, Tatsuno Kingo) with a central dome; the later annexes behind')
+T(gx, 'tykandamyojin', '神田明神', 'Kanda Myōjin', 'temple', 'a:w89431876', None, 'Shrine with the vermilion-and-gold concrete main hall (1934) and the Zuishinmon gate')
+T(gx, 'tynikolai', '尼古拉堂', 'Holy Resurrection Cathedral (Nikolai-dō)', 'heritage', 'a:r4080936', None, 'Byzantine-style Orthodox cathedral (1891) with a green copper dome and a bell tower')
+T(gx, 'tyhie', '日枝神社', 'Hie Shrine', 'temple', 'a:w509411458', None, 'Akasaka shrine on a hill: the main hall, the escalator approach and the tunnel of red torii gates')
+T(gx, 'tykachidoki', '胜哄桥', 'Kachidoki Bridge', 'bridge', 'a:w549492916', None, 'Bascule bridge (1940) over the Sumida, two steel arches either side of the (now fixed) double-leaf bascule span')
+T(gx, 'tyeitai', '永代桥', 'Eitai Bridge', 'bridge', 'a:w1060000228', None, 'Steel tied-arch bridge (1926) over the Sumida, painted blue')
+T(gx, 'tykiyosu', '清洲桥', 'Kiyosu Bridge', 'bridge', 'a:w856821159', None, 'Self-anchored suspension bridge (1928) over the Sumida, modelled on a Cologne bridge, painted blue')
+T(gx, 'tyhamarikyu', '滨离宫恩赐庭园', 'Hama-rikyū Gardens', 'site', 'a:w7836744', None, 'Edo-era garden on the bay with the tidal pond, the teahouse on its island and the bridges, framed by the Shiodome towers (site)')
+T(gx, 'tyedotokyo', '江户东京博物馆', 'Edo-Tokyo Museum', 'museum', 'b:w76187056', None, 'Museum (1993, Kikutake Kiyonori): a huge box raised on four massive legs over an open plaza, shaped like an old storehouse')
+T(gx, 'tykokugikan', '两国国技馆', 'Ryōgoku Kokugikan', 'stadium', 'a:w76187058', None, 'Sumo arena (1985) with the green copper hipped roof in traditional style')
+gx = 'tyx_west'
+T(gx, 'tycrossing', '涩谷十字路口', 'Shibuya Crossing', 'site', 'n:35.65950,139.70050', None, 'The scramble crossing in front of the Hachikō exit: zebra stripes in every direction, the big video screens on the surrounding buildings (abstract content, no ads)', r=140)
+T(gx, 'tymeijijingu', '明治神宫', 'Meiji Jingū', 'site', 'a:w469908925', None, 'The shrine forest (~70 ha) with the gravel approaches, torii and the main shrine compound (cypress halls with copper roofs) (SITE)')
+T(gx, 'tystadium', '国立竞技场', 'Japan National Stadium', 'site', 'a:w499552719', None, 'The 2019 stadium (Kuma Kengo): layered timber eaves around the bowl, planted terraces (model on the stadium\'s footprint inside this sports area)')
+T(gx, 'tygyoen', '新宿御苑', 'Shinjuku Gyoen National Garden', 'site', 'a:w15772074', None, 'Former imperial garden: French formal, English landscape and Japanese gardens, ponds, the greenhouse (SITE)')
+T(gx, 'tymetgym', '东京体育馆', 'Tokyo Metropolitan Gymnasium', 'building', 'a:w153182207', None, 'Maki Fumihiko 1990: the main arena with a helmet-like metal roof, the pool hall and the plaza')
+T(gx, 'tyoperacity', '东京歌剧城', 'Tokyo Opera City Tower', 'tower', 'b:w312628595', None, 'Office tower (1996) with a stepped top over the concert hall and theatre podium')
+T(gx, 'tydocomo', 'NTT都科摩代代木大厦', 'NTT Docomo Yoyogi Building', 'tower', 'b:w137189971', None, 'Tower (2000) with an Art Deco-like stepped spire and a clock near the top; no logos')
+T(gx, 'tymitsui', '新宿三井大厦', 'Shinjuku Mitsui Building', 'tower', 'b:w145495565', None, 'Dark tower (1974) with an exposed steel grid facade on a sunken plaza')
+T(gx, 'tykeioplaza', '京王广场大饭店', 'Keio Plaza Hotel', 'tower', 'b:w116596175', None, 'White hotel (1971, the first skyscraper of Nishi-Shinjuku) with the main tower and the south tower; no hotel names')
+T(gx, 'tycamii', '东京清真寺', 'Tokyo Camii', 'temple', 'a:w155508308', None, 'Ottoman-style mosque (2000) with a central dome and a slender minaret')
+T(gx, 'tyyebisu', '惠比寿花园广场', 'Yebisu Garden Place Tower', 'tower', 'b:w93182025', None, 'Ebisu complex (1994) on the old brewery: the 40-storey tower over the plaza, the château-style restaurant building; no brand names (the anchor is the Garden Place footprint: find the tower in the refs)', r=220)
+gx = 'tyx_north'
+T(gx, 'tynact', '国立新美术馆', 'The National Art Center, Tokyo', 'museum', 'a:w103425086', None, 'Kurokawa Kishō 2007: an undulating glass curtain wall with two inverted concrete cones inside the atrium')
+T(gx, 'tysunshine60', '阳光60大厦', 'Sunshine 60', 'tower', 'b:w314155355', None, 'Ikebukuro tower (1978), once the tallest in Asia: plain rectangular shaft with the observation deck; on the Sunshine City complex')
+T(gx, 'tystmary', '东京圣玛利亚主教座堂', "St. Mary's Cathedral, Tokyo", 'temple', 'a:w120704384', None, 'Tange Kenzō 1964: eight hyperbolic stainless-steel shells rising to a cross-shaped skylight, the separate 60 m bell tower')
+T(gx, 'tywesternart', '国立西洋美术馆', 'The National Museum of Western Art', 'museum', 'a:w203960903', None, 'Le Corbusier 1959 (World Heritage): a square box on pilotis with the later wings, in Ueno Park')
+T(gx, 'tytoshogu', '上野东照宫', 'Ueno Tōshō-gū', 'temple', 'b:w145344085', None, 'Shrine (1651) with the gilded Karamon gate and main hall, the stone lantern avenue and the five-storey pagoda nearby')
+T(gx, 'tykiyomizu', '清水观音堂', 'Kiyomizu Kannon-dō', 'temple', 'b:w138585452', None, 'Ueno temple (1631) on a wooden stage over the slope, modelled on Kyoto\'s Kiyomizu-dera; the "moon pine" in front')
+T(gx, 'tytakanawa', '高轮Gateway站', 'Takanawa Gateway Station', 'station', 'n:35.6355,139.7404', None, 'JR station (2020, Kuma Kengo): a big white origami-like membrane roof on a timber and steel frame over the tracks; find its footprint in the refs')
+T(gx, 'tyyokostadium', '横滨球场', 'Yokohama Stadium', 'stadium', 'b:r2958080', None, 'Baseball stadium (1978) in Yokohama Park with its steep stands and the light towers')
+T(gx, 'tysankeien', '三溪园三重塔', 'Sankei-en Three-storied Pagoda', 'heritage', 'b:w95639574', None, 'The 1457 pagoda of the former Tōmyō-ji, moved to Sankei-en garden in Yokohama, on its hill above the pond')
 # ---------------- resolve against this build's OSM data ----------------
 if __name__ == '__main__':
     import shapely.wkb

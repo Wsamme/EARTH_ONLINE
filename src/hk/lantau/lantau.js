@@ -143,12 +143,7 @@ function t1Piece(k){
     B.flush(g); return g;
   };
 }
-const T1KEYS = {hall:'hkt1', nf:'hkt1_b', sf:'hkt1_c', conc:'hkt1_d', nw:'hkt1_e', sw:'hkt1_f'};
-for (const [k, key] of Object.entries(T1KEYS)){
-  LANDMARKS[key] = {zh:'香港国际机场一号客运大楼', en:'HKIA Terminal 1', cat:'new', r:T1R, h:34, lt:{m:0, c:'#ffe4bf', k:0.22, e:0.6}, build:t1Piece(k)};
-  if (key !== 'hkt1') LANDMARKS[key].label = false;
-  SG_PLACES.push({type:key, lat:T1A[0], lon:T1A[1], rot:0});
-}
+// (v39: HKIA Terminal 1 (hkt1, hkt1_b.._f) moved to hk/hkx_nt)
 
 // Terminal 2 (rebuilt for the three-runway system, reopened 2026): one broad curved roof over the departure hall, deeper
 // canopy on the kerb (east) side; glazed walls. Height is an estimate (no published figure found).

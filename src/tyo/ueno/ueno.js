@@ -352,8 +352,7 @@ Object.assign(SITES, {tyuenopark:{zh:'上野恩赐公园', en:'Ueno Park', lat:3
       tRoof(B, f, {L:L + 1.6, W:W + 1.6, y:y0 + wallH + 0.3, h:roofH, k:Math.max(0.5, (L - W)/2 + 1.5), gab, pw:1.6, lift:0.5, col:cols.roof || ROOF, hip:RID, und:UND, gcol:cols.wall, rw:0.5, nt:6});
       return y0; };
     hall(D.repl.benten, 5.8, 5.6, 0.5, {wall:VER});
-    hall(D.repl.kiyomizu, 6.2, 5.6, 0.5, {wall:VER});
-    { const o = D.repl.toshogu, y0 = hall(o, 5.0, 4.8, 0.5, {wall:GOLD, col:GOLD, roof:'#2f3236'}); }
+    // v39: Kiyomizu Kannon-dō and Ueno Tōshō-gū are landmarks now (tyo/tyx_north: tykiyomizu, tytoshogu) — no site halls / labels for them here
     // the pagoda: five storeys, 36 m to the finial, the top roof in copper
     { const o = D.repl.pagoda, [cx, cz, a] = o.rect, y0 = Math.min(...o.ring.map(q => gy(q[0], q[1]))), f = FR(cx, cz, a);
       fbox(B(ST), f, 0, 0, 6.6, 6.6, y0 - 2, y0 + 0.9);
@@ -366,11 +365,9 @@ Object.assign(SITES, {tyuenopark:{zh:'上野恩赐公园', en:'Ueno Park', lat:3
       cyl(B(GOLD), cx, cz, 0.14, 0.1, ys + 0.4, y0 + 35.6, 6);
       for (let i = 0; i < 9; i++){ const y = ys + 1.2 + i*0.68; cyl(B(GOLD), cx, cz, 0.62 - i*0.02, 0.62 - i*0.02, y, y + 0.22, 10, true); }
       LSph(g, 0.3, cx, y0 + 35.7, cz, GOLD, 1.2, 8); }
-    const L = D.labs.map(([x, z, zh, en]) => ({x, z, y:gy(x, z) + 14, zh, en}));
+    const L = D.labs.filter(l => l[3] !== 'National Museum of Western Art').map(([x, z, zh, en]) => ({x, z, y:gy(x, z) + 14, zh, en}));
     const r = D.repl; L.push({x:r.benten.c[0], z:r.benten.c[1], y:gy(r.benten.c[0], r.benten.c[1]) + 16, zh:'不忍池辩天堂', en:'Shinobazu Benten-dō'});
-    L.push({x:r.kiyomizu.c[0], z:r.kiyomizu.c[1], y:gy(r.kiyomizu.c[0], r.kiyomizu.c[1]) + 16, zh:'清水观音堂', en:'Kiyomizu Kannon-dō'});
     L.push({x:r.pagoda.c[0], z:r.pagoda.c[1], y:gy(r.pagoda.c[0], r.pagoda.c[1]) + 38, zh:'旧宽永寺五重塔', en:"Kan'ei-ji Five-storey Pagoda"});
-    L.push({x:r.toshogu.c[0], z:r.toshogu.c[1], y:gy(r.toshogu.c[0], r.toshogu.c[1]) + 14, zh:'上野东照宫', en:'Ueno Tōshō-gū', ic:'⛩'});
     g.userData.labels = L;
     B.flush(g); return g; }}});
 }

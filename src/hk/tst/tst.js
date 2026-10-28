@@ -200,7 +200,7 @@ SG_PLACES.push({type:'hkclocktower', lat:CT.lat, lon:CT.lon, rot:0});
 // =====================================================================================================================
 const CC = {lat:22.293814, lon:114.170339};
 LANDMARKS.hkculturalcentre = {zh:'香港文化中心', en:'Hong Kong Cultural Centre', cat:'new', r:94, h:48,
-  lt:{m:0, c:'#ffd6b0', k:0.75, e:0.4},
+  lt:{m:0, c:'#ffd2e4', k:1.05, e:0.55, anim:'cycle', c2:'#b07cff'},   // v39: floodlit pink-white, purple during the Symphony of Lights (photos 0010, 0028)
   build(){
     const g = new THREE.Group(), B = mkB(), G = mkG(CC.lat, CC.lon), P = D.cc;
     const y0 = gMin(G, P) - 2, gs = gMin(G, P) + 0.3;
@@ -280,51 +280,7 @@ LANDMARKS.hkmuseumart = {zh:'香港艺术馆', en:'Hong Kong Museum of Art', cat
     B.flush(g); return g; }};
 SG_PLACES.push({type:'hkmuseumart', lat:MA.lat, lon:MA.lon, rot:0});
 
-// =====================================================================================================================
-// Avenue of Stars (rebuilt 2019): the harbourfront promenade deck on its OSM outline, in three straight pieces (the long diagonal is the
-// labelled key; hkavenuestars_b west, hkavenuestars_c north are label:false), with the sea railing and its row of small bronze plaques,
-// timber benches, undulating white shade canopies, lamp posts, and the piles under the deck.
-// =====================================================================================================================
-const AV0 = {lat:22.293782, lon:114.175006};
-const AVP = {
-  hkavenuestars:[[-22, 86], [-14, 81], [109, -64], [118, -80], [106, -82], [97, -70], [52, -17], [36, 2], [-23, 72], [-26, 74]],
-  hkavenuestars_b:[[-229, 59], [-184, 97], [-178, 98], [-22, 86], [-26, 74], [-36, 75], [-175, 86], [-178, 86], [-180, 84], [-220, 50], [-225, 55]],
-  hkavenuestars_c:[[118, -80], [122, -85], [146, -151], [149, -162], [159, -188], [163, -197], [158, -201], [152, -207], [129, -143], [124, -142], [125, -131], [115, -101], [106, -82]]};
-const AVSEA = {hkavenuestars:[[-22, 86], [-14, 81], [109, -64], [118, -80]], hkavenuestars_b:[[-229, 59], [-184, 97], [-178, 98], [-22, 86]], hkavenuestars_c:[[118, -80], [122, -85], [146, -151], [149, -162], [159, -188], [163, -197]]};
-for (const k of Object.keys(AVP)){
-  const c = cenP(AVP[k]), A = LL(AV0.lat, AV0.lon, c[0], c[1]), P = shiftP(AVP[k], -c[0], -c[1]), SEA = shiftP(AVSEA[k], -c[0], -c[1]);
-  let rr = 0; for (const p of P) rr = Math.max(rr, Math.hypot(p[0], p[1]));
-  LANDMARKS[k] = {zh:'星光大道', en:'Avenue of Stars', cat:'new', r:Math.ceil(rr + 6), h:8, label:k === 'hkavenuestars' ? undefined : false,
-    lt:{m:0, c:'#ffe4bc', k:0.6, e:0.5},
-    build(){
-      const g = new THREE.Group(), B = mkB(), G = mkG(A.lat, A.lon);
-      // deck level: the promenade behind it (land side), at least 1.5 m above the sea
-      let land = -1e9; for (const p of P) land = Math.max(land, G(p[0], p[1]));
-      const yD = Math.max(land + 0.4, WATER_Y + 1.8 - LMCTX.u.base.value);
-      const DECK = '#c9c3b6', WOOD = '#9a7b5c';
-      prismP(B.p(DECK), P, WATER_Y - 1 - LMCTX.u.base.value, yD, false);
-      prismP(B.p('#b1aa9c'), offP(P, 1.2), yD, yD + 0.05, false);
-      pilesP(B.p('#8d8a83'), P, yD - 0.5, 9, 0.8);
-      // sea railing with plaques, lamps, benches, canopies along the sea edge
-      const S = SEA, rail = B.p('#d8d8d3'), plq = B.p('#8a6a3a');
-      const Sin = S.map((p, i) => p);  // the railing sits 0.6 m inside the edge
-      railP(rail, Sin, () => yD, 1.1, 2.4, false);
-      let acc = 0;
-      for (let i = 0; i < S.length - 1; i++){ const a = S[i], b = S[i+1], L = Math.hypot(b[0]-a[0], b[1]-a[1]), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L;
-        let nx = -uz, nz = ux; const mid = [(a[0]+b[0])/2 + nx*3, (a[1]+b[1])/2 + nz*3]; if (!inPoly(P, mid[0], mid[1])){ nx = -nx; nz = -nz; }
-        for (let s = 1; s < L - 0.5; s += 1.6){ const x = a[0] + ux*s + nx*0.5, z = a[1] + uz*s + nz*0.5; boxP(plq, 0.7, 0.04, 0.7, x, yD + 0.02, z, -Math.atan2(uz, ux)); }
-        for (let s = 6; s < L; s += 24){ const x = a[0] + ux*s + nx*1.4, z = a[1] + uz*s + nz*1.4; LCyl(g, 0.08, 0.12, 5.5, x, yD, z, '#4a4c4e', 6); LBox(g, 0.5, 0.3, 0.5, x, yD + 5.5, z, {c:'#eee', glow:'#ffe2b0', gk:1.3}); }
-        for (let s = 14; s < L - 6; s += 24){ const x = a[0] + ux*s + nx*4, z = a[1] + uz*s + nz*4; boxP(B.p(WOOD), 6, 0.45, 0.6, x, yD + 0.4, z, -Math.atan2(uz, ux)); boxP(B.p('#6b6d6f'), 5.6, 0.4, 0.4, x, yD, z, -Math.atan2(uz, ux)); }
-        // undulating canopy every ~40 m, on slender columns
-        for (let s = 18; s < L - 14; s += 44){ const can = B.p({c:'#f3f1ea', ds:true}), n = 12, w = 6.5, len = 16, secs = [];
-          for (let k2 = 0; k2 <= n; k2++){ const t = k2/n, x = a[0] + ux*(s + len*t) + nx*7, z = a[1] + uz*(s + len*t) + nz*7, y = yD + 4.2 + 0.9*Math.sin(t*TAU);
-            secs.push([[x - nx*w/2, y + 0.4*Math.cos(t*PI), z - nz*w/2], [x + nx*w/2, y - 0.4*Math.cos(t*PI), z + nz*w/2]]); }
-          stripP(can, secs);
-          for (const t of [0.15, 0.5, 0.85]){ const x = a[0] + ux*(s + len*t) + nx*7, z = a[1] + uz*(s + len*t) + nz*7; segP(B.p('#cfd0d0'), [x, yD, z], [x, yD + 4.1 + 0.9*Math.sin(t*TAU) - 0.3, z], 0.12, 5); } }
-        acc += L; }
-      B.flush(g); return g; }};
-  SG_PLACES.push({type:k, lat:A.lat, lon:A.lon, rot:0});
-}
+// (v39: the Avenue of Stars keys hkavenuestars / _b / _c moved to hk/hkx_kowloon, which supersedes the old v37 block here.)
 
 // =====================================================================================================================
 // Tsim Sha Tsui Star Ferry Pier (1957): the two finger piers and the concourse on their OSM footprints, two levels: white walls with green
@@ -379,12 +335,15 @@ LANDMARKS.hkoceanterminal = {zh:'海运大厦', en:'Ocean Terminal', cat:'new', 
     // round car ramp at the landward end
     { const c = cenP(ramp), R = Math.max(...ramp.map(p => Math.hypot(p[0]-c[0], p[1]-c[1]))) * 0.92;
       LCyl(g, R, R, 26.4, c[0], yD, c[1], '#d1d0ca', 24); for (let y = 3; y < 26; y += 3.3) LCyl(g, R + 0.3, R + 0.3, 0.9, c[0], yD + y, c[1], '#a9aaa5', 24); }
-    // Ocean Terminal Deck at the tip: stepped lawn terraces descending to the harbour, glass below
-    { const T = PT.filter(p => p.b === 6.2 && p.t === 9.9 && p.r.length > 6)[0].r, bq = bbP(T), x0 = bq[0], x1 = bq[2];
-      prismP(B.p(GL), T, yD, yD + 9.9, true); mullP(B.p('#e6e7e4'), T, yD, yD + 9.9, 2.4, 0.18, 0.06);
-      const steps = 6; for (let k = 0; k < steps; k++){ const xa = x0 + (x1 - x0)*k/steps, xb = x0 + (x1 - x0)*(k + 1)/steps, y = yD + 10 + 1.4*k;
-        const cell = clipP(clipP(T, 1, 0, -xa), -1, 0, xb); if (cell.length < 3) continue; prismP(B.p('#d0cec6'), cell, yD + 9.9, y); flatP(B.p('#6f9a4c'), offP(cell, 0.6), y + 0.06); }
-      railP(B.p('#e0e0dc'), T, (x, z) => yD + 10 + 1.4*Math.min(steps - 1, Math.floor((x - x0)/(x1 - x0)*steps)), 1.1, 3, true); }
+    // Ocean Terminal Deck at the tip (Foster + Partners, 2017; v39 after photos 0022-0024): three glazed decks stacked like a ship's,
+    // each with a thin white slab edge and glass balustrade, the upper ones set back from the harbour end, the lawn deck on top; lit warm
+    { const T = PT.filter(p => p.b === 6.2 && p.t === 9.9 && p.r.length > 6)[0].r, bq = bbP(T), x0 = bq[0], x1 = bq[2], L = x1 - x0;
+      const WG = {c:'#7d94a0', m:1, fh:4.4, cw:2.4, lc:'#ffd9a8', lk:0.7}, SL = {c:'#f2f1ec', lc:'#fff4e2', lk:0.9}, BAL = {c:'#b9c8cc', op:0.6, ds:true};
+      const decks = [[0, 0, 4.6], [0.10, 4.6, 9.2], [0.26, 9.2, 13.8], [0.42, 13.8, 17.6]];
+      for (const [cut, y0, y1] of decks){ const Q = clipP(T, 1, 0, -(x0 + L*cut)); if (Q.length < 3) continue;
+        const Qi = offP(Q, 1.4); prismP(B.p(WG), Qi, yD + y0, yD + y1 - 0.5, true); mullP(B.p('#e8e8e4'), Qi, yD + y0, yD + y1 - 0.5, 2.0, 0.12, 0.05);
+        prismP(B.p(SL), Q, yD + y1 - 0.5, yD + y1, false); prismP(B.p(BAL), Q, yD + y1, yD + y1 + 1.1, true); }
+      { const Q = clipP(T, 1, 0, -(x0 + L*0.42)); if (Q.length > 2) flatP(B.p('#6f9a4c'), offP(Q, 1.2), yD + 17.66); } }
     B.flush(g); return g; }};
 SG_PLACES.push({type:'hkoceanterminal', lat:OT.lat, lon:OT.lon, rot:0});
 
@@ -403,12 +362,26 @@ LANDMARKS.hkpeninsula = {zh:'香港半岛酒店', en:'The Peninsula Hong Kong', 
     prismP(B.p(CRM), P, y0, top); bandsP(B.p(TRIM), P, gs, top, 3.5, 0.3, 0.1);
     winsP(B.p(WIN), P, gs + 4.5, top - 3, 3.5, 3.2, 1.3, 2.0, 0.08);
     // rusticated ground floor, cornice, balustrade
-    prismP(B.p('#ddd0b4'), offP(P, -0.25), gs, gs + 4); prismP(B.p(TRIM), offP(P, -0.6), top - 1.2, top - 0.2); railP(B.p(TRIM), P, () => top, 1.0, 1.0, true);
+    prismP(B.p('#ddd0b4'), offP(P, -0.25), gs, gs + 4); prismP(B.p(TRIM), offP(P, -1.6), top - 1.4, top - 0.2); mullP(B.p('#e2d6bc'), offP(P, -0.2), top - 2.6, top - 1.4, 1.4, 0.3, 0.05, null, 1.2); railP(B.p(TRIM), P, () => top, 1.0, 1.0, true);
+    bandsP(B.p({c:'#5f8fb5', ds:true}), P, gs, gs + 7.6, 6.2, 1.4, 1.6);   // v39: the blue-white striped canopies (photo 0032)
     // the tower: same style, window grid lit, cornice bands, set-back top storeys, helipad deck
     const tTop = gs + 113.8;
     prismP(B.p({c:CRM, m:1, fh:3.6, cw:2.6}), T, top - 1, tTop - 6); bandsP(B.p(TRIM), T, top, tTop - 6, 3.6, 0.35, 0.1);
     winsP(B.p({c:'#4c4f4e', m:1, fh:3.6, cw:2.6}), T, top + 1, tTop - 7, 3.6, 2.8, 1.4, 2.1, 0.08);
-    prismP(B.p({c:'#5d6466', glow:'#ffd9a0', gk:0.55}), offP(T, 1.2), tTop - 6, tTop - 0.2); mullP(B.p(TRIM), offP(T, 1.2), tTop - 6, tTop - 0.2, 2.2, 0.35, 0.08);
+    // v39 (photo 0032): the dark-glass slot down the middle of the long faces and dark glass at their ends; the crown of two pavilions
+    // with arched windows under deep overhanging eaves, the dark recessed bay between them
+    { const c = cenP(T); let sxx = 0, szz = 0, sxz = 0; for (const p of T){ const x = p[0]-c[0], z = p[1]-c[1]; sxx += x*x; szz += z*z; sxz += x*z; }
+      const th = 0.5*Math.atan2(2*sxz, sxx - szz), ux = Math.cos(th), uz = Math.sin(th); let hl = 0, hw = 0;
+      for (const p of T){ const x = p[0]-c[0], z = p[1]-c[1]; hl = Math.max(hl, Math.abs(x*ux + z*uz)); hw = Math.max(hw, Math.abs(-x*uz + z*ux)); }
+      const pt = (s, v) => [c[0] + ux*s - uz*v, c[1] + uz*s + ux*v], ry = -Math.atan2(uz, ux), DG = {c:'#2f383c', m:1, fh:3.6, cw:2.0, lc:'#ffe2b0', lk:0.5};
+      for (const sv of [-1, 1]){ const v = sv*(hw + 0.12);
+        { const q = pt(0, v); boxP(B.p(DG), hl*0.34, tTop - 6 - top, 0.3, q[0], top, q[1], ry); }
+        for (const se of [-1, 1]){ const q = pt(se*(hl - 2.2), v); boxP(B.p(DG), 4.4, tTop - 6 - top, 0.3, q[0], top, q[1], ry); } }
+      prismP(B.p(CRM), T, tTop - 6, tTop - 1.6, true);
+      for (const se of [-1, 1]){ const q = pt(se*hl*0.62, 0); boxP(B.p(TRIM), hl*0.78 + 3.6, 1.2, hw*2 + 3.6, q[0], tTop - 1.6, q[1], ry);
+        for (const sv of [-1, 1]){ const w = pt(se*hl*0.62, sv*(hw + 0.1)); boxP(B.p({c:'#4f585c', glow:'#ffd9a0', gk:0.7}), hl*0.5, 3.6, 0.3, w[0], tTop - 5.6, w[1], ry);
+          LCyl(g, hl*0.25, hl*0.25, 0.3, w[0], tTop - 2.0, w[1], {c:'#4f585c', glow:'#ffd9a0', gk:0.7}, 16); } }
+      { const q = pt(0, 0); boxP(B.p({c:'#2f383c', glow:'#ffd9a0', gk:0.4}), hl*0.3, 5, hw*2 - 3, q[0], tTop - 6, q[1], ry); } }
     prismP(B.p(ROOF), HPD, tTop, tTop + 1.2);
     { const c = cenP(HPD); const hp = [c[0] - 12, c[1] - 2]; LCyl(g, 10.5, 10.5, 0.1, hp[0], tTop + 1.2, hp[1], '#6a6d6a', 28);
       lineRingP(B.p({c:'#f4f4f0', glow:'#ffffff', gk:0.6}), Array.from({length:28}, (_, i) => [hp[0] + Math.cos(i/28*TAU)*9.6, hp[1] + Math.sin(i/28*TAU)*9.6]), tTop + 1.35, 0.18);

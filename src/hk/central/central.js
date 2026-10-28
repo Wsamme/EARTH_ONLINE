@@ -134,6 +134,8 @@ function skinP(B, P, y0, y1, o){
   if (o.pier) mullP(B.p(o.pier), P, y0, y1, o.psp || 4.5, o.pw || 0.45, 0.06, o.pd || 0.35, o.edges);
   if (o.band) bandsP(B.p(o.band), P, y0 + (o.b0 || o.fh), y1, o.fh, o.bh || 0.5, 0.08, o.edges);
 }
+// v39 (hkv_island): Symphony of Lights searchlight roots - small bright lamps on the roofs
+const sLamps = (g, pts, col) => { for (const p of pts) LCylD(g, 0.6, 0.7, 0.8, p[0], p[1], p[2], {c:'#dfe3e6', glow:col || '#eef3ff', gk:1.8}, 8); };
 // red aviation lights
 const avLights = (g, pts, r) => { for (const p of pts) LSphD(g, r || 0.5, p[0], p[1], p[2], {c:'#c22', glow:'#ff2a1a', gk:2.4}, 1, 6); };
 // low-poly trees into a batch
@@ -172,7 +174,7 @@ const rectOf = P => { const s = shedOf(P), f = frm(...s.f.w(0, s.vc), Math.atan2
 const IFCG = {c:'#94a8b8', m:1, fh:4.5, cw:1.5}, IFCM = {c:'#dfe5ea', m:0, lk:0.22}, IFCP = {c:'#e9edf0', m:0, lk:0.3};
 const IFCL = {c:'#55626c', glow:'#ffe3bc', gk:0.55}, IFCC = {c:'#eef2f5', m:0, lk:0.2, glow:'#d8e6ff', gk:0.6};
 LANDMARKS.hkifc2 = {zh:'国际金融中心二期', en:'Two International Finance Centre', cat:'new', r:38, h:412,
-  lt:{m:1, c:'#dfe9ff', k:0.6, fh:4.5, cw:1.5}, build(){
+  lt:{m:1, c:'#dfe9ff', k:0.6, fh:4.5, cw:1.5, anim:'cycle', c2:'#bcd4ff'}, build(){
   const g = new THREE.Group(), B = mkB(), gf = gL('hkifc2'), R0 = clean(FD.hkifc2.ring), f = frm(0, 0, 29.4*PI/180);
   const y0 = gMin(gf, R0) - 0.4, HT = 412, Y = h => y0 + h;
   // stepped corner setbacks (|u| + |v| <= C); the base outline has C ~ 48.6
@@ -209,6 +211,7 @@ LANDMARKS.hkifc2 = {zh:'国际金融中心二期', en:'Two International Finance
     for (const hh of [390, 395]) edgeP(Cf, P, Y(hh), 1.3, 0.4, 1.3);
   }
   avLights(g, [f.p(0, Y(HT) - 6, 0), f.p(10, Y(HT) - 9, 0), f.p(-10, Y(HT) - 9, 0)]);
+  sLamps(g, [f.p(-6, Y(398.5), -6), f.p(6, Y(398.5), -6), f.p(6, Y(398.5), 6), f.p(-6, Y(398.5), 6)]);   // v39: SoL searchlights from the crown (photos 0036)
   plinthP(B.p({c:'#bdb6a8', m:0, lk:0.3}), clean(offP(R0, -1.5)), gf, Y(0));
   B.flush(g); return g; }};
 place('hkifc2');
@@ -347,7 +350,7 @@ place('hkexchange');
 // aluminium is pierced by rows of round "porthole" windows on every floor (about 1,750 in all); chamfered corners; a recessed glazed base with the
 // entrance on Connaught Road; plant rooms on the roof. At night the portholes glow. Frame: rot 0 (faces at ~32 deg).
 LANDMARKS.hkjardine = {zh:'怡和大厦', en:'Jardine House', cat:'new', r:34, h:180,
-  lt:{m:0, c:'#fff3dc', k:0.5, e:0.6}, build(){
+  lt:{m:0, c:'#e6eeff', k:0.55, e:0.6, anim:'breathe'}, build(){   // v39: bluish-white floodlight (photos 0004, 0013); SoL searchlights from the roof
   const g = new THREE.Group(), B = mkB(), F = FD.hkjardine, gf = gL('hkjardine'), R0 = clean(F.ring);
   const y0 = gMin(gf, R0) - 0.3, Y = h => y0 + h, FH = 3.24;
   const wall = {c:'#ecebe6', m:0, lk:0.5}, port = {c:'#3c4954', glow:'#ffe0b0', gk:0.62}, rim = {c:'#cfd0cc', m:0, lk:0.2};
@@ -366,6 +369,9 @@ LANDMARKS.hkjardine = {zh:'怡和大厦', en:'Jardine House', cat:'new', r:34, h
   // roof: parapet band and the plant-room blocks (OSM parts to 178.5 m)
   edgeP(B.p(rim), R0, Y(166.8), 0.5, 1.7, 0.15);
   for (const [b, t, P] of F.parts.slice(1)) prismP(B.p(wall), clean(P), Y(168.5), Y(t));
+  // v39: the slightly pitched aluminium roof cap over the plant storeys (photo 0028) and the SoL searchlights
+  { const pp = F.parts.slice(1).slice().sort((a, b) => Math.abs(area2(b[2])) - Math.abs(area2(a[2])))[0];
+    if (pp){ const P = clean(pp[2]), r = rectOf(P); hipRect(B.p({c:'#c9ccca', m:0, lk:0.35}), r.f, r.u0, r.u1, r.hw, Y(pp[1]), 2.4, 0.6); sLamps(g, [r.f.p(r.u0 + 3, Y(pp[1]) + 0.2, -r.hw + 2), r.f.p(r.u1 - 3, Y(pp[1]) + 0.2, r.hw - 2)]); } }
   avLights(g, [[0, Y(179), 0]]);
   plinthP(B.p({c:'#bdb6a8', m:0, lk:0.3}), clean(offP(R0, -0.4)), gf, Y(0));
   B.flush(g); return g; }};
@@ -416,10 +422,7 @@ const pierLM = (k, zh, en, lab) => { LANDMARKS[k] = {zh, en, cat:'new', r:58, h:
   const g = new THREE.Group(), B = mkB(), s = shedOf(clean(FD[k].p)), f2 = frm(...s.f.w(0, s.vc), Math.atan2(s.f.s, s.f.c));
   pierShed(g, B, f2, s.u0 + 0.6, s.u1 - 0.6, s.hw - 0.6, 10, 13.6);
   B.flush(g); return g; }}; if (lab === false) delete LANDMARKS[k].label, LANDMARKS[k].label = false; else delete LANDMARKS[k].label; place(k); };
-pierLM('hkcentralpiers', '中环码头', 'Central Piers');              // Pier 5 (Cheung Chau) carries the label for the row
-pierLM('hkcentralpiers_b', '中环4号码头', 'Central Pier 4', false);
-pierLM('hkcentralpiers_c', '中环3号码头', 'Central Pier 3', false);
-pierLM('hkcentralpiers_d', '中环6号码头', 'Central Pier 6', false);
+// (v39: Central Piers 3-6 moved to hk/hkx_island (hkcentralpiers), which supersedes the v37 pierLM keys)
 
 // ===== Central Star Ferry Pier (Pier 7, 2006) and the Central Terminal Building: a mock-Edwardian design after the 1910 pier -
 // two-storey pier halls with a roof viewing deck under hipped roofs, joined on the landward side by a long arcaded building whose

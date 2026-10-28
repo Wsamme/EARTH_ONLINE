@@ -8,12 +8,12 @@ Five real cities at 1:1 in the browser, built with three.js r128 and OpenStreetM
 | `site/index.html` | Singapore 新加坡 | Marina Bay, NUS, Changi, Gardens by the Bay … |
 | `site/bay.html` | San Francisco Bay Area 旧金山湾区 | Golden Gate, Bay Bridge, company HQs … |
 | `site/nyc.html` | New York City 纽约 | ~420 landmarks |
-| `site/hk.html` | Hong Kong 香港 | 92 landmarks, Shenzhen skyline |
-| `site/tyo.html` | Tokyo 东京 | 84 landmarks, Mount Fuji on the horizon |
+| `site/hk.html` | Hong Kong 香港 | 189 landmarks and parks; Victoria Harbour rebuilt from photos, neon streets, Symphony of Lights, Shenzhen skyline |
+| `site/tyo.html` | Tokyo 东京 | 111 landmarks and parks, Mount Fuji on the horizon |
 
 Real roads, rail, buildings, terrain and water; landmark models; intro cards; 中 / EN / 双 language switch; driving,
-flying, races, multiplayer, Cthulhu mode; weather; speed or local time.
-真实的道路、铁路、建筑、地形和水面；地标模型；介绍卡；中 / EN / 双 语言切换；驾驶、飞行、比赛、多人、克苏鲁模式；天气；倍速或当地时间。
+flying, races, multiplayer, Cthulhu mode; weather; speed or local time. Every city opens in View mode.
+真实的道路、铁路、建筑、地形和水面；地标模型；介绍卡；中 / EN / 双 语言切换；驾驶、飞行、比赛、多人、克苏鲁模式；天气；倍速或当地时间。每个城市打开时默认是视角模式。
 
 ## Run it 运行
 
@@ -56,5 +56,7 @@ Note: the build scripts still use the absolute workspace path they were written 
 - 地图数据 © OpenStreetMap 贡献者，按开放数据库许可（ODbL）提供：https://www.openstreetmap.org/copyright
 - Terrain: AWS Terrain Tiles (Mapzen terrarium) — https://registry.opendata.aws/terrain-tiles/
 - 地形：AWS Terrain Tiles（Mapzen terrarium）—— https://registry.opendata.aws/terrain-tiles/
-- Landmark models are original, simplified works. No company logos, brand colours or characters are used.
-- 地标模型都是自己做的简化模型，没有使用公司标志、品牌配色或卡通角色。
+- Landmark models are original, simplified works. No company logos or characters are used.
+- 地标模型都是自己做的简化模型，没有使用公司标志或卡通角色。
+- Hong Kong's signs follow the position, size, colour and style of real signs, but every name on them is invented; no real brands, look-alike names or logo shapes.
+- 香港的招牌按真实招牌的位置、大小、颜色和风格来做，但上面的名字都是编的，没有真实品牌、谐音名或标志图形。

@@ -201,3 +201,18 @@ contains null / undefined / None / NaN, and every label entry has en and zh.
   river), `../tyo/bay/gate_deck_fix.py`, `../tyo/yokohama/bb_deck_fix.py`. Then b6_misc.py, b7_encode.py, stage.sh.
 - **Verified.** Rainbow 61.6 / 54.1. Gate Bridge symmetric, 56.1 at mid-span (main piers 54.4 / 54.6). Bay Bridge lower =
   upper − 8.0 ± 0.1 m between the anchor piers.
+
+## v39 integration (v38 landmark groups tyx_central, tyx_west, tyx_north; 2026-10-28)
+- Modules: 14 (`tyo/<k>/<k>.js`). `node lmx/count.js tyo`: 117 LANDMARKS + 16 SITES, 114 labelled before `tyoreal/app/tyo_post.js`
+  unlabels the sub-keys tymetgympool, tymetgymsub, tyyebisuchateau → **111 labelled keys** (v37: 84). No key placed twice, none defined
+  in two modules.
+- Superseded v37 blocks removed (backups `*.v39.bak`): SITES tycrossing, tymeijijingu, tystadium in `tyo/shibuya/shibuya.js` and tygyoen
+  in `tyo/shinjuku/shinjuku.js` (with their site data); in `tyo/ueno/ueno.js` the Ueno Park site no longer draws or labels Kiyomizu
+  Kannon-dō and Ueno Tōshō-gū (landmarks tykiyomizu / tytoshogu now) nor the National Museum of Western Art label (tywesternart).
+- OSM labels dropped (`tyo_post.js`, TYO_DROP_LABELS, by English name + position): POIs "MUFG Stadium" (naming-rights name of the
+  National Stadium) and "New National Stadium" (r10071391), "Meiji Jingu Main Shrine" at the south gate, "Hama-rikyu Gardens"
+  (POI and place) under the site label.
+- Intro cards (`lm33/info_tyo`, labelled.js → build.js → info_tyo.js, `node validate.js` clean): +27 entries for the new labelled
+  keys, `site:tyhamarikyu`, and 3 parent links for the renamed tyx_west site-building labels; 165 entries.
+- Build: `bash tyo39/build39_tyo.sh` → `pub39/tyo/index.html` (+ `pub39/tyo/tyodata/`, hard links to `sgreal/site/tyodata/`); the
+  staged data are unchanged since v37 (no deck fixes in the v38 groups).

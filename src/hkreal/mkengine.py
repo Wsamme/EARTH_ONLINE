@@ -116,6 +116,7 @@ R("""  const W = {2:20, 4:15, 6:12, 8:9.5, 10:7}, Wo = {2:11, 4:10, 6:8, 8:7, 10
   for (const li of SGR.treeIdx.get(T.ti) || []){
     const l = SGR.lines[li];
     if (!(l.c in W) || (l.flags & 8)) continue;""")
+# (v39: k2 = 0 for 'PK': the Peak Tram's cars are hk/hkx_island's static model hkpeaktram, so no generic train runs through them)
 # ---------- rail: BART, Caltrain, Muni Metro LRVs, the F-line streetcars, cable cars, VTA light rail ----------
 R("const SGR_LRT = new Set(['BP', 'SE', 'SW', 'PE', 'PW']);", """const SGR_MTR = new Set(['EAL', 'TML', 'TWL', 'KTL', 'ISL', 'TKL', 'TCL', 'AEL', 'SIL', 'DRL']);
 const SGR_LRT = {has:c => /^L\\d/.test(c) || c === 'TR' || c === 'PK'};
@@ -132,12 +133,16 @@ const SGR_TRAIN = c => c === 'SIL' ? {sp:15, gap:22.8, sc:[22.5, 3.8, 3.1], side
   {sp:20, gap:19.4, sc:[19.0, 3.8, 3.0], side:1.7, y:2.1, cars:6, per:4200};""")
 # tracks on the road bridges (the lower decks of Tsing Ma and Kap Shui Mun) carry explicit heights (base.mrt[].z)
 R("const lrt = SGR_LRT.has(Ld.code), H0 = lrt ? 7.5 : 10.5;", "const lrt = SGR_LRT.has(Ld.code), H0 = lrt ? 7.5 : 10.5, Z = Ld.z || null;")
+# v39 (hk/hkx_island/tools/pk_rail_fix.py): light-rail lines with explicit heights z (the Peak Tram's bridge over Kennedy Road) keep them
+# after the ramp passes (on the Peak's 1-in-2 slope the passes would carry the summit's height down the hill)
+R("    const cls = new Uint8Array(n), yR = new Float32Array(n), cum = new Float32Array(n); let L = 0;",
+  "    if (Z && lrt) for (let i = 0; i < n; i++) if (Z[i] > 0) e[i] = tgt[i];\n    const cls = new Uint8Array(n), yR = new Float32Array(n), cum = new Float32Array(n); let L = 0;")
 R("for (let i = 0; i < n; i++) tgt[i] = el[i] === 2 ? sm[i] - 16 : el[i] === 1 ? sm[i] + H0 : Math.max(0, g[i]) + 0.5;",
   "for (let i = 0; i < n; i++) tgt[i] = Z && Z[i] > 0 ? Math.max(-0.3, g[i]) + Z[i] + 0.5 : el[i] === 2 ? sm[i] - 16 : el[i] === 1 ? sm[i] + H0 : Math.max(0, g[i]) + 0.5;")
 R("const R = {P, g, e, cls, yR, wat, cum, L, kind:'mrt', line:Ld, lrt, col:hexRGB(Ld.col).map(v => v/255)};",
   "const R = {P, g, e, cls, yR, wat, cum, L, kind:'mrt', line:Ld, lrt, street:Ld.code === 'TR', col:hexRGB(Ld.col).map(v => v/255)};")
 R("for (let t = 0; t < k; t++) net.trains.push({R, ph:(t/k)*2*R.L + rr()*300, sp:R.lrt ? 11 : 18, gap:R.lrt ? 11.5 : 23, sc:R.lrt ? [10.6, 3.1, 2.6] : [22.4, 3.7, 3.2], side:R.lrt ? 1.15 : 1.9, y:R.lrt ? 1.9 : 2.1, cars:R.lrt ? 2 : 6, col:R.col}); }",
-  "const Tq = SGR_TRAIN(R.line.code), k2 = Math.max(1, Math.round(R.L/Tq.per)); for (let t = 0; t < k2; t++) net.trains.push({R, ph:(t/k2)*2*R.L + rr()*300, sp:Tq.sp, gap:Tq.gap, sc:Tq.sc, side:Tq.side, y:Tq.y, cars:Tq.cars, col:R.col}); }")
+  "const Tq = SGR_TRAIN(R.line.code), k2 = R.line.code === 'PK' ? 0 : Math.max(1, Math.round(R.L/Tq.per)); for (let t = 0; t < k2; t++) net.trains.push({R, ph:(t/k2)*2*R.L + rr()*300, sp:Tq.sp, gap:Tq.gap, sc:Tq.sc, side:Tq.side, y:Tq.y, cars:Tq.cars, col:R.col}); }")
 # street-running lines follow the street, however steep (Nob Hill, Russian Hill: up to 30 %)
 R("cls[i] = e[i] < gg - 1.5 ? 2 : e[i] - gg > 4 ? 1 : 0;", "cls[i] = lrt && el[i] === 0 ? 0 : e[i] < gg - 1.5 ? 2 : e[i] - gg > 4 ? 1 : 0;")   # (the Peak Tram climbs ~1 in 2)
 # landmark bridges bring their own piers and lamps: the road module skips its generic ones inside a landmark's ground plan

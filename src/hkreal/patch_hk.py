@@ -2,7 +2,7 @@
 # Hong Kong keeps the Singapore engine's left-hand traffic, foreign-context handling (Shenzhen: muted land, main roads, the
 # skyline as type-14 buildings) and the Singapore-style modules (signs, weather, sound) until city-specific ones exist.
 import re
-MODS = ['hkreal/app/hk_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm20/signs/signs.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm33/info_hk/info_hk.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
+MODS = ['hkreal/app/hk_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'hkv/hksigns/hksigns.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm33/info_hk/info_hk.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 APP = ['lm20/audio/audio.js', 'hkreal/app/hkreal.js', 'hkreal/app/hkstats.js', 'sgreal/app/cityswitch.js']
 def apply(src):
     def R(a, b, count=1):
@@ -62,6 +62,10 @@ def apply(src):
     # ---------- landmarks split into several keys: one label ----------
     R("for (const L of landmarks){ const def = LANDMARKS[L.type], el = document.createElement('div'); el.className = 'lbl n lm';",
       "for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm';")
+    # ---------- v39: no generic station platforms / canopies on the Peak Tram (PK): hk/hkx_island models the four stops, hk/peak the termini
+    # (hkpeaktramlower, hkpeaktower); the stations stay in net.stations (names), without geometry ----------
+    R("      if (bi < 0 || ug || R.cls[bi] === 2 || done.has(R.line.code)) continue; done.add(R.line.code);",
+      "      if (R.line.code === 'PK'){ elev = true; col = R.col; continue; }\n      if (bi < 0 || ug || R.cls[bi] === 2 || done.has(R.line.code)) continue; done.add(R.line.code);")
     # ---------- the trams run in the street (rails in the road, no ballast bed) ----------
     R("    } else quadSegD(B.flat, p0, p1, W + 3, 0.55, hex('#a39a8a'));", "    } else if (!R.street) quadSegD(B.flat, p0, p1, W + 3, 0.55, hex('#a39a8a'));")
     R("const a = off(p0, d0, sd), b = off(p1, d1, sd); if (!up) quadSegD(B.flat, a, b, lrt ? 1.6 : 2.4, 0.65, track);",

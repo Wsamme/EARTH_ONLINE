@@ -458,6 +458,7 @@ function sgMRT(B){
     // ramps between levels: a 3 % grade where a viaduct comes down to grade or a tunnel portal opens
     const e = Float32Array.from(tgt);
     for (let pass = 0; pass < 2; pass++){ for (let i = 1; i < n; i++) e[i] = el[i] === 2 ? Math.min(e[i], e[i-1] + 0.7) : Math.max(Math.min(e[i], e[i-1] + 0.7), Math.max(e[i], e[i-1] - 0.7)); for (let i = n - 2; i >= 0; i--) e[i] = el[i] === 2 ? Math.min(e[i], e[i+1] + 0.7) : Math.max(Math.min(e[i], e[i+1] + 0.7), Math.max(e[i], e[i+1] - 0.7)); }
+    if (Z && lrt) for (let i = 0; i < n; i++) if (Z[i] > 0) e[i] = tgt[i];
     const cls = new Uint8Array(n), yR = new Float32Array(n), cum = new Float32Array(n); let L = 0;
     for (let i = 0; i < n; i++){
       if (i) L += Math.hypot(P[i][0] - P[i-1][0], P[i][1] - P[i-1][1]); cum[i] = L;
@@ -471,7 +472,7 @@ function sgMRT(B){
   net.mrt = lines;
   sgStations(B, lines);
   const rr = mulberry32(77); net.trains = [];
-  for (const R of lines){ if (!R.cls.some(c => c !== 2)) continue; const k = Math.max(1, Math.round(R.L/2600)); const Tq = SGR_TRAIN(R.line.code), k2 = Math.max(1, Math.round(R.L/Tq.per)); for (let t = 0; t < k2; t++) net.trains.push({R, ph:(t/k2)*2*R.L + rr()*300, sp:Tq.sp, gap:Tq.gap, sc:Tq.sc, side:Tq.side, y:Tq.y, cars:Tq.cars, col:R.col}); }
+  for (const R of lines){ if (!R.cls.some(c => c !== 2)) continue; const k = Math.max(1, Math.round(R.L/2600)); const Tq = SGR_TRAIN(R.line.code), k2 = R.line.code === 'PK' ? 0 : Math.max(1, Math.round(R.L/Tq.per)); for (let t = 0; t < k2; t++) net.trains.push({R, ph:(t/k2)*2*R.L + rr()*300, sp:Tq.sp, gap:Tq.gap, sc:Tq.sc, side:Tq.side, y:Tq.y, cars:Tq.cars, col:R.col}); }
   const total = net.trains.reduce((s, T) => s + T.cars, 0);
   if (total){
     const im = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshLambertMaterial({color:0xffffff, emissive:0x000000}), total), cc = new THREE.Color(); im.castShadow = true;

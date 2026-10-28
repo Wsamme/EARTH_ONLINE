@@ -161,7 +161,7 @@ const LL = (lat, lon, x, z) => ({lat:+(lat - z/110734.9).toFixed(7), lon:+(lon +
 // =====================================================================================================================
 const CP = {lat:22.279963, lon:114.173643};
 LANDMARKS.hkcentralplaza = {zh:'中环广场', en:'Central Plaza', cat:'new', r:36, h:374,
-  lt:{m:1, c:'#ffd9a8', k:0.65, anim:'cycle', c2:'#ff8ad8'},
+  lt:{m:1, c:'#ffd9a8', k:0.65, anim:'show', c2:'#ffd27a'},   // v39: Symphony of Lights
   build(){
     const g = new THREE.Group(), B = mkB(), G = mkG(CP.lat, CP.lon);
     const R0 = D.cp.ring, PT = D.cp.parts;
@@ -194,6 +194,11 @@ LANDMARKS.hkcentralplaza = {zh:'中环广场', en:'Central Plaza', cat:'new', r:
     // the four neon bars of the clock (one on each crown step), colour stepping through a palette at night
     const BAR = {c:'#efe9dc', ds:true}, bars = B.p(BAR);
     const barRing = (P, y, off) => { for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.5) continue; const [nx, nz] = outN(P, i); quadP(bars, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, y+1.5, b[1]+nz*off], [a[0]+nx*off, y+1.5, a[1]+nz*off]); } };
+    // v39 (hkv_island): the tall vertical LED bars on the three main faces in the upper third (photos 0017, 0018, 0033), same palette
+    for (let i = 0; i < R0.length; i++){ const a = R0[i], b = R0[(i+1) % R0.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 25) continue;
+      const [nx, nz] = outN(R0, i), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L;
+      for (const [t, y0b, y1b] of [[0.27, 205, 255], [0.73, 198, 258], [0.73, 140, 190]]){ const x = a[0] + ux*L*t + nx*0.35, z = a[1] + uz*L*t + nz*0.35;
+        quadP(bars, [x - ux*2.1, y0b, z - uz*2.1], [x + ux*2.1, y0b, z + uz*2.1], [x + ux*2.1, y1b, z + uz*2.1], [x - ux*2.1, y1b, z - uz*2.1]); } }
     barRing(R0, 263.5, 0.3); barRing(r275, 271, 0.3); barRing(t282, 278, 0.3); barRing(t282.map(p => [p[0] + (c[0]-p[0])*0.18, p[1] + (c[1]-p[1])*0.18]), 286.5, 0.3);
     lmPatch(BAR, `float k = mod(floor(uTime/14.0), 5.0);
       vec3 cc = k < 0.5 ? vec3(1.0, 0.22, 0.18) : k < 1.5 ? vec3(1.0, 1.0, 1.0) : k < 2.5 ? vec3(0.62, 0.32, 1.0) : k < 3.5 ? vec3(1.0, 0.82, 0.2) : vec3(0.25, 0.85, 1.0);
@@ -226,7 +231,7 @@ SG_PLACES.push({type:'hkcentralplaza', lat:CP.lat, lon:CP.lon, rot:0});
 // =====================================================================================================================
 const CEC0 = {lat:22.282482, lon:114.172866}, CECO = [15, -90], CEC = LL(CEC0.lat, CEC0.lon, CECO[0], CECO[1]);
 LANDMARKS.hkcec = {zh:'香港会议展览中心', en:'Hong Kong Convention and Exhibition Centre', cat:'new', r:212, h:56,
-  lt:{m:0, c:'#dfe8ff', k:0.55, e:0.6},
+  lt:{m:0, c:'#dfe8ff', k:0.55, e:0.6, anim:'show', c2:'#ff7ad6'},   // v39: Symphony of Lights
   build(){
     const g = new THREE.Group(), B = mkB(), G = mkG(CEC.lat, CEC.lon), sh = P => shiftP(P, -CECO[0], -CECO[1]);
     const S = sh(D.cec.nw), c0 = cenP(S), c = [c0[0], c0[1] - 8];
@@ -265,6 +270,8 @@ LANDMARKS.hkcec = {zh:'香港会议展览中心', en:'Hong Kong Convention and E
         segP(B.p(MUL), [p[0], wBot(p), p[1]], [p[0], wTop(p), p[1]], 0.2, 3);
         if (!north) for (const y of [8, 16, 24]) if (wBot(p) < y) segP(B.p('#9aa3a8'), [p[0], y, p[1]], [q[0], y, q[1]], 0.3, 3); }
       if (north) for (const y of [12, 22]) segP(B.p(MUL), [a[0], y, a[1]], [b[0], y, b[1]], 0.25, 3);
+      // v39 (hkv_island): magenta / violet / cyan LED bands on the slab edges of the harbour glass, east half (photos 0002, 0017, 0047)
+      if (north && (a[0] + b[0])/2 > c[0] - 15){ const LE = B.p({c:'#e2d6e4', ds:true}); for (const y of [7.6, 12.6, 17.6, 22.6]) if (wTop(a) > y + 1 && wTop(b) > y + 1) segP(LE, [a[0], y, a[1]], [b[0], y, b[1]], 0.42, 4); }
     }
     // the lifted south strip: deck soffit, a wall down at its north edge, columns between the carriageways
     const Ssouth = clipP(S, 0, 1, -zLift);
@@ -289,6 +296,7 @@ LANDMARKS.hkcec = {zh:'香港会议展览中心', en:'Hong Kong Convention and E
       for (let k = 0; k < 206; k += 2){ const y = gy + 1.8 + k*st; LCyl(g, 0.8, 0.8, st*2 - 0.02, m[0], y, m[1], light.has(k) ? LG : DK, 10); }
       LCyl(g, 0.84, 0.84, 0.18, m[0], gy + 1.8 + 155*st, m[1], {c:'#d8d2c6', glow:'#ffffff', gk:1.6}, 12);
       LCyl(g, 1.05, 0.8, 0.8, m[0], gy + 19.2, m[1], '#4f8a76', 10); LCone(g, 0.5, 0.6, m[0], gy + 20, m[1], '#4f8a76', 8); }
+    lmPatch({c:'#e2d6e4', ds:true}, `float k = mod(floor(uTime/9.0), 3.0); vec3 cc = k < 0.5 ? vec3(1.0, 0.2, 0.75) : k < 1.5 ? vec3(0.55, 0.3, 1.0) : vec3(0.2, 0.85, 1.0); ledC = cc*1.5;`, 'cecband');
     B.flush(g); return g; }};
 SG_PLACES.push({type:'hkcec', lat:CEC.lat, lon:CEC.lon, rot:0});
 
@@ -464,110 +472,6 @@ LANDMARKS.hkoneislandeast = {zh:'港岛东中心', en:'One Island East', cat:'ne
     B.flush(g); return g; }};
 SG_PLACES.push({type:'hkoneislandeast', lat:OIE.lat, lon:OIE.lon, rot:0});
 
-// =====================================================================================================================
-// SITE: Happy Valley Racecourse — the turf course on its OSM outline with white running rails, the infield pitches, the parade ring,
-// the seven-storey-and-up grandstands along the west side (Happy Valley Stand, Pavilion Stand, Members Stands I-III, Grandstand) on
-// their OSM footprints with their tiers and roofs facing the track, low infield buildings, floodlight masts for night racing.
-// =====================================================================================================================
-const HV = {lat:22.272641, lon:114.181861};
-SITES.hkhappyvalley = {zh:'跑马地马场', en:'Happy Valley Racecourse', lat:HV.lat, lon:HV.lon, r:310, keep:D.hv.site, keepRoads:[11, 12], h:45,
-  lt:{m:1, c:'#ffe7c4', k:0.6},
-  build(ctx){
-    const g = new THREE.Group(), B = mkB(), gy = ctx.gy, hv = D.hv;
-    ctx.paint(hv.site, [222, 218, 206]);
-    ctx.paint(hv.track, [160, 198, 128]);
-    ctx.paint(hv.inf, [182, 206, 150]);
-    for (const p of hv.pitch){ const art = /artificial/.test(p.s), par = /Parade/.test(p.n); ctx.paint(p.r, par ? [168, 200, 134] : art ? [140, 186, 112] : [150, 192, 120]); }
-    if (hv.park) ctx.paint(hv.park, [150, 150, 146]);
-    for (const p of hv.green) ctx.paint(p, [150, 172, 118]);
-    // pitch lines on the larger pitches
-    for (const p of hv.pitch){ if (/Parade/.test(p.n)) continue; const P = offP(p.r, 3); for (let i = 0; i < P.length; i++) ctx.line([P[i], P[(i+1) % P.length]], 0.25, [236, 240, 232]); }
-    const tc = cenP(hv.inf);
-    // running rails: inner (infield edge) and outer (track edge)
-    const RAIL = B.p('#f4f4f0');
-    railP(RAIL, resP(offP(hv.inf, -1.5), 220), (x, z) => gy(x, z), 1.1, 3.5, true);
-    { const pts = resP(offP(hv.track, 2.0), 260), ok = pts.map(p => dPoly(hv.inf, p[0], p[1]) > 6); let run = [];
-      for (let i = 0; i <= pts.length; i++){ const k = i % pts.length; if (i < pts.length && ok[k]) run.push(pts[k]); else { if (run.length > 1) railP(RAIL, run, (x, z) => gy(x, z), 1.1, 3.5, false); run = []; } } }
-    // grandstands
-    const GLS = {c:'#53606a', m:1, fh:3.4, cw:3.2}, WALL = '#e7e2d6', SEAT = '#3e5f8a', ROOF = '#f0efe9';
-    const labels = [];
-    for (const b of hv.bld){
-      const P = b.r, cb = cenP(P), lo = gMin(gy, P), stand = /Stand/.test(b.n);
-      if (!stand){ const h = b.n ? Math.min(b.h, 12) : Math.min(b.h, 9); prismP(B.p(WALL), P, lo - 2, gMax(gy, P) + h); bandsP(B.p(GLS), P, lo, gMax(gy, P) + h, 3.4, 1.4, 0.08); continue; }
-      const h = b.h, top = lo + h;
-      prismP(B.p(WALL), P, lo - 2, top); bandsP(B.p(GLS), P, lo + 1, top - 1, 3.4, 1.7, 0.08);
-      // front edges face the track centre
-      for (let i = 0; i < P.length; i++){
-        const a = P[i], c2 = P[(i+1) % P.length], L = Math.hypot(c2[0]-a[0], c2[1]-a[1]); if (L < 12) continue;
-        const [nx, nz] = outN(P, i), mx = (a[0]+c2[0])/2, mz = (a[1]+c2[1])/2, tx = tc[0] - mx, tz = tc[1] - mz, tl = Math.hypot(tx, tz);
-        if ((nx*tx + nz*tz)/tl < 0.55) continue;
-        const off = (p, d) => [p[0] + nx*d, p[1] + nz*d], S = B.p(SEAT);
-        // lower tier, upper tier, roof canopy, glazed boxes between
-        for (const [yb, yt, d] of [[1.2, 9.5, 11], [12.5, 0.62*h, 8]]){ const A1 = off(a, 0), A2 = off(c2, 0), O1 = off(a, d), O2 = off(c2, d);
-          quadP(S, [O1[0], lo + yb, O1[1]], [O2[0], lo + yb, O2[1]], [A2[0], lo + yt, A2[1]], [A1[0], lo + yt, A1[1]]);
-          for (let k = 1; k < 7; k++){ const t = k/7, y = lo + yb + (yt - yb)*(1 - t) + 0.2, p = off(a, d*t), q = off(c2, d*t); segP(B.p('#7f97b5'), [p[0], y, p[1]], [q[0], y, q[1]], 0.1, 3); }
-          const yy = lo + yb; segP(B.p('#e8e8e2'), [O1[0], yy + 1, O1[1]], [O2[0], yy + 1, O2[1]], 0.08, 3); }
-        const R1 = off(a, 13), R2 = off(c2, 13);
-        quadP(B.p(ROOF), [a[0], top + 0.2, a[1]], [c2[0], top + 0.2, c2[1]], [R2[0], top - 1.2, R2[1]], [R1[0], top - 1.2, R1[1]]);
-        quadP(B.p({c:'#ffffff', glow:'#ffffff', gk:0.9}), [a[0] + nx*12.5, top - 1.5, a[1] + nz*12.5], [c2[0] + nx*12.5, top - 1.5, c2[1] + nz*12.5], [c2[0] + nx*12.5, top - 1.1, c2[1] + nz*12.5], [a[0] + nx*12.5, top - 1.1, a[1] + nz*12.5]);
-        for (let k = 0; k <= Math.round(L/12); k++){ const t = k/Math.max(1, Math.round(L/12)), p = [a[0] + (c2[0]-a[0])*t, a[1] + (c2[1]-a[1])*t]; segP(B.p('#d9d9d4'), [p[0], top - 1.4, p[1]], [p[0] + nx*12.5, top - 1.4, p[1] + nz*12.5], 0.25, 4); }
-      }
-    }
-    // floodlight masts along the inner rail (night racing)
-    { const M = resP(offP(hv.inf, -4), 18), o = B.p('#c9ccd0'), hd = B.p({c:'#f2f2ea', glow:'#fffbe8', gk:1.6});
-      for (const p of M){ const y = gy(p[0], p[1]); segP(o, [p[0], y, p[1]], [p[0], y + 34, p[1]], 0.45, 6); boxP(hd, 3.2, 1.6, 1.2, p[0], y + 33.5, p[1], Math.atan2(p[1] - tc[1], p[0] - tc[0]) + HP); ctx.lamp(p[0], y + 33, p[1], [255, 248, 225]); } }
-    // trees along the outer edge of the site
-    { const S = resP(offP(hv.site, 6), 150); for (const p of S){ if (dPoly(hv.track, p[0], p[1]) < 3 || inPoly(hv.track, p[0], p[1])) continue; ctx.tree(p[0], p[1], 2.8 + ctx.rng(), 'raintree'); } }
-    B.flush(g); return g; }};
-
-// =====================================================================================================================
-// SITE: Victoria Park — the park on its OSM outline: the central lawn, the six football pitches, the tennis centre with the Centre
-// Court and its stands, the bowling greens, the model boat pool, playgrounds, basketball courts, the swimming complex, the bandstand,
-// the seated bronze Queen Victoria statue (OSM position) and the trees along the paths (the real paths are kept).
-// =====================================================================================================================
-const VP = {lat:22.282534, lon:114.188733};
-SITES.hkvicpark = {zh:'维多利亚公园', en:'Victoria Park', lat:VP.lat, lon:VP.lon, r:380, keep:D.vp.site, keepRoads:[11, 12], h:20,
-  lt:{m:1, c:'#ffe7c4', k:0.6},
-  build(ctx){
-    const g = new THREE.Group(), B = mkB(), gy = ctx.gy, vp = D.vp;
-    ctx.paint(vp.site, [176, 202, 142]);
-    const COL = {lawn:[186, 208, 152], 'p:soccer':[140, 186, 112], 'p:tennis':[134, 178, 118], 'p:bowls':[150, 194, 120], 'p:basketball':[196, 128, 100], water:[143, 181, 202], play:[221, 205, 170], garden:[172, 202, 140], pave:[222, 214, 199], court:[134, 178, 118], tc:[214, 210, 200]};
-    const F = vp.f.slice().sort((a, b) => b.a - a.a);
-    for (const f of F){ const c = COL[f.k] || (f.k.startsWith('p:') ? [168, 164, 160] : null); if (c && f.k !== 'bleach') ctx.paint(f.r, c); }
-    for (const f of F) if (f.k === 'p:soccer' || f.k === 'p:tennis' || f.k === 'p:basketball'){ const P = offP(f.r, f.k === 'p:soccer' ? 2 : 1); for (let i = 0; i < P.length; i++) ctx.line([P[i], P[(i+1) % P.length]], 0.2, [236, 238, 232]); }
-    // tennis centre court stands
-    for (const f of vp.f) if (f.k === 'bleach'){ const P = f.r, lo = gMin(gy, P); prismP(B.p('#bdbab2'), P, lo - 1.5, lo + 7.5); bandsP(B.p('#5e6e7c'), P, lo, lo + 7.5, 1.2, 0.5, 0.06); }
-    // fences round the courts
-    for (const f of vp.f) if (f.k === 'tc' || f.k === 'p:soccer'){ const o = B.p({c:'#41514a', ds:true}), P = f.r; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; quadP(o, [a[0], gy(a[0], a[1]), a[1]], [b[0], gy(b[0], b[1]), b[1]], [b[0], gy(b[0], b[1]) + 3.5, b[1]], [a[0], gy(a[0], a[1]) + 3.5, a[1]]); } }
-    // buildings
-    const labels = [];
-    for (const b of vp.bld){ const P = b.r, lo = gMin(gy, P), hi = gMax(gy, P);
-      if (/Swimming/.test(b.n)){ const h = 16, top = hi + h, c = cenP(P);
-        prismP(B.p({c:'#7f98a8', glow:'#e6f2ff', gk:0.35}), P, lo - 2, top - 3); bandsP(B.p('#e3e6e6'), P, lo, top - 3, 4.5, 0.9, 0.1); mullP(B.p('#e3e6e6'), P, lo, top - 3, 5, 0.3, 0.12);
-        const bb = bbP(P), cx = (bb[0] + bb[2])/2, cz = (bb[1] + bb[3])/2, rx = (bb[2] - bb[0])/2, rz = (bb[3] - bb[1])/2;
-        prismP(B.p('#f0f0ec'), P, top - 3, (x, z) => top - 3 + 3.5*Math.cos(cl01(Math.abs(z - cz)/rz)*HP));
-        labels.push({x:c[0], z:c[1], y:top + 4, zh:'维多利亚公园游泳池', en:'Victoria Park Swimming Pool'}); continue; }
-      const h = Math.min(b.h, 10); prismP(B.p('#e4e0d6'), P, lo - 1.5, hi + h); bandsP(B.p('#66737b'), P, lo, hi + h, 3.4, 1.3, 0.08);
-      if (/Bandstand/.test(b.n)) { const c = cenP(P); LCone(g, 9, 2.5, c[0], hi + h, c[1], '#cbc6b8', 8); } }
-    // Queen Victoria statue: granite pedestal and a seated bronze figure
-    { const [x, z] = vp.statue, y = gy(x, z), BR = '#3f4a3e', GR = '#b8b2a6';
-      boxP(B.p(GR), 5, 0.6, 5, x, y, z, 0.6); boxP(B.p(GR), 3.0, 2.6, 2.6, x, y + 0.6, z, 0.6); boxP(B.p('#a8a296'), 3.4, 0.4, 3.0, x, y + 3.2, z, 0.6);
-      LLathe(g, [[0, 0], [1.2, 0], [1.25, 0.6], [0.95, 1.2], [0.7, 1.9], [0.55, 2.3], [0.42, 2.5], [0.3, 2.6], [0, 2.62]], x, y + 3.6, z, BR, 10);
-      LSph(g, 0.32, x, y + 6.45, z, BR, 1.1, 8); LCyl(g, 0.22, 0.32, 0.25, x, y + 6.72, z, '#5a5f40', 8);
-      boxP(B.p(BR), 1.9, 0.8, 1.5, x + Math.cos(0.6)*0.5, y + 3.6, z - Math.sin(0.6)*0.5, 0.6);
-      labels.push({x, z, y:y + 9, zh:'维多利亚女皇像', en:'Queen Victoria Statue', near:true}); }
-    // trees: a jittered grid over the park, off the pitches, courts, pools and the real paths
-    { const S = vp.site, bb = bbP(S), paths = vp.paths, hard = vp.f.filter(f => f.k !== 'garden' && f.k !== 'lawn').map(f => f.r), lawn = vp.f.filter(f => f.k === 'lawn').map(f => f.r);
-      for (let x = bb[0]; x < bb[2]; x += 13) for (let z = bb[1]; z < bb[3]; z += 13){
-        const px = x + (ctx.rng() - 0.5)*9, pz = z + (ctx.rng() - 0.5)*9;
-        if (!inPoly(S, px, pz) || dPoly(S, px, pz) < 3) continue;
-        if (hard.some(P => inPoly(P, px, pz) || dPoly(P, px, pz) < 3)) continue;
-        if (vp.bld.some(b => inPoly(b.r, px, pz) || dPoly(b.r, px, pz) < 5)) continue;
-        if (paths.some(L => dLine(L, px, pz) < 3.2)) continue;
-        if (lawn.some(P => inPoly(P, px, pz) && dPoly(P, px, pz) > 7)) continue;
-        ctx.tree(px, pz, 2.6 + ctx.rng()*1.6, ctx.rng() < 0.2 ? 'palm' : 'raintree'); } }
-    // lamps along the paths
-    for (const L of vp.paths) for (let i = 0; i < L.length - 1; i++){ const a = L[i], b = L[i+1], d = Math.hypot(b[0]-a[0], b[1]-a[1]); for (let s = 0; s < d; s += 28){ const x = a[0] + (b[0]-a[0])*s/d, z = a[1] + (b[1]-a[1])*s/d; ctx.lamp(x + 2, gy(x, z) + 4.5, z, [255, 226, 170]); } }
-    B.flush(g); if (labels.length) g.userData.labels = labels; return g; }};
+// (v39: the sites hkhappyvalley and hkvicpark moved to hk/hkx_island)
 
 }

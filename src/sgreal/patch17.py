@@ -234,7 +234,7 @@ else:   # v29: Singapore too: landmarks split into several keys keep one label (
       "for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm';")
 # v33: post patches — python files defining apply(src, city) -> src, applied to every city's page in order (production list POSTS,
 # plus EXTRA_POSTS=a.py,b.py for tests). Each must assert its replacements match exactly once.
-POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_detail.py', 'lm32/clock/post_clock.py', 'lm33/post_railskip.py', 'lm33/post_parkpoi.py', 'lm33/fuji/post_far.py']
+POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_detail.py', 'lm32/clock/post_clock.py', 'lm33/post_railskip.py', 'lm33/post_parkpoi.py', 'lm33/fuji/post_far.py', 'lm33/post_viewdefault.py']
 for _p in POSTS + [x for x in os.environ.get('EXTRA_POSTS', '').split(',') if x]:
     _ns = {'__file__': SC + _p}; exec(compile(open(SC + _p).read(), SC + _p, 'exec'), _ns); src = _ns['apply'](src, CITY); print('post', _p)
 src = src.replace('<title>', '<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is (the map switch reads it)

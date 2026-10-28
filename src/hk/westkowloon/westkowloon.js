@@ -67,20 +67,34 @@ const lampB = (B, x, y, z, s) => boxB(B, 0.5*(s || 1), 0.5*(s || 1), 0.5*(s || 1
 const fillRec = (Bw, Br, b, y0) => { const pieces = b.p && b.p.length ? b.p.map(p => [Math.max(y0 || 0, p[0]), p[1], dec(p[2])]) : [[Math.max(y0 || 0, b.mh || 0), b.h, dec(b.r)]];
   for (const [a, t, P] of pieces){ if (t - a < 0.5) continue; walls(Bw, P, a, t); cap(Br, P, t); } };
 const circ = (r, n) => { const P = []; for (let i = 0; i < (n || 16); i++){ const a = i/(n || 16)*TAU; P.push([Math.cos(a)*r, Math.sin(a)*r]); } return P; };
-// ---- animated light-show skin (own shader, additive, night only): mode 0 = ICC show (soft white-to-blue rising bands and a
-// sweeping diagonal graphic, now and then a warm phase); mode 1 = M+ screen (a calm, slowly drifting colour field) ----
+// ---- animated light-show skin (own shader, additive, night only; abstract content only):
+// mode 0 = ICC's LED skin (v39, after photos 0004 / 0037 / 0038): horizontal LED bars on every floor band, running three calm scenes
+//   in turn - white zig-zag chevrons rising, a field of big blocks scrolling up (the giant vertical lettering, abstracted), and soft
+//   white-to-blue rising bands; a short fade between scenes;
+// mode 1 = M+ screen (v39, photos 0020 / 0021 / 0038): the horizontal-louvre mesh with a slow abstract picture - drifting colour
+//   fields, now and then three vertical colour bands ----
 const LED_VS = 'varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }';
 const LED_FS = `uniform float uT; uniform float uN; uniform float uK; uniform float uMode; varying vec3 vW;
 void main(){ float t = uT, y = vW.y, h = vW.x - vW.z; vec3 col; float a;
   if (uMode < 0.5){
-    float f = fract(y/72.0 - t*0.045); float b1 = smoothstep(0.0, 0.3, f)*(1.0 - smoothstep(0.3, 0.62, f));
-    float b2 = pow(0.5 + 0.5*sin(h*0.055 + y*0.028 - t*0.45), 8.0);
-    float ph = fract(t/48.0); vec3 cool = mix(vec3(0.86, 0.93, 1.0), vec3(0.32, 0.55, 1.0), 0.5 + 0.5*sin(t*0.11 + y*0.004));
-    col = mix(cool, vec3(1.0, 0.8, 0.52), smoothstep(0.78, 0.86, ph)*(1.0 - smoothstep(0.94, 1.0, ph)));
-    a = 0.07 + 0.55*b1 + 0.4*b2;
+    float u = vW.x*1.414, fy = fract(y/4.2), bar = smoothstep(0.04, 0.12, fy)*(1.0 - smoothstep(0.34, 0.44, fy));
+    float ph = mod(t, 156.0), sc = floor(ph/52.0), lt = mod(ph, 52.0), env = smoothstep(0.0, 2.5, lt)*(1.0 - smoothstep(49.0, 52.0, lt));
+    float c;
+    if (sc < 0.5){ float z = abs(fract(u/56.0) - 0.5)*2.0; c = step(0.55, fract((y + z*34.0)/46.0 - t*0.035)); col = vec3(0.95, 0.97, 1.0); }
+    else if (sc < 1.5){ vec2 cell = floor(vec2(u/8.5, (y - t*5.0)/8.5)); float r = fract(sin(dot(cell, vec2(12.9898, 78.233)))*43758.5453);
+      c = step(0.58, r); col = vec3(1.0, 0.98, 0.95); }
+    else { float f = fract(y/72.0 - t*0.045); c = smoothstep(0.0, 0.3, f)*(1.0 - smoothstep(0.3, 0.62, f)) + 0.35*pow(0.5 + 0.5*sin(u*0.05 + y*0.028 - t*0.45), 8.0);
+      col = mix(vec3(0.86, 0.93, 1.0), vec3(0.35, 0.55, 1.0), 0.5 + 0.5*sin(t*0.11 + y*0.004)); }
+    a = (0.05 + 0.95*c*env)*bar*1.6;
   } else {
+    float lou = 0.45 + 0.55*step(0.4, fract(y/0.75));
+    float ph = mod(t, 90.0);
     float v = 0.5 + 0.5*sin(h*0.045 + t*0.10)*sin(y*0.06 - t*0.07);
-    col = mix(vec3(0.12, 0.30, 0.48), vec3(0.72, 0.84, 0.95), v); a = 0.35 + 0.25*v;
+    vec3 c1 = mix(vec3(0.12, 0.30, 0.48), vec3(0.72, 0.84, 0.95), v);
+    float band = floor(fract(h/108.0 + 0.5)*3.0);
+    vec3 c2 = band < 0.5 ? vec3(0.55, 0.55, 0.56) : band < 1.5 ? vec3(0.95, 0.55, 0.18) : vec3(0.35, 0.7, 0.4);
+    float k2 = smoothstep(55.0, 58.0, ph)*(1.0 - smoothstep(86.0, 89.0, ph));
+    col = mix(c1, c2, k2); a = (0.35 + 0.25*v)*lou*1.3;
   }
   gl_FragColor = vec4(col*a*uK*uN, 1.0); }`;
 const ledLayer = (g, pos, mode, k) => { if (!pos.length) return;
@@ -97,7 +111,7 @@ const ledLayer = (g, pos, mode, k) => { if (!pos.length) return;
 // rising bands and a sweeping diagonal graphic, a warm phase now and then) on
 // the two harbour-facing faces (SE, SW; the real show covers two facades, ~50 000 m2), red aviation lights.
 LANDMARKS.hkicc = {zh:'环球贸易广场', en:'International Commerce Centre', cat:'new', r:46, h:484,
-  lt:{m:1, c:'#dce8ff', k:0.55},
+  lt:{m:1, c:'#dce8ff', k:0.55, anim:'show', c2:'#8fb0ff'},
   build(){
     const g = new THREE.Group();
     const GL = mkB({c:'#a7bccb', m:1, fh:4.2, cw:3.0, lc:'#dce8ff', lk:0.5}), LED = mkB({c:'#a7bccb', m:1, fh:4.2, cw:3.0, lc:'#dce8ff', lk:0.5}), SHOW = [],
@@ -185,25 +199,46 @@ LANDMARKS.hkkowloonstation = {zh:'九龙站', en:'Kowloon Station', cat:'new', r
       treeB(TR, CR, x, 20, z, 0.8 + rng()*0.5); if (n % 4 === 0) boxB(LMP, 0.4, 0.4, 0.4, x + 3, 23.5, z); n++; }
     flush(g, WALL, PAVE, GRN, GLS, RIB, TR, CR, LMP, SLAB);
     return g; }};
+// v39 (hkv_kowloon): the Union Square towers with their facade character from photos 0005 / 0021 / 0037 / 0038 instead of plain lit
+// walls: fine floor bands and vertical mullion strips on every tower, estate by estate (The Waterfront beige, Sorrento pale grey,
+// The Harbourside grey with its full-height white-lit slot on the harbour face, The Arch grey-blue, The Cullinan dark blue-green glass
+// with a white-lit crown frame); heights and outlines unchanged (OSM).
+const usOut = (P, i) => { const a = P[i], b = P[(i + 1) % P.length], dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz) || 1; let nx = dz/L, nz = -dx/L;
+  if (pipP(P, (a[0] + b[0])/2 + nx*0.6, (a[1] + b[1])/2 + nz*0.6)) { nx = -nx; nz = -nz; } return [nx, nz, L, dx/L, dz/L]; };
+const usBands = (B, P, y0, y1, step, bh, off) => { for (let i = 0; i < P.length; i++){ const [nx, nz, L] = usOut(P, i); if (L < 0.5) continue; const a = P[i], b = P[(i + 1) % P.length];
+  for (let y = y0 + step; y < y1 - 0.3; y += step) quad(B, [a[0] + nx*off, y, a[1] + nz*off], [b[0] + nx*off, y, b[1] + nz*off], [b[0] + nx*off, y + bh, b[1] + nz*off], [a[0] + nx*off, y + bh, a[1] + nz*off]); } };
+const usMull = (B, P, y0, y1, sp, w, off) => { for (let i = 0; i < P.length; i++){ const [nx, nz, L, ux, uz] = usOut(P, i); if (L < sp*0.6) continue; const a = P[i], n = Math.max(1, Math.round(L/sp));
+  for (let k = 0; k <= n; k++){ const t = k/n*L, x = a[0] + ux*t + nx*off, z = a[1] + uz*t + nz*off; quad(B, [x - ux*w/2, y0, z - uz*w/2], [x + ux*w/2, y0, z + uz*w/2], [x + ux*w/2, y1, z + uz*w/2], [x - ux*w/2, y1, z - uz*w/2]); } } };
+const US_ST = {wf:{band:'#efe8d8', mull:'#c8bfae', sp:3.2, bh:0.55}, so:{band:'#eef0f0', mull:'#b9c3ca', sp:2.6, bh:0.5}, hs:{band:'#e6eaec', mull:'#9aa8b2', sp:2.2, bh:0.4},
+  ar:{band:'#d6dde2', mull:'#8d9aa5', sp:2.4, bh:0.45}, cu:{band:'#4a5d6c', mull:'#9fb4c4', sp:1.6, bh:0.3}};
 LANDMARKS.hkkowloonstation_b = {zh:'九龙站上盖住宅', en:'Union Square towers', cat:'new', r:285, h:270, label:false,
   lt:{m:1, c:'#ffe7c8', k:0.4},
   build(){
     const g = new THREE.Group(), M = {};
     for (const [k, e] of Object.entries(EST)){
-      M[k] = mkB({c:e.c, m:1, fh:3.0, cw:2.4, lc:'#ffe7c8', lk:0.35}); M[k + 'c'] = mkB({c:e.crown, m:0, lc:'#eef4ff', lk:0.9}); }
+      M[k] = mkB({c:k === 'cu' ? '#3f5868' : e.c, m:1, fh:3.0, cw:2.4, lc:'#ffe7c8', lk:0.35}); M[k + 'c'] = mkB({c:e.crown, m:0, lc:'#eef4ff', lk:0.9});
+      M[k + 'b'] = mkB({c:US_ST[k].band, m:0, lc:'#ffe7c8', lk:0.12}); M[k + 'm'] = mkB({c:US_ST[k].mull, m:0, lc:'#ffe7c8', lk:0.12}); }
     M.arc = mkB({c:'#a9b5bf', m:1, fh:3.0, cw:2.4, lc:'#ffe7c8', lk:0.35});
-    const ROOF = mkB({c:'#8f9294'}), RED = mkB({c:'#a01818', glow:'#ff2a1a', gk:2.0});
-    for (const b of US){ const k = estOf(b.o); if (!k) continue; const W = M[k], Cc = M[k + 'c'];
+    const ROOF = mkB({c:'#8f9294'}), RED = mkB({c:'#a01818', glow:'#ff2a1a', gk:2.0}), SLOT = mkB({c:'#eef2f4', glow:'#ffffff', gk:1.0}), CRL = mkB({c:'#e8eef4', glow:'#f2f8ff', gk:1.3});
+    let slot = null;
+    for (const b of US){ const k = estOf(b.o); if (!k) continue; const W = M[k], Cc = M[k + 'c'], St = US_ST[k];
       const pieces = b.p && b.p.length ? b.p.map(p => [Math.max(18, p[0]), p[1], dec(p[2])]) : [[18, b.h, dec(b.r)]];
       for (const [y0, y1, P] of pieces){ if (y1 - y0 < 2) continue;
         if (y1 - y0 > 40){ const cr = Math.min(7, (y1 - y0)*0.05); walls(W, P, y0, y1 - cr); walls(Cc, P, y1 - cr, y1); cap(ROOF, P, y1 - 0.4);
+          usBands(M[k + 'b'], P, y0, y1 - cr, 3.0, St.bh, 0.08); usMull(M[k + 'm'], P, y0, y1 - cr, St.sp, 0.3, 0.1);
+          if (k === 'cu') for (let i = 0; i < P.length; i++){ const a = P[i], c = P[(i + 1) % P.length]; quad(CRL, [a[0], y1 - 0.6, a[1]], [c[0], y1 - 0.6, c[1]], [c[0], y1, c[1]], [a[0], y1, a[1]]); }
+          if (k === 'hs' && (!slot || y1 > slot[1])) slot = [P, y1, y0];
           // roof plant room on the tall pieces
           const Pi = offR(P, -2.2); if (Math.abs(areaS(Pi)) > 60){ walls(Cc, Pi, y1 - 0.4, y1 + 3.2); cap(ROOF, Pi, y1 + 3.2); }
           if (y1 > 200){ const c = cenP(P); boxB(RED, 0.8, 0.8, 0.8, c[0], y1 + 3.2, c[1]); } }
         else prism(Cc, ROOF, P, y0, y1); } }
+    // The Harbourside: the full-height white-lit slot on its south (harbour) face
+    if (slot){ const [P, y1, y0] = slot; let best = null; for (let i = 0; i < P.length; i++){ const [nx, nz, L] = usOut(P, i); const sc = nz*L; if (!best || sc > best[0]) best = [sc, i, nx, nz]; }
+      const a = P[best[1]], c = P[(best[1] + 1) % P.length], m = [(a[0] + c[0])/2 + best[2]*0.4, (a[1] + c[1])/2 + best[3]*0.4], ux = c[0] - a[0], uz = c[1] - a[1], ul = Math.hypot(ux, uz) || 1;
+      quad(SLOT, [m[0] - ux/ul*2.2, y0 + 6, m[1] - uz/ul*2.2], [m[0] + ux/ul*2.2, y0 + 6, m[1] + uz/ul*2.2], [m[0] + ux/ul*2.2, y1 - 8, m[1] + uz/ul*2.2], [m[0] - ux/ul*2.2, y1 - 8, m[1] - uz/ul*2.2]); }
     // the arch's underside (mapped as a part of Elements, 140-160 m) between Moontower and Suntower
     for (const [b0, t1, r] of IDX.get('w1415166820').p) if (b0 >= 100) prism(M.arc, ROOF, dec(r), b0, t1);
-    for (const k of Object.keys(M)) flush(g, M[k]); flush(g, ROOF, RED);
+    for (const k of Object.keys(M)) flush(g, M[k]); flush(g, ROOF, RED, SLOT, CRL);
     return g; }};
 SG_PLACES.push({type:'hkkowloonstation', lat:22.304912, lon:114.161644, rot:0}, {type:'hkkowloonstation_b', lat:22.304912, lon:114.161644, rot:0});
 }

@@ -1,7 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="citybrush-map" content="bay">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="citybrush-map" content="bay">
 <title>City Brush · San Francisco Bay Area</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -459,7 +458,7 @@ let baseRGB = new Uint8Array(N*N*3), contour = new Uint8Array(N*N);
 let H = new Float32Array(TN*TN);
 let roads = [];
 let islandSeed = 11, seed = 7, styleKey = 'tokyo', tint = true;
-let tool = 'R', brushR = 80, groundMode = 'zone';
+let tool = 'view', brushR = 80, groundMode = 'zone';
 let world = {};
 const SGR = {on:false};   // v17: the real island (state filled in by the sgreal module)
 // v20: hook points for add-on modules (aircraft, signs, weather ...): HOOKS.frame(t, dt), HOOKS.time(tod, nightF), HOOKS.tile(T, list, skip) -> Object3D, HOOKS.net(), HOOKS.boot()
@@ -30260,8 +30259,8 @@ A.test = {
   gen:() => A.gen.map(g => ({ci:g.ci, zh:g.zh, cap:g.lv === 0, hollow:g.hollow, x:Math.round(g.x), y:Math.round(g.y), lp:g.c.labelPos && g.c.labelPos.map(Math.round), r:Math.round(g.c.r)})),
   halls:() => { const H = []; for (const c of cache.values()) for (const q of c.pois || []) if (q.t === 'cityhall') H.push([Math.round(q.x), Math.round(q.y), cityOf(q.x, q.y)]); return H; },
   cityLabel:ci => { const it = labelItems.filter(i => i.el.className === 'lbl city')[ci]; return it ? {x:Math.round(it.x), y:Math.round(it.y), abs:Math.round(it.abs), vis:it.vis} : null; },
-  erase:(x, y, r) => { pushUndo(); setTool('erase'); const b = brushR; brushR = r; paintAt([x, y]); brushR = b; drawTex(); requestRegen(); },
-  paint:(x, y, r, t) => { pushUndo(); setTool(t || 'P'); const b = brushR; brushR = r; paintAt([x, y]); brushR = b; setTool('R'); drawTex(); requestRegen(); },
+  erase:(x, y, r) => { pushUndo(); const _pt = tool, _tc = $('#tray').classList.contains('closed'); setTool('erase'); const b = brushR; brushR = r; paintAt([x, y]); brushR = b; setTool(_pt); if (_tc) $('#tray').classList.add('closed'); drawTex(); requestRegen(); },
+  paint:(x, y, r, t) => { pushUndo(); const _pt = tool, _tc = $('#tray').classList.contains('closed'); setTool(t || 'P'); const b = brushR; brushR = r; paintAt([x, y]); brushR = b; setTool(_pt); if (_tc) $('#tray').classList.add('closed'); drawTex(); requestRegen(); },
   cam:(x, y, d, el, az) => { const h = Math.max(0, hAt(x, y)), e = el*Math.PI/180, a = az*Math.PI/180; camera.position.set(x + Math.sin(a)*Math.cos(e)*d, h + Math.sin(e)*d, -y + Math.cos(a)*Math.cos(e)*d); controls.target.set(x, h, -y); controls.update(); },
   dist:() => { const r = []; document.querySelectorAll('#dlist .admseat').forEach(e => r.push(e.textContent.replace(/\s+/g, ' ').trim())); return r; }
 };
@@ -67896,7 +67895,7 @@ function sgrBoot(){
   showBusy('正在载入真实旧金山湾区地图… Loading the real map of the San Francisco Bay Area');
   sgrLoad().then(() => {
     sgView(); sgBuild();
-    setTool('R'); renderStyle(); renderIslandStats(); syncLabels();
+    setTool('view'); $('#tray').classList.add('closed'); renderStyle(); renderIslandStats(); syncLabels();
     buildSkeleton(); drawTex(); renderStats();
     sgView(); applyTime(); syncLabels();
     trafficRan = true; requestRegen();
@@ -68512,7 +68511,7 @@ function loop(now){
 }
 
 /* ================= boot ================= */
-setTool('R'); renderStyle(); applyTime();
+setTool('view'); $('#tray').classList.add('closed'); renderStyle(); applyTime();
 runHooks('boot');
 sgrBoot();
 requestAnimationFrame(loop);

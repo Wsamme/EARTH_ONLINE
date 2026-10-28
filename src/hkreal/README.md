@@ -140,3 +140,18 @@ cd SC && bash hkreal/mkhk.sh hk ""                    # sgreal/site/t_hk.html (n
 ```
 The only failed requests are the map switch's probes for the sibling pages (sg.html, bay.html, nyc.html, tyo.html, index.html:
 they exist only in a published artifact) and favicon.ico.
+
+## v39 integration (2026-10-28): v38 landmarks + the v39 harbour front
+- Modules: hk/hkx_island, hkx_kowloon, hkx_nt (v38) and hk/hkv_island, hkv_kowloon (v39) load with the v37 ones; the v37 blocks they
+  supersede were cut (lmx/v39_cut.py; backups `*.v39.bak`): central.js hkcentralpiers(_b.._d), peak.js hkpeaktram(_b.._d),
+  wanchai.js SITES hkhappyvalley / hkvicpark, lantau.js hkt1.._f, bridges.js hkhzmblink* / hkszbaybridge*. `node lmx/count.js hk`:
+  176 labelled landmarks + 13 sites = 189 labelled keys (62 unlabelled sub-keys), nothing placed twice or defined twice.
+- Signs: patch_hk.py MODS use hkv/hksigns/hksigns.js (the Hong Kong sign / neon engine; `python3 hkv/hksigns/gen.py` collects the
+  sign specs, 132) instead of lm20/signs.
+- Peak Tram: no generic station platforms on the PK line (patch_hk.py; the stops are hkx_island models), no generic PK train
+  (mkengine.py, k2 = 0: hkpeaktram models the two cars where they pass), explicit rail heights z kept for light rail (mkengine.py
+  line from hk/hkx_island/tools/pk_rail_fix.py).
+- Road / rail chain, in order: b4b_hkdecks.py, ../hk/bridges/tm_deck_fix.py, ../hk/hkx_nt/deck_fix.py (Shenzhen Bay Bridge cable-stayed
+  spans to 37.5 m, HZMB link road navigation crest 51 m), ../hk/hkx_kowloon/aos_deck_fix.py (Avenue of Stars promenade on its deck),
+  b7r_roads.py, b6_misc.py, b7b_base.py, ../hk/hkx_island/tools/pk_rail_fix.py, stage.sh. Changed staged files: hk_roads, hk_base.
+- Intro cards: lm33/info_hk (labelled.js + labelled_v39.js -> build.js -> info_hk.js): 215 entries, every labelled key covered.

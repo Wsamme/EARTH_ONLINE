@@ -278,31 +278,7 @@ LANDMARKS.hkpeaktramlower = {zh:'山顶缆车花园道总站', en:'Peak Tram Gar
 SG_PLACES.push({type:'hkpeaktramlower', lat:LAT, lon:LON, rot:0});
 }
 
-// ===== Peak Tram (山顶缆车): the funicular of 1888 (1.36 km, 27 m to 396 m), here its four intermediate stops (Kennedy Road,
-// MacDonnell Road, May Road, Barker Road): platforms beside the single track with small shelters. The track, the viaducts and
-// the cars are drawn by the app. The main key sits at May Road (mid-line, just below the passing loop); the others are hkpeaktram_b..d.
-{
-const STOPS = [['hkpeaktram', 22.273363, 114.155888, [10.1, -17.8], [-11.0, 16.7]], ['hkpeaktram_b', 22.276542, 114.158082, [14.4, -21.3], [-7.8, 12.4]],
-  ['hkpeaktram_c', 22.275169, 114.157121, [13.8, -21.4], [-8.7, 12.1]], ['hkpeaktram_d', 22.270961, 114.151743, [20.0, 2.9], [-20.1, -1.9]]];
-for (const [key, LAT, LON, P0, P1] of STOPS){
-  const main = key === 'hkpeaktram', RR = 16;
-  LANDMARKS[key] = Object.assign({zh:main ? '山顶缆车' : '山顶缆车站', en:main ? 'Peak Tram' : 'Peak Tram stop', cat:'old', r:RR, h:5, lt:{m:0, c:'#ffe2b8', k:0.7}}, main ? {} : {label:false}, {
-    build(){
-      const g = new THREE.Group(), gl = mkGround(LAT, LON, RR).gl, B = mkBatch();
-      const ST = {c:'#b9b2a4', m:0, lk:0.3}, GRN = '#3f6b4f', RF = '#5c6a61', LMP = {c:'#fff', glow:'#ffe2b0', gk:1.4};
-      const dx = P1[0] - P0[0], dz = P1[1] - P0[1], L = Math.hypot(dx, dz), D = [dx/L, dz/L], Nn = [-D[1], D[0]], ang = Math.atan2(-D[1], D[0]);
-      // platform 18 m along the track, 2.6 m wide, on the side away from the slope's low edge; steps follow the ground
-      for (let k = -4; k <= 4; k++){ const u = k*2.2, cx = D[0]*u + Nn[0]*3.0, cz = D[1]*u + Nn[1]*3.0, gr = gl(cx - Nn[0]*1.6, cz - Nn[1]*1.6);
-        obox(B.a(ST), cx, cz, ang, 2.25, 2.6, Math.min(gr, gl(cx, cz)) - 1.5, gr + 0.95); obox(B.a(GRN), cx + Nn[0]*1.25, cz + Nn[1]*1.25, ang, 2.25, 0.08, gr + 0.95, gr + 2.0); }
-      // the shelter: posts and a pitched roof
-      const gr = gl(0, 0), c = [Nn[0]*3.2, Nn[1]*3.2];
-      for (const u of [-3.4, 3.4]) for (const v of [-1.0, 1.0]) obox(B.a(GRN), c[0] + D[0]*u + Nn[0]*v, c[1] + D[1]*u + Nn[1]*v, ang, 0.18, 0.18, gr + 0.95, gr + 3.6);
-      hipB(B.a(RF), F(c[0], c[1], ang), 0, 0, 7.6, 2.6, gr + 3.6, 0.8, 0.3, true);
-      LCyl(g, 0.06, 0.08, 3.2, D[0]*8 + Nn[0]*3.9, gr + 0.95, D[1]*8 + Nn[1]*3.9, GRN, 5); LSph(g, 0.25, D[0]*8 + Nn[0]*3.9, gr + 4.3, D[1]*8 + Nn[1]*3.9, LMP, 1, 6);
-      B.flush(g); return g; }});
-  SG_PLACES.push({type:key, lat:LAT, lon:LON, rot:0});
-}
-}
+// (v39: the Peak Tram keys hkpeaktram / _b.._d moved to hk/hkx_island (hkpeaktram + _kr/_mr/_mg/_my/_bk))
 
 // ===== Murray House (美利楼), Stanley: built 1846 as officers' quarters of the Murray Barracks in Central, taken down in 1982
 // (the stones numbered) and rebuilt at Stanley (opened 2002): three storeys of verandahs on all sides, heavy granite ground floor

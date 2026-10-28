@@ -19,7 +19,6 @@ T(g, 'hkifcmall', '国际金融中心商场', 'IFC Mall', 'building', 'b:r138499
 T(g, 'hkstation', '香港站', 'Hong Kong Station', 'station', 'b:r16793912', None, 'MTR Airport Express / Tung Chung Line terminus under the IFC podium: above ground only the entrances and the podium (model with hkifcmall)')
 T(g, 'hkexchange', '交易广场', 'Exchange Square', 'tower', 'a:w26434739', 188, 'Three granite-and-silver-glass towers (One and Two 188 m, Three 144 m) on a podium with a plaza; the bus terminus underneath')
 T(g, 'hkjardine', '怡和大厦', 'Jardine House', 'tower', 'b:w42293714', 178.5, '1972 tower with about 1 750 round porthole windows on a white aluminium facade')
-T(g, 'hkcentralpiers', '中环码头', 'Central Piers', 'pier', 'a:r14944632', None, 'Row of ferry piers 2-10 with pavilion roofs (colonial-revival style, 2006) along the Central harbourfront')
 T(g, 'hkstarferryc', '中环天星码头', 'Central Star Ferry Pier', 'pier', 'b:w1483823682', None, 'Pier 7: Edwardian-revival two-storey pier with a clock tower (2006) for the Star Ferry to Tsim Sha Tsui')
 T(g, 'hkwheel', '香港摩天轮', 'Hong Kong Observation Wheel', 'attraction', 'a:w323202866', 60, 'About 60 m Ferris wheel with enclosed gondolas on the Central harbourfront, LED-lit at night')
 T(g, 'hkcentralfront', '中环海滨长廊', 'Central Harbourfront', 'park', 'a:w734745074', None, 'The waterfront promenade and lawns between the piers and the wheel (site: paving, lawns, trees, lamps)')
@@ -51,7 +50,6 @@ T(g, 'hkzoo', '香港动植物公园', 'Hong Kong Zoological and Botanical Garde
 g = 'peak'
 T(g, 'hkpeaktower', '凌霄阁', 'Peak Tower', 'building', 'b:w143716612', None, 'Terry Farrell 1997: wok / crescent-shaped roof bowl on a stone base; the Sky Terrace 428 m above the sea; the Peak Tram upper terminus inside')
 T(g, 'hkpeakgalleria', '山顶广场', 'The Peak Galleria', 'building', 'b:w156335591', None, 'Terraced mall next to the Peak Tower with a roof viewing deck')
-T(g, 'hkpeaktram', '山顶缆车', 'Peak Tram', 'line', 'R:3264047', None, 'Funicular (1888) from Garden Road to the Peak: one track with a passing loop, stops, steep cuttings and viaducts; the cars; the line itself is drawn by the app (rail layer, code PK)')
 T(g, 'hkpeaktramlower', '山顶缆车花园道总站', 'Peak Tram Garden Road terminus', 'station', 'a:w636324517', None, 'Lower terminus next to St John\'s Building, Garden Road')
 T(g, 'hkhku', '香港大学', 'The University of Hong Kong', 'site', 'a:r4246029', None, 'Campus on the hillside: the Main Building (1912, red brick and granite, clock tower, Ionic columns), Centennial Campus terraces (site)')
 T(g, 'hkoceanpark', '海洋公园', 'Ocean Park (site)', 'site', 'a:r3676813', None, 'Marine theme park on two sides of a headland joined by a cable car; site only: buildings, paths, the cable car, the ocean tower — no characters, brand imagery or signage')
@@ -62,9 +60,7 @@ T(g, 'hkcentralplaza', '中环广场', 'Central Plaza', 'tower', 'b:w27087018', 
 T(g, 'hkcec', '香港会议展览中心', 'Hong Kong Convention and Exhibition Centre', 'building', 'a:w754002052', None, 'Extension (1997) on an island in the harbour with a curved, wing-like aluminium roof and glass curtain walls')
 T(g, 'hkbauhinia', '金紫荆广场', 'Golden Bauhinia Square', 'monument', 'a:w998741825', None, 'Gilded bauhinia flower sculpture on a granite plinth by the harbour, flag poles')
 T(g, 'hkhopewell', '合和中心', 'Hopewell Centre', 'tower', 'b:w88391069', 216, 'Cylindrical tower (1980) with a revolving restaurant crown and external glass lifts, on the Wan Chai hillside')
-T(g, 'hkhappyvalley', '跑马地马场', 'Happy Valley Racecourse', 'stadium', 'a:r8049451', None, 'Racecourse in the valley bowl with the long grandstands on its west side and sports pitches in the infield (site)')
 T(g, 'hkstadium', '香港大球场', 'Hong Kong Stadium', 'stadium', 'a:w230843881', None, 'Bowl stadium (1994, 40 000 seats) with white tubular roof arches over the two long stands')
-T(g, 'hkvicpark', '维多利亚公园', 'Victoria Park', 'park', 'a:w4182605', None, 'Large park in Causeway Bay: lawns, the statue of Queen Victoria, the tennis centre, the swimming pool (site)')
 T(g, 'hkoneislandeast', '港岛东中心', 'One Island East', 'tower', 'b:w100457821', 298.4, 'Tall square office tower (2008) at Taikoo Place with chamfered glass corners and a lit crown')
 # ---- Tsim Sha Tsui
 g = 'tst'
@@ -72,7 +68,6 @@ T(g, 'hkclocktower', '尖沙咀钟楼', 'Tsim Sha Tsui Clock Tower', 'heritage',
 T(g, 'hkculturalcentre', '香港文化中心', 'Hong Kong Cultural Centre', 'building', 'b:w37664345', None, 'Windowless pink-tiled concert hall and theatres (1989) with a great sloping curved roof facing the harbour')
 T(g, 'hkspacemuseum', '香港太空馆', 'Hong Kong Space Museum', 'museum', 'a:w184731574', None, 'White egg-shaped planetarium dome (1980) with tiled shell, next to the Cultural Centre')
 T(g, 'hkmuseumart', '香港艺术馆', 'Hong Kong Museum of Art', 'museum', 'b:w37664699', None, 'Museum on the promenade, rebuilt 2019 with a glazed top floor and a grid facade, pink tiles below')
-T(g, 'hkavenuestars', '星光大道', 'Avenue of Stars', 'park', 'a:r14947605', None, 'Harbourfront promenade (rebuilt 2019) on a deck over the water with a wavy canopy and benches; the classic skyline viewpoint')
 T(g, 'hkstarferrytst', '尖沙咀天星码头', 'Tsim Sha Tsui Star Ferry Pier', 'pier', 'b:r14941145', None, 'Star Ferry pier (1957) with its green-and-white piers and gangways')
 T(g, 'hkoceanterminal', '海运大厦', 'Ocean Terminal', 'building', 'b:w112453139', None, 'Long cruise terminal pier with shops (1966), the Ocean Terminal Deck at its tip (2017) with a stepped lawn viewing deck')
 T(g, 'hkpeninsula', '香港半岛酒店', 'The Peninsula Hong Kong', 'heritage', 'a:w709674355', None, '1928 hotel: H-shaped neoclassical block with a forecourt fountain, the 1994 tower with a rooftop heliport behind')
@@ -104,11 +99,9 @@ T(g, 'hktsingma', '青马大桥', 'Tsing Ma Bridge', 'bridge', 'a:w635348630', 2
 T(g, 'hkkapshuimun', '汲水门大桥', 'Kap Shui Mun Bridge', 'bridge', 'a:w635348629', None, 'Double-deck cable-stayed bridge (1997), main span 430 m, two H-shaped concrete towers, fan stays; decks drawn at 54.5 / 48 m')
 T(g, 'hktingkau', '汀九桥', 'Ting Kau Bridge', 'bridge', 'a:r16007342', 201.55, 'Cable-stayed bridge (1998) with three slender single-leg towers stabilised by transverse stays and the longitudinal stabilising cables; two decks side by side; spans 448 + 475 m')
 T(g, 'hkstonecutters', '昂船洲大桥', 'Stonecutters Bridge', 'bridge', 'a:r4045407', 293.5, 'Cable-stayed bridge (2009), main span 1 018 m, twin aerodynamic decks, two single tapering towers (293.5 m) (concrete below, stainless-steel skin above); deck drawn at 77 m')
-T(g, 'hkhzmblink', '港珠澳大桥香港连接路', 'HZMB Hong Kong Link Road', 'bridge', 'a:r14373678', None, 'Long sea viaduct from the boundary crossing island to the HKSAR boundary, with three higher navigation arches (41 m vessel height limit); deck drawn ~16 m (estimate)')
 T(g, 'hkninatower', '如心广场', 'Nina Tower', 'tower', 'b:w112284860', 318, 'Tsuen Wan tower (2007): two stepped slabs joined, square plan with a skeletal glass crown')
 # ---- Lantau: the airport, Ngong Ping, Disneyland
 g = 'lantau'
-T(g, 'hkt1', '香港国际机场一号客运大楼', 'HKIA Terminal 1', 'building', 'b:w772085062', None, 'Norman Foster 1998: Y-shaped terminal with a light vaulted steel roof in long barrels over the halls and piers')
 T(g, 'hkt2', '香港国际机场二号客运大楼', 'HKIA Terminal 2', 'building', 'b:w1204348925', None, 'Terminal 2 (rebuilt for the three-runway system): curved roof over the departure hall')
 T(g, 'hkmidfield', '一号客运大楼中场客运廊', 'HKIA T1 Midfield Concourse', 'building', 'b:w393009711', None, 'Y-shaped satellite concourse (2016) between the runways, linked by the automated people mover')
 T(g, 'hkskypier', '海天客运码头', 'SkyPier', 'building', 'b:w181594810', None, 'Ferry terminal for the Pearl River Delta ports at the east of the airport island')
@@ -125,8 +118,41 @@ g = 'shenzhen'
 T(g, 'hkpingan', '平安金融中心', 'Ping An Finance Center', 'tower', 'b:w535860513', 599.1, 'Futian, 2017: tapering granite-and-glass tower with stainless-steel ribs at the corners and a spire top')
 T(g, 'hkcrtower', '华润大厦', 'China Resources Tower', 'tower', 'b:w529272473', 392.5, 'Nanshan, 2018: "spring bamboo shoot" — 56 slender ribs converging to a pointed top')
 T(g, 'hkkingkey', '京基100', 'KK100', 'tower', 'b:w781166572', 441.8, 'Luohu, 2011: tower with a curved, softly bulging profile and a curved glass crown')
-T(g, 'hkszbaybridge', '深圳湾公路大桥', 'Shenzhen Bay Bridge', 'bridge', 'a:r15750001', None, 'Cable-stayed bridge (2007) across Deep Bay with inclined single-pylon spans; the Hong Kong part (relation 15750001) and the Shenzhen part')
 
+# ---- v38: more landmarks (to 100 distinct per city); targets of v37 never built moved here
+gx = 'hkx_island'
+T(gx, 'hkcentralpiers', '中环码头', 'Central Piers', 'pier', 'a:r14944632', None, 'Row of ferry piers 2-10 with pavilion roofs (colonial-revival style, 2006) along the Central harbourfront')
+T(gx, 'hkpeaktram', '山顶缆车', 'Peak Tram', 'line', 'R:3264047', None, 'Funicular (1888) from Garden Road to the Peak: one track with a passing loop, stops, steep cuttings and viaducts; the cars; the line itself is drawn by the app (rail layer, code PK)')
+T(gx, 'hkhappyvalley', '跑马地马场', 'Happy Valley Racecourse', 'stadium', 'a:r8049451', None, 'Racecourse in the valley bowl with the long grandstands on its west side and sports pitches in the infield (site)')
+T(gx, 'hkvicpark', '维多利亚公园', 'Victoria Park', 'park', 'a:w4182605', None, 'Large park in Causeway Bay: lawns, the statue of Queen Victoria, the tennis centre, the swimming pool (site)')
+T(gx, 'hktimessq', '时代广场', 'Times Square (Causeway Bay)', 'building', 'b:w26469269', None, 'Two office towers on a shopping podium (1994) round a sunken open plaza with a giant screen wall; the Causeway Bay meeting point')
+T(gx, 'hkpacificplace', '太古广场', 'Pacific Place', 'building', 'b:w41498903', None, 'Admiralty complex (1988-1990): the mall podium with One, Two and Three Pacific Place towers (hotels and offices); model the podium and the three towers')
+T(gx, 'hkthreegarden', '花园道三号', 'Three Garden Road (Champion Tower and ICBC Tower)', 'tower', 'b:w85320726', None, 'Two dark glass towers (1992) with notched corners on Garden Road, the taller one the Champion Tower')
+T(gx, 'hkhenderson', '恒基大厦（The Henderson）', 'The Henderson', 'tower', 'b:w26434768', None, 'Zaha Hadid Architects tower (2023) on Murray Road: curved glass facade of folded petal-like panels, opposite Chater Garden')
+T(gx, 'hkrepulsebay', '影湾园', 'The Repulse Bay', 'building', 'a:w227779865', None, 'Wavy-facaded apartment block (1989) on the hillside above Repulse Bay beach with the large square hole through its middle; the colonial-style arcade at its foot')
+T(gx, 'hkapleichau', '鸭脷洲大桥', 'Ap Lei Chau Bridge', 'bridge', 'a:r11201245', None, 'Twin prestressed concrete road bridges (1980 and 1994) across the Aberdeen Channel from Aberdeen to Ap Lei Chau')
+T(gx, 'hkpark', '香港公园', 'Hong Kong Park', 'site', 'a:w42255430', None, 'Park (1991) on the former Victoria Barracks: the Edward Youde Aviary (walk-through mesh dome), the Forsgate Conservatory, Olympic Square, the artificial lake and waterfalls (site)')
+gx = 'hkx_kowloon'
+T(gx, 'hkavenuestars', '星光大道', 'Avenue of Stars', 'park', 'a:r14947605', None, 'Harbourfront promenade (rebuilt 2019) on a deck over the water with a wavy canopy and benches; the classic skyline viewpoint')
+T(gx, 'hkk11musea', 'K11 MUSEA', 'K11 MUSEA', 'building', 'b:w1044263638', None, 'Victoria Dockside cultural retail building (2019) on the TST waterfront: bronze-toned facade with greenery, the "Opera Theatre" atrium; no brand names')
+T(gx, 'hkhistorymuseum', '香港历史博物馆', 'Hong Kong Museum of History', 'museum', 'b:r10331794', None, 'Museum (1998) in Tsim Sha Tsui East: red-brown tiled blocks with a pitched glass roof and a domed entrance hall, next to the Science Museum')
+T(gx, 'hksciencemuseum', '香港科学馆', 'Hong Kong Science Museum', 'museum', 'b:w56752303', None, 'Museum (1991) in TST East: boxy tiled building with diagonal concrete bracing and a big exposed truss on its facade')
+T(gx, 'hkstandrew', '圣安德烈堂', "St Andrew's Church (Kowloon)", 'heritage', 'b:w692802846', None, 'Anglican church (1906) on Nathan Road: red brick Victorian Gothic with a square bell tower and lancet windows')
+T(gx, 'hkkowloonmosque', '九龙清真寺', 'Kowloon Mosque and Islamic Centre', 'temple', 'b:w149352980', None, 'White marble mosque (1984) on Nathan Road at Kowloon Park: central dome, four minarets')
+T(gx, 'hkchungking', '重庆大厦', 'Chungking Mansions', 'building', 'b:w39315991', None, '17-storey residential-commercial block (1961) on Nathan Road: five blocks on a two-storey podium, the famous ground-floor arcade')
+T(gx, 'hklangham', '朗豪坊', 'Langham Place (Mong Kok)', 'tower', 'b:w65259283', None, 'Mong Kok complex (2004): the 59-storey office tower with a lit crown and the mall with its long "Xpresscalators" in a glazed atrium; no brand names')
+gx = 'hkx_nt'
+T(gx, 'hkhzmblink', '港珠澳大桥香港连接路', 'HZMB Hong Kong Link Road', 'bridge', 'a:r14373678', None, 'Long sea viaduct from the boundary crossing island to the HKSAR boundary, with three higher navigation arches (41 m vessel height limit); deck drawn ~16 m (estimate)')
+T(gx, 'hkt1', '香港国际机场一号客运大楼', 'HKIA Terminal 1', 'building', 'b:w772085062', None, 'Norman Foster 1998: Y-shaped terminal with a light vaulted steel roof in long barrels over the halls and piers')
+T(gx, 'hkszbaybridge', '深圳湾公路大桥', 'Shenzhen Bay Bridge', 'bridge', 'a:r15750001', None, 'Cable-stayed bridge (2007) across Deep Bay with inclined single-pylon spans; the Hong Kong part (relation 15750001) and the Shenzhen part')
+T(gx, 'hkheritagemuseum', '香港文化博物馆', 'Hong Kong Heritage Museum', 'museum', 'b:r1846636', None, 'Museum (2000) in Sha Tin by the Shing Mun River: low courtyard blocks with Chinese-style pitched tiled roofs')
+T(gx, 'hk10kbuddhas', '万佛寺', 'Ten Thousand Buddhas Monastery (Sha Tin)', 'temple', 'a:w916943187', None, 'Hillside monastery (1950s) above Sha Tin: the red nine-storey pagoda, the main hall, and the path lined with golden Buddha statues')
+T(gx, 'hkchekung', '车公庙', 'Che Kung Temple (Sha Tin)', 'temple', 'n:22.3731,114.1875', None, 'Temple in Tai Wai (1994 hall in front of the old one): large traditional hall with green-glazed roofs and the courtyard; find its footprint in the refs (the OSM object of that name is the MTR station)')
+T(gx, 'hktsuisinglau', '聚星楼', 'Tsui Sing Lau Pagoda', 'heritage', 'b:w114393168', None, "Hong Kong's only ancient pagoda (about 600 years old, Ping Shan): hexagonal, three storeys of green-grey brick")
+T(gx, 'hktaio', '大澳棚屋', 'Tai O stilt houses', 'site', 'n:22.2544,113.8625', None, 'The fishing village on Lantau: tin-roofed stilt houses (pang uk) along the tidal creeks, the drawbridge (site)')
+T(gx, 'hklammaps', '南丫发电厂', 'Lamma Power Station', 'building', 'b:w41522773', None, 'Coal and gas power station on Lamma Island: the boiler halls and the three tall chimneys visible from the south side of Hong Kong Island')
+T(gx, 'hkszse', '深圳证券交易所', 'Shenzhen Stock Exchange', 'tower', 'b:w923157986', None, 'OMA tower (2013) in Futian: a square glass tower with a huge "raised podium" platform cantilevered 36 m above the ground')
+T(gx, 'hkszbaysports', '深圳湾体育中心（春茧）', 'Shenzhen Bay Sports Center ("Spring Cocoon")', 'stadium', 'a:w542049855', None, 'Stadium, arena and natatorium (2011) under one continuous white lattice shell, the "Spring Cocoon", by Shenzhen Bay')
 # ---------------- resolve against the OSM extract ----------------
 if __name__ == '__main__':
     import pickle

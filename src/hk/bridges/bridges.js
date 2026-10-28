@@ -511,36 +511,7 @@ const HL_PIERS = (() => { const S = [];
   return S.sort((p, q) => p.s - q.s); })();
 const hlDepth = s => { for (const [a, mid, b] of HL_UNITS){ if (s < a || s > b) continue; let d = 1e9; for (const m of mid) d = Math.min(d, Math.abs(s - m)); const hs = (mid.length > 2 ? 150 : 180)/2; return 4 + 6*Math.max(0, 1 - Math.min(1, d/hs))**2; } return 4.0; };
 // pieces short and straight enough that each one's ground-plan hull (convex) stays on the alignment
-const HL_KEYS = [['hkhzmblink_b', 120, 1720], ['hkhzmblink_c', 1720, 2270], ['hkhzmblink_d', 2270, 2820], ['hkhzmblink', 2820, 5370], ['hkhzmblink_e', 5370, 5970], ['hkhzmblink_f', 5970, 6570], ['hkhzmblink_g', 6570, 6920], ['hkhzmblink_h', 6920, 7270], ['hkhzmblink_i', 7270, 7720], ['hkhzmblink_j', 7720, 8800], ['hkhzmblink_k', 8800, 9220]];
-for (const [key, sa, sb] of HL_KEYS){
-  const K = viaKey(key, HL, HLR, sa, sb, (sa + sb)/2);
-  LANDMARKS[key] = {zh:'港珠澳大桥香港连接路', en:'HZMB Hong Kong Link Road', cat:'new', r:K.r, h:30, label:key === 'hkhzmblink' ? undefined : false, lt:{m:0, c:'#e8ecf5', k:0.7, e:0.6},
-    build(){
-      const [g, s] = frame(30), B = mkB(), X0 = K.X0, Y0 = K.Y0;
-      const DECK = {c:'#c8c6bf', lk:0.5}, COL = {c:'#bdb9b0', lk:0.45}, CAP = {c:'#a9a59c', lk:0.3}, POLE = '#7d8286', LAMPH = {c:'#efe2c0', glow:'#ffcf8a', gk:1.6};
-      const oD = B.p(DECK), oC = B.p(COL), oK = B.p(CAP), lamps = [];
-      // twin boxes, one under each carriageway (cantilevered top flange, inclined webs), haunched in the navigation units
-      for (const sg of [-1, 1]) viaSweep(oD, HLR, sa, sb, 10, (s, a) => { const o = sg*a.h, z = a.z, D = hlDepth(s), w = Math.min(6.6, a.h - 0.1);
-        return [[o - w*sg, z - 0.3], [o + 6.6*sg, z - 0.3], [o + 6.6*sg, z - 0.75], [o + 3.6*sg, z - 1.15], [o + 2.9*sg, z - D], [o - 2.9*sg, z - D], [o - 3.6*sg, z - 1.15], [o - w*sg, z - 0.75]]; }, X0, Y0);
-      // piers: per deck a hollow precast column (5.0 m across, 3.2 m along; 8 x 4.4 m blades in the navigation units) on a three-pile cap
-      for (const p of HL_PIERS){ if (p.s < sa - 0.01 || p.s >= sb - 0.01) continue; const a = HLR.at(p.s), D = hlDepth(p.s), yt = a.z - D - 0.3, gy = a.g;
-        if (yt - Math.max(gy, 0) < 2) continue;
-        for (const sg of [-1, 1]){ const o = sg*a.h;
-          const y0 = gy <= -0.29 ? 2.6 : gy + 0.5;
-          if (gy <= -0.29) viaTri(oK, HLR, p.s, o, p.big ? 9.5 : 6.6, -2.5, 2.6, X0, Y0);
-          viaCol(oC, HLR, p.s, o, p.big ? 2.2 : 1.6, p.big ? 4.0 : 2.5, y0 - 0.6, yt, X0, Y0);
-          viaCol(oC, HLR, p.s, o, p.big ? 2.6 : 1.9, 3.3, yt - 0.9, yt + 0.3, X0, Y0); } }
-      // lamp posts on the median every 50 m
-      const oPo = B.p(POLE), oLh = B.p(LAMPH);
-      for (let s0 = Math.ceil(sa/50)*50 + 25; s0 < sb; s0 += 50){ const a = HLR.at(s0), x = a.x - X0, z = -(a.y - Y0), y = a.z;
-        obox(oPo, x, z, a.tx, -a.ty, 0.15, 0.15, y - 0.3, y + 11.5);
-        obox(oPo, x, z, a.tx, -a.ty, 0.1, 2.6, y + 11.2, y + 11.4);
-        for (const sg of [-1, 1]){ const lx = x + a.nx*sg*2.4, lz = z - a.ny*sg*2.4; obox(oLh, lx, lz, a.tx, -a.ty, 0.35, 0.5, y + 10.9, y + 11.2); lamps.push(lx, y + 10.8, lz); } }
-      B.flush(s); sprites(s, lamps, [1.0, 0.8, 0.5], 12);
-      return g;
-    }};
-  SG_PLACES.push(K.place);
-}
+// (v39: the HZMB Hong Kong Link Road keys hkhzmblink* moved to hk/hkx_nt)
 
 // ---------- Shenzhen Bay Bridge (2007): 5.5 km, a single steel / concrete box 38.6 m wide (zh.wikipedia), two cable-stayed
 // spans with single inclined towers and a single plane of stays in the median, the towers leaning toward each other (HyD):
@@ -553,45 +524,6 @@ const SZR = viaPath(SZ);
 const SZT = {sz:1507, mid:1687, hk:1897, szBack:[1417, 1342], hkBack:[1996, 2071, 2146], lean:8*PI/180, Hhk:155, Hsz:139};
 const SZ_PIERS = (() => { const S = [{s:SZT.mid}, ...SZT.szBack.map(s => ({s})), ...SZT.hkBack.map(s => ({s}))];
   for (let s = SZT.szBack[1] - 60; s > 5; s -= 60) S.push({s}); for (let s = SZT.hkBack[2] + 75; s < 4735; s += 75) S.push({s}); return S.sort((p, q) => p.s - q.s); })();
-const SZ_KEYS = [['hkszbaybridge_c', 0, 1300], ['hkszbaybridge', 1300, 2250], ['hkszbaybridge_b', 2250, 3500], ['hkszbaybridge_d', 3500, 4740]];
-for (const [key, sa, sb] of SZ_KEYS){
-  const K = viaKey(key, SZ, SZR, sa, sb, (sa + sb)/2);
-  LANDMARKS[key] = {zh:'深圳湾公路大桥', en:'Shenzhen Bay Bridge', cat:'new', r:K.r, h:key === 'hkszbaybridge' ? 160 : 30, label:key === 'hkszbaybridge' ? undefined : false, lt:{m:0, c:'#e8eeff', k:0.85, e:0.5, anim:key === 'hkszbaybridge' ? 'breathe' : undefined},
-    build(){
-      const [g, s] = frame(key === 'hkszbaybridge' ? 160 : 30), B = mkB(), X0 = K.X0, Y0 = K.Y0;
-      const DECK = {c:'#cfd0cc', lk:0.55}, COL = {c:'#bdb9b0', lk:0.45}, CAP = {c:'#a9a59c', lk:0.3}, TOW = {c:'#d2cfc8', lk:1.0}, STAY = {c:'#e6e8e8', lk:1.0},
-        RED = {c:'#a81010', glow:'#ff2a14', gk:2.4}, POLE = '#7d8286', LAMPH = {c:'#efe2c0', glow:'#ffcf8a', gk:1.6};
-      const oD = B.p(DECK), oC = B.p(COL), oK = B.p(CAP), lamps = [], red = [];
-      viaSweep(oD, SZR, sa, sb, 10, (s, a) => { const z = a.z, D = Math.abs(s - SZT.mid) < 380 ? 4.1 : 3.8;
-        return [[-19.3, z - 0.3], [19.3, z - 0.3], [19.3, z - 1.0], [15.0, z - 1.7], [12.5, z - D], [-12.5, z - D], [-15.0, z - 1.7], [-19.3, z - 1.0]]; }, X0, Y0);
-      for (const p of SZ_PIERS){ if (p.s < sa - 0.01 || p.s >= sb - 0.01) continue; const a = SZR.at(p.s), yt = a.z - 4.2, gy = a.g, y0 = gy <= -0.29 ? 2.4 : gy + 0.4;
-        if (yt - Math.max(gy, 0) < 1.5) continue;
-        if (gy <= -0.29) viaCol(oK, SZR, p.s, 0, 4.5, 13, -2.5, 2.4, X0, Y0);
-        for (const sg of [-1, 1]) viaCol(oC, SZR, p.s, sg*7.5, 1.6, 2.2, y0 - 0.5, yt - 1.4, X0, Y0);
-        viaCol(oC, SZR, p.s, 0, 1.9, 11.5, yt - 1.4, yt, X0, Y0); }
-      // the inclined towers and their single plane of stays
-      const oT = B.p(TOW), oY = B.p(STAY);
-      for (const [sT, H, dir, nPair, dM, dB] of [[SZT.hk, SZT.Hhk, -1, 13, 14.5, 11], [SZT.sz, SZT.Hsz, 1, 12, 13.2, 12]]){
-        if (sT < sa || sT >= sb) continue;
-        const a = SZR.at(sT), yb = 2.6, top = (y) => { const d = (y - yb)*Math.tan(SZT.lean)*dir; const b = SZR.at(sT + d); return [b.x - X0, -(b.y - Y0)]; };
-        viaCol(oK, SZR, sT, 0, 14, 16, -3, yb, X0, Y0);
-        // pylon rings (along 9 -> 5 m, across 4.4 m) following the lean
-        const R = []; for (const y of [yb, 20, a.z - 6, a.z + 6, 60, 100, H - 10, H]){ const c = top(y), f = (y - yb)/(H - yb), hl = 4.5 - 2.0*f, hc = 2.2 - 0.3*f;
-          const P4 = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, v]) => [c[0] + a.tx*hl*u + a.nx*hc*v, y, c[1] - a.ty*hl*u - a.ny*hc*v]); R.push(P4); }
-        loft(oT, R, true); const c = top(H); red.push(c[0], H + 0.8, c[1]);
-        for (let k = 0; k < nPair; k++){ const yT = H - 6 - k*3.0, cT = top(yT);
-          for (const [side, d0, dd] of [[dir, 20, dM], [-dir, 15, dB]]){ const sd = sT + side*(d0 + k*dd), b = SZR.at(sd);
-            cab(oY, [cT[0], yT, cT[1]], [b.x - X0, b.z - 0.2, -(b.y - Y0)], 0.13); } }
-      }
-      const oPo = B.p(POLE), oLh = B.p(LAMPH);
-      for (let s0 = Math.ceil(sa/50)*50 + 25; s0 < sb; s0 += 50){ if (Math.abs(s0 - SZT.hk) < 30 || Math.abs(s0 - SZT.sz) < 30) continue; const a = SZR.at(s0), x = a.x - X0, z = -(a.y - Y0), y = a.z;
-        obox(oPo, x, z, a.tx, -a.ty, 0.15, 0.15, y - 0.3, y + 11.5); obox(oPo, x, z, a.tx, -a.ty, 0.1, 2.6, y + 11.2, y + 11.4);
-        for (const sg of [-1, 1]){ const lx = x + a.nx*sg*2.4, lz = z - a.ny*sg*2.4; obox(oLh, lx, lz, a.tx, -a.ty, 0.35, 0.5, y + 10.9, y + 11.2); lamps.push(lx, y + 10.8, lz); } }
-      for (let i = 0; i < red.length; i += 3) box(B.p(RED), red[i] - 0.5, red[i] + 0.5, red[i + 1] - 0.5, red[i + 1] + 0.5, red[i + 2] - 0.5, red[i + 2] + 0.5);
-      B.flush(s); sprites(s, lamps, [1.0, 0.8, 0.5], 12); sprites(s, red, [1.0, 0.18, 0.1], 16);
-      return g;
-    }};
-  SG_PLACES.push(K.place);
-}
+// (v39: the Shenzhen Bay Bridge keys hkszbaybridge* moved to hk/hkx_nt)
 
 }

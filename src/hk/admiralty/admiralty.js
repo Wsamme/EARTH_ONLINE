@@ -134,6 +134,23 @@ function skinP(B, P, y0, y1, o){
   if (o.pier) mullP(B.p(o.pier), P, y0, y1, o.psp || 4.5, o.pw || 0.45, 0.06, o.pd || 0.35, o.edges);
   if (o.band) bandsP(B.p(o.band), P, y0 + (o.b0 || o.fh), y1, o.fh, o.bh || 0.5, 0.08, o.edges);
 }
+// v39 (hkv_island): custom night emissive add-on (copied from hk/wanchai)
+// v39 (hkv_island): Symphony of Lights searchlight roots - small bright lamps on the roofs
+const sLamps = (g, pts, col) => { for (const p of pts) LCylD(g, 0.6, 0.7, 0.8, p[0], p[1], p[2], {c:'#dfe3e6', glow:col || '#eef3ff', gk:1.8}, 8); };
+function lmPatch(spec, glsl, tag){
+  const m = lmMat(spec); if (m.userData.hkc) return m; m.userData.hkc = 1;
+  const base = m.onBeforeCompile;
+  m.onBeforeCompile = function hkcGlow(sh){
+    base(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvLP = transformed;');
+    const code = '\n{ vec3 lp = vLP; vec3 ledC = vec3(0.0);\n' + glsl + '\n totalEmissiveRadiance += ledC * uNight; }\n';
+    const fs = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;');
+    sh.fragmentShader = fs.indexOf('totalEmissiveRadiance += em * uNight;') >= 0 ? fs.replace('totalEmissiveRadiance += em * uNight;', 'totalEmissiveRadiance += em * uNight;' + code) : fs.replace('#include <aomap_fragment>', code + '#include <aomap_fragment>');
+  };
+  const ck = 'hkc|' + (tag || '') + '|' + glsl.length + '|' + String(base).length;
+  m.customProgramCacheKey = () => ck;
+  return m;
+}
 // red aviation lights
 const avLights = (g, pts, r) => { for (const p of pts) LSphD(g, r || 0.5, p[0], p[1], p[2], {c:'#c22', glow:'#ff2a1a', gk:2.4}, 1, 6); };
 // low-poly trees into a batch
@@ -171,10 +188,11 @@ const rectOf = P => { const s = shedOf(P), f = frm(...s.f.w(0, s.vc), Math.atan2
 // night), carrying the load to four corner columns. A granite base with the entrances, on its sloping site above Garden Road.
 // Frame: rot 0, the real footprint (square at ~16 deg).
 LANDMARKS.hkboc = {zh:'中银大厦', en:'Bank of China Tower', cat:'new', r:45, h:368,
-  lt:{m:1, c:'#e6efff', k:0.55, fh:4.2, cw:1.8}, build(){
+  lt:{m:1, c:'#e6efff', k:0.55, fh:4.2, cw:1.8, anim:'show', c2:'#cfe0ff'}, build(){
   const g = new THREE.Group(), B = mkB(), F = FD.hkboc, gf = gL('hkboc'), R0 = clean(F.ring);
   const y0 = gMin(gf, R0) - 0.3, Y = h => y0 + h;
-  const GL = {c:'#8ea2b1', m:1, fh:4.2, cw:1.8}, FR = {c:'#e7ebee', m:0, lk:0.15, glow:'#eef4ff', gk:0.8}, GR = {c:'#b9b2a6', m:0, lk:0.45}, DK = {c:'#4d5961', glow:'#ffe3bc', gk:0.55};
+  // v39: paler sky-reflecting glass, brighter and wider braces (photos 0025, 0026); at night the glass stays dark behind the white X outline (0013, 0034)
+  const GL = {c:'#a2b6c5', m:0, lk:0.1}, FR = {c:'#eef1f3', m:0, lk:0.15, glow:'#f2f6ff', gk:1.25}, GR = {c:'#b9b2a6', m:0, lk:0.45}, DK = {c:'#4d5961', glow:'#ffe3bc', gk:0.55};
   // corners from the parts: C = centre, Q = [W, N, E, S] square corners
   const W = F.parts[2][2][0], N = F.parts[2][2][1], E = F.parts[0][2][1], S = F.parts[1][2][2], C = [0, 0];
   // quadrant triangles: [outer corner a, outer corner b, apex height]
@@ -206,10 +224,10 @@ LANDMARKS.hkboc = {zh:'中银大厦', en:'Bank of China Tower', cat:'new', r:45,
     for (let k = 0; k < 7; k++){ const ya = Y(BASE + k*MOD), yb = Y(BASE + (k + 1)*MOD); if (ya >= edge - 0.5) break;
       const yt = Math.min(yb, edge), t = (yt - ya)/(yb - ya), m = [(a[0]+b[0])/2, (a[1]+b[1])/2];
       const pa = P3(a, ya), pb = P3(b, ya);
-      if (t >= 0.999){ member(pa, P3(b, yb), ox, oz, 1.6); member(pb, P3(a, yb), ox, oz, 1.6); }
-      else { member(pa, P3(m, ya + (yb - ya)/2), ox, oz, 1.6); member(pb, P3(m, ya + (yb - ya)/2), ox, oz, 1.6); }
-      member(pa, pb, ox, oz, 1.3); }
-    member(P3(a, edge), P3(b, edge), ox, oz, 1.3);
+      if (t >= 0.999){ member(pa, P3(b, yb), ox, oz, 2.2); member(pb, P3(a, yb), ox, oz, 2.2); }
+      else { member(pa, P3(m, ya + (yb - ya)/2), ox, oz, 2.2); member(pb, P3(m, ya + (yb - ya)/2), ox, oz, 2.2); }
+      member(pa, pb, ox, oz, 1.8); }
+    member(P3(a, edge), P3(b, edge), ox, oz, 1.8);   // v39: braces 2.2 / 1.8 m wide so they read from Kowloon
     // the inner (diagonal) walls of this shaft, exposed above the lower neighbours: glass up to the sloping roof line
     for (const p of [a, b]){ // wall from corner p to the centre, between the neighbour's top and this roof
       const nb = Qd.find(q => q !== Qd.find(z => z[0] === a && z[1] === b) && (q[0] === p || q[1] === p)), hn = nb ? nb[2] : 0;
@@ -233,7 +251,8 @@ LANDMARKS.hkboc = {zh:'中银大厦', en:'Bank of China Tower', cat:'new', r:45,
   // the twin masts on the apex of the SW prism, with beacons
   for (const s of [-1, 1]){ const d = [(W[0] - S[0]), (W[1] - S[1])], dl = Math.hypot(d[0], d[1]), x = s*d[0]/dl*3.2, z = s*d[1]/dl*3.2;
     LCylD(g, 0.35, 1.25, 367.4 - 315 + 2, x, Y(313), z, {c:'#d9dde0', m:0, lk:0.2}, 8);
-    LSphD(g, 0.55, x, Y(367.6), z, {c:'#c22', glow:'#ff2a1a', gk:2.4}, 1, 6); }
+    LSphD(g, 0.55, x, Y(367.6), z, {c:'#c22', glow:'#ff2a1a', gk:2.4}, 1, 6);
+    sLamps(g, [[x*1.6, Y(316), z*1.6]]); }   // v39: SoL searchlights from the foot of the masts (photo 0037)
   B.flush(g); return g; }};
 place('hkboc');
 
@@ -244,7 +263,7 @@ place('hkboc');
 // with escalators up into the atrium; two bronze lions at the Queen's Road entrance; maintenance cranes on the roof. Grey steel,
 // grey glass and aluminium sun louvres. Frame: rot 0, the OSM footprint and its parts (floor zones, masts).
 LANDMARKS.hkhsbc = {zh:'汇丰总行大厦', en:'HSBC Main Building', cat:'new', r:48, h:186,
-  lt:{m:1, c:'#e2ecff', k:0.55, fh:3.9, cw:1.6}, build(){
+  lt:{m:1, c:'#e2ecff', k:0.55, fh:3.9, cw:1.6, anim:'show', c2:'#ffd0d0'}, build(){
   const g = new THREE.Group(), B = mkB(), F = FD.hkhsbc, gf = gL('hkhsbc'), R0 = clean(F.ring);
   const yG = 26 - F.base, Y = h => yG + h;                       // datum: the plaza level (the app ground under the plan is 18 - 31 m)
   const GL = {c:'#76848d', m:1, fh:3.9, cw:1.6}, ST = {c:'#9aa2a7', m:0, lk:0.35}, LV = {c:'#b8bec2', m:0, lk:0.2}, DK = {c:'#3d464c', glow:'#ffe6c4', gk:0.5};
@@ -270,7 +289,7 @@ LANDMARKS.hkhsbc = {zh:'汇丰总行大厦', en:'HSBC Main Building', cat:'new',
   rows.sort((a, b) => a.v - b.v);
   const pairs = []; for (let i = 0; i < rows.length; i++) for (let j = i + 1; j < rows.length; j++) if (Math.abs(rows[i].v - rows[j].v) < 6 && Math.abs(rows[i].u - rows[j].u) > 30) pairs.push([rows[i], rows[j]]);
   for (const [A, Bm] of pairs){ const top = Math.min(A.m.top, Bm.m.top), v = (A.v + Bm.v)/2, uA = Math.min(A.u, Bm.u), uB = Math.max(A.u, Bm.u);
-    for (const yy of TR){ if (yy + 8 > top + 0.5) continue; const y0 = Y(yy), y1 = Y(yy + 8), o = B.p(ST);
+    for (const yy of TR){ if (yy + 8 > top + 0.5) continue; const y0 = Y(yy), y1 = Y(yy + 8), o = B.p({c:'#9da5aa', m:0, lk:0.35, glow:'#eef2ff', gk:0.5});   // v39: trusses lit white at night (photos 0015, 0034)
       for (const dv of [-2.0, 2.0]){ const P = (u, y) => f.p(u, y, v + dv);
         segP(o, P(uA, y0), P(uB, y0), 0.55, 4); segP(o, P(uA, y1), P(uB, y1), 0.55, 4);
         const n = 4, du = (uB - uA)/n; for (let k = 0; k < n; k++){ const ua = uA + k*du, ub = ua + du; segP(o, P(ua, k % 2 ? y0 : y1), P(ub, k % 2 ? y1 : y0), 0.5, 4); }
@@ -294,6 +313,12 @@ LANDMARKS.hkhsbc = {zh:'汇丰总行大厦', en:'HSBC Main Building', cat:'new',
     for (const s of [-1, 1]){ const p = f.w(s*22, -8); const yb = Y(160); segP(B.p({c:'#c9cdd0', m:0, lk:0.3}), [p[0], yb, p[1]], [p[0], yb + 13, p[1]], 0.6, 6);
       const q = f.w(s*22 - s*16, -8); segP(B.p({c:'#c9cdd0', m:0, lk:0.3}), [p[0], yb + 12, p[1]], [q[0], yb + 12.5, q[1]], 0.45, 4); }
     avLights(g, [[c[0], Y(179.4), c[1]]]); }
+  // v39: red-white dotted lights running up both edges of the harbour (north) face (photos 0013, 0015, 0016)
+  { const RW = B.p({c:'#e8e2e2', ds:true}); const top = zones.slice().sort((a, b) => Math.abs(area2(b[2])) - Math.abs(area2(a[2])))[0]; const P = clean(offP(clean(top[2]), 1.0));
+    let bi = 0, bd = -2; for (let i = 0; i < P.length; i++){ const q = P[(i+1) % P.length], L = Math.hypot(q[0]-P[i][0], q[1]-P[i][1]); if (L < 8) continue; const [nx, nz] = outN(P, i); if (-nz > bd){ bd = -nz; bi = i; } }
+    const a = P[bi], b = P[(bi+1) % P.length], [nx, nz] = outN(P, bi), L = Math.hypot(b[0]-a[0], b[1]-a[1]), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L, yT = Y(Math.max(...zones.map(z => z[1])) - 6);
+    for (const t of [1.0, L - 1.0]){ const x = a[0] + ux*t + nx*0.9, z = a[1] + uz*t + nz*0.9; quadP(RW, [x - ux*0.8, Y(12), z - uz*0.8], [x + ux*0.8, Y(12), z + uz*0.8], [x + ux*0.8, yT, z + uz*0.8], [x - ux*0.8, yT, z - uz*0.8]); }
+    lmPatch({c:'#e8e2e2', ds:true}, `float d = step(0.5, fract(lp.y/2.6 - uTime*0.5)); ledC = mix(vec3(1.0, 0.1, 0.08), vec3(1.0), d)*1.4;`, 'hsbcrw'); }
   B.flush(g); return g; }};
 place('hkhsbc');
 
@@ -333,7 +358,7 @@ function drapeP(o, P, gf, s, skip, dy){
 // grid of glass and stainless steel, a tall glazed lobby, and Cheung Kong Park round it on the slope towards Garden Road. At night
 // the facade grid is lit by programmable lights that change colour (part of the harbour light show). Frame: rot 0 (square at 45 deg).
 LANDMARKS.hkcheungkong = {zh:'长江集团中心', en:'Cheung Kong Center', cat:'new', r:92, h:284,
-  lt:{m:1, c:'#bfe0ff', k:0.75, e:1, fh:4.0, cw:1.5, anim:'cycle', c2:'#ff9ad8'}, build(){
+  lt:{m:1, c:'#bfe0ff', k:0.75, e:1, fh:4.0, cw:1.5, anim:'show', c2:'#ff9ad8'}, build(){   // v39: SoL
   const g = new THREE.Group(), B = mkB(), F = FD.hkcheungkong, gf = gL('hkcheungkong'), R0 = clean(F.ring), rng = LMCTX.rng;
   const y0 = gMin(gf, R0) - 0.3, Y = h => y0 + h, HT = 283;
   const GL = {c:'#8d9eab', m:1, fh:4.0, cw:1.5}, GD = {c:'#e3e8ec', m:0, lk:1.1}, GD2 = {c:'#e3e8ec', m:0, lk:0.7};

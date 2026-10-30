@@ -697,5 +697,22 @@ Object.assign(window.LM_INFO, {
        en:"Temasek Hall is named after Temasek, an old name for Singapore, and is one of the NUS halls of residence on the western side of Kent Ridge. It values community life, and the yearly inter-hall games and performances are major highlights."}},
   "site:nus:Sheares Hall": {k:{zh:"学生舍堂", en:"Hall of residence"},
     d:{zh:"薛尔思舍堂以新加坡第二任总统薛尔思命名，他也是一位杰出的妇产科医生。舍堂位于肯特岗北坡，以活跃的舍堂文化和体育传统著称。",
-       en:"Sheares Hall is named after Benjamin Sheares, Singapore's second President and a distinguished obstetrician. The hall sits on the northern slope of Kent Ridge and is known for its lively hall culture and sporting traditions."}}
+       en:"Sheares Hall is named after Benjamin Sheares, Singapore's second President and a distinguished obstetrician. The hall sits on the northern slope of Kent Ridge and is known for its lively hall culture and sporting traditions."}},
+
+  // ---------------- five more heroes (Marina Centre, Shenton Way, Bras Basah, Kampong Glam) ----------------
+  sgmillenia: {k:{zh:"摩天大楼", en:"Skyscraper"}, y:"1996", h:218, fl:41, a:{zh:"凯文·洛奇", en:"Kevin Roche"},
+    d:{zh:"美年大厦位于滨海中心淡马锡大道1号，紧邻宝门廊地铁站，1992年动工、1996年完工，高218米、41层，是美年城这组建筑里最高的一座。平面是正方形，整座塔楼立在四根会发光的圆柱上，圆柱之间是五层高的玻璃大堂；楼顶是一座巨大的玻璃金字塔，也是这一带天际线的焦点。",
+       en:"Millenia Tower, at 1 Temasek Avenue in Marina Centre beside Promenade MRT, was built from 1992 to 1996. At 218 metres and 41 storeys it is the tallest building in the Millenia Singapore development. Its square plan stands on four lit cylinders around a glass lobby five storeys high, and a large glass pyramid crowns the roof."}},
+  sgcentennial: {k:{zh:"摩天大楼", en:"Skyscraper"}, y:"1997", h:158, fl:37, a:{zh:"凯文·洛奇；2015年外立面由汤姆·梅恩重做", en:"Kevin Roche; facade reclad in 2015 by Thom Mayne"},
+    d:{zh:"盛年大厦在淡马锡大道3号，与美年大厦、新达城相邻。1995年开工、1997年完工，高158米、37层。最初由凯文·洛奇设计，2015年由汤姆·梅恩更换了外立面。结构上预留了往上加盖约15层的余地，但建成后一直是37层。1999年它获得建设局“最佳可施工设计奖”（商业与办公楼组别）。",
+       en:"Centennial Tower stands at 3 Temasek Avenue, next to Millenia Tower and Suntec City. Started in 1995 and finished in 1997, it is 158 metres and 37 storeys. Kevin Roche designed it; in 2015 Thom Mayne gave it a new facade. The structure was built so that about 15 more storeys could be added later, but it has stayed at 37. In 1999 it won the Building and Construction Authority's Best Buildable Design Award for commercial and office buildings."}},
+  sgcapital: {k:{zh:"摩天大楼", en:"Skyscraper"}, y:"2000", h:254, fl:52, a:{zh:"RSP建筑师规划与工程事务所", en:"RSP Architects Planners & Engineers"},
+    d:{zh:"资金大厦在罗敏申路168号，丹戎巴葛地铁站旁边，2000年完工，高254米、52层，2001年5月16日由时任国家发展部长马宝山主持揭幕。它原先计划作为邮政储蓄银行的总部，后来成为凯德的旗舰楼。52层由五部双层穿梭电梯服务；顶层是会员制的中国会，2001年5月19日开业。夜里楼顶会被照亮。",
+       en:"Capital Tower, 168 Robinson Road beside Tanjong Pagar MRT, was completed in 2000. It is 254 metres and 52 storeys, and was opened on 16 May 2001 by Mah Bow Tan, then Minister for National Development. Planned as the POSBank headquarters, it became CapitaLand's flagship. Five double-deck shuttle lifts serve the floors. The members' China Club on the top floor opened on 19 May 2001. The crown is lit at night."}},
+  sgsota: {k:{zh:"艺术学校", en:"Arts school"}, y:"2010", h:50, a:{zh:"WOHA建筑事务所", en:"WOHA"},
+    d:{zh:"新加坡艺术学院是一所六年制艺术专科学校，2008年1月2日开办，2010年1月迁入布拉斯巴沙、索菲亚山脚的朱比萨伊路1号新校舍。校舍由WOHA设计：底下是贯通的裙楼，上面分成三座平行的长条楼，中间留出空隙，外立面有一排排水平遮阳鳍片。地图上这座建筑标高约50米。",
+       en:"School of the Arts is a six-year specialised arts school. It opened on 2 January 2008 and moved in January 2010 into its campus at 1 Zubir Said Drive, Bras Basah, at the foot of Mount Sophia. WOHA designed the building: a shared podium, then three parallel bars with open gaps between them and rows of horizontal sunshade fins. The mapped height of this block is about 50 metres."}},
+  sgmalabar: {k:{zh:"清真寺", en:"Mosque"}, y:"1963", a:{zh:"A.H. Siddique", en:"A.H. Siddique"},
+    d:{zh:"马拉巴回教堂在甘榜格南，维多利亚街471号与苏丹街的路口，1963年由南印度马拉巴穆斯林社群建成，又叫“蓝清真寺”。外墙在1995年翻新时贴上青金石蓝瓷砖，屋顶是几座金色的洋葱形圆顶。建筑师是A.H. Siddique，风格带有莫卧儿与印度-萨拉森的做法，平面斜向麦加。礼拜大殿在二楼。屋顶只有一座约2米高的宣礼塔，塔顶也是一个小金顶。",
+       en:"The Malabar Mosque, also called the Blue Mosque, stands at 471 Victoria Street where it meets Jalan Sultan in Kampong Glam. The Malabar Muslim community finished it in 1963. Lapis-blue tiles, added in the 1995 renovation, cover the outside, and golden onion domes sit on the roof. A.H. Siddique designed it in a Mughal and Indo-Saracenic manner, and the plan is set diagonally toward Mecca. The main prayer hall is on the upper floor. There is a single minaret about two metres tall, with a small golden cap."}}
 });

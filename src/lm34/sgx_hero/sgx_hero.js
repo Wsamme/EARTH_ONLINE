@@ -243,8 +243,11 @@ place('sgcentennial');
 // glass crown. Copper spandrels sit in the blue-green glass. No lettering.
 LANDMARKS.sgcapital = {zh:'资金大厦', en:'Capital Tower', cat:'new', r:SGCAPITAL.r, h:254, lt:{m:1, c:'#d5e6f6', k:0.55}, build(){
   const g = new THREE.Group(), B = mkB(), P = SGCAPITAL.P, c = ctr(P);
-  const GLASS = Object.assign(GL('#3f6474', 4.0, 3.6), {glow:'#ffe0b0', gk:0.12});
-  const GLASS2 = Object.assign(GL('#6d93a4', 3.6, 2.6), {glow:'#eaf6ff', gk:0.35});
+  const GLASS = Object.assign(GL('#2f6f92', 4.0, 3.4), {glow:'#d6ecff', gk:0.28});
+  const GLASS2 = Object.assign(GL('#3a7eaa', 3.6, 2.6), {glow:'#eaf6ff', gk:0.4});
+  const STONE = {c:'#e4d0b0', m:0, lk:0.45, ds:true};
+  const STONE2 = {c:'#f3e6d2', m:0, lk:0.55, ds:true};
+  const WIN = {c:'#6d6258', m:1, fh:3.7, cw:3.1, glow:'#ffd9a8', gk:0.22, ds:true};
   const SLOT = GL('#1e303c', 3.8, 2.8);
   const SILVER = {c:'#d5dde4', m:0, lk:0.55, ds:true};
   const COPPER = {c:'#c48978', m:0, lk:0.4, ds:true};
@@ -276,28 +279,18 @@ LANDMARKS.sgcapital = {zh:'资金大厦', en:'Capital Tower', cat:'new', r:SGCAP
   // podium follows the real footprint, including the north notch; street canopy on the south face
   LPoly(g, scaleRing(P, 1.04, c), -8, 8.3, {c:'#b7b1a4', m:0, ds:true});
   LPoly(g, P, 0, 5.2, POD);
-  LPoly(g, scaleRing(P, 0.985, c), 5.2, 7.2, GLASS);
+  LPoly(g, scaleRing(P, 0.985, c), 5.2, 7.2, STONE);
   LPoly(g, scaleRing(P, 1.01, c), 12.2, 1.1, SILVER);
   const south = Wxz(UC, VC + HD), OX = -SI, OZ = CO, ry = Math.atan2(-SI, CO);
   boxP(B.p(METAL), 20, 0.7, 7.5, south[0] + OX * 3.6, 3.6, south[1] + OZ * 3.6, ry);
   segP(B.p(POD), [south[0] + OX * 6.2, 0, south[1] + OZ * 6.2], [south[0] + OX * 6.2, 3.6, south[1] + OZ * 6.2], 0.35, 6);
-  // main shaft: sharper corners, blue-green glass, silver floor lines, copper bays
-  const S = ring(HW, HD, 3.6);
-  LPoly(g, S, 13, 147, GLASS);
-  floorBands(B.p(SILVER), S, 17, 156, 4.05, 0.55, 0.22);
-  const copper = B.p(COPPER);
-  for (const e of edgesF(S)){ if (e.L < 22) continue;
-    const southFace = e.nz > 0.6;
-    const n = Math.max(3, Math.round(e.L / 6.4));
-    for (let k = 0; k < n; k++){ if (k % 2 === 0) continue;
-      const u0 = e.L * (k + 0.12) / n, u1 = e.L * (k + 0.88) / n;
-      if (southFace && Math.abs((u0 + u1) / 2 - e.L / 2) < e.L * 0.14) continue;
-      for (let y = 28; y < 148; y += 8.1){
-        quadP(copper, e.F(u0, y, 0.34), e.F(u1, y, 0.34), e.F(u1, y + 1.15, 0.34), e.F(u0, y + 1.15, 0.34));
-        quadP(copper, e.F(u0, y, 0.02), e.F(u0, y, 0.34), e.F(u1, y, 0.34), e.F(u1, y, 0.02));
-      }
-    }
-  }
+  // lower half: warm beige stone and a dense window grid. upper half: blue glass.
+  const S = ring(HW, HD, 3.6), HALF = 127;
+  LPoly(g, S, 13, HALF - 13, WIN);
+  LPoly(g, ring(HW * 0.985, HD * 0.985, 3.4), HALF, 160 - HALF, GLASS);
+  floorBands(B.p(STONE2), S, 16.5, HALF - 2, 3.7, 0.85, 0.42);
+  mullions(B.p(STONE), S, 13.4, HALF - 1, 3.15, 0.22, 0.5);
+  floorBands(B.p(SILVER), ring(HW * 0.99, HD * 0.99, 4), HALF + 4, 158, 8.2, 0.45, 0.18);
   // vertical glass slot and the semicircular canopy on the south face
   boxP(B.p(SLOT), 8.2, 146, 1.5, south[0] + OX * 0.4, 14, south[1] + OZ * 0.4, ry);
   const brow = B.p(METAL), R = 9.2, yB = 86;

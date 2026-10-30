@@ -235,43 +235,102 @@ LANDMARKS.sgcentennial = {zh:'盛年大厦', en:'Centennial Tower', cat:'new', r
 place('sgcentennial');
 
 // ================= ★ Capital Tower (RSP, 2000) =================
-// 254 m roof, 52 storeys. Blue-grey glass, a strong horizontal belt every few
-// floors, a setback, then a narrower glass-grid crown. No lettering.
-LANDMARKS.sgcapital = {zh:'资金大厦', en:'Capital Tower', cat:'new', r:SGCAPITAL.r, h:254, lt:{m:1, c:'#d5e4f6', k:0.62}, build(){
+// 254 m roof, occupied floors to about 232 m (CTBUH), 52 storeys.
+// The OSM plan is a rotated rectangle with a stepped notch on the north side.
+// The tower above the podium is that rectangle with rounded corners. The south
+// face (toward Maxwell Road) carries the semicircular canopy and the vertical
+// glass slot. Two projecting cornices, then a rounded shoulder and a louvered
+// glass crown. Copper spandrels sit in the blue-green glass. No lettering.
+LANDMARKS.sgcapital = {zh:'资金大厦', en:'Capital Tower', cat:'new', r:SGCAPITAL.r, h:254, lt:{m:1, c:'#d5e6f6', k:0.55}, build(){
   const g = new THREE.Group(), B = mkB(), P = SGCAPITAL.P, c = ctr(P);
-  const POD = {c:'#c9c3b4', m:0, lk:0.3, ds:true}, BELT = {c:'#d5dbe2', m:0, lk:0.5, ds:true};
-  const SPAND = {c:'#b7c2cc', m:0, lk:0.35, ds:true};
-  const GLASS = GL('#5a7080', 4.0, 3.4), CROWN = GL('#8ea6b6', 3.6, 2.8);
-  const RIB = {c:'#eef2f4', glow:'#fff4d8', gk:0.85, m:0, ds:true};
-  LPoly(g, scaleRing(P, 1.05, c), -8, 8.4, {c:'#b7b1a4', m:0, ds:true});
-  LPoly(g, P, 0, 16, POD);
-  LPoly(g, scaleRing(P, 0.42, c), 0.4, 12, {c:'#d5e4ea', m:0, glow:'#fff0d0', gk:0.65, ds:true});
-  const S = scaleRing(P, 0.90, c);
-  LPoly(g, S, 16, 180, GLASS);
-  floorBands(B.p(SPAND), S, 20, 192, 4.05, 0.72, 0.28);
-  // deeper belts group the floors, which is the rhythm you see from the street
-  for (let y = 36; y < 188; y += 20) floorBands(B.p(BELT), S, y, y + 1.6, 10, 1.45, 0.7);
-  mullions(B.p(SPAND), S, 16.5, 194, 3.8, 0.2, 0.36);
-  // cornice, then a set-back shaft, then the gridded crown
-  const belt = scaleRing(S, 1.04, c), up = scaleRing(S, 0.82, c);
-  loftP(B.p(BELT), belt, 196, up, 206);
-  LPoly(g, up, 206, 22, GLASS);
-  floorBands(B.p(SPAND), up, 208, 226, 4.05, 0.36, 0.16);
-  const A = scaleRing(S, 0.70, c), Bp = scaleRing(S, 0.60, c);
-  loftP(B.p(CROWN), A, 228, Bp, 249); capP(B.p(CROWN), Bp, 249);
-  const ribs = B.p(RIB);
-  for (let i = 0; i < A.length; i++){
-    const a = A[i], b = A[(i+1)%A.length], c0 = Bp[i], d = Bp[(i+1)%Bp.length], L = vlen2(a, b);
-    const n = Math.max(1, Math.round(L / 2.8));
-    for (let k = 0; k <= n; k++){ const t = k/n;
-      segP(ribs, [a[0]+(b[0]-a[0])*t, 228, a[1]+(b[1]-a[1])*t], [c0[0]+(d[0]-c0[0])*t, 249, c0[1]+(d[1]-c0[1])*t], 0.16, 3); }
+  const GLASS = Object.assign(GL('#3f6474', 4.0, 3.6), {glow:'#ffe0b0', gk:0.12});
+  const GLASS2 = Object.assign(GL('#6d93a4', 3.6, 2.6), {glow:'#eaf6ff', gk:0.35});
+  const SLOT = GL('#1e303c', 3.8, 2.8);
+  const SILVER = {c:'#d5dde4', m:0, lk:0.55, ds:true};
+  const COPPER = {c:'#c48978', m:0, lk:0.4, ds:true};
+  const SHELF = {c:'#e8e6df', m:0, lk:0.7, glow:'#fff6e4', gk:0.55, ds:true};
+  const LOUVER = {c:'#f4f1ea', m:0, glow:'#fff3cc', gk:1.45, ds:true};
+  const METAL = {c:'#ddd8ce', m:0, lk:0.6, glow:'#fff1d8', gk:0.35, ds:true};
+  const POD = {c:'#c8c2b4', m:0, lk:0.3, ds:true};
+  // Plan frame: +u runs along the south facade, +v points south (toward the park).
+  const ANG = 31.8 * PI / 180, CO = Math.cos(ANG), SI = Math.sin(ANG);
+  const Wxz = (u, v) => [u * CO - v * SI, u * SI + v * CO];
+  const UC = -0.4, VC = 3.2;
+  const rrect = (hw, hd, rad) => {
+    rad = Math.max(0.8, Math.min(rad, hw - 0.8, hd - 0.8));
+    const nArc = 5, cns = [
+      [UC + hw - rad, VC + hd - rad, 0],
+      [UC - hw + rad, VC + hd - rad, PI / 2],
+      [UC - hw + rad, VC - hd + rad, PI],
+      [UC + hw - rad, VC - hd + rad, PI * 1.5]
+    ], pts = [];
+    for (const [cx, cy, a0] of cns) for (let k = 0; k <= nArc; k++){
+      const a = a0 + (PI / 2) * (k / nArc);
+      pts.push([cx + Math.cos(a) * rad, cy + Math.sin(a) * rad]);
+    }
+    return pts;
+  };
+  const ring = (hw, hd, rad) => rrect(hw, hd, rad).map(p => Wxz(p[0], p[1]));
+  const sec = (hw, hd, rad, y) => ring(hw, hd, rad).map(p => [p[0], y, p[1]]);
+  const HW = 27.2, HD = 26.4;
+  // podium follows the real footprint, including the north notch; street canopy on the south face
+  LPoly(g, scaleRing(P, 1.04, c), -8, 8.3, {c:'#b7b1a4', m:0, ds:true});
+  LPoly(g, P, 0, 5.2, POD);
+  LPoly(g, scaleRing(P, 0.985, c), 5.2, 7.2, GLASS);
+  LPoly(g, scaleRing(P, 1.01, c), 12.2, 1.1, SILVER);
+  const south = Wxz(UC, VC + HD), OX = -SI, OZ = CO, ry = Math.atan2(-SI, CO);
+  boxP(B.p(METAL), 20, 0.7, 7.5, south[0] + OX * 3.6, 3.6, south[1] + OZ * 3.6, ry);
+  segP(B.p(POD), [south[0] + OX * 6.2, 0, south[1] + OZ * 6.2], [south[0] + OX * 6.2, 3.6, south[1] + OZ * 6.2], 0.35, 6);
+  // main shaft: sharper corners, blue-green glass, silver floor lines, copper bays
+  const S = ring(HW, HD, 3.6);
+  LPoly(g, S, 13, 147, GLASS);
+  floorBands(B.p(SILVER), S, 17, 156, 4.05, 0.55, 0.22);
+  const copper = B.p(COPPER);
+  for (const e of edgesF(S)){ if (e.L < 22) continue;
+    const southFace = e.nz > 0.6;
+    const n = Math.max(3, Math.round(e.L / 6.4));
+    for (let k = 0; k < n; k++){ if (k % 2 === 0) continue;
+      const u0 = e.L * (k + 0.12) / n, u1 = e.L * (k + 0.88) / n;
+      if (southFace && Math.abs((u0 + u1) / 2 - e.L / 2) < e.L * 0.14) continue;
+      for (let y = 28; y < 148; y += 8.1){
+        quadP(copper, e.F(u0, y, 0.34), e.F(u1, y, 0.34), e.F(u1, y + 1.15, 0.34), e.F(u0, y + 1.15, 0.34));
+        quadP(copper, e.F(u0, y, 0.02), e.F(u0, y, 0.34), e.F(u1, y, 0.34), e.F(u1, y, 0.02));
+      }
+    }
   }
-  for (let s = 1; s <= 5; s++){ const t = s/6, y = 228 + 21*t;
-    const ring = A.map((p, i) => [p[0]+(Bp[i][0]-p[0])*t, p[1]+(Bp[i][1]-p[1])*t]);
-    for (let i = 0; i < ring.length; i++) segP(ribs, [ring[i][0], y, ring[i][1]], [ring[(i+1)%ring.length][0], y, ring[(i+1)%ring.length][1]], 0.14, 3); }
-  // louver cap, still with no mark on it
-  for (let k = 0; k < 4; k++) LPoly(g, scaleRing(Bp, 1.04 - k*0.02, c), 249.4 + k*1.05, 0.28, RIB);
-  LCyl(g, 0.16, 0.45, 2.0, c[0], 253.2, c[1], RED, 6);
+  // vertical glass slot and the semicircular canopy on the south face
+  boxP(B.p(SLOT), 8.2, 146, 1.5, south[0] + OX * 0.4, 14, south[1] + OZ * 0.4, ry);
+  const brow = B.p(METAL), R = 9.2, yB = 86;
+  for (let i = 0; i < 12; i++){
+    const a0 = -PI / 2 + PI * i / 12, a1 = -PI / 2 + PI * (i + 1) / 12;
+    const pt = (a, rr, y) => { const w = Wxz(UC + Math.sin(a) * rr, VC + HD + Math.cos(a) * rr); return [w[0], y, w[1]]; };
+    quadP(brow, pt(a0, 0.4, yB), pt(a1, 0.4, yB), pt(a1, R, yB), pt(a0, R, yB));
+    quadP(brow, pt(a0, 0.4, yB + 1.15), pt(a0, R, yB + 1.15), pt(a1, R, yB + 1.15), pt(a1, 0.4, yB + 1.15));
+    quadP(brow, pt(a0, R, yB), pt(a1, R, yB), pt(a1, R, yB + 1.15), pt(a0, R, yB + 1.15));
+  }
+  // first cornice, then the rounded upper body, then the second cornice
+  LPoly(g, ring(HW * 1.12, HD * 1.12, 5), 158.5, 4.6, SHELF);
+  const up = [];
+  for (let k = 0; k <= 6; k++){ const t = k / 6; up.push(sec(HW * (1 - 0.05 * t), HD * (1 - 0.05 * t), 6 + 8 * t, 163 + 43 * t)); }
+  LLoft(g, up, GLASS2, false);
+  floorBands(B.p(SILVER), ring(HW * 0.98, HD * 0.98, 10), 170, 200, 4.2, 0.4, 0.16);
+  LPoly(g, ring(HW * 1.02, HD * 1.02, 12), 206, 3.6, SHELF);
+  // sloping glass shoulder into the crown (occupied floors end near 232 m)
+  const sh = [];
+  for (let k = 0; k <= 5; k++){ const t = k / 5; sh.push(sec(HW * (0.90 - 0.16 * t), HD * (0.90 - 0.16 * t), 13 + 3 * t, 210 + 22 * t)); }
+  LLoft(g, sh, GLASS2, false);
+  const cr = [];
+  for (let k = 0; k <= 4; k++){ const t = k / 4; cr.push(sec(HW * (0.72 - 0.04 * t), HD * (0.72 - 0.04 * t), 14, 232 + 16 * t)); }
+  LLoft(g, cr, GLASS2, false);
+  capP(B.p(GLASS2), ring(HW * 0.68, HD * 0.68, 14), 248);
+  // louvered crown: the lit stack you recognise from Tanjong Pagar, with no mark on it
+  for (let k = 0; k < 5; k++){
+    const t = k / 4, sc = 0.78 - 0.03 * t;
+    LPoly(g, ring(HW * sc, HD * sc, 14), 231.2 + k * 4.15, 0.55, LOUVER);
+  }
+  LPoly(g, ring(HW * 0.70, HD * 0.70, 13), 251.2, 1.3, LOUVER);
+  mullions(B.p(LOUVER), ring(HW * 0.72, HD * 0.72, 14), 232, 248, 3.2, 0.1, 0.2);
+  LCyl(g, 0.14, 0.4, 2.2, c[0], 252.2, c[1], RED, 6);
   B.flush(g); return g;
 }};
 place('sgcapital');
@@ -430,9 +489,9 @@ place('sgmalabar');
 window.__sgx = {
   ready(){ return landmarks.some(L => L.type === 'sgmillenia' && L.top != null) && landmarks.some(L => L.type === 'sgmalabar' && L.top != null); },
   names(){ return landmarks.filter(L => ['sgmillenia','sgcentennial','sgcapital','sgsota','sgmalabar'].includes(L.type)).map(L => ({type:L.type, top:+L.top.toFixed(2), x:+L.x.toFixed(1), y:+L.y.toFixed(1), h:LANDMARKS[L.type].h})); },
-  look(type, dist, heading, elev, night){
+  look(type, dist, heading, elev, night, aim){
     const L = landmarks.find(q => q.type === type); if (!L) return false;
-    const aimY = (L.top || 0) + Math.min(LANDMARKS[type].h * 0.55, 150);
+    const aimY = (L.top || 0) + Math.min(LANDMARKS[type].h * (aim == null ? 0.55 : aim), 200);
     const horiz = Math.cos(elev) * dist, vert = Math.sin(elev) * dist;
     camera.position.set(L.x + Math.sin(heading) * horiz, aimY + vert, -L.y + Math.cos(heading) * horiz);
     controls.target.set(L.x, aimY, -L.y);

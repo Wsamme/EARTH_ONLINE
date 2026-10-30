@@ -44705,18 +44705,21 @@ SG_PLACES.push({type:'sghawpar', lat:LAT, lon:LON, rot:0});
 }
 
 // ===== lm34/sgx_hero — five hero landmarks for the Singapore page (City Brush)
-// All five are new (none of these keys existed). Each one sits on its real OSM footprint,
-// rot 0, local +x east and +z south. y = 0 is the ground the app places the model on.
-// No logos, brand marks or writing on the models. Heights below are the published figures
-// (Wikipedia / the building's own infobox), except the mosque domes, which are sized from
-// the footprint because no dome height is published, and SOTA, whose 50 m is the OSM height
-// tag on this same footprint.
+// All five sit on their real OSM footprints. rot 0: local +x is east, +z is south.
+// y = 0 is the ground the app places the model on.
 //
-//   sgmillenia    ★ Millenia Tower        OSM way/48035153   1 Temasek Avenue     roof 218 m, 41 storeys
-//   sgcentennial  ★ Centennial Tower      OSM way/155988210  3 Temasek Avenue     roof 158 m, 37 storeys
-//   sgcapital     ★ Capital Tower         OSM way/47345009   168 Robinson Road    roof 254 m, 52 storeys
-//   sgsota        ★ School of the Arts    OSM way/107937797  1 Zubir Said Drive   OSM height 50 m
-//   sgmalabar     ★ Malabar Mosque        OSM way/531916524  471 Victoria Street  blue tile, gold onion domes
+// These are fine-detail replicas, built the same way as Marina Bay Sands in
+// src/lm22/marina/marina.js: one glass volume, then the facade drawn as real
+// geometry (mullions, spandrels, fins, ribs). Canvas textures are not used,
+// because lmMerge keeps positions but drops UVs, so a texture would vanish.
+// The night window glow (material m:1) is only the lights inside the glass.
+// No logos, brand marks or writing.
+//
+//   sgmillenia    ★ Millenia Tower      OSM way/48035153   roof 218 m
+//   sgcentennial  ★ Centennial Tower    OSM way/155988210  roof 158 m
+//   sgcapital     ★ Capital Tower       OSM way/47345009   roof 254 m
+//   sgsota        ★ School of the Arts  OSM way/107937797  OSM height 50 m
+//   sgmalabar     ★ Malabar Mosque      OSM way/531916524  tiles, domes, minaret
 //
 // Block-scoped: only LANDMARKS and SG_PLACES are touched.
 {
@@ -44728,220 +44731,414 @@ const quadP = (o, a, b, c, d) => o.push(a[0],a[1],a[2], b[0],b[1],b[2], c[0],c[1
 const triP = (o, a, b, c) => o.push(a[0],a[1],a[2], b[0],b[1],b[2], c[0],c[1],c[2]);
 const ctr = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x / P.length, z / P.length]; };
 const scaleRing = (P, s, c) => { c = c || ctr(P); return P.map(p => [c[0] + (p[0] - c[0]) * s, c[1] + (p[1] - c[1]) * s]); };
-// walls between two rings of the same length (a closed plan at two heights)
+const vlen2 = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+// walls between two rings of the same length
 function loftP(o, A, yA, B, yB){ const n = A.length; for (let i = 0; i < n; i++){ const j = (i + 1) % n; quadP(o, [A[i][0], yA, A[i][1]], [A[j][0], yA, A[j][1]], [B[j][0], yB, B[j][1]], [B[i][0], yB, B[i][1]]); } }
 function capP(o, P, y){ const c = ctr(P); for (let i = 0; i < P.length; i++){ const j = (i + 1) % P.length; triP(o, [c[0], y, c[1]], [P[i][0], y, P[i][1]], [P[j][0], y, P[j][1]]); } }
-// four corners of a roughly square plan: vertices far from the centre and not bunched on one side
+// a round tube from point a to point b, used for thin mullions and ribs
+function segP(o, a, b, r, n){
+  n = n || 4; const dx = b[0]-a[0], dy = b[1]-a[1], dz = b[2]-a[2], L = Math.hypot(dx, dy, dz); if (L < 1e-4) return;
+  const d = [dx/L, dy/L, dz/L], up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  const ux = d[1]*up[2] - d[2]*up[1], uy = d[2]*up[0] - d[0]*up[2], uz = d[0]*up[1] - d[1]*up[0];
+  const ul = Math.hypot(ux, uy, uz) || 1, u = [ux/ul, uy/ul, uz/ul];
+  const v = [d[1]*u[2] - d[2]*u[1], d[2]*u[0] - d[0]*u[2], d[0]*u[1] - d[1]*u[0]];
+  const ring = (p) => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5) / n * TAU; R.push([p[0] + (u[0]*Math.cos(t) + v[0]*Math.sin(t))*r, p[1] + (u[1]*Math.cos(t) + v[1]*Math.sin(t))*r, p[2] + (u[2]*Math.cos(t) + v[2]*Math.sin(t))*r]); } return R; };
+  const A = ring(a), B = ring(b);
+  for (let i = 0; i < n; i++){ const j = (i + 1) % n; quadP(o, A[i], A[j], B[j], B[i]); }
+}
+function polyP(o, pts, r, n){ for (let i = 0; i < pts.length - 1; i++) segP(o, pts[i], pts[i + 1], r, n); }
+// a box standing on y. w runs along local x, d along local z, then the box is turned by ry.
+function boxP(o, w, h, d, x, y, z, ry){
+  const c = Math.cos(ry || 0), s = Math.sin(ry || 0), hw = w/2, hd = d/2, y1 = y + h;
+  const ax = x - hw*c - hd*s, az = z + hw*s - hd*c, bx = x + hw*c - hd*s, bz = z - hw*s - hd*c;
+  const cx = x + hw*c + hd*s, cz = z - hw*s + hd*c, dx = x - hw*c + hd*s, dz = z + hw*s + hd*c;
+  o.push(ax,y,az, bx,y,bz, cx,y,cz, ax,y,az, cx,y,cz, dx,y,dz,
+    ax,y1,az, dx,y1,dz, cx,y1,cz, ax,y1,az, cx,y1,cz, bx,y1,bz,
+    ax,y,az, ax,y1,az, bx,y1,bz, ax,y,az, bx,y1,bz, bx,y,bz,
+    bx,y,bz, bx,y1,bz, cx,y1,cz, bx,y,bz, cx,y1,cz, cx,y,cz,
+    cx,y,cz, cx,y1,cz, dx,y1,dz, cx,y,cz, dx,y1,dz, dx,y,dz,
+    dx,y,dz, dx,y1,dz, ax,y1,az, dx,y,dz, ax,y1,az, ax,y,az);
+}
 function far4(P){
-  const c = ctr(P), V = P.map(p => ({p, d: Math.hypot(p[0] - c[0], p[1] - c[1]), a: Math.atan2(p[1] - c[1], p[0] - c[0])}));
+  const c = ctr(P), V = P.map(p => ({p, d: Math.hypot(p[0]-c[0], p[1]-c[1]), a: Math.atan2(p[1]-c[1], p[0]-c[0])}));
   V.sort((a, b) => b.d - a.d); const pick = [];
   for (const v of V){ if (pick.every(q => Math.abs(Math.atan2(Math.sin(v.a - q.a), Math.cos(v.a - q.a))) > 0.7)) pick.push(v); if (pick.length === 4) break; }
   return pick.map(v => v.p);
 }
-// a round-arch outline in a facade (u across, v up), for the blue mosque's openings
-function archO(hw, ht){ const n = 7, rise = Math.min(hw, ht * 0.45), P = [[-hw, 0], [hw, 0], [hw, ht - rise]];
-  for (let i = 0; i <= n; i++){ const a = PI * (1 - i / n); P.push([Math.cos(a) * hw, ht - rise + Math.sin(a) * rise]); } P.push([-hw, ht - rise]); return P; }
-const sArea = P => { let A = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i + 1) % P.length]; A += a[0] * b[1] - b[0] * a[1]; } return A / 2; };
-// one facade frame per edge: u runs along the edge, w points outward
-function edgesF(P){ const sg = sArea(P) > 0 ? 1 : -1, out = [];
-  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i + 1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1e-6, ex = (b[0] - a[0]) / L, ez = (b[1] - a[1]) / L, nx = ez * sg, nz = -ex * sg;
-    out.push({L, a, ex, ez, nx, nz, F:(u, v, w) => [a[0] + ex * u + nx * (w || 0), v, a[1] + ez * u + nz * (w || 0)]}); }
-  return out; }
-function shapeP(o, pts, F, w){
-  // fan from the first point — arch outlines are convex enough
-  for (let i = 1; i < pts.length - 1; i++){ const A = F(pts[0][0], pts[0][1], w), B = F(pts[i][0], pts[i][1], w), C = F(pts[i + 1][0], pts[i + 1][1], w); triP(o, A, B, C); }
+// The Millenia plan in OSM is a chamfered square (6 points). Fitting a box to that
+// hexagon stretches the pyramid. The four far corners are the real square.
+function cornerSq(P){
+  const c = ctr(P), V = far4(P).slice();
+  V.sort((a, b) => Math.atan2(a[1] - c[1], a[0] - c[0]) - Math.atan2(b[1] - c[1], b[0] - c[0]));
+  return V.length >= 4 ? V : P.slice();
 }
-function slabP(o, pts, F, w0, w1){ shapeP(o, pts, F, w1); for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i + 1) % pts.length]; quadP(o, F(a[0], a[1], w0), F(b[0], b[1], w0), F(b[0], b[1], w1), F(a[0], a[1], w1)); } }
-// cut a plan into the strip where v (across the short axis) is between v0 and v1
+function archO(hw, ht){ const n = 7, rise = Math.min(hw, ht * 0.48), P = [[-hw, 0], [hw, 0], [hw, ht - rise]];
+  for (let i = 0; i <= n; i++){ const a = PI * (1 - i / n); P.push([Math.cos(a) * hw, ht - rise + Math.sin(a) * rise]); } P.push([-hw, ht - rise]); return P; }
+const sArea = P => { let A = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i + 1) % P.length]; A += a[0]*b[1] - b[0]*a[1]; } return A / 2; };
+// One frame per edge. u runs along the edge, w points outward, v is height.
+function edgesF(P){ const sg = sArea(P) > 0 ? 1 : -1, out = [];
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i + 1) % P.length], L = vlen2(a, b) || 1e-6, ex = (b[0]-a[0])/L, ez = (b[1]-a[1])/L, nx = ez*sg, nz = -ex*sg;
+    out.push({L, a, b, ex, ez, nx, nz, ry: Math.atan2(-ez, ex), F:(u, v, w) => [a[0] + ex*u + nx*(w || 0), v, a[1] + ez*u + nz*(w || 0)]}); }
+  return out; }
+function shapeP(o, pts, F, w){ for (let i = 1; i < pts.length - 1; i++) triP(o, F(pts[0][0], pts[0][1], w), F(pts[i][0], pts[i][1], w), F(pts[i+1][0], pts[i+1][1], w)); }
+function slabP(o, pts, F, w0, w1){ shapeP(o, pts, F, w1); for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i+1)%pts.length]; quadP(o, F(a[0], a[1], w0), F(b[0], b[1], w0), F(b[0], b[1], w1), F(a[0], a[1], w1)); } }
+// Horizontal stone bands proud of a wall, one per floor. This is what you see by day.
+function floorBands(o, P, y0, y1, step, bh, off){
+  for (let y = y0; y < y1 - bh; y += step){
+    for (const e of edgesF(P)){ if (e.L < 1.2) continue;
+      const a = e.F(0, y, off), b = e.F(e.L, y, off), c = e.F(e.L, y + bh, off), d = e.F(0, y + bh, off);
+      quadP(o, a, b, c, d);
+      quadP(o, e.F(0, y, 0), a, b, e.F(e.L, y, 0));
+      quadP(o, d, c, e.F(e.L, y + bh, 0), e.F(0, y + bh, 0)); }
+  }
+}
+// Vertical mullions. sp is the bay width in metres.
+function mullions(o, P, y0, y1, sp, r, off){
+  for (const e of edgesF(P)){ if (e.L < 2) continue; const n = Math.max(1, Math.round(e.L / sp));
+    for (let k = 0; k <= n; k++){ const p = e.F(e.L * k / n, y0, off); segP(o, p, [p[0], y1, p[2]], r, 4); } }
+}
 function frameOf(P){
   const c = ctr(P); let xx = 0, zz = 0, xz = 0;
-  for (const p of P){ const x = p[0] - c[0], z = p[1] - c[1]; xx += x * x; zz += z * z; xz += x * z; }
-  let ang = 0.5 * Math.atan2(2 * xz, xx - zz), c0 = Math.cos(ang), s0 = Math.sin(ang), vu = 0, vv = 0;
-  for (const p of P){ const x = p[0] - c[0], z = p[1] - c[1], u = x * c0 + z * s0, v = -x * s0 + z * c0; vu += u * u; vv += v * v; }
-  if (vv > vu) ang += PI / 2;
-  const co = Math.cos(ang), si = Math.sin(ang);
-  const L = (x, z) => [(x - c[0]) * co + (z - c[1]) * si, -(x - c[0]) * si + (z - c[1]) * co];
-  return {L};
+  for (const p of P){ const x = p[0]-c[0], z = p[1]-c[1]; xx += x*x; zz += z*z; xz += x*z; }
+  let ang = 0.5 * Math.atan2(2*xz, xx - zz), co = Math.cos(ang), si = Math.sin(ang), vu = 0, vv = 0;
+  for (const p of P){ const x = p[0]-c[0], z = p[1]-c[1], u = x*co + z*si, v = -x*si + z*co; vu += u*u; vv += v*v; }
+  if (vv > vu){ ang += PI/2; co = Math.cos(ang); si = Math.sin(ang); }
+  return { c, co, si,
+    L:(x, z) => [(x-c[0])*co + (z-c[1])*si, -(x-c[0])*si + (z-c[1])*co],
+    W:(u, v) => [c[0] + u*co - v*si, c[1] + u*si + v*co] };
 }
 function clipHalf(P, inside, hit){ if (!P.length) return []; const out = [];
-  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i + 1) % P.length], ia = inside(a), ib = inside(b);
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1)%P.length], ia = inside(a), ib = inside(b);
     if (ia && ib) out.push(b); else if (ia && !ib) out.push(hit(a, b)); else if (!ia && ib){ out.push(hit(a, b)); out.push(b); } }
   return out;
 }
 function clipBand(P, vOf, v0, v1){
-  const hit = (a, b, v) => { const va = vOf(a), vb = vOf(b), t = (v - va) / ((vb - va) || 1e-6); return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; };
+  const hit = (a, b, v) => { const va = vOf(a), vb = vOf(b), t = (v - va) / ((vb - va) || 1e-6); return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t]; };
   let Q = clipHalf(P, p => vOf(p) >= v0 - 1e-4, (a, b) => hit(a, b, v0));
   Q = clipHalf(Q, p => vOf(p) <= v1 + 1e-4, (a, b) => hit(a, b, v1));
-  return Q.filter((p, i) => Math.hypot(p[0] - Q[(i + Q.length - 1) % Q.length][0], p[1] - Q[(i + Q.length - 1) % Q.length][1]) > 0.4);
+  return Q.filter((p, i) => vlen2(p, Q[(i + Q.length - 1) % Q.length]) > 0.35);
 }
-const GLASS = (c, fh) => ({c, m:1, fh: fh || 4.0, cw:3.0, ds:true});
-const RED = {c:'#ffb0b0', glow:'#ff2a2a', gk:2.4, m:0, ds:true};
+function pip(P, x, z){ let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; }
+// Liang–Barsky clip of a segment to the rectangle (0..L) x (0..H), in facade coordinates.
+function clipSeg(u0, v0, u1, v1, L, H){
+  let t0 = 0, t1 = 1, du = u1-u0, dv = v1-v0;
+  const pk = [-du, du, -dv, dv], qk = [u0, L-u0, v0, H-v0];
+  for (let i = 0; i < 4; i++){
+    if (Math.abs(pk[i]) < 1e-9){ if (qk[i] < 0) return null; }
+    else { const r = qk[i] / pk[i]; if (pk[i] < 0){ if (r > t1) return null; if (r > t0) t0 = r; } else { if (r < t0) return null; if (r < t1) t1 = r; } }
+  }
+  return [u0 + du*t0, v0 + dv*t0, u0 + du*t1, v0 + dv*t1];
+}
+function ribbon(o, e, u0, v0, u1, v1, th, off){
+  const dx = u1-u0, dy = v1-v0, len = Math.hypot(dx, dy) || 1, px = -dy/len*th, py = dx/len*th;
+  quadP(o, e.F(u0+px, v0+py, off), e.F(u1+px, v1+py, off), e.F(u1-px, v1-py, off), e.F(u0-px, v0-py, off));
+}
+// White diagonal lattice over a tiled wall. Two families of lines, clipped to the facade.
+function lattice(o, e, y0, H, step, th, off){
+  const L = e.L;
+  for (const dir of [1, -1]){
+    for (let s = -H; s < L + H; s += step){
+      const c = clipSeg(s, 0, s + dir*H, H, L, H);
+      if (!c || Math.hypot(c[2]-c[0], c[3]-c[1]) < 0.4) continue;
+      ribbon(o, e, c[0], y0 + c[1], c[2], y0 + c[3], th, off);
+    }
+  }
+}
+const GL = (c, fh, cw) => ({c, m:1, fh: fh || 3.8, cw: cw || 3.1, ds:true});
+const RED = {c:'#ffb0b0', glow:'#ff2a2a', gk:2.2, m:0, ds:true};
 
-// ---------- footprints (metres from the anchor, +x east, +z south) ----------
 const SGMILLENIA = {lat:1.2926332, lon:103.8603017, r:37.5, way:48035153, P:[[-28.26,8.6],[8.79,28.03],[18.73,9.32],[28.02,-8.16],[-9.03,-27.58],[-18.25,-10.23]]};
 const SGCENTENNIAL = {lat:1.2934365, lon:103.8602859, r:44.6, way:155988210, P:[[-35.17,-6.54],[-29.05,5.73],[-21.8,13.71],[-14.93,18.37],[-12.25,16.51],[-9.03,17.03],[-6.68,19.55],[-6.95,22.75],[8.34,28.16],[23.94,27.64],[24.07,26.14],[22.37,26.08],[22.42,24.22],[26.18,23.63],[27.15,19.19],[31.52,13.77],[30.49,10.58],[32.07,8.96],[32.57,9.77],[34.26,9.16],[29.67,-0.17],[23.13,-8.58],[14.36,-14.85],[12.65,-12.84],[8.12,-13.51],[6.03,-15.51],[6.55,-18.99],[-2.33,-23.24],[-14.06,-24.74],[-24.9,-23.83],[-24.63,-22.62],[-23.67,-22.77],[-23.69,-20.71],[-27.01,-20.03],[-29.03,-13.87],[-32.63,-10.02],[-31.59,-7.5]]};
 const SGCAPITAL = {lat:1.2776741, lon:103.8476538, r:53.4, way:47345009, P:[[-43.63,12.38],[-36.25,16.94],[-0.36,39.17],[7.43,43.98],[8.99,41.5],[31.51,5.6],[39.44,-7.07],[22.65,-17.47],[25.24,-21.59],[10.13,-30.95],[7.83,-27.26],[-11.34,-39.13],[-19.56,-26],[-42.08,9.91]]};
 const SGSOTA = {lat:1.2992411, lon:103.8486383, r:83.4, way:107937797, P:[[-48.92,-48.24],[-43.2,-36.25],[-29.33,-25.08],[-45.44,-4.78],[-43.31,-3.01],[-45.18,-0.48],[-36.86,6.07],[-34.9,3.69],[-32.72,5.16],[-31.88,3.93],[-26.99,20.61],[-32.26,27.51],[-30.12,29.22],[-31.29,30.81],[-23.35,37.61],[-22.32,36.56],[-20.34,38.23],[-14.93,31.37],[-1.1,36.52],[-3.56,39.25],[-1.04,41.39],[-2.21,42.9],[5.47,48.68],[6.49,47.66],[9.24,48.78],[34.84,15.82],[36.04,16.96],[41.67,9.76],[40.34,8.69],[66.13,-24.58],[64.06,-26.06],[66.47,-29.55],[12.22,-74.4],[10.97,-72.99],[8.13,-73.78],[4.93,-69.62]]};
 const SGMALABAR = {lat:1.3051674, lon:103.8597777, r:36.3, way:531916524, P:[[-20.11,8.47],[-5.09,27.79],[21.19,7.24],[20.84,2.82],[6.9,-17.51],[2.11,-11.44],[1.73,-7.16],[-5.63,-8.42],[-10.91,-3.2],[-11.04,1.42]]};
-
 const place = k => { const D = {sgmillenia:SGMILLENIA, sgcentennial:SGCENTENNIAL, sgcapital:SGCAPITAL, sgsota:SGSOTA, sgmalabar:SGMALABAR}[k]; SG_PLACES.push({type:k, lat:D.lat, lon:D.lon, rot:0}); };
 
 // ================= ★ Millenia Tower (Kevin Roche, 1996) =================
-// Published account (Georges Binder, Tall Buildings of Asia and Australia): a square plan standing
-// on four lit cylinders around a glass lobby five storeys high, with a big pyramidal roof.
-// Roof 218 m, 41 storeys. The pyramid and the four glowing cylinders are what you recognise.
-LANDMARKS.sgmillenia = {zh:'美年大厦', en:'Millenia Tower', cat:'new', r:SGMILLENIA.r, h:218, lt:{m:1, c:'#e4eef8', k:0.72}, build(){
-  const g = new THREE.Group(), B = mkB(), P = SGMILLENIA.P, c = ctr(P);
-  const STONE = {c:'#ddd6c8', m:0, lk:0.3, ds:true}, CYL = {c:'#f6f1e6', glow:'#ffe6b4', gk:1.45, m:0, ds:true};
-  const LOB = {c:'#c5dde2', m:0, glow:'#fff1d4', gk:0.85, ds:true}, GL = GLASS('#8eacb4', 4.0);
-  const PY = {c:'#d7e2e6', m:1, fh:8, cw:5, glow:'#f7fbff', gk:0.55, ds:true}, RIB = {c:'#f4f7f8', glow:'#fff6dc', gk:1.15, m:0};
-  // plaza and a foundation, so a slope does not leave the tower standing on air
-  LPoly(g, scaleRing(P, 1.06, c), -10, 10.3, STONE);
-  // four illuminated cylinders: the tower "rests" on them, and they frame the lobby
-  for (const p of far4(P)) LCyl(g, 3.3, 3.7, 22, p[0], 0, p[1], CYL, 18);
-  LPoly(g, scaleRing(P, 0.62, c), 0.4, 21.2, LOB);
-  // office shaft, set in from the cylinders
-  const S = scaleRing(P, 0.86, c);
-  LPoly(g, S, 22, 148, GL);
-  for (let y = 36; y < 166; y += 18) LPoly(g, scaleRing(S, 1.025, c), y, 0.4, {c:'#eceae4', m:0, lk:0.25, ds:true});
-  // the pyramidal roof, 170 m to 218 m, following the real plan as it tapers
-  const y0 = 170, top = scaleRing(S, 0.07, c);
-  loftP(B.p(PY), S, y0, top, 214); capP(B.p(PY), top, 214);
-  // a rib along each hip of the pyramid, from the eave up to the tip
-  for (const p of far4(S)){ const q = [c[0] + (p[0] - c[0]) * 0.07, c[1] + (p[1] - c[1]) * 0.07];
-    LBeam(g, [p[0], y0 + 0.4, p[1]], [q[0], 214.4, q[1]], 0.55, RIB, 5); }
-  LCyl(g, 0.15, 0.7, 4.2, c[0], 214, c[1], RED, 8);
+// Square plan on four lit cylinders (each 50 ft / 15.24 m), five-storey glass lobby,
+// granite curtain wall with a tight window grid, dark glazed slots at the top corners,
+// then a ribbed glass pyramid 140 ft / 42.7 m (main roof about 176 m, tip 218 m).
+LANDMARKS.sgmillenia = {zh:'美年大厦', en:'Millenia Tower', cat:'new', r:SGMILLENIA.r, h:218, lt:{m:1, c:'#fff1dc', k:0.62}, build(){
+  const g = new THREE.Group(), B = mkB(), c = ctr(SGMILLENIA.P);
+  const SQ = cornerSq(SGMILLENIA.P);
+  const STONE = {c:'#f3f0e8', m:0, lk:0.35, ds:true}, GRAN = {c:'#e4dfd4', m:0, lk:0.4, ds:true};
+  const CYL = {c:'#f7f3ea', glow:'#ffe6b0', gk:1.5, m:0, ds:true};
+  const GLASS = Object.assign(GL('#7f8c90', 3.7, 3.05), {glow:'#ffe4b8', gk:0.2});
+  const SLOT = GL('#243038', 3.4, 2.4);
+  const PY = Object.assign(GL('#c5d0d4', 5.5, 3.6), {glow:'#f4fbff', gk:0.45});
+  const RIB = {c:'#f4f6f4', glow:'#fff6dc', gk:1.05, m:0};
+  const yShaft = 16, yRoof = 175.5, yTip = yRoof + 42.7;
+  LPoly(g, scaleRing(SGMILLENIA.P, 1.08, c), -8, 8.4, {c:'#cfc8ba', m:0, ds:true});
+  // four illuminated cylinders, pushed just outside the corners so the shaft does not swallow them
+  for (const p of SQ){ const dx = p[0]-c[0], dz = p[1]-c[1], L = Math.hypot(dx, dz) || 1;
+    LCyl(g, 2.55, 3.15, 15.24, p[0] + dx/L*2.4, 0, p[1] + dz/L*2.4, CYL, 16); }
+  LPoly(g, scaleRing(SQ, 0.48, c), 0.3, 20.2, {c:'#d5e6ea', m:0, glow:'#fff0d0', gk:0.75, ds:true});
+  const S = scaleRing(SQ, 0.90, c);
+  LPoly(g, S, yShaft, yRoof - yShaft, GLASS);
+  // granite corner piers, full height, wider than the window mullions
+  for (const p of S){ const q = [c[0] + (p[0]-c[0])*1.015, c[1] + (p[1]-c[1])*1.015];
+    boxP(B.p(GRAN), 2.05, yRoof - yShaft, 2.05, q[0], yShaft, q[1], Math.atan2(p[1]-c[1], p[0]-c[0])); }
+  // light granite grid over darker glass, kept thin enough that the lit windows show at night
+  floorBands(B.p(STONE), S, yShaft + 3.2, yRoof - 8, 3.7, 0.7, 0.26);
+  mullions(B.p(STONE), S, yShaft + 0.4, yRoof - 1, 3.15, 0.2, 0.32);
+  // the top corners step back into dark vertical window slots, under the pyramid
+  for (const e of edgesF(S)){ if (e.L < 8) continue;
+    for (const u of [2.4, e.L - 2.4]){ const p = e.F(u, 152, 0.05);
+      boxP(B.p(SLOT), 2.7, 22.5, 0.55, p[0], 152, p[2], e.ry); } }
+  // pyramid: a true square, same width as the shaft, ribbed glass, 42.7 m tall
+  const top = scaleRing(S, 0.04, c);
+  loftP(B.p(PY), S, yRoof, top, yTip - 0.6); capP(B.p(PY), top, yTip - 0.6);
+  const ribs = B.p(RIB);
+  for (let i = 0; i < S.length; i++){
+    const a = S[i], b = S[(i+1)%S.length];
+    segP(ribs, [a[0], yRoof, a[1]], [c[0], yTip, c[1]], 0.36, 4);
+    const n = 4; for (let k = 1; k < n; k++){ const t = k/n, x = a[0]+(b[0]-a[0])*t, z = a[1]+(b[1]-a[1])*t;
+      segP(ribs, [x, yRoof + 0.2, z], [c[0], yTip, c[1]], 0.14, 3); }
+  }
+  for (let s = 1; s <= 6; s++){ const t = s/7, y = yRoof + (yTip - yRoof)*t;
+    const ring = S.map(p => [c[0]+(p[0]-c[0])*(1-t), c[1]+(p[1]-c[1])*(1-t)]);
+    for (let i = 0; i < ring.length; i++){ const A = ring[i], Bv = ring[(i+1)%ring.length]; segP(ribs, [A[0], y, A[1]], [Bv[0], y, Bv[1]], 0.14, 3); } }
+  LCyl(g, 0.12, 0.45, 3.2, c[0], yTip - 0.4, c[1], RED, 8);
   B.flush(g); return g;
 }};
 place('sgmillenia');
 
 // ================= ★ Centennial Tower =================
-// Kevin Roche, completed 1997, reclad in 2015 by Thom Mayne. 158 m, 37 storeys.
-// The plan is the real rounded OSM footprint (an oval with a bite taken out of one side).
-// The current skin is a plain glass curtain wall with horizontal spandrels — the 2015 cladding —
-// rather than a guess at a folded pattern the sources do not describe.
-LANDMARKS.sgcentennial = {zh:'盛年大厦', en:'Centennial Tower', cat:'new', r:SGCENTENNIAL.r, h:158, lt:{m:1, c:'#dce8f2', k:0.7}, build(){
-  const g = new THREE.Group(), P = SGCENTENNIAL.P, c = ctr(P);
-  const STONE = {c:'#d5dbe0', m:0, lk:0.28, ds:true}, GL = GLASS('#9eb4be', 3.75), BAND = {c:'#e7eef2', m:0, lk:0.35, ds:true};
-  const LOU = {c:'#c5ced4', m:0, lk:0.4, ds:true};
-  LPoly(g, scaleRing(P, 1.03, c), -8, 8.4, {c:'#cfc8bc', m:0, lk:0.2, ds:true});
-  LPoly(g, P, 0, 8, STONE);
-  LPoly(g, scaleRing(P, 0.98, c), 8, 138, GL);
-  for (let y = 16; y < 142; y += 14) LPoly(g, scaleRing(P, 1.012, c), y, 0.38, BAND);
-  // plant screen on the roof, inset, with a few louvre bands
-  const C = scaleRing(P, 0.82, c);
-  LPoly(g, C, 146, 10, LOU);
-  for (let y = 147.2; y < 155; y += 1.6) LPoly(g, scaleRing(C, 1.03, c), y, 0.28, {c:'#8e99a1', m:0, lk:0.5, ds:true});
-  LCyl(g, 0.12, 0.45, 2.4, c[0], 156, c[1], RED, 6);
-  return g;
+// Kevin Roche, 1997, reclad in 2015 by Thom Mayne. 158 m, 37 storeys.
+// The wall follows the real curved footprint. The new skin is a field of
+// interlinking window frames; they project further the higher they sit.
+// A 12 m open trellis crowns the roof (it answers Millenia's pyramid).
+LANDMARKS.sgcentennial = {zh:'盛年大厦', en:'Centennial Tower', cat:'new', r:SGCENTENNIAL.r, h:158, lt:{m:1, c:'#e7eef6', k:0.6}, build(){
+  const g = new THREE.Group(), B = mkB(), P = SGCENTENNIAL.P, c = ctr(P);
+  const STONE = {c:'#d5dbe0', m:0, lk:0.3, ds:true}, FRAME = {c:'#e7eef2', m:0, lk:0.45, ds:true};
+  const GLASS = GL('#8fa6b0', 3.7, 3.2), METAL = {c:'#c5ced4', glow:'#f3f7fb', gk:0.35, m:0, ds:true};
+  LPoly(g, scaleRing(P, 1.04, c), -8, 8.5, {c:'#cfc8bc', m:0, ds:true});
+  LPoly(g, P, 0, 9, STONE);
+  const S = scaleRing(P, 0.985, c);
+  LPoly(g, S, 9, 137, GLASS);
+  floorBands(B.p(FRAME), S, 14, 142, 7.4, 0.32, 0.12);
+  // projecting window modules, staggered like brickwork, deeper toward the roof
+  const mods = B.p(FRAME); let row = 0;
+  for (let y = 12; y < 142; y += 6.4, row++){
+    const depth = 0.28 + 1.05 * ((y - 12) / 130);
+    const shift = (row % 2) * 2.7;
+    for (const e of edgesF(S)){ if (e.L < 5) continue;
+      for (let u = 1.6 + shift; u < e.L - 1.2; u += 5.4){
+        const p = e.F(u, y, 0.02);
+        boxP(mods, Math.min(3.15, e.L * 0.4), 2.35, depth, p[0] + e.nx*(depth*0.5 + 0.02), y, p[2] + e.nz*(depth*0.5 + 0.02), e.ry);
+      } }
+  }
+  // 12 m open trellis: posts, three hoops, and one diagonal per bay
+  const R = scaleRing(P, 0.78, c), posts = B.p(METAL);
+  for (const e of edgesF(R)){ if (e.L < 3) continue; const n = Math.max(1, Math.round(e.L / 6.5));
+    for (let k = 0; k <= n; k++){ const p = e.F(e.L*k/n, 146, 0); segP(posts, p, [p[0], 158, p[2]], 0.16, 4);
+      if (k < n){ const q = e.F(e.L*(k+1)/n, 146, 0); segP(posts, p, [q[0], 158, q[2]], 0.07, 3); } } }
+  for (const y of [149.2, 153.2, 157.2]){ for (const e of edgesF(R)){ if (e.L < 1) continue; const a = e.F(0, y, 0), b = e.F(e.L, y, 0); segP(posts, a, b, 0.11, 3); } }
+  LPoly(g, scaleRing(R, 0.92, c), 145.2, 0.7, STONE);
+  LCyl(g, 0.1, 0.4, 2.2, c[0], 158, c[1], RED, 6);
+  B.flush(g); return g;
 }};
 place('sgcentennial');
 
 // ================= ★ Capital Tower (RSP, 2000) =================
-// 254 m roof, 52 storeys, 168 Robinson Road. The office shaft is dark glass.
-// Above the occupied floors the roof becomes an open cage of vertical ribs, lit at night.
-// There is no logo and no lettering on the cage.
-LANDMARKS.sgcapital = {zh:'资金大厦', en:'Capital Tower', cat:'new', r:SGCAPITAL.r, h:254, lt:{m:1, c:'#d5e2f4', k:0.7}, build(){
-  const g = new THREE.Group(), P = SGCAPITAL.P, c = ctr(P);
-  const POD = {c:'#c8c2b6', m:0, lk:0.3, ds:true}, GL = GLASS('#4e6578', 4.05);
-  const BAND = {c:'#d9d4c8', m:0, lk:0.35, ds:true};
-  const FIN = {c:'#f4f1e8', glow:'#fff3cc', gk:1.35, m:0, ds:true}, CORE = GLASS('#8ea4b4', 4.2);
-  LPoly(g, scaleRing(P, 1.04, c), -8, 8.3, {c:'#b7b1a4', m:0, ds:true});
-  LPoly(g, P, 0, 14, POD);
-  // a glass lobby set inside the stone base, slightly proud on purpose so the entrance reads
-  LPoly(g, scaleRing(P, 0.55, c), 0.3, 12, {c:'#d5e4ea', m:0, glow:'#fff0d0', gk:0.7, ds:true});
-  const S = scaleRing(P, 0.9, c);
-  LPoly(g, S, 14, 218, GL);
-  for (let y = 28; y < 226; y += 22) LPoly(g, scaleRing(S, 1.02, c), y, 0.55, BAND);
-  // crown: an inner glass lantern and a ring of lit vertical ribs, 232 m to 254 m
-  LPoly(g, scaleRing(S, 0.72, c), 230, 20, CORE);
-  const crown = scaleRing(S, 0.92, c);
-  for (const e of edgesF(crown)){ const n = Math.max(2, Math.round(e.L / 8));
-    for (let k = 0; k < n; k++){ const u = e.L * (k + 0.5) / n, p = e.F(u, 232, 0.4);
-      LBox(g, 1.05, 22, 1.35, p[0], 232, p[2], FIN, -Math.atan2(e.ez, e.ex)); } }
-  LPoly(g, scaleRing(crown, 1.01, c), 252.5, 1.3, FIN);
-  LCyl(g, 0.2, 0.55, 2.2, c[0], 253.5, c[1], RED, 6);
-  return g;
+// 254 m roof, 52 storeys. Blue-grey glass, a strong horizontal belt every few
+// floors, a setback, then a narrower glass-grid crown. No lettering.
+LANDMARKS.sgcapital = {zh:'资金大厦', en:'Capital Tower', cat:'new', r:SGCAPITAL.r, h:254, lt:{m:1, c:'#d5e4f6', k:0.62}, build(){
+  const g = new THREE.Group(), B = mkB(), P = SGCAPITAL.P, c = ctr(P);
+  const POD = {c:'#c9c3b4', m:0, lk:0.3, ds:true}, BELT = {c:'#d5dbe2', m:0, lk:0.5, ds:true};
+  const SPAND = {c:'#b7c2cc', m:0, lk:0.35, ds:true};
+  const GLASS = GL('#5a7080', 4.0, 3.4), CROWN = GL('#8ea6b6', 3.6, 2.8);
+  const RIB = {c:'#eef2f4', glow:'#fff4d8', gk:0.85, m:0, ds:true};
+  LPoly(g, scaleRing(P, 1.05, c), -8, 8.4, {c:'#b7b1a4', m:0, ds:true});
+  LPoly(g, P, 0, 16, POD);
+  LPoly(g, scaleRing(P, 0.42, c), 0.4, 12, {c:'#d5e4ea', m:0, glow:'#fff0d0', gk:0.65, ds:true});
+  const S = scaleRing(P, 0.90, c);
+  LPoly(g, S, 16, 180, GLASS);
+  floorBands(B.p(SPAND), S, 20, 192, 4.05, 0.72, 0.28);
+  // deeper belts group the floors, which is the rhythm you see from the street
+  for (let y = 36; y < 188; y += 20) floorBands(B.p(BELT), S, y, y + 1.6, 10, 1.45, 0.7);
+  mullions(B.p(SPAND), S, 16.5, 194, 3.8, 0.2, 0.36);
+  // cornice, then a set-back shaft, then the gridded crown
+  const belt = scaleRing(S, 1.04, c), up = scaleRing(S, 0.82, c);
+  loftP(B.p(BELT), belt, 196, up, 206);
+  LPoly(g, up, 206, 22, GLASS);
+  floorBands(B.p(SPAND), up, 208, 226, 4.05, 0.36, 0.16);
+  const A = scaleRing(S, 0.70, c), Bp = scaleRing(S, 0.60, c);
+  loftP(B.p(CROWN), A, 228, Bp, 249); capP(B.p(CROWN), Bp, 249);
+  const ribs = B.p(RIB);
+  for (let i = 0; i < A.length; i++){
+    const a = A[i], b = A[(i+1)%A.length], c0 = Bp[i], d = Bp[(i+1)%Bp.length], L = vlen2(a, b);
+    const n = Math.max(1, Math.round(L / 2.8));
+    for (let k = 0; k <= n; k++){ const t = k/n;
+      segP(ribs, [a[0]+(b[0]-a[0])*t, 228, a[1]+(b[1]-a[1])*t], [c0[0]+(d[0]-c0[0])*t, 249, c0[1]+(d[1]-c0[1])*t], 0.16, 3); }
+  }
+  for (let s = 1; s <= 5; s++){ const t = s/6, y = 228 + 21*t;
+    const ring = A.map((p, i) => [p[0]+(Bp[i][0]-p[0])*t, p[1]+(Bp[i][1]-p[1])*t]);
+    for (let i = 0; i < ring.length; i++) segP(ribs, [ring[i][0], y, ring[i][1]], [ring[(i+1)%ring.length][0], y, ring[(i+1)%ring.length][1]], 0.14, 3); }
+  // louver cap, still with no mark on it
+  for (let k = 0; k < 4; k++) LPoly(g, scaleRing(Bp, 1.04 - k*0.02, c), 249.4 + k*1.05, 0.28, RIB);
+  LCyl(g, 0.16, 0.45, 2.0, c[0], 253.2, c[1], RED, 6);
+  B.flush(g); return g;
 }};
 place('sgcapital');
 
-// ================= ★ School of the Arts (WOHA) =================
-// The school moved into this campus in January 2010 (1 Zubir Said Drive).
-// The OSM footprint is one long block. Above a shared podium it is cut into three parallel bars
-// — the raised "fingers" — with open sky between them and a perforated screen of horizontal fins.
-// Bar tops follow the 50 m height tagged on this footprint.
-LANDMARKS.sgsota = {zh:'新加坡艺术学院', en:'School of the Arts', cat:'new', r:SGSOTA.r, h:50, lt:{m:1, c:'#e7efe4', k:0.55, fh:3.5, cw:2.6}, build(){
-  const g = new THREE.Group(), P = SGSOTA.P, c = ctr(P);
-  const CONC = {c:'#d2cdc2', m:0, lk:0.25, ds:true}, BASE = GLASS('#b9c3bc', 4.2);
-  const BAR = GLASS('#8f978f', 3.4), FIN = {c:'#6e756f', m:0, lk:0.45, ds:true}, GAP = {c:'#c5ddd8', m:0, glow:'#fff0d2', gk:0.4, ds:true};
-  LPoly(g, scaleRing(P, 1.02, c), -12, 12.4, {c:'#b7b3a8', m:0, ds:true});
-  LPoly(g, P, 0, 5.2, BASE);
-  LPoly(g, scaleRing(P, 0.985, c), 5.2, 9.6, CONC);
-  // three bars across the short axis of the real plan
-  const F = frameOf(P), vOf = p => F.L(p[0], p[1])[1];
-  let v0 = 1e9, v1 = -1e9; for (const p of P){ const v = vOf(p); if (v < v0) v0 = v; if (v > v1) v1 = v; }
-  // gaps wide enough that the three bars read as separate fingers from the street
-  const gap = (v1 - v0) * 0.13, w = ((v1 - v0) - 2 * gap) / 3;
-  for (let i = 0; i < 3; i++){
-    const a = v0 + i * (w + gap), b = a + w;
-    const Q = clipBand(P, vOf, a, b);
-    if (Q.length < 3) continue;
-    LPoly(g, Q, 14.6, 35.2, BAR);
-    // the perforated screen reads, at this distance, as a stack of horizontal fins
-    const qc = ctr(Q);
-    for (let y = 18; y < 48; y += 3.2) LPoly(g, scaleRing(Q, 1.015, qc), y, 0.18, FIN);
-    LPoly(g, scaleRing(Q, 0.96, qc), 49.2, 0.7, {c:'#9aa397', m:0, ds:true});
+// ================= ★ School of the Arts (WOHA, occupied 2010) =================
+// Three white-framed bars over an open ground floor. On each long face, one half
+// is a screen of vertical fins and the other half is a planted wall. A skybridge
+// ties the bars together. The base is dark folded metal. 50 m is the OSM height.
+LANDMARKS.sgsota = {zh:'新加坡艺术学院', en:'School of the Arts', cat:'new', r:SGSOTA.r, h:50, lt:{m:1, c:'#e7efe4', k:0.5, fh:3.6, cw:2.8}, build(){
+  const g = new THREE.Group(), B = mkB(), P = SGSOTA.P, c = ctr(P);
+  const WHITE = {c:'#f4f5f2', m:0, lk:0.55, ds:true}, FIN = {c:'#d5d8dc', m:0, lk:0.4, ds:true};
+  const DARK = {c:'#3c3834', m:0, lk:0.2, ds:true}, DARK2 = {c:'#2a2826', m:0, ds:true};
+  const GLASS = GL('#9aa8a4', 3.6, 2.6);
+  const GREENS = ['#3f7d3c', '#5ea24c', '#2f6a34', '#6eae58'];
+  const F = frameOf(P), vOf = p => F.L(p[0], p[1])[1], uOf = p => F.L(p[0], p[1])[0];
+  let v0 = 1e9, v1 = -1e9, u0 = 1e9, u1 = -1e9;
+  for (const p of P){ const u = uOf(p), v = vOf(p); if (v < v0) v0 = v; if (v > v1) v1 = v; if (u < u0) u0 = u; if (u > u1) u1 = u; }
+  LPoly(g, scaleRing(P, 1.02, c), -12, 12.3, {c:'#b7b3a8', m:0, ds:true});
+  // open ground floor: columns, then the floor slab the bars stand on
+  const cols = B.p(WHITE);
+  for (let u = u0 + 8; u < u1 - 8; u += 16) for (const v of [v0*0.72, 0, v1*0.72]){
+    const q = F.W(u, v); if (!pip(P, q[0], q[1])) continue; segP(cols, [q[0], 0, q[1]], [q[0], 8.2, q[1]], 0.55, 6); }
+  LPoly(g, scaleRing(P, 0.98, c), 7.6, 1.3, WHITE);
+  // dark folded skirt along the long sides
+  const skirt = B.p(DARK), skirt2 = B.p(DARK2);
+  for (const e of edgesF(P)){ if (e.L < 12) continue; const pitch = 5.2;
+    for (let u = 0; u + pitch < e.L + 0.2; u += pitch){
+      const A = e.F(u, 2.4, 0.15), M = e.F(Math.min(e.L, u + pitch*0.5), 5.4, 1.55), C = e.F(Math.min(e.L, u + pitch), 2.4, 0.15);
+      const A2 = e.F(u, 8.0, 0.2), M2 = e.F(Math.min(e.L, u + pitch*0.5), 8.0, 0.35), C2 = e.F(Math.min(e.L, u + pitch), 8.0, 0.2);
+      const o = ((u / pitch) | 0) % 2 ? skirt2 : skirt;
+      triP(o, A, M, C); triP(o, A, M, A2); triP(o, M, C, C2); triP(o, A2, M, M2); triP(o, M2, C, C2); }
   }
-  // a low glass link so the three bars read as one school, not three towers
-  LPoly(g, scaleRing(P, 0.55, c), 14.6, 4.2, GAP);
-  return g;
+  const gap = (v1 - v0) * 0.11, w = ((v1 - v0) - 2*gap) / 3;
+  const heights = [44, 50, 46];
+  for (let i = 0; i < 3; i++){
+    const a = v0 + i*(w + gap), b = a + w, Q = clipBand(P, vOf, a, b);
+    if (Q.length < 3) continue;
+    const y0b = 8.6, h = heights[i] - y0b, qc = ctr(Q);
+    LPoly(g, Q, y0b, h, GLASS);
+    LPoly(g, scaleRing(Q, 1.012, qc), y0b + h - 0.3, 1.15, WHITE);
+    LPoly(g, scaleRing(Q, 1.02, qc), y0b, 0.55, WHITE);
+    const posts = B.p(WHITE);
+    for (const p of Q) boxP(posts, 0.62, h, 0.62, p[0], y0b, p[1], 0);
+    for (const e of edgesF(Q)){ if (e.L < 16) continue;
+      const mid = e.L * 0.46;
+      // white pier splitting fins from the planted half
+      const pier = e.F(mid, y0b, 0.35); boxP(posts, 0.85, h + 1.2, 0.9, pier[0], y0b, pier[2], e.ry);
+      const fins = B.p(FIN);
+      for (let u = 0.8; u < mid - 0.6; u += 1.15){ const p = e.F(u, y0b + 0.6, 0.15);
+        boxP(fins, 0.32, h - 1.4, 0.85, p[0] + e.nx*0.5, y0b + 0.6, p[2] + e.nz*0.5, e.ry); }
+      let k = 0;
+      for (let u = mid + 1.1; u < e.L - 0.6; u += 1.25, k++){
+        const drop = (k % 5) * 0.7, ph = h - 1.2 - drop, p = e.F(u, y0b + 0.4 + drop, 0.2);
+        const col = {c:GREENS[k % GREENS.length], m:0, lk:0.15, ds:true};
+        boxP(B.p(col), 0.72, ph, 0.7, p[0] + e.nx*0.45, y0b + 0.4 + drop, p[2] + e.nz*0.45, e.ry);
+      }
+    }
+    // a little planting along the roof edge
+    const roofG = {c:'#4e9444', m:0, ds:true};
+    for (const e of edgesF(Q)){ if (e.L < 8) continue;
+      for (let u = 1.5; u < e.L; u += 3.2){ const p = e.F(u, y0b + h, 0.3);
+        boxP(B.p(roofG), 0.8, 1.3 + (u % 2)*0.6, 0.55, p[0], y0b + h, p[2], e.ry); } }
+  }
+  // two skybridges across the three bars, open underneath, so the link reads from the street
+  const bridge = (u0, u1, y) => {
+    LPoly(g, [F.W(u0, v0 + 1.2), F.W(u1, v0 + 1.2), F.W(u1, v1 - 1.2), F.W(u0, v1 - 1.2)], y, 0.9, WHITE);
+    LPoly(g, [F.W(u0 + 0.6, v0 + 1.6), F.W(u0 + 2.2, v0 + 1.6), F.W(u0 + 2.2, v1 - 1.6), F.W(u0 + 0.6, v1 - 1.6)], y + 0.9, 2.8, GLASS);
+    LPoly(g, [F.W(u1 - 2.2, v0 + 1.6), F.W(u1 - 0.6, v0 + 1.6), F.W(u1 - 0.6, v1 - 1.6), F.W(u1 - 2.2, v1 - 1.6)], y + 0.9, 2.8, GLASS);
+  };
+  bridge(-22, -6, 27); bridge(8, 24, 32);
+  B.flush(g); return g;
 }};
 place('sgsota');
 
-// ================= ★ Malabar Mosque, the Blue Mosque (A.H. Siddique, 1963) =================
-// Blue lapis-tile walls (the tiles date from the 1995 renovation) and golden onion domes.
-// Wikipedia records a single minaret two metres tall, with its own small golden cap — not a pair
-// of tall towers — so that is what is modelled. Dome sizes are taken from the footprint:
-// no published dome height was found. The plan already faces the way the real building does.
-LANDMARKS.sgmalabar = {zh:'马拉巴回教堂', en:'Malabar Mosque', cat:'old', r:SGMALABAR.r, h:32, lt:{m:0, c:'#d7e2ff', k:0.95, e:0.45, anim:'breathe'}, build(){
+// ================= ★ Malabar Mosque (A.H. Siddique, 1963) =================
+// Light turquoise tiles with a white geometric lattice (the tiles are the 1995
+// work; the walls were painted before that). A gold onion dome on a drum, smaller
+// domes beside it, and an octagonal minaret with its own small gold cap and crescent.
+// Dome heights are not published; they are proportioned to this footprint and to
+// photographs. No calligraphy.
+LANDMARKS.sgmalabar = {zh:'马拉巴回教堂', en:'Malabar Mosque', cat:'old', r:SGMALABAR.r, h:28, lt:{m:0, c:'#d7e8ff', k:0.85, e:0.4, anim:'breathe'}, build(){
   const g = new THREE.Group(), B = mkB(), P = SGMALABAR.P, c = ctr(P);
-  const BLUE = {c:'#1a468f', m:0, lc:'#d5e4ff', lk:0.9, ds:true}, BLUE2 = {c:'#2456a8', m:0, lc:'#d5e4ff', lk:0.9, ds:true};
-  const WHITE = {c:'#f6f2e8', m:0, lk:0.7, ds:true}, DARK = {c:'#1a2230', glow:'#ffd9a6', gk:0.28, m:0, ds:true};
-  const GOLD = {c:'#e0b03a', glow:'#ffd56a', gk:1.15, m:0, ds:true}, GOLD2 = {c:'#f0cb6a', glow:'#ffe08a', gk:1.3, m:0};
-  LPoly(g, scaleRing(P, 1.04, c), -6, 6.5, {c:'#c9c3b4', m:0, ds:true});
-  // two-storey prayer block (the hall is on the upper floor) in two blues, like tile courses
-  LPoly(g, P, 0, 6.2, BLUE);
-  LPoly(g, scaleRing(P, 0.992, c), 6.2, 5.4, BLUE2);
-  LPoly(g, scaleRing(P, 1.015, c), 11.4, 0.7, WHITE);
-  LPoly(g, scaleRing(P, 1.01, c), 5.9, 0.45, WHITE);
-  // arched openings on every long wall
-  for (const e of edgesF(P)){ if (e.L < 8) continue; const n = Math.max(2, Math.round(e.L / 4.4)), bw = e.L / n;
-    for (let k = 0; k < n; k++){ const u = bw * (k + 0.35);
-      for (const yb of [1.1, 6.8]){ const ht = yb < 3 ? 3.6 : 3.3, hw = Math.min(1.15, bw * 0.32);
+  const CYAN = {c:'#5eb4c6', m:0, lc:'#e7f4ff', lk:0.75, ds:true};
+  const CYAN2 = {c:'#3f9aaf', m:0, lc:'#e7f4ff', lk:0.7, ds:true};
+  const WHITE = {c:'#f7f4ec', m:0, lk:0.7, ds:true};
+  const DARK = {c:'#1c2830', glow:'#ffd9a8', gk:0.35, m:0, ds:true};
+  const GOLD = {c:'#e2b23c', glow:'#ffd56a', gk:1.2, m:0, ds:true};
+  const GOLD2 = {c:'#f0cb6c', glow:'#ffe090', gk:1.15, m:0};
+  const yWall = 13.2;
+  LPoly(g, scaleRing(P, 1.05, c), -4, 4.4, {c:'#c9c3b4', m:0, ds:true});
+  LPoly(g, P, 0, 6.4, CYAN);
+  LPoly(g, scaleRing(P, 0.992, c), 6.4, yWall - 6.4, CYAN2);
+  LPoly(g, scaleRing(P, 0.96, c), yWall, 0.45, WHITE);
+  // white lattice over every wall, then the arched openings on top of it
+  const lat = B.p(WHITE), arches = B.p(WHITE), holes = B.p(DARK);
+  for (const e of edgesF(P)){ if (e.L < 3) continue;
+    lattice(lat, e, 0.6, yWall - 1.1, 2.6, 0.16, 0.2);
+    if (e.L < 9) continue;
+    const n = Math.max(2, Math.round(e.L / 5.2)), bw = e.L / n;
+    for (let k = 0; k < n; k++){ const u = bw*(k + 0.5);
+      for (const yb of [1.3, 7.2]){ const ht = yb < 3 ? 3.5 : 3.15, hw = Math.min(1.05, bw*0.28);
         const F = (uu, vv, w) => e.F(u + uu, yb + vv, w);
-        slabP(B.p(WHITE), archO(hw + 0.18, ht + 0.2), F, 0.02, 0.28);
-        shapeP(B.p(DARK), archO(hw, ht), F, 0.34); } } }
-  // golden onion domes: one large, and a smaller one toward each corner
-  const onion = r => [[r * 0.25, 0], [r * 0.9, r * 0.15], [r * 1.05, r * 0.55], [r * 0.85, r * 0.95], [r * 0.4, r * 1.4], [r * 0.1, r * 1.72], [0.04, r * 1.9]];
-  const domeAt = (x, z, r, y) => { LCyl(g, r * 0.55, r * 0.7, r * 0.45, x, y, z, WHITE, 16); LLathe(g, onion(r), x, y + r * 0.4, z, GOLD, 22); LCyl(g, 0.06, 0.12, r * 0.55, x, y + r * 0.4 + r * 1.85, z, GOLD2, 6); };
-  domeAt(c[0], c[1], 6.4, 12.1);
-  for (const p of far4(scaleRing(P, 0.58, c))) domeAt(p[0], p[1], 2.5, 12.1);
-  // the single 2 m minaret, with a small golden cap, standing on the roof at one corner
-  const m = far4(P)[0];
-  LCyl(g, 0.42, 0.5, 2.0, m[0], 12.2, m[1], WHITE, 10);
-  LLathe(g, onion(0.55), m[0], 14.2, m[1], GOLD, 12);
+        slabP(arches, archO(hw + 0.16, ht + 0.18), F, 0.18, 0.4);
+        shapeP(holes, archO(hw, ht), F, 0.46); } }
+    // a string course and a row of small merlons
+    for (let u = 0.8; u < e.L; u += 1.7){ const p = e.F(u, yWall, 0.25); boxP(lat, 0.55, 0.7, 0.4, p[0], yWall, p[2], e.ry); }
+  }
+  // gold onion on an octagonal drum; ribs so the dome is not a smooth blob
+  const onionProf = r => [[r*0.22, 0], [r*0.85, r*0.12], [r*1.02, r*0.5], [r*0.78, r*0.95], [r*0.38, r*1.35], [r*0.1, r*1.62], [0.03, r*1.78]];
+  const ribsOf = (x, y, z, r, n) => { const prof = onionProf(r), o = B.p(GOLD2);
+    for (let i = 0; i < n; i++){ const a = i/n*TAU, ca = Math.cos(a), sa = Math.sin(a);
+      polyP(o, prof.map(p => [x + ca*p[0], y + p[1], z + sa*p[0]]), 0.045, 3); } };
+  // a crescent thick enough to read from the street, plus a small finial
+  const crescentAt = (x, y, z, r) => { const o = B.p(GOLD2);
+    const sweep = (yaw) => { const cy = Math.cos(yaw), sy = Math.sin(yaw);
+      for (let i = 0; i < 8; i++){ const a0 = 0.45 + i/8*2.25, a1 = 0.45 + (i+1)/8*2.25;
+        const p = (a, rr) => [x + Math.cos(a)*rr*cy, y + Math.sin(a)*rr, z + Math.cos(a)*rr*sy];
+        quadP(o, p(a0, r), p(a1, r), p(a1, r*0.62), p(a0, r*0.62)); } };
+    sweep(0); sweep(PI/2); LCyl(g, 0.05, 0.12, r*0.7, x, y + r*0.15, z, GOLD2, 6); };
+  const domeAt = (x, z, r, y) => {
+    LCyl(g, r*0.62, r*0.78, r*0.5, x, y, z, WHITE, 8);
+    LCyl(g, r*0.8, r*0.8, r*0.12, x, y + r*0.38, z, CYAN, 8);
+    LLathe(g, onionProf(r), x, y + r*0.48, z, GOLD, 18);
+    ribsOf(x, y + r*0.48, z, r, 8);
+    crescentAt(x, y + r*0.48 + r*1.78, z, r*0.28);
+  };
+  domeAt(c[0], c[1], 4.3, yWall);
+  // smaller dome to the west of the main one, and little domes on the other corners
+  let east = P[0], west = P[0];
+  for (const p of P){ if (p[0] > east[0]) east = p; if (p[0] < west[0]) west = p; }
+  const outP = p => { const dx = p[0]-c[0], dz = p[1]-c[1], L = Math.hypot(dx, dz) || 1; return [p[0] - dx/L*1.2, p[1] - dz/L*1.2]; };
+  const wpt = outP(west); domeAt(wpt[0], wpt[1], 2.15, yWall);
+  for (const p of far4(P)){ if (Math.hypot(p[0]-east[0], p[1]-east[1]) < 3 || Math.hypot(p[0]-west[0], p[1]-west[1]) < 3) continue;
+    const q = outP(p); domeAt(q[0], q[1], 1.45, yWall); }
+  // octagonal minaret just outside the east corner, taller than the wall, smaller gold cap
+  { const dx = east[0]-c[0], dz = east[1]-c[1], L = Math.hypot(dx, dz) || 1;
+    const x = east[0] + dx/L*2.6, z = east[1] + dz/L*2.6, H = 20.5;
+    LCyl(g, 1.85, 2.15, H, x, 0, z, CYAN, 8);
+    for (let y = 3.2; y < H - 1; y += 3.4) LCyl(g, 2.05, 2.05, 0.28, x, y, z, WHITE, 8);
+    LCyl(g, 2.35, 2.35, 0.45, x, H - 0.2, z, WHITE, 8);
+    // a small arched opening on each second face of the shaft
+    for (let i = 0; i < 4; i++){ const a = i/4*TAU, ca = Math.cos(a), sa = Math.sin(a);
+      const F = (u, v, w) => [x + ca*(2.05 + (w || 0)) - sa*u, v, z + sa*(2.05 + (w || 0)) + ca*u];
+      slabP(arches, archO(0.38, 1.5).map(q => [q[0], q[1] + 8]), F, 0, 0.12);
+      shapeP(holes, archO(0.26, 1.15).map(q => [q[0], q[1] + 8.15]), F, 0.16); }
+    LLathe(g, onionProf(1.35), x, H + 0.3, z, GOLD, 14);
+    ribsOf(x, H + 0.3, z, 1.35, 8);
+    crescentAt(x, H + 0.3 + 1.35*1.78, z, 0.42);
+  }
   B.flush(g); return g;
 }};
 place('sgmalabar');
 
-// Test handle used to frame screenshots. It only moves the camera the app already has.
+// Moves the camera the app already has, so screenshots can frame each model.
+// heading 0 puts the camera to the south. dist is metres.
 window.__sgx = {
   ready(){ return landmarks.some(L => L.type === 'sgmillenia' && L.top != null) && landmarks.some(L => L.type === 'sgmalabar' && L.top != null); },
   names(){ return landmarks.filter(L => ['sgmillenia','sgcentennial','sgcapital','sgsota','sgmalabar'].includes(L.type)).map(L => ({type:L.type, top:+L.top.toFixed(2), x:+L.x.toFixed(1), y:+L.y.toFixed(1), h:LANDMARKS[L.type].h})); },
-  // heading 0: camera sits south of the building. dist is metres. night uses 21:30.
   look(type, dist, heading, elev, night){
     const L = landmarks.find(q => q.type === type); if (!L) return false;
-    const aimY = (L.top || 0) + Math.min(LANDMARKS[type].h * 0.42, 90);
+    const aimY = (L.top || 0) + Math.min(LANDMARKS[type].h * 0.55, 150);
     const horiz = Math.cos(elev) * dist, vert = Math.sin(elev) * dist;
     camera.position.set(L.x + Math.sin(heading) * horiz, aimY + vert, -L.y + Math.cos(heading) * horiz);
     controls.target.set(L.x, aimY, -L.y);
@@ -79475,20 +79672,20 @@ Object.assign(window.LM_INFO, {
 
   // ---------------- five more heroes (Marina Centre, Shenton Way, Bras Basah, Kampong Glam) ----------------
   sgmillenia: {k:{zh:"摩天大楼", en:"Skyscraper"}, y:"1996", h:218, fl:41, a:{zh:"凯文·洛奇", en:"Kevin Roche"},
-    d:{zh:"美年大厦位于滨海中心淡马锡大道1号，紧邻宝门廊地铁站，1992年动工、1996年完工，高218米、41层，是美年城这组建筑里最高的一座。平面是正方形，整座塔楼立在四根会发光的圆柱上，圆柱之间是五层高的玻璃大堂；楼顶是一座巨大的玻璃金字塔，也是这一带天际线的焦点。",
-       en:"Millenia Tower, at 1 Temasek Avenue in Marina Centre beside Promenade MRT, was built from 1992 to 1996. At 218 metres and 41 storeys it is the tallest building in the Millenia Singapore development. Its square plan stands on four lit cylinders around a glass lobby five storeys high, and a large glass pyramid crowns the roof."}},
+    d:{zh:"美年大厦位于滨海中心淡马锡大道1号，紧邻宝门廊地铁站，1992年动工、1996年完工，高218米、41层，是美年城这组建筑里最高的一座。平面是正方形，立在四根会发光的圆柱上，每根约15米（50英尺），圆柱之间是五层高的玻璃大堂。塔身是浅色花岗石幕墙，窗格又密又齐，靠近顶部的四角收进一列深色玻璃。主屋面大约在176米，上面是一座约43米（140英尺）高的玻璃金字塔，金字塔上有一圈圈肋条。",
+       en:"Millenia Tower, at 1 Temasek Avenue in Marina Centre beside Promenade MRT, was built from 1992 to 1996. At 218 metres and 41 storeys it is the tallest building in the Millenia Singapore development. The square plan stands on four lit cylinders, each about 15 metres (50 feet), around a glass lobby five storeys high. The shaft is a pale granite curtain wall with a tight window grid, and the top corners step back into dark glazing. The main roof is about 176 metres, under a ribbed glass pyramid about 43 metres (140 feet) tall."}},
   sgcentennial: {k:{zh:"摩天大楼", en:"Skyscraper"}, y:"1997", h:158, fl:37, a:{zh:"凯文·洛奇；2015年外立面由汤姆·梅恩重做", en:"Kevin Roche; facade reclad in 2015 by Thom Mayne"},
-    d:{zh:"盛年大厦在淡马锡大道3号，与美年大厦、新达城相邻。1995年开工、1997年完工，高158米、37层。最初由凯文·洛奇设计，2015年由汤姆·梅恩更换了外立面。结构上预留了往上加盖约15层的余地，但建成后一直是37层。1999年它获得建设局“最佳可施工设计奖”（商业与办公楼组别）。",
-       en:"Centennial Tower stands at 3 Temasek Avenue, next to Millenia Tower and Suntec City. Started in 1995 and finished in 1997, it is 158 metres and 37 storeys. Kevin Roche designed it; in 2015 Thom Mayne gave it a new facade. The structure was built so that about 15 more storeys could be added later, but it has stayed at 37. In 1999 it won the Building and Construction Authority's Best Buildable Design Award for commercial and office buildings."}},
+    d:{zh:"盛年大厦在淡马锡大道3号，与美年大厦、新达城相邻。1995年开工、1997年完工，高158米、37层。最初由凯文·洛奇设计，2015年由汤姆·梅恩更换了外立面：一格格互相咬合的窗框，越往上挑出越深。屋顶有一座约12米高的镂空格架，用来呼应旁边美年大厦的金字塔。结构上预留了往上加盖约15层的余地，但建成后一直是37层。1999年它获得建设局“最佳可施工设计奖”（商业与办公楼组别）。",
+       en:"Centennial Tower stands at 3 Temasek Avenue, next to Millenia Tower and Suntec City. Started in 1995 and finished in 1997, it is 158 metres and 37 storeys. Kevin Roche designed it. In 2015 Thom Mayne reclad it with interlinking window frames that project further as they rise, and a 12 metre open trellis that answers Millenia's pyramid. The structure was built so that about 15 more storeys could be added later, but it has stayed at 37. In 1999 it won the Building and Construction Authority's Best Buildable Design Award for commercial and office buildings."}},
   sgcapital: {k:{zh:"摩天大楼", en:"Skyscraper"}, y:"2000", h:254, fl:52, a:{zh:"RSP建筑师规划与工程事务所", en:"RSP Architects Planners & Engineers"},
-    d:{zh:"资金大厦在罗敏申路168号，丹戎巴葛地铁站旁边，2000年完工，高254米、52层，2001年5月16日由时任国家发展部长马宝山主持揭幕。它原先计划作为邮政储蓄银行的总部，后来成为凯德的旗舰楼。52层由五部双层穿梭电梯服务；顶层是会员制的中国会，2001年5月19日开业。夜里楼顶会被照亮。",
-       en:"Capital Tower, 168 Robinson Road beside Tanjong Pagar MRT, was completed in 2000. It is 254 metres and 52 storeys, and was opened on 16 May 2001 by Mah Bow Tan, then Minister for National Development. Planned as the POSBank headquarters, it became CapitaLand's flagship. Five double-deck shuttle lifts serve the floors. The members' China Club on the top floor opened on 19 May 2001. The crown is lit at night."}},
+    d:{zh:"资金大厦在罗敏申路168号，丹戎巴葛地铁站旁边，2000年完工，高254米、52层，2001年5月16日由时任国家发展部长马宝山主持揭幕。它原先计划作为邮政储蓄银行的总部，后来成为凯德的旗舰楼。塔身是蓝灰玻璃，每隔几层有一道较深的水平腰线，上部收进，顶上是更窄的玻璃格栅塔冠，夜里会被照亮。52层由五部双层穿梭电梯服务；顶层是会员制的中国会，2001年5月19日开业。",
+       en:"Capital Tower, 168 Robinson Road beside Tanjong Pagar MRT, was completed in 2000. It is 254 metres and 52 storeys, and was opened on 16 May 2001 by Mah Bow Tan, then Minister for National Development. Planned as the POSBank headquarters, it became CapitaLand's flagship. The shaft is blue-grey glass with a deep horizontal belt every few floors, then a setback and a narrower glass-grid crown that is lit at night. Five double-deck shuttle lifts serve the floors. The members' China Club on the top floor opened on 19 May 2001."}},
   sgsota: {k:{zh:"艺术学校", en:"Arts school"}, y:"2010", h:50, a:{zh:"WOHA建筑事务所", en:"WOHA"},
-    d:{zh:"新加坡艺术学院是一所六年制艺术专科学校，2008年1月2日开办，2010年1月迁入布拉斯巴沙、索菲亚山脚的朱比萨伊路1号新校舍。校舍由WOHA设计：底下是贯通的裙楼，上面分成三座平行的长条楼，中间留出空隙，外立面有一排排水平遮阳鳍片。地图上这座建筑标高约50米。",
-       en:"School of the Arts is a six-year specialised arts school. It opened on 2 January 2008 and moved in January 2010 into its campus at 1 Zubir Said Drive, Bras Basah, at the foot of Mount Sophia. WOHA designed the building: a shared podium, then three parallel bars with open gaps between them and rows of horizontal sunshade fins. The mapped height of this block is about 50 metres."}},
+    d:{zh:"新加坡艺术学院是一所六年制艺术专科学校，2008年1月2日开办，2010年1月迁入布拉斯巴沙、索菲亚山脚的朱比萨伊路1号新校舍。校舍由WOHA设计：地面层架空，底部包着深色折叠金属，上面是三座白色框架的长条楼。每座长向立面一半是密排的竖向鳍片，一半是垂直绿化，楼与楼之间有天桥。地图上这座建筑标高约50米。",
+       en:"School of the Arts is a six-year specialised arts school. It opened on 2 January 2008 and moved in January 2010 into its campus at 1 Zubir Said Drive, Bras Basah, at the foot of Mount Sophia. WOHA designed it with an open ground floor, a dark folded-metal base, and three white-framed bars. Each long face is half dense vertical fins and half a planted wall, and a skybridge links the bars. The mapped height of this block is about 50 metres."}},
   sgmalabar: {k:{zh:"清真寺", en:"Mosque"}, y:"1963", a:{zh:"A.H. Siddique", en:"A.H. Siddique"},
-    d:{zh:"马拉巴回教堂在甘榜格南，维多利亚街471号与苏丹街的路口，1963年由南印度马拉巴穆斯林社群建成，又叫“蓝清真寺”。外墙在1995年翻新时贴上青金石蓝瓷砖，屋顶是几座金色的洋葱形圆顶。建筑师是A.H. Siddique，风格带有莫卧儿与印度-萨拉森的做法，平面斜向麦加。礼拜大殿在二楼。屋顶只有一座约2米高的宣礼塔，塔顶也是一个小金顶。",
-       en:"The Malabar Mosque, also called the Blue Mosque, stands at 471 Victoria Street where it meets Jalan Sultan in Kampong Glam. The Malabar Muslim community finished it in 1963. Lapis-blue tiles, added in the 1995 renovation, cover the outside, and golden onion domes sit on the roof. A.H. Siddique designed it in a Mughal and Indo-Saracenic manner, and the plan is set diagonally toward Mecca. The main prayer hall is on the upper floor. There is a single minaret about two metres tall, with a small golden cap."}}
+    d:{zh:"马拉巴回教堂在甘榜格南，维多利亚街471号与苏丹街的路口，1963年1月24日由总统尤索夫·伊沙克主持启用，南印度马拉巴穆斯林社群出资，又叫“蓝清真寺”。建筑师是A.H. Siddique，平面斜向麦加，礼拜大殿在二楼，三面有游廊。外墙原先是油漆，1995年翻新时改贴浅蓝与白色的几何瓷砖。中央是一座坐在鼓座上的金色洋葱顶，一侧有较小的金顶，另一侧是八角宣礼塔，塔顶同样是小金顶和新月。",
+       en:"The Malabar Mosque, also called the Blue Mosque, stands at 471 Victoria Street where it meets Jalan Sultan in Kampong Glam. President Yusof Ishak opened it on 24 January 1963 for the Malabar Muslim community. A.H. Siddique designed it with the plan set toward Mecca; the prayer hall is on the upper floor, with verandas on three sides. The walls were painted until the 1995 renovation, which added light turquoise and white geometric tiles. A gold onion dome sits on a drum, with a smaller dome to one side and an octagonal minaret, itself capped by a small gold dome and crescent, to the other."}}
 });
 
 /* ================= v36 lm32/detail: sharp ground near the camera and in the big map (window.SGDetail) =================

@@ -59,7 +59,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:2.8}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:1.65}));b.buckets.delete(mode);}}
 
 // The legacy anchor/OSM 481614952 is an ancillary building; see REVIEW.md.
 register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa Perumal Temple',80,(b,D,G,g)=>{

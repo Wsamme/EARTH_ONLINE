@@ -1,7 +1,8 @@
 # v17: Singapore becomes the real island at 1:1 (real roads, buildings, coastline). Applies on top of the v16 build.
 # usage: python3 patch17.py <in.html> <out.html>
-import sys, re
-SC = '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/'
+import sys, re, os
+# src/ directory: this file lives in src/sgreal/. The old scratchpad absolute path is not used.
+SC = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + '/'
 src = open(sys.argv[1]).read()
 def R(a, b, count=1):
     global src
@@ -180,7 +181,7 @@ import os
 MODS = ['sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm16/sg2/changi.js', 'lm18/f1/f1.js', 'lm18/f2/f2.js', 'lm18/a/a.js', 'lm18/b/b.js', 'lm18/c/c.js', 'lm18/d/d.js', 'sgtest_uss/uss.js']
 # v24: lm22 = the wave-3 landmark upgrades (they load before lm20/core so its light-show table still merges into them)
 # v20 add-ons (included when present; EXTRA_MODS env adds more, SKIP_MODS removes some, for module tests)
-MODS += ['lm20/nus/nus.js', 'lm29/nuseng/nuseng.js', 'lm29/nuscentral/nuscentral.js', 'lm29/nussci/nussci.js', 'lm29/nusutown/nusutown.js', 'lm29/nushalls/nushalls.js', 'lm29/nussci/nusduke.js', 'lm29/nushalls/nusbt.js', 'lm20/ntu/ntu.js', 'lm20/changi/changi.js', 'lm20/w1/w1.js', 'lm20/w2/w2.js', 'lm20/w3/w3.js', 'lm20/w4/w4.js', 'lm20/w5/w5.js', 'lm22/marina/marina.js', 'lm27/flyer/flyer.js', 'lm22/rafflesplace/rafflesplace.js', 'lm22/tanjongpagar/tanjongpagar.js', 'lm22/civic/civic.js', 'lm22/heritage/heritage.js', 'lm22/orchardsport/orchardsport.js', 'lm22/gardens/gardens.js', 'lm26/sgcivic/sgcivic.js', 'lm26/sgriver/sgriver.js', 'lm26/sgcbd/sgcbd.js', 'lm26/sgbugis/sgbugis.js', 'lm26/sgouter/sgouter.js', 'lm20/air/air.js', 'lm20/signs/signs.js', 'lm20/hdb/hdb.js', 'lm20/port/port.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/f1track/f1track.js', 'lm20/traffic/traffic.js', 'lm20/crown/crown.js', 'lm20/audio/audio.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_sg/info_sg.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
+MODS += ['lm20/nus/nus.js', 'lm29/nuseng/nuseng.js', 'lm29/nuscentral/nuscentral.js', 'lm29/nussci/nussci.js', 'lm29/nusutown/nusutown.js', 'lm29/nushalls/nushalls.js', 'lm29/nussci/nusduke.js', 'lm29/nushalls/nusbt.js', 'lm20/ntu/ntu.js', 'lm20/changi/changi.js', 'lm20/w1/w1.js', 'lm20/w2/w2.js', 'lm20/w3/w3.js', 'lm20/w4/w4.js', 'lm20/w5/w5.js', 'lm22/marina/marina.js', 'lm27/flyer/flyer.js', 'lm22/rafflesplace/rafflesplace.js', 'lm22/tanjongpagar/tanjongpagar.js', 'lm22/civic/civic.js', 'lm22/heritage/heritage.js', 'lm22/orchardsport/orchardsport.js', 'lm22/gardens/gardens.js', 'lm26/sgcivic/sgcivic.js', 'lm26/sgriver/sgriver.js', 'lm26/sgcbd/sgcbd.js', 'lm26/sgbugis/sgbugis.js', 'lm26/sgouter/sgouter.js', 'lm34/sgx_hero/sgx_hero.js', 'sg200/b01.js', 'sg200/b02.js', 'sg200/b03.js', 'sg200/b04.js', 'sg200/b05.js', 'sg200/b06.js', 'sg200/b07.js', 'sg200/b08.js', 'sg200/b09.js', 'sg200/b10.js', 'sg200/engine.js', 'sg200/heroes.js', 'sg200/heroes_fix.js', 'sg200/heroes_towers.js', 'lm20/air/air.js', 'lm20/signs/signs.js', 'lm20/hdb/hdb.js', 'lm20/port/port.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/f1track/f1track.js', 'lm20/traffic/traffic.js', 'lm20/crown/crown.js', 'lm20/audio/audio.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_sg/info_sg.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules (by folder name), LM20= : none
     keep20 = set(x for x in os.environ['LM20'].split(',') if x); MODS = [m for m in MODS if not m.startswith('lm20/') or m.split('/')[1] in keep20]
 MODS += [m for m in os.environ.get('EXTRA_MODS', '').split(',') if m]
@@ -238,5 +239,9 @@ POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_de
 for _p in POSTS + [x for x in os.environ.get('EXTRA_POSTS', '').split(',') if x]:
     _ns = {'__file__': SC + _p}; exec(compile(open(SC + _p).read(), SC + _p, 'exec'), _ns); src = _ns['apply'](src, CITY); print('post', _p)
 src = src.replace('<title>', '<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is (the map switch reads it)
+# The page is full of UTF-8 (Chinese labels, and a character-class regex). Without a charset,
+# a browser that does not sniff the encoding compiles that regex wrong and the script never runs.
+if not src.lstrip().lower().startswith('<meta charset'):
+    src = '<meta charset="utf-8">\n' + src
 open(sys.argv[2], 'w').write(src)
 print('ok', len(src))

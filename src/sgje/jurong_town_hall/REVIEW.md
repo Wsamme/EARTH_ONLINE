@@ -59,7 +59,7 @@ Final offline geometry check (`node tools/je_gateway_geometry.cjs`): **8,532
 triangles**, zero degenerate triangles, all coordinates finite, maximum y
 **59.2997 m**. Node syntax check passes.
 
-Matched-camera r3 verification reports **zero page errors and zero console
+Final combined matched-camera verification reports **zero page errors and zero console
 errors**. All eight day views and the south/close-southwest night views were
 rendered. Final comparison sheet, north/east/top overlays and south night image
 were visually inspected.
@@ -87,9 +87,13 @@ The north/east/top outlines do not support expanding the entire building to
 cover those residuals. The street image is almost entirely tree occlusion.
 Further indiscriminate enlargement would harm the observed cantilever and OSM
 plan, so massing iteration stops here. Interior/crown detail limits below remain
-honest visual approximations. Root worker performs the final combined build.
+honest visual approximations. The final combined build and independent geometry/artifact audit pass.
 
 Roof plant layout, clock blade curvature and exact intermediate floor levels are
 approximations. No surrounding parking lots, neighbouring structures or mature
 tree canopies were added to increase the silhouette score. Landscaping stays
 within the footprint. There are no subsidiary landmark keys.
+
+The reference metadata marks close northeast, close southwest and street
+captures `tiles_settled:false`. The compass and top captures are settled;
+these are the primary massing checks.

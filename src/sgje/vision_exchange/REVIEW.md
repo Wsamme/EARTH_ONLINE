@@ -10,4 +10,47 @@
 
 ## Matched-camera refinement
 
-Initial r5: n .696, e .811, s .764, w .770, top .759; close_ne .888, close_sw .820, street .820. Mean n/e/s/w/top .760; mean all .791. 20,416 triangles and zero page/console errors (root verification). The top and north overlays revealed a real northwest tower setback absent from the first version, plus an overly tapered north face. The corrected approximately 119 × 23.3 m slab follows the visible top roof corners and preserves the full OSM podium. Podium terrace raised from 19.3 to measured p50 22.7 m; terrace opening now 3.5 m. Final comparison pending.
+Initial r5: n .696, e .811, s .764, w .770, top .759; close_ne .888, close_sw .820, street .820. Mean n/e/s/w/top .760; mean all .791. 20,416 triangles and zero page/console errors (root verification). The top and north overlays revealed a real northwest tower setback absent from the first version, plus an overly tapered north face. The corrected approximately 119 × 23.3 m slab follows the visible top roof corners and preserves the full OSM podium. Podium terrace raised from 19.3 to measured p50 22.7 m; terrace opening now 3.5 m. Final comparison below.
+
+
+## Final verification and stopping reason
+
+Final assembled-app comparison (`renders/final/verification.json`, root-run): **zero page errors and zero console errors; 18,294 triangles**.
+
+| View | IoU |
+| --- | ---: |
+| n | .758 |
+| e | .815 |
+| s | .811 |
+| w | .805 |
+| top | .850 |
+| close_ne | .946 |
+| close_sw | .935 |
+| street | .918 |
+
+Mean n/e/s/w/top: **.808**; mean all eight: **.855**.
+
+The final compare sheet plus north/east/top overlays were visually inspected. The large northwest model-only tower extension from r5 is removed. Remaining reference-only area includes two temporary tower cranes and the column-filled silhouettes beneath their booms, unfinished podium/construction grade and basement edges, and the 3 m footprint buffer. Minor roof/edge/setback differences remain estimates because the references show construction rather than the completed photographed building. Stop here: broadening the finished building to absorb those mask regions would add geometry unsupported by the real completed-building photographs. No cranes, unfinished cladding or fake basement mass were added. The warm podium night treatment has a real storefront photo cross-check; full tower office occupancy and intensity remain unverified, as disclosed above.
+
+
+## Integration verification
+
+The four owned modules register their measured heights locally, keeping runtime
+cards, stats and shader height uniforms consistent while the protected shared
+catalogue remains unchanged. Card labels follow the supplied reference metadata.
+The lead should regenerate the shared catalogue using Vision's **122.1 m roof
+p90**, excluding the temporary **144.2 m crane maximum**. Other maxima are
+JTC 150.7 m, CPF 22.5 m and Town Hall 59.3 m.
+
+`bash tools/bv_build.sh --test` passes. The independent command
+`node tools/je_gateway_geometry.cjs --browser-report /workspace/eo_je_out/gateway/renders/final/verification.json`
+exits 0: four models, 53,737 triangles, finite vertices, zero degenerate triangles,
+consistent registration heights, all 40 day/night records, all 32 masks and four
+complete IoU score sets. Browser reports have zero page and console errors.
+
+Runner caveat: the render command wrapper reported SIGTERM 143 after the complete
+comparison sheets, scores and final verification report had been written. The
+independent artifact/geometry audit above exited 0 and verified those outputs;
+the launcher exit status is recorded separately from the zero browser errors.
+
+No shared source files, image references or generated pages are committed.

@@ -32,4 +32,26 @@ for(const slug of slugs){
  results.push({slug,triangles,degenerate,bounds:{min:box.min.toArray(),max:box.max.toArray()},registeredHeight:def.h,measuredHeight,rawMeasuredMaximum:measured?.value_m??null,heightError});
 }
 if(ctx.SG_PLACES.length!==4)throw Error('Expected exactly four placements');
-console.log(JSON.stringify(results,null,2));
+const reportArg=process.argv.indexOf('--browser-report');
+let browserVerification=null;
+if(reportArg>=0){
+ const file=process.argv[reportArg+1];if(!file)throw Error('Missing browser report path');
+ const report=JSON.parse(fs.readFileSync(file)),dir=path.dirname(file);
+ if(report.pageErrors.length||report.consoleErrors.length)throw Error('Browser errors present');
+ const views=['n','e','s','w','top','close_ne','close_sw','street'];
+ const scores=JSON.parse(fs.readFileSync(path.resolve(dir,'../../je_iou.json')));
+ for(const model of results){
+  const actual=report.models[model.slug];
+  if(views.some(v=>!Number.isFinite(scores[model.slug]?.views[v])||scores[model.slug].views[v]<0||scores[model.slug].views[v]>1))throw Error('Incomplete IoU scores '+model.slug);
+  if(!actual||actual.triangles!==model.triangles||Math.abs(actual.height-model.registeredHeight)>.01)throw Error('Browser/geometry stats mismatch '+model.slug);
+  for(const view of views)for(const tod of (['s','close_sw'].includes(view)?[13,20.5]:[13])){
+   if(!report.views.some(v=>v.slug===model.slug&&v.view===view&&v.tod===tod&&v.landmark_found))throw Error('Missing rendered view '+model.slug+'/'+view+'/'+tod);
+   const tag=tod===13?'day':'night',image=path.join(dir,`${model.slug}_${view}_${tag}.jpg`);
+   if(!fs.existsSync(image)||fs.statSync(image).size<1000)throw Error('Missing image '+image);
+   if(tod===13&&!fs.existsSync(path.join(dir,`${model.slug}_${view}_mask.png`)))throw Error('Missing silhouette '+model.slug+'/'+view);
+  }
+ }
+ if(report.views.length!==40)throw Error('Expected forty final render records');
+ browserVerification={report:file,renders:report.views.length,silhouettes:32,scoreSets:4,pageErrors:report.pageErrors,consoleErrors:report.consoleErrors};
+}
+console.log(JSON.stringify(browserVerification?{models:results,browserVerification}:results,null,2));

@@ -8,7 +8,7 @@ const {register,scale,out,rect}=SGJE;
 // Roof p90 excludes temporary construction cranes in the older references.
 SGJE.data.vision_exchange.height=122.1;
 SGJE.data.vision_exchange.height_source='Reference roof p90, cranes excluded (image-only metadata)';
-register('vision_exchange','维信大厦','Vision Exchange',100,(b,D)=>{
+register('vision_exchange','Vision Exchange','Vision Exchange',100,(b,D)=>{
  const P=D.parts[0].p,a=.55,c=Math.cos(a),s=Math.sin(a);
  const pt=(u,v)=>[u*c-v*s,u*s+v*c];
  const plate=(u0,u1,v0,v1)=>[pt(u0,v0),pt(u1,v0),pt(u1,v1),pt(u0,v1)];

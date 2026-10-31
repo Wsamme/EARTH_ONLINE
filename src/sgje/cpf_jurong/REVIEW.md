@@ -46,7 +46,7 @@ rear service layout, roof equipment and unphotographed elevations are estimates.
 
 ## Matched-camera review
 
-Round `r5`, after correcting the arched portal to the east return. All eight day
+Final combined round `final`, after correcting the arched portal to the east return. All eight day
 views and the south/close southwest night views rendered successfully, with
 `pageErrors=[]` and `consoleErrors=[]`.
 
@@ -69,3 +69,6 @@ The actual OSM outline is retained rather than enlarged to cover those pixels.
 The inward courtyard and service roof remain approximate, hand-authored
 interpretations of the image views. Model day, night and top views were inspected;
 no further massing change is justified by these residuals.
+
+The reference metadata marks the street capture `tiles_settled:false`; its
+photogrammetric detail is less reliable than the other seven settled views.

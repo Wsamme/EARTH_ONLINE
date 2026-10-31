@@ -71,3 +71,16 @@ Mean n/e/s/w/top **0.719**; all-view mean **0.738**.
 Final full-app comparison and independent day/night detail runs have **zero page
 errors and zero console errors**; retired placement list is empty. Final images,
 verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+
+## Round 2
+
+Rechecked all supplied views and actual day/night photos. Retained the gateway
+at +37.5 east/+24.5 south, facing east toward Serangoon Road, separate from the
+low 481614952 ancillary building. Height remains 18 m (measured metadata max),
+PGP roof 15.4 m against p90 15.6 m. The reference contains temporary tower/roof
+shrouds, which are not permanent architecture. The model keeps the five painted
+tiers, now with central dark shrine recesses, and the photographed darker blue-grey
+base. Ahboy's saved night photo supports a stronger warm golden tier wash and
+white entrance lintel lamp. Full-compound roof/courtyard geometry is retained;
+no car park or courtyard was filled to match the scorer's column filling.
+Offline geometry passes. Updated matched-camera results follow below.

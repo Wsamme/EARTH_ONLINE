@@ -7,5 +7,5 @@ vm.runInContext(fs.readFileSync('src/sgje/core.js','utf8').replace('/* JE_FOOTPR
 vm.runInContext(fs.readFileSync('src/sgje/jurong_east_mrt/jurong_east_mrt.js','utf8'),ctx);
 const g=ctx.LANDMARKS.sgje_jurong_east_mrt.build(),box=new THREE.Box3().setFromObject(g);
 let triangles=0;g.traverse(o=>{if(!o.isMesh)return;for(const v of o.geometry.attributes.position.array)assert(Number.isFinite(v));triangles+=o.geometry.attributes.position.count/3;});
-assert(triangles<60000);assert(box.max.y<23);assert.equal(ctx.SG_PLACES.length,1);
+assert(triangles<60000);assert(box.max.y<=ctx.LANDMARKS.sgje_jurong_east_mrt.h+1);assert.equal(ctx.SG_PLACES.length,1);
 console.log(JSON.stringify({triangles,bounds:{min:box.min.toArray(),max:box.max.toArray()}}));

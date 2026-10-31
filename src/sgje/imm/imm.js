@@ -4,14 +4,16 @@
  */
 {
 const {register,scale,out,rect,inside,Batch}=SGJE;
+SGJE.data.imm.height=31.6;
+SGJE.data.imm.height_source='Image-only reference meta.json: measured maximum 31.6 m; p90 roof 30.6 m, median roof 26.2 m';
 register('imm','国际商品城','IMM',191,(b,D,G,g)=>{
  const P=D.parts.find(p=>p.id===33543880).p,C=D.parts.find(p=>p.id===429038696).p;
- const H=30,deck=13.2;
+ const H=26.2,deck=13.2;
  // Three-storey retail base follows every turn of the surveyed OSM perimeter.
  b.prism(P,-.5,deck,'#c5c6bb');
  // The higher warehouse / office body is recessed behind the garden frontage.
  const T=[[-90.6,-25.55],[-66,-48],[71.89,-42.17],[92.46,134.19],[84.95,134.62],[89.58,139.69],[92.72,148.95],[92.51,160.18],[86.73,171.18],[79.09,177.83],[67.33,180.26],[60.57,179.53],[53.14,176.62],[-43.55,101.43],[-49.54,94.86],[-52.04,86.35],[-51.87,77.69],[-53,56],[-72,20]];
- b.prism(T,deck,H-1,'#d5d4c5');b.cap(T,H-1,'#a6aaa0');b.rim(T,H-.3,'#e3e1d4',.55);
+ b.prism(T,deck,H-.5,'#d5d4c5');b.cap(T,H-.5,'#a6aaa0');b.rim(T,H-.25,'#e3e1d4',.45);
  // Cream cladding and continuous recessed grey ribbon windows. Physical seams
  // keep the rounded southern end legible at street distance.
  const O=out(T,.08);
@@ -57,10 +59,31 @@ register('imm','国际商品城','IMM',191,(b,D,G,g)=>{
   for(const t of [-.42,.42]){const px=x+dx/L*w*t+nx*1.7,pz=z+dz/L*w*t+nz*1.7;b.box(px,0,pz,.35,6.8,.35,'#c7ccc2');}
   lit.box(x+nx,6.68,z+nz,w-.5,.09,2.8,'#e1cfb0',a);
  }
- // Small rooftop mechanical enclosures, with dark louvres and no invented logo.
- for(const [x,z,w,d]of [[20,42,17,12],[49,95,14,16],[-17,5,13,11]]){
-  if(!inside(T,x,z))continue;b.box(x,H-.9,z,w,.85,d,'#aeb6ad');b.box(x,H-.04,z,w*.8,.04,d*.72,'#64726e');
-  for(let j=-2;j<=2;j++)b.box(x+j*w/6,H-.1,z,.12,.06,d*.72,'#c1c8bf');
+ // The broad roof is a service deck at the measured median 26.2 m,
+ // with a shallow central roof cover rising towards the 30.6 m p90 level.
+ // Its two rectangles and tapering skirt are visible in the image-only top view.
+ const lower=rect(13,49,113,187,.105),upper=rect(13,49,79,149,.105);
+ b.prism(lower,H-.3,H+.2,'#bec2ba');
+ lower.forEach((p,i)=>{const q=lower[(i+1)%4],r=upper[(i+1)%4],v=upper[i];b.quad('#d5d7cd',[p[0],H+.2,p[1]],[q[0],H+.2,q[1]],[r[0],30.3,r[1]],[v[0],30.3,v[1]]);});
+ b.cap(upper,30.3,'#d8dad2');b.rim(upper,30.5,'#c5c9c1',.2);
+ // The secondary southern cover and standing seams remain below the crown.
+ b.prism(rect(36,145,58,42,.105),H-.25,28.6,'#cdd0c7');
+ for(let z=-20;z<120;z+=13){const p=[13+Math.sin(.105)*(z-49),30.36,z];b.beam([p[0]-38,30.36,p[2]+4],[p[0]+38,30.36,p[2]-4],.045,'#b8beb7');}
+ // Groups of cooling plant flank the central roof instead of scattered boxes.
+ for(const [x,z,n,axis]of [[-21,-36,8,0],[37,-42,7,0],[66,20,7,1],[-55,16,5,1],[64,109,5,1]]){
+  for(let j=0;j<n;j++){const xx=x+(axis?0:j*4.2),zz=z+(axis?j*7.8:0);if(!inside(T,xx,zz))continue;
+   b.box(xx,H,zz,axis?4.5:3.5,1.8,axis?5.5:6,'#afb8b0');b.cap(SGJE.ellipse(xx,zz,1.3,1.3,10),H+1.86,'#526760');
+   b.box(xx+.6,H-.1,zz+3,1,.6,1.4,'#a4b3ad');
+  }
+ }
+ for(const z of [-38,-34])b.beam([-36,27,z],[57,27,z],.38,'#b0c8bc');
+ // Narrow service housings seen on the east perimeter and a north lift head.
+ for(const [x,z,w,d]of [[67,66,7,14],[60,-33,10,12],[-68,-17,8,10]])b.box(x,H-.2,z,w,5.6,d,'#c7cec3');
+ // White tensile pavilions above the west garden. Four corner troughs and a
+ // raised centre give each canopy its real light saddle silhouette.
+ for(const [x,z,w,d]of [[-99,21,26,47],[-70,58,22,22]]){
+  const Q=rect(x,z,w,d,-.62),mid=[x,20,z];
+  Q.forEach((p,i)=>{const q=Q[(i+1)%4],m=[(p[0]+q[0])/2,18.7,(p[1]+q[1])/2];b.tri('#ebece1',[p[0],16.7,p[1]],m,mid);b.tri('#e3e6da',m,[q[0],16.7,q[1]],mid);b.box(p[0],deck,p[1],.18,3.5,.18,'#b4bdb3');});
  }
  screen.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:'#ffbc72',gk:.28}));
  lit.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:'#ffdfad',gk:.65}));

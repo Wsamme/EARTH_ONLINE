@@ -4,6 +4,9 @@
  * Existing app viaducts and moving trains are retained. No logos or text. */
 {
 const {register,scale,inside}=SGJE;
+// Image-reference metadata: roof maximum 22.7 m; p90 22.3 m.
+SGJE.data.jurong_east_mrt.height=22.7;
+SGJE.data.jurong_east_mrt.height_source='Image-reference meta.json: sampled maximum roof minus ground, 22.7 m (p90 22.3 m)';
 register('jurong_east_mrt','裕廊东地铁站','Jurong East MRT',205,(b,D)=>{
  const P=D.parts[0].p,B=D.parts[1].p;
  // OSM's long edges fix the track azimuth, 29.3 degrees east of south.
@@ -62,14 +65,18 @@ register('jurong_east_mrt','裕廊东地铁站','Jurong East MRT',205,(b,D)=>{
   }
   for(const v of [v0,v1])beam(u0,top-3.7,v,u1,top-3.7,v,.3,'#a36256');
  }
- roof(-62.7,75.8,43.5,71.6,22);
- roof(-62.7,75.8,71.6,99.6,22);
- roof(-110.1,-63,53.2,83.0,21.3);
- // Narrow glazed gutters/skylights subdivide the principal lids.
- for(const v of [52,63,80,91]){
-  box(5.5,22.035,v,134,.055,1.35,'#849d98',2);
-  for(let u=-60;u<74;u+=3.1)box(u,22.1,v,.08,.08,1.42,'#d1d8ca');
+ // Three parallel roof monitors read as a pale sawtooth from the east.
+ for(let j=0;j<3;j++){
+  const v=43.5+j*18.7;roof(-62.7,75.8,v,v+18.7,22);
+  // Long, steep clerestory faces below each raised lid: dark narrow panes,
+  // pale posts and a shallow cap. This is glazing, not roof plant.
+  const V=v+5.5;
+  b.quad('#718783',pt(-60,21,V),pt(73,21,V),pt(73,22.58,V+.35),pt(-60,22.58,V+.35),2);
+  b.quad('#dadcd1',pt(-60,22.58,V+.35),pt(73,22.58,V+.35),pt(73,22.05,V+8),pt(-60,22.05,V+8));
+  for(let u=-60;u<74;u+=1.6)beam(u,21,V,u,22.58,V+.35,.065,'#c7d0c4');
+  beam(-60,22.64,V+.35,73,22.64,V+.35,.12,'#e2e4da');
  }
+ roof(-110.1,-63,53.2,83.0,21.3);
  // Two stair cores at the third-platform extension, beneath the main eaves.
  for(const [u,v]of [[-83,67],[54,86]]){
   box(u,0,v,7,10.4,7,'#aaa99b');

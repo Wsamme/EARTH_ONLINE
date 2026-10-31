@@ -219,7 +219,7 @@ mods = mods.replace('</script', '<\\/script')
 R("/* ================= loop ================= */", "/* ================= v17 modules ================= */\nwindow.SGR_APP = true;\n" + mods + "\n/* ================= loop ================= */")
 # ---------- boot: load the data, then build ----------
 a = src.index('/* ================= boot ================= */'); b = src.index('requestAnimationFrame(loop);', a)
-src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nsgrBoot();\n" + src[b:]
+src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nif (window.G3DInstall) window.G3DInstall({scene:scene,camera:camera,renderer:renderer,controls:controls,canvas:canvas,sgXY:sgXY,setTod:setTod,HOOKS:HOOKS,night:function(){return nightF;},setSgView:function(fn){sgView=fn;},stopFly:function(){fly=null;},geo:function(){return {lon0:SG.lon0,lat0:SG.lat0,MX:SG.MX,MY:SG.MY};},city:function(){return {lmGroup:lmGroup,sgGroup:sgGroup,terrain:terrain,sea:sea,skirt:sgSkirtMesh,SGR:SGR,showForest:showForest};}});\nsgrBoot();\n" + src[b:]
 # titles
 R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
 # v23: the map switch under the title (both builds)
@@ -232,11 +232,14 @@ elif CITY in ('hk', 'tyo'): src = PC.apply(src)
 else:   # v29: Singapore too: landmarks split into several keys keep one label (secondary keys have label:false)
     R("for (const L of landmarks){ const def = LANDMARKS[L.type], el = document.createElement('div'); el.className = 'lbl n lm';",
       "for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm';")
+    # Google Photorealistic 3D Tiles (Buona Vista). Scripts live in site/ next to index.html; the module is not inlined.
+    R('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>',
+      '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>\n<script src="config.local.js"></script>\n<script src="g3d-math.js"></script>\n<script src="google3d.js"></script>')
 # v33: post patches — python files defining apply(src, city) -> src, applied to every city's page in order (production list POSTS,
 # plus EXTRA_POSTS=a.py,b.py for tests). Each must assert its replacements match exactly once.
 POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_detail.py', 'lm32/clock/post_clock.py', 'lm33/post_railskip.py', 'lm33/post_parkpoi.py', 'lm33/fuji/post_far.py', 'lm33/post_viewdefault.py']
 for _p in POSTS + [x for x in os.environ.get('EXTRA_POSTS', '').split(',') if x]:
     _ns = {'__file__': SC + _p}; exec(compile(open(SC + _p).read(), SC + _p, 'exec'), _ns); src = _ns['apply'](src, CITY); print('post', _p)
-src = src.replace('<title>', '<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is (the map switch reads it)
+src = src.replace('<title>', '<meta charset="utf-8">\n<link rel="icon" href="favicon.ico">\n<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is. charset must be in the first bytes or Chrome mis-decodes regexes and the script never runs. favicon avoids a 404 in the console.
 open(sys.argv[2], 'w').write(src)
 print('ok', len(src))

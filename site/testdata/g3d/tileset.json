@@ -1,0 +1,1 @@
+{"asset":{"version":"1.0","copyright":"City Brush loader fixture"},"geometricError":800,"root":{"boundingVolume":{"sphere":[30,10,30,120]},"geometricError":0,"refine":"ADD","transform":[1,0,0,0,0,1,0,0,0,0,1,0,-1519936.8272034244,6192739.949365511,144542.6011922847,1],"content":{"uri":"marker.glb"}}}

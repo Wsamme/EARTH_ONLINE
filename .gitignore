@@ -1,0 +1,9 @@
+# Real keys stay on your machine. An empty stub of site/config.local.js is
+# tracked (git add -f) so the page does not 404. After you put a key in it:
+#   git rm --cached site/config.local.js
+site/config.local.js
+
+tools/node_modules/
+tools/shots/
+__pycache__/
+*.pyc

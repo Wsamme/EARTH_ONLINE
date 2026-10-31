@@ -60,3 +60,18 @@ Mean n/e/s/w/top **0.721**; all-view mean **0.752**.
 Final full-app comparison and independent day/night detail runs have **zero page
 errors and zero console errors**; retired placement list is empty. Final images,
 verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+
+## Round 2
+
+Rechecked all measured views: retained the irregular OSM plan, gallery/terrace
+19.1 m, dark service roofs 20.5/21.74 m, and highest plant 22.4 m (metadata max;
+p90 21.5 m / p50 20.5 m). Low perimeter IoU does not justify enlarging the gallery
+into the 3 m buffer or neighbouring roofs. Added the two small ground-level rear
+service openings visible in the north reference.
+
+Re-inspected ONG&ONG's saved night photograph. Replaced plain crossing diagonal
+members with the photographed short horizontal baoli junctions, still clipped to
+the actual glass bounds. Added original geometric colonnade/stepped-tower mural
+motifs behind the glass so architectural forms read at night, without reproducing
+photographs, text or logos. Kept the strong colour-preserving mural backlight and
+quiet roof/opaque sides. Offline geometry passes; final camera scores follow.

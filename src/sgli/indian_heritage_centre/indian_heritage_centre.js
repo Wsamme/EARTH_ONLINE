@@ -89,6 +89,13 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
     for(const v of [.2,.65,1.1])if(v<h-.1)panel(F,u,y+v,w*.7,.055,'#ddbd67',.09,7);
    }
   }
+  // Original architectural motifs give the backlit mural a readable scale.
+  for(let j=0;j<5;j++){
+   const u=3.2+j*(L-6.4)/4,y=5.1+(j%2)*3.5;
+   for(let tier=0;tier<4;tier++)panel(F,u,y+tier*.52,2.25-tier*.42,.42,j%2?'#d6b75f':'#3f8791',.105,7);
+   panel(F,u,y-.12,2.8,.18,'#dac586',.11,7);
+   for(const dx of [-.8,0,.8])panel(F,u+dx,y-.95,.14,.8,'#c8b783',.108,7);
+  }
   // A real stair rhythm behind the stepped facade, with horizontal landings.
   for(let j=0;j<36;j++){
    const u=.3+j*(L-.6)/36,y=4.7+j*(H-5.4)/36;
@@ -98,15 +105,23 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
   // Translucent lightly tinted glass sheets let the mural remain visible.
   const n=Math.ceil(L/2.5);
   for(let j=0;j<n;j++)panel(F,(j+.5)*L/n,4.6,L/n-.025,H-4.7,j%3?'#8ea9b1':'#77949f',.18,6);
-  // Baoli diamond lattice, clipped analytically at the facade's actual bounds.
-  for(const slope of [-.78,.78])for(let start=-25;start<L+25;start+=7.0){
-   const y0=4.6,y1=H-.05;
-   const u0=start,u1=start+(y1-y0)/slope;
-   let lo=0,hi=1;const d=u1-u0;
-   if(d>0){lo=Math.max(lo,-u0/d);hi=Math.min(hi,(L-u0)/d);}else{lo=Math.max(lo,(L-u0)/d);hi=Math.min(hi,-u0/d);}
-   if(hi<=lo)continue;
-   const a=F(u0+d*lo,y0+(y1-y0)*lo,.32),q=F(u0+d*hi,y0+(y1-y0)*hi,.32);
-   beam(a,q,.19,'#5c5b4f');const A=F(u0+d*lo,y0+(y1-y0)*lo+.08,.35),B=F(u0+d*hi,y0+(y1-y0)*hi+.08,.35);beam(A,B,.045,'#ad9b77');
+  // Baoli frame: short horizontal junctions between diagonal members, as in
+  // the lighting designer's night photograph. Clip every member to the facade.
+  const member=(a,q)=>{
+   const du=q[0]-a[0],dy=q[1]-a[1];let lo=0,hi=1;
+   for(const [v,d,min,max]of [[a[0],du,0,L],[a[1],dy,4.6,H-.05]]){
+    if(Math.abs(d)<1e-8){if(v<min||v>max)return;continue;}
+    const t=(min-v)/d,r=(max-v)/d;lo=Math.max(lo,Math.min(t,r));hi=Math.min(hi,Math.max(t,r));
+   }
+   if(hi<=lo)return;
+   const x=a[0]+du*lo,y=a[1]+dy*lo,u=a[0]+du*hi,v=a[1]+dy*hi;
+   beam(F(x,y,.32),F(u,v,.32),.17,'#5c5b4f');
+   beam(F(x,y+.065,.35),F(u,v+.065,.35),.035,'#ad9b77');
+  };
+  for(const sign of [-1,1])for(let start=-25;start<L+25;start+=7)for(let k=-1;k<6;k++){
+   const u=start+sign*k*3.5,y=4.6+k*2.73;
+   member([u-sign*.36,y],[u+sign*.36,y]);
+   member([u+sign*.36,y],[u+sign*(3.5-.36),y+2.73]);
   }
   for(const y of [4.55,H])beam(F(0,y,.26),F(L,y,.26),.22,'#736d57');
   for(const u of [0,L])beam(F(u,4.5,.26),F(u,H,.26),.18,'#817b63');
@@ -122,6 +137,7 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
  for(const i of [0,3,4,5]){
   const E=faces(P)[i];if(E.L<2)continue;
   panel(E.F,E.L/2,.15,E.L-.08,3.8,'#49585b',.045);
+  if(i===4)for(const u of [E.L*.13,E.L*.23])panel(E.F,u,.65,1.1,1.8,'#3c5155',.07);
   if(i===4)for(const u of [E.L*.3,E.L*.46])for(let f=0;f<3;f++){
    panel(E.F,u,4.4+f*4.6,f===0?1:1.8,2.8,'#647e7b',.06,2);
    panel(E.F,u+2.7,4.4+f*4.6,.6,2.8,'#627371',.06,2);

@@ -81503,7 +81503,7 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
 
 }
 
-/* OSM 47198835. Two-storey market only; adjacent HDB towers stay generic.
+/* OSM 47198835. Market hall and the overlapping Buffalo Road HDB slabs restored in round 2.
  * Current purple paint from September 2023 reopening photographs. */
 {
 const {register,out,scale,lerp}=SGLI;
@@ -81511,8 +81511,8 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
  const P=D.parts[0].p,H=9.2,eave=9.0;
  // Reference p50 12.1 m / p90 13.6 m; 68.9 m max is HDB contamination.
  const verticalScale=1.32;
- const flush=b.flush.bind(b);b.flush=g=>{for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+(B.p[i]-b.base)*verticalScale;return flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':undefined,gk:mode===4?.75:mode===5?.3:0}));};
- b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#363d40');b.walls(P,7.42,9.0,'#9a7ab6');
+ const flush=b.flush.bind(b);b.flush=g=>{for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+(B.p[i]-b.base)*verticalScale;return flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':mode===6?'#ffe5b5':undefined,gk:mode===4?1.2:mode===5?.85:mode===6?.65:0}));};
+ b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#8a8571',5);b.walls(P,7.42,9.0,'#9a7ab6');
  // Sheltered market and first-floor galleries: the open bays sit behind the columns.
  const Q=out(P,.06);
  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<6)return;
@@ -81536,9 +81536,9 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
  const R=out(P,.65);
  // Two broad parallel ridge lines follow the market wings. Boundary recesses
  // remain plan details, not a source of tiny conical roof peaks.
- const roof=p=>{const v=-.624*p[0]+.781*p[1];return [p[0],v<4?9.05:9.15,p[1]];};
+ const roof=p=>{const v=-.624*p[0]+.781*p[1];let d=Infinity;R.forEach((a,i)=>{const q=R[(i+1)%R.length],dx=q[0]-a[0],dz=q[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dz)/(dx*dx+dz*dz)));d=Math.min(d,Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dz));});return [p[0],(v<4?8.6:8.8)+Math.min(.95,d*.12),p[1]];};
  const tris=THREE.ShapeUtils.triangulateShape(R.map(p=>new THREE.Vector2(...p)),[]);
- function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#6596a1':'#819079',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
+ function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#8db4b7':'#a4b397',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
  tris.forEach(t=>tile(...t.map(i=>R[i]),3));b.rim(R,eave,'#d9d2d7',.22);
  // North hall: repeated sawtooth monitor roofs. The broad outer roof and
  // south gridded sheet roof stay separate from these raised ventilator strips.
@@ -81547,10 +81547,12 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
   if([A,B,C,E].every(p=>SGLI.inside(P,p[0],p[2]))){b.quad('#66796b',A,B,C,E);b.quad('#344850',C,E,UV(u+4.8,-33,9.2),UV(u+4.8,-7,9.2));b.beam(C,E,.1,'#aab7ae');}
  }
  // Fine standing-seam grid and a few exhaust banks on the southern roof.
- for(let u=-10;u<75;u+=3.2)for(let v=6;v<40;v+=4){const A=UV(u,v,9.2),B=UV(u,v+3.8,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.055,'#c4d0c4');}
- for(let v=8;v<41;v+=8)for(let u=-10;u<72;u+=4){const A=UV(u,v,9.2),B=UV(u+3.8,v,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.05,'#b7c8c0');}
+ for(let u=-10;u<75;u+=3.2)for(let v=6;v<40;v+=4){const A=UV(u,v,9.2),B=UV(u,v+3.8,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(roof([A[0],A[2]]).map((v,i)=>v+(i===1?.035:0)),roof([B[0],B[2]]).map((v,i)=>v+(i===1?.035:0)),.055,'#c4d0c4');}
+ for(let v=8;v<41;v+=8)for(let u=-10;u<72;u+=4){const A=UV(u,v,9.2),B=UV(u+3.8,v,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(roof([A[0],A[2]]).map((v,i)=>v+(i===1?.035:0)),roof([B[0],B[2]]).map((v,i)=>v+(i===1?.035:0)),.05,'#b7c8c0');}
  for(const [u,v]of [[16,10],[31,13],[50,23],[22,34]]){const c=UV(u,v,9.2);b.box(c[0],9.2,c[2],3,.35,1.4,'#d2d9d4',-.67);for(let k=-1;k<=1;k++)b.box(c[0]+k*.7,9.56,c[2],.5,.04,1.1,'#647c7c',-.67);}
 
+ // Raised central ventilation monitor, glazed below a pale cyan cap.
+ {const c=UV(25,22,0),T=SGLI.rect(c[0],c[2],24,4,-.674);if(T.every(p=>SGLI.inside(P,...p))){b.prism(T,9.65,10.15,'#789fa1',5);b.cap(out(T,.3),10.3,'#b5c9c4');b.rim(T,10.3,'#d5ded2',.12);}}
  // Entrance stair and short access ramp stay inside the front footprint.
  {const p=P[25],q=P[26],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),F=(u,v,y)=>[p[0]+dx/L*u-dz/L*v,y,p[1]+dz/L*u+dx/L*v];
   for(let j=0;j<8;j++){const c=F(L*.62,1+j*.32,.18);b.box(c[0],.18,c[2],5,(j+1)*.12,.34,'#c8b8a4',a);}
@@ -81564,6 +81566,25 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
   for(let y=4.7;y<7.4;y+=.22)b.box(x,y,z,Math.min(7,L*.22),.09,.72,'#c8cccd',a);
   b.box(lerp(p[0],q[0],.62),5.25,lerp(p[1],q[1],.62),6,1.1,.12,'#e7e0c6',a,4);
  }
+ // OSM context ways, © OpenStreetMap contributors (ODbL). Full original
+ // footprints, not shapes traced or reconstructed from the image silhouettes.
+ // 661 / 663 are the residential slabs; 662 is the low service court.
+ const context=[{"id":178436578,"p":[[-47.23,-68.32],[-46.45,-65.66],[-51.29,-64.49],[-51.44,-65.12],[-50.7,-65.3],[-51.17,-67.23],[-55.01,-66.3],[-54.53,-64.32],[-53.46,-64.58],[-53.29,-63.84],[-61.03,-61.97],[-63.12,-61.47],[-62.83,-60.29],[-66.12,-59.45],[-65.96,-61.93],[-69.57,-62.17],[-69.77,-59.18],[-75.61,-61.86],[-80.1,-53.39],[-79.1,-52.44],[-77.83,-53.39],[-77.09,-52.63],[-77.98,-51.54],[-76.76,-50.38],[-74.67,-50.93],[-73.75,-50.18],[-74.8,-46.1],[-65.17,-44.51],[-64.43,-47.9],[-57.43,-49.59],[-57.75,-50.94],[-53.93,-51.87],[-53.18,-48.76],[-44.29,-50.9],[-45.08,-54.17],[-40.08,-55.56],[-42.31,-63.51],[-38.65,-64.53],[-37.81,-61.55],[-29.91,-63.75],[-31.02,-67.72],[-29.92,-68.94],[-27.16,-66.45],[-22.66,-71.44],[-26.21,-74.64],[-27.35,-73.37],[-32.06,-77.61],[-35.8,-76.7],[-36.46,-79.44],[-35.72,-79.62],[-36.35,-82.27],[-39.99,-81.39],[-39.37,-78.84],[-38.72,-78.99],[-38.04,-76.19],[-44.91,-74.53],[-45.43,-76.69],[-50.11,-75.55],[-50.91,-74.59],[-51.17,-73.54],[-50.34,-68.84],[-49.34,-68.17],[-48.52,-67.96]]},{"id":178436579,"p":[[-70.65,5.14],[-62.12,12.28],[-58.1,11.5],[-57.51,14.5],[-57.95,14.59],[-57.55,16.63],[-53.99,15.93],[-54.39,13.89],[-54.69,13.95],[-55.28,10.93],[-48.9,9.68],[-48.37,11.12],[-46.8,11.91],[-44.9,11.68],[-43.0,10.86],[-42.11,9.52],[-41.96,7.82],[-44.29,-0.67],[-42.8,-1.07],[-41.92,2.18],[-38.87,1.36],[-39.83,-2.17],[-27.71,-0.09],[-29.42,2.2],[-29.75,1.95],[-31.38,4.15],[-28.87,6.01],[-27.23,3.79],[-27.46,3.63],[-25.28,0.69],[-19.44,5.03],[-13.73,-2.65],[-17.32,-5.32],[-16.17,-6.89],[-23.21,-12.12],[-24.13,-10.89],[-38.92,-13.81],[-39.56,-16.77],[-48.87,-14.75],[-48.02,-10.93],[-52.78,-9.86],[-50.95,-1.42],[-55.02,-0.55],[-55.94,-4.81],[-60.79,-3.76],[-62.38,-5.1],[-64.81,-2.19],[-67.9,-4.69],[-65.99,-7.05],[-64.81,-6.09],[-62.65,-8.74],[-70.21,-14.91],[-71.68,-13.1],[-72.86,-14.06],[-75.34,-11.01],[-76.26,-11.77],[-74.78,-13.58],[-74.93,-14.73],[-73.94,-14.85],[-74.78,-21.72],[-76.22,-21.54],[-76.32,-22.32],[-78.42,-23.63],[-77.51,-25.09],[-73.62,-22.66],[-72.06,-25.15],[-70.12,-23.94],[-64.9,-32.22],[-66.91,-33.49],[-66.15,-34.7],[-76.44,-41.18],[-82.52,-31.54],[-85.3,-33.29],[-86.77,-30.97],[-84.03,-29.25],[-88.55,-22.07],[-87.19,-8.75]]},{"id":178436580,"p":[[9.08,75.04],[0.47,67.12],[4.62,62.39],[6.69,64.27],[8.03,62.83],[5.93,60.9],[7.8,58.79],[10.44,61.1],[14.94,60.04],[15.45,62.27],[19.73,61.27],[17.77,52.92],[21.96,51.93],[21.18,48.31],[30.66,46.13],[31.77,50.73],[44.63,53.05],[46.68,50.14],[54.85,55.35],[53.12,57.99],[56.63,60.29],[52.25,66.91],[46.56,63.16],[43.45,67.86],[42.75,68.43],[41.64,68.07],[40.84,67.35],[41.59,62.58],[31.37,60.68],[31.3,62.17],[30.6,63.62],[29.09,64.49],[27.61,65.01],[27.88,71.25],[27.83,72.37],[27.14,73.48],[25.93,74.27],[21.6,74.79],[21.2,72.07],[16.1,73.35],[15.85,78.61],[15.29,79.05],[14.16,79.21],[12.97,79.11],[12.13,78.47],[12.31,74.14]]}];
+ for(const part of context){const T=part.p,tower=part.id!==178436579,h=(tower?68.9:10.8)/verticalScale;
+  b.prism(T,0,h,tower?'#c9dedb':'#bebeb1');b.cap(T,h,'#b4bab4');
+  if(!tower){b.rim(T,h,'#e4e3d4',.2);continue;}
+  const Q=out(T,.035);
+  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<3.7)return;const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/2.7));
+   for(let f=0;f<20;f++){const y=(4+f*3.15)/verticalScale;
+    b.box((p[0]+q[0])/2,y-.2,(p[1]+q[1])/2,L,.16,.12,'#f0f0e7',a);
+    for(let j=0;j<n;j++){const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t),lit=(j*7+f*3+i)%11<3;
+     const w=L/n*.345,c=Math.cos(a)*w,v=-Math.sin(a)*w;b.quad(lit?'#e5d9b6':'#50666a',[x-c,y,z-v],[x+c,y,z+v],[x+c,y+1.45/verticalScale,z+v],[x-c,y+1.45/verticalScale,z-v],lit?6:0);
+     b.quad('#eff1e8',[x-c,y+1.5/verticalScale,z-v],[x+c,y+1.5/verticalScale,z+v],[x+c,y+1.65/verticalScale,z+v],[x-c,y+1.65/verticalScale,z-v]);
+    }
+   }
+  });
+ }
+
 },[]);
 }
 
@@ -81572,13 +81593,13 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
 {
 const {register,out,scale,lerp,center,ellipse}=SGLI;
 register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.22:mode===4?1:mode===5?.8:mode===6?.1:0}));
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.35:mode===4?1.35:mode===5?1.0:mode===6?.18:0}));
  for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?9.6:part.id===178437069?26.9:part.id===47198841?21.2:22.5;
   if(bridge){
    // This mapped narrow part connects across the lane; keep the clearance open.
    b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,9.1,'#4a7970',2);b.facade(out(P,.04),5.7,9.1,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),9.1,H,'#cbd1be');continue;
   }
-  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06);
+  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06),mullions=out(P,.20);
   Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<2)return;const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/4));
    // Older pale hotel / retail block at the west, greener glazing on the extension.
    const old=part.id===47198841;
@@ -81588,9 +81609,18 @@ register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
     b.box(x,0,z,.42,4.6,.48,'#7c7d68',a);
     b.box(x,3.8,z,w-.15,.78,.22,['#d7d9b5','#8eb584','#d3bb93'][j%3],a,4);
     b.box(x,4.7,z,w,.2,1.4,'#dedbc5',a,4);
+    // Shop glazing transoms and door stiles, under the continuous canopy.
+    b.box(x,.3,z,.075,3.5,.22,'#d8ded1',a);
+    b.box(x,2.75,z,w-.24,.065,.23,'#d8ded1',a);
+
     for(let y=old?5.5:6;y<H-2;y+=old?3.7:4.1){
      b.box(x,y,z,w*(old?.55:.94),old?2.3:2.75,.17,old?'#41685d':'#477b71',a,2);
      b.box(x,y-.4,z,w,.38,.35,old?'#e5e4d5':'#abbcb0',a);
+     // Thin paired mullions divide the extension's broad green window bays.
+     if(!old)for(const k of [-1,1]){const u=lerp(mullions[i][0],mullions[(i+1)%Q.length][0],t)+Math.cos(a)*k*w*.23,v=lerp(mullions[i][1],mullions[(i+1)%Q.length][1],t)-Math.sin(a)*k*w*.23,c=Math.cos(a)*.033,d=-Math.sin(a)*.033;b.quad('#c0c9bc',[u-c,y,v-d],[u+c,y,v+d],[u+c,y+2.75,v+d],[u-c,y+2.75,v-d]);}
+     // Service/parking frontage: narrow open slots behind pale guard rails.
+     if(part.id===178437070&&i===2){b.box(x,y+.3,z,w*.82,.75,.24,'#394b48',a);for(const r of [.38,.7])b.box(x,y+r,z,w*.85,.055,.29,'#aebcae',a);}
+
      if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.5,.23,'#bdc7b6',a);
       const r=w*.275,pt=(t,R)=>[x+Math.cos(a)*Math.cos(t)*R,y+2.3+Math.sin(t)*R,z-Math.sin(a)*Math.cos(t)*R];
       for(let k=0;k<12;k++){const t=k/12*Math.PI,u=(k+1)/12*Math.PI;b.tri('#41685d',[x,y+2.3,z],pt(t,r),pt(u,r),2);b.quad('#c8d0bd',pt(t,r+.1),pt(u,r+.1),pt(u,r),pt(t,r));}
@@ -81665,13 +81695,18 @@ register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=
    for(let j=0;j<n;j++){const u=(j+.5)*L/n,w=L/n;
     block(j*L/n,.18,.4,7.15,.32,trim);block(j*L/n,.2,.62,.3,.45,trim);block(j*L/n,6.85,.62,.27,.45,trim);
     // Open five-foot way behind the piers and a deep timber lintel.
+    // Glazed shop doors sit behind the sheltered five-foot way.
+    b.quad('#a1b7a5',Q(u-w*.4,.3,-1.15),Q(u+w*.4,.3,-1.15),Q(u+w*.4,2.8,-1.15),Q(u-w*.4,2.8,-1.15),5);
+    for(const v of [-.4,0,.4])b.beam(Q(u+w*v,.3,-1.12),Q(u+w*v,2.8,-1.12),.065,'#e8e5d3');
+    b.beam(Q(u-w*.4,2.2,-1.1),Q(u+w*.4,2.2,-1.1),.06,'#e8e5d3');
+    for(const v of [-.4,.4])b.beam(Q(u+w*v,2.65,.12),Q(u+w*v,3.12,.8),.045,'#587268');
     block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);block(u,3.1,w-.4,.23,.9,'#577f70');
     for(let win=0;win<3;win++){const v=u+(win-1)*w*.25,ww=Math.min(.88,w*.21);
      block(v,4.5,ww+.18,2.25,.22,trim);block(v,4.6,ww,1.92,.29,blue);
      block(v,4.59,.045,1.95,.35,'#b8d2c7');
      for(let y=4.74;y<6.4;y+=.14)block(v,y,ww-.07,.055,.37,'#66a1a5');
      // Arched shutter transom and its raised plaster archivolt.
-     for(let k=0;k<14;k++){const a=k/14*Math.PI,c=(k+1)/14*Math.PI;b.quad(trim,Q(v+Math.cos(a)*(ww/2+.13),6.48+Math.sin(a)*(ww/2+.13)),Q(v+Math.cos(c)*(ww/2+.13),6.48+Math.sin(c)*(ww/2+.13)),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2));}
+     for(let k=0;k<14;k++){const a=k/14*Math.PI,c=(k+1)/14*Math.PI;b.tri(blue,Q(v,6.48,.12),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2,.12),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2,.12));b.quad(trim,Q(v+Math.cos(a)*(ww/2+.13),6.48+Math.sin(a)*(ww/2+.13)),Q(v+Math.cos(c)*(ww/2+.13),6.48+Math.sin(c)*(ww/2+.13)),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2));}
      block(v,4.35,ww+.28,.13,.4,trim);
     }
     // Small ornamental panels between window groups and cornice dentils.
@@ -81695,7 +81730,7 @@ register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=
 {
 const {register,out,scale,lerp,inside}=SGLI;
 register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.35:mode===4?.85:mode===5?.45:0}));
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.65:mode===4?1.0:mode===5?.8:0}));
  const P=D.parts[0].p,T=D.parts[1].p,podium=25.0,top=51.6;
  // Local front-parallel / rearward frame, derived from the OSM edge.
  const a=P[0],q=P[1],dx=q[0]-a[0],dz=q[1]-a[1],L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L,nx=uz,nz=-ux;
@@ -81719,11 +81754,11 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
  for(const u of [8,27])for(const y of [6.2,10.7,15.2]){const w=8.5,h=2.6;b.quad('#527174',F(u-w/2,y,-.18),F(u+w/2,y,-.18),F(u+w/2,y+h,-.18),F(u-w/2,y+h,-.18),2);}
  for(const u of [1,18,36])b.beam(F(u,5,-.25),F(u,podium,-.25),.22,'#d8d7cb');
  const glassStart=37,glassEnd=L-4,roofY=u=>28.2;
- for(let u=glassStart;u<glassEnd;u+=2.8){const e=Math.min(glassEnd,u+2.8),v=.35+1.5*Math.sin((u-glassStart)/(glassEnd-glassStart)*Math.PI),w=.35+1.5*Math.sin((e-glassStart)/(glassEnd-glassStart)*Math.PI);
+ for(let u=glassStart;u<glassEnd;u+=2.8){const e=Math.min(glassEnd,u+2.8),v=-.35-1.5*Math.sin((u-glassStart)/(glassEnd-glassStart)*Math.PI),w=-.35-1.5*Math.sin((e-glassStart)/(glassEnd-glassStart)*Math.PI);
   // Curtain wall above the retail floor, with visible mullions and curved eave.
-  b.quad('#739b9c',F(u,podium,v),F(e,podium,w),F(e,roofY(e)-.4,w),F(u,roofY(u)-.4,v),2);
+  b.quad('#739b9c',F(u,5.8,v),F(e,5.8,w),F(e,roofY(e)-.4,w),F(u,roofY(u)-.4,v),2);
   b.beam(F(u,0,v),F(u,roofY(u),v),.14,'#c9d0c6');
-  for(let y=24;y<roofY(u)-.5;y+=2.2)b.beam(F(u,y,v),F(e,Math.min(y,roofY(e)-.4),w),.09,'#cbd3c8');
+  for(let y=5.8;y<roofY(u)-.5;y+=2.2)b.beam(F(u,y,v),F(e,Math.min(y,roofY(e)-.4),w),.09,'#cbd3c8');
   b.quad('#b8cbc4',F(u,28.2,v),F(e,28.2,w),F(e,28.2,7),F(u,28.2,7),2);
   b.beam(F(u,roofY(u),v-.25),F(e,roofY(e),w-.25),.13,'#e4dfc8');
   // Thin LED edge, not a large glowing opaque wall.
@@ -81743,6 +81778,10 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
  for(const [u,y,w,h]of [[19,17,12,3.2],[30,11,7,2],[70,12,8,1.5]]){const v=F(u,y,-.12);b.box(v[0],y,v[2],w,h,.15,'#e8dfc4',panelAngle,4);}
  // Roof garden beds restricted to the low roof outside the nine-level block.
  for(let u=5;u<34;u+=7){const c=F(u,podium,75);if(inside(P,c[0],c[2])&&!inside(T,c[0],c[2])){b.box(c[0],podium,c[2],5,.5,3,'#b8b8a6',panelAngle);b.box(c[0],podium+.5,c[2],4.6,.3,2.6,'#658449',panelAngle);b.tree(c[0],podium+.7,c[2],.65);}}
+ // Planted roof terrace behind the barrel hall, outside the taller annex.
+ for(let u=42;u<101;u+=12){const c=F(u,podium,43);if(inside(P,c[0],c[2])&&!inside(T,c[0],c[2])){b.box(c[0],podium,c[2],7,.45,2.5,'#b3b9a8',panelAngle);b.box(c[0],podium+.45,c[2],6.6,.35,2.2,'#5d8245',panelAngle);}}
+ // Ground floor entrance glazing and canopy stanchions.
+ for(let u=40;u<L-6;u+=5.6){const c=F(u,.3,-.2);b.box(c[0],.3,c[2],4.8,4.5,.12,'#7c9d97',panelAngle,2);const a=F(u-2.4,.3,-.3),e=F(u-2.4,5,-.3);b.beam(a,e,.12,'#d1d7c9');}
  // Compact edge of the park eco-canopy; full City Green park stays context.
  for(let u=8;u<35;u+=3){const e=Math.min(35,u+3);for(let k=0;k<4;k++){const v=-2+k*1.5,w=v+1.5,Y=(u,v)=>5.6+.6*Math.sin((u-8)/27*Math.PI)-v*.06;b.quad(k%2?'#809979':'#b0c1b7',F(u,Y(u,v),v),F(e,Y(e,v),v),F(e,Y(e,w),w),F(u,Y(u,w),w),k%2?0:2);b.beam(F(u,Y(u,v),v),F(e,Y(e,v),v),.1,'#d4d7c7');}}
  for(const u of [9,32]){const A=F(u,0,-1),B=F(u,5.8,-1);b.beam(A,B,.3,'#e0dfd2');}
@@ -81755,17 +81794,17 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
 const {register,lerp}=SGLI;
 register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali Light-up',690,(b,D,G,g)=>{
  const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>{
-  const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,lc:mode===10?'#ffd082':'#bfc0ad',glow:mode===10?'#ffffff':undefined,gk:mode===10?.95:0});
-  if(mode===10&&!m.userData.liFestival){const prior=m.onBeforeCompile;m.onBeforeCompile=function(sh,r){prior.call(this,sh,r);sh.fragmentShader=sh.fragmentShader.replace('em += uSelf * uSelfK;','em += vColor * uSelfK * (0.96 + 0.04 * sin(uTime * 0.65 + vWP.x * 0.13 + vWP.z * 0.09));');};m.customProgramCacheKey=()=> 'li-festival-ribbon-v1';m.userData.liFestival=true;}
+  const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,lc:mode===10?'#ffd082':'#bfc0ad',glow:mode===10?'#ffffff':undefined,gk:mode===10?2.8:0});
+  if(mode===10&&!m.userData.liFestival){const prior=m.onBeforeCompile;m.onBeforeCompile=function(sh,r){prior.call(this,sh,r);sh.fragmentShader=sh.fragmentShader.replace('em += uSelf * uSelfK;','em += vColor * uSelfK * (0.96 + 0.04 * sin(uTime * 0.65 + vWP.x * 0.13 + vWP.z * 0.09));');};m.customProgramCacheKey=()=> 'li-festival-ribbon-v2';m.userData.liFestival=true;}
   return m;
  });
- const gold='#ffbc42',pink='#ea48ba',green='#78ca68',orange='#ee8241',blue='#866ce4';
+ const gold='#ffb112',pink='#ff18c4',green='#39e954',orange='#ff6816',blue='#7651ff';
  const road=name=>{const A=D.streets.filter(s=>s.name===name).flatMap(s=>s.p),unique=[...new Map(A.map(p=>[p.join(','),p])).values()];return unique.sort((p,q)=>name==='Serangoon Road'?q[1]-p[1]:p[0]-q[0]);};
  const ser=road('Serangoon Road').filter(p=>p[1]>=-600&&p[1]<=297),camp=road('Campbell Lane'),dun=road('Dunlop Street');
  function sample(P,step,callback){let carry=step*.55,count=0;for(let i=0;i<P.length-1;i++){const p=P[i],q=P[i+1],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);while(carry<L){callback([lerp(p[0],q[0],carry/L),lerp(p[1],q[1],carry/L)],[dx/L,dz/L],count++);carry+=step;}carry-=L;}return count;}
  // Every motif lives in the vertical plane across its actual road tangent.
  function frame(c,t){const n=[-t[1],t[0]];const h=G.at(...c)-G.base+.04;return (u,y,v=0)=>[c[0]+n[0]*u+t[0]*v,h+y,c[1]+n[1]*u+t[1]*v];}
- function line(F,A,c,w=.055){for(let i=0;i<A.length-1;i++){const p=A[i],q=A[i+1],dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy)||1,ox=-dy/L*w/2,oy=dx/L*w/2;b.quad(c,F(p[0]+ox,p[1]+oy),F(q[0]+ox,q[1]+oy),F(q[0]-ox,q[1]-oy),F(p[0]-ox,p[1]-oy),10);}}
+ function line(F,A,c,w=.095){for(let i=0;i<A.length-1;i++){const p=A[i],q=A[i+1],dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy)||1,ox=-dy/L*w/2,oy=dx/L*w/2;b.quad(c,F(p[0]+ox,p[1]+oy),F(q[0]+ox,q[1]+oy),F(q[0]-ox,q[1]-oy),F(p[0]-ox,p[1]-oy),10);}}
  const curve=(F,cx,cy,rx,ry,c,n=20)=>line(F,Array.from({length:n+1},(_,i)=>[cx+rx*Math.cos(i/n*Math.PI*2),cy+ry*Math.sin(i/n*Math.PI*2)]),c);
  function petal(F,x,y,w,h,c){line(F,Array.from({length:17},(_,i)=>{const a=i/16*Math.PI*2;return [x+w*Math.sin(a)*(0.65+.35*Math.cos(a)),y+h*(1-Math.cos(a))/2];}),c);}
  function lotus(F,x,y,s){for(let j=-2;j<=2;j++)petal(F,x+j*.29*s,y,.4*s,(1.1-Math.abs(j)*.18)*s,j%2?gold:pink);line(F,[[x-1.1*s,y],[x,y-.32*s],[x+1.1*s,y]],gold);}
@@ -81777,22 +81816,30 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   curve(F,x,y,.68,.42,blue,20);line(F,[[x-sign*.45,y],[x-sign*.85,y+.75],[x-sign*.7,y+1.15],[x-sign*.4,y+1.12],[x-sign*.35,y+.83]],gold);line(F,[[x-sign*.7,y+1.15],[x-sign*1.0,y+1.07]],orange);
  }
  const gates=[];
- const archCount=sample(ser,32,(c,t,i)=>{const F=frame(c,t),w=i===21?4:i===20?5:6;gates.push({center:c,tangent:t,width:w});
-  for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u,4.8,.7);flower(F,u,7.6,.62);}
+ sample(ser,32,(c,t,i)=>{if(i===3)return;const F=frame(c,t),w=({4:5.5,5:5,6:4.5,7:4.5,8:4.5,20:5,21:4,32:5,33:5.5})[i]||6;gates.push({center:c,tangent:t,width:w});
+  for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u-Math.sign(u)*.75,4.8,.7);flower(F,u-Math.sign(u)*.7,7.6,.62);}
   b.beam(F(-w,8),F(w,8),.07,'#8b8c81');
   lotus(F,0,7.9,1.15);for(const u of [-(w-2.5),w-2.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
   line(F,Array.from({length:49},(_,j)=>{let u=-w+j/48*w*2;return[u,8.25+.25*Math.cos(u*.9)];}),green);
+  // Dense floral scrollwork seen around the 2024 diya/lotus panels.
+  // Keep every outline in the span plane and inside its existing supports.
+  for(const sign of [-1,1]){
+   line(F,Array.from({length:33},(_,j)=>{const a=j/32*Math.PI*2.7,r=.52*(1-j/40);return[sign*(w-1.1)+Math.cos(a)*r,8.75+Math.sin(a)*r];}),pink,.085);
+   lotus(F,sign*(w-1.0),5.9,.55);
+   diya(F,sign*1.6,7.6,.48);
+  }
+
  });
  // One peacock gateway near the southern arrival, no invented text panel.
  if(gates.length>1){const F=frame(gates[1].center,gates[1].tangent);peacock(F,-1.7,9.1,-1);peacock(F,1.7,9.1,1);line(F,Array.from({length:33},(_,i)=>{const a=i/32*Math.PI;return[3.0*Math.cos(a),9.8+2.0*Math.sin(a)];}),gold,.09);}
  // Longitudinal garlands between successive arches, following the road bend.
- for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*(A.width-.25),7.7),q=E(side*(B.width-.25),7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
+ for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];if(Math.hypot(A.center[0]-B.center[0],A.center[1]-B.center[1])>45)continue;for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*(A.width-.25),7.7),q=E(side*(B.width-.25),7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
  sample(camp,12,(c,t,i)=>{const F=frame(c,t);for(const u of [-3,3])b.beam(F(u,0),F(u,5.5),.07,'#8d8c7a');line(F,[[-3,5.4],[0,5.0],[3,5.4]],gold);flower(F,0,5.15,.45);
   // Compact festival stalls inside the pedestrian lane, on one side only.
   if(i%2===0){const p=F(2,0),a=Math.atan2(-t[1],t[0]);b.box(p[0],p[1],p[2],2.8,2.2,1.2,'#d4a474',a);b.box(p[0],p[1]+2.2,p[2],3,.18,1.5,i%4?pink:orange,a);}
  });
  sample(dun,22,(c,t)=>{const F=frame(c,t);line(F,[[-2.2,5.5],[0,5.1],[2.2,5.5]],gold);diya(F,0,5.25,.45);});
- g.userData.liLightup={arches:archCount,spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
+ g.userData.liLightup={arches:gates.length,omittedSampleIndices:[3],spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
 },[]);
 }
 

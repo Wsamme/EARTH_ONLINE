@@ -392,3 +392,191 @@ street resemblance. The five control modules gain shading, with their previous
 street geometry retained. No additional malls or buildings are introduced in
 this batch. PR #5's body is deliberately left unchanged for the owner's later
 batch summary.
+
+
+## Batch 2: two Holland Village malls
+
+Added **One Holland Village** and **Holland Road Shopping Centre**, with separate
+modules, original procedural geometry and per-module reviews. No existing module
+geometry changes. No reference images, textures, tiles or meshes are loaded at
+runtime. PR #5's body is left unchanged for the owner's later batch summary.
+
+### Area selection and deferred targets
+
+| Target | OSM identity | Selection / status |
+| --- | --- | --- |
+| One Holland Village | way 1226724186 | New major mall and mixed-use village north of Buona Vista; built this batch, including verified northern residential footprints |
+| Holland Road Shopping Centre | way 152638469 | Distinct existing mall with current red/cream facade and valid tile references; built this batch |
+| Holland Piazza | way 152752624 | Third nearby mall, deferred; supplied photograph (61) belongs here, not OHV |
+| Elementum | way 981964001 | Nearby one-north neighbour; selected for a later batch, unchanged here |
+| Nucleos | relation 21450449 / outer way 305516250 | Nearby Biopolis neighbour; deferred, unchanged here |
+| Fusionopolis Two | ways 448605477 / 448605478 / 448605479 | Nearby research cluster; deferred, unchanged here |
+| Rochester Mall | existing rochester module | Already modeled; no duplicate module |
+| Anchorpoint / Queensway SC / IKEA Alexandra | outside selected radius | Excluded because farther than 2 km from the focus area |
+
+### Evidence corrections and height provenance
+
+**The supplied photo `(61)` is Holland Piazza**, as the facade lettering shows.
+Its colourful undulating exterior is not One Holland Village. OHV's *Interlude*
+is suspended under its courtyard canopy: [Vantaly](https://www.vantaly.com/en/project/68622cb530cb4c0020457a86)
+and [ERCO / SWITCH](https://www.erco.com/en/inspiration/projects/interlude-by-tomislav-topic-one-holland-village-singapore/)
+confirm the installation and 3000 K upward wash. The module uses an original,
+simplified colour-field under an approximately sited 540 m²-plan ETFE canopy.
+[Plantwerkz's day/night photographs](https://www.plantwerkz.com/one-holland-village)
+inform the steps, planted terraces and warm corridor lines.
+
+OHV's supplied Google tiles **predate the development**. Its 38.5 m tile sample
+and metadata's obsolete “up to ~10 storeys” description are not used as building
+heights. The [developer release](https://www.fareast.com/globalassets/media-library/fareast/aboutus/newsroom/press-release-pdfs/20230111-OHV-Residences-achieves-80-per-cent-sales.pdf)
+supports three retail floors, offices L4–L7, Sereen 34 floors, Quincy 28 floors
+(including serviced residences L1–L19 and private residences L21–L28), and Leven
+three floors plus terrace. The OSM extract confirms Sereen way 1115524529,
+address-5 Quincy way 1115524527, and named Leven way 1115524518 north of the mall.
+Southern candidate 1226724187 is not a residential tower and is not replaced.
+**OHV metre heights are estimated**: 112 m Sereen, 98 m Quincy, 12 m Leven roof,
+and 28.5 m commercial roof. No surveyed or official tower metre heights were found.
+The model uses documented levels plus explicit floor/slab allowances; it does
+not mislabel clear ceiling heights as floor-to-floor dimensions.
+
+HRSC uses measured roof 45.6 minus ground 25.9 ellipsoidal metres = **19.7 m**,
+including roof plant. OSM's three levels / 9 m is low. The current red/pink and
+cream facade follows [LN9267's 2024 photo (66), CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Holland_Village_13-05-2024(66).jpg).
+Older green/white photographs are not used for current colours. An [LTA night
+photograph](https://www.lta.gov.sg/content/dam/ltagov/who_we_are/statistics_and_publications/books/pdf/Circle_Line_Book.pdf)
+(PDF p39, printed p76) supports the lit arcade and bright panel boxes, but is
+historical; current-colour night photometry and roof lamps remain inferred.
+
+### Fitting, photo checks and IoU
+
+The first round exposed HRSC's overly flat roof and misplaced roof house.
+The second added the green upper deck, red roof canopy, court/parking detail
+and moved the roof house to the southwest end. The final model also recesses the ground-floor core so it no longer hides the
+shop glazing or closes the arcade. It adds warm arcade
+and corridor lines, a photo-interpreted inner retail bar at OHV, and canopy glow.
+Some initial approximate OHV cameras landed in walls and were rejected. The
+final photo-only pass uses a checked open-court position and recorded street /
+terrace poses. The initial south-east and southwest overviews were obstructed by generic HDB
+context; the accepted northeast overview retains full context. An HRSC street
+camera was also moved clear of a generated tree, without hiding context.
+
+HRSC per-view raw silhouette IoU at the supplied camera poses:
+
+| View | First model | Final model | Scoring scope |
+| --- | ---: | ---: | --- |
+| e | 0.790450 | 0.764557 | Visible mapped portion crop; attached low wing beyond the named OSM footprint excluded |
+| n | 0.803394 | 0.811197 | Northern visible roof/body crop; southern foreground excluded |
+| s | 0.736555 | 0.714644 | Whole visible building envelope |
+| w | 0.732946 | 0.739002 | Visible rear elevation crop; adjacent low roof wing excluded |
+| top | 0.834283 | 0.833107 | Named OSM footprint roof; adjacent low roof above the visible junction excluded |
+| street | 0.846108 | 0.855466 | Observable right-hand facade crop; foreground tree excluded |
+
+Six-view mean: **0.790623 → 0.786329**. The small occupancy
+decrease follows the corrected open arcade and setback ground glazing. The
+closed-core version scored higher but hid the real shopfront recess. Masks
+were not changed again to remove this decline. This metric does not establish
+facade fidelity or measure the added roof detail.
+
+N/E/W/street scores are explicit observable crops; S is the whole visible
+envelope and top is the named-footprint roof. Eight additional orbit views are
+visual checks, not scored. Close NE/SW tile images are obstructed and unscored.
+The initial E/W/top annotations inadvertently included an adjacent lower roof
+wing beyond the named OSM footprint. Revision 2 corrects this association using
+explicit crops and the visible roof junction; **both rounds use identical
+revision-2 masks**. Initial annotations and the original broader-envelope mean
+0.696326 remain as diagnostic history. This correction is not a geometry gain.
+Manual masks are never derived from the model; OSM projection identified the
+object association only. Boundary uncertainty is approximately 5–10 pixels at
+800 px annotation width. Final masks and hashes are committed as small numeric
+annotations, while source images and output overlays remain outside git.
+
+**OHV tile IoU: unavailable**, because the imagery predates the mall. The exact
+historical cameras remain in the sheet for ground/context only; they can crop
+new towers. Photo (40), Plantwerkz's night view and Vantaly's canopy photographs
+are compared against approximate courtyard/street/terrace cameras. The separate
+`one_holland_village_photo_overlay.jpg` shows manual photo architecture guides
+and the rendered boundary over a 50% blend. It is explicitly **unregistered**,
+with no warp or quantitative photo IoU. The render is centre-cropped to the same
+4:3 frame. Massing, planting density and gallery alignment disagreement remain
+visible; this is a diagnostic check, not a claim of a surveyed camera match.
+
+### Geometry, materials and full-app validation
+
+- `one_holland_village`: **29,553 triangles**, zero degenerate triangles.
+- `holland_road_sc`: **5,640 triangles**, zero degenerate triangles.
+
+All eleven modules: **377,385 triangles**, plus unchanged EW rail detail
+**29,304**, giving **406,689 total Buona Vista added triangles**. This is the
+addition's total, not a fixed triangle count for the entire streamed city. The
+geometry budget is now 450,000 including rails for eleven modules (previously
+nine); actual usage is below it. The full city's per-frame triangle counts
+are view-dependent (3,351,845–4,934,952 in the established camera checks)
+and recorded in `existing/verification.json`.
+
+The geometry provenance check hashes all original nine modules against
+`692594e`: every oriented triangle is identical. Both additions have finite
+vertices, no degenerate triangles, correct OSM anchors and expected height bounds.
+Materials reuse the existing cached PBR/glass and night-window shaders; canopy
+and warm-light batches share materials. ETFE owns a cloned material so opacity
+changes do not mutate cached landmark materials. No additional post-processing.
+
+The accepted OHV run and targeted final HRSC rerun together capture **32 reference poses in both day/night**,
+plus approximate photo/overview views. The final HRSC run reports **zero page errors, zero console
+errors and 67 runnable shader programs**. The independent regression run
+covers **54 established cameras plus nine night views**, also with zero
+page/console errors and all 63 programs runnable. The final photo-only run
+also completes without page/console/shader errors. These checks use real r128
+through appshot and the browser lock; physical-GPU execution is not claimed.
+
+`core.js` now counts extra canopy/light batches in module statistics. The appshot
+readiness check reads the catalogue size rather than assuming nine modules;
+`patch17.py` registers the two new modules. The production page is regenerated
+through the normal `bv_build.sh --test` flow and its inline script syntax-checks.
+Source hashes in `hrsc_final/verification.json` match the current code/generated
+page after the ground-floor core correction. OHV source and its earlier accepted
+images remain unchanged. The existing-camera regression is repeated after this
+last geometry adjustment.
+
+### Outputs, reproduction and remaining gaps
+
+Local outputs, never committed:
+
+- `/workspace/eo_codex_out/one_holland_village_compare.jpg`
+- `/workspace/eo_codex_out/holland_road_sc_compare.jpg`
+- `/workspace/eo_codex_out/one_holland_village_photo_overlay.jpg`
+- `/workspace/eo_codex_out/one_holland_village_photo_check.json`
+- `/workspace/eo_codex_out/one_holland_village_hero_day.jpg` and `_night.jpg`
+- `/workspace/eo_codex_out/bv_batch2/`: individual views, masks, IoU JSON,
+  geometry provenance and full-app verification.
+
+After the box reboot, all temporary dependencies and logs were restored under
+`/workspace/bv_wip_codex/`, with OSM at `/workspace/bv_data/map_ext.osm`. Reference
+camera/height metadata is in `/workspace/bv_refs/<slug>/meta.json`; no ephemeral
+Google services or API keys are needed. Reproduce using:
+
+```sh
+BV_VENDOR=/workspace/bv_wip_codex/vendor TMPDIR=/workspace/bv_wip_codex bash tools/bv_build.sh --test
+PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch2_render.mjs final
+BV_NEW_ONLY=holland_road_sc PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch2_render.mjs hrsc_final
+BV_PHOTOS_ONLY=1 PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch2_render.mjs photo_final
+PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch2_regression.mjs
+BV_PHOTOS_ONLY=1 BV_PHOTO_FILTER=hrsc_photo66 PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch2_render.mjs photo_refit
+python3 tools/bv_batch2_score.py hrsc_final
+python3 tools/bv_batch2_sheet.py
+node tools/bv_batch2_check.cjs
+THREE_JS=/workspace/bv_wip_codex/vendor/package/build/three.min.js node tools/bv_geometry.cjs
+```
+
+The local HTTP server serves `site/` on port 8047. The regression tool reuses the
+54 preserved camera records from the external Batch-1 baseline report, avoiding
+the wiped `/tmp` street-camera file. Supplementary Plantwerkz/Vantaly/LTA photos
+retain their source copyright; no open licence or redistribution permission is
+claimed. They are local review references only. Module reviews link the Commons
+photographs and licences. No images/renders are committed or attached to PR #5.
+
+Neither mall reaches photographic replica fidelity. OHV's internal bar, canopy
+siting, tower elevations and balcony patterns are approximate; the photo check
+exposes differences in gallery rhythm, landscaping and circulation. HRSC's rear
+and roof equipment remain simplified, and its raw silhouette score includes
+terrain/model differences. Flat app grading and generic context limit street
+matches. Night intensities are visual approximations; the HRSC night source is
+historical. See each module review for documented versus inferred details.

@@ -13,7 +13,7 @@ async function openApp(options={}){
  const url=new URL(options.page||process.env.PAGE||'t_bv.html',options.url||process.env.URL||'http://127.0.0.1:8047/');url.searchParams.set('view','bv');if(options.near||process.env.NEAR)url.searchParams.set('near',options.near||process.env.NEAR);
  await page.addInitScript(()=>{const raf=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=cb=>raf(t=>{if(!window.__freeze)cb(t);});});
  await page.goto(url.href,{waitUntil:'domcontentloaded',timeout:120000});
- await page.waitForFunction(()=>window.__t?.SGR?.tiles?.size>0&&(!window.BuonaVista||Object.keys(window.BuonaVista.stats).length===9),null,{timeout:180000});
+ await page.waitForFunction(()=>window.__t?.SGR?.tiles?.size>0&&(!window.BuonaVista||Object.keys(window.BuonaVista.stats).length===Object.keys(window.__t.ev('SGBV.data')).length),null,{timeout:180000});
  await page.evaluate(()=>{window.__budget=250;window.__t.ev("todPlay=false; if(typeof CLOCK!=='undefined') CLOCK.on=false; controls.enableDamping=false; controls.minPolarAngle=0; controls.maxPolarAngle=Math.PI; controls.maxDistance=100000; controls.minDistance=.01;");});
  let ready=false;for(let i=0;i<180;i++){const state=await page.evaluate(()=>({queue:__t.SGR.queue.length,dirty:__t.SGR.dirty.size,done:[...__t.SGR.tiles.values()].filter(t=>t.done).length}));if(i%15===0)console.log('tiles',state);if(!state.queue&&!state.dirty){ready=true;break;}await page.waitForTimeout(1000);}
  await page.evaluate(()=>{window.__freeze=true;});

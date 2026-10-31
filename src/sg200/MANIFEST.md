@@ -4,19 +4,19 @@
 
 | 键 | 中文 | English | OSM way | 高度 m | 高度来源 | 类型 | 级别 | 状态 |
 |---|---|---|---|---|---|---|---|---|
-| `s2001` | 卫斯理卫理公会教堂 | Wesley Methodist Church | 351305504 | 30 | osm-height | church | hero | done |
+| `s2001` | 卫斯理卫理公会教堂 | Wesley Methodist Church | 351305504 | 32 | photo tower | church | hero | fine |
 | `s2002` | 新加坡华族文化中心 | Singapore Chinese Cultural Centre | 1080516770 | 39.6 | osm-levels*3.6 | civic | hero | done |
-| `s2003` | 圣伯多禄圣保禄堂 | Church of Saints Peter and Paul | 155986468 | 20 | osm-height | church | hero | done |
-| `s2004` | 感恩堂卫理公会 | Kum Yan Methodist Church | 164182084 | 27 | osm-height | church | hero | done |
+| `s2003` | 圣伯多禄圣保禄堂 | Church of Saints Peter and Paul | 155986468 | 30 | spire above osm 20 | church | hero | fine |
+| `s2004` | 感恩堂卫理公会 | Kum Yan Methodist Church | 164182084 | 27 | osm-height | church | hero | fine |
 | `s2005` | 圣淘沙天空螺旋塔 | SkyHelix Sentosa | 176839464 | 35 | osm-height | block | hero | done |
-| `s2006` | 甘榜马六甲奥马尔回教堂 | Masjid Omar Kampung Melaka | 147104299 | 35 | osm-height | mosque | hero | done |
-| `s2007` | 明古连回教堂 | Masjid Bencoolen | 172596716 | 40 | osm-height | mosque | hero | done |
+| `s2006` | 甘榜马六甲奥马尔回教堂 | Masjid Omar Kampung Melaka | 147104299 | 35 | osm-height | mosque | hero | fine |
+| `s2007` | 明古连回教堂 | Masjid Bencoolen | 172596716 | 26 | rebuilt hall; osm tag 40 | mosque | hero | fine |
 | `s2008` | 兴都庙（切蒂亚尔） | Sri Thendayuthapani Temple | 172748749 | 12 | osm-height | temple | hero | done |
-| `s2009` | 圣心堂 | Church of the Sacred Heart | 172748913 | 25 | osm-height | church | hero | done |
+| `s2009` | 圣心堂 | Church of the Sacred Heart | 172748913 | 34 | cupola above osm 25 | church | hero | fine |
 | `s2010` | 红点设计博物馆 | Red Dot Design Museum | 116801907 | 9 | osm-height | civic | hero | done |
-| `s2011` | 仁慈会堂 | Chesed-El Synagogue | 172748756 | 20 | osm-height | civic | hero | done |
+| `s2011` | 仁慈会堂 | Chesed-El Synagogue | 172748756 | 18 | osm-height | civic | hero | fine |
 | `s2012` | 印度文化遗产中心 | Indian Heritage Centre | 176326997 | 14.4 | osm-levels*3.6 | civic | hero | done |
-| `s2013` | 陈氏宗祠保赤宫 | Tan Si Chong Su | 147102973 | 35 | osm-height | temple | hero | done |
+| `s2013` | 陈氏宗祠保赤宫 | Tan Si Chong Su | 147102973 | 16 | hall and roof; osm tag 35 | temple | hero | fine |
 | `s2014` | 滨海湾雅居 | Marina Bay Residences | 116905045 | 245 | osm-height | tower | hero | done |
 | `s2015` | 莱佛士码头一号北塔 | One Raffles Quay North Tower | 172915345 | 245 | osm-height | tower | hero | done |
 | `s2016` | 珊顿道一号一塔 | One Shenton Tower 1 | 325793774 | 214 | osm-height | tower | hero | done |

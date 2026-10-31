@@ -23,16 +23,16 @@ try {
    return {slug,...JurongEast.stats[slug],triangles,vertices,batches,nonfinite,bounds:{min:box.min.toArray(),max:box.max.toArray()}};
   });
  },slugs);
- for(const slug of slugs)for(const night of [false,true]){
-  const jpeg=await page.evaluate(({slug,night})=>{
+ for(const slug of slugs)for(const side of ['se','sw'])for(const night of [false,true]){
+  const jpeg=await page.evaluate(({slug,night,side})=>{
    const t=__t,D=t.ev('SGJE.data')[slug],q=t.sgXY(D.lat,D.lon),ground=t.hC(...q);
    t.setTod(night?20.5:13);t.camera.up.set(0,1,0);t.camera.fov=42;t.camera.near=1;
    t.controls.target.set(q[0],ground+D.height*.5,-q[1]);
-   t.camera.position.set(q[0]+400,ground+260,-q[1]+440);t.controls.update();t.camera.updateProjectionMatrix();
+   t.camera.position.set(q[0]+(side==='sw'?-290:400),ground+(side==='sw'?140:260),-q[1]+(side==='sw'?310:440));t.controls.update();t.camera.updateProjectionMatrix();
    t.ev("runHooks('frame',2,0);runHooks('prerender',2,0)");
    t.renderer.render(t.scene,t.camera);return t.renderer.domElement.toDataURL('image/jpeg',.92).split(',')[1];
-  },{slug,night});
-  fs.writeFileSync(path.join(out,slug+(night?'_review_night.jpg':'_review_day.jpg')),Buffer.from(jpeg,'base64'));
+  },{slug,night,side});
+  fs.writeFileSync(path.join(out,slug+'_'+side+(night?'_review_night.jpg':'_review_day.jpg')),Buffer.from(jpeg,'base64'));
  }
  const report={pageErrors:errors,consoleErrors,models};
  fs.writeFileSync(path.join(out,'hub_east_verification.json'),JSON.stringify(report,null,2));

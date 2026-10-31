@@ -5,12 +5,12 @@
 {
 const {register,scale,rect,out,inside,lerp}=SGJE;
 SGJE.data.perennial_business_city.height=49.05;
-SGJE.data.perennial_business_city.height_source='Official owner sectional plan: 3 x 7.5 m + 3 x 5 m + 7.5 m + 4.05 m; roof frame 49.05 m';
+SGJE.data.perennial_business_city.height_source='Official owner sectional plan: 3 x 7.5 m + 3 x 5 m + 7.5 m + 4.05 m; roof frame 49.05 m; reference meta roof p90 49.2 m';
 register('perennial_business_city','鹏瑞利商务城','Perennial Business City',178,(b,D)=>{
  const P=D.parts[0].p;
  const T=[P[0],P[1],P[11],...P.slice(12)];
- // Broad pale structural envelope, with the curved southwest arrival bay below
- // the upper office floors. Floor levels follow the published section.
+ // Broad pale structural envelope, with the rounded southwest carpark ramp below
+ // the open upper roof frame. Floor levels follow the published section.
  b.prism(P,-.5,22.5,'#d3d5cb');b.prism(T,22.5,45,'#dce0d7');
  const ring=out(P,.08),upper=out(T,.10);
  const face=(a,q,y,h,c,mode=0)=>b.quad(c,[a[0],y,a[1]],[q[0],y,q[1]],[q[0],y+h,q[1]],[a[0],y+h,a[1]],mode);
@@ -19,7 +19,7 @@ register('perennial_business_city','鹏瑞利商务城','Perennial Business City
  // an all-glass office tower. Lower public floors have taller teal glazing.
  for(let i=0;i<ring.length;i++){
   const p=ring[i],q=ring[(i+1)%ring.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);
-  if(L<8)continue;
+  if(L<8||(i>=1&&i<=10))continue;
   const a=cut(p,q,.055),d=cut(p,q,.945);
   b.facade([a,d],.7,6.9,6.2,2.4,'#679b9b','#c9d6cd',.15,false);
   const tall=(i===0||i===12||i>=18&&i<=20);
@@ -49,13 +49,22 @@ register('perennial_business_city','鹏瑞利商务城','Perennial Business City
    for(let k=0;k<13;k++)face(u,v,8+k*2.8,(k+j)%2?2.1:2.65,(j+k)%3?'#c5c39a':'#b8ba89');
   }
  }
- // The rounded arrival terrace is lower than the principal slab, with a
- // planted parapet, small entry canopy and physical mullions.
- const A=P.slice(1,12);b.cap(A,22.55,'#c2c9bc');
- const AR=scale(A,.94);b.garden(AR,22.7,false);b.rim(A,23.5,'#d7ddce',.25);
- for(let i=1;i<10;i+=2){const p=P[i];b.tree(p[0]*.95,22.8,p[1]*.95,.48);}
- b.prism(rect(-50,57,27,8,-.61),6.9,7.25,'#d3dcd2');
- for(const [x,z]of [[-60,52],[-41,65]])b.box(x,0,z,.45,7,.45,'#d7dfd5');
+ // The rounded southwest projection is the eight-level carpark spiral,
+ // visible in both southwest reference images; its roof sits below the frame.
+ // Open dark slots, white slab edges and uprights follow the actual OSM arc.
+ const A=P.slice(1,12),AO=out(A,.13);b.walls(A,0,40,'#647371');
+ for(let i=0;i<AO.length-1;i++){
+  const p=AO[i],q=AO[i+1];
+  face(p,q,.4,39.2,'#536466');
+  for(let y=0;y<=40;y+=5){face(p,q,y,.65,'#dce0d6');}
+  b.beam([p[0],0,p[1]],[p[0],40.5,p[1]],.50,'#dce0d6');
+ }
+ const inner=scale(A,.47);b.capHole(A,[inner],40.05,'#b8bfb3');
+ b.rim(A,40.55,'#dce0d6',.45);b.walls(inner,35,40.05,'#687b75');b.cap(inner,35,'#394d4c');
+ b.rim(inner,40.55,'#dce0d6',.32);
+ // Low entrance hood below the main office frontage.
+ b.prism(rect(-88,11,27,8,-.61),6.9,7.25,'#d3dcd2');
+ for(const [x,z]of [[-98,4],[-79,18]])b.box(x,0,z,.45,7,.45,'#d7dfd5');
  // Roof garden and solar farm, documented by the owner. Garden/plant positions
  // are schematic inside the true envelope until matched-camera refs arrive.
  b.cap(T,45.02,'#adb5aa');b.rim(T,45.65,'#e1e4d6',.4);

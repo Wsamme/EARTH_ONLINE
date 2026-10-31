@@ -62,11 +62,11 @@ function kit(b,a=0,ox=0,oz=0){
 function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
 
 register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,(b,D,G,g)=>{
- const K=kit(b),{faces,panel,beam,quad}=K,P=D.parts[0].p,H=21.5;
- b.prism(P,-1,H,'#bdb8aa');b.cap(P,H+.04,'#a7aca5');b.rim(P,H+.35,'#c9c8b9',.3);
+ const K=kit(b),{faces,panel,beam,quad}=K,P=D.parts[0].p,H=19.1,serviceTop=21.74;
+ b.prism(P,-1,H,'#aeb3ae');b.cap(P,H+.04,'#667953');b.rim(P,H+.35,'#b3b8af',.3);
  const colors=['#b18430','#287d73','#b66435','#516f99','#b9aa43','#7e4162','#4b8c96','#c9a75a'];
- for(const i of [1,3]){
-  const E=faces(P)[i],F=E.F,L=E.L;
+ for(const i of [1]){
+  const E=faces(P)[i],F=E.F,L=E.L-3;
   // Recessed street-level lobby; diagonal supports carry the glazed upper volume.
   panel(F,L/2,.2,L-.15,4.3,'#3e5d61',.04,2);
   for(let u=0;u<L;u+=4.3){beam(F(u,.2,.12),F(u,4.5,.12),.12,'#7b8075');}
@@ -97,7 +97,7 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
   }
   // Translucent lightly tinted glass sheets let the mural remain visible.
   const n=Math.ceil(L/2.5);
-  for(let j=0;j<n;j++)panel(F,(j+.5)*L/n,4.6,L/n-.025,H-4.7,j%3?'#b9c4bb':'#9bada8',.18,6);
+  for(let j=0;j<n;j++)panel(F,(j+.5)*L/n,4.6,L/n-.025,H-4.7,j%3?'#8ea9b1':'#77949f',.18,6);
   // Baoli diamond lattice, clipped analytically at the facade's actual bounds.
   for(const slope of [-.78,.78])for(let start=-25;start<L+25;start+=7.0){
    const y0=4.6,y1=H-.05;
@@ -117,17 +117,55 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
    const R=[F(L*.32,.1+j*.15,.5),F(L*.65,.1+j*.15,.5),F(L*.65,.1+j*.15,1.4-j*.3),F(L*.32,.1+j*.15,1.4-j*.3)];b.quad('#b5b4a7',...R);
   }
  }
- // Opaque upper gallery walls and recessed roof plant stay quiet at night.
- for(const i of [0,4,5]){
+ // The southeast and rear elevations are opaque gallery walls, with small
+ // vertical windows and distinct dark service fins, not a second mural facade.
+ for(const i of [0,3,4,5]){
   const E=faces(P)[i];if(E.L<2)continue;
-  for(const y of [4.4,9,13.6,18.2])beam(E.F(0,y,.05),E.F(E.L,y,.05),.09,'#aca99b');
+  panel(E.F,E.L/2,.15,E.L-.08,3.8,'#49585b',.045);
+  if(i===4)for(const u of [E.L*.3,E.L*.46])for(let f=0;f<3;f++){
+   panel(E.F,u,4.4+f*4.6,f===0?1:1.8,2.8,'#647e7b',.06,2);
+   panel(E.F,u+2.7,4.4+f*4.6,.6,2.8,'#627371',.06,2);
+  }
+  if(i===3||i===4)for(const slope of [-.65,.65])for(let start=-25;start<E.L+25;start+=5.2){
+   const y0=4.1,y1=H-.3,u0=start,u1=start+(y1-y0)/slope,d=u1-u0;
+   let lo=0,hi=1;
+   if(d>0){lo=Math.max(lo,-u0/d);hi=Math.min(hi,(E.L-u0)/d);}else{lo=Math.max(lo,(E.L-u0)/d);hi=Math.min(hi,-u0/d);}
+   if(hi>lo)beam(E.F(u0+d*lo,y0+(y1-y0)*lo,.065),E.F(u0+d*hi,y0+(y1-y0)*hi,.065),.035,'#939e99');
+  }
+  for(const y of [4.1,9.1,14.1,19.1])beam(E.F(0,y,.06),E.F(E.L,y,.06),.06,'#929d99');
+  if(i===5||i===3){
+   const length=i===3?4.2:E.L;
+   panel(E.F,length/2,.1,length,serviceTop-.1,'#3e484e',.14);
+   for(let u=.12;u<length;u+=.33)beam(E.F(u,.15,.2),E.F(u,serviceTop,.2),.09,'#617077');
+  }
  }
- const C=center(P);b.box(C[0]-2,H+.05,C[1]-1,8,1.2,5,'#a1aaa4');
- for(let i=-3;i<=3;i++)b.box(C[0]-2+i,H+1.27,C[1]-1,.07,.04,4,'#586b69');
+ // Tall carved stone entry portal at the end of the Campbell Lane glass front.
+ const EF=faces(P)[1],u=EF.L-1.5;
+ for(const x of [u-1.3,u+1.3]){
+  beam(EF.F(x,.2,.6),EF.F(x,7.8,.6),.4,'#8b8c7a');
+  for(let y=.4;y<7.6;y+=.35)panel(EF.F,x,y,.18,.18,'#b4ae8c',.83);
+ }
+ beam(EF.F(u-1.5,7.8,.6),EF.F(u+1.5,7.8,.6),.45,'#8b8c7a');
+ panel(EF.F,u,.3,2.2,7,'#5b4f3c',.14);
+ // Set-back dark roof service volume and planted terraces, visible in the refs.
+ const roofPlate=scale(P,.86),core=scale(P,.62);b.prism(roofPlate,H+.05,20.5,'#39434a');b.cap(roofPlate,20.52,'#434c51');b.prism(core,20.5,serviceTop,'#39434a');b.cap(core,serviceTop+.05,'#434c51');
+ for(const E of faces(core))for(let v=.25;v<E.L;v+=.4)beam(E.F(v,H+.12,.1),E.F(v,serviceTop,.1),.06,'#66747a');
+ for(let v=1.3;v<EF.L-2;v+=2.6){const q=EF.F(v,H+.05,-1.3);b.tree(q[0],q[1],q[2],.32);}
+ const SE=faces(P)[3];for(let v=7;v<SE.L-1;v+=2.5){const q=SE.F(v,H+.05,-1.2);b.tree(q[0],q[1],q[2],.3);}
+ const C=center(core);b.box(C[0]-2,serviceTop+.05,C[1]-1,4,.55,3,'#a1aaa4');
+ for(let j=-1;j<=1;j++)b.box(C[0]-2+j,serviceTop+.62,C[1]-1,.07,.04,2.4,'#586b69');
  // Transparent glass and colour-preserving mural light each form one shared batch.
  for(const mode of [6,7])if(b.buckets.has(mode)){
   const B=new SGLI.Batch(b.base);B.buckets.set(mode,b.buckets.get(mode));
-  B.flush(g,()=>lmMat(mode===6?{c:'#ffffff',vc:true,ds:true,m:0,lk:.1,op:.23}:{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe4b6',lk:2.6}));b.buckets.delete(mode);
+  B.flush(g,()=>{
+   const mat=lmMat(mode===6?{c:'#ffffff',vc:true,ds:true,m:0,lk:.1,op:.76}:{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe4b6',lk:2.6});
+   if(mode===6&&!mat.userData.liDayGlass){
+    const compile=mat.onBeforeCompile;
+    mat.onBeforeCompile=function(sh,r){compile.call(this,sh,r);sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.a *= mix(1.0,0.24,uNight);');};
+    mat.customProgramCacheKey=()=> 'sgli-ihc-day-glass-v1';mat.userData.liDayGlass=true;
+   }
+   return mat;
+  });b.buckets.delete(mode);
  }
  lights(b,g);
 });

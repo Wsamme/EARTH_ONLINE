@@ -61,20 +61,46 @@ function kit(b,a=0,ox=0,oz=0){
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
 function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
 
-// Gopuram is OSM 481614952 at the east entrance, not the anchor centroid.
+// The legacy anchor/OSM 481614952 is an ancillary building; see REVIEW.md.
 register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa Perumal Temple',80,(b,D,G,g)=>{
- const K=kit(b,1.504,53.49,-.84),W=kit(b),{box,lathe,tower,panel,deity}=K;
+ const K=kit(b,1.504,37.5,24.5),W=kit(b),{box,lathe,tower,panel,deity}=K;
  const gate=D.parts.find(p=>p.id===481614952).p;
- b.prism(gate,-.7,.3,'#c1b7a4');
+ b.prism(gate,-.7,4.8,'#dbdcd0');
+ b.cap(gate,4.85,'#e8e8dd');b.rim(gate,5,'#bbc9c6',.16);
+ for(const E of W.faces(gate))for(let u=1.3;u<E.L;u+=2.5){W.panel(E.F,u,.9,1.2,2.3,'#7eaaa9',.06,2);}
+ b.box(54.5,4.85,1.4,5,.13,8,'#87b3bd');
  box(0,.3,0,13.3,6.6,9.5,'#9fb7c4',3);
  const F=(u,y,w=0)=>[u,y,4.78+w];
  panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,5);
  for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,3);deity(F,s*5.3,1.3,2.1,s+7,3);}
- box(0,6.6,0,13.8,.38,10,'#caa3aa',3);tower(0,0,13.2,9.3,7,20,5);
+ box(0,6.6,0,13.8,.38,10,'#caa3aa',3);tower(0,0,13.2,9.3,7,18,5);
  // Temple halls and side buildings use all four mapped OSM temple outlines.
- const heights={454182405:7.3,454182408:7.9,454182454:6.8,455155906:7.7};
+ const heights={454182405:7.3,454182408:7.9,454182454:6.8,455155906:14.8};
  for(const part of D.parts.filter(p=>p.id!==481614952)){
   const P=part.p,H=heights[part.id];b.prism(P,-.7,H,'#e6d9ba');b.cap(P,H+.04,'#a49275');b.rim(P,H+.24,'#c3aa71',.32);
+  if(part.id===455155906){
+   // PGP Hall is a three-storey civic hall, not a single-storey temple arcade.
+   const C=center(P),angle=.748;
+   b.cap(P,(x,z)=>14.8+.6*Math.max(0,1-Math.abs((x-C[0])*Math.sin(angle)+(z-C[1])*Math.cos(angle))/14),'#bfc3bc');
+   for(const E of W.faces(P)){
+    const n=Math.max(1,Math.round(E.L/3.5)),bw=E.L/n;
+    for(let j=0;j<n;j++){
+     const u=(j+.5)*bw;
+     W.panel(E.F,u,.65,bw-.35,3.5,'#617578',.08,2);
+     for(const y of [4.9,9.5])W.panel(E.F,u,y,1,2.5,'#8b9290',.08,2);
+     // Recessed square floral lattice and raised pale lotus-like rosettes.
+     for(let k=0;k<3;k++)for(let f=0;f<2;f++){
+      const v=u+(k-1)*bw*.25,y=8+f*2.3;W.panel(E.F,v,y,.64,.64,'#b49a9b',.06);
+      W.panel(E.F,v,y+.07,.5,.5,'#e5d9c5',.09);
+     }
+     if(j%2===0)for(const [du,dy]of [[0,0],[-.32,.32],[.32,.32],[0,.65]])W.panel(E.F,u+du,8.9+dy,.4,.4,'#efe8d5',.13);
+    }
+    for(const y of [4.5,6.7,13.9])b.beam(E.F(0,y,.15),E.F(E.L,y,.15),.24,'#c4aca4');
+    b.beam(E.F(0,4.3,1),E.F(E.L,4.3,1),.18,'#c6c8bd');
+   }
+   b.roof(scale(P,.87),14.8,1);
+   continue;
+  }
   for(const E of W.faces(P)){
    const n=Math.max(1,Math.floor(E.L/3.25));
    for(let j=0;j<n;j++){
@@ -87,7 +113,7 @@ register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa 
  }
  // Sanctum above the northeast/southwest axis of the main mandapam.
  const S=kit(b,.017,20,10);S.tower(0,0,7.1,7.1,6.9,14.1,2);
- for(const [x,z]of [[18.2,31.8],[-5,-26],[-28,10]]){
+ for(const [x,z]of [[18.2,31.8],[-28,10]]){
   const T=kit(b,.017,x,z);T.tower(0,0,3.6,3.6,7.4,11.6,1);
  }
  // Red/white short boundary wings on either side of the entrance; no oversized landuse slab.
@@ -95,8 +121,12 @@ register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa 
   box(s*12.1,.15,3.8,10.5,2.7,.42,'#ece4cd');box(s*12.1,2.8,3.8,10.8,.16,.65,'#d0b273');
   for(let u=7;u<17;u+=.9)box(s*u,.3,4.03,.43,2.4,.035,'#a74839');
  }
+ // Documented covered link between gateway and mandapam, not a filled courtyard.
+ const link=kit(b,.015,27,23.5);
+ link.box(0,5.2,0,19,.18,3.8,'#b6c3b6');
+ for(const x of [-8,-3,3,8])for(const z of [-1.6,1.6])link.box(x,.2,z,.17,5,.17,'#c9c8b2');
  // Silver flagstaff and low stepped entrance plinth.
- W.lathe(38,2,.3,.55,11.3,'#c7be8e',0,[[1,0],[.6,.08],[.2,.1],[.14,1]],10);
+ W.lathe(29,24,.3,.55,11.3,'#c7be8e',0,[[1,0],[.6,.08],[.2,.1],[.14,1]],10);
  for(let i=0;i<3;i++)box(0,i*.13,6.4-i*.3,4.2,.13,.6,'#c4bca8');
  lights(b,g);
 },['srinivasa']);

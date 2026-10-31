@@ -1,22 +1,49 @@
 # Sri Veeramakaliamman Temple
 
-Original geometry on OSM ways 155991884 and 1078263462, east/south metres.
-Replaces `sgveeramakali`. Low 7.2 m temple hall, red/white compound panels,
-four-tier 18.9 m gateway with sculpted colour relief, sanctum vimana and small
-shrines, green ribbed roof, barrel skylight, entrance canopy and silver flagstaff.
-Six-storey annex has paired windows, red end strips and a recessed roof service room.
-Maximum 27.1 m measured in `/workspace/li_refs/veeramakaliamman/meta.json`;
-model annex roof/service room 26.9 m, parapet 24.6 m. Hall height follows measured
-p50 7.2 m; measured p90 23.8 m supports the annex wall height.
+OSM 155991884 (hall) and 1078263462 (annex), replacing `sgveeramakali`.
+Low striped hall, sculpted parapet shrines, four-tier painted gateway, Kali
+vimana with domed crown, smaller sanctums, green ribbed roof, barrel skylight,
+white entrance canopy and silver flagstaff. Six-storey annex has paired windows,
+red end strips, floor cornices, roof service room and small plant. Geometry uses
+shared SGBV batches and dedicated shared lmMat architectural-light batches.
 
-Night checked against ScribblingGeek's 2020 night photograph:
+Measured maximum **27.1 m**, p90 **23.8 m**, median **7.2 m**:
+`/workspace/li_refs/veeramakaliamman/meta.json`. Model maximum 26.9 m, annex
+parapet 24.6 m, hall 7.2 m, gateway 18.9 m. The shared footprint's provisional
+25 m metadata still needs regeneration by the lead.
+
+Night checked against ScribblingGeek's 7 October 2020 photograph:
 https://commons.wikimedia.org/wiki/File:Sri_Veeramakaliamman_Temple.jpg .
-Saved photo and provenance live outside the repo in `/workspace/li_photo_refs/veeramakaliamman/`.
-Warm floodlit geometric relief and entrance; annex windows use restrained shared
-night glazing. No photographic textures, signs, logos or external meshes.
+Warm tower/relief floodlight and lit doorway; restrained annex glazing. All photos
+and provenance are outside git in `/workspace/li_photo_refs/veeramakaliamman/`.
+No photographic textures, lettering, logos or external meshes.
 
-Initial build syntax and offline finite-geometry validation pass. Browser comparison
-queued through the shared browser lock; results will be recorded after completion.
-Known limits: relief figures are small geometric abstractions, not iconographic
-replicas. Roof details and annex floor dimensions are photo estimates. Temporary
-festival tents, overhead wires and trees in the reference are omitted.
+## Validation and limits
+
+**33,508 triangles**, four shared material batches. Build syntax and offline
+finite geometry validation pass. Final r3 comparison: n **0.813**, e **0.794**,
+s **0.767**, w **0.818**, top **0.832**; mean **0.805**. Close NE 0.854, close
+SW 0.821, street 0.752; all-view mean 0.806. Main-view scores stayed identical
+after the small vimana crown correction. r3 comparison and independent day/night
+detail run both report `pageErrors: []` and `consoleErrors: []`; retired placement
+check is empty. Artifacts: `/workspace/eo_li_out/heritage/`, never committed.
+
+Overlays retain a wider reference base from its 3 m footprint buffer, tree and
+adjacent-building contamination, and column filling. Geometry has not been
+expanded into that buffer. Exact OSM wall positions and photographic proportions
+are retained. Roof service layout is simplified. Relief figures are geometric
+abstractions; temporary tents and overhead wires are omitted.
+
+## Final verification snapshot
+
+Round **r8**; 33508 triangles.
+
+| n | e | s | w | top | close NE | close SW | street |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.813 | 0.794 | 0.767 | 0.818 | 0.832 | 0.854 | 0.821 | 0.752 |
+
+Mean n/e/s/w/top **0.805**; all-view mean **0.806**.
+
+Final full-app comparison and independent day/night detail runs have **zero page
+errors and zero console errors**; retired placement list is empty. Final images,
+verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.

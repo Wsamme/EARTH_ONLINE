@@ -62,13 +62,13 @@ function kit(b,a=0,ox=0,oz=0){
 function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
 
 register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,g)=>{
- const K=kit(b,-.686),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
- const cream='#ece6d6',white='#f6f1e6',green='#335e49',roof='#a7a89a';
+ const K=kit(b,2.467),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
+ const cream='#ece6d6',white='#f6f1e6',green='#335e49',roof='#768974';
  b.prism(D.parts[0].p,-1,1.65,'#c9c4b2');
  // Raised historic prayer hall within a real open arcade; eastern extension stays low.
- box(-7.4,1.65,-.6,17.8,7.6,23.2,cream,3);box(-7.4,9.05,-.6,18.2,.3,23.6,white,3);
+ box(-7.4,1.65,-.6,17.8,7.6,23.2,cream,3);box(-7.4,9.05,-.6,18.2,.3,23.6,white,3);b.cap(K.P(rect(-7.4,-.6,17.8,23.2)),9.36,'#607967');
  box(12.2,1.65,0,14.5,7.5,29,cream,3);
- const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);
+ const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);b.cap(K.P(deck),7.11,'#72836b');
  const arcades=faces(deck);
  for(const [i,E]of arcades.entries()){
   if(i===0)continue;const n=i%2===0?7:8,bay=E.L/n;
@@ -94,6 +94,10 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
   for(let u=.25;u<E.L;u+=.6){panel(E.F,u,7.2,.24,.57,green,.08);}
   beam(E.F(0,7.95,.03),E.F(E.L,7.95,.03),.22,white);
  }
+ // Shaded prayer-hall openings read through the open verandah rather than as blank walls.
+ for(const E of faces(rect(-7.4,-.6,17.9,23.3)))for(let u=1.5;u<E.L;u+=3){
+  arch(E.F,u,1.9,1.9,4.3,'#344b43',.08);arcTrim(E.F,u,1.9,1.9,4.3,green);
+ }
  // Clerestory windows, paired pilasters, terrace and 22 slender parapet turrets.
  for(const E of faces(rect(-7.4,-.6,17.9,23.3))){for(let u=1.5;u<E.L;u+=3){arch(E.F,u,7.35,1.05,1.45,green,.08);arcTrim(E.F,u,7.35,1.05,1.45,white);}}
  const turret=(x,z,y,w,h)=>{
@@ -109,23 +113,27 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  const F=(u,y,w=0)=>[u-7.5,y,14.65+w];
  const outline=[[-2.6,7],[-2.8,9.5],[-2,10.8],[-1,11.7],[0,13.6],[1,11.7],[2,10.8],[2.8,9.5],[2.6,7]];
  const t=THREE.ShapeUtils.triangulateShape(outline.map(p=>new THREE.Vector2(...p)),[]);for(const v of t)b.tri(white,...v.map(i=>K.T(...F(...outline[i],.14))),3);
- for(let i=0;i<25;i++){const a=i/25*Math.PI*2,c=(i+.65)/25*Math.PI*2;quad(i%2?green:'#c6ac65',F(Math.cos(a)*.48,9.25+Math.sin(a)*.48,.2),F(Math.cos(a)*1.75,9.25+Math.sin(a)*1.75,.2),F(Math.cos(c)*1.75,9.25+Math.sin(c)*1.75,.2),F(Math.cos(c)*.48,9.25+Math.sin(c)*.48,.2),3);}
+ for(let i=0;i<25;i++){const a=i/25*Math.PI*2,c=(i+.65)/25*Math.PI*2;quad(i%2?green:'#c6ac65',F(Math.cos(a)*.24,9.25+Math.sin(a)*.48,.2),F(Math.cos(a)*.88,9.25+Math.sin(a)*1.75,.2),F(Math.cos(c)*.88,9.25+Math.sin(c)*1.75,.2),F(Math.cos(c)*.24,9.25+Math.sin(c)*.48,.2),3);}
  panel(F,0,6.4,3.5,.55,green,.23);panel(F,0,6.5,3.2,.25,'#e8d6a2',.25,5);
  for(const x of [-10.2,-4.8])turret(x,14.6,7,1.1,4.8);
  for(let i=0;i<6;i++)box(-7.5,.25+i*.23,16.1-i*.27,4.6,.23,.52,'#b7a998');
  // Hexagonal three-stage cupola with inset arched windows and small corner pinnacles.
  let y=9.3;for(let k=0;k<3;k++){
-  const r=3.3-k*.55,H=1.9-k*.15,R=K.ring(-7.4,-1.3,r,6);prism(R,y,y+H,cream,3);
+  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-7.4,-1.3,r,6);prism(R,y,y+H,cream,3);
   for(const E of faces(R)){arch(E.F,E.L/2,y+.25,.72,H-.45,'#547d72',.04,5);arcTrim(E.F,E.L/2,y+.25,.72,H-.45,white);}
   prism(K.ring(-7.4,-1.3,r+.12,6),y+H-.16,y+H,white,3);y+=H;
  }
- lathe(-7.4,-1.3,y,1.7,3.8,green,4,null,24);
- lathe(-7.4,-1.3,y+3.6,.46,1.05,green,4,null,16);
+ lathe(-7.4,-1.3,y,1.3,3.8,green,4,null,24);
+ lathe(-7.4,-1.3,y+3.6,.38,1.05,green,4,null,16);
  lathe(-7.4,-1.3,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
- for(const p of K.ring(-7.4,-1.3,2.05,6))turret(p[0],p[1],14.5,.33,1.3);
+ for(const p of K.ring(-7.4,-1.3,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
  // Extension's long arched window rhythm and restrained flat service roof.
  for(const E of faces(rect(12.2,0,14.55,29.05))){for(let u=1.5;u<E.L;u+=2.8){arch(E.F,u,2.2,1.35,3.2,'#456655',.08,2);arcTrim(E.F,u,2.2,1.35,3.2,white);}beam(E.F(0,8.7,.15),E.F(E.L,8.7,.15),.28,green);}
  box(12.2,9.15,0,14.6,.2,29.1,roof);box(13,9.35,-8,3,1.1,3,'#b7c2b6');
+ // Measured vertical levels: main deck 4.3 m, highest finial 10.8 m.
+ // Keep the OSM plan unchanged; compress the old over-tall architectural sections.
+ const fittedY=y=>y<=0?y:y<=9.3?y*(4.3/9.3):4.3+(y-9.3)*(6.5/10.77);
+ for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+fittedY(B.p[i]-b.base);
  lights(b,g);
 },['sgabdulgafoor']);
 

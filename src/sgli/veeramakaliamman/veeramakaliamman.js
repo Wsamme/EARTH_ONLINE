@@ -94,7 +94,7 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
  tower(-.6,21.1,9.8,5.7,6.95,18.9,4);
  // Main Kali vimana plus smaller sanctum towers, clear of the front court.
- tower(-.5,2.2,5.7,5.7,7.3,15.1,2);
+ tower(-.5,2.2,5.7,5.7,7.3,14.1,2);lathe(-.5,2.2,13.7,1.03,1.4,'#cfb365',3,null,16);
  for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
  // Green ribbed hall roof and pale barrel skylight visible in the reference views.
  for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');

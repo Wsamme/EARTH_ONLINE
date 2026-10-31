@@ -2,8 +2,8 @@
  "westgate": {
   "lat": 1.3342548674067993,
   "lon": 103.74286557083342,
-  "height": 110,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 141.1,
+  "height_source": "Tile roof max minus ground 141.1 m (p90 135.4, p50 27.5); refine per module",
   "parts": [
    {
     "id": 158234014,
@@ -167,8 +167,8 @@
  "jem": {
   "lat": 1.3331836346381178,
   "lon": 103.74339489404758,
-  "height": 60,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 82.8,
+  "height_source": "Tile roof max minus ground 82.8 m (p90 77.9, p50 30.5); refine per module",
   "parts": [
    {
     "id": 620519197,
@@ -272,8 +272,8 @@
  "j_den": {
   "lat": 1.3333390841789186,
   "lon": 103.74018296022726,
-  "height": 130,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 139,
+  "height_source": "Design estimate: 150 m AMSL height limit minus ~11 m ground; tiles predate the building (show 37.3 m JCube)",
   "parts": [
    {
     "id": 158227102,
@@ -357,8 +357,8 @@
  "imm": {
   "lat": 1.3350588362597813,
   "lon": 103.74678277083959,
-  "height": 30,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 31.6,
+  "height_source": "Tile roof max minus ground 31.6 m (p90 30.6, p50 26.2); refine per module",
   "parts": [
    {
     "id": 33543880,
@@ -571,8 +571,8 @@
  "perennial_business_city": {
   "lat": 1.3317686116968448,
   "lon": 103.74488470658632,
-  "height": 45,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 53.4,
+  "height_source": "Tile roof max minus ground 53.4 m (p90 49.2, p50 44.3); refine per module",
   "parts": [
    {
     "id": 173029751,
@@ -695,8 +695,8 @@
  "jurong_east_mrt": {
   "lat": 1.3328043862477081,
   "lon": 103.74173176857592,
-  "height": 22,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 22.7,
+  "height_source": "Tile roof max minus ground 22.7 m (p90 22.3, p50 13.3); refine per module",
   "parts": [
    {
     "id": 33737976,
@@ -921,8 +921,8 @@
  "ng_teng_fong": {
   "lat": 1.3335203000669698,
   "lon": 103.7455027991624,
-  "height": 75,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 94.2,
+  "height_source": "Tile roof max minus ground 94.2 m (p90 81.3, p50 25.9); refine per module",
   "parts": [
    {
     "id": 368005263,
@@ -1656,8 +1656,8 @@
  "vision_exchange": {
   "lat": 1.330146916236836,
   "lon": 103.74457679934665,
-  "height": 120,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 122.1,
+  "height_source": "Tile roof p90 122.1 m; tile max 144.2 m includes a temporary crane",
   "parts": [
    {
     "id": 368005267,
@@ -1703,8 +1703,8 @@
  "jtc_summit": {
   "lat": 1.3311862415899627,
   "lon": 103.74184163105096,
-  "height": 142,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 150.7,
+  "height_source": "Tile roof max minus ground 150.7 m (p90 139.1, p50 22.6); refine per module",
   "parts": [
    {
     "id": 33738028,
@@ -1858,8 +1858,8 @@
  "cpf_jurong": {
   "lat": 1.3350171463650466,
   "lon": 103.73980710196375,
-  "height": 20,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 22.5,
+  "height_source": "Tile roof max minus ground 22.5 m (p90 21.8, p50 17.4); refine per module",
   "parts": [
    {
     "id": 103752945,
@@ -1933,8 +1933,8 @@
  "jurong_town_hall": {
   "lat": 1.3287426986937119,
   "lon": 103.74185181592496,
-  "height": 32,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 59.3,
+  "height_source": "Tile roof max minus ground 59.3 m (p90 30.7, p50 26.0); refine per module",
   "parts": [
    {
     "id": 96764520,

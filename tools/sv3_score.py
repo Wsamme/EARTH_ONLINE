@@ -9,6 +9,16 @@ from PIL import Image,ImageDraw,ImageFont,ImageFilter
 ROOT=Path(__file__).resolve().parents[1];OUT=Path(os.environ.get('BV_OUT','/workspace/eo_codex_out'));P=OUT/'sv3'
 manifest=json.load(open(P/'manifest.json'));ann=json.load(open(ROOT/'src/sgbv/star_vista/silhouettes.json'))
 round=os.environ.get('ROUND','final');D=P/round;rows=[]
+def extrema(a,dilate):
+ # Separable boolean min/max, avoiding Pillow's slow large rank filter.
+ n=10;h,w=a.shape
+ p=np.pad(a,((0,0),(n,n)),constant_values=not dilate);r=np.zeros_like(a)if dilate else np.ones_like(a)
+ op=np.logical_or if dilate else np.logical_and
+ for i in range(2*n+1):op(r,p[:,i:i+w],out=r)
+ p=np.pad(r,((n,n),(0,0)),constant_values=not dilate);r=np.zeros_like(a)if dilate else np.ones_like(a)
+ for i in range(2*n+1):op(r,p[i:i+h,:],out=r)
+ return r
+
 def polygon(points):
  im=Image.new('L',(1600,1000));ImageDraw.Draw(im).polygon([(x*2,y*2)for x,y in points],fill=255);return np.array(im)>0
 for v in manifest['views']:
@@ -24,7 +34,7 @@ for v in manifest['views']:
   model=np.array(Image.open(f).convert('L'))>127
   inter=np.sum(ref&model&valid);union=np.sum((ref|model)&valid);iou=float(inter/union)if union else 0
   row[k]=float(f'{iou:.5f}')
-  boundary=Image.fromarray((ref*255).astype('uint8'));eroded=np.array(boundary.filter(ImageFilter.MinFilter(21)))>0;dilated=np.array(boundary.filter(ImageFilter.MaxFilter(21)))>0;stable=valid&~(dilated&~eroded);den=np.sum((ref|model)&stable);row[k+'_outside_10px_boundary']=float(f'{np.sum(ref&model&stable)/den:.5f}')if den else None
+  eroded=extrema(ref,False);dilated=extrema(ref,True);stable=valid&~(dilated&~eroded);den=np.sum((ref|model)&stable);row[k+'_outside_10px_boundary']=float(f'{np.sum(ref&model&stable)/den:.5f}')if den else None
   if k=='after':
    rgb=np.array(Image.open(v['file']).convert('RGB')).copy();rgb[ref&~model&valid]=[255,80,60];rgb[model&~ref&valid]=[40,130,255];rgb[ref&model&valid]=(rgb[ref&model&valid]*.55+np.array([50,220,80])*.45).astype('uint8');Image.fromarray(rgb).save(D/(n+'_iou.jpg'))
  row.update(status=a.get('confidence','manual'),annotation_sha256=hashlib.sha256(json.dumps(a,sort_keys=True).encode()).hexdigest(),valid_fraction=float(f'{valid.mean():.4f}'));rows.append(row)
@@ -36,7 +46,7 @@ for k in ['before','after']:
 (OUT/'star_vista_v3_iou.json').write_text(json.dumps(report,indent=2))
 (P/(round+'_iou.json')).write_text(json.dumps(report,indent=2))
 # Several bounded sheets instead of a single unreadably tall image.
-cats=[('star_vista_v3',[v for v in manifest['views']if v['name'].startswith('original_')]),('star_vista_v3_orbit',[v for v in manifest['views']if v['name'].startswith('orbit')]),('star_vista_v3_close',[v for v in manifest['views']if v['name'].startswith(('close','cu_'))]),('star_vista_v3_top_street',[v for v in manifest['views']if v['name'].startswith(('top_','street_'))])]
+cats=[('star_vista_v3',[v for v in manifest['views']if v['name'].startswith('original_')]),('star_vista_v3_orbit',[v for v in manifest['views']if v['name'].startswith('orbit')]),('star_vista_v3_close',[v for v in manifest['views']if v['name'].startswith('cu_')]),('star_vista_v3_close150',[v for v in manifest['views']if v['name'].startswith('close150')]),('star_vista_v3_top_street',[v for v in manifest['views']if v['name'].startswith(('top_','street_'))])]
 for title,vs in cats:
  for k in range(0,len(vs),8):
   batch=[v for v in vs[k:k+8]if(D/(v['name']+'.jpg')).exists()]

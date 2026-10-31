@@ -104,5 +104,34 @@ The score tool needs Python Pillow and NumPy. Output defaults to
 are read-only local inputs, never runtime dependencies. Exact camera output logs
 are `/tmp/bv/sv3_out_a.json` and `/tmp/bv/sv3_out_b.json`.
 
-Final per-view results and remaining gaps are appended after all capture batches
-and the final full-app verification are complete.
+## Final acceptance
+
+All 67 exact cameras render with zero page/console errors. The independent
+six-view full-app appshot also passes. The final source hash is recorded beside
+the camera poses. A transient Chrome WebGL-context initialization failure was
+rejected; the fresh-browser reruns passed.
+
+The model has 76,232 triangles including context, a 74.67 m maximum including
+seams, upward roof normals and no degenerate triangles. All nine plus rails total
+343,389 triangles. Other eight geometry records remain identical. Raw mean IoU
+is 0.800 → 0.845 across 62 paired observable/cropped views; five obstructed views
+have no score. 58 paired views improve and four regress. All six original views improve; the small north street crop drops
+0.025.
+
+The complete per-view table, source citations, method contributions and remaining
+limitations are in [the district review's v3 section](../REVIEW.md#star-vista-v3-follow-up--exact-camera-result).
+Southern enclosure curvature, etched/translucent cladding, internal truss shading,
+retail terraces and local grading remain approximate. The model is not yet a
+photographic replica. All final comparison sheets and both heroes were inspected.
+
+
+For independent appshot and geometry verification:
+
+```bash
+NEAR=1.30687671,103.78846253,1700 bash src/lm33/kit/browser.sh \
+  node src/lm20/kit/appshot.js /workspace/eo_codex_out/sv3/appshot_final \
+  "$(cat src/sgbv/tools/star_vista_v3_views.json)"
+node tools/sv3_check.cjs
+node tools/bv_geometry.cjs
+python3 tools/sv3_measure.py
+```

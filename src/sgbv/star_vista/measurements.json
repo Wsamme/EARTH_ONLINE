@@ -67,5 +67,6 @@
     }
   ],
   "roof_control_method": "Small manually chosen roof corners checked with perspective camera rays in original top and elevations; analytic faceted surfaces between sections, not dense photogrammetry or extracted mesh. Control section heights are estimates (typically \u00b12\u20133 m).",
-  "limitations": "Approximate facade planes and fixed ground datum introduce uncertainty. These values are modelling estimates except where explicitly verified by the supplied measurement or cited architect/operator."
+  "limitations": "Approximate facade planes and fixed ground datum introduce uncertainty. These values are modelling estimates except where explicitly verified by the supplied measurement or cited architect/operator.",
+  "sparse_ray_check": "Run python3 tools/sv3_measure.py for original_n reveal and upper-glazing plane intersections (2 m plane/pixel uncertainty)."
 }

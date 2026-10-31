@@ -78,3 +78,149 @@ The reference images remain local and are not shipped or attached to the PR.
 | Galaxis | L plan, pilotis, north checker facade, southern horizontal bands and roof screen | Cassette arrangement, annex details and roof equipment are simplified |
 | Mediacorp | Floating tapered bar, theatre/studio volumes, cylindrical core and roof fans | Undercroft, studio massing, roof services and metal finish remain approximate |
 | Rochester | One cranked main tower, hotel/mall footprints, balconies, pink spine and ribbed mall roof | Balcony stacks, roof profiles and mall facade are simplified |
+
+## Star Vista v3 follow-up — exact-camera result
+
+This section supersedes the earlier Star Vista assessment and triangle totals.
+The other eight model sources and geometry records are unchanged. OSM anchor:
+**way 104352121**, measured roof maximum **74.5 m**. The new mesh reaches 74.67 m
+including roof seams, with **76,232 triangles including its context**. All nine
+models plus added rails total **343,389 triangles**.
+
+All 61 new references and the original six were inspected. Final acceptance uses
+all **67 supplied exact camera poses** at 1600×1000 / horizontal FOV 60°, with
+ellipsoidal altitude minus ground 19.4 m added to the scene anchor ground. The
+67-camera render, baseline mask run and independent six-view full-app appshot
+reported **zero page and console errors**. Source hashes match the final module.
+A transient Chrome WebGL-context initialization failure caused rejected attempts;
+the fresh-browser reruns above succeeded and are the accepted results.
+
+### What the methods changed
+
+1. The expanded orbit/top/close references exposed the high roof's stop before a
+   lower eastern apron, western glass slots, varying crossfall and folded soffit.
+2. Public architectural research fixed retail B1–L2 and the floating theatre /
+   33 m foyer interpretation. Sources: [operator](https://thestarvista.sg/about-us),
+   [Aedas](https://www.aedas.com/en/project/the-star/),
+   [architect account, plans, section and photographs](https://www.archdaily.com/510587/the-star-andrew-bromberg-of-aedas),
+   [structural engineer](https://www.thorntontomasetti.com/project/star-vista), and
+   [lighting designer](https://www.lighting.co.jp/en/projects/the-star-vista-and-the-star/).
+   The full source notes and measurement assumptions are in
+   [star_vista/REVIEW.md](star_vista/REVIEW.md) and `measurements.json`.
+3. Sparse photo-ray checks and repeated fixed-mask IoU comparisons guided roof
+   control sections, west reach, reveal depth, base and canopy corrections.
+4. Folded surfaces now have clipped panel triangles, independent face winding,
+   upward roof normals, seams and roof grids. The geometry check finds no
+   degenerate triangles or nonfinite positions.
+5. An in-memory procedural cube map adds r128-compatible reflections. Panel tones,
+   warm outline/atrium strips and restrained blue theatre light replace a uniformly
+   dull night enclosure; no photographs or logos are applied to the mesh.
+6. Street work adds the curved retail rim, open court, foyer supports, escalators,
+   low north canopy, northeast entrance connector, plaza steps and planting.
+
+The first three major silhouette problems were the uniform box-like roof sweep,
+the over-deep reveal / flat underside, and the disconnected retail base. Successive
+geometry rounds replaced them with separate roof sections/apron, a shallower slot
+and folded soffit, and connected curved galleries/canopies. Material rounds then
+reduced tone checkerboarding, added reflection and lighting, and removed seam-beam
+shadow speckling. All final comparison sheets and both heroes were inspected.
+
+### Measurement limits and remaining status
+
+Mean raw IoU is **0.800 → 0.845** across **62 paired observable/cropped views**.
+58 paired views improve and four regress. All six original views improve. The north street crop regresses by 0.025; this
+small, heavily obstructed crop is not evidence of a fully observed base. Five
+views have unavailable scores because the building boundary is hidden. They were
+rendered and remain in the sheets. Cropped-view IoU is not a whole-building score.
+
+The same final hand-reviewed photo masks are used for both versions. Corrections
+to inaccurate initial outlines were applied to both, and are recorded by annotation
+hashes in the JSON report. Masks have roughly 5–10 px uncertainty at the 800 px
+annotation width. The JSON includes an additional diagnostic outside a 10 px
+rendered-image boundary band. IoU is an occupancy metric, not proof of material or
+construction accuracy.
+
+The model is more recognisable, but **still does not reach photographic replica
+fidelity**. Its southern curved enclosure remains too planar, the main reveals
+and fold positions are approximate, and the pale cladding lacks the real etched
+glass/translucency and internal truss shading. Retail terraces, ramps, gardens and
+site grading remain simplified; the flat app terrain limits the below-ground
+amphitheatre. Night light is an approximation, not a photometric recreation.
+These gaps are visible in the supplied comparisons and should remain review items.
+
+Outputs are local only: `/workspace/eo_codex_out/star_vista_v3.jpg`, the numbered
+orbit/top/street/close/close150 sheets, `star_vista_v3_hero_day.jpg`,
+`star_vista_v3_hero_night.jpg`, and `star_vista_v3_iou.json`. No reference image or
+render is committed or attached to the PR. See the module review for reproduction.
+
+### Per-view raw silhouette IoU
+
+| View | Before | After | Scoring scope |
+| --- | ---: | ---: | --- |
+| original_n | 0.766 | 0.801 | Visible envelope |
+| original_e | 0.778 | 0.816 | Visible envelope |
+| original_s | 0.887 | 0.912 | Visible envelope |
+| original_w | 0.732 | 0.802 | Crop / exclusions |
+| original_top | 0.809 | 0.859 | Visible envelope |
+| original_street | 0.791 | 0.821 | Crop / exclusions |
+| orbit_h0000_p15 | — | — | Unavailable: obstructed |
+| orbit_h0000_p35 | 0.796 | 0.870 | Crop / exclusions |
+| orbit_h0225_p15 | 0.844 | 0.914 | Crop / exclusions |
+| orbit_h0225_p35 | 0.819 | 0.892 | Visible envelope |
+| orbit_h0450_p15 | 0.725 | 0.809 | Visible envelope |
+| orbit_h0450_p35 | 0.859 | 0.915 | Visible envelope |
+| orbit_h0675_p15 | 0.741 | 0.810 | Visible envelope |
+| orbit_h0675_p35 | 0.859 | 0.906 | Visible envelope |
+| orbit_h0900_p15 | 0.702 | 0.777 | Visible envelope |
+| orbit_h0900_p35 | 0.832 | 0.879 | Visible envelope |
+| orbit_h1125_p15 | 0.783 | 0.790 | Visible envelope |
+| orbit_h1125_p35 | 0.803 | 0.833 | Visible envelope |
+| orbit_h1350_p15 | 0.767 | 0.762 | Visible envelope |
+| orbit_h1350_p35 | 0.753 | 0.766 | Visible envelope |
+| orbit_h1575_p15 | 0.712 | 0.743 | Visible envelope |
+| orbit_h1575_p35 | 0.814 | 0.831 | Visible envelope |
+| orbit_h1800_p15 | 0.738 | 0.789 | Visible envelope |
+| orbit_h1800_p35 | 0.755 | 0.799 | Visible envelope |
+| orbit_h2025_p15 | 0.755 | 0.800 | Visible envelope |
+| orbit_h2025_p35 | 0.803 | 0.870 | Visible envelope |
+| orbit_h2250_p15 | 0.748 | 0.785 | Visible envelope |
+| orbit_h2250_p35 | 0.796 | 0.849 | Visible envelope |
+| orbit_h2475_p15 | 0.753 | 0.799 | Visible envelope |
+| orbit_h2475_p35 | 0.815 | 0.856 | Visible envelope |
+| orbit_h2700_p15 | 0.729 | 0.756 | Visible envelope |
+| orbit_h2700_p35 | 0.772 | 0.806 | Visible envelope |
+| orbit_h2925_p15 | 0.751 | 0.772 | Visible envelope |
+| orbit_h2925_p35 | 0.788 | 0.829 | Visible envelope |
+| orbit_h3150_p15 | 0.777 | 0.806 | Visible envelope |
+| orbit_h3150_p35 | 0.839 | 0.828 | Visible envelope |
+| orbit_h3375_p15 | 0.821 | 0.845 | Crop / exclusions |
+| orbit_h3375_p35 | 0.841 | 0.873 | Crop / exclusions |
+| close150_h000 | 0.782 | 0.882 | Cropped view |
+| close150_h045 | 0.890 | 0.909 | Cropped view |
+| close150_h090 | 0.868 | 0.906 | Cropped view |
+| close150_h135 | 0.796 | 0.837 | Cropped view |
+| close150_h180 | 0.876 | 0.915 | Cropped view |
+| close150_h225 | 0.818 | 0.893 | Cropped view |
+| close150_h270 | 0.798 | 0.869 | Cropped view |
+| close150_h315 | 0.825 | 0.869 | Cropped view |
+| street_s | 0.714 | 0.778 | Crop / exclusions |
+| street_n | 0.949 | 0.924 | Crop / exclusions |
+| street_e | 0.870 | 0.888 | Crop / exclusions |
+| street_w | — | — | Unavailable: obstructed |
+| top_full | 0.805 | 0.854 | Visible envelope |
+| top_ne | 0.664 | 0.684 | Cropped view |
+| top_nw | 0.891 | 0.948 | Cropped view |
+| top_se | 0.781 | 0.868 | Cropped view |
+| top_sw | 0.944 | 0.928 | Cropped view |
+| cu_edge_east | 0.790 | 0.855 | Cropped view |
+| cu_edge_west | 0.836 | 0.880 | Crop / exclusions |
+| cu_edge_north | 0.864 | 0.901 | Crop / exclusions |
+| cu_edge_south | 0.758 | 0.841 | Cropped view |
+| cu_reveal_south | 0.769 | 0.884 | Crop / exclusions |
+| cu_reveal_north | 0.843 | 0.921 | Crop / exclusions |
+| cu_atrium_top | 0.828 | 0.889 | Cropped view |
+| cu_atrium_side | 0.844 | 0.853 | Cropped view |
+| cu_glassbase_north | — | — | Unavailable: obstructed |
+| cu_glassbase_south | — | — | Unavailable: obstructed |
+| cu_glassbase_east | 0.750 | 0.863 | Crop / exclusions |
+| cu_glassbase_west | — | — | Unavailable: obstructed |

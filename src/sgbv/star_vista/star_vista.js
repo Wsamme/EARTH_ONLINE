@@ -17,11 +17,11 @@ function environment(){
 register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  const metal=3,glass=2,light=4;
  const oldFlush=b.flush.bind(b);
- b.flush=(group)=>oldFlush(group,mode=>{
-  const m=lmMat({c:'#ffffff',vc:true,ds:true,m:mode===glass?1:0,lc:'#ffe2b0',lk:mode===glass?.22:.12,fh:4.4,cw:2.6,glow:mode===light?'#ffe5ba':mode===9?'#8bb8ec':mode===metal?'#c0d6df':undefined,gk:mode===light?.8:mode===9?.22:mode===metal?.105:undefined});
+ b.flush=(group)=>{const result=oldFlush(group,mode=>{
+  const m=lmMat({c:'#ffffff',vc:true,ds:true,m:mode===glass?1:0,lc:'#ffe2b0',lk:mode===glass?.22:.12,fh:4.4,cw:2.6,glow:mode===light?'#ffe5ba':mode===9?'#3768de':mode===metal?'#c0d6df':undefined,gk:mode===light?.8:mode===9?.55:mode===metal?.065:undefined});
   if(mode===metal||mode===glass||mode===5||mode===6||mode===9){m.envMap=environment();m.combine=THREE.MixOperation;m.reflectivity=mode===glass?.32:(mode===metal||mode===9)?.19:.025;if(mode===metal||mode===9)m.emissive=new THREE.Color('#101b20');m.flatShading=true;m.needsUpdate=true;}
   return m;
- });
+ });const modes=[...b.buckets.keys()];group.children.slice(-modes.length).forEach((m,i)=>{m.userData.svMode=modes[i];if(modes[i]===0||modes[i]===light)m.castShadow=false;});return result;};
  const plazaHole=SGBV.ellipse(32,8,13,14,48);b.capHole(scale(D.parts[0].p,.985),[plazaHole],1.2,'#a6b6af');b.walls(scale(D.parts[0].p,.985),-.5,1.2,'#9caea6');b.cap(plazaHole,-1.6,'#8b9f98');
  const glowBeam=(a,q,w=.25)=>{const tri=b.tri.bind(b);b.tri=(c,p,q,r)=>tri(c,p,q,r,light);b.beam(a,q,w,'#f4e5cc');b.tri=tri;};
  const mix=(a,q,t)=>a.map((v,k)=>lerp(v,q[k],t));
@@ -51,8 +51,8 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
   }
  }
  function shell(A,B,north){
-  const lowerA=A.map((p,i)=>[p[0]*.94+(north?0:1)-11*(1-i/4),north?41-i*.15:39-i*.5,p[2]*(north?.82:.82)]);
-  const lowerB=B.map((p,i)=>[p[0]*.95-10*(1-i/4),north?42-i*.2:39-i*.45,p[2]*.84]);
+  const lowerA=A.map((p,i)=>[p[0]*.94+(north?0:1)-11*(1-i/4),north?41-i*.15:39-i*.5,p[2]*.93]);
+  const lowerB=B.map((p,i)=>[p[0]*.95-10*(1-i/4),north?42-i*.2:39-i*.45,p[2]*.93]);
   plate(A,B,north?5:6);face(A,lowerA,north?2:5,true);face(B,lowerB,north?7:11);
   // Western end: two folded planes separated by a real recessed glass slot.
   const U=A[0],V=B[0],C=lowerA[0],E=lowerB[0],lo=55.5,hi=59;
@@ -78,12 +78,12 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
   // and lower edges. Horizontal depth is 3–6 m, not a line painted on the wall.
   const ribbonTopA=lowerA.map((p,i)=>north&&i===4?[65,37.5,-14]:[A[i][0]*1.025-10*(1-i/4),p[1]-2.5,A[i][2]*1.025]);
   const ribbonTopB=lowerB.map((p,i)=>north&&i===4?[39,37.5,18]:[B[i][0]*1.025-10*(1-i/4),p[1]-2.5,B[i][2]*1.025]);
-  const ribbonBottomA=ribbonTopA.map((p,i)=>[p[0]*.90,24+(north?0:-1)+i*.3,p[2]*.80]);
-  const ribbonBottomB=ribbonTopB.map((p,i)=>[p[0]*.90,25-i*.15,p[2]*.80]);
+  const ribbonBottomA=ribbonTopA.map((p,i)=>[p[0]*.90,north?24+i*.3:[29,30,32,33,30][i],p[2]*.80]);
+  const ribbonBottomB=ribbonTopB.map((p,i)=>[p[0]*.90,north?[29,30,32,33,30][i]:25-i*.15,p[2]*.80]);
   plate(ribbonTopA,ribbonTopB,0);face(ribbonTopA,ribbonBottomA,19,true);face(ribbonTopB,ribbonBottomB,23);
   for(const i of [0,4])b.quad('#b2c0c0',ribbonBottomA[i],ribbonBottomB[i],ribbonTopB[i],ribbonTopA[i],metal);
   plate(ribbonBottomA,ribbonBottomB,0,false);
-  for(const E of [ribbonTopA,ribbonTopB])for(let i=0;i<E.length-1;i++){b.beam(E[i],E[i+1],.25,'#e5e8e1');glowBeam(E[i].map((v,k)=>v+(k===1?.2:0)),E[i+1].map((v,k)=>v+(k===1?.2:0)),.2);const p=E[i].map((v,k)=>v+(k===1?-.2:0)),q=E[i+1].map((v,k)=>v+(k===1?-.2:0));b.quad('#f5ddaf',p,q,q.map((v,k)=>v+(k===1?-.1:0)),p.map((v,k)=>v+(k===1?-.1:0)),light);}
+  for(const E of [ribbonTopA,ribbonTopB])for(let i=0;i<E.length-1;i++){b.beam(E[i],E[i+1],.25,'#e5e8e1');glowBeam(E[i].map((v,k)=>v+(k===1?.2:0)),E[i+1].map((v,k)=>v+(k===1?.2:0)),.35);const p=E[i].map((v,k)=>v+(k===1?-.2:0)),q=E[i+1].map((v,k)=>v+(k===1?-.2:0));b.quad('#f5ddaf',p,q,q.map((v,k)=>v+(k===1?-.1:0)),p.map((v,k)=>v+(k===1?-.1:0)),light);}
   // Dark recessed curtain wall inside the slot and sparse supporting posts.
   for(const E of [lowerA,lowerB])for(let i=0;i<E.length-1;i++){const p=E[i],q=E[i+1],a=[p[0]*.92,p[1]-2.8,p[2]*.92],d=[q[0]*.92,q[1]-2.8,q[2]*.92];b.quad('#293c40',a,d,[d[0],d[1]+3,d[2]],[a[0],a[1]+3,a[2]],glass);}
  }
@@ -102,6 +102,9 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // 20–30 m behind the shell eaves, leaving the 33 m grand atrium open.
  const theatre=[[-55,-12],[-33,-15],[-12,-7],[8,7],[4,29],[-27,29],[-54,14]];
  b.prism(theatre,24,58,'#687b7d');b.cap(theatre,24,'#596f74');b.facade([[8,7],[4,29]],24,50,4.3,2.7,'#516b74','#96adae',.12);
+ // Deep rear wall of the naturally ventilated foyer: the court stays open in
+ // front of this curved glazing. This is not a floor-to-roof fill at the eave.
+ b.facade([[-25,-12],[-15,-6],[-8,6],[-8,18],[-18,26]],-1.4,32.8,4.1,2.7,'#314b54','#849da0',.1);
  // Set-back shopping galleries: B1/L1/L2, with a mezzanine/foyer above. Neither
  // base wing crosses the eastern atrium void. Terrace levels follow the slope.
  const north=[[-64,-40],[-28,-42],[6,-33],[39,-19],[54,-7],[50,3],[33,0],[12,-11],[-17,-17],[-60,-18]];
@@ -114,6 +117,10 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // the large theatre overhang and segmented along the changing perimeter.
  const hoodOuter=[[-70,-40],[-60,-52],[-25,-53],[5,-42],[37,-28],[59,-12]],hoodInner=[[-64,-35],[-56,-44],[-24,-45],[4,-35],[32,-22],[52,-7]];
  for(let i=0;i<hoodOuter.length-1;i++)for(let j=0;j<8;j++){const t=j/8,u=(j+1)/8,p=hoodOuter[i].map((v,k)=>lerp(v,hoodOuter[i+1][k],t)),q=hoodOuter[i].map((v,k)=>lerp(v,hoodOuter[i+1][k],u)),r=hoodInner[i].map((v,k)=>lerp(v,hoodInner[i+1][k],u)),s=hoodInner[i].map((v,k)=>lerp(v,hoodInner[i+1][k],t));b.quad('#92adb0',[p[0],5.4,p[1]],[s[0],6.8,s[1]],[r[0],6.8,r[1]],[q[0],5.4,q[1]],glass);b.beam([p[0],5.45,p[1]],[s[0],6.85,s[1]],.12,'#c6d4cc');if(j%4===0)b.beam([p[0],0,p[1]],[p[0],5.4,p[1]],.2,'#b6c7c0');}
+ // Northeast entrance connector follows the projecting OSM wing toward MRT.
+ const link=[[28,-44],[50,-39],[79,-47],[82,-40],[78,-20],[80,-8],[74,-1],[66,-9],[64,-20],[51,-27],[38,-32]],linkY=(x,z)=>6.3+.04*(x-40);
+ b.cap(link,linkY,'#9db7b8',glass);for(let i=0;i<link.length;i++){const p=link[i],q=link[(i+1)%link.length];b.beam([p[0],linkY(...p),p[1]],[q[0],linkY(...q),q[1]],.17,'#c4d1ca');if(i%2===0)b.beam([p[0],0,p[1]],[p[0],linkY(...p),p[1]],.22,'#b6c8bf');}
+ for(let x=35;x<82;x+=3)for(let z=-45;z<-7;z+=3)if(SGBV.inside(link,x,z)&&SGBV.inside(link,x+3,z))b.beam([x,linkY(x,z)+.04,z],[x+3,linkY(x+3,z)+.04,z],.08,'#c7d3cc');
  // Curving recessed glazed amphitheatre rim, with a true central opening.
  const arc=(r,zr,angle)=>[32+r*Math.cos(angle),8+zr*Math.sin(angle)];
  for(let k=0;k<11;k++)for(let j=0;j<32;j++){const t=-1.35+j/32*2.7,u=-1.35+(j+1)/32*2.7,r=12+k*1.95,zr=13+k*1.45,y=-1.8+k*.58,p=arc(r,zr,t),q=arc(r,zr,u),s=arc(r-1.95,zr-1.45,t),v=arc(r-1.95,zr-1.45,u);b.quad('#a6b7af',[...p.slice(0,1),y,p[1]],[q[0],y,q[1]],[v[0],y,v[1]],[s[0],y,s[1]]);b.quad('#84998e',[p[0],y-.58,p[1]],[q[0],y-.58,q[1]],[q[0],y,q[1]],[p[0],y,p[1]]);}
@@ -122,7 +129,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // remains open: only the annular galleries are built, with a planted outer edge.
  const rimOuter=[],rimInner=[];for(let j=0;j<=48;j++){const t=-1.4+j/48*2.8;rimOuter.push(arc(37,30,t));rimInner.push(arc(31.5,24.5,t));}
  const rimPlan=[...rimOuter,...rimInner.slice().reverse()];b.prism(rimPlan,-.5,1.7,'#879f9e',glass);b.cap(rimPlan,3.3,'#bcc8be');
- b.facade(rimOuter,1.7,5.1,3.4,2.5,'#718e94','#b7c7c1',.1);b.rim(rimOuter,5.05,'#d4ded4',.18);
+ b.facade(rimOuter,1.7,5.1,3.4,2.5,'#718e94','#b7c7c1',.1);b.rim(rimOuter,5.05,'#d4ded4',.18);for(let i=0;i<rimOuter.length-1;i++)glowBeam([rimOuter[i][0],5.2,rimOuter[i][1]],[rimOuter[i+1][0],5.2,rimOuter[i+1][1]],.18);
  const plantOuter=rimOuter.map(p=>[p[0]-.8,p[1]]),plantInner=rimOuter.map(p=>[p[0]-2,p[1]]);b.cap([...plantOuter,...plantInner.reverse()],2.7,'#55764a');
  // Foyer supports: pale sloping columns and shaded soffits, not a filled podium.
  for(const [x,z,dx,dz]of [[-54,-18,3,2],[-31,-10,3,1],[-5,1,3,-1],[18,13,1,-2],[27,30,-2,-2],[-45,25,3,-2],[-20,30,3,-2]])b.beam([x,0,z],[x+dx,35,z+dz],1.05,'#d3d9d2');

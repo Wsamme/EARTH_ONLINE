@@ -186,6 +186,9 @@ if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules
     keep20 = set(x for x in os.environ['LM20'].split(',') if x); MODS = [m for m in MODS if not m.startswith('lm20/') or m.split('/')[1] in keep20]
 # Singapore landmark modules: same LANDMARKS / SG_PLACES format as the city groups.
 MODS += ['sgbv/core.js'] + ['sgbv/%s/%s.js' % (k, k) for k in ['star_vista', 'metropolis', 'buona_vista_mrt', 'biopolis', 'fusionopolis_one', 'solaris', 'galaxis', 'mediacorp', 'rochester', 'one_holland_village', 'holland_road_sc', 'holland_piazza', 'elementum', 'nucleos', 'fusionopolis_two']] + ['sgbv/view.js']
+# Little India (sgli): same kit, own footprints; missing slug files are skipped below.
+LI_SLUGS = ['veeramakaliamman', 'srinivasa_perumal', 'abdul_gafoor', 'angullia_mosque', 'tan_teng_niah', 'indian_heritage_centre', 'tekka_centre', 'mustafa_centre', 'little_india_arcade', 'city_square_mall', 'deepavali_lightup']
+MODS += ['sgli/core.js'] + ['sgli/%s/%s.js' % (k, k) for k in LI_SLUGS] + ['sgli/view.js']
 MODS += [m for m in os.environ.get('EXTRA_MODS', '').split(',') if m]
 skip = set(m for m in os.environ.get('SKIP_MODS', '').split(',') if m)
 MODS = [m for m in MODS if m not in skip and os.path.exists(SC + m)] + ['sgreal/app/sgreal.js', 'sgreal/app/sgstats.js', 'sgreal/app/cityswitch.js']
@@ -221,6 +224,7 @@ mods = ''.join(open(SC + p).read() + '\n' for p in MODS)
 if CITY == 'sg':
     import json
     mods = mods.replace('/* BV_FOOTPRINTS */', json.dumps(json.load(open(SC + 'sgbv/footprints.json')), separators=(',', ':')))
+    mods = mods.replace('/* LI_FOOTPRINTS */', json.dumps(json.load(open(SC + 'sgli/footprints.json')), separators=(',', ':')))
 mods = mods.replace('</script', '<\\/script')
 R("/* ================= loop ================= */", "/* ================= v17 modules ================= */\nwindow.SGR_APP = true;\n" + mods + "\n/* ================= loop ================= */")
 # ---------- boot: load the data, then build ----------
@@ -231,7 +235,7 @@ if CITY == 'sg':
     # Keep the Singapore page free of Google service requests, including fonts.
     src = re.sub(r'<link[^>]*href="https://fonts\.(?:googleapis|gstatic)\.com[^>]*>\n?', '', src)
     R("function sgrSkipB(B){\n  if (B.foreign) return false;", "function sgrSkipB(B){\n  if (B.foreign) return false;\n  if (SGBV.skip(B)) return true;")
-    R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
+    R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'li'){ const q = sgXY(1.3078, 103.8530); controls.target.set(q[0], 18, -q[1]); camera.position.set(q[0] + 620, 470, -q[1] + 760); return; } if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
     R("  for (const S of SGD.stations){\n    const mine = [];", "  for (const S of SGD.stations){\n    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }\n    const mine = [];")
 # titles
 R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')

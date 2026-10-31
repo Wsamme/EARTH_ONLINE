@@ -4,13 +4,13 @@
  * view = {name,lat,lon,dx,dy,dz,tod,js}; js has access to `t` (__t).
  */
 const fs=require('node:fs'),path=require('node:path');
-async function getChromium(){let p=process.env.PLAYWRIGHT_CORE||'/tmp/bv/node_modules/playwright-core';try{return require(p).chromium;}catch{throw new Error('Set PLAYWRIGHT_CORE to an installed playwright-core package');}}
+async function getChromium(){const ps=[process.env.PLAYWRIGHT_CORE,'/tmp/bv/node_modules/playwright-core','/workspace/je_tools/node_modules/playwright-core'].filter(Boolean);for(const p of ps){try{return require(p).chromium;}catch{}}{throw new Error('Set PLAYWRIGHT_CORE to an installed playwright-core package');}}
 async function openApp(options={}){
  const chromium=await getChromium();const browser=await chromium.launch({executablePath:process.env.CHROME||'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-gpu-sandbox']});
  try {
  const page=await browser.newPage({viewport:{width:1600,height:1000},deviceScaleFactor:1});const errors=[],consoleErrors=[];
  page.on('pageerror',e=>{errors.push(e.message);console.error('PAGEERROR',e.message);});page.on('console',msg=>{if(msg.type()==='error'&&!msg.text().includes('404'))consoleErrors.push(msg.text());});
- const url=new URL(options.page||process.env.PAGE||'t_bv.html',options.url||process.env.URL||'http://127.0.0.1:8047/');url.searchParams.set('view','bv');if(options.near||process.env.NEAR)url.searchParams.set('near',options.near||process.env.NEAR);
+ const url=new URL(options.page||process.env.PAGE||'t_bv.html',options.url||process.env.URL||'http://127.0.0.1:8047/');url.searchParams.set('view',options.view||process.env.VIEW||'bv');if(options.near||process.env.NEAR)url.searchParams.set('near',options.near||process.env.NEAR);
  await page.addInitScript(()=>{const raf=window.requestAnimationFrame.bind(window);window.requestAnimationFrame=cb=>raf(t=>{if(!window.__freeze)cb(t);});});
  await page.goto(url.href,{waitUntil:'domcontentloaded',timeout:120000});
  await page.waitForFunction(()=>window.__t?.SGR?.tiles?.size>0&&(!window.BuonaVista||Object.keys(window.BuonaVista.stats).length===Object.keys(window.__t.ev('SGBV.data')).length),null,{timeout:180000});

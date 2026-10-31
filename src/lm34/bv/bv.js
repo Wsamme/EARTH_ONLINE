@@ -274,84 +274,148 @@ function bvByName(slug, name){
   return p ? bvCCW(p.pts.map(q => q.slice())) : null;
 }
 
-// ---------- 星悦汇：两片折面玻璃壳，罩在露天中庭上 ----------
-function bvStar(g){
-  const P = bvPart('star_vista', 104352121);
-  const M = bvBag();
-  // 从远处看，玻璃壳是一整块反光的实体，不是透出来的骨架。夜里按幕墙亮窗。
-  const glass = bvGet(M, bvMetal('#d4dadc', 0.46));
-  const glass2 = bvGet(M, bvMetal('#c3cbcf', 0.42));
-  const frame = bvGet(M, bvMetal('#6a787e', 0.34));
-  const podium = bvGet(M, bvGlass('#5a7382', 4.0, 3.4, 0.58));
-  const mull = bvGet(M, bvMetal('#d5dee4', 0.22));
-  const soffit = bvGet(M, bvMetal('#8b969c', 0.2));
-  const deck = bvGet(M, '#9aa8a4');
-  // 斜向格子上的折面。高度在格子点上取值，每一小格是一块平面，看起来才是折板而不是揉皱的纸。
-  const ang = 0.55, ca = Math.cos(ang), sa = Math.sin(ang);
-  const toG = (x, z) => [x * ca + z * sa, -x * sa + z * ca];
-  const toW = (u, v) => [u * ca - v * sa, u * sa + v * ca];
-  const hAt = (x, z) => {
-    const g2 = toG(x, z), u = g2[0], v = g2[1];
-    const lobe = Math.abs(u) < 14 ? 0.62 : 1;          // 两翼之间略低，对应中庭
-    const across = Math.max(0.15, 1 - Math.abs(v) / 78);
-    const fold = ((Math.floor(u / 18) + Math.floor(v / 16)) & 1) ? 4 : 0;
-    return Math.max(46, Math.min(74, 50 + 22 * across * lobe + fold));
-  };
-  // 下面几层是真正的玻璃幕墙，壳从它们头顶挑出去。
-  bvCurtain(podium, mull, mull, P, 0, 22, {fh: 4.0, bay: 3.2, bh: 0.28, bt: 0.22, push: 0.04});
-  bvCap(deck, P, 0.2);
-  const Shell = bvOff(P, -8);
+// 从中心把轮廓推出去。dist>0 向外。凹多边形用这个，不会甩出尖刺。
+function bvPush(P, dist){
+  const c = bvCtr(P);
+  return P.map(p => {
+    const dx = p[0] - c[0], dz = p[1] - c[1], L = Math.hypot(dx, dz) || 1;
+    return [p[0] + dx / L * dist, p[1] + dz / L * dist];
+  });
+}
+function bvResample(P, step){
+  const out = [];
   for (let i = 0; i < P.length; i++){
-    const a = P[i], b = P[(i + 1) % P.length], c = Shell[i], d = Shell[(i + 1) % Shell.length];
-    bvQ(soffit, [a[0], 22, a[1]], [b[0], 22, b[1]], [d[0], 22, d[1]], [c[0], 22, c[1]]);
+    const a = P[i], b = P[(i + 1) % P.length];
+    const L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    const n = Math.max(1, Math.round(L / step));
+    for (let k = 0; k < n; k++) out.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]);
   }
-  // 斜向格子：四角都在轮廓里才铺一块折板，边上用真实轮廓的墙接上。
-  const step = 14;
-  const gb = [1e9, 1e9, -1e9, -1e9];
-  for (const p of Shell){ const g2 = toG(p[0], p[1]); if (g2[0] < gb[0]) gb[0] = g2[0]; if (g2[1] < gb[1]) gb[1] = g2[1]; if (g2[0] > gb[2]) gb[2] = g2[0]; if (g2[1] > gb[3]) gb[3] = g2[1]; }
-  const iu0 = Math.floor(gb[0] / step) - 1, iu1 = Math.ceil(gb[2] / step) + 1;
-  const iv0 = Math.floor(gb[1] / step) - 1, iv1 = Math.ceil(gb[3] / step) + 1;
-  const at = (i, j) => { const w = toW(i * step, j * step); return [w[0], hAt(w[0], w[1]), w[1], bvIn(Shell, w[0], w[1])]; };
-  for (let i = iu0; i < iu1; i++) for (let j = iv0; j < iv1; j++){
-    const A = at(i, j), B = at(i + 1, j), C = at(i + 1, j + 1), D = at(i, j + 1);
-    if (!(A[3] && B[3] && C[3] && D[3])) continue;
-    const batch = ((i + j) & 1) ? glass : glass2;
-    batch.push(A[0], A[1], A[2], B[0], B[1], B[2], C[0], C[1], C[2], A[0], A[1], A[2], C[0], C[1], C[2], D[0], D[1], D[2]);
-    bvQ(frame, A, B, [B[0], B[1] + 0.7, B[2]], [A[0], A[1] + 0.7, A[2]]);
-    bvQ(frame, A, D, [D[0], D[1] + 0.7, D[2]], [A[0], A[1] + 0.7, A[2]]);
+  return out;
+}
+// 两圈三维环之间的斜墙，每块板上一条斜缝。
+function bvLoftFacet(metal, seam, A, B){
+  const n = Math.min(A.length, B.length);
+  for (let i = 0; i < n; i++){
+    const j = (i + 1) % n, a = A[i], b = A[j], c = B[j], d = B[i];
+    metal.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2], a[0], a[1], a[2], c[0], c[1], c[2], d[0], d[1], d[2]);
+    bvQ(seam, a, c, [c[0], c[1] + 0.4, c[2]], [a[0], a[1] + 0.4, a[2]]);
   }
-  // 挑出的金属壳，底边接在裙房以上，所以下面的玻璃楼层露在外面。
-  for (let i = 0; i < Shell.length; i++){
-    const a = Shell[i], b = Shell[(i + 1) % Shell.length];
-    const ha = hAt(a[0], a[1]), hb = hAt(b[0], b[1]);
-    bvQ(glass, [a[0], 22, a[1]], [b[0], 22, b[1]], [b[0], hb, b[1]], [a[0], ha, a[1]]);
-    bvQ(frame, [a[0], ha, a[1]], [b[0], hb, b[1]], [b[0], hb + 0.7, b[1]], [a[0], ha + 0.7, a[1]]);
+}
+const bvRoof = hex => ({c: hex, m: 0, lc: '#e6eef2', lk: 0.05, rf: 0});
+
+// ---------- 星悦汇：两片向外鼓的折面金属壳，压在退进的玻璃裙房上 ----------
+function bvStar(g){
+  const raw = bvPart('star_vista', 104352121);
+  const P = bvResample(raw, 10);
+  const M = bvBag();
+  const metal = bvGet(M, bvMetal('#aeb6ba', 0.16));
+  const metal2 = bvGet(M, bvMetal('#9aa3a8', 0.14));
+  const seam = bvGet(M, bvMetal('#66747b', 0.16));
+  const podium = bvGet(M, bvGlass('#5a7382', 3.6, 3.2, 0.4));
+  const mull = bvGet(M, bvMetal('#d5dee4', 0.1));
+  const soffit = bvGet(M, bvRoof('#5e686c'));
+  const colr = bvGet(M, bvMetal('#c5ced2', 0.08));
+  const cen = bvCtr(P);
+  let xx = 0, zz = 0, xz = 0;
+  for (const p of P){ const dx = p[0] - cen[0], dz = p[1] - cen[1]; xx += dx * dx; zz += dz * dz; xz += dx * dz; }
+  const ang = 0.5 * Math.atan2(2 * xz, xx - zz), ax = Math.cos(ang), az = Math.sin(ang);
+  const along = (x, z) => (x - cen[0]) * ax + (z - cen[1]) * az;
+  // 朝南的边留空，中庭从南侧切进去。
+  const southEdge = (a, b) => {
+    const dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz) || 1;
+    return -dx / L > 0.2 && (a[1] + b[1]) * 0.5 > cen[1] - 6;
+  };
+  // 裙房三层，往上逐层退进，壳从它们外面挑出去。
+  for (let tier = 0; tier < 3; tier++){
+    const Q = bvPush(P, -1.5 - tier * 3.2);
+    const y0 = tier * 6, y1 = y0 + 6;
+    for (let i = 0; i < Q.length; i++){
+      const a = Q[i], b = Q[(i + 1) % Q.length];
+      if (southEdge(a, b)) continue;
+      bvQ(podium, [a[0], y0, a[1]], [b[0], y0, b[1]], [b[0], y1, b[1]], [a[0], y1, a[1]]);
+    }
+    bvEdgeBand(mull, Q, y1 - 0.3, 0.25, 0.32, 0.02);
+  }
+  for (let i = 0; i < P.length; i += 3){
+    const p = P[i];
+    if (p[1] > cen[1] + 12) continue;
+    bvCyl(colr, p[0], 16, p[1], 0.5, 12, 6);
+  }
+  // 剖面：底边刚离开裙房，中段向外鼓到最大，屋脊再收回。长轴中部凹下，形成两片壳。
+  const profile = [[2, 30, 0], [8, 42, 12], [14, 56, 22], [10, 66, 10], [6, 74, 2]];
+  const rings = profile.map(([dist, y, dip]) => P.map(p => {
+    const u = along(p[0], p[1]);
+    const end = Math.min(1, Math.abs(u) / 42);
+    const push = dist * (0.2 + 0.8 * end);
+    const dx = p[0] - cen[0], dz = p[1] - cen[1], L = Math.hypot(dx, dz) || 1;
+    return [p[0] + dx / L * push, y - dip * Math.exp(-(u * u) / (24 * 24)), p[1] + dz / L * push];
+  }));
+  const lip = bvPush(P, -8);
+  for (let i = 0; i < lip.length; i++){
+    const a = lip[i], b = lip[(i + 1) % lip.length], c = rings[0][i], d = rings[0][(i + 1) % rings[0].length];
+    bvQ(soffit, [a[0], 18, a[1]], [b[0], 18, b[1]], [d[0], d[1], d[2]], [c[0], c[1], c[2]]);
+  }
+  for (let k = 0; k < rings.length - 1; k++) bvLoftFacet(k % 2 ? metal : metal2, seam, rings[k], rings[k + 1]);
+  const top = rings[rings.length - 1], top2 = top.map(p => [p[0], p[2]]);
+  let faces = [];
+  try { faces = THREE.ShapeUtils.triangulateShape(top2.map(p => new THREE.Vector2(p[0], p[1])), []); } catch (e){ faces = []; }
+  for (const f of faces){
+    if (!f || f.length < 3) continue;
+    const A = top[f[0]], B = top[f[1]], C = top[f[2]];
+    if (!A || !B || !C) continue;
+    metal2.push(A[0], A[1], A[2], B[0], B[1], B[2], C[0], C[1], C[2]);
   }
   bvFlush(g, M);
 }
 
-// ---------- 大都会：双塔 + 横百叶 ----------
+// ---------- 大都会：错层玻璃块，中间凹进空中露台 ----------
 function bvMetro(g){
   const t1 = bvPart('metropolis', 1563020894);
   const t2 = bvPart('metropolis', 1563020891);
   const link = bvPart('metropolis', 1563020893);
   const M = bvBag();
-  const glass = bvGet(M, bvGlass('#243e4c', 3.35, 2.8, 0.7));
-  const fin = bvGet(M, bvMetal('#5c7080', 0.4));
-  const pod = bvGet(M, bvGlass('#314a58', 4.2, 4, 0.45));
-  const roof = bvGet(M, bvMetal('#6a7c88', 0.25));
-  const core = bvGet(M, bvMetal('#4a5e6c', 0.3));
-  // 西塔略高，顶上有设备层，贴近实测 113 米；东塔平屋顶。
-  bvLouver(glass, fin, t1, 0, 106, 3.35);
-  bvBox3(core, 16, 7.2, 14, bvCtr(t1)[0] + 4, 106, bvCtr(t1)[1] - 6, 0.4);
-  bvCap(roof, bvOff(t1, 2), 106.05);
-  bvLouver(glass, fin, t2, 0, 102, 3.35);
-  bvCap(roof, bvOff(t2, 2), 102.05);
-  bvPrism(pod, link, 0, 14, true);
-  bvEdgeBand(fin, link, 13.4, 0.6, 0.8, 0.1);
-  // 两塔之间的玻璃连廊（低区一整条，高区一条）。
+  const glass = bvGet(M, bvGlass('#243e4c', 3.3, 2.8, 0.42));
+  const fin = bvGet(M, bvMetal('#5c7080', 0.22));
+  const notchG = bvGet(M, bvGlass('#6d8ea0', 4.2, 6, 0.35));
+  const plant = bvGet(M, bvRoof('#3f7a45'));
+  const pod = bvGet(M, bvGlass('#314a58', 4.2, 4, 0.3));
+  const roof = bvGet(M, bvRoof('#7d868c'));
+  const hvac = bvGet(M, bvRoof('#5c666c'));
+  const shift = (P, dx, dz) => P.map(p => [p[0] + dx, p[1] + dz]);
+  // 每一截玻璃块在平面上错开，中间那截退进去，露台上种一圈绿。
+  const stack = (P, bands) => {
+    for (const b of bands){
+      let Q = shift(P, b.dx || 0, b.dz || 0);
+      if (b.inset) Q = bvOff(Q, b.inset);
+      if (b.notch){
+        bvWall(notchG, Q, b.y0, b.y1);
+        bvEdgeBand(plant, shift(P, b.dx || 0, b.dz || 0), b.y0, 0.55, 2.4, 0.15);
+      } else bvLouver(glass, fin, Q, b.y0, b.y1, 3.3);
+    }
+    const last = bands[bands.length - 1];
+    const R = shift(P, last.dx || 0, last.dz || 0);
+    bvCap(roof, R, last.y1 + 0.08);
+    const c = bvCtr(R);
+    bvBox3(hvac, 12, 3.4, 7, c[0] + 2, last.y1, c[1] - 2, 0.35);
+    bvBox3(plant, 9, 0.35, 4, c[0] - 6, last.y1 + 0.1, c[1] + 3, 0.2);
+  };
+  stack(t1, [
+    {y0: 0, y1: 28, dx: 0, dz: 0},
+    {y0: 28, y1: 36, dx: 0, dz: 0, inset: 5.5, notch: 1},
+    {y0: 36, y1: 64, dx: 7, dz: -5},
+    {y0: 64, y1: 72, dx: 7, dz: -5, inset: 5, notch: 1},
+    {y0: 72, y1: 106, dx: -4, dz: 4}
+  ]);
+  stack(t2, [
+    {y0: 0, y1: 36, dx: 0, dz: 0},
+    {y0: 36, y1: 44, dx: 0, dz: 0, inset: 4.5, notch: 1},
+    {y0: 44, y1: 74, dx: -6, dz: 5},
+    {y0: 74, y1: 100, dx: 3, dz: -2}
+  ]);
+  bvPrism(pod, link, 0, 12, true);
+  bvCap(roof, link, 12.1);
   const c1 = bvCtr(t1), c2 = bvCtr(t2);
-  bvBox3(pod, Math.hypot(c2[0] - c1[0], c2[1] - c1[1]) * 0.55, 12, 8, (c1[0] + c2[0]) / 2, 4, (c1[1] + c2[1]) / 2, -Math.atan2(c2[1] - c1[1], c2[0] - c1[0]));
+  bvBox3(pod, Math.hypot(c2[0] - c1[0], c2[1] - c1[1]) * 0.45, 10, 7, (c1[0] + c2[0]) / 2, 2, (c1[1] + c2[1]) / 2, -Math.atan2(c2[1] - c1[1], c2[0] - c1[0]));
   bvFlush(g, M);
 }
 
@@ -360,7 +424,7 @@ function bvMRT(g){
   const M = bvBag();
   const conc = bvGet(M, '#d5d3cc');
   const teal = bvGet(M, bvW('#5eb6ae', 0.45));
-  const mint = bvGet(M, '#9ed3b0');
+  const mint = bvGet(M, bvRoof('#6eae96'));
   const glass = bvGet(M, bvG('#c5dde4', 4, 3.5));
   const steel = bvGet(M, '#6e787c');
   const railC = bvGet(M, '#3a4044');
@@ -455,7 +519,7 @@ function bvBio(g){
   const win = bvGet(M, bvGlass('#4e6878', 3.6, 3.4, 0.55));
   const glass = bvGet(M, bvGlass('#3e5a68', 3.7, 3.2, 0.6));
   const band = bvGet(M, '#efe6da');
-  const roof = bvGet(M, '#b9c0c4');
+  const roof = bvGet(M, bvRoof('#8a9298'));
   const cell = bvGet(M, '#3d5f86');
   const bridge = bvGet(M, bvG('#d5e2ea', 3.2, 3));
   const white = bvGet(M, '#f3f5f4');
@@ -525,7 +589,8 @@ function bvFus(g){
     const c = bvCtr(P), b = bvBox(P);
     const rx = (b[2] - b[0]) * er, rz = (b[3] - b[1]) * er;
     const E = bvEll(c[0], c[1], rx, rz, 0.4, 32);
-    bvPrism(green, E, h + 0.15, h + 0.55, false);
+    bvCap(bvGet(M, bvRoof('#8b9396')), P, h + 0.05);
+    bvPrism(green, E, h + 0.2, h + 0.7, false);
     bvEdgeBand(white, E, h + 0.2, 1.3, 0.45, 0);
     // 草坪上散几棵树
     for (let k = 0; k < 7; k++){
@@ -591,7 +656,7 @@ function bvSol(g){
         }
       }
     }
-    bvCap(green, P, 5 + floors * fh);
+    bvCap(bvGet(M, bvRoof('#3e6c3a')), P, 5 + floors * fh);
   };
   stack(south, 15, 4.7, 4.8);   // 起伏加大，轮廓才不像一层层方盒子
   bvEdgeBand(frame, south, 5 + 15 * 4.7, 5, 0.7, 0.2);
@@ -643,7 +708,7 @@ function bvGal(g){
   const M = bvBag();
   // 0 亮灰 1 中灰 2 深玻璃 3 白，4/5 是底部的紫。
   const cols = ['#b4bdc4', '#7a868e', '#3a4650', '#d0d6db', '#5a3d70', '#73558c'].map(hex => bvGet(M, bvGlass(hex, 4.5, 3.4, 0.35)));
-  const roof = bvGet(M, bvMetal('#b4babf', 0.2));
+  const roof = bvGet(M, bvRoof('#9aa1a6'));
   const edge = bvGet(M, '#eceee9');
   const dark = bvGet(M, '#3e4650');
   const shaftTop = 84;
@@ -664,8 +729,8 @@ function bvMedia(g){
   const metal = bvGet(M, bvGlass('#7e908c', 3.6, 3.6, 0.48));
   const band = bvGet(M, bvMetal('#e7eeea', 0.2));
   const green = bvGet(M, '#7d9a68');
-  const equip = bvGet(M, '#b7bec3');
-  const drum = bvGet(M, '#d5dbde');
+  const equip = bvGet(M, bvRoof('#8d9694'));
+  const drum = bvGet(M, bvRoof('#9aa6a2'));
   const glass = bvGet(M, bvGlass('#5e7874', 4, 4, 0.5));
   // 整片叶子先做到 46 米（北端的绿屋顶就在这个高度），南边的脊再往上长。
   bvCurtain(metal, band, band, P, 0, 46, {fh: 3.6, bay: 4.2, bh: 0.55, bt: 0.55, push: 0.05});
@@ -722,7 +787,7 @@ function bvRoch(g){
   const terra = bvGet(M, bvW('#c9a090', 0.4));
   const mallC = bvGet(M, bvW('#e6e1d8', 0.3));
   const win = bvGet(M, bvGlass('#5a7080', 4.2, 4, 0.4));
-  const roof = bvGet(M, '#c5ccd0');
+  const roof = bvGet(M, bvRoof('#8e98a0'));
   const pool = bvGet(M, '#3f86b0');
   const cell = bvGet(M, '#355a86');
   const base = bvGet(M, '#d9d3ca');
@@ -740,6 +805,7 @@ function bvRoch(g){
     bvBox3(terra, L, 120, 0.4, (a[0] + b[0]) / 2 + nx * 1.5, 0, (a[1] + b[1]) / 2 + nz * 1.5, -ang);
   }
   bvEdgeBand(slab, home, 120, 8, 0.5, 0.2);
+  bvCap(roof, home, 120.12);
   const hc = bvCtr(home);
   bvBox3(pool, 10, 0.4, 5, hc[0] - 4, 120.2, hc[1] + 2, 0.4);
   bvBox3(pool, 7, 0.4, 4, hc[0] + 6, 120.2, hc[1] - 3, 0.2);
@@ -747,6 +813,7 @@ function bvRoch(g){
   // 酒店塔更偏玻璃，少一点阳台。
   bvCurtain(glassH, slab, slab, hotel, 0, 102, {fh: 3.4, bay: 3.0, bh: 0.28, bt: 0.45, push: 0.15});
   bvEdgeBand(slab, hotel, 102, 6, 0.45, 0.1);
+  bvCap(roof, hotel, 102.12);
   bvBox3(pool, 8, 0.35, 4, bvCtr(hotel)[0], 102.2, bvCtr(hotel)[1], 0.6);
   bvFlush(g, M);
 }

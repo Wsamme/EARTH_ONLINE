@@ -55,7 +55,7 @@
     if (rf > 0.08){
       mat = new THREE.MeshPhongMaterial({
         color: spec.c || '#ffffff', side: THREE.DoubleSide,
-        shininess: 28 + rf * 50, specular: new THREE.Color('#d5e8f2'),
+        shininess: 8 + rf * 10, specular: new THREE.Color('#7d90a0'),
         reflectivity: rf, envMap: ENV, combine: THREE.MultiplyOperation
       });
     } else {
@@ -78,8 +78,8 @@
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(hero === 'night' ? 0x0c1420 : 0xb7cfe2);
   // 天光偏蓝、地面反光偏绿，主光从镜头那一侧打过来，立面才不会变成一块剪影。
-  scene.add(new THREE.HemisphereLight(hero === 'night' ? 0x1c3048 : 0xd5e6f2, hero === 'night' ? 0x0a100c : 0x6a7d52, hero === 'night' ? 0.4 : 0.82));
-  const sun = new THREE.DirectionalLight(hero === 'night' ? 0x8aa0c0 : 0xfff3df, hero === 'night' ? 0.22 : 1.25);
+  scene.add(new THREE.HemisphereLight(hero === 'night' ? 0x1c3048 : 0xd5e6f2, hero === 'night' ? 0x0a100c : 0x6a7d52, hero === 'night' ? 0.4 : 0.52));
+  const sun = new THREE.DirectionalLight(hero === 'night' ? 0x8aa0c0 : 0xfff3df, hero === 'night' ? 0.22 : 0.62);
   sun.position.set(-220, 480, 160);
   scene.add(sun);
   const fill = new THREE.DirectionalLight(0xc5d4e4, hero === 'night' ? 0.05 : 0.28);

@@ -1,4 +1,4 @@
-"""Authoring helpers for the six owned heritage modules. No external mesh/image input."""
+"""Scaffold library for self-contained heritage modules. Bodies live in the modules. No external mesh/image input."""
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 KIT=r'''
@@ -65,50 +65,3 @@ function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=n
 def write(slug,body):
  p=ROOT/'src/sgli'/slug;p.mkdir(exist_ok=True)
  (p/(slug+'.js')).write_text('{\nconst {register,rect,scale,center,out}=SGLI;\n'+KIT+body+'\n}\n')
-if __name__=='__main__':
- write('veeramakaliamman',r'''
-// OSM 155991884 (hall), 1078263462 (annex). Painted plaster relief is geometry.
-register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamman Temple',38,(b,D,G,g)=>{
- const K=kit(b,1.012),{box,beam,faces,panel,arch,lathe,tower,deity}=K;
- const hall=D.parts[0].p,annex=D.parts[1].p;
- b.prism(hall,-1,7.2,'#bcb5a1');b.cap(hall,7.23,'#5f7964');
- b.prism(annex,-1,24.2,'#ede5d3');b.cap(annex,24.22,'#a6a69a');
- // Six-storey annex: red end walls, paired small windows and pedimented central bay.
- for(const E of kit(b).faces(annex)){
-  const n=Math.max(1,Math.round(E.L/3.3));
-  for(let f=0;f<6;f++){const y=.55+f*3.8;
-   for(let j=0;j<n;j++){const u=(j+.5)*E.L/n;
-    for(const s of [-1,1]){kit(b).panel(E.F,u+s*.37,y+1,.45,1.25,'#35464c',.08,2);}
-    if(j===Math.floor(n/2)){kit(b).panel(E.F,u,y+.7,1.9,2,'#d0c9b7',.04);kit(b).arch(E.F,u,y+2.5,2,.7,'#f8ecdb',.11);}
-   }
-   const p=E.F(0,y+3.55,.15),q=E.F(E.L,y+3.55,.15);b.beam(p,q,.18,'#a36762');
-  }
-  for(const u of [.4,E.L-.4])kit(b).panel(E.F,u,.3,.8,23.6,'#a25151',.13);
- }
- b.rim(annex,24.6,'#e8ddc7',.3);b.prism(scale(annex,.45),24.2,26.9,'#d5d2c7');
- b.roof(scale(annex,.86),24.25);
- // Hall's alternating red/white compound panels and sculpted parapet shrines.
- for(const E of kit(b).faces(hall)){
-  for(let u=.25;u<E.L;u+=.85)kit(b).panel(E.F,u,.7,.41,5.2,'#a3473c',.04);
-  for(let u=.7;u<E.L;u+=2.2){const p=E.F(u,7.45,.05);b.box(p[0],7.45,p[2],.85,.6,.65,'#a6bbc6');kit(b).deity(E.F,u,7.5,.9,Math.floor(u),3);}
- }
- b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
- // Entrance tower centred on the Serangoon Road edge, not on the whole compound.
- box(-.6,.35,21.1,10,6.6,5.9,'#a3c0c9',3);
- const F=(u,y,w=0)=>[u-.6,y,24.08+w];
- panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,5);
- for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
- tower(-.6,21.1,9.8,5.7,6.95,18.9,4);
- // Main Kali vimana plus smaller sanctum towers, clear of the front court.
- tower(-.5,2.2,5.7,5.7,7.3,15.1,2);
- for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
- // Green ribbed hall roof and pale barrel skylight visible in the reference views.
- for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');
- for(let i=0;i<12;i++){const t=i/12*Math.PI,u=(i+1)/12*Math.PI;K.quad('#d0d2c4',[-8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2],[-8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2]);}
- lathe(-.6,16.6,.3,.55,10.9,'#c3c5b9',0,[[1,0],[.6,.1],[.2,.12],[.15,1]],8);
- // White entrance canopy: modest projection, no festival decorations or lettering.
- for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),24],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),24]);}
- for(const x of [-4.1,2.9])box(x,.1,26.7,.1,4.1,.1,'#adb9b8');
- lights(b,g);
-},['sgveeramakali']);
-''')

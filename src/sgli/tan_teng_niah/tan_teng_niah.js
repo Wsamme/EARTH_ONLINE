@@ -50,10 +50,20 @@ function kit(b,a=0,ox=0,oz=0){
   for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
  };
  const tiledRoof=(x,z,w,d,y,h,c)=>{
-  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
-  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
-  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
-  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+  // Equal-pitch hips converge onto the short ridge implied by the real plan.
+  const R=rect(x,z,w,d),longX=w>=d,r=Math.abs(w-d)/2;
+  const A=longX?[x-r,z]:[x,z-r],B=longX?[x+r,z]:[x,z+r];
+  const Q=longX?[A,B,B,A]:[A,A,B,B];
+  for(let i=0;i<4;i++){
+   const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);
+   const n=Math.ceil(Math.hypot(R[j][0]-R[i][0],R[j][1]-R[i][1])/.28);
+   for(let k=0;k<n;k++){
+    const t=(k+.5)/n,px=R[i][0]+(R[j][0]-R[i][0])*t,pz=R[i][1]+(R[j][1]-R[i][1])*t;
+    const dx=B[0]-A[0],dz=B[1]-A[1],v=Math.max(0,Math.min(1,((px-A[0])*dx+(pz-A[1])*dz)/(dx*dx+dz*dz||1)));
+    beam([px,y,pz],[A[0]+dx*v,y+h,A[1]+dz*v],.055,'#a88466');
+   }
+  }
+  beam([A[0],y+h,A[1]],[B[0],y+h,B[1]],.23,'#75614f');
  };
  return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
 }
@@ -116,8 +126,8 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
  }
  box(1.4,3.78,12,8.6,.15,2,'#c6b68c');
  // Two intersecting Chinese bamboo-tile hip roofs, visible ridge and narrow tile rolls.
- K.tiledRoof(1.47,-4.3,16.1,17.2,7.8,3.0,'#94755e');
- const q=K.T(1.4,0,8.2),R=kit(b,2.49+Math.PI/2,q[0],q[2]);R.tiledRoof(0,0,10.5,9.4,7.8,2.55,'#997b60');
+ K.tiledRoof(1.47,-4.3,16.1,17.2,7.8,3.585,'#b17454');
+ const q=K.T(1.4,0,8.2),R=kit(b,2.49+Math.PI/2,q[0],q[2]);R.tiledRoof(0,0,10.5,9.4,7.8,3.135,'#b97a58');
  // Shallow over-door tiled canopy and modest rear air-conditioning plant.
  box(1.4,3.8,11.8,8.7,.16,2.15,'#4e8076');
  for(let u=-2.8;u<5.8;u+=.28)beam([u,3.95,10.8],[u,3.85,12.8],.08,'#5e927e');

@@ -74,7 +74,7 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
   for(let i=1;i<O.length-1;i++)b.tri(c,K.T(...F(u+O[0][0],y+O[0][1],off)),K.T(...F(u+O[i][0],y+O[i][1],off)),K.T(...F(u+O[i+1][0],y+O[i+1][1],off)),m);
  };
  for(const [i,E]of faces(hall).entries()){
-  const n=i%2===0?3:6;
+  const n=i===2?2:i===0?3:6;
   for(let j=0;j<n;j++){
    const u=(j+.5)*E.L/n,bw=E.L/n;
    if(i===2){
@@ -83,14 +83,19 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
    }else{
     for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,2);}
    }
-   pointed(E.F,u,15.2,bw-.65,3.35,cream,.08,3);pointed(E.F,u,15.38,bw-.95,3.02,bronze,.1);
-   // Physical diamond jali lattice across the upper register.
-   for(let v=-bw*.31;v<bw*.32;v+=.45)for(let yy=15.6;yy<17.8;yy+=.5){beam(E.F(u+v,yy,.14),E.F(u+v+.22,yy+.25,.14),.045,cream);beam(E.F(u+v+.22,yy+.25,.14),E.F(u+v,yy+.5,.14),.045,cream);}
+   const sub=i===2?2:1;
+   for(let k=0;k<sub;k++){
+    const v=u+(k+.5-sub/2)*bw/sub,sw=bw/sub;
+    pointed(E.F,v,15.2,sw-.65,3.35,cream,.08,3);pointed(E.F,v,15.38,sw-.95,3.02,bronze,.1);
+    // Physical diamond jali lattice within each upper niche.
+    for(let q=-sw*.31;q<sw*.32;q+=.45)for(let yy=15.6;yy<17.8;yy+=.5){beam(E.F(v+q,yy,.14),E.F(v+q+.22,yy+.25,.14),.045,cream);beam(E.F(v+q+.22,yy+.25,.14),E.F(v+q,yy+.5,.14),.045,cream);}
+   }
    beam(E.F(j*bw,.3,.12),E.F(j*bw,19.4,.12),.2,cream);
   }
   for(const y of [4.8,9.3,14.6,19.45])beam(E.F(0,y,.13),E.F(E.L,y,.13),.17,cream);
   for(let u=.2;u<E.L;u+=.45){const p=E.F(u,19.55,0);box(p[0],19.55,p[2],.24,.35,.24,coral);}
  }
+ const gateStart=new Map([...b.buckets].map(([mode,B])=>[mode,B.p.length]));
  // Conserved three-arch gate, freestanding behind the Serangoon Road pavement.
  const F=(u,y,w=0)=>[u-2.4,y,18.65+w];
  box(-2.4,4.65,18.4,19.3,.55,1.1,cream,3);box(-2.4,5.13,18.4,19.5,.18,1.25,coral,3);
@@ -106,6 +111,9 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
  }
  for(let u=-9;u<9.3;u+=.4){const p=F(u,4.3,0);box(p[0],4.3,p[2],.13,.4,.13,'#52765d');}
  box(-2.4,5.45,18.4,4,.65,.28,'#7b8f7e');
+ // Gatehouse scale is independent of the four-storey hall; current photos
+ // show its finials at about 7 m, not at half the hall height.
+ for(const [mode,B]of b.buckets)for(let j=(gateStart.get(mode)||0)+1;j<B.p.length;j+=3)B.p[j]=b.base+(B.p[j]-b.base)*.8;
  // Short rooftop corner tower, not a tall freestanding Ottoman minaret.
  box(6.7,19.4,10.6,2.3,4.4,2.3,coral,3);
  for(const E of faces(rect(6.7,10.6,2.32,2.32))){pointed(E.F,E.L/2,20.4,1.65,2.2,cream,.1,3);panel(E.F,E.L/2,21,1.05,.85,dark,.12);}

@@ -62,3 +62,9 @@ lighting changes. Warm colour-preserving tier wash is stronger, with modest cano
 soffit lamps and a lit verandah cornice. Roof/annex remain restrained. The saved
 photo and SOURCES.md remain outside git. Offline geometry passes; round-2 matched
 camera results are recorded below after the browser queue completes.
+
+r2a improved mean n/e/s/w/top from 0.805 to 0.811: n .815, e .808,
+s .792, w .811, top .830; close NE .866, close SW .819, street .788.
+Zero page/console errors. First night exposure clipped the pale sculpture; reduced
+tier wash before final capture and separated the verandah wash into a lower-power
+shared batch. This is an exposure correction, not added silhouette mass.

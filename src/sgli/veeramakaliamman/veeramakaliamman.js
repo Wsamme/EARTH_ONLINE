@@ -59,7 +59,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:2.65}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?.65:1.45}));b.buckets.delete(mode);}}
 
 // OSM 155991884 (hall), 1078263462 (annex). Painted plaster relief is geometry.
 register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamman Temple',38,(b,D,G,g)=>{
@@ -107,7 +107,7 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),26.9],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),26.9]);}
  for(const x of [-4.1,2.9])box(x,.1,29.6,.1,4.1,.1,'#adb9b8');
  for(const x of [-2.8,1.6])box(x,4.1,28.6,.22,.06,.55,'#e9d9b9',5);
- for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,6.25,E.L-.2,.55,'#d7c3a4',.06,3);
+ for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,5.65,E.L-.2,1.05,'#bcb5a1',.055,8);
  lights(b,g);
 },['sgveeramakali']);
 

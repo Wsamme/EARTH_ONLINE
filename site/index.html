@@ -14116,6 +14116,7 @@ function drawMRT(R, B){
 function sgStations(B, lines){
   for (const S of SGD.stations){
     if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }
+    if (S.en === 'Jurong East'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW24 / NS1']}); continue; }
     const mine = []; for (const c of S.codes){ const p = sgLineCode(c); for (const R of lines) if (R.line.code === p) mine.push({R, ug:c.trim() in SG_UGO ? SG_UGO[c.trim()] : S.ug}); }
     if (!mine.length) continue;
     let elev = false, col = mine[0].R.col; const done = new Set();
@@ -80542,7 +80543,7 @@ window.BuonaVista = {get stats(){return SGBV.stats;}};
  * geometry only. Photo / Google 3D Tiles references inform massing only and never ship.
  * Keys are registered as sgje_<slug>; footprints live in sgje/footprints.json. */
 const SGJE = (() => {
-  const data = {"westgate":{"lat":1.3342548674067993,"lon":103.74286557083342,"height":110,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":158234014,"name":"Westgate","tags":{"building":"retail","building:levels":"5","name":"Westgate"},"p":[[16.7,-63.53],[25.67,-63.72],[35.04,-60.09],[43.54,-51.13],[45.8,-38.21],[49.78,-38.21],[68.88,-7.04],[82.97,16.04],[11.26,53.24],[-42.74,81.26],[-48.66,70.16],[-56.71,55.07],[-80.85,-2.58],[-49.79,-13.78],[-52.83,-20.6],[-56.55,-28.95],[-49.98,-32.02],[-40.03,-36.32],[-31.94,-40.57],[-24.35,-43.57],[-19.04,-46.01]]},{"id":368005268,"name":"Westgate Tower","tags":{"building":"office","name":"Westgate Tower"},"p":[[-17.36,-43.81],[-3.55,-18.55],[38.95,-14.75],[41.15,-28.69],[41.59,-36.69],[40.85,-44.26],[39.21,-49.15],[35.93,-53.6],[31.9,-57.6],[26.22,-60.27],[18.47,-60.56],[11.9,-59.53],[-5.38,-50.25]]}]},"jem":{"lat":1.3331836346381178,"lon":103.74339489404758,"height":60,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":620519197,"name":"JEM","tags":{},"p":[[-52.09,58.97],[-76.63,12.16],[-39.76,-51.0],[39.95,-90.59],[75.24,-47.9],[77.16,-43.24],[77.6,-37.7],[76.46,-31.86],[46.42,6.97],[15.79,45.6],[11.64,50.85]]},{"id":978644313,"name":"JEM","tags":{},"p":[[11.64,50.85],[-27.69,101.78],[-52.09,58.97]]},{"id":368005256,"name":"JEM Tower","tags":{"building":"office","building:levels":"11","name":"JEM Tower"},"p":[[26.35,-29.55],[-33.59,48.87],[-6.04,69.63],[53.9,-8.78]]}]},"j_den":{"lat":1.3333390841789186,"lon":103.74018296022726,"height":130,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":158227102,"name":"J'Den","tags":{"building":"construction","building:levels":"2","construction":"retail","name":"J'Den","roof:shape":"flat"},"p":[[-53.86,-32.42],[38.38,-49.95],[47.91,-1.75],[51.61,10.29],[51.38,13.07],[48.73,15.96],[44.7,17.64],[38.1,22.98],[34.25,26.75],[12.9,55.76],[10.38,58.33],[7.5,58.51],[4.99,57.33],[-38.58,32.09],[-40.9,28.71],[-42.52,25.23]]}]},"imm":{"lat":1.3350588362597813,"lon":103.74678277083959,"height":30,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":33543880,"name":"IMM","tags":{"building":"retail","building:levels":"5","name":"IMM"},"p":[[-56.38,-103.27],[-61.02,-97.38],[-63.05,-88.71],[-65.53,-85.41],[-98.37,-41.75],[-99.32,-33.47],[-96.47,-28.94],[-90.6,-25.55],[-104.7,-10.99],[-128.14,21.34],[-51.87,77.69],[-52.04,86.35],[-49.54,94.86],[-43.55,101.43],[53.14,176.62],[60.57,179.53],[67.33,180.26],[79.09,177.83],[86.73,171.18],[92.51,160.18],[92.72,148.95],[89.58,139.69],[84.95,134.62],[92.46,134.19],[71.89,-42.17],[66.15,-91.3],[65.05,-100.74],[62.0,-108.99],[53.91,-113.94],[45.66,-115.36],[-48.48,-107.12]]},{"id":429038696,"name":"IMM Carpark","tags":{"amenity":"parking","building":"parking","name":"IMM Carpark"},"p":[[-90.6,-25.55],[-96.47,-28.94],[-99.32,-33.47],[-98.37,-41.75],[-65.53,-85.41],[-63.05,-88.71],[-61.02,-97.38],[-56.38,-103.27],[-48.48,-107.12],[45.66,-115.36],[53.91,-113.94],[62.0,-108.99],[65.05,-100.74],[66.15,-91.3],[71.89,-42.17]]}]},"perennial_business_city":{"lat":1.3317686116968448,"lon":103.74488470658632,"height":45,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":173029751,"name":"Perennial Business City","tags":{"building":"commercial","building:levels":"8","height":"0","name":"Perennial Business City"},"p":[[-133.73,-21.73],[-62.73,27.64],[-69.08,30.81],[-74.63,35.46],[-78.62,41.84],[-78.96,50.8],[-74.11,59.77],[-49.47,76.47],[-39.93,80.79],[-28.65,79.06],[-19.8,75.97],[-14.77,68.55],[60.53,121.46],[141.64,17.11],[136.69,14.18],[139.81,8.67],[105.29,-15.38],[95.83,-1.25],[55.53,-28.39],[64.03,-40.67],[30.63,-63.81],[4.94,-97.61],[-5.79,-106.49],[-18.21,-96.42],[-60.23,-125.99],[-98.78,-71.3]]}]},"jurong_east_mrt":{"lat":1.3328043862477081,"lon":103.74173176857592,"height":22,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":33737976,"name":"Jurong East","tags":{"building":"train_station","building:levels":"3","name":"Jurong East","public_transport":"station"},"p":[[-7.59,-122.14],[14.29,-83.19],[5.7,-78.42],[12.3,-66.68],[14.27,-63.16],[49.13,-1.11],[74.9,44.77],[99.59,31.09],[112.08,24.16],[124.13,17.49],[122.7,14.95],[79.51,-61.95],[76.78,-66.8],[66.87,-84.44],[64.99,-87.8],[58.36,-99.57],[56.19,-103.45],[41.69,-95.42],[18.54,-136.63],[7.09,-130.28],[-6.27,-122.87]]},{"id":881935994,"name":"Jurong East Bus Interchange","tags":{"building":"transportation","name":"Jurong East Bus Interchange"},"p":[[-75.15,110.67],[-87.84,140.65],[-124.53,125.14],[-109.01,87.93],[-122.87,71.76],[-117.9,67.37],[-126.97,49.22],[-152.43,31.9],[-151.03,29.6],[-139.24,24.67],[-132.6,14.98],[-113.72,-11.53],[-110.34,-10.38],[-101.76,6.21],[-116.31,26.52],[-102.33,54.43],[-101.59,53.81],[-68.69,92.53],[-71.0,94.66],[-66.17,94.64],[-65.65,95.18],[-57.47,87.82],[-98.1,40.35],[-91.38,34.53],[-73.12,55.64],[-52.23,78.5],[-47.96,83.15],[-46.05,85.26]]}]},"ng_teng_fong":{"lat":1.3335203000669698,"lon":103.7455027991624,"height":75,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":368005263,"name":"Ng Teng Fong General Hospital","tags":{"amenity":"hospital","building":"hospital","name":"Ng Teng Fong General Hospital"},"p":[[-33.03,-61.17],[-35.63,-62.54],[-38.68,-63.48],[-42.31,-63.84],[-45.81,-63.68],[-49.41,-62.74],[-52.62,-61.2],[-55.71,-58.99],[-57.64,-56.72],[-59.21,-54.53],[-60.54,-51.91],[-61.38,-48.9],[-61.78,-45.79],[-61.71,-42.64],[-60.87,-39.15],[-59.15,-35.24],[-59.25,-33.28],[-59.97,-31.36],[-69.78,-19.25],[-71.56,-15.56],[-72.31,-11.18],[-72.22,-7.0],[-71.31,-1.88],[-69.58,1.91],[-67.97,4.36],[-38.13,27.84],[-19.05,42.37],[-21.19,45.45],[-21.12,46.09],[-12.01,52.5],[-11.48,53.85],[-10.66,54.51],[-9.62,55.0],[-8.35,55.0],[-7.34,54.78],[-6.36,53.97],[-3.62,54.14],[10.29,64.73],[42.97,89.53],[46.88,91.26],[51.74,91.28],[56.37,90.24],[59.61,88.44],[62.09,86.16],[65.16,83.34],[67.52,79.98],[69.39,75.68],[69.78,70.87],[69.51,68.37],[67.94,65.66],[53.45,52.64],[58.29,52.14],[63.23,51.47],[67.29,50.01],[70.91,47.71],[73.97,44.0],[76.95,38.49],[77.89,34.95],[78.14,31.38],[77.76,28.37],[76.87,25.41],[75.31,22.45],[73.15,19.62],[-14.7,-47.23],[-14.99,-47.72],[-15.49,-48.66],[-16.18,-49.02],[-16.89,-48.9]]},{"id":368005259,"name":"Jurong Community Hospital","tags":{"amenity":"hospital","building":"hospital","height":"0","name":"Jurong Community Hospital"},"p":[[67.94,65.66],[98.76,88.94],[97.26,94.32],[96.55,99.95],[96.42,105.08],[96.64,110.72],[92.73,115.73],[91.24,114.77],[90.28,114.61],[89.41,115.11],[87.05,117.39],[73.11,106.44],[69.91,110.89],[92.63,128.41],[99.18,131.44],[105.77,133.83],[105.34,135.26],[114.13,138.17],[123.7,139.2],[132.6,138.42],[144.62,139.04],[155.7,138.26],[160.69,136.26],[164.72,133.0],[170.4,122.86],[173.68,115.21],[178.45,112.54],[182.04,109.28],[183.53,102.9],[183.37,96.67],[181.85,91.22],[168.21,91.64],[162.92,80.72],[160.72,73.33],[157.71,69.56],[153.55,65.32],[147.62,60.82],[142.42,57.84],[138.55,55.94],[134.5,54.37],[129.89,53.12],[124.85,52.2],[119.53,51.93],[111.36,52.09],[109.51,51.86],[107.71,50.86],[105.09,46.99],[103.49,44.26],[101.6,41.97],[98.64,39.22],[95.21,37.01],[93.37,36.14],[91.53,35.48],[90.67,35.62],[90.11,36.08],[89.81,36.84],[89.88,39.75],[90.3,42.56],[91.3,45.55],[93.58,48.67],[96.33,51.25],[101.64,55.33],[100.67,58.24],[99.03,60.56],[98.61,63.05],[75.97,46.38],[75.31,45.37],[74.59,44.56],[73.97,44.0],[70.91,47.71],[67.29,50.01],[63.23,51.47],[58.29,52.14],[53.45,52.64]]},{"id":320763066,"name":"Jurong Health Specialist Outpatient Clinics","tags":{"amenity":"hospital","building":"hospital","height":"0","name":"Jurong Health Specialist Outpatient Clinics"},"p":[[-169.29,-177.37],[-199.97,-157.96],[-175.18,-117.92],[-130.33,-70.78],[-126.68,-68.11],[-120.56,-67.07],[-116.45,-67.81],[-112.28,-69.88],[-109.36,-74.04],[-96.6,-93.76],[-99.14,-104.14],[-97.95,-105.98],[-92.87,-109.77],[-89.81,-115.33],[-89.22,-119.11],[-88.77,-125.7],[-89.51,-130.44],[-91.16,-136.23],[-97.75,-144.65],[-103.84,-152.46],[-107.21,-154.68],[-110.25,-155.8],[-113.39,-156.24],[-118.02,-155.58],[-133.03,-147.5],[-137.28,-146.68],[-141.16,-147.79],[-144.51,-150.46],[-158.77,-173.67],[-161.68,-176.19],[-165.41,-177.59]]}]},"vision_exchange":{"lat":1.330146916236836,"lon":103.74457679934665,"height":120,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":368005267,"name":"Vision Exchange","tags":{"building":"yes","building:levels":"25","name":"Vision Exchange"},"p":[[-66.25,-57.73],[63.25,5.42],[74.14,12.78],[76.16,23.07],[59.44,50.12],[41.28,54.82],[-84.74,-27.34]]}]},"jtc_summit":{"lat":1.3311862415899627,"lon":103.74184163105096,"height":142,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":33738028,"name":"JTC Summit","tags":{"building":"commercial","building:levels":"4","name":"JTC Summit"},"p":[[9.01,45.09],[19.15,51.4],[50.17,5.71],[43.56,-2.67],[37.82,-10.81],[32.6,-21.26],[29.09,-30.44],[25.79,-41.67],[17.57,-43.12],[10.89,-44.59],[1.94,-46.97],[1.36,-44.17],[-6.08,-44.74],[-11.85,-44.3],[-17.46,-42.67],[-22.79,-40.44],[-27.61,-37.62],[-31.97,-33.7],[-36.17,-28.99],[-39.7,-23.92],[-42.17,-19.11],[-44.06,-12.82],[-44.35,-5.38],[-47.05,-3.16],[-46.57,2.86],[-44.6,10.26],[-41.3,17.89],[-36.62,24.35],[-31.95,29.1],[-23.49,34.73],[-16.32,36.49],[-2.41,45.04],[-0.86,42.84],[5.32,43.53]]}]},"cpf_jurong":{"lat":1.3350171463650466,"lon":103.73980710196375,"height":20,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":103752945,"name":"CPF Jurong Building","tags":{},"p":[[-24.82,-16.45],[-18.12,21.01],[11.08,15.57],[10.48,11.57],[9.37,8.15],[14.51,4.89],[17.13,9.34],[18.03,14.46],[30.87,12.45],[27.16,3.22],[22.82,-5.38],[17.26,-11.54],[9.58,-16.57],[-0.4,-18.96],[-11.21,-18.28]]}]},"jurong_town_hall":{"lat":1.3287426986937119,"lon":103.74185181592496,"height":32,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":96764520,"name":"Jurong Town Hall","tags":{"building":"commercial","building:levels":"5","height":"32","name":"Jurong Town Hall"},"p":[[-38.42,-24.06],[-52.14,-33.11],[-59.54,-31.87],[-65.43,-30.88],[-72.14,-20.94],[-70.93,-15.75],[-69.31,-8.79],[34.42,60.14],[46.96,57.93],[53.37,47.83],[51.74,36.28],[37.7,26.35],[38.97,23.76],[43.44,26.88],[57.62,24.2],[63.0,14.42],[61.35,2.55],[45.39,-7.91],[33.3,-15.83],[36.27,-21.15],[-0.44,-44.88],[-2.83,-40.44],[-24.17,-53.92],[-37.15,-51.85],[-44.17,-41.62],[-41.03,-29.31],[-37.01,-26.35]]}]}};
+  const data = {"westgate":{"lat":1.3342548674067993,"lon":103.74286557083342,"height":141.1,"height_source":"Tile roof max minus ground 141.1 m (p90 135.4, p50 27.5); refine per module","parts":[{"id":158234014,"name":"Westgate","tags":{"building":"retail","building:levels":"5","name":"Westgate"},"p":[[16.7,-63.53],[25.67,-63.72],[35.04,-60.09],[43.54,-51.13],[45.8,-38.21],[49.78,-38.21],[68.88,-7.04],[82.97,16.04],[11.26,53.24],[-42.74,81.26],[-48.66,70.16],[-56.71,55.07],[-80.85,-2.58],[-49.79,-13.78],[-52.83,-20.6],[-56.55,-28.95],[-49.98,-32.02],[-40.03,-36.32],[-31.94,-40.57],[-24.35,-43.57],[-19.04,-46.01]]},{"id":368005268,"name":"Westgate Tower","tags":{"building":"office","name":"Westgate Tower"},"p":[[-17.36,-43.81],[-3.55,-18.55],[38.95,-14.75],[41.15,-28.69],[41.59,-36.69],[40.85,-44.26],[39.21,-49.15],[35.93,-53.6],[31.9,-57.6],[26.22,-60.27],[18.47,-60.56],[11.9,-59.53],[-5.38,-50.25]]}]},"jem":{"lat":1.3331836346381178,"lon":103.74339489404758,"height":82.8,"height_source":"Tile roof max minus ground 82.8 m (p90 77.9, p50 30.5); refine per module","parts":[{"id":620519197,"name":"JEM","tags":{},"p":[[-52.09,58.97],[-76.63,12.16],[-39.76,-51.0],[39.95,-90.59],[75.24,-47.9],[77.16,-43.24],[77.6,-37.7],[76.46,-31.86],[46.42,6.97],[15.79,45.6],[11.64,50.85]]},{"id":978644313,"name":"JEM","tags":{},"p":[[11.64,50.85],[-27.69,101.78],[-52.09,58.97]]},{"id":368005256,"name":"JEM Tower","tags":{"building":"office","building:levels":"11","name":"JEM Tower"},"p":[[26.35,-29.55],[-33.59,48.87],[-6.04,69.63],[53.9,-8.78]]}]},"j_den":{"lat":1.3333390841789186,"lon":103.74018296022726,"height":139,"height_source":"Design estimate: 150 m AMSL height limit minus ~11 m ground; tiles predate the building (show 37.3 m JCube)","parts":[{"id":158227102,"name":"J'Den","tags":{"building":"construction","building:levels":"2","construction":"retail","name":"J'Den","roof:shape":"flat"},"p":[[-53.86,-32.42],[38.38,-49.95],[47.91,-1.75],[51.61,10.29],[51.38,13.07],[48.73,15.96],[44.7,17.64],[38.1,22.98],[34.25,26.75],[12.9,55.76],[10.38,58.33],[7.5,58.51],[4.99,57.33],[-38.58,32.09],[-40.9,28.71],[-42.52,25.23]]}]},"imm":{"lat":1.3350588362597813,"lon":103.74678277083959,"height":31.6,"height_source":"Tile roof max minus ground 31.6 m (p90 30.6, p50 26.2); refine per module","parts":[{"id":33543880,"name":"IMM","tags":{"building":"retail","building:levels":"5","name":"IMM"},"p":[[-56.38,-103.27],[-61.02,-97.38],[-63.05,-88.71],[-65.53,-85.41],[-98.37,-41.75],[-99.32,-33.47],[-96.47,-28.94],[-90.6,-25.55],[-104.7,-10.99],[-128.14,21.34],[-51.87,77.69],[-52.04,86.35],[-49.54,94.86],[-43.55,101.43],[53.14,176.62],[60.57,179.53],[67.33,180.26],[79.09,177.83],[86.73,171.18],[92.51,160.18],[92.72,148.95],[89.58,139.69],[84.95,134.62],[92.46,134.19],[71.89,-42.17],[66.15,-91.3],[65.05,-100.74],[62.0,-108.99],[53.91,-113.94],[45.66,-115.36],[-48.48,-107.12]]},{"id":429038696,"name":"IMM Carpark","tags":{"amenity":"parking","building":"parking","name":"IMM Carpark"},"p":[[-90.6,-25.55],[-96.47,-28.94],[-99.32,-33.47],[-98.37,-41.75],[-65.53,-85.41],[-63.05,-88.71],[-61.02,-97.38],[-56.38,-103.27],[-48.48,-107.12],[45.66,-115.36],[53.91,-113.94],[62.0,-108.99],[65.05,-100.74],[66.15,-91.3],[71.89,-42.17]]}]},"perennial_business_city":{"lat":1.3317686116968448,"lon":103.74488470658632,"height":53.4,"height_source":"Tile roof max minus ground 53.4 m (p90 49.2, p50 44.3); refine per module","parts":[{"id":173029751,"name":"Perennial Business City","tags":{"building":"commercial","building:levels":"8","height":"0","name":"Perennial Business City"},"p":[[-133.73,-21.73],[-62.73,27.64],[-69.08,30.81],[-74.63,35.46],[-78.62,41.84],[-78.96,50.8],[-74.11,59.77],[-49.47,76.47],[-39.93,80.79],[-28.65,79.06],[-19.8,75.97],[-14.77,68.55],[60.53,121.46],[141.64,17.11],[136.69,14.18],[139.81,8.67],[105.29,-15.38],[95.83,-1.25],[55.53,-28.39],[64.03,-40.67],[30.63,-63.81],[4.94,-97.61],[-5.79,-106.49],[-18.21,-96.42],[-60.23,-125.99],[-98.78,-71.3]]}]},"jurong_east_mrt":{"lat":1.3328043862477081,"lon":103.74173176857592,"height":22.7,"height_source":"Tile roof max minus ground 22.7 m (p90 22.3, p50 13.3); refine per module","parts":[{"id":33737976,"name":"Jurong East","tags":{"building":"train_station","building:levels":"3","name":"Jurong East","public_transport":"station"},"p":[[-7.59,-122.14],[14.29,-83.19],[5.7,-78.42],[12.3,-66.68],[14.27,-63.16],[49.13,-1.11],[74.9,44.77],[99.59,31.09],[112.08,24.16],[124.13,17.49],[122.7,14.95],[79.51,-61.95],[76.78,-66.8],[66.87,-84.44],[64.99,-87.8],[58.36,-99.57],[56.19,-103.45],[41.69,-95.42],[18.54,-136.63],[7.09,-130.28],[-6.27,-122.87]]},{"id":881935994,"name":"Jurong East Bus Interchange","tags":{"building":"transportation","name":"Jurong East Bus Interchange"},"p":[[-75.15,110.67],[-87.84,140.65],[-124.53,125.14],[-109.01,87.93],[-122.87,71.76],[-117.9,67.37],[-126.97,49.22],[-152.43,31.9],[-151.03,29.6],[-139.24,24.67],[-132.6,14.98],[-113.72,-11.53],[-110.34,-10.38],[-101.76,6.21],[-116.31,26.52],[-102.33,54.43],[-101.59,53.81],[-68.69,92.53],[-71.0,94.66],[-66.17,94.64],[-65.65,95.18],[-57.47,87.82],[-98.1,40.35],[-91.38,34.53],[-73.12,55.64],[-52.23,78.5],[-47.96,83.15],[-46.05,85.26]]}]},"ng_teng_fong":{"lat":1.3335203000669698,"lon":103.7455027991624,"height":94.2,"height_source":"Tile roof max minus ground 94.2 m (p90 81.3, p50 25.9); refine per module","parts":[{"id":368005263,"name":"Ng Teng Fong General Hospital","tags":{"amenity":"hospital","building":"hospital","name":"Ng Teng Fong General Hospital"},"p":[[-33.03,-61.17],[-35.63,-62.54],[-38.68,-63.48],[-42.31,-63.84],[-45.81,-63.68],[-49.41,-62.74],[-52.62,-61.2],[-55.71,-58.99],[-57.64,-56.72],[-59.21,-54.53],[-60.54,-51.91],[-61.38,-48.9],[-61.78,-45.79],[-61.71,-42.64],[-60.87,-39.15],[-59.15,-35.24],[-59.25,-33.28],[-59.97,-31.36],[-69.78,-19.25],[-71.56,-15.56],[-72.31,-11.18],[-72.22,-7.0],[-71.31,-1.88],[-69.58,1.91],[-67.97,4.36],[-38.13,27.84],[-19.05,42.37],[-21.19,45.45],[-21.12,46.09],[-12.01,52.5],[-11.48,53.85],[-10.66,54.51],[-9.62,55.0],[-8.35,55.0],[-7.34,54.78],[-6.36,53.97],[-3.62,54.14],[10.29,64.73],[42.97,89.53],[46.88,91.26],[51.74,91.28],[56.37,90.24],[59.61,88.44],[62.09,86.16],[65.16,83.34],[67.52,79.98],[69.39,75.68],[69.78,70.87],[69.51,68.37],[67.94,65.66],[53.45,52.64],[58.29,52.14],[63.23,51.47],[67.29,50.01],[70.91,47.71],[73.97,44.0],[76.95,38.49],[77.89,34.95],[78.14,31.38],[77.76,28.37],[76.87,25.41],[75.31,22.45],[73.15,19.62],[-14.7,-47.23],[-14.99,-47.72],[-15.49,-48.66],[-16.18,-49.02],[-16.89,-48.9]]},{"id":368005259,"name":"Jurong Community Hospital","tags":{"amenity":"hospital","building":"hospital","height":"0","name":"Jurong Community Hospital"},"p":[[67.94,65.66],[98.76,88.94],[97.26,94.32],[96.55,99.95],[96.42,105.08],[96.64,110.72],[92.73,115.73],[91.24,114.77],[90.28,114.61],[89.41,115.11],[87.05,117.39],[73.11,106.44],[69.91,110.89],[92.63,128.41],[99.18,131.44],[105.77,133.83],[105.34,135.26],[114.13,138.17],[123.7,139.2],[132.6,138.42],[144.62,139.04],[155.7,138.26],[160.69,136.26],[164.72,133.0],[170.4,122.86],[173.68,115.21],[178.45,112.54],[182.04,109.28],[183.53,102.9],[183.37,96.67],[181.85,91.22],[168.21,91.64],[162.92,80.72],[160.72,73.33],[157.71,69.56],[153.55,65.32],[147.62,60.82],[142.42,57.84],[138.55,55.94],[134.5,54.37],[129.89,53.12],[124.85,52.2],[119.53,51.93],[111.36,52.09],[109.51,51.86],[107.71,50.86],[105.09,46.99],[103.49,44.26],[101.6,41.97],[98.64,39.22],[95.21,37.01],[93.37,36.14],[91.53,35.48],[90.67,35.62],[90.11,36.08],[89.81,36.84],[89.88,39.75],[90.3,42.56],[91.3,45.55],[93.58,48.67],[96.33,51.25],[101.64,55.33],[100.67,58.24],[99.03,60.56],[98.61,63.05],[75.97,46.38],[75.31,45.37],[74.59,44.56],[73.97,44.0],[70.91,47.71],[67.29,50.01],[63.23,51.47],[58.29,52.14],[53.45,52.64]]},{"id":320763066,"name":"Jurong Health Specialist Outpatient Clinics","tags":{"amenity":"hospital","building":"hospital","height":"0","name":"Jurong Health Specialist Outpatient Clinics"},"p":[[-169.29,-177.37],[-199.97,-157.96],[-175.18,-117.92],[-130.33,-70.78],[-126.68,-68.11],[-120.56,-67.07],[-116.45,-67.81],[-112.28,-69.88],[-109.36,-74.04],[-96.6,-93.76],[-99.14,-104.14],[-97.95,-105.98],[-92.87,-109.77],[-89.81,-115.33],[-89.22,-119.11],[-88.77,-125.7],[-89.51,-130.44],[-91.16,-136.23],[-97.75,-144.65],[-103.84,-152.46],[-107.21,-154.68],[-110.25,-155.8],[-113.39,-156.24],[-118.02,-155.58],[-133.03,-147.5],[-137.28,-146.68],[-141.16,-147.79],[-144.51,-150.46],[-158.77,-173.67],[-161.68,-176.19],[-165.41,-177.59]]}]},"vision_exchange":{"lat":1.330146916236836,"lon":103.74457679934665,"height":122.1,"height_source":"Tile roof p90 122.1 m; tile max 144.2 m includes a temporary crane","parts":[{"id":368005267,"name":"Vision Exchange","tags":{"building":"yes","building:levels":"25","name":"Vision Exchange"},"p":[[-66.25,-57.73],[63.25,5.42],[74.14,12.78],[76.16,23.07],[59.44,50.12],[41.28,54.82],[-84.74,-27.34]]}]},"jtc_summit":{"lat":1.3311862415899627,"lon":103.74184163105096,"height":150.7,"height_source":"Tile roof max minus ground 150.7 m (p90 139.1, p50 22.6); refine per module","parts":[{"id":33738028,"name":"JTC Summit","tags":{"building":"commercial","building:levels":"4","name":"JTC Summit"},"p":[[9.01,45.09],[19.15,51.4],[50.17,5.71],[43.56,-2.67],[37.82,-10.81],[32.6,-21.26],[29.09,-30.44],[25.79,-41.67],[17.57,-43.12],[10.89,-44.59],[1.94,-46.97],[1.36,-44.17],[-6.08,-44.74],[-11.85,-44.3],[-17.46,-42.67],[-22.79,-40.44],[-27.61,-37.62],[-31.97,-33.7],[-36.17,-28.99],[-39.7,-23.92],[-42.17,-19.11],[-44.06,-12.82],[-44.35,-5.38],[-47.05,-3.16],[-46.57,2.86],[-44.6,10.26],[-41.3,17.89],[-36.62,24.35],[-31.95,29.1],[-23.49,34.73],[-16.32,36.49],[-2.41,45.04],[-0.86,42.84],[5.32,43.53]]}]},"cpf_jurong":{"lat":1.3350171463650466,"lon":103.73980710196375,"height":22.5,"height_source":"Tile roof max minus ground 22.5 m (p90 21.8, p50 17.4); refine per module","parts":[{"id":103752945,"name":"CPF Jurong Building","tags":{},"p":[[-24.82,-16.45],[-18.12,21.01],[11.08,15.57],[10.48,11.57],[9.37,8.15],[14.51,4.89],[17.13,9.34],[18.03,14.46],[30.87,12.45],[27.16,3.22],[22.82,-5.38],[17.26,-11.54],[9.58,-16.57],[-0.4,-18.96],[-11.21,-18.28]]}]},"jurong_town_hall":{"lat":1.3287426986937119,"lon":103.74185181592496,"height":59.3,"height_source":"Tile roof max minus ground 59.3 m (p90 30.7, p50 26.0); refine per module","parts":[{"id":96764520,"name":"Jurong Town Hall","tags":{"building":"commercial","building:levels":"5","height":"32","name":"Jurong Town Hall"},"p":[[-38.42,-24.06],[-52.14,-33.11],[-59.54,-31.87],[-65.43,-30.88],[-72.14,-20.94],[-70.93,-15.75],[-69.31,-8.79],[34.42,60.14],[46.96,57.93],[53.37,47.83],[51.74,36.28],[37.7,26.35],[38.97,23.76],[43.44,26.88],[57.62,24.2],[63.0,14.42],[61.35,2.55],[45.39,-7.91],[33.3,-15.83],[36.27,-21.15],[-0.44,-44.88],[-2.83,-40.44],[-24.17,-53.92],[-37.15,-51.85],[-44.17,-41.62],[-41.03,-29.31],[-37.01,-26.35]]}]}};
   const stats = {};
   function register(slug, zh, en, r, build){
     SGBV.data[slug] = data[slug];            // only registered modules join the hull mask (SGBV.skip builds it lazily)
@@ -80553,6 +80554,1038 @@ const SGJE = (() => {
   }
   return Object.assign({}, SGBV, {data, register, stats});
 })();
+
+/* Westgate: OSM ways 158234014 / 368005268. Original metre geometry.
+ * Curved office curtain wall, shaded retail court, planted roofs and J-walk.
+ * Reference images remain outside the repository. See REVIEW.md. */
+{
+const {register,scale,out,rect,center,Batch}=SGJE;
+register('westgate','西城购物中心','Westgate',112,(b,D,G,g)=>{
+ // Upper curtain plate is photo-fitted 2.8m west / 3.2m north of the simplified
+ // OSM tower outline; its base and the mall retain the surveyed site polygon.
+ const P=D.parts[0].p,T=SGJE.move(D.parts[1].p,-2.8,-3.2),H=141.1;
+ const court=[[-77.5,-4],[-39.3,66.75],[58.9,15.55],[51.1,.45],[-32.7,43.25],[-62.5,-12]];
+ // The mall roof is a landscaped terrace surrounding a long covered court.
+ const north=[19,0,1,2,3,4];
+ P.forEach((p,i)=>{const q=P[(i+1)%P.length],glass=north.includes(i);b.quad(glass?'#3c5d61':'#d3ceba',[p[0],-.8,p[1]],[q[0],-.8,q[1]],[q[0],28.8,q[1]],[p[0],28.8,p[1]],glass?2:0);});b.capHole(P,[court],28.8,'#9caaa0');
+ b.facade(out(P,.08),.3,10.2,5,3.1,'#3c5d61','#aab8ae',.24);
+ for(let y=10.2;y<28.5;y+=4.65){const O=out(P,.12);O.forEach((p,i)=>{if(north.includes(i))return;const q=O[(i+1)%O.length];b.beam([p[0],y,p[1]],[q[0],y,q[1]],.48,'#b6c1b7');});}
+ // Large pale blank panels alternate with dark glazing and living walls.
+ const F=out(P,.28);
+ for(const i of [5,6,7,8,9,10,11,12,13,14,15,16,17,18]){
+  const p=F[i],q=F[(i+1)%F.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.round(L/5));
+  for(let j=0;j<n;j++){
+   const a=j/n,c=(j+.93)/n,x=p[0]+dx*a,z=p[1]+dz*a,X=p[0]+dx*c,Z=p[1]+dz*c;
+   let col=(i===7||i===10||i===14)?'#d9d2bc':j%5===1?'#5e7950':j%3===0?'#b6b9a8':'#617f80';
+   b.quad(col,[x,10.7,z],[X,10.7,Z],[X,28.6,Z],[x,28.6,z],col==='#617f80'?2:0);
+   if(i===7||i===10)for(let y=12;y<28;y+=.6)b.beam([x,y,z],[X,y,Z],.055,'#c8c3ae');
+  }
+ }
+ b.rim(P,29.15,'#e0e0ce',.55);
+ // Internal light court, galleries and slender columns; no solid roof slab.
+ b.walls(court,0,25,'#3b5a5e',2);
+ for(let y=5;y<26;y+=5){b.rim(out(court,1.3),y,'#d2d8cc',.7);b.rim(court,y+1.1,'#93aeb0',.12);}
+ court.forEach(p=>b.box(p[0],0,p[1],.65,26,.65,'#dedfd1'));
+ // Two glazed wings form the L-shaped court around the roof garden.
+ for(const [a,c] of [[[-70,-8],[-36,55]],[[-36,55],[55,8]]]){
+  const dx=c[0]-a[0],dz=c[1]-a[1],L=Math.hypot(dx,dz),nx=-dz/L,nz=dx/L;
+  const cp=(x,t,y)=>[a[0]+dx*t+nx*x,y,a[1]+dz*t+nz*x];
+  b.quad('#9ab8b7',cp(-8.5,0,27.2),cp(0,0,32.6),cp(0,1,32.6),cp(-8.5,1,27.2),2);
+  b.quad('#9ab8b7',cp(0,0,32.6),cp(8.5,0,27.2),cp(8.5,1,27.2),cp(0,1,32.6),2);
+  for(let d=0;d<=L;d+=3.5){b.beam(cp(-8.5,d/L,27.25),cp(0,d/L,32.65),.16,'#ced9d0');b.beam(cp(0,d/L,32.65),cp(8.5,d/L,27.25),.16,'#ced9d0');}
+  for(let x=-6;x<=6;x+=3)b.beam(cp(x,0,32.6-Math.abs(x)*.635),cp(x,1,32.6-Math.abs(x)*.635),.1,'#c1d0c9');
+ }
+ for(const Q of [rect(-29,9,15,36,.48),rect(14,-1,38,12,.48),rect(35,-2,11,22,.48)])b.garden(Q,29.1);
+ // Pool and paths visible in the central roof garden; play equipment omitted.
+ b.prism(rect(-10,10,29,8,.05),28.95,29.05,'#4b9da9');
+ for(const Q of [rect(-9,20,34,2,.48),rect(16,6,2,24,.48)])b.cap(Q,29.15,'#c9ccb8');
+ // Photo-based winding beds and pale paths around the central terrace pool.
+ for(const bed of [
+  [[-48,-16],[-27,-21],[-7,-14],[1,-7],[-15,-2],[-33,-5],[-47,2]],
+  [[16,-12],[33,-20],[42,-10],[38,2],[23,10],[10,5]],
+  [[-30,26],[-16,25],[-4,27],[7,18],[14,23],[4,35],[-14,39],[-29,34]]
+ ]){const R=SGJE.smooth(bed,2);b.garden(R,29.2,false);b.rim(out(R,.8),29.24,'#d2d4bf',.75);}
+ for(const [x,z]of [[-38,-13],[-26,-15],[25,-13],[32,-5],[-19,32],[3,30]])b.tree(x,29.2,z,.58);
+ const plant=rect(29,-1,20,13,-.47);b.prism(plant,28.8,33,'#a0a99d');b.roof(plant,33);
+ // Tower footprint remains the surveyed OSM plate. The horizontal band rhythm
+ // is 4.3m (owner's published floor-to-floor), with a higher crown screen.
+ b.prism(T,-.7,7,'#647a72');b.garden(out(T,.25),7.1,false);
+ b.prism(scale(T,.97),7.2,16,'#3c5358',2);
+ b.facade(T,16,H-4,4.3,2.6,'#365b6b','#7f979b',.15);
+ for(let y=17;y<H-3;y+=4.3){b.band(out(T,.26),y,.55,'#879b9c');b.rim(out(T,.42),y+.62,'#b3bfba',.13);}
+ // Dark vertical split between the rounded and flat wings on the public face.
+ const p=T[0],q=T[1];b.quad('#263f4c',[p[0],16,p[1]],[q[0],16,q[1]],[q[0],H-4,q[1]],[p[0],H-4,p[1]],2);
+ b.cap(T,H-3.8,'#687a73');b.garden(scale(T,.82),H-3.7,false);
+ const tc=center(T),service=rect(tc[0],tc[1],24,16,.06);
+ b.prism(service,H-3.65,H-1.4,'#9ca79e');b.cap(service,H-1.35,'#7d8e86');
+ for(let k=-1;k<=1;k++){
+  b.box(tc[0]+k*6.5,H-1.3,tc[1],4.9,.6,9,'#a9b4aa',.06);
+  for(let j=-3;j<=3;j++)b.box(tc[0]+k*6.5,H-.68,tc[1]+j,4.1,.06,.35,'#526663',.06);
+ }
+
+ b.walls(T,H-4,H,'#82938e');b.rim(T,H-.16,'#b8c2b7',.32);
+ for(let i=0;i<T.length;i++){const p=T[i],q=T[(i+1)%T.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/1.4);for(let j=0;j<n;j++){const t=j/n,x=p[0]+(q[0]-p[0])*t,z=p[1]+(q[1]-p[1])*t;b.box(x,H-3.8,z,.10,3.8,.10,'#b4bfb6');}}
+ // LED lines are their own batched lmMat surface, preserving night uniforms.
+ const led=new Batch(G.base),Q=out(T,.45);
+ for(let y=17;y<H-5;y+=4.3)led.walls(Q,y+.84,y+1.02,'#8aaeb4',4);
+ // Recessed vertical blue light seam, seen in CapitaLand's night photograph.
+ const a=Q[1],c=Q[2],t=.28,u=.32;
+ led.quad('#8aaeb4',[a[0]+(c[0]-a[0])*t,8,a[1]+(c[1]-a[1])*t],[a[0]+(c[0]-a[0])*u,8,a[1]+(c[1]-a[1])*u],[a[0]+(c[0]-a[0])*u,H-4,a[1]+(c[1]-a[1])*u],[a[0]+(c[0]-a[0])*t,H-4,a[1]+(c[1]-a[1])*t]);
+ // Blank illuminated panels on the retail facade replace photographic signs.
+ const sign=out(P,.4),v=sign[7],w=sign[8];
+ led.quad('#c5d1ce',[v[0]*.35+w[0]*.65,15,v[1]*.35+w[1]*.65],[v[0]*.15+w[0]*.85,15,v[1]*.15+w[1]*.85],[v[0]*.15+w[0]*.85,22,v[1]*.15+w[1]*.85],[v[0]*.35+w[0]*.65,22,v[1]*.35+w[1]*.65]);
+ led.flush(g,()=>{const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0}),m=source.clone(),prior=source.onBeforeCompile;
+  m.customProgramCacheKey=()=> 'je-westgate-slow-led-v1';
+  m.onBeforeCompile=function(sh,r){prior.call(this,sh,r);sh.fragmentShader=sh.fragmentShader.replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+ float wgCycle=.5-.5*cos(uTime*.105+vWP.y*.018);
+ vec3 wgHue=mix(vec3(.025,.16,.9),vec3(.43,.035,.72),wgCycle);
+ totalEmissiveRadiance+=uNight*wgHue*.85;`);};return m;});
+ // Level 2 bridge towards the station; small covered span stops at its edge.
+ const bridge=[[-44,74],[-40,78],[-65,107],[-70,103]];
+ b.prism(bridge,5.1,5.55,'#c1c7bb');b.walls(bridge,5.55,6.75,'#8ba2a0',2);b.prism(out(bridge,.3),8.4,8.65,'#c4d0c8');
+ for(const p of [bridge[0],bridge[2]])b.box(p[0],0,p[1],.5,8.4,.5,'#9aa99d');
+ // Covered entrance and blank illuminated sign panels.
+ const canopy=rect(63,21,29,6,-.48);b.prism(canopy,5.4,5.7,'#d1d6c9');
+ for(const x of [49,72])b.box(x,0,24,.45,5.4,.45,'#bfcabc');
+ for(const [x,z]of [[-59,3],[57,10],[-30,63]])b.tree(x,0,z,.9);
+});
+// Keep labels and night-height uniforms at the modeled crown until shared data is regenerated.
+LANDMARKS.sgje_westgate.h=141.1;
+}
+
+/* Jem. OSM ways 620519197, 978644313 and office plate 368005256.
+ * Original metre geometry; photographs inform facade / planting, never ship.
+ * See REVIEW.md for the measured height and photo sources. */
+{
+const {register,scale,out,rect,center,lerp,Batch}=SGJE;
+const jemClock={value:0};
+if(typeof HOOKS!=='undefined')HOOKS.frame.push(t=>{jemClock.value=t;});
+// Dedicated, batched luminous soffits and abstract LED glazing. lmMat retains
+// the app's night schedule, fog and landmark lighting uniforms.
+function jemLight(base,kind){
+ const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0}),m=source.clone();
+ const prior=source.onBeforeCompile;
+ m.customProgramCacheKey=()=> 'jem-light-'+kind;
+ m.onBeforeCompile=function(sh,r){prior.call(this,sh,r);sh.uniforms.jemClock=jemClock;
+ sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 jemP;').replace('#include <begin_vertex>',`#include <begin_vertex>\njemP=position-vec3(0.0,${base.toFixed(5)},0.0);`);
+ sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 jemP; uniform float jemClock;').replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>\n totalEmissiveRadiance += ${kind===1?'vec3(1.0,.65,.28)*.85':'mix(vec3(.65,.88,.21),vec3(.15,.60,.76),.5+.5*sin(jemP.x*.075+jemP.z*.08+jemClock*.12))*.90'}*uNight;`);
+ };return m;
+}
+register('jem','裕廊东广场','Jem',112,(b,D,G,g)=>{
+ const P=D.parts[0].p,A=D.parts[1].p,T=D.parts[2].p,H=82.8;
+ const lights=new Batch(G.base),media=new Batch(G.base);
+ // Ground-level cross-block passages are open beneath the elevated mall.
+ const N=[...P.slice(2),P[0],[-33.59,48.87],[26.35,-29.55]],W=[P[0],P[1],P[2],[26.35,-29.55],[-33.59,48.87]];
+ b.cap(P,.05,'#a8aaa2');b.prism(P,7.5,18.5,'#b2afa2');b.prism(N,18.5,29.5,'#b2afa2');b.cap(W,18.55,'#b2b7a8');
+ b.prism(A,7.5,29.5,'#b8b9ad');b.cap(A,.05,'#afb2a5');
+ function edgePanel(p,q,y,h,c,mode=0,t=0,u=1){b.quad(c,[lerp(p[0],q[0],t),y,lerp(p[1],q[1],t)],[lerp(p[0],q[0],u),y,lerp(p[1],q[1],u)],[lerp(p[0],q[0],u),y+h,lerp(p[1],q[1],u)],[lerp(p[0],q[0],t),y+h,lerp(p[1],q[1],t)],mode);}
+ for(const [ix,Q] of [P,A].entries()){
+  const O=out(Q,.12);O.forEach((p,i)=>{const q=O[(i+1)%O.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),n=Math.max(1,Math.ceil(L/4));
+   // Portal bays at both ends of each through-block route; remaining retail
+   // fronts are warm glass with tall slender columns under the upper podium.
+   for(let j=0;j<n;j++){const t=j/n,u=(j+1)/n,open=(i===1||i===7||i===9||i===0)&&j%7===3;
+    if(!open)edgePanel(p,q,.25,6.9,'#456166',2,t+.02/n,u-.02/n);
+    b.box(lerp(p[0],q[0],t),.1,lerp(p[1],q[1],t),.45,7.4,.45,'#d5d5c7');
+   }
+   b.beam([p[0],7.3,p[1]],[q[0],7.3,q[1]],.42,'#dddcd1');
+   // Staggered limestone and silver cassettes: broad opaque retail enclosure,
+   // darker, finer perforated courses at the parapet, as in the official photos.
+   const nc=Math.max(1,Math.ceil(L/3.3));for(let f=0;f<(!ix&&i<2?9:19);f++)for(let j=0;j<nc;j++){
+    const t=j/nc+.012/nc,u=(j+1)/nc-.012/nc,y=7.6+f*1.14;
+    const pat=(j*11+f*7+i*3)%17,shade=f>13?(pat<7?'#77796f':'#8b8b7f'):pat<4?'#d0cec1':pat<8?'#979b91':'#b9b9ac';
+    edgePanel(p,q,y,1.09,shade,0,t,u);
+   }
+  });
+ }
+ b.rim(N,29.7,'#d6d6c6',.35);b.roof(scale(N,.98),29.6);b.rim(W,18.8,'#d6d6c6',.25);
+ b.cap(A,29.6,'#757d74');b.rim(A,30,'#d9ded1',.3);
+ for(let j=0;j<23;j++){const t=(j+.2)/24,q=[lerp(A[0][0],A[1][0],t),lerp(A[0][1],A[1][1],t)];b.beam([q[0],29.85,q[1]],[lerp(q[0],A[2][0],.91),29.85,lerp(q[1],A[2][1],.91)],.15,'#bfc7bb');}
+ // Terraced western garden promenade, glass pavilions and stairs down toward
+ // the station concourse. The layouts are photograph estimates on the OSM plate.
+ const terraces=[{p:[[-72,12],[-43,-39],[-30,-35],[-52,15],[-45,41],[-52,53]],y:19},
+ {p:[[-61,11],[-39,-28],[-27,-24],[-45,13],[-36,32],[-44,42]],y:24.5}];
+ for(const {p,y} of terraces){b.prism(p,15.5,y,'#c7c9bc');b.facade(out(p,.04),y-3.6,y-.3,3.3,3.2,'#526d6b','#e0e1d6',.15);b.garden(scale(p,.86),y+.05);b.rim(p,y+1.15,'#cadbd5',.11);}
+ for(const [x,z,w,d]of [[-45,-4,14,13],[-28,-30,12,10],[18,-57,26,16]]){const Q=rect(x,z,w,d,-.65);b.prism(Q,29.7,30.2,'#5e8387',2);for(let k=-w/2;k<=w/2;k+=3)b.box(x+k*.8,30.2,z+k*.6,.16,.15,d,'#b7c4bd',-.65);}
+ // Office tower uses the exact independent OSM plate. Its continuous curtain
+ // wall and alternate long elevation with planted terraces are distinct.
+ b.prism(T,29.7,H-5,'#34555c',2);b.facade(out(T,.08),30,H-5.1,4.7,2.7,'#3e626b','#bfcac5',.18);
+ const O=out(T,.8),p=O[0],q=O[1],dx=q[0]-p[0],dz=q[1]-p[1];
+ for(let f=0;f<10;f++){
+  const y=31.7+f*4.65;if(y>H-4)break;
+  b.beam([p[0],y,p[1]],[q[0],y,q[1]],.78,'#e0e0d2');
+  const end=O[2];b.beam([q[0],y,q[1]],[end[0],y,end[1]],.78,'#e0e0d2');
+  lights.quad('#fff0c6',[q[0],y-.405,q[1]],[end[0],y-.405,end[1]],[end[0]+.7,y-.405,end[1]-.8],[q[0]+.7,y-.405,q[1]-.8]);
+  lights.quad('#fff0c6',[p[0],y-.405,p[1]],[q[0],y-.405,q[1]],[q[0]+.7,y-.405,q[1]+.5],[p[0]+.7,y-.405,p[1]+.5]);
+  // Slender warm fascia just beyond the slab edge stays visible from above
+  // while the underside strip supplies the closer ground-level night view.
+  for(const [a,c]of [[p,q],[q,end]]){const ex=c[0]-a[0],ez=c[1]-a[1],L=Math.hypot(ex,ez),nx=-ez/L*.405,nz=ex/L*.405;
+   lights.quad('#fff0c6',[a[0]+nx,y-.28,a[1]+nz],[c[0]+nx,y-.28,c[1]+nz],[c[0]+nx,y-.16,c[1]+nz],[a[0]+nx,y-.16,a[1]+nz]);
+  }
+  // The short southwest elevation continues the terrace treatment: glass
+  // rails, three vine piers and planted ledges, as in SAA's night hero.
+  b.quad('#82a09b',[q[0],y+.4,q[1]],[end[0],y+.4,end[1]],[end[0],y+1.25,end[1]],[q[0],y+1.25,q[1]],2);
+  for(const t of [.12,.43,.74]){
+   edgePanel(q,end,y+.5,3.85,f%2?'#527444':'#63834d',0,t,t+.09);
+   const a=[lerp(q[0],end[0],t+.10),lerp(q[1],end[1],t+.10)],c=[lerp(q[0],end[0],t+.23),lerp(q[1],end[1],t+.23)];
+   b.beam([a[0],y+.65,a[1]],[c[0],y+.65,c[1]],.5,'#698452');
+  }
+  // Glass balustrade above the luminous slab and staggered vine piers.
+  b.quad('#82a09b',[p[0],y+.4,p[1]],[q[0],y+.4,q[1]],[q[0],y+1.25,q[1]],[p[0],y+1.25,p[1]],2);
+  for(let j=0;j<6;j++){
+   const t=(j+.28)/6,u=t+.065;edgePanel(p,q,y+.5,3.85,(f+j)%2?'#527444':'#63834d',0,t,u);
+   const a=[lerp(p[0],q[0],t+.07),lerp(p[1],q[1],t+.07)],c=[lerp(p[0],q[0],t+.145),lerp(p[1],q[1],t+.145)];
+   b.beam([a[0],y+.65,a[1]],[c[0],y+.65,c[1]],.5,'#698452');
+  }
+ }
+ // Pale projecting service blades visible on the uninterrupted curtain side.
+ {const blade=out(T,1.5),a=blade[2],c=blade[3];
+ for(const t of [.13,.61]){const u=t+.235,dx=c[0]-a[0],dz=c[1]-a[1],L=Math.hypot(dx,dz),nx=dz/L*1.4,nz=-dx/L*1.4;const Q=[[lerp(a[0],c[0],t),lerp(a[1],c[1],t)],[lerp(a[0],c[0],u),lerp(a[1],c[1],u)],[lerp(a[0],c[0],u)+nx,lerp(a[1],c[1],u)+nz],[lerp(a[0],c[0],t)+nx,lerp(a[1],c[1],t)+nz]];b.prism(Q,26.5,H-4,'#bdc5bd');}}
+ b.roof(T,H-4.5);
+ for(const t of [.04,.78]){const u=t+.18,Q=[[lerp(T[0][0],T[1][0],t),lerp(T[0][1],T[1][1],t)],[lerp(T[0][0],T[1][0],u),lerp(T[0][1],T[1][1],u)],[lerp(T[3][0],T[2][0],u),lerp(T[3][1],T[2][1],u)],[lerp(T[3][0],T[2][0],t),lerp(T[3][1],T[2][1],t)]];const R=scale(Q,.8);b.prism(R,H-4.4,H-.15,'#7d877e');b.rim(R,H-.05,'#b9c3b8',.18);R.forEach((p,i)=>{const q=R[(i+1)%R.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/1.1);for(let j=0;j<n;j++){const x=lerp(p[0],q[0],j/n),z=lerp(p[1],q[1],j/n);b.box(x,H-4.3,z,.11,4.1,.11,'#bcc4b8');}});}
+ b.garden(scale(T,.63),H-4.4,false);
+ // Rooftop garden and a few lightweight pergolas, confined to the OSM roof.
+ for(const [x,z]of [[-47,14],[-37,-5],[-26,-35],[39,-52],[48,-30],[-16,52]])b.tree(x,z>45?29.8:z<0?29.9:24.7,z,.65);
+ for(const [x,z]of [[-10,-38],[24,-66]]){b.box(x,30,z,14,.25,8,'#9eaaa0',-.65);for(let j=-6;j<=6;j+=2)b.box(x+j*.8,30.35,z+j*.6,.13,.2,8,'#d6d8cc',-.65);}
+ // L2 J-walk connection toward the MRT: open-sided canopy and real railings.
+ const a=[-60,31],c=[-81,37],L=Math.hypot(c[0]-a[0],c[1]-a[1]),ang=Math.atan2(-(c[1]-a[1]),c[0]-a[0]),mx=(a[0]+c[0])/2,mz=(a[1]+c[1])/2;
+ b.box(mx,6.8,mz,L,.5,5.5,'#bfc9bf',ang);b.box(mx,10.5,mz,L,.22,6,'#bdc9c1',ang);
+ for(const side of [-1,1]){const nx=Math.sin(ang)*side*2.65,nz=Math.cos(ang)*side*2.65;b.beam([a[0]+nx,8.3,a[1]+nz],[c[0]+nx,8.3,c[1]+nz],.13,'#cbd7cc');for(let k=0;k<=L;k+=5)b.box(a[0]+(c[0]-a[0])*k/L+nx,7.3,a[1]+(c[1]-a[1])*k/L+nz,.16,3.2,.16,'#c3cdc4');}
+ // MRT-facing interactive media glazing: abstract, slowly varying colour only.
+ const mp=out(P,.32);for(const i of [0,1]){const a=mp[i],c=mp[(i+1)%mp.length];for(let j=0;j<8;j++){const t=.14+j*.085,u=t+.075;media.quad('#bbcdaa',[lerp(a[0],c[0],t),12,lerp(a[1],c[1],t)],[lerp(a[0],c[0],u),12,lerp(a[1],c[1],u)],[lerp(a[0],c[0],u),17.8,lerp(a[1],c[1],u)],[lerp(a[0],c[0],t),17.8,lerp(a[1],c[1],t)]);}}
+ lights.flush(g,()=>jemLight(G.base,1));media.flush(g,()=>jemLight(G.base,2));
+});
+// Keep labels and night-height uniforms at the modeled crown until shared data is regenerated.
+LANDMARKS.sgje_jem.h=82.8;
+}
+
+/* J'Den (聚鼎), OSM 158227102. Published future design, approximate.
+ * CapitaLand: 150 m AMSL, 38 residential levels above two retail levels.
+ * 139 m above grade assumes 11 m ground; not measured from obsolete JCube tiles.
+ * Original H-plan geometry from the official brochure / artist impressions.
+ */
+{
+const {register,rect,scale,out,ellipse,smooth}=SGJE;
+register('j_den','聚鼎',"J'Den",83,(b,D,G,g)=>{
+ const P=D.parts[0].p,angle=.188,H=139,base=11.2,fh=3.3,sky=base+21*fh;
+ // The podium retains the OSM site polygon, with recessed double-height shopfronts.
+ b.prism(P,-.8,1,'#bab5a8');
+ b.prism(scale(P,.986),1,10.3,'#9b9582');
+ b.facade(out(scale(P,.986),.06),1,9.8,4.5,3,'#6f8584','#b9b7a4',.18);
+ b.band(P,5.2,.4,'#c9c3ad');b.band(P,10.25,.3,'#515b50');
+ // The artist impression has a sweeping bronze veil with broad low scallops,
+ // revealing a dark clerestory below the garden deck. Keep it within the site.
+ const screen=scale(P,.997),veil=(x,z)=>9.95-3.45*Math.pow(Math.max(0,Math.sin((x*.94-z*.34+16)*.071)),2);
+ screen.forEach((p,i)=>{const q=screen[(i+1)%screen.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.ceil(L/1.2);for(let k=0;k<n;k++){
+  const t=k/n,u=(k+1)/n,x=p[0]+dx*t,z=p[1]+dz*t,X=p[0]+dx*u,Z=p[1]+dz*u,h=veil(x,z),H=veil(X,Z);
+  b.quad('#b2a07d',[x,5.65,z],[X,5.65,Z],[X,H,Z],[x,h,z]);
+  b.box(x,5.65,z,.1,h-5.65,.22,'#c1af8b',Math.atan2(-dz,dx));
+ }});
+ b.garden(scale(P,.97),10.6,false);
+ // Local plan axes follow the north OSM boundary; the tower's two staggered
+ // residential wings and connecting circulation core occupy the southern half.
+ const pt=(x,z)=>[-4+x*Math.cos(angle)+z*Math.sin(angle),14-x*Math.sin(angle)+z*Math.cos(angle)];
+ const poly=(x,z,w,d)=>{const c=pt(x,z);return rect(c[0],c[1],w,d,angle);};
+ const wings=[poly(0,-6,66,13.6),poly(-3,15,57,13.4)],core=poly(-2,4.5,22,12.5);
+ b.prism(core,base,H-2.2,'#777b75');
+ for(const [wi,T] of wings.entries()){
+  for(const [lo,hi]of [[base,sky],[sky+fh,H-2.2]]){
+   b.prism(scale(T,.965),lo,hi,'#657c86');
+   b.facade(T,lo,hi,fh,2.8,'#6f8994','#3c4c52',.12);
+  }
+  // Residential floor fronts: dark inset living-room doors behind deep balconies,
+  // pale projecting slabs and substantial bronze party-wall/divider stacks.
+  for(let f=0;f<38;f++){
+   const y=base+f*fh;if(f===21)continue;
+   b.band(out(T,.75),y,.23,'#c7ccc2');
+   b.band(out(T,.78),y+.28,.60,'#738890');
+   b.rim(out(T,.8),y+.94,'#53676c',.075);
+   for(const x of [-17,0,17])for(const side of [-1,1]){
+    const cx=x+(wi?-3:0),z0=wi?15:-6,zBack=z0+side*6.94,zFront=z0+side*8.45;
+    const front=pt(cx,zFront),floor=pt(cx,z0+side*7.6),a=angle;
+    // Flat recess backs and inset doors use oriented planes; the slabs and
+    // divider walls supply their depth. Offset doors along the local normal.
+    const pane=(w,z,lo,hi,col,mode=0)=>{const A=pt(cx-w/2,z),B=pt(cx+w/2,z);b.quad(col,[A[0],lo,A[1]],[B[0],lo,B[1]],[B[0],hi,B[1]],[A[0],hi,A[1]],mode);};
+    pane(7.2,zBack,y+.25,y+fh-.05,'#263a40');
+    pane(5.2,zBack+side*.025,y+.55,y+2.55,'#49616a',2);
+    b.box(floor[0],y,floor[1],8.1,.26,2.25,'#cbd0c5',a);
+    b.box(front[0],y+.3,front[1],6.85,.80,.10,'#647e86',a,2);
+    b.box(front[0],y+1.12,front[1],7.0,.07,.12,'#b1bbb1',a);
+    for(const edge of [-1,1]){const d=pt(cx+edge*3.95,z0+side*7.55);b.box(d[0],y,d[1],1.0,fh,2.2,'#b3a07d',a);}
+   }
+  }
+  b.cap(out(T,.65),H-2.1,'#929b94');b.rim(out(T,.65),H-1.65,'#b7b6a7',.24);
+  // The open level-24 sky terrace reads as one planted dark notch.
+  b.garden(out(T,.5),sky+.08,false);
+  for(const x of [-29,-18,0,18,29]){if(wi&&Math.abs(x)>27)continue;const c=pt(x+(wi?-3:0),wi?15:-6);b.box(c[0],sky,c[1],.65,fh,.65,'#9a9a86',angle);}
+ }
+ // Recessed roof services and a slender, bronze-edged crown.
+ b.prism(poly(-2,4,18,14),H-2.1,H,'#858a7d');
+ for(const x of [-31,31]){const c=pt(x,-6);b.box(c[0],base,c[1],.75,H-base,.75,'#9d8d70',angle);}
+ // L24 shrubs are small enough to preserve the open terrace silhouette.
+ for(const x of [-25,-12,12,25])for(const z of [-6,15]){const c=pt(x,z);b.tree(c[0],sky+.2,c[1],.48);}
+ // Roof garden, 50 m lake pool, curved leisure water and sheltered clubhouse.
+ const pool=poly(-2,-27,51,6);b.prism(pool,10.67,10.78,'#539ba3');b.rim(pool,10.83,'#c2c7b6',.22);
+ const leisure=ellipse(26,-14,10,16,24,.2);b.cap(leisure,10.75,'#5c9da1');b.rim(leisure,10.84,'#acbaa7',.22);
+ // Softly rounded clubhouse glazing and its thin, projecting curved roof follow
+ // the dusk impression; a small rear clerestory sits above the low front eave.
+ const club=smooth(poly(-25,-38,17,14),2),clubRoof=out(club,.9);
+ b.prism(club,10.7,14,'#607575',2);b.facade(out(club,.04),10.7,13.85,3.15,2.5,'#7b8a80','#6c6859',.1);
+ b.prism(clubRoof,14,14.28,'#646a5c');b.rim(clubRoof,14.3,'#3e4b49',.12);
+ const clerestory=smooth(poly(-25,-41,11,5),1);b.prism(clerestory,14.28,15.15,'#69817f',2);b.prism(out(clerestory,.35),15.15,15.35,'#59655d');
+ for(const [x,z]of [[-43,-21],[-39,-5],[-34,-37],[-20,-39],[-4,-40],[14,-41],[32,-38],[40,-21],[40,1],[27,29],[17,42],[-22,29]])b.tree(x,10.7,z,.8);
+ // Blank canopy fascia and short J'Walk connector at retail level two.
+ const A=[38,7],B=[58,3];b.beam([A[0],5.7,A[1]],[B[0],5.7,B[1]],3.0,'#b9b5a5');b.beam([A[0],8.4,A[1]],[B[0],8.4,B[1]],3.4,'#b7b9ab');
+ for(const side of [-1,1]){b.beam([38,6,7+side*1.45],[58,6,3+side*1.45],.12,'#6c7d7e');b.beam([38,7.15,7+side*1.45],[58,7.15,3+side*1.45],.12,'#6c7d7e');for(let t=0;t<=1;t+=.2)b.beam([38+20*t,5.9,7-4*t+side*1.45],[38+20*t,8.35,7-4*t+side*1.45],.12,'#76827c');}
+ // Landmark-local PBR surfaces retain lmMat's shared night/time/fog uniforms.
+ // Apartment occupancy is sparse and warm rather than the default office grid.
+ const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>{
+  const key='jden-residential-v2-'+mode;
+  if(typeof LMCTX!=='undefined'&&LMCTX.mats.has(key))return LMCTX.mats.get(key);
+  const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0});
+  const m=new THREE.MeshStandardMaterial({color:source.color,side:source.side,vertexColors:true,roughness:mode===2?.32:.74,metalness:mode===2?.12:.025});
+  const previous=source.onBeforeCompile;
+  m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);if(mode===2){
+   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 jdP;').replace('#include <begin_vertex>','#include <begin_vertex>\njdP=position-vec3(0.0,'+G.base.toFixed(6)+',0.0);');
+   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 jdP;').replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+float jdTower=step(16.0,jdP.y), jdFH=mix(4.5,3.3,jdTower);
+float jdFloor=floor((jdP.y-11.2)/jdFH), jdY=fract((jdP.y-11.2)/jdFH);
+float jdX=jdP.x*.9824-jdP.z*.1869, jdZ=jdP.x*.1869+jdP.z*.9824;
+float jdBay=floor(jdX/3.6),jdSide=floor(jdZ/9.0);
+float jdHash=fract(sin(jdFloor*83.13+jdBay*17.27+jdSide*36.87)*43758.5453);
+float jdLit=step(jdHash,mix(.42,.17,jdTower))*step(.17,jdY)*(1.0-step(.82,jdY));
+float jdPane=step(.12,fract(jdX/3.6))*(1.0-step(.91,fract(jdX/3.6)));
+totalEmissiveRadiance+=vec3(1.0,.63,.30)*jdLit*jdPane*uNight*mix(.42,.30,jdTower);
+`);
+  }};
+  m.customProgramCacheKey=()=>key;if(typeof LMCTX!=='undefined')LMCTX.mats.set(key,m);return m;
+ });
+});
+// Keep labels and night-height uniforms at the modeled crown until shared data is regenerated.
+LANDMARKS.sgje_j_den.h=139;
+}
+
+/* IMM: OSM 33543880 (mall) and 429038696 (north car park).
+ * Original metre geometry, +x east / +z south. Photos: Commons 2018/2025,
+ * ICSC 2019 shopping-centre tours p5 (dusk). No image assets or logos ship.
+ */
+{
+const {register,scale,out,rect,inside,Batch}=SGJE;
+SGJE.data.imm.height=31.6;
+SGJE.data.imm.height_source='Image-only reference meta.json: measured maximum 31.6 m; p90 roof 30.6 m, median roof 26.2 m';
+register('imm','国际商品城','IMM',191,(b,D,G,g)=>{
+ const P=D.parts.find(p=>p.id===33543880).p,C=D.parts.find(p=>p.id===429038696).p;
+ const H=26.2,deck=13.2;
+ // Three-storey retail base follows every turn of the surveyed OSM perimeter.
+ b.prism(P,-.5,deck,'#c5c6bb');
+ // The higher warehouse / office body is recessed behind the garden frontage.
+ const T=[[-90.6,-25.55],[-66,-48],[71.89,-42.17],[92.46,134.19],[84.95,134.62],[89.58,139.69],[92.72,148.95],[92.51,160.18],[86.73,171.18],[79.09,177.83],[67.33,180.26],[60.57,179.53],[53.14,176.62],[-43.55,101.43],[-49.54,94.86],[-52.04,86.35],[-51.87,77.69],[-53,56],[-72,20]];
+ b.prism(T,deck,H-.5,'#d5d4c5');b.cap(T,H-.5,'#a6aaa0');b.rim(T,H-.25,'#e3e1d4',.45);
+ // Cream cladding and continuous recessed grey ribbon windows. Physical seams
+ // keep the rounded southern end legible at street distance.
+ const O=out(T,.08);
+ for(let f=0;f<3;f++){
+  const y=15.2+f*4.4;
+  b.walls(O,y,y+1.65,'#8c9c97');b.rim(O,y-.05,'#e4e3d8',.13);b.rim(O,y+1.7,'#b4b9ad',.13);
+ }
+ O.forEach((p,i)=>{const q=O[(i+1)%O.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/2.7);for(let j=0;j<n;j++){const t=j/n,x=p[0]+(q[0]-p[0])*t,z=p[1]+(q[1]-p[1])*t;b.beam([x,deck,z],[x,H-1,z],.055,'#b7b9ad');}});
+ // North multi-storey car park: dark open ventilation slots, broad slab edges,
+ // and closely spaced upright piers, rather than an office curtain wall.
+ b.prism(C,-.4,25.5,'#b6b8ad');
+ const CO=out(C,.12);
+ for(let y=3.3;y<25;y+=4.2){b.walls(CO,y,y+2.3,'#596360');b.rim(CO,y-.2,'#d0d0c1',.48);b.rim(CO,y+2.4,'#cbcbbd',.28);}
+ CO.forEach((p,i)=>{const q=CO[(i+1)%CO.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/6.5);for(let j=0;j<n;j++){const t=j/n;b.box(p[0]+(q[0]-p[0])*t,0,p[1]+(q[1]-p[1])*t,.65,25.5,.65,'#d3d3c5');}});
+ b.cap(C,25.5,'#9c9f95');b.rim(C,26.2,'#d0d1c3',.48);
+ // Parking stalls and plant courts are low roof details, kept on their own roof.
+ for(let x=-55;x<60;x+=5.5)for(let z=-98;z<-35;z+=17){if(inside(C,x,z)&&inside(C,x+4,z+8)){b.box(x,25.54,z,.09,.025,7.5,'#dddcc9');}}
+ // Low street frontage: charcoal shop frames and grey-green glazing below the
+ // planted upper deck. Pink/orange luminous panel wall is photo-observed.
+ const front=[P[8],P[9],P[10],P[11],P[12],P[13]];
+ b.facade(front,.8,8.1,7.3,3.1,'#628984','#363e3d',.15,false);
+ const lit=new Batch(G.base),screen=new Batch(G.base);
+ const frontOuter=out(P,.16);
+ for(const i of [8,9,10,11,12]){
+  const p=frontOuter[i],q=frontOuter[i+1],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/4.2);
+  for(let j=0;j<n;j++)for(let k=0;k<2;k++){
+   const t=(j+.035)/n,u=(j+.965)/n,y=8.25+k*2.25;
+   screen.quad(['#c75d65','#d16c68','#bd5667','#d78068'][(j+k*3)%4],[p[0]+(q[0]-p[0])*t,y,p[1]+(q[1]-p[1])*t],[p[0]+(q[0]-p[0])*u,y,p[1]+(q[1]-p[1])*u],[p[0]+(q[0]-p[0])*u,y+2.08,p[1]+(q[1]-p[1])*u],[p[0]+(q[0]-p[0])*t,y+2.08,p[1]+(q[1]-p[1])*t]);
+  }
+  b.beam([p[0],8.1,p[1]],[q[0],8.1,q[1]],.2,'#394441');b.beam([p[0],12.8,p[1]],[q[0],12.8,q[1]],.22,'#394441');
+ }
+ // Landscaped retail roof, visible above the low west facade.
+ const garden=[[-103,-8],[-124,21],[-54,73],[-54,60],[-68,25],[-81,2]];
+ b.garden(garden,deck+.06,false);
+ for(const [x,z]of [[-110,20],[-96,32],[-81,44],[-65,54],[-96,1]])b.tree(x,deck+.1,z,.85);
+ const path=[[-119,20],[-114,14],[-62,55],[-59,65]];b.cap(path,deck+.15,'#b9b5a6');
+ // Entrance glass / blank light box and shallow metal-and-glass hoods.
+ for(const i of [9,13,25]){
+  const p=P[i],q=P[(i+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),x=(p[0]+q[0])/2,z=(p[1]+q[1])/2,a=Math.atan2(-dz,dx),w=Math.min(17,L*.72);
+  b.box(x,0,z,w,7,.3,'#314b4c',a,2);lit.box(x,5.6,z,w*.75,1.2,.36,'#f4dfbd',a);
+  const nx=dz/L*2.3,nz=-dx/L*2.3;
+  b.box(x+nx,6.8,z+nz,w+2,.28,5.3,'#a9b8b3',a);
+  for(const t of [-.42,.42]){const px=x+dx/L*w*t+nx*1.7,pz=z+dz/L*w*t+nz*1.7;b.box(px,0,pz,.35,6.8,.35,'#c7ccc2');}
+  lit.box(x+nx,6.68,z+nz,w-.5,.09,2.8,'#e1cfb0',a);
+ }
+ // The broad roof is a service deck at the measured median 26.2 m,
+ // with a shallow central roof cover rising towards the 30.6 m p90 level.
+ // Its two rectangles and tapering skirt are visible in the image-only top view.
+ const lower=rect(13,49,113,187,.105),upper=rect(13,49,79,149,.105);
+ b.prism(lower,H-.3,H+.2,'#bec2ba');
+ lower.forEach((p,i)=>{const q=lower[(i+1)%4],r=upper[(i+1)%4],v=upper[i];b.quad('#d5d7cd',[p[0],H+.2,p[1]],[q[0],H+.2,q[1]],[r[0],30.3,r[1]],[v[0],30.3,v[1]]);});
+ b.cap(upper,30.3,'#d8dad2');b.rim(upper,30.5,'#c5c9c1',.2);
+ // The secondary southern cover and standing seams remain below the crown.
+ b.prism(rect(36,145,58,42,.105),H-.25,28.6,'#cdd0c7');
+ for(let z=-20;z<120;z+=13){const p=[13+Math.sin(.105)*(z-49),30.36,z];b.beam([p[0]-38,30.36,p[2]+4],[p[0]+38,30.36,p[2]-4],.045,'#b8beb7');}
+ // Groups of cooling plant flank the central roof instead of scattered boxes.
+ for(const [x,z,n,axis]of [[-21,-36,8,0],[37,-42,7,0],[66,20,7,1],[-55,16,5,1],[64,109,5,1]]){
+  for(let j=0;j<n;j++){const xx=x+(axis?0:j*4.2),zz=z+(axis?j*7.8:0);if(!inside(T,xx,zz))continue;
+   b.box(xx,H,zz,axis?4.5:3.5,1.8,axis?5.5:6,'#afb8b0');b.cap(SGJE.ellipse(xx,zz,1.3,1.3,10),H+1.86,'#526760');
+   b.box(xx+.6,H-.1,zz+3,1,.6,1.4,'#a4b3ad');
+  }
+ }
+ for(const z of [-38,-34])b.beam([-36,27,z],[57,27,z],.38,'#b0c8bc');
+ // Narrow service housings seen on the east perimeter and a north lift head.
+ for(const [x,z,w,d]of [[67,66,7,14],[60,-33,10,12],[-68,-17,8,10]])b.box(x,H-.2,z,w,5.6,d,'#c7cec3');
+ // White tensile pavilions above the west garden. Four corner troughs and a
+ // raised centre give each canopy its real light saddle silhouette.
+ for(const [x,z,w,d]of [[-99,21,26,47],[-70,58,22,22]]){
+  const Q=rect(x,z,w,d,-.62),mid=[x,20,z];
+  Q.forEach((p,i)=>{const q=Q[(i+1)%4],m=[(p[0]+q[0])/2,18.7,(p[1]+q[1])/2];b.tri('#ebece1',[p[0],16.7,p[1]],m,mid);b.tri('#e3e6da',m,[q[0],16.7,q[1]],mid);b.box(p[0],deck,p[1],.18,3.5,.18,'#b4bdb3');});
+ }
+ screen.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:'#ffbc72',gk:.28}));
+ lit.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:'#ffdfad',gk:.65}));
+});
+}
+
+/* Perennial Business City — OSM way 173029751, original procedural geometry.
+ * Eight levels, 49.05 m maximum from the owner's sectional plan. The former
+ * warehouse's deep floorplate is retained; this is one connected building.
+ */
+{
+const {register,scale,rect,out,inside,lerp}=SGJE;
+SGJE.data.perennial_business_city.height=49.05;
+SGJE.data.perennial_business_city.height_source='Official owner sectional plan: 3 x 7.5 m + 3 x 5 m + 7.5 m + 4.05 m; roof frame 49.05 m; reference meta roof p90 49.2 m';
+register('perennial_business_city','鹏瑞利商务城','Perennial Business City',178,(b,D)=>{
+ const P=D.parts[0].p;
+ const T=[P[0],P[1],P[11],...P.slice(12)];
+ // Broad pale structural envelope, with the rounded southwest carpark ramp below
+ // the open upper roof frame. Floor levels follow the published section.
+ b.prism(P,-.5,22.5,'#d3d5cb');b.prism(T,22.5,45,'#dce0d7');
+ const ring=out(P,.08),upper=out(T,.10);
+ const face=(a,q,y,h,c,mode=0)=>b.quad(c,[a[0],y,a[1]],[q[0],y,q[1]],[q[0],y+h,q[1]],[a[0],y+h,a[1]],mode);
+ const cut=(p,q,t)=>[lerp(p[0],q[0],t),lerp(p[1],q[1],t)];
+ // Continuous ribbon windows separated by deep white spandrels, rather than
+ // an all-glass office tower. Lower public floors have taller teal glazing.
+ for(let i=0;i<ring.length;i++){
+  const p=ring[i],q=ring[(i+1)%ring.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);
+  if(L<8||(i>=1&&i<=10))continue;
+  const a=cut(p,q,.055),d=cut(p,q,.945);
+  b.facade([a,d],.7,6.9,6.2,2.4,'#679b9b','#c9d6cd',.15,false);
+  const tall=(i===0||i===12||i>=18&&i<=20);
+  b.facade([a,d],8.4,tall?20.8:13.3,tall?6.2:4.9,2.4,'#70a2a2','#cbd5cb',.14,false);
+  if(!tall)b.facade([a,d],16.2,20.2,4,2.7,'#749b9b','#cad4cd',.12,false);
+  b.beam([p[0],7.5,p[1]],[q[0],7.5,q[1]],.38,'#e3e4d9');
+ }
+ for(let i=0;i<upper.length;i++){
+  const p=upper[i],q=upper[(i+1)%upper.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<10)continue;
+  // Alternating blank service panels and glazed bays reproduce the industrial
+  // proportions visible in the owner's completed-building photographs.
+  for(const [lo,hi]of [[23.5,25.5],[28.5,30.5],[33.5,35.5],[39,43.7]]){
+   const a=cut(p,q,.07),d=cut(p,q,.93);
+   b.facade([a,d],lo,hi,hi-lo,2.8,'#668a8d','#c8d1ca',.10,false);
+  }
+  for(let y of [22.5,27.5,32.5,37.5,45])b.beam([p[0],y,p[1]],[q[0],y,q[1]],.22,'#e6e7de');
+  // Subtle panel joints in the opaque piers.
+  const n=Math.ceil(L/6);for(let j=0;j<=n;j++){const a=cut(p,q,j/n);b.beam([a[0],22.6,a[1]],[a[0],44.8,a[1]],.045,'#c2c8c0');}
+ }
+ // Tall olive/gold perforated screens are the characteristic vertical accents.
+ // These stand just proud of the white wall; no sign lettering is reproduced.
+ for(const [edge,t0,t1]of [[0,.72,.99],[12,.02,.18],[20,.05,.45],[24,.03,.19]]){
+  const p=ring[edge],q=ring[(edge+1)%ring.length],a=cut(p,q,t0),d=cut(p,q,t1),L=Math.hypot(d[0]-a[0],d[1]-a[1]);
+  face(a,d,7.7,37.3,'#aeb184');
+  const n=Math.max(2,Math.round(L/.85));for(let j=0;j<=n;j++){
+   const u=cut(a,d,j/n),v=cut(a,d,Math.min(1,(j+.43)/n));
+   for(let k=0;k<13;k++)face(u,v,8+k*2.8,(k+j)%2?2.1:2.65,(j+k)%3?'#c5c39a':'#b8ba89');
+  }
+ }
+ // The rounded southwest projection is the eight-level carpark spiral,
+ // visible in both southwest reference images; its roof sits below the frame.
+ // Open dark slots, white slab edges and uprights follow the actual OSM arc.
+ const A=P.slice(1,12),AO=out(A,.13);b.walls(A,0,40,'#647371');
+ for(let i=0;i<AO.length-1;i++){
+  const p=AO[i],q=AO[i+1];
+  face(p,q,.4,39.2,'#536466');
+  for(let y=0;y<=40;y+=5){face(p,q,y,.65,'#dce0d6');}
+  b.beam([p[0],0,p[1]],[p[0],40.5,p[1]],.50,'#dce0d6');
+ }
+ const inner=scale(A,.47);b.capHole(A,[inner],40.05,'#b8bfb3');
+ b.rim(A,40.55,'#dce0d6',.45);b.walls(inner,35,40.05,'#687b75');b.cap(inner,35,'#394d4c');
+ b.rim(inner,40.55,'#dce0d6',.32);
+ // Low entrance hood below the main office frontage.
+ b.prism(rect(-88,11,27,8,-.61),6.9,7.25,'#d3dcd2');
+ for(const [x,z]of [[-98,4],[-79,18]])b.box(x,0,z,.45,7,.45,'#d7dfd5');
+ // Roof garden and solar farm, documented by the owner. Garden/plant positions
+ // are schematic inside the true envelope until matched-camera refs arrive.
+ b.cap(T,45.02,'#adb5aa');b.rim(T,45.65,'#e1e4d6',.4);
+ const garden=[[-97,-58],[-57,-114],[-11,-82],[3,-52],[-21,-16],[-67,-25]];
+ b.garden(garden,45.1,false);
+ for(const [x,z]of [[-77,-52],[-60,-83],[-37,-89],[-21,-57],[-46,-39]])b.tree(x,45.2,z,.60);
+ // A pale open roof frame above the northern garden, with genuine openings.
+ for(let edge=0;edge<T.length;edge++){
+  const p=T[edge],q=T[(edge+1)%T.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<12)continue;
+  b.beam([p[0],48.8,p[1]],[q[0],48.8,q[1]],.5,'#dce1d5');
+  const n=Math.ceil(L/15);for(let j=0;j<=n;j++){const a=cut(p,q,j/n);b.box(a[0],45,a[1],.45,4.05,.45,'#dce1d5');}
+ }
+ const Q=scale(T,.88);
+ for(let x=-77;x<121;x+=7)for(let z=-72;z<103;z+=5){
+  if(!inside(Q,x,z)||!inside(Q,x+5,z+3)||inside(garden,x,z))continue;
+  b.quad('#405d68',[x,45.3,z],[x+5,45.3,z],[x+5,45.85,z+3],[x,45.85,z+3]);
+  b.beam([x+2.5,45.32,z],[x+2.5,45.87,z+3],.035,'#b1bdb7');
+ }
+ // Recessed plant enclosures remain below the rooftop frame.
+ for(const [x,z]of [[30,-28],[53,-12],[74,5]]){b.box(x,45.15,z,12,2.4,8,'#a7b0a8',-.6);for(let i=-4;i<=4;i+=2)b.box(x+i,47.6,z,1.3,.1,5,'#667873',-.6);}
+ // Blank entrance light panels and warm glazed vestibules, kept under canopies.
+ for(const [x,z,a]of [[-88,11,-.61],[25,91,-.61],[113,42,.66]]){
+  b.box(x,1,z,12,5,.25,'#5d8a8b',a,2);b.box(x,6.4,z,16,.3,4,'#d7dfd4',a);
+  b.box(x,5.5,z,4,.65,.3,'#eadfba',a,4);
+ }
+ // Night output uses the app's shared lmMat shader. Solid walls stay dark;
+ // modest occupied windows replace any speculative decorative light show.
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:mode===2?1:0,lc:'#ffe4be',lk:mode===2?.16:0,fh:5,cw:2.8,glow:mode===4?'#ffe3aa':undefined,gk:mode===4?.38:0}));
+});
+}
+
+/* EW24 / NS1 Jurong East. OSM ways 33737976 and 881935994.
+ * Original metre geometry: elevated concourse, three island platforms, red
+ * space-frame roof and the 2020 temporary bus interchange photographed in 2023.
+ * Existing app viaducts and moving trains are retained. No logos or text. */
+{
+const {register,scale,inside}=SGJE;
+// Image-reference metadata: roof maximum 22.7 m; p90 22.3 m.
+SGJE.data.jurong_east_mrt.height=22.7;
+SGJE.data.jurong_east_mrt.height_source='Image-reference meta.json: sampled maximum roof minus ground, 22.7 m (p90 22.3 m)';
+register('jurong_east_mrt','裕廊东地铁站','Jurong East MRT',205,(b,D)=>{
+ const P=D.parts[0].p,B=D.parts[1].p;
+ // OSM's long edges fix the track azimuth, 29.3 degrees east of south.
+ const pt=(u,y,v)=>[.49*u+.872*v,y,.872*u-.49*v];
+ const plan=(u,v,w,d)=>[[u-w/2,v-d/2],[u+w/2,v-d/2],[u+w/2,v+d/2],[u-w/2,v+d/2]].map(([u,v])=>{const p=pt(u,0,v);return [p[0],p[2]];});
+ const beam=(u,y,v,U,Y,V,w,c)=>b.beam(pt(u,y,v),pt(U,Y,V),w,c);
+ const box=(u,y,v,w,h,d,c,mode=0)=>b.prism(plan(u,v,w,d),y,y+h,c,mode);
+ // Independent lamp material; the white roofs and concrete stay dark at night.
+ const oldFlush=b.flush.bind(b);
+ b.flush=g=>oldFlush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:mode===2?1:0,lk:mode===2?.17:0,lc:'#e6eddc',fh:4,cw:3,glow:mode===4?'#ffedce':undefined,gk:mode===4?.62:undefined}));
+ const lamp=(u,y,v,w,d)=>box(u,y,v,w,.09,d,'#e9dfc5',4);
+ // Open pilotis below the concourse; no filled ground-to-roof extrusion.
+ b.prism(scale(P,.965),5.6,6.4,'#a9aaa0');
+ b.prism(scale(P,.95),6.4,9.9,'#6e7975',2);
+ b.band(scale(P,.97),9.7,.7,'#d1cec0');
+ for(let u=-102;u<76;u+=14)for(const v of [56,80,95]){
+  const p=pt(u,0,v);if(!inside(P,p[0],p[2]))continue;
+  box(u,-.3,v,1.25,11.7,1.25,'#b8b8a9');
+ }
+ // Three islands with dark half-height doors; four rail slots remain open.
+ for(const [v,u0,u1,w]of [[49,-63,75,9],[71,-109,75,10],[94,-62,75,9]]){
+  box((u0+u1)/2,10.3,v,u1-u0,.65,w,'#b9b8a7');
+  for(const sd of [-1,1]){
+   box((u0+u1)/2,10.96,v+sd*(w/2-.35),u1-u0,.07,.24,'#d9c26f');
+   for(let u=u0+1;u<u1-1;u+=3.1){
+    box(u,11.05,v+sd*w/2,2.8,1.35,.13,'#496163',2);
+    box(u,12.4,v+sd*w/2,3.05,.13,.23,'#acb7b0');
+    box(u-1.46,11,v+sd*w/2,.10,1.6,.20,'#b8c0b7');
+   }
+  }
+  for(let u=u0+6;u<u1;u+=12){
+   box(u,10.95,v,0.48,5.7,.48,'#d7c7a3');
+   box(u,15.8,v,5,.55,1,'#c4c1b3');lamp(u,15.72,v,2.7,.27);
+   box(u,13.6,v+1.5,1.9,.64,.13,'#d1dccb',4);
+  }
+ }
+ // Roofs have chamfered section edges and broad pale flat lids, as seen in
+ // the close exterior photo; deep red triangulated soffits are left open.
+ function roof(u0,u1,v0,v1,top){
+  const profile=[[v0,top-3.5],[v0+3.4,top],[v1-3.4,top],[v1,top-3.5]];
+  for(let j=0;j<3;j++){
+   const [v,y]=profile[j],[V,Y]=profile[j+1];
+   b.quad(j===1?'#ced1c6':'#b9beb2',pt(u0,y,v),pt(u1,y,v),pt(u1,Y,V),pt(u0,Y,V));
+   beam(u0,y+.04,v,u1,y+.04,v,.20,'#e0e0d1');
+   for(let u=u0;u<u1;u+=3.1)beam(u,y+.07,v,u,Y+.07,V,.055,'#a6b0a7');
+  }
+  beam(u0,top,v1-3.4,u1,top,v1-3.4,.2,'#e0e0d1');
+  for(let u=u0;u<=u1;u+=6.2){
+   for(let j=0;j<3;j++){
+    const [v,y]=profile[j],[V,Y]=profile[j+1];
+    beam(u,y-.25,v,u,Y-.25,V,.14,'#8f5149');
+    beam(u,top-4.4,v,u,top-4.4,V,.14,'#97584e');
+    beam(u,top-4.4,v,u,Y-.35,V,.12,'#97584e');
+    if(u+6.2<=u1){beam(u,top-4.4,v,u+6.2,Y-.35,V,.11,'#97584e');beam(u,y-.35,v,u+6.2,top-4.4,V,.11,'#97584e');}
+   }
+  }
+  for(const v of [v0,v1])beam(u0,top-3.7,v,u1,top-3.7,v,.3,'#a36256');
+ }
+ // Three parallel roof monitors read as a pale sawtooth from the east.
+ for(let j=0;j<3;j++){
+  const v=43.5+j*18.7;roof(-62.7,75.8,v,v+18.7,22);
+  // Long, steep clerestory faces below each raised lid: dark narrow panes,
+  // pale posts and a shallow cap. This is glazing, not roof plant.
+  const V=v+5.5;
+  b.quad('#718783',pt(-60,21,V),pt(73,21,V),pt(73,22.58,V+.35),pt(-60,22.58,V+.35),2);
+  b.quad('#dadcd1',pt(-60,22.58,V+.35),pt(73,22.58,V+.35),pt(73,22.05,V+8),pt(-60,22.05,V+8));
+  for(let u=-60;u<74;u+=1.6)beam(u,21,V,u,22.58,V+.35,.065,'#c7d0c4');
+  beam(-60,22.64,V+.35,73,22.64,V+.35,.12,'#e2e4da');
+ }
+ roof(-110.1,-63,53.2,83.0,21.3);
+ // Two stair cores at the third-platform extension, beneath the main eaves.
+ for(const [u,v]of [[-83,67],[54,86]]){
+  box(u,0,v,7,10.4,7,'#aaa99b');
+  box(u,10.4,v,7.1,3.7,6.6,'#a8a99a');
+  for(let k=0;k<16;k++)box(u-8+k*.55,.1+k*.34,v,0.6,.34,3.4,'#bdbdb0');
+ }
+ // Bus interchange: its OSM shape is a set of shallow, branching concourse
+ // canopies. Keep the open boarding edges and salmon horizontal louvres.
+ b.prism(B,-.25,.23,'#b9b8a8');
+ b.prism(B,5.8,6.18,'#b8a39a');b.cap(B,6.22,'#bdafa3');
+ const Q=scale(B,.996);
+ Q.forEach((p,i)=>{
+  const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.ceil(L/8));
+  for(let k=0;k<n;k++){
+   const x=p[0]+dx*(k+.5)/n,z=p[1]+dz*(k+.5)/n;
+   b.box(x,.23,z,.28,5.55,.28,'#d5d3c7');
+   if(k%2===0)b.box(x,5.68,z,1.6,.08,.65,'#e4e4ce',Math.atan2(-dz,dx),4);
+  }
+  for(let y=3.4;y<5.75;y+=.58)b.beam([p[0],y,p[1]],[q[0],y,q[1]],.15,'#a7786b');
+  b.beam([p[0],6.3,p[1]],[q[0],6.3,q[1]],.28,'#b49d91');
+ });
+ // Roof seams and low service blocks stay inside the bus canopy footprint.
+ const bb=[Math.min(...B.map(p=>p[0])),Math.max(...B.map(p=>p[0])),Math.min(...B.map(p=>p[1])),Math.max(...B.map(p=>p[1]))];
+ for(let x=bb[0]+2;x<bb[1];x+=4)for(let z=bb[2]+2;z<bb[3];z+=4){
+  if(inside(B,x,z)&&inside(B,x,z+3.8))b.beam([x,6.25,z],[x,6.25,z+3.8],.055,'#a48d82');
+ }
+});
+}
+
+/* Ng Teng Fong / Jurong Community Hospital, OSM 368005263, 368005259,
+ * 320763066. Original metre geometry from OSM plans and published photographs.
+ * References and uncertainty are documented in REVIEW.md. No image assets ship.
+ */
+{
+const {register,scale,out,center,lerp,inside}=SGJE;
+// Measured reference envelope, applied locally without editing shared data.
+SGJE.data.ng_teng_fong.height=94.2;
+register('ng_teng_fong','黄廷方综合医院','Ng Teng Fong General Hospital',255,(b,D,G)=>{
+ const stone='#d6d9cf',edge='#eef0e5',glass='#567475',dark='#46524e';
+ // Hospital-specific batches: dark vegetation / cladding, cool ward windows,
+ // and the gently warmer entrance and terrace soffits all use lmMat night state.
+ const flush=b.flush.bind(b);
+ b.flush=g=>flush(g,mode=>{
+  const m=lmMat({c:'#ffffff',vc:true,ds:true,
+   m:mode===2?1:0,lk:mode===2?.15:.035,lc:'#e2f1f3',fh:4.15,cw:2.5,
+   glow:mode===4?'#fff0cd':undefined,gk:mode===4?.65:undefined});
+  if(mode===2&&!m.userData.hospitalCool){m.userData.hospitalCool=true;const prior=m.onBeforeCompile;
+   m.onBeforeCompile=(shader,renderer)=>{prior.call(m,shader,renderer);
+    shader.fragmentShader=shader.fragmentShader.replace(
+     'vec3 wc = mix(vec3(1.0, 0.8, 0.56), vec3(0.78, 0.87, 1.0), step(0.55, fract(r * 7.13)));',
+     'vec3 wc = mix(vec3(.94, .94, .84), vec3(.79, .90, 1.0), step(.20, fract(r * 7.13)));');
+   };m.customProgramCacheKey=()=> 'sgje-hospital-cool-wards-v1';
+  }return m;
+ });
+ const glowQuad=(P,y)=>b.cap(P,y,'#e6e4ce',4);
+ const cut=(P,test)=>{const Q=[];P.forEach((p,i)=>{const q=P[(i+1)%P.length],a=test(p),c=test(q);if(a>=0)Q.push(p);if((a<0)!==(c<0)){const t=a/(a-c);Q.push([lerp(p[0],q[0],t),lerp(p[1],q[1],t)]);}});return Q;};
+ // Cladding in narrow vertical cassettes; large white areas and sparse green
+ // panels match the clinic and four-level common diagnostic podium.
+ function panels(P,lo,hi){
+  b.prism(P,lo,hi,stone);const Q=out(P,.08);
+  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),n=Math.max(1,Math.round(L/1.65));
+   for(let j=0;j<n;j++)for(let y=lo+.25,f=0;y<hi-.3;y+=4.15,f++){
+    const a=j/n,c=(j+.88)/n,Y=Math.min(y+3.85,hi-.18),k=(j*13+i*7+f*3)%17;
+    const col=k<8?glass:k<11?'#9aac9a':k===11?'#718e6d':stone;
+    b.quad(col,[lerp(p[0],q[0],a),y,lerp(p[1],q[1],a)],[lerp(p[0],q[0],c),y,lerp(p[1],q[1],c)],[lerp(p[0],q[0],c),Y,lerp(p[1],q[1],c)],[lerp(p[0],q[0],a),Y,lerp(p[1],q[1],a)],k<8?2:0);
+   }
+  });
+  for(let y=lo+4.15;y<hi;y+=4.15)b.band(out(P,.12),y,.16,edge);
+ }
+ function terraceRing(P,y){
+  // Opaque rounded balcony front, inset dark green planting, and a fine rail.
+  b.prism(P,y,y+.24,edge);b.band(P,y+.24,.65,edge);
+  b.walls(scale(P,.987),y+.82,y+1.22,'#4c6c43');b.capHole(scale(P,.987),[scale(P,.96)],y+1.22,'#547449');
+  b.walls(scale(P,.993),y+1.17,y+1.25,'#b6c3b6');
+  // Recessed warm soffit strips, sheltered behind the dark planter edge.
+  const I=scale(P,.94);P.forEach((p,i)=>{if(i%3)return;const j=(i+1)%P.length,q=P[j];b.quad('#dfd7b5',[p[0],y-.04,p[1]],[q[0],y-.04,q[1]],[I[j][0],y-.04,I[j][1]],[I[i][0],y-.04,I[i][1]],4);});
+ }
+ function ward(P,lo,hi,floors){
+  // Sawtooth ward bays sit behind the projecting balcony edge. This is a
+  // local planar construction, not a sampled or approximated reference mesh.
+  const inset=scale(P,.88),core=[];
+  inset.forEach((p,i)=>{const q=inset[(i+1)%inset.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=L>25?Math.round(L/5.5):1;
+   for(let j=0;j<n;j++){const t=j/n;core.push([p[0]+dx*t,p[1]+dz*t]);if(n>1){const u=(j+.68)/n,mid=[p[0]+dx*u,p[1]+dz*u],c=center(P),v=[c[0]-mid[0],c[1]-mid[1]],k=1.1/(Math.hypot(...v)||1);core.push([mid[0]+v[0]*k,mid[1]+v[1]*k]);}}
+  });const fh=(hi-lo)/floors;
+  b.prism(core,lo,hi-.5,dark);b.facade(out(core,.06),lo+.7,hi-.5,fh,2.65,glass,'#c0cbc3',0);
+  for(let f=0;f<=floors;f++){
+   const y=lo+f*fh;terraceRing(P,y);
+   if(f<floors)P.forEach((p,i)=>{if(i%7||i===0)return;const c=center(P),dx=c[0]-p[0],dz=c[1]-p[1],d=Math.hypot(dx,dz)||1;
+    const x=p[0]+dx/d*.8,z=p[1]+dz/d*.8;
+    b.box(x,y+1.2,z,1.8,.45+(i+f)%3*.15,1.0,(i+f)%2?'#527746':'#617d4f');
+   });
+   // A shallow staggered row of bay reveals, rather than a flat curtain wall.
+   const Q=scale(P,.98);Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<18||f===floors)return;
+    const n=Math.round(L/5.2),nx=(q[1]-p[1])/L,nz=-(q[0]-p[0])/L;
+    for(let j=0;j<n;j++){const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.beam([x,y+1.0,z],[x+nx*.85,y+fh-.15,z+nz*.85],.24,stone);}
+   });
+  }
+  b.cap(scale(P,.95),hi+.3,'#8d9da3');b.rim(P,hi+1.1,stone,.28);
+  const c=center(P),Q=scale(P,.80);for(let x=c[0]-30;x<c[0]+30;x+=6)for(let z=c[1]-25;z<c[1]+25;z+=7){if(inside(Q,x-2,z-2)&&inside(Q,x+2,z+2)){b.box(x,hi+.35,z,3.6,.16,4.5,'#59717c');b.box(x,hi+.52,z,.07,.03,4.5,'#b3c2c7');}}
+ }
+ const B=D.parts.find(p=>p.id===368005263).p,C=D.parts.find(p=>p.id===368005259).p,A=D.parts.find(p=>p.id===320763066).p;
+ panels(B,-.5,20);panels(C,-.5,18);panels(A,-.5,14);
+ const AT=cut(A,p=>-p[0]-p[1]-212);panels(AT,14,44.5);b.prism(scale(AT,.96),44.5,47,stone);
+ // Ward plates are inset from the diagnostic podium, leaving roof gardens.
+ // OSM podium outlines remain intact; the upper lobes follow the roof/close views.
+ const Bnorth=SGJE.smooth([[-64,-10],[-68,-19],[-62,-29],[-52,-37],[-43,-41],[-31,-42],[-20,-40],[-12,-24],[-24,-25],[-35,-21],[-42,-13],[-51,-4]]);
+ const Bsouth=[[-23,15],[-14,2],[-3,-6],[12,-12],[23,-11],[35,-8],[42,-14],[53,-9],[57,-4],[55,2],[48,7],[44,18],[36,25],[28,26],[25,35],[13,35],[8,30],[0,34],[-8,27],[-15,27]];
+ ward(Bnorth,20,57.5,8);ward(scale(Bsouth,1.08),20,81.3,13);
+ // Tall transverse service core with pale rounded plant crown; a separate
+ // long low entrance canopy toward the northeast road.
+ const spine=SGJE.ellipse(5,-8,12,28,28,-.65);
+ b.prism(spine,20,86,stone);b.facade(scale(spine,1.002),20,86,4.7,2.2,glass,'#c0cbc3',.15);
+ b.walls(scale(spine,1.08),86,94.2,stone);b.cap(scale(spine,1.08),94.2,stone);
+ for(const p of scale(spine,1.081))b.beam([p[0],86,p[1]],[p[0],94.2,p[1]],.055,'#b9c1bb');
+ const crown=scale(spine,1.08),recess=scale(spine,.97);crown.forEach((p,i)=>{const j=(i+1)%crown.length,q=crown[j];b.quad('#dfd7b5',[p[0],85.98,p[1]],[q[0],85.98,q[1]],[recess[j][0],85.98,recess[j][1]],[recess[i][0],85.98,recess[i][1]],4);});
+ const back=SGJE.ellipse(12,-36,25,6,24,-.65);
+ b.prism(back,4.6,5.1,stone);glowQuad(back,4.59);
+ for(const t of [-.6,.6])b.box(12+20*t,0,-36+15*t,.55,4.6,.55,stone);
+ // Community wards form a curved plate, rather than filling their podium.
+ const CW=scale(cut(C,p=>p[0]-105),.76);
+ ward(CW,18,57,9);
+ const CP=SGJE.ellipse(140,94,10,22,24,-.65);
+ b.prism(CP,18,61,stone);for(const p of scale(CP,1.003))b.beam([p[0],51,p[1]],[p[0],61,p[1]],.055,'#b9c1bb');b.facade(scale(CP,1.005),18,51,4,2.5,glass,'#c0cbc3',.12);
+ // Roof plant is confined to actual upper plates and clinic roof.
+ for(const [P,h]of [[AT,47],[Bnorth,58.6],[Bsouth,82.4],[CW,58.1]]){
+  const c=center(P);b.box(c[0],h,c[1],12,1.2,7,'#89938a');
+  for(let k=0;k<5;k++)b.box(c[0]-5+k*2.4,h+1.2,c[1],1.7,.18,5,'#53656a');
+ }
+ // White external stair landings at the ward tips.
+ for(const [x,z,h]of [[-54,-14,57.5],[48,-3,81.3],[24,31,81.3]]){
+  const R=SGJE.ellipse(x,z,2,2,12);b.prism(R,20,h,'#a6ada1');
+  for(let y=20;y<h;y+=4.7)b.band(out(R,.3),y,.24,edge);
+ }
+ // Sheltered clinic-to-ward public bridge across the internal street.
+ function bridge(p,q,y,width){
+  const dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),nx=-dz/L*width/2,nz=dx/L*width/2;
+  const P=[[p[0]+nx,p[1]+nz],[q[0]+nx,q[1]+nz],[q[0]-nx,q[1]-nz],[p[0]-nx,p[1]-nz]];
+  b.prism(P,y,y+.45,stone);b.facade(P,y+.45,y+4.0,3.55,2.8,glass,'#c6d2ca',.12);b.prism(out(P,.4),y+4,y+4.35,edge);
+  for(let t=0;t<=1;t+=.08){const x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.beam([x+nx,y+4.35,z+nz],[x-nx,y+4.35,z-nz],.12,'#a6b9b2');}
+ }
+ bridge([-109,-75],[-59,-40],12,7);
+ bridge([66,53],[104,79],12,6);
+ // Deep entrance overhangs with pale columns, recessed glazing and blank signs.
+ function entrance(P,indices){const Q=out(P,.6);for(const i of indices){const p=Q[i],q=Q[(i+1)%Q.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<9)continue;
+  const dx=(q[0]-p[0])/L,dz=(q[1]-p[1])/L,nx=dz*5,nz=-dx*5;
+  const R=[p,q,[q[0]+nx,q[1]+nz],[p[0]+nx,p[1]+nz]];
+  b.prism(R,4.4,4.85,stone);glowQuad(R,4.39);
+  for(let s=5;s<L;s+=10)b.box(p[0]+dx*s+nx*.7,0,p[1]+dz*s+nz*.7,.8,4.4,.8,stone);
+  const mid=[(p[0]+q[0])/2,(p[1]+q[1])/2];b.box(mid[0],3.05,mid[1],3.8,.65,.15,'#dfeddf',Math.atan2(-dz,dx),4);
+ }}
+ entrance(B,[24,37]);entrance(C,[18,20]);entrance(A,[2]);
+ // Roof greenery stays inside the mapped podiums; no speculative helipad.
+ for(const [P,h] of [[B,20],[C,18],[A,14]]){const Q=scale(P,.90);b.cap(P,h+.06,'#6b8253');b.capHole(scale(P,.94),[scale(P,.90)],h+.09,'#c4c3ad');for(let i=0;i<Q.length;i+=8){const p=Q[i];if(inside(P,...p)&&!inside(Bnorth,...p)&&!inside(Bsouth,...p)&&!inside(CW,...p)&&!inside(AT,...p))b.tree(p[0],h+.1,p[1],.55);}}
+});
+}
+
+/* Vision Exchange, OSM way 368005267. Original procedural geometry from
+ * the OSM outline and Design Link / Sim Lian photographs; no image textures.
+ * The two glass wings stand above the fifth-storey landscaped terrace.
+ */
+{
+const {register,scale,out,rect}=SGJE;
+// Own measured registration height; shared catalogue is regenerated by the lead.
+// Roof p90 excludes temporary construction cranes in the older references.
+SGJE.data.vision_exchange.height=122.1;
+SGJE.data.vision_exchange.height_source='Reference roof p90, cranes excluded (image-only metadata)';
+register('vision_exchange','Vision Exchange','Vision Exchange',100,(b,D)=>{
+ const P=D.parts[0].p,a=.55,c=Math.cos(a),s=Math.sin(a);
+ const pt=(u,v)=>[u*c-v*s,u*s+v*c];
+ const plate=(u0,u1,v0,v1)=>[pt(u0,v0),pt(u1,v0),pt(u1,v1),pt(u0,v1)];
+ const box=(u,y,v,w,h,d,col,mode=0)=>{const q=pt(u,v);b.box(q[0],y,q[1],w,h,d,col,-a,mode);};
+ // Four occupied podium levels: transparent shops and offices below the
+ // staggered silver/charcoal perforated parking-deck screen.
+ b.prism(P,-.6,22.6,'#465359');
+ b.facade(out(P,.06),.6,8.0,3.7,2.65,'#48676b','#909fa1',.24);
+ b.band(out(P,.15),7.95,.35,'#b8c1bd');
+ const screen=out(P,.18);
+ screen.forEach((p,i)=>{const q=screen[(i+1)%screen.length],dx=q[0]-p[0],dz=q[1]-p[1],n=Math.max(1,Math.round(Math.hypot(dx,dz)/2.0));
+  for(let j=0;j<n;j++)for(let f=0;f<4;f++){
+   const t=(j+.035)/n,u=(j+.965)/n,y=8.4+f*3.5,cols=['#bcc5c6','#798a90','#43545d','#98a6ab'];
+   const color=cols[(j*7+f*11+i*3)%cols.length];
+   const y0=y+((j+i)%3===0?.5:0),y1=Math.min(22.4,y+3.35+((j+i)%3===1?.35:0));
+   b.quad(color,[p[0]+dx*t,y0,p[1]+dz*t],[p[0]+dx*u,y0,p[1]+dz*u],[p[0]+dx*u,y1,p[1]+dz*u],[p[0]+dx*t,y1,p[1]+dz*t]);
+  }
+ });
+ b.cap(P,22.65,'#a5afa5');b.rim(P,23.1,'#c5cfca',.3);
+ // Narrow planted and paved ribbons visible around the recessed sky lobby.
+ b.garden(plate(-80,-50,-8,14),22.72,false);
+ for(const [u,v]of [[-73,-3],[-65,8],[-56,-2]]){const q=pt(u,v);b.tree(q[0],22.75,q[1],.52);}
+ const south=plate(-45,68,16.0,19.2);b.garden(south,22.72,false);
+ for(let u=-39;u<69;u+=14){const q=pt(u,17.6);b.tree(q[0],22.75,q[1],.52);}
+ for(let u=-35;u<69;u+=24){box(u,22.75,15.9,9,.12,2,'#b99b74');box(u,22.9,17.6,5,.45,1.1,'#b6bba6');}
+ // Open terrace floor under the projecting office volume, with rectangular
+ // piers and dark recessed lift-lobby glazing.
+ b.prism(plate(-43,69,-5,9),22.7,25.6,'#284147',2);
+ for(let u=-44;u<74;u+=15)for(const v of [-7,14])box(u,22.7,v,1.15,3.5,1.15,'#a0aca9');
+ // Reference max 144.2 m is a temporary construction crane; the p90 roof
+ // measurement 122.1 m is used for the completed building.
+ const roof=122.1,lo=26.2,hi=119.8;
+ // Separate wings create the fine full-height vertical joint apparent in
+ // the developer's aerial photo. The north edge follows the tapered site.
+ // Top-view roof corners, cross-checked against the completed aerial photo,
+ // place the northwest end well inside the full-length podium. The slab is
+ // approximately 119 m long and 23 m deep, not the full 164 m podium length.
+ const wings=[[-45,13.5],[14.9,74]];
+ for(const [l,r]of wings){
+  const n=u=>-8.5;
+  const T=[pt(l,n(l)),pt(r,n(r)),pt(r,14.8),pt(l,14.8)];
+  b.prism(T,lo,hi,'#245061',2);
+  b.facade(out(T,.025),lo,hi,(hi-lo)/20,1.62,'#3b7389','#72949d',.15);
+  // Narrow transom at mid-storey, matching the closely spaced horizontal
+  // glazing grid rather than thick concrete slab edges.
+  for(let f=0;f<20;f++)b.rim(out(T,.065),lo+(f+.5)*(hi-lo)/20,'#486b79',.09);
+  b.cap(T,hi+.05,'#b5c0bf');b.rim(T,hi+.35,'#899c9e',.28);
+  const R=scale(T,.91);b.cap(R,hi+.11,'#c2ccca');
+  // Low rooftop maintenance rails and screened plant stay below the parapet.
+  const inner=scale(T,.82);b.rim(inner,roof-.9,'#b3c1c0',.12);
+  for(let u=l+6;u<r-3;u+=8)box(u,hi+.18,-2.5,4.8,1.2,4.5,'#a4b2b3');
+  b.rim(out(T,-.9),roof-.15,'#adbcbc',.13);
+ }
+ b.prism(plate(13.5,14.9,-8.5,14.8),lo,hi,'#152e3c',2);
+ // The central sky-garden pavilion and modest entrance awnings are built
+ // into the podium; no railway or neighbouring geometry is added.
+ box(-29,22.8,11.0,10,3.0,6,'#48545b');
+ box(46,22.8,15.0,13,.25,5,'#c0ccc4');
+ for(const u of [-60,-27,20,54]){box(u,4.4,20.3,9,.2,2.8,'#a3b1ad');box(u,3.7,19.4,4,.45,.12,'#dfd6b4',2);}
+});
+}
+
+/* JTC Summit, OSM way 33738028. Original geometry in metres.
+ * Curved curtain wall, stepped cream office wings, four-level public podium
+ * and a recessed curved louvre crown. No logos or photographic textures.
+ */
+{
+const {register,scale,out}=SGJE;
+// Own measured registration height; shared catalogue is regenerated by the lead.
+SGJE.data.jtc_summit.height=150.7;
+SGJE.data.jtc_summit.height_source='Measured roof-minus-ground (image-only reference metadata)';
+register('jtc_summit','JTC 峰会大厦','JTC Summit',77,(b,D)=>{
+ const P=D.parts[0].p;
+ // OSM building-part ways 368005257 (curved curtain wall) and 463193388
+ // (cream rear office bar), fetched from the OSM API 2026-11-01. Both lie
+ // within parent way 33738028; metres east/south at the supplied anchor.
+ const C=[[-36.81,-1.08],[-42.88,-5.06],[-41.49,8.48],[-36.81,18.71],[-28.83,26],[-19.98,30.16],[-10.9,33.09],[-1.76,33.11],[6.91,31.72],[2.4,28.95]];
+ const W=[[-36.81,-1.08],[2.4,28.95],[13.33,14.02],[-25.01,-15.81]];
+ const pt=(u,v)=>[.830*u+.558*v,.558*u-.830*v];
+ b.prism(P,-1,22.6,'#a7aaa1');b.facade(out(P,.06),1,22.1,4,3.2,'#577a7e','#c5d0c7',.22);
+ // The public podium is a finely ribbed round volume, distinct from the
+ // taller cream wings. Horizontal external shades follow its OSM curve.
+ for(let y=2.4;y<22.3;y+=1.35)b.band(out(P,.16),y,.20,'#c2cbc3');
+ b.cap(P,22.6,'#969f96');b.rim(P,22.95,'#d2d6ca',.38);
+ b.prism(W,22.4,132.4,'#b4b5a7');
+ b.facade(out(W,.06),22.7,132.2,4.25,2.7,'#557476','#cccabd',0);
+ for(let y=22.7;y<132.4;y+=4.25){b.band(out(W,.10),y,1.58,'#c7c6b9');b.band(out(W,.65),y+1.52,.18,'#afb6af');}
+ // On the northeast rear face, cream piers interrupt the central ribbon
+ // into punched windows, matching the north/east image references.
+ const back=[W[3],W[2]],dx=back[1][0]-back[0][0],dz=back[1][1]-back[0][1],L=Math.hypot(dx,dz);
+ for(let j=4;j<15;j++){const t=j/19,x=back[0][0]+dx*t,z=back[0][1]+dz*t;b.beam([x+.12,22.6,z-.16],[x+.12,132.3,z-.16],.72,'#c7c6b9');}
+ b.roof(W,132.5,2);
+ b.prism(C,0,139.1,'#55797b',2);b.facade(out(C,.06),1.1,138.9,4.25,2.7,'#547d80','#9baeb0',0);
+ // Three narrow metallic rails bracket the floor spandrel, the characteristic
+ // continuous striped rhythm seen in the Commons daytime/dusk photographs.
+ const front=out(C,.18).slice(0,9);
+ for(let y=3.1;y<139;y+=4.25)for(const dy of [0,.34,.70])for(let i=0;i<front.length-1;i++){
+  const a=front[i],q=front[i+1];b.beam([a[0],y+dy,a[1]],[q[0],y+dy,q[1]],dy===0?.20:.12,'#cbd2c8');
+ }
+ for(const a of [C[0],C[9]])b.box(a[0],0,a[1],.75,139.3,.75,'#d9ded4');
+ // Tall recessed service slit in the centre of the cream rear elevation.
+ const spine=[[-10.1,-4.2],[-6.5,-1.4],[-7.1,-.6],[-10.7,-3.4]];
+ b.prism(spine,22.7,138,'#354f52');
+ for(let y=23;y<138;y+=.95)b.band(out(spine,.08),y,.13,'#798e89');
+ const crown=scale(C,.88);b.prism(crown,139.1,147.6,'#526d6c');
+ for(let y=139.3;y<147.8;y+=.80)b.band(out(crown,.20),y,.19,'#9aa9a1');
+ b.rim(crown,147.8,'#bec8bb',.38);b.cap(crown,147.6,'#7c8981');
+ const mast=[-31,4];b.box(mast[0],147.8,mast[1],.2,2.9,.2,'#aeb8b0');
+ // Open safety railing above the lower rear bar.
+ const rear=scale(W,.94);
+ rear.forEach((a,i)=>{const q=rear[(i+1)%rear.length];for(const y of [133.7,135,136.3])b.beam([a[0],y,a[1]],[q[0],y,q[1]],.18,'#9faeaa');});
+ // The public podium has a central glazed atrium and segmented roof shades.
+ const atrium=[[-6,-36],[27,-14],[13,7],[-20,-16]];
+ b.prism(atrium,22.6,23.3,'#6f8886',2);b.rim(atrium,23.5,'#d2d8cb',.48);
+ for(let t=0;t<=1;t+=.09){const a=atrium[0],q=atrium[1],c=atrium[3],d=atrium[2];b.beam([a[0]+(q[0]-a[0])*t,23.55,a[1]+(q[1]-a[1])*t],[c[0]+(d[0]-c[0])*t,23.55,c[1]+(d[1]-c[1])*t],.20,'#c4d0ca');}
+ // Entrance glazing, low projecting shelter and slender supports stay at the
+ // true podium perimeter rather than enlarging the district silhouette.
+ const ent=pt(33,-31);b.box(ent[0],5.5,ent[1],13,.35,4,'#c3cec7',-.592);
+ for(const u of [28,38]){const a=pt(u,-31);b.box(a[0],0,a[1],.35,5.5,.35,'#b8c5bf');}
+ // Material-only, module-local dusk occupancy correction. Batch.flush creates
+ // the inherited PBR/lmMat materials after this build callback, so wrap that
+ // one flush and clone only this group's glass material. Shared materials and
+ // every daytime shading/geometry path remain untouched.
+ const inheritedFlush=b.flush;
+ b.flush=function(group){
+  const result=inheritedFlush.call(this,group);
+  for(const mesh of group.children){
+   if(!mesh.isMesh||mesh.material.customProgramCacheKey()!=='sgbv-pbr-v1-2')continue;
+   const inherited=mesh.material,local=inherited.clone(),compile=inherited.onBeforeCompile;
+   local.onBeforeCompile=function(shader,renderer){
+    compile.call(this,shader,renderer);
+    shader.fragmentShader=shader.fragmentShader
+     .replace(/step\(r, 0\.58( \* uOcc)?\)/g,(_,occ)=>'step(r, mix(0.28, 0.055, step(uBase + 25.0, vWP.y))'+(occ||'')+')')
+     .replace('step(0.28, fract(vWP.y / uFH))','step(0.78, fract(vWP.y / uFH)) * (1.0 - step(0.94, fract(vWP.y / uFH)))')
+     .replace(/vec3 wc = mix\(vec3\(1\.0, 0\.8, 0\.56\), vec3\(0\.78, 0\.87, 1\.0\), step\(0\.55, fract\(r \* 7\.13\)\)\);/,'vec3 wc = vec3(1.0, 0.86, 0.65);')
+     .replace(' + LC * LK * smoothstep(0.93, 1.0, hN) * (0.9 + 0.8 * uShow)','')
+     .replace(' + uLC * uLK * smoothstep(0.93, 1.0, hN) * 0.9','');
+   };
+   local.customProgramCacheKey=()=> 'sgbv-pbr-v1-2-jtc-dusk-sparse-v1';
+   local.needsUpdate=true;mesh.material=local;
+  }
+  return result;
+ };
+
+});
+}
+
+/* CPF Jurong Building, OSM way 103752945. Original geometry in local metres.
+ * Green/white curved frontage, square/round ornamental bays and arched portals.
+ * Height is fitted to the image-only reference when available; see REVIEW.md.
+ */
+{
+const {register,scale,out,lerp,rect}=SGJE;
+// Own measured registration height; shared catalogue is regenerated by the lead.
+SGJE.data.cpf_jurong.height=22.5;
+SGJE.data.cpf_jurong.height_source='Measured roof-minus-ground (image-only reference metadata)';
+register('cpf_jurong','公积金裕廊大厦','CPF Jurong Building',42,(b,D)=>{
+ const P=D.parts[0].p,H=20;
+ const court=[[-13,-8],[-5,-8],[5,-4],[12,3],[8,7],[6,12],[-10,15],[-14,6]];
+ b.walls(P,-.4,H-.45,'#e2e6de');
+ b.walls(out(P,.035),.25,13.7,'#327569');
+ b.band(out(P,.10),13.65,.45,'#edf0e7');
+ b.band(out(P,.16),H-.55,.34,'#a8b5af');b.capHole(P,[court],H-.18,'#a5afa5');b.cap(court,H-4.5,'#8a9791');b.walls(court,H-4.5,H-.18,'#bac8bf');
+ const Q=out(P,.12);
+ function face(i){const p=Q[i],q=Q[(i+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);return {p,q,L,at:(t,y,off=0)=>[p[0]+dx*t-dz/L*off,y,p[1]+dz*t+dx/L*off]};}
+ function panel(F,t,w,lo,hi,c,mode=0,off=.02){const d=w/F.L/2;b.quad(c,F.at(t-d,lo,off),F.at(t+d,lo,off),F.at(t+d,hi,off),F.at(t-d,hi,off),mode);}
+ function frame(F,t,w,lo,hi,c='#eef0e7',th=.15,off=.07){const d=w/F.L/2;for(const [a,v]of [[lo,lo+th],[hi-th,hi]])panel(F,t,w,a,v,c,0,off);for(const s of [-1,1])panel(F,t+s*(w-th)/2/F.L,th,lo,hi,c,0,off);}
+ function circle(F,t,y,r,c,th=.10,off=.10){for(let k=0;k<24;k++){const a=k/24*Math.PI*2,v=(k+1)/24*Math.PI*2;b.quad(c,F.at(t+Math.cos(a)*r/F.L,y+Math.sin(a)*r,off),F.at(t+Math.cos(v)*r/F.L,y+Math.sin(v)*r,off),F.at(t+Math.cos(v)*(r-th)/F.L,y+Math.sin(v)*(r-th),off),F.at(t+Math.cos(a)*(r-th)/F.L,y+Math.sin(a)*(r-th),off));}}
+ for(let i=0;i<P.length;i++){
+  const F=face(i),front=i>=8||i===0,n=Math.max(1,Math.round(F.L/(front?5.3:5.7)));
+  // Fine horizontal joints in the green rendered panels.
+  for(let y=.75;y<13.6;y+=.48)b.beam(F.at(0,y,.015),F.at(1,y,.015),.025,'#50877a');
+  for(let k=0;k<n;k++){
+   const t=(k+.5)/n,w=Math.min(3.25,F.L/n-.55);
+   for(const [lo,hi]of [[9.65,13.1],[15,18.35]]){
+    panel(F,t,w,lo,hi,'#28575d',2);frame(F,t,w+.34,lo-.17,hi+.17);
+    panel(F,t,.07,lo,hi,'#879f9c',0,.08);panel(F,t,w,lo+1.2,lo+1.29,'#8caba7',0,.08);
+   }
+   if(front&&w>2){
+    panel(F,t,w,.3,4.25,'#355d5b',2);frame(F,t,w+.35,.25,4.45,'#e9eae1',.20);
+    panel(F,t,w+.35,4.1,5.25,'#e4e8dc');
+    panel(F,t,w,5.4,8.4,'#286158',2);frame(F,t,w+.38,5.25,8.65,'#eef0e8',.16);
+    frame(F,t,w-.18,5.55,8.35,'#e6ebe1',.08,.11);circle(F,t,6.95,1.13,'#eff0e7',.14);
+   }else{
+    panel(F,t,w,.9,3.9,'#315859',2);frame(F,t,w,.9,3.9,'#c5d4c9',.10);
+    panel(F,t,w,5.6,8.2,'#3d6564',2);frame(F,t,w,5.6,8.2,'#c5d4c9',.10);
+   }
+  }
+ }
+ // Large end portal on the east return: inset glass semicircle and white arch.
+ const F=face(8),t=.5,w=Math.min(5.8,F.L-.5),r=w/2;
+ panel(F,t,w,.25,6.0,'#31585d',2,.15);panel(F,t,w,3.3,4.6,'#eceee4',0,.21);
+ for(let k=0;k<24;k++){const a=k/24*Math.PI,v=(k+1)/24*Math.PI;b.tri('#31585d',F.at(t,6,.15),F.at(t+Math.cos(a)*r/F.L,6+Math.sin(a)*r,.15),F.at(t+Math.cos(v)*r/F.L,6+Math.sin(v)*r,.15),2);b.quad('#f0f1e8',F.at(t+Math.cos(a)*(r+.28)/F.L,6+Math.sin(a)*(r+.28),.22),F.at(t+Math.cos(v)*(r+.28)/F.L,6+Math.sin(v)*(r+.28),.22),F.at(t+Math.cos(v)*r/F.L,6+Math.sin(v)*r,.22),F.at(t+Math.cos(a)*r/F.L,6+Math.sin(a)*r,.22));}
+ frame(F,t,w+.5,.25,6.0,'#edf0e6',.25,.22);
+ // Recessed crescent roof deck, curved inner parapet and rear service core.
+ // The outer green/white facade remains the unmodified OSM building edge.
+ const inner=scale(P,.62,[-8,9]);
+ for(let i=8;i<P.length;i++){
+  const a=inner[i],q=inner[(i+1)%P.length];
+  b.beam([a[0],H+5.0,a[1]],[q[0],H+5.0,q[1]],.24,'#e3e7dc');
+  b.quad('#d7dfd6',[a[0],H-.1,a[1]],[q[0],H-.1,q[1]],[q[0],H+5.0,q[1]],[a[0],H+5.0,a[1]]);
+ }
+ const R=rect(-14,-5,16,13,-.17);b.prism(R,H-.18,H+5.6,'#e2e7df');b.cap(R,H+5.65,'#a2aea5');b.rim(R,22.5/.87-.1,'#e7ebe3',.2);
+ b.facade(out(R,.04),H+1.2,H+4.3,3,3.1,'#547272','#dce3da',0);
+ for(const x of [-5,0,5]){b.box(x,H-4.4,9,3.4,1.05,6,'#b9c3bd',-.17);for(let k=-1;k<=1;k++)b.box(x+k*.85,H-3.34,9,.65,.05,5.2,'#566969',-.17);}
+ b.rim(scale(P,.985),H-.03,'#e1e6dc',.22);
+ // Blank facade panel in place of lettering. No logos or tenant graphics.
+ panel(face(13),.5,7.1,18.7,19.15,'#dbe5dc',0,.04);
+ // Authored facade levels normalised to measured median roof17.4m; the
+ // independent rear parapet reaches the measured maximum22.5m.
+ for(const bucket of b.buckets.values())for(let i=1;i<bucket.p.length;i+=3)bucket.p[i]=b.base+(bucket.p[i]-b.base)*.87;
+});
+}
+
+/* Jurong Town Hall — OSM 96764520. Original metre geometry; no image textures.
+ * Two chamfered, cantilevered office hulls and the three-faced periscope clock.
+ * Upper envelopes follow the OSM plan; lower plates recess under their eaves.
+ */
+{
+const {register,scale,center,lerp}=SGJE;
+// Own measured registration height; shared catalogue is regenerated by the lead.
+SGJE.data.jurong_town_hall.height=59.3;
+SGJE.data.jurong_town_hall.height_source='Measured roof-minus-ground (image-only reference metadata)';
+register('jurong_town_hall','裕廊镇大厦','Jurong Town Hall',92,(b,D,G,g)=>{
+ const P=D.parts[0].p,stone='#d2d3c9',edge='#e2e2d8',dark='#34474b';
+ const cs=.835,ss=.55,to=(u,v)=>[u*cs-v*ss,u*ss+v*cs];
+ const poly=Q=>Q.map(p=>to(...p));
+ // Exact OSM perimeter is the parapet line. Separate roof plates preserve the
+ // narrow central glazed concourse rather than filling it with a solid box.
+ const A=P.slice(0,12).map(p=>p.slice()),B=[...P.slice(13),P[12]].map(p=>p.slice());
+ // Top reference shows a recessed central service court, with the two long
+ // inner eaves separated by about 14 m around a lower square atrium skylight.
+ for(const [Q,indices,v]of [[A,[0,11],7],[B,[B.length-2,B.length-1],-7]])for(const i of indices){const u=Q[i][0]*cs+Q[i][1]*ss;Q[i]=to(u,v);}
+ function section(Q,inset){const c=center(Q);return Q.map(([x,z])=>{const u=x*cs+z*ss,v=-x*ss+z*cs,cu=c[0]*cs+c[1]*ss,cv=-c[0]*ss+c[1]*cs;return to(cu+(u-cu)*(1-inset/70),cv+(v-cv)*(1-inset/16));});}
+ function at(Q,R,t){return Q.map((p,i)=>[lerp(p[0],R[i][0],t),lerp(p[1],R[i][1],t)]);}
+ function frustum(Q,R,lo,hi,c){Q.forEach((p,i)=>{const j=(i+1)%Q.length;b.quad(c,[p[0],lo,p[1]],[Q[j][0],lo,Q[j][1]],[R[j][0],hi,R[j][1]],[R[i][0],hi,R[i][1]]);});}
+ for(const [ix,Q] of [A,B].entries()){
+  const lower=section(Q,5),glass=section(Q,6),top=Q;
+  b.prism(glass,0,14.2,dark,2);
+  b.facade(glass,1.2,12.6,4.2,2.7,'#547078',edge,.22);
+  b.band(lower,5.1,1.2,stone);b.band(lower,11.8,2.7,stone);
+  // Freestanding pilotis and slender vertical blades across the lowest office row.
+  lower.forEach((p,i)=>{let q=lower[(i+1)%lower.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<14)return;let n=Math.round(L/8);for(let k=0;k<=n;k++){const t=k/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.box(x,0,z,.72,12.6,.72,edge);}});
+  // Splayed upper walls: wide solid spandrels alternate with deeply inset
+  // ribbon windows. Fins follow the slope, leaving the glazing in shadow.
+  for(const [lo,hi,c]of [[14,16.3,stone],[20.3,22,stone],[26.1,28.6,stone]])frustum(at(lower,top,(lo-14)/14.6),at(lower,top,(hi-14)/14.6),lo,hi,c);
+  for(const [lo,hi]of [[16.3,20.3],[22,26.1]]){
+   const L=at(lower,top,(lo-14)/14.6),U=at(lower,top,(hi-14)/14.6),I=section(L,.9);
+   b.walls(I,lo,hi,dark,2);
+   L.forEach((p,i)=>{const j=(i+1)%L.length,q=L[j],len=Math.hypot(q[0]-p[0],q[1]-p[1]);if(len<13){b.quad(stone,[p[0],lo,p[1]],[q[0],lo,q[1]],[U[j][0],hi,U[j][1]],[U[i][0],hi,U[i][1]]);return;}const n=Math.round(len/2.65);for(let k=0;k<=n;k++){const t=k/n,a=[lerp(p[0],q[0],t),lo,lerp(p[1],q[1],t)],c=[lerp(U[i][0],U[j][0],t),hi,lerp(U[i][1],U[j][1],t)];b.beam(a,c,.23,edge);}b.beam([p[0],lo,p[1]],[q[0],lo,q[1]],.22,edge);});
+  }
+  b.cap(top,28.6,'#858d89');b.rim(top,28.8,edge,.38);
+  // Fine expansion seams and the rooftop ventilation hoods visible in aerials.
+  for(const u of [-40,-20,0,20,40]){const q=to(u,ix?-16:16);if(SGJE.inside(top,...q)){const a=to(u,ix?-28:3),c=to(u,ix?-3:28);b.beam([a[0],28.67,a[1]],[c[0],28.67,c[1]],.09,'#bbc1b8');}}
+  for(const u of [-32,32]){const q=to(u,ix?-17:16),R=poly([[u-3,(ix?-17:16)-3],[u+3,(ix?-17:16)-3],[u+3,(ix?-17:16)+3],[u-3,(ix?-17:16)+3]]);frustum(R,scale(R,.60),28.7,34,stone);b.cap(scale(R,.60),34,edge);}
+ }
+ // Raised central concourse, roof skylight and articulated connecting bridges.
+ const C=poly([[-45,-7],[45,-7],[45,7],[-45,7]]);b.prism(C,4.7,25.7,stone);
+ const skylight=poly([[-15,-7],[15,-7],[15,7],[-15,7]]);b.prism(skylight,25.7,26.1,'#8faaa6',2);b.rim(skylight,26.2,edge,.3);
+ for(let u=-15;u<=15;u+=3){const a=to(u,-7),q=to(u,7);b.beam([a[0],26.18,a[1]],[q[0],26.18,q[1]],.12,edge);}
+ for(const u of [-40,32]){const Q=poly([[u-3,-7],[u+3,-7],[u+3,7],[u-3,7]]);b.prism(Q,25.7,28.7,stone);}
+ // Median measured main roof is26m. Rescale only the completed body batch;
+ // the independently measured59.3m clock below keeps its absolute dimensions.
+ for(const bucket of b.buckets.values())for(let i=1;i<bucket.p.length;i+=3)bucket.p[i]=G.base+(bucket.p[i]-G.base)*(26/28.8);
+ // Local facade floodlight pass reuses lmMat's height-falling wash, with no
+ // self-emission. Office-glass bucket2 continues through the shared helper.
+ const wash=new SGJE.Batch(G.base);if(b.buckets.has(0)){wash.buckets.set(0,b.buckets.get(0));b.buckets.delete(0);}
+ wash.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe0ad',lk:.34}));
+ // Clock shaft and thin terminal blades; displays are blank red lit panels.
+ const clockTo=(u,v)=>to(u+33,v+49),clockPoly=Q=>Q.map(p=>clockTo(...p));
+ const lamp=new SGJE.Batch(G.base);
+ const shaft=clockPoly([[-12,-31],[-8,-31],[-8,-27],[-12,-27]]);lamp.prism(shaft,0,49.2,stone);
+ const head=clockPoly([[-14,-32.5],[-6,-32.5],[-6,-27],[-14,-27]]);lamp.prism(head,49.2,57.8,stone);
+ const blade=clockPoly([[-14,-32.6],[-6,-32.6],[-6,-31.9],[-14,-31.9]]);lamp.prism(blade,49.2,(x,z)=>58.874+(x*cs+z*ss-23)*.09,edge);
+ const blade2=clockPoly([[-14,-32.5],[-13.3,-32.5],[-13.3,-27],[-14,-27]]);lamp.prism(blade2,49.2,(x,z)=>58.774-(-x*ss+z*cs-20)*.15,edge);
+ for(let y=30;y<48;y+=3.5){const a=clockTo(-8,-30.1),c=clockTo(-8,-28.9);b.quad(dark,[a[0]+.03,y,a[1]],[c[0]+.03,y,c[1]],[c[0]+.03,y+1.8,c[1]],[a[0]+.03,y+1.8,a[1]]);}
+ const clock=new SGJE.Batch(G.base);
+ const display=(u0,v0,u1,v1)=>{let a=clockTo(u0,v0),c=clockTo(u1,v1);clock.quad('#7e3b32',[a[0],52.2,a[1]],[c[0],52.2,c[1]],[c[0],53.8,c[1]],[a[0],53.8,a[1]],4);};display(-12.6,-32.66,-7.4,-32.66);display(-14.03,-31.5,-14.03,-28);display(-12.6,-26.96,-7.4,-26.96);
+ lamp.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe4b4',lk:.22,glow:'#ffe4b4',gk:.12}));
+ clock.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#e14522',lk:1.1,glow:'#e14522',gk:.45}));
+ // Two stair and entrance platforms tucked under the long outer facade.
+ for(const u of [-30,27]){const c=to(u,26),Q=poly([[u-5,23],[u+5,23],[u+5,30],[u-5,30]]);b.prism(Q,4.6,5.1,stone);for(let i=0;i<15;i++){const q=to(u-5+i*.65,30);b.box(q[0],i*.30,q[1],.78,.3,4.5,stone,-Math.atan2(ss,cs));}}
+ // Restrained planting, kept within the monument footprint.
+ for(const [u,v]of [[-42,27],[38,27],[-39,-29],[39,-27]]){let q=to(u,v);b.box(q[0],0,q[1],4,.5,2,'#9da68e',-.58);}
+});
+}
 
 /* Public, read-only modelling statistics for the Jurong East modules (camera harness uses mktest.__t). */
 window.JurongEast = {get stats(){ const s = {}; for (const k of Object.keys(SGJE.data)) if (SGBV.stats[k]) s[k] = SGBV.stats[k]; return s; }};

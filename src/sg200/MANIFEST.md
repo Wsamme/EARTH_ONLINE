@@ -11,58 +11,58 @@
 | `s2005` | 圣淘沙天空螺旋塔 | SkyHelix Sentosa | 176839464 | 36 | spiral mast | block | hero | fine |
 | `s2006` | 甘榜马六甲奥马尔回教堂 | Masjid Omar Kampung Melaka | 147104299 | 35 | osm-height | mosque | hero | fine |
 | `s2007` | 明古连回教堂 | Masjid Bencoolen | 172596716 | 26 | rebuilt hall; osm tag 40 | mosque | hero | fine |
-| `s2008` | 兴都庙（切蒂亚尔） | Sri Thendayuthapani Temple | 172748749 | 24 | gopuram above osm 12 | temple | hero | fine |
+| `s2008` | 兴都庙（切蒂亚尔） | Sri Thendayuthapani Temple | 172748749 | 28 | gopuram on the gate | temple | hero | fine |
 | `s2009` | 圣心堂 | Church of the Sacred Heart | 172748913 | 34 | cupola above osm 25 | church | hero | fine |
 | `s2010` | 红点设计博物馆 | Red Dot Design Museum | 116801907 | 12 | brick hall plus porch | civic | hero | fine |
 | `s2011` | 仁慈会堂 | Chesed-El Synagogue | 172748756 | 18 | osm-height | civic | hero | fine |
 | `s2012` | 印度文化遗产中心 | Indian Heritage Centre | 176326997 | 18 | cantilevered box | civic | hero | fine |
 | `s2013` | 陈氏宗祠保赤宫 | Tan Si Chong Su | 147102973 | 16 | hall and roof; osm tag 35 | temple | hero | fine |
-| `s2014` | 滨海湾雅居 | Marina Bay Residences | 116905045 | 245 | osm-height | tower | hero | done |
-| `s2015` | 莱佛士码头一号北塔 | One Raffles Quay North Tower | 172915345 | 245 | osm-height | tower | hero | done |
-| `s2016` | 珊顿道一号一塔 | One Shenton Tower 1 | 325793774 | 214 | osm-height | tower | hero | done |
-| `s2017` | 新加坡置地大厦 | Singapore Land Tower | 46595418 | 190 | osm-height | tower | hero | done |
-| `s2018` | 珊顿道一号二塔 | One Shenton Tower 2 | 325793778 | 178 | osm-height | tower | hero | done |
+| `s2014` | 滨海湾雅居 | Marina Bay Residences | 116905045 | 245 | osm-height | tower | hero | fine |
+| `s2015` | 莱佛士码头一号北塔 | One Raffles Quay North Tower | 172915345 | 245 | osm-height | tower | hero | fine |
+| `s2016` | 珊顿道一号一塔 | One Shenton Tower 1 | 325793774 | 214 | osm-height | tower | hero | fine |
+| `s2017` | 新加坡置地大厦 | Singapore Land Tower | 46595418 | 190 | osm-height | tower | hero | fine |
+| `s2018` | 珊顿道一号二塔 | One Shenton Tower 2 | 325793778 | 178 | osm-height | tower | hero | fine |
 | `s2019` | Office大厦 | Office Tower | 699163978 | 178 | osm-height | tower | medium | done |
 | `s2020` | Court大厦 | Court Tower | 699163979 | 178 | osm-height | tower | medium | done |
-| `s2021` | 必麒麟运作大厦 | Pickering Operation Complex | 126520582 | 177 | osm-height | tower | hero | done |
-| `s2022` | 职总中心 | NTUC Centre | 172915350 | 163 | osm-height | tower | hero | done |
-| `s2023` | 史各士广场 | Scotts Square | 1548787688 | 159.4 | osm-height | tower | hero | done |
-| `s2024` | 雪佛龙大厦 | Chevron House | 106193388 | 152 | osm-height | tower | hero | done |
-| `s2025` | 华联城二座 | OUE Downtown Tower 2 | 172915341 | 150 | osm-height | tower | hero | done |
+| `s2021` | 必麒麟运作大厦 | Pickering Operation Complex | 126520582 | 177 | osm-height | tower | hero | fine |
+| `s2022` | 职总中心 | NTUC Centre | 172915350 | 163 | osm-height | tower | hero | fine |
+| `s2023` | 史各士广场 | Scotts Square | 1548787688 | 159.4 | osm-height | tower | hero | fine |
+| `s2024` | 雪佛龙大厦 | Chevron House | 106193388 | 152 | osm-height | tower | hero | fine |
+| `s2025` | 华联城二座 | OUE Downtown Tower 2 | 172915341 | 150 | osm-height | tower | hero | fine |
 | `s2026` | Marina One Residences - Garden大厦 | Marina One Residences - Garden Tower | 463858904 | 141 | osm-height | tower | medium | done |
 | `s2027` | Marina One Residences - Park大厦 | Marina One Residences - Park Tower | 463858905 | 141 | osm-height | tower | medium | done |
-| `s2028` | 莱佛士码头一号南塔 | One Raffles Quay South Tower | 172915347 | 139.9 | osm-height | tower | hero | done |
+| `s2028` | 莱佛士码头一号南塔 | One Raffles Quay South Tower | 172915347 | 139.9 | osm-height | tower | hero | fine |
 | `s2029` | 林荫道住宅 | The Boulevard Residences | 178595284 | 130 | osm-height | tower | medium | done |
-| `s2030` | 联合工业大厦 | UIC Building , Shenton Way | 560229136 | 123 | osm-height | tower | hero | done |
+| `s2030` | 联合工业大厦 | UIC Building , Shenton Way | 560229136 | 123 | osm-height | tower | hero | fine |
 | `s2031` | Centro | Centro | 303796608 | 122.4 | osm-levels*3.6 | tower | medium | done |
-| `s2032` | 东京海上中心 | Tokio Marine Centre | 171995558 | 121 | osm-height | tower | hero | done |
+| `s2032` | 东京海上中心 | Tokio Marine Centre | 171995558 | 121 | osm-height | tower | hero | fine |
 | `s2033` | 罗切斯特 | The Rochester | 167472309 | 120 | osm-height | tower | medium | done |
 | `s2034` | 纽顿套房 | Newton Suites | 453498468 | 120 | osm-height | tower | medium | done |
 | `s2035` | 牛车水广场 | Perennial Chinatown Point | 326926547 | 118 | osm-height | tower | medium | done |
 | `s2036` | MD1 基金会大楼 | MD1 - Tahir Foundation Building | 141912739 | 112.387 | osm-height | tower | medium | done |
-| `s2037` | 莱佛士码头6号 | 6 Raffles Quay | 47345004 | 112 | osm-height | tower | hero | done |
+| `s2037` | 莱佛士码头6号 | 6 Raffles Quay | 47345004 | 112 | osm-height | tower | hero | fine |
 | `s2038` | 港务大厦 | PSA Horizons | 704270151 | 112 | osm-height | tower | medium | done |
 | `s2039` | 公园大道酒店 | Park Avenue Hotel | 167472303 | 102 | osm-height | tower | medium | done |
-| `s2040` | 华联海湾大厦 | OUE Bayfront | 679032154 | 100 | osm-height | tower | hero | done |
+| `s2040` | 华联海湾大厦 | OUE Bayfront | 679032154 | 100 | osm-height | tower | hero | fine |
 | `s2041` | 新加坡华人基督徒恩典堂 | Grace (Singapore Chinese Christian) Church | 164180066 | 63 | osm-height | church | medium | done |
 | `s2042` | 丰隆广场 | GSH Plaza | 171999278 | 95 | osm-height | tower | medium | done |
 | `s2043` | 科莫大都会 | COMO Metropolitan Singapore | 256974240 | 93.6 | osm-levels*3.6 | tower | medium | done |
 | `s2044` | 国防科技局肯特岗 | DSO @ Kent Ridge | 141910272 | 93.3085 | osm-height | tower | medium | done |
 | `s2045` | 东亚银行大厦 | Bank of East Asia | 172915367 | 91 | osm-height | tower | medium | done |
 | `s2046` | 中国文化中心 | China Cultural Centre | 173000485 | 48 | tower with open bay | civic | hero | fine |
-| `s2047` | 希尔顿乌节酒店 | Hilton Singapore Orchard | 41890074 | 90 | osm-height | tower | hero | done |
+| `s2047` | 希尔顿乌节酒店 | Hilton Singapore Orchard | 41890074 | 144 | tower 1 published | tower | hero | fine |
 | `s2048` | Mercure | Mercure | 351305505 | 90 | osm-levels*3.6 | tower | medium | done |
 | `s2049` | Pinetree Marina Resort | Pinetree Marina Resort | 531703538 | 90 | osm-levels*3.6 | tower | medium | done |
 | `s2050` | Novotel Living Singapore 乌节 | Novotel Living Singapore Orchard | 576343591 | 90 | osm-levels*3.6 | tower | medium | done |
 | `s2051` | 卓越酒店 | Excelsior Hotel | 44414530 | 84 | osm-height | tower | medium | done |
 | `s2052` | 半岛酒店 | Peninsula Hotel | 334127049 | 84 | osm-height | tower | medium | done |
-| `s2053` | 友邦大厦 | AIA Tower | 47345003 | 83 | osm-height | tower | hero | done |
+| `s2053` | 友邦大厦 | AIA Tower | 47345003 | 83 | osm-height | tower | hero | fine |
 | `s2054` | Royal Group大厦 | Royal Group Building | 172002558 | 83 | osm-height | tower | medium | done |
-| `s2055` | 泛太平洋乌节酒店 | Pan Pacific Orchard | 154099754 | 82.8 | osm-levels*3.6 | tower | hero | done |
+| `s2055` | 泛太平洋乌节酒店 | Pan Pacific Orchard | 154099754 | 140 | published 140 m | tower | hero | fine |
 | `s2056` | 18 Cross | 18 Cross | 47300929 | 80 | osm-height | tower | medium | done |
-| `s2057` | 八角楼 | The Octagon | 99347079 | 80 | osm-height | tower | hero | done |
+| `s2057` | 八角楼 | The Octagon | 99347079 | 80 | osm-height | tower | hero | fine |
 | `s2058` | 城市大厦 | City House | 47345012 | 78 | osm-height | tower | medium | done |
-| `s2059` | 新加坡银行中心 | Bank of Singapore Centre | 171999341 | 76 | osm-height | tower | hero | done |
+| `s2059` | 新加坡银行中心 | Bank of Singapore Centre | 171999341 | 76 | osm-height | tower | hero | fine |
 | `s2060` | Maghain Aboth会堂 | Maghain Aboth Synagogue | 172596786 | 40 | osm-height | civic | medium | done |
 | `s2061` | 联合广场住宅 | UE Square Residences | 172748774 | 75 | osm-height | tower | medium | done |
 | `s2062` | Pullman Singapore HIll Street | Pullman Singapore HIll Street | 103110146 | 72 | osm-height | tower | medium | done |

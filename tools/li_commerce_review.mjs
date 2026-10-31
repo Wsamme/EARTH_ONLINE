@@ -21,3 +21,5 @@ const stats=await page.evaluate(()=>{const models={};for(const k in LittleIndia.
 fs.writeFileSync(`${out}/commerce_verification.json`,JSON.stringify({pageErrors:errors,consoleErrors,models:stats},null,2));console.log(JSON.stringify({pageErrors:errors,consoleErrors,models:stats}));await browser.close();if(errors.length||consoleErrors.length)process.exitCode=1;
 
 const matched=slugs.filter(s=>s!=='deepavali_lightup'&&fs.existsSync('/workspace/li_refs/'+s+'/meta.json'));if(matched.length)execFileSync(process.execPath,['tools/li_compare.mjs',matched.join(','),'--round',process.env.LI_ROUND||'r1'],{stdio:'inherit'});
+
+if(fs.existsSync(out+'/li_iou.json'))fs.copyFileSync(out+'/li_iou.json',out+'/li_iou_'+(process.env.LI_ROUND||'r1')+'.json');

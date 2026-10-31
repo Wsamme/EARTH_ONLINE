@@ -1,77 +1,48 @@
-# Indian Heritage Centre
+# Indian Heritage Centre — round 2 final
 
-OSM way 176326997, actual irregular plan. Four-storey gallery body, Campbell
-Lane baoli glass front, stepped circulation rhythm, diagonal ground-floor
-supports, tall carved stone entry portal, shallow steps, opaque side/rear gallery
-walls with etched diagonal joints and small vertical windows, dark service fins,
-planted roof terraces and stepped black service volumes. No second mural facade:
-reference views show the southeast wall is predominantly opaque.
+OSM 176326997, actual irregular plan. Four-storey gallery, Campbell Lane
+baoli glass facade, stepped circulation, diagonal ground supports, carved stone
+portal, shallow steps, opaque side/rear galleries, small vertical/service windows,
+dark fins, planted terraces and stepped roof service volumes. No second mural
+facade: the southeast elevation is predominantly opaque in the reference views.
+Two ground-level rear service openings were added in round 2.
 
-Measured maximum **22.4 m**, p90 **21.5 m**, p50 **20.5 m**, from
-`/workspace/li_refs/indian_heritage_centre/meta.json`. Gallery/terrace edge 19.1 m,
-lower dark roof 20.5 m, upper service volume 21.74 m, highest small plant 22.4 m.
-**9,786 triangles**, five shared material batches. Shared JSON's 22 m is still
-provisional; lead should replace it with the measured source metadata.
+Meta.json maximum **22.4 m**, p90 **21.5 m**, p50 **20.5 m**. Model gallery/terrace
+edge 19.1 m, dark lower roof 20.5 m, upper services 21.74 m, small plant maximum
+22.4 m. Public authorship: Robert Greg Shand Architects / URBNarc.
 
-The mural consists of original geometric colour fields, figures and architectural
-motifs behind tinted glass, with physical bronze lattice members in front.
-No copied artwork, image textures, lettering, logos or external mesh assets.
-Day glass has a stronger cool tint; it fades with the app's existing `uNight`
-uniform to reveal the brightly lit mural after dark. This has no per-frame callback.
+Night source: lighting designer ONG&ONG,
+https://www.ong-ong.com/projects/civic/indian-heritage-centre-singapore/ . Saved
+`night.jpg` and SOURCES.md are in `/workspace/li_photo_refs/indian_heritage_centre/`.
+Round 2 replaces plain diagonal crossings with short horizontal baoli junctions,
+and adds original geometric colonnade/stepped-tower mural motifs behind the glass.
+A vertex-colour-preserving shared lmMat batch provides strong mural backlighting;
+glass tint fades at night, while roof and opaque sides stay quiet.
 
-Night lighting reference, inspected and saved outside git:
-https://www.ong-ong.com/projects/civic/indian-heritage-centre-singapore/ .
-ONG&ONG's photograph shows a luminous coloured mural behind the dark baoli grid.
-A dedicated vertex-colour-preserving lmMat batch supplies that lantern effect;
-opaque service walls and roof stay quiet. Day reference:
+Day source:
 https://commons.wikimedia.org/wiki/File:Indian_Heritage_Centre,_Singapore_-_20150423-01.jpg .
-All photos/provenance are in `/workspace/li_photo_refs/indian_heritage_centre/`.
-Public project authorship is Robert Greg Shand Architects / URBNarc.
+Known gaps: the mural is an original geometric interpretation, not the actual
+photographic artwork. Fine glass folds, portal carving, planting and roof plant
+are simplified. The 3 m buffer and neighbouring shophouse geometry affect n/e/w
+scores; the measured gallery was not enlarged to fill them.
 
-## Validation and limits
+## Final validation
 
-Offline finite geometry and build syntax checks pass. r3 full-app and independent
-detail tests of the day/night glass shader reported zero page and console errors;
-no retired landmark types remained placed. A new measured-camera pass follows the
-opaque-side and roof correction. Artifacts remain in `/workspace/eo_li_out/heritage/`.
-The mural is an original geometric interpretation. Fine glass folds, carved portal
-detail, roof joints and interior exhibits are simplified; exact garden planting
-and plant equipment are estimates.
+**11,790 triangles**, 5 shared material batches.
 
-Final r7 matched-camera result: n **0.647**, e **0.689**, s **0.722**,
-w **0.688**, top **0.860**, mean **0.721**; close NE 0.760, close SW 0.799,
-street 0.854. Mean improved from r6's 0.716 after lowering the glass/terrace edge
-relative to the roof services. The measured maximum remains 22.4 m. Remaining
-boundary differences include the 3 m buffer, dense nearby shophouse occlusion and
-simplified roof edges; no mass was expanded into the buffer. Page and console
-errors are zero. Day/night detail views confirm the stronger day tint and glowing
-front mural; the side wall stays opaque.
-
-## Final verification snapshot
-
-Round **r8**; 9786 triangles.
-
-| n | e | s | w | top | close NE | close SW | street |
+| n | e | s | w | top | close_ne | close_sw | street |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0.647 | 0.689 | 0.722 | 0.688 | 0.860 | 0.760 | 0.799 | 0.854 |
 
-Mean n/e/s/w/top **0.721**; all-view mean **0.752**.
+Mean n/e/s/w/top **0.721**; all-view mean
+**0.752**. Final matched-camera run: **r2final**.
 
-Final full-app comparison and independent day/night detail runs have **zero page
-errors and zero console errors**; retired placement list is empty. Final images,
-verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+`bash tools/bv_build.sh --test` and the offline finite-geometry check pass.
+Matched-camera and independent detail checks have **zero page errors and zero
+console errors**, with no retired landmarks still placed. Results, overlays,
+comparison sheets, geometry and verification JSON stay under
+`/workspace/eo_li_out/heritage/`, outside git. References/photos are never runtime
+assets. No logos, brand text, photographic textures or external meshes are used.
 
-## Round 2
-
-Rechecked all measured views: retained the irregular OSM plan, gallery/terrace
-19.1 m, dark service roofs 20.5/21.74 m, and highest plant 22.4 m (metadata max;
-p90 21.5 m / p50 20.5 m). Low perimeter IoU does not justify enlarging the gallery
-into the 3 m buffer or neighbouring roofs. Added the two small ground-level rear
-service openings visible in the north reference.
-
-Re-inspected ONG&ONG's saved night photograph. Replaced plain crossing diagonal
-members with the photographed short horizontal baoli junctions, still clipped to
-the actual glass bounds. Added original geometric colonnade/stepped-tower mural
-motifs behind the glass so architectural forms read at night, without reproducing
-photographs, text or logos. Kept the strong colour-preserving mural backlight and
-quiet roof/opaque sides. Offline geometry passes; final camera scores follow.
+Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
+No shared source/data files were edited by this round-2 worker work.

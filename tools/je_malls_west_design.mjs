@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import {createRequire} from 'node:module';
 const require=createRequire(import.meta.url),{openApp}=require('../src/lm20/kit/appshot.js');
 const out=(process.env.JE_OUT||'/workspace/eo_je_out/malls_west')+'/design';fs.mkdirSync(out,{recursive:true});
-const app=await openApp({near:'1.3335,103.7430,900',view:'je'}),{page,browser}=app;
+const app=await openApp({near:'1.3335,103.7430,2500',view:'je'}),{page,browser}=app;
 await page.evaluate(()=>{const s=document.createElement('style');s.textContent='body *{visibility:hidden!important}canvas{visibility:visible!important}';document.head.appendChild(s);});
 const shots=[
  {name:'j_den_day',slug:'j_den',lat:1.333339084,lon:103.74018296,dx:-200,dy:95,dz:290,tod:13,target:65},

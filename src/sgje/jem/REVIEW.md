@@ -25,3 +25,23 @@ Directly inspected SAA official `jem-hero-1.jpg`, https://saaarchitects.com.sg/m
 The supplied n/e/s/w reference images were inspected as they arrived. They clarified that the planted long facade faces northwest and the two broad opaque service blades face southeast/east; those elevations were corrected. The southern retail triangle was raised to the same retail parapet height and its dark fan-slatted roof was added. Office slab edges now wrap its short southern elevation as seen in s.jpg.
 
 Photo estimates remain for the precise terrace outlines, service blades and pergolas; planting is simplified. The real media installation is interactive; the model supplies only a calm abstract colour field. Ground-level openings represent the two routes but do not model a navigable interior. Individual tenants, escalator machinery, garden playground details and the full district bridge network are omitted. The OSM footprint is exact; those internal subdivisions are approximate.
+
+## Matched-camera comparison, r2
+
+At measured 82.8 m: n **0.914**, e **0.885**, s **0.900**, w **0.906**, top **0.942**, close NE **0.871**, close SW **0.914**, street **0.887**. Cardinal/top mean **0.909**; all-view mean **0.902**. Runtime had zero page errors and zero console errors, with **22,386 triangles** before the final short-face terrace detail. Shared stats report the old provisional 60 m; the actual geometry and label/night-height override use 82.8 m. The lead must regenerate shared footprint heights.
+
+The comparison showed the short southwest office end was too plain. It now continues the photographed terrace treatment with three slim vine piers per level, planted ledges, glass rails, warm underside light strips and narrow lit slab fascias. The strips sit below/outside slab beams so the lights remain visible rather than buried in their geometry. This is facade detail; the OSM outline and tower placement remain unchanged. Final triangle count and confirmation run are recorded by the root after rebuilding.
+
+
+## Final build and design verification
+
+`bash tools/bv_build.sh --test` passes, including the assembled app's JavaScript syntax check. The original-geometry check reports **22,746 triangles**, all finite vertex coordinates. The final day/night design run (`tools/je_malls_west_design.mjs`) reports **zero pageErrors and zero consoleErrors**. It checks J'Den day, night and garden-deck views, JEM night, and Westgate's 0/15/30/45/60-second night-cycle samples. Verification artifacts remain outside the repository under `/workspace/eo_je_out/malls_west/`.
+
+
+## Final matched-camera result
+
+Round `final`: **n 0.914**, **e 0.885**, **s 0.900**, **w 0.906**, **top 0.942**, **close_ne 0.871**, **close_sw 0.913**, **street 0.886**. Cardinal/top mean **0.909**; all-eight-view mean **0.902**.
+
+The cardinal/top mean is unchanged from r2 after the final facade/plant details. Further massing edits are not justified by the photos: residual differences include the buffered reference silhouette, vegetation, small omitted recesses and OSM simplification. The model was not enlarged to chase those differences.
+
+The final shared comparison completed with **zero pageErrors**, **zero consoleErrors**, and all 24 day-view landmark masks found. Final runtime triangle count: **22,746**. Raw statistics still carry the shared provisional height; actual model/label heights are documented above.

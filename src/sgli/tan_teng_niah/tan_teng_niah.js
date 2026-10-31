@@ -69,7 +69,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?1.25:.7}));b.buckets.delete(mode);}}
 
 register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)=>{
  const K=kit(b,2.49),{box,faces,panel,arch,arcTrim,beam,quad,lathe}=K;
@@ -83,23 +83,24 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
  let index=0;
  for(const E of faces(P)){
   const front=E.F(E.L/2,0)[2]>12;
+  const lit=front?8:3;
   const n=Math.max(1,Math.round(E.L/2.65)),bay=E.L/n;
   for(let j=0;j<n;j++,index++){
    const u=(j+.5)*bay,w=Math.min(1.4,bay*.63),col=colors[index%8];
    // Deep painted shutter rebates, contrasting lunettes and carved floral panels.
-   arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,3);arch(E.F,u,4.47,w+.07,2.53,colors[(index+2)%8],.09,3);
+   arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,lit);arch(E.F,u,4.47,w+.07,2.53,colors[(index+2)%8],.09,lit);
    panel(E.F,u,4.48,w,1.94,'#454941',.11);
    for(const s of [-1,1]){
-    panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,3);
+    panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,lit);
     for(let y=4.75;y<6.32;y+=.17)beam(E.F(u+s*w*.25-w*.18,y,.16),E.F(u+s*w*.25+w*.18,y,.16),.052,colors[(index+3)%8]);
-    panel(E.F,u+s*w*.25,4.58,w*.3,.4,colors[(index+5)%8],.18,3);
+    panel(E.F,u+s*w*.25,4.58,w*.3,.4,colors[(index+5)%8],.18,lit);
    }
    arcTrim(E.F,u,4.35,w+.35,2.78,colors[(index+1)%8]);
-   for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,3);}
+   for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,lit);}
    for(const v of [j*bay,(j+1)*bay]){
-    panel(E.F,v,3.88,.26,3.5,colors[(index+3)%8],.15,3);
+    panel(E.F,v,3.88,.26,3.5,colors[(index+3)%8],.15,lit);
     for(const s of [-1,1])beam(E.F(v+s*.08,4.15,.18),E.F(v+s*.08,6.95,.18),.042,'#e8c76c');
-    panel(E.F,v,7.04,.48,.28,colors[(index+5)%8],.2,3);
+    panel(E.F,v,7.04,.48,.28,colors[(index+5)%8],.2,lit);
    }
    if(!front){arch(E.F,u,.75,w+.25,2.5,colors[(index+1)%8],.06);panel(E.F,u,.8,w,2,'#716046',.08);}
   }
@@ -107,11 +108,11 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
   for(const [y,h,c]of [[3.65,.18,'#c49939'],[3.84,.16,'#438e6b'],[7.3,.15,'#d4af61'],[7.55,.16,'#6b648a']]){
    beam(E.F(0,y,.15),E.F(E.L,y,.15),h,c);
   }
-  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,colors[Math.floor(u/.28)%8],.3,3);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
+  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,colors[Math.floor(u/.28)%8],.3,lit);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
  }
  // Recessed red front wall and richly carved timber doors, all inscription panels blank.
  const F=(u,y,w=0)=>[u+1.4,y,11.18+w];
- panel(F,0,.35,8.18,3.45,'#b9494e',.01,3);
+ panel(F,0,.35,8.18,3.45,'#b9494e',.01,8);
  for(const u of [-2.55,0,2.55]){
   panel(F,u,.5,u===0?1.7:1.45,2.65,'#bfaa78',.05);
   for(const s of [-1,1])for(let j=0;j<3;j++){
@@ -120,7 +121,7 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
   panel(F,u,3.2,1.9,.38,'#4e7587',.07,3);
  }
  for(const [x,c]of [[-2.48,'#3c78b4'],[5.28,'#d6bd4a']]){
-  box(x,.3,12.48,.55,3.55,.58,c,3);box(x,.3,12.48,.76,.25,.8,'#454f48');box(x,3.65,12.48,.75,.2,.8,'#b3a07a');
+  box(x,.3,12.48,.55,3.55,.58,c,8);box(x,.3,12.48,.76,.25,.8,'#454f48');box(x,3.65,12.48,.75,.2,.8,'#b3a07a');
   // Warm globe lamps in the 2023 night photograph.
   lathe(x,12.8,3.85,.2,.35,'#efce83',5,null,10);
  }

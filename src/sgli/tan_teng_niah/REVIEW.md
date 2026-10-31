@@ -51,3 +51,18 @@ Mean n/e/s/w/top **0.704**; all-view mean **0.715**.
 Final full-app comparison and independent day/night detail runs have **zero page
 errors and zero console errors**; retired placement list is empty. Final images,
 verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+
+## Round 2
+
+Rechecked n/e/s/w/top and the lead's current surroundings after merge. Kept the
+11.5 m ridge / 7.8 m eaves fit from tile metadata, short equal-pitch hip ridges,
+OSM plan and real roof overhangs. Low n/s IoU includes the 3 m reference buffer,
+neighbouring roofs and the old front forecourt structure absent from the saved
+2023 night photograph. No temporary forecourt mass or enlarged shell was added.
+
+Night re-inspected against Rosanazareth's HouseOfTanTengNiah.jpg, 2023-06-28.
+The front upper shutters, fascia, coloured columns and red recessed entry now
+receive a stronger warm wash in their own shared batch; side elevations remain
+quieter and the roof stays dark. Warm globe lamps are retained. This follows the
+photographed front-versus-side lighting, with no all-window emission or neon.
+Offline finite geometry passes; exact-camera final results follow below.

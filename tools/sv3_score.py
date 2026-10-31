@@ -2,10 +2,10 @@
 Masks remain fixed across all iterations. Unannotated/occluded views are listed
 without a fabricated IoU. A 2 px tolerance check quantifies outline sensitivity.
 """
-import json,os
+import json,os,hashlib
 from pathlib import Path
 import numpy as np
-from PIL import Image,ImageDraw,ImageFont
+from PIL import Image,ImageDraw,ImageFont,ImageFilter
 ROOT=Path(__file__).resolve().parents[1];OUT=Path(os.environ.get('BV_OUT','/workspace/eo_codex_out'));P=OUT/'sv3'
 manifest=json.load(open(P/'manifest.json'));ann=json.load(open(ROOT/'src/sgbv/star_vista/silhouettes.json'))
 round=os.environ.get('ROUND','final');D=P/round;rows=[]
@@ -13,6 +13,7 @@ def polygon(points):
  im=Image.new('L',(1600,1000));ImageDraw.Draw(im).polygon([(x*2,y*2)for x,y in points],fill=255);return np.array(im)>0
 for v in manifest['views']:
  n=v['name'];a=ann.get(n);row=dict(view=n,camera_source=v['source'])
+ if a and a.get('unscorable'):row.update(before=None,after=None,status=a['unscorable']);rows.append(row);continue
  if not a:row.update(before=None,after=None,status='No reviewed annotation yet');rows.append(row);continue
  ref=polygon(a['polygon']);valid=polygon(a['valid'])if 'valid'in a else np.ones_like(ref)
  for poly in a.get('exclude',[]):valid&=~polygon(poly)
@@ -23,12 +24,15 @@ for v in manifest['views']:
   model=np.array(Image.open(f).convert('L'))>127
   inter=np.sum(ref&model&valid);union=np.sum((ref|model)&valid);iou=float(inter/union)if union else 0
   row[k]=float(f'{iou:.5f}')
+  boundary=Image.fromarray((ref*255).astype('uint8'));eroded=np.array(boundary.filter(ImageFilter.MinFilter(21)))>0;dilated=np.array(boundary.filter(ImageFilter.MaxFilter(21)))>0;stable=valid&~(dilated&~eroded);den=np.sum((ref|model)&stable);row[k+'_outside_10px_boundary']=float(f'{np.sum(ref&model&stable)/den:.5f}')if den else None
   if k=='after':
    rgb=np.array(Image.open(v['file']).convert('RGB')).copy();rgb[ref&~model&valid]=[255,80,60];rgb[model&~ref&valid]=[40,130,255];rgb[ref&model&valid]=(rgb[ref&model&valid]*.55+np.array([50,220,80])*.45).astype('uint8');Image.fromarray(rgb).save(D/(n+'_iou.jpg'))
- row.update(status=a.get('confidence','manual'));rows.append(row)
+ row.update(status=a.get('confidence','manual'),annotation_sha256=hashlib.sha256(json.dumps(a,sort_keys=True).encode()).hexdigest(),valid_fraction=float(f'{valid.mean():.4f}'));rows.append(row)
 report=dict(method='Fixed manual photo silhouettes vs isolated actual geometry; masks at 1600x1000; explicit validity exclusions for occlusion. No geometry-ground-truth claim.',round=round,views=rows)
+paired=[r for r in rows if r.get('before')is not None and r.get('after')is not None]
+report['paired_scored_views']=len(paired)
 for k in ['before','after']:
- vals=[r[k]for r in rows if r.get(k)is not None];report['mean_'+k]=sum(vals)/len(vals)if vals else None
+ vals=[r[k]for r in paired];report['mean_'+k]=sum(vals)/len(vals)if vals else None
 (OUT/'star_vista_v3_iou.json').write_text(json.dumps(report,indent=2))
 (P/(round+'_iou.json')).write_text(json.dumps(report,indent=2))
 # Several bounded sheets instead of a single unreadably tall image.

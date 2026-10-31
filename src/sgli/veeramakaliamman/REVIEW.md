@@ -74,3 +74,7 @@ beam helper ignores material mode. The local helper now moves only those arm-bea
 triangles into the sculpture batch. Heads/crowns use small lathed profiles and
 robes are tapered, improving relief silhouettes without textures. 51,618 triangles;
 the annex and measured outer bounds are unchanged.
+
+Final night base exposure: the gateway's grey-blue pedestal and wooden door now
+use the lower-power verandah wash; sculpted tiers retain the stronger floodlight.
+This avoids a near-white rectangular pedestal beneath the coloured sculpture.

@@ -95,9 +95,9 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
  // Gateway straddles the measured street wall at local z=24.1 (east/southeast).
  // The previous centre at z=21.1 put its front against the wall and read as a roof tower.
- box(-.6,.35,24.1,10,6.6,5.9,'#a3c0c9',3);
+ box(-.6,.35,24.1,10,6.6,5.9,'#a3c0c9',8);
  const F=(u,y,w=0)=>[u-.6,y,27.08+w];
- panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,5);
+ panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,8);
  for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
  tower(-.6,24.1,9.8,5.7,6.95,18.9,4);
  // Main Kali vimana plus smaller sanctum towers, clear of the front court.

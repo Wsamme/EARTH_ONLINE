@@ -72,7 +72,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);b.cap(K.P(deck),7.11,'#72836b');
  const arcades=faces(deck);
  for(const [i,E]of arcades.entries()){
-  if(i===0)continue;const n=i===2?5:8,bay=E.L/n;
+  if(i===0)continue;const n=i===1?5:8,bay=E.L/n;
   for(let j=0;j<n;j++){
    const u=(j+.5)*bay,w=bay-.7,lo=1.7,hi=6.45;
    const p=E.F(j*bay,lo,.02);box(p[0],lo,p[2],.65,4.85,.65,cream,3);
@@ -83,7 +83,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
     quad(cream,E.F(x,y,.03),E.F(x1,y1,.03),E.F(x1,6.72,.03),E.F(x,6.72,.03),3);
    }
    arcTrim(E.F,u,lo,w,hi-lo,green,5);
-   if(!(i===2&&j===3)){
+   if(!(i===1&&j===2)){
     for(let v=-w/2+.15;v<w/2;v+=.38){const a=E.F(u+v,lo+.2,.1),q=E.F(u+v,lo+1,.1);beam(a,q,.11,white);}
     beam(E.F(u-w/2,lo+1.05,.1),E.F(u+w/2,lo+1.05,.1),.16,green);
    }
@@ -111,13 +111,13 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  }
  for(const [x,z]of [[-19,14],[4,14],[-19,-14],[4,-14]])turret(x,z,7.1,1.1,2.2);
  // Entrance sunburst: twenty-five geometric rays, blank panels instead of calligraphy.
- const F=(u,y,w=0)=>[u-7.5,y,14.65+w];
+ const F=(u,y,w=0)=>[4.85+w,y,u];
  const outline=[[-2.6,7],[-2.8,9.5],[-2,10.8],[-1,11.7],[0,13.6],[1,11.7],[2,10.8],[2.8,9.5],[2.6,7]];
  const t=THREE.ShapeUtils.triangulateShape(outline.map(p=>new THREE.Vector2(...p)),[]);for(const v of t)b.tri(white,...v.map(i=>K.T(...F(...outline[i],.14))),3);
  for(let i=0;i<25;i++){const a=i/25*Math.PI*2,c=(i+.65)/25*Math.PI*2;quad(i%2?green:'#c6ac65',F(Math.cos(a)*.24,9.25+Math.sin(a)*.48,.2),F(Math.cos(a)*.88,9.25+Math.sin(a)*1.75,.2),F(Math.cos(c)*.88,9.25+Math.sin(c)*1.75,.2),F(Math.cos(c)*.24,9.25+Math.sin(c)*.48,.2),3);}
  panel(F,0,6.4,3.5,.55,green,.23);panel(F,0,6.5,3.2,.25,'#e8d6a2',.25,5);
- for(const x of [-10.2,-4.8])turret(x,14.6,7,1.1,4.8);
- for(let i=0;i<6;i++)box(-7.5,.25+i*.23,16.1-i*.27,4.6,.23,.52,'#b7a998');
+ for(const z of [-2.7,2.7])turret(4.8,z,7,1.1,4.8);
+ for(let i=0;i<6;i++)box(6.4-i*.27,.25+i*.23,0,.52,.23,4.6,'#b7a998');
  // Hexagonal three-stage cupola with inset arched windows and small corner pinnacles.
  let y=9.3;for(let k=0;k<3;k++){
   const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-10.2,-.2,r,6);prism(R,y,y+H,cream,3);
@@ -131,7 +131,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  // Measured vertical levels: main deck 4.3 m, highest finial 10.8 m.
  // Keep the OSM plan unchanged; compress the old over-tall architectural sections.
  // Fit the historic hall to the northwest quarter, with its sunburst facing
- // southwest into the entrance court. OSM includes the low forecourt wings.
+ // southeast into the entrance court. OSM includes the low forecourt wings.
  const A=2.467+Math.PI,C=Math.cos(A),S=Math.sin(A);
  for(const [m,B]of b.buckets)for(let j=mainStart.get(m)||0;j<B.p.length;j+=3){
   const x=B.p[j]*C-B.p[j+2]*S,z=B.p[j]*S+B.p[j+2]*C;
@@ -147,6 +147,16 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  for(const x of [-18.9,19])box(x,3.45,11.5,.22,.55,6.2,white);
  box(14.8,3.5,11.5,8.5,.45,5.6,cream,3);
  for(const x of [12,14.5,17]){box(x,3.95,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,4.71,z,1.6,.04,.07,'#6a8076');}
+ // Documented clay-roof ancillary wing along the eastern side of the court.
+ box(13.8,.35,-2.7,6.4,3.05,20.2,cream,3);
+ for(const side of [-1,1]){
+  quad('#ad694d',[13.8+side*3.35,3.45,-12.95],[13.8+side*3.35,3.45,7.55],[13.8,5.05,7.55],[13.8,5.05,-12.95]);
+  for(let z=-12.8;z<7.5;z+=.42)beam([13.8+side*3.35,3.46,z],[13.8,5.07,z],.045,'#bf7b59');
+ }
+ for(const z of [-12.95,7.55])b.tri(cream,K.T(10.45,3.4,z),K.T(17.15,3.4,z),K.T(13.8,5.05,z),3);
+ beam([13.8,5.08,-12.95],[13.8,5.08,7.55],.14,'#b97a5c');
+ const AF=(u,y,w=0)=>[10.57-w,y,u-12.8];
+ for(let u=1.2;u<20;u+=2.7){panel(AF,u,.5,1.15,2.25,'#566b62',.04);panel(AF,u,2.9,1.25,.3,'#b7b4a1',.05);}
  lights(b,g);
 },['sgabdulgafoor']);
 

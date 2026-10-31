@@ -82,3 +82,11 @@ Repeated web searches did not locate a reliable contemporary dome-visible night
 photo. Retained the saved NHB/URA 1992 night image as frontage-light evidence;
 green dome wash remains brief-led and explicitly unverified. Offline geometry
 passes at 44,591 triangles. New exact-camera scores follow below.
+
+r2b confirmed the cupola now lands on the photographed northwest roof, while
+removing the oversized extension reduced mean IoU .698 → .678. A further genuine
+missing part was visible in top/n/e: the narrow clay-roof ancillary wing on the
+east side of the courtyard. Added it at 3.4 m eaves / 5.05 m ridge, with physical
+tile rolls; the courtyard remains open. Corrected the sunburst/entrance to the
+southeast side facing that court, rather than the southwest frontage wing. The
+finial maximum remains 10.8 m. Final rerender follows this roof/entrance correction.

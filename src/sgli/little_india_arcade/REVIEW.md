@@ -1,0 +1,7 @@
+# Little India Arcade
+
+Models all twelve supplied parts: Serangoon strip 176326900 and Campbell Lane 176326798, 176326872, 176326923, 176326965, 176326698, 176326731, 176326759, 176326784, 176326792, 176326803, 176326811. Each has a sheltered five-foot way, plaster pilasters/capitals, string courses and dentils, blue/teal louvred shutters with individual slats, arched transoms, terracotta pitched roofs and ridge/tile courses. Blank warm shop panels, no text.
+
+Height: eave 7.6 m, ridge 9.7 m; provisional two-storey photo estimate pending the measured refs. The current footprint set is narrower and less complete than the three-block, 26-shophouse complex described in URA's 1996 conservation award PDF (https://www.ura.gov.sg/-/media/Corporate/Get-Involved/Conserve-Built-Heritage/AHA/1996/AHA-1996---Little-India-Arcade.pdf). Do not infer that all Campbell Lane parcels belong to the Arcade solely from this dataset's repeated `name` field. No ids proposed for removal without a reference overlay. The frontage gap between 176326900 and 176326798 needs investigation; additional Serangoon/Hastings parcels likely needed, exact ids unconfirmed.
+
+Photo search found older ochre/green façades and conflicting location labels; retain blue/teal shutters per task brief. No reliably identified close night photo downloaded yet; use restrained warm shop illumination rather than an unsupported upper-storey floodlight. Pending photo check, matched-camera IoU and runtime count.

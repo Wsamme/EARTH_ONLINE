@@ -227,25 +227,34 @@ render is committed or attached to the PR. See the module review for reproductio
 
 ## Star Vista night/show lighting
 
-The v3 silhouette is retained. Night lighting now uses LPA's documented
-20-second blue/turquoise enclosure cycle, cool-white outlines and warm retail
-base, with lit soffits, escalators, step nosings and fountain floor lights.
-`?view=bv&show=1` selects an inferred concert-night variant with an eight-second
-blue/turquoise/violet/magenta cycle, soft pulses/sweep and brighter foyers;
-`show=0` or no parameter selects normal night. All effects follow the app's
-night factor; no automatic event schedule or sky beams are present.
+Pass 2 replaces the single luminous rectangle with a continuous, edge-brightened
+blue-white enclosure. It retains the documented 20-second blue/turquoise cycle,
+keeps the roof planes dark, adds crisp cool-white slab/fold/prow strips and uses
+darker retail glazing with varied warm bays and ceiling bands. Soffit emission,
+visible step-nosing strips, fountain floor lights and 21 tapered jet ribbons
+complete the warm base. `show=1` raises foyer warmth/brightness and introduces
+inferred whole-enclosure pulses and sweeps with an eight-second wider palette;
+`show=0` or no parameter selects normal night. All lighting follows the app's
+night factor. There are no sky beams, event schedule, logos or advertising.
 
-Sources, per-photo observations, licences, attendee context, implementation and
-honest limits are in [Night and show lighting](star_vista/REVIEW.md#night-and-show-lighting):
-[LPA](https://www.lighting.co.jp/en/projects/the-star-vista-and-the-star/),
-[LEDinside article](https://www.ledinside.com/lighting/2013/10/surreal_architecture_falling_on_the_ground_the_star_performing_arts_centre_star_vista)
-and [gallery](https://ledinside.com/gallery/view/24), plus Commons night originals.
-Show cues are artistic inference, not a photographed exterior performance.
-Procedural emission substitutes for true etched-glass transport; fountain jets
-and people are not modelled. Local photo/model comparisons and both heroes are
-written to `/workspace/eo_codex_out/`, outside git.
+The local court fragment mask prevents terrain and context paving from burying
+the existing below-grade step/fountain floor. Architectural vertex positions
+remain unchanged. Added lighting contributes **5,448 triangles**, making Star
+Vista **81,680 total**; the **76,232 original oriented triangles** hash identically
+to `9e9e32a`. Bounds, maximum height, roof normals and other eight building
+geometry records remain unchanged, with zero degenerate triangles.
 
-`tools/sv3_check.cjs` retains 76,232 Star Vista triangles, 74.67 m maximum and zero
-degenerate faces. `tools/sv_night_check.cjs` verifies identical oriented-triangle
-hashes against `9e9e32a`; the nine-building geometry report is unchanged. The
-normal build and browser-lock/appshot night renderer exercise the real r128 app.
+See [Night and show lighting](star_vista/REVIEW.md#night-and-show-lighting) for
+three visual rounds, per-photo observations, exact reproduction, licences and
+limits. Sources include [LPA](https://www.lighting.co.jp/en/projects/the-star-vista-and-the-star/),
+[LEDinside](https://www.ledinside.com/lighting/2013/10/surreal_architecture_falling_on_the_ground_the_star_performing_arts_centre_star_vista),
+its [gallery](https://ledinside.com/gallery/view/24), Commons originals and
+attendee accounts. The show cue is explicitly inferred. The preserved v3 shell,
+retail and stair layout still differ from the real venue; procedural glass,
+retail shading and jet ribbons do not supply physical transmission or water.
+
+`tools/sv_night_render.mjs` uses the real r128 appshot/browser-lock flow. The four
+comparison rows use eye-height SW, front, E/NE and close-court cameras; generic
+context/traffic is hidden only for these comparisons, while other landmarks
+remain. Heroes and animation restore full context. Outputs and validation JSON
+are under `/workspace/eo_codex_out/` and are not committed.

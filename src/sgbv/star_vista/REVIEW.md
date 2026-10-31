@@ -187,28 +187,83 @@ show. The eight-second blue/turquoise/violet/magenta palette, broad slow sweep,
 soft moving leakage pulses and extra foyer brightness are explicitly **inferred**
 art direction. No claim is made that a real concert uses these exact cues.
 
-Implementation uses the existing r128 Lambert `onBeforeCompile` path and shared
-`uNight`; one frame hook updates one shared time uniform. Material zones share
-the same clock and show override. There are no added meshes, textures, lights,
-postprocessing passes or per-frame allocations. Existing triangles receive new
-lighting material assignments. Daylight lighting effects are gated by `uNight`.
-The pre-existing environment and diffuse materials are retained where applicable.
+The current pass uses r128 Lambert `onBeforeCompile` shaders and the app's
+shared `uNight`. A shared time uniform drives the 20-second normal cycle and
+inferred eight-second show palette. Every enclosure facet, including its end
+caps, receives the soft blue-white wash, a broad spatial gradient and a modest
+view-dependent edge brightening. Roof planes remain unlit. Show pulses and a
+slow sweep modulate the whole enclosure. This is an etched-glass approximation,
+not true optical transmission.
 
-Limits: procedural emission approximates etched glass and reflected light;
-there is no light transport, volumetric haze, true translucency or bloom. The
-fountain is represented by animated pool/nozzle light on its existing floor,
-without water-jet geometry. Existing v3 terraces and canopy occlude much of
-the recessed step/fountain detail in the chosen exterior cameras. Fibre paths follow the approximate v3 folds rather
-than a surveyed installation. No people or seasonal decorations were added.
-Reference camera matches are approximate, not calibrated photo reconstructions.
+Separate thin lighting beams trace the slab perimeters, prows and actual large
+fold diagonals. Three shared lighting materials cover cool-white outlines,
+warm corridor/step strips, and fountain jets/nozzles. The fountain consists of
+21 slender, crossed, tapered jet ribbons with soft alpha edges and fading tips.
+Its floor spots cycle blue/violet/magenta more quickly in show mode. Retail uses
+darker glazing, deterministic bay occupancy, shaded lower reveals, dark frame
+gaps and warm ceiling bands; show mode raises foyer warmth and brightness.
+The soffits and nearby existing paving receive bounded warm-white emission as
+a cheap substitute for reflected light. No additional light sources, textures,
+postprocessing passes, advertising or people were added.
+
+The original v3 court is recessed below grade. Both the island terrain and the
+v3 context slab had covered the step/fountain floor. A local fragment mask now
+opens only their overlapping surfaces inside the original 13 × 14 m court
+ellipse; it does not move or remove any vertex. The original court floor,
+steps, architectural surfaces and other eight landmarks remain intact. The
+terrain mask is spatially restricted to this Star Vista court and its ground
+height. This visibility correction applies in production, in day and night.
+
+There are **5,448 added lighting triangles**: Star Vista is now **81,680 total including context**,
+with the original **76,232 oriented triangles bit-identical** to `9e9e32a`.
+Bounds and the 74.6749 m maximum are unchanged. The lighting batch is tagged so
+`tools/sv_night_check.cjs` compares the original surfaces separately and reports
+the exact addition. `tools/sv3_check.cjs` still checks the total budget, finite
+coordinates, upward roof normals and absence of degenerate triangles.
+
+### Pass 2 visual rounds
+
+| Round | Changes and observed result | Remaining issue at that round |
+|---|---|---|
+| 1 | Whole-envelope wash, merged white edge strips, varied retail ceiling light, step LEDs and fountain ribbons. The rectangular-panel-only effect was removed. | Lantern too navy; jets/steps too harsh; initial street cameras obstructed and plaza camera under an escalator. |
+| 2 | Raised blue-white lantern fill, creamier step light, softened fountain ribbons and warmer floor spill. | Real street views exposed conflicts with neighbouring landmark positions; continuous ground still buried the lower court. |
+| 3 | Opened the original court with local fragment masks; lit remaining enclosure end caps; used actual fold diagonals; tapered jet tips and lifted floor/riser fill. Refined street-camera variants within this round and selected the clear views. | V3's angular shell, retail massing and stair/canopy arrangement still differ from the photographs; the result is not a calibrated photographic replica. |
+
+The final comparison has four rows: `ledinside_01` (SW blue-hour), Commons
+`8527566637` (front reference), Commons `8522414945` (E/NE low reference), and
+`ledinside_07` (close court). `ledinside_02` separately informed the interior
+wash and cool-white fibre contours. The cameras are at ground/eye height, with
+the plaza camera inside the recessed court. Generic streamed context, synthetic
+city meshes and traffic are hidden **only in comparison renders** to avoid
+occlusion and nearby headlight/billboard flare. The other eight landmarks are
+retained; full context returns for the heroes, animation and day checks. Some
+rail/context structures remain visible. Camera bearings, perspective and lens
+matching are estimates; see the verification JSON for the exact poses.
+
+Limits: the original v3 shape cannot reproduce the real bowl curvature or glass
+segmentation without a separate geometry revision. There is no true light
+transport, volumetric haze, water simulation or new bloom. Jet ribbons and floor
+spots suggest the fountain lighting; they do not reproduce spray, splash or
+reflections. Retail depth is procedural shading, not furnished interiors. The
+step layout is the preserved v3 approximation. Show colours, sweep and leakage
+remain artistic inference rather than a claim about a real concert cue sheet.
 
 Reproduce with `bash tools/bv_build.sh --test`, `node tools/sv3_check.cjs`,
 `node tools/sv_night_check.cjs`, `node tools/bv_geometry.cjs`, then
 `bash src/lm33/kit/browser.sh node tools/sv_night_render.mjs` against the local
 server on port 8047. Output goes to `/workspace/eo_codex_out/`.
 
-Night acceptance: 28 full-app captures (four views, nine time samples and one
-daylight check per mode) pass with zero page/console errors and runnable shader
-programs. Both heroes, the labelled comparison and nine-frame strip were viewed.
-The companion GIF contains eight one-second frames across the show palette.
-The geometry hash is identical to v3, and all nine geometry records match.
+Pass 2 acceptance uses the generated full app, not a standalone material
+viewer. The renderer checks the initial URL show override, court terrain mask,
+page/console errors and shader diagnostics. The final batch includes five views,
+nine time samples and a daylight check in each mode (30 captures). All final
+side-by-sides, both heroes and the nine-frame strip are inspected. The GIF uses
+eight one-second frames across the show palette. Photos, captures, intermediate
+rounds, source hashes and camera/error reports stay in `/workspace/eo_codex_out/`.
+
+Final acceptance: all 30 cycle/day/view captures plus 10 fresh-load view checks
+pass with zero page/console errors and runnable shader programs. Initial
+`show=1` and absent-parameter normal mode both pass; the court mask works on
+the generated page before any source reload. The generated page contains the
+exact reviewed module. Other eight geometry records match the v3 baseline.
+The final comparison, heroes and animation strip were inspected directly.

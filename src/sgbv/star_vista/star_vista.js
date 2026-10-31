@@ -20,13 +20,14 @@ function environment(){
 const svClock={value:0},svShow={value:typeof location!=='undefined'&&new URLSearchParams(location.search).get('show')==='1'?1:0};
 if(typeof HOOKS!=='undefined')HOOKS.frame.push(t=>{svClock.value=t;});
 function nightMaterial(m,mode,base){
+ m.userData.svShow=svShow;
  const prior=m.onBeforeCompile;
- m.customProgramCacheKey=()=> 'sv-night-v1-'+mode;
+ m.customProgramCacheKey=()=> 'sv-night-v2-'+mode;
  m.onBeforeCompile=function(sh,r){
   prior.call(this,sh,r);
   Object.assign(sh.uniforms,{svClock,svShow});
-  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svP;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvP=position-vec3(0.0,${base.toFixed(6)},0.0);`);
-  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svP; uniform float svClock; uniform float svShow;');
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvP=position-vec3(0.0,${base.toFixed(6)},0.0); svR=pow(1.0-abs(dot(normalize(normalMatrix*objectNormal),normalize(-(modelViewMatrix*vec4(position,1.0)).xyz))),2.0);`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR; uniform float svClock; uniform float svShow;');
   // Replace the inherited office-window lighting only on this landmark. Preserve
   // lmShader's shared uNight, diffuse shading, environment and fog integration.
   const start=sh.fragmentShader.indexOf('\n',sh.fragmentShader.indexOf('#include <emissivemap_fragment>'));
@@ -47,45 +48,101 @@ float softness=.23+.58*exp(-pow((svP.y-53.0+3.0*sin(svP.x*.03))/10.0,2.0))+.07*c
 float sweep=pow(.5+.5*sin(svP.x*.055+svP.y*.025-svClock*.48),8.0);
 float pulse=.5+.5*sin(svClock*1.3+svP.x*.07+svP.z*.09);
 vec3 svE=vec3(0.0);
-${mode===9||mode===11?`svE=blue*softness*(1.15+svShow*(.10+.14*pulse+.22*sweep));
-${mode===9?'svE*=smoothstep(45.0,51.0,svP.y)*(1.0-smoothstep(58.0,66.0,svP.y));':''}
-// Narrow fibre contours sit over a soft wash, following the folded volume.
-float fibre=1.0-smoothstep(.035,.13,abs(mod(svP.y+svP.x*.025+svP.z*.02,6.8)-3.4));
-svE+=white*fibre*.38;`:''}
-${mode===2?`float retail=1.0-smoothstep(23.0,29.0,svP.y);
-svE=warm*(.46+.22*svShow)*retail+blue*.10*(1.0-retail);
-float downline=1.0-smoothstep(.07,.24,abs(mod(svP.y-1.0,4.5)-2.7));
-svE+=warm*downline*.28*retail;`:''}
+${mode===9||mode===11||mode===15?`
+// Continuous etched-glass lantern across every enclosure facet, no lit rectangle.
+float contour=.78+.12*cos(svP.y*.18+svP.x*.045)+.10*sin(svP.z*.12);
+vec3 lantern=mix(vec3(.62,.73,.87),blue,.30+svShow*.25);
+svE=lantern*(1.0+.65*svR)*contour*(.85+svShow*(.25+.16*pulse+.22*sweep));
+${mode===11?'svE=blue*(.55+.25*svShow)*contour;':''}
+`:''}
+${mode===2?`
+// Recessed warm rooms seen through dark glass; stable occupancy and a thin
+// bright ceiling above each bay, with dark mullions and a shaded lower reveal.
+float retail=1.0-smoothstep(26.0,35.0,svP.y);
+float hz=abs(vWN.x)>abs(vWN.z)?svP.z:svP.x;
+vec2 cell=vec2(hz/3.1,svP.y/4.5);
+vec2 uv=fract(cell);
+float occupied=fract(sin(dot(floor(cell),vec2(12.9898,78.233)))*43758.5453);
+float frame=smoothstep(.035,.09,uv.x)*(1.0-smoothstep(.93,.98,uv.x));
+float ceiling=smoothstep(.75,.83,uv.y)*(1.0-smoothstep(.86,.94,uv.y));
+float room=(.06+.27*step(.24,occupied))*(.45+.55*smoothstep(.10,.65,uv.y));
+float window=frame*(room+ceiling*.72);
+float vertical=1.0-smoothstep(.25,.65,abs(vWN.y));
+svE=warm*window*retail*vertical*(1.0+.65*svShow);
+svE+=mix(warm,blue,.35)*(.20+.20*svShow)*(1.0-retail)*vertical;
+diffuseColor.rgb*=mix(1.0,.26,uNight);
+`:''}
 ${mode===4?`svE=mix(white,warm,1.0-smoothstep(8.0,28.0,svP.y))*(.63+.14*svShow);`:''}
-${mode===3?'svE=white*.12+blue*.22*(1.0-abs(vWN.y))*smoothstep(38.0,48.0,svP.y);':''}
+${mode===3?'svE=white*.055+warm*.07*(1.0-smoothstep(30.0,45.0,svP.y));':''}
 ${mode===10?'svE=white*.72;':''}
-${mode===12?'svE=warm*(.42+.18*svShow);':''}
+${mode===12?'svE=mix(warm,white,.52)*(.64+.24*svShow);':''}
 ${mode===13?`float nosing=1.0-smoothstep(.055,.15,mod(4.0-svP.y,.58));
-svE=warm*(.055+.65*nosing);`:''}
+svE=warm*.32+vec3(1.0,.83,.61)*.65*nosing;`:''}
 ${mode===14?`vec2 f=svP.xz-vec2(32.0,8.0);
 float ring=length(f/vec2(10.0,11.0));
 vec2 cell=mod(f+1.4,2.8)-1.4;
 float spot=(1.0-smoothstep(.10,.38,length(cell)))*(1.0-smoothstep(.80,.96,ring));
 vec3 water=mix(vec3(.07,.06,.85),vec3(.85,.02,.45),.5+.5*sin(svClock*mix(.28,1.05,svShow)));
-svE=water*(spot*.85+.035*max(0.0,1.0-ring));`:''}
+svE=vec3(.44,.39,.30)+water*(spot*1.2+.055*max(0.0,1.0-ring));`:''}
 ${mode===0?`// Soft reflected soffit light and corridor spill, no extra light sources.
-svE=warm*.045*(1.0-smoothstep(0.0,24.0,svP.y));`:''}
+svE=warm*(.07+.16*exp(-dot(svP.xz-vec2(8.0,8.0),svP.xz-vec2(8.0,8.0))/1600.0))*(1.0-smoothstep(0.0,24.0,svP.y));`:''}
+${mode===20?'svE=white*2.4;':''}
+${mode===21?'svE=vec3(1.0,.83,.61)*1.25;':''}
+${mode===22?`vec3 water=mix(vec3(.30,.10,.95),vec3(.85,.08,.52),.5+.5*sin(svClock*mix(.28,1.05,svShow)));
+float jetR=length(mod(svP.xz-vec2(32.0,8.0)+1.55,3.1)-1.55);
+float core=exp(-jetR*jetR/.0010);
+vec2 jetCell=floor((svP.xz-vec2(32.0,8.0))/3.1+.5);
+float jetH=1.5+mod(jetCell.x*7.0+jetCell.y*3.0+20.0,5.0)*.43;
+float tip=1.0-smoothstep(jetH*.65,jetH,svP.y+1.48);
+svE=water*(.60+.55*core+.12*sin(svP.y*2.0+svClock*1.4))*tip;
+diffuseColor.a*=(.28+.62*core)*tip;`:''}
+${mode===23?'svE=warm*(.16+.10*svShow);':''}
 totalEmissiveRadiance+=svE*uNight;
 `;
   if(start<0||end<0)throw new Error('Star Vista: lmShader injection point missing');
   sh.fragmentShader=sh.fragmentShader.slice(0,start)+ '\n'+lighting+'\n'+sh.fragmentShader.slice(end);
  };
+ if(mode===22){m.transparent=true;m.opacity=.85;m.depthWrite=false;}
  return m;
+}
+// The v3 court is below grade. Mask only the overlapping terrain/context
+// fragments inside its original ellipse; retain every original vertex. Without
+// this, the island's continuous ground and v3 context paving bury its lights.
+function courtCut(m,center,world=true){
+ if(m.userData.svCourtCut)return;m.userData.svCourtCut=true;
+ const previous=m.onBeforeCompile;
+ m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svCourt;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvCourt=${world?'(modelMatrix*vec4(position,1.0)).xyz':'position'};`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svCourt;').replace('#include <clipping_planes_fragment>',`#include <clipping_planes_fragment>
+vec3 court=svCourt-vec3(${center?center.map(v=>v.toFixed(6)).join(','):'32.0,0.0,8.0'});
+if(dot(court.xz/vec2(13.0,14.0),court.xz/vec2(13.0,14.0))<.998 && court.y>-.9 && court.y<1.25)discard;`);
+ };
+ m.customProgramCacheKey=()=> 'sv-court-cut-v1-'+(world?'world':'local');m.needsUpdate=true;
 }
 register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  const metal=3,glass=2,light=4;
+ if(typeof terrain!=='undefined'&&terrain?.material&&typeof sgXY==='function'){
+  const a=sgXY(D.lat,D.lon);courtCut(terrain.material,[a[0]+32,hC(...a),-a[1]+8]);
+ }
+ // Lighting is a separate, tagged batch: v3's oriented triangles stay intact.
+ const lamps=new SGBV.Batch(G.base);
+ const lampBeam=(a,q,w=.23,mode=20)=>{const tri=lamps.tri.bind(lamps);lamps.tri=(c,p,q,r)=>tri(c,p,q,r,mode);lamps.beam(a,q,w,'#d7dedb');lamps.tri=tri;};
+ const offset=p=>[p[0]*1.0018,p[1]+.035,p[2]*1.0018];
+ const outline=E=>{for(let i=0;i<E.length-1;i++)lampBeam(offset(E[i]),offset(E[i+1]));};
  const oldFlush=b.flush.bind(b);
  b.flush=(group)=>{const result=oldFlush(group,mode=>{
   // Unique lc keys keep the app's material cache from aliasing lighting zones.
   const m=lmMat({c:'#ffffff',vc:true,ds:true,m:mode===glass?1:0,lc:'#'+(0xffe2a0+mode).toString(16),lk:mode===glass?.22:.12,fh:4.4,cw:2.6,glow:mode===light?'#ffe5ba':mode===9?'#3768de':mode===metal?'#c0d6df':undefined,gk:mode===light?.8:mode===9?.55:mode===metal?.065:undefined});
-  if(mode===metal||mode===glass||mode===5||mode===6||mode===9){m.envMap=environment();m.combine=THREE.MixOperation;m.reflectivity=mode===glass?.32:(mode===metal||mode===9)?.19:.025;if(mode===metal||mode===9)m.emissive=new THREE.Color('#101b20');m.flatShading=true;m.needsUpdate=true;}
+  if(mode===metal||mode===glass||mode===5||mode===6||mode===9||mode===15){m.envMap=environment();m.combine=THREE.MixOperation;m.reflectivity=mode===glass?.32:(mode===metal||mode===9)?.19:.025;if(mode===metal||mode===9)m.emissive=new THREE.Color('#101b20');m.flatShading=true;m.needsUpdate=true;}
   return nightMaterial(m,mode,G.base);
- });const modes=[...b.buckets.keys()];group.children.slice(-modes.length).forEach((m,i)=>{m.userData.svMode=modes[i];if(modes[i]===0||modes[i]===light)m.castShadow=false;});return result;};
+ });const modes=[...b.buckets.keys()];group.children.slice(-modes.length).forEach((m,i)=>{m.userData.svMode=modes[i];if(modes[i]===0||modes[i]===light)m.castShadow=false;});
+ const lampGroup=new THREE.Group();lampGroup.userData.svLighting=true;
+ lamps.flush(lampGroup,mode=>nightMaterial(lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#'+(0xffd000+mode).toString(16),lk:0}),mode,G.base));
+ lampGroup.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;}});
+ group.add(lampGroup);group.userData.svBaseTriangles=group.userData.bvTriangles;
+ group.userData.svLightingTriangles=lampGroup.userData.bvTriangles;
+ group.userData.bvTriangles+=lampGroup.userData.bvTriangles;
+ return result;};
  const plazaHole=SGBV.ellipse(32,8,13,14,48);b.capHole(scale(D.parts[0].p,.985),[plazaHole],1.2,'#a6b6af');b.walls(scale(D.parts[0].p,.985),-.5,1.2,'#9caea6');b.cap(plazaHole,-1.6,'#8b9f98',14);
  const glowBeam=(a,q,w=.25,mode=light)=>{const tri=b.tri.bind(b);b.tri=(c,p,q,r)=>tri(c,p,q,r,mode);b.beam(a,q,w,'#f4e5cc');b.tri=tri;};
  const mix=(a,q,t)=>a.map((v,k)=>lerp(v,q[k],t));
@@ -104,19 +161,22 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  function face(top,bottom,seed,reverse=false){
   // Large folds are fixed by control sections; narrow panel seams subdivide the
   // planes without smoothing their normals. Every vertex is non-indexed.
-  for(let seg=0;seg<top.length-1;seg++){const A=top[seg],B=top[seg+1],C=bottom[seg],E=bottom[seg+1],L=Math.hypot(B[0]-A[0],B[2]-A[2]),n=Math.ceil(L/1.25);
+  for(let seg=0;seg<top.length-1;seg++){const A=top[seg],B=top[seg+1],C=bottom[seg],E=bottom[seg+1];
+   outline([A,B]);outline([C,E]);if(seg===0)outline([C,A]);outline([E,B]);
+   const L=Math.hypot(B[0]-A[0],B[2]-A[2]),n=Math.ceil(L/1.25);
    for(let i=0;i<n;i++)for(let j=0;j<16;j++){const t=i/n,u=(i+1)/n,v=j/16,w=(j+1)/16;const at=(t,v)=>t+v<=1?C.map((a,k)=>a+t*(E[k]-a)+v*(A[k]-a)):B.map((a,k)=>a+(1-t)*(A[k]-a)+(1-v)*(E[k]-a));const p=at(t,v),q=at(u,v),r=at(u,w),s=at(t,w);const poly=[[t,v],[u,v],[u,w],[t,w]];
-    for(const sign of [-1,1]){let result=[];for(let k=0;k<poly.length;k++){const a=poly[k],d=poly[(k+1)%poly.length],fa=sign*(a[0]+a[1]-1),fd=sign*(d[0]+d[1]-1);if(fa>=-1e-8)result.push(a);if((fa>0&&fd<0)||(fa<0&&fd>0)){const f=fa/(fa-fd);result.push([lerp(a[0],d[0],f),lerp(a[1],d[1],f)]);}}if(result.length>=3)for(let k=1;k<result.length-1;k++)b.tri(tone(i+seed,j+seg),at(...result[0]),at(...result[reverse?k+1:k]),at(...result[reverse?k:k+1]),seed===11&&seg>0&&j>=4&&j<=11?9:metal);}}
+    for(const sign of [-1,1]){let result=[];for(let k=0;k<poly.length;k++){const a=poly[k],d=poly[(k+1)%poly.length],fa=sign*(a[0]+a[1]-1),fd=sign*(d[0]+d[1]-1);if(fa>=-1e-8)result.push(a);if((fa>0&&fd<0)||(fa<0&&fd>0)){const f=fa/(fa-fd);result.push([lerp(a[0],d[0],f),lerp(a[1],d[1],f)]);}}if(result.length>=3)for(let k=1;k<result.length-1;k++)b.tri(tone(i+seed,j+seg),at(...result[0]),at(...result[reverse?k+1:k]),at(...result[reverse?k:k+1]),seed<12||seed===31||seed===37?15:metal);}}
    for(let i=0;i<=n;i++){const t=i/n,a=mix(C,E,t),q=mix(A,B,t);b.beam(a,q,.045,'#8d9e9f');}
    for(let j=1;j<16;j++)b.beam(mix(C,A,j/16),mix(E,B,j/16),.035,'#a4b2b2');
    // Quiet diagonal structural lines read through the pale screened cladding.
-   b.beam(seg%2?A:C,seg%2?E:B,.095,'#a4b5b8');
+   b.beam(seg%2?A:C,seg%2?E:B,.095,'#a4b5b8');if(seed<12)lampBeam(offset(A),offset(E),.13);
    if(seg===1||seg===3){const p=mix(mix(C,E,.4),mix(A,B,.4),.52),q=mix(mix(C,E,.47),mix(A,B,.47),.52),r=mix(mix(C,E,.47),mix(A,B,.47),.57),s=mix(mix(C,E,.4),mix(A,B,.4),.57);b.quad('#839ca0',p,q,r,s,metal);}
   }
  }
  function shell(A,B,north){
   const lowerA=A.map((p,i)=>[p[0]*.94+(north?0:1)-11*(1-i/4),north?41-i*.15:39-i*.5,p[2]*.93]);
   const lowerB=B.map((p,i)=>[p[0]*.95-10*(1-i/4),north?42-i*.2:39-i*.45,p[2]*.93]);
+  outline(A);outline(B);outline([A[0],B[0]]);outline([A[4],B[4]]);
   plate(A,B,north?5:6);face(A,lowerA,north?2:5,true);face(B,lowerB,north?7:11);
   // Western end: two folded planes separated by a real recessed glass slot.
   const U=A[0],V=B[0],C=lowerA[0],E=lowerB[0],lo=55.5,hi=59;
@@ -126,7 +186,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
   const inset=p=>[p[0]+2.7,p[1],p[2]];b.quad('#607e86',inset(c),inset(e),inset(d),inset(a),glass);
   for(const [p,q]of [[c,e],[a,d]])glowBeam(p,q,.24,10);
   for(let j=1;j<10;j++)b.beam(mix(inset(c),inset(e),j/10),mix(inset(a),inset(d),j/10),.1,'#adbfbd');
-  const i=A.length-1;b.quad('#bdc8c8',lowerA[i],A[i],B[i],lowerB[i],metal);
+  const i=A.length-1;b.quad('#bdc8c8',lowerA[i],A[i],B[i],lowerB[i],15);
   plate(lowerA,lowerB,12,false);
   // Roof seams, transverse ribs and diagonal grid. The broad southern roof has
   // a fan of diagonals rather than the previous uniform ladder texture.
@@ -144,6 +204,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
   const ribbonTopB=lowerB.map((p,i)=>north&&i===4?[39,37.5,18]:[B[i][0]*1.025-10*(1-i/4),p[1]-2.5,B[i][2]*1.025]);
   const ribbonBottomA=ribbonTopA.map((p,i)=>[p[0]*.90,north?24+i*.3:[29,30,32,33,30][i],p[2]*.80]);
   const ribbonBottomB=ribbonTopB.map((p,i)=>[p[0]*.90,north?[29,30,32,33,30][i]:25-i*.15,p[2]*.80]);
+  outline(ribbonTopA);outline(ribbonTopB);outline(ribbonBottomA);outline(ribbonBottomB);
   plate(ribbonTopA,ribbonTopB,0);face(ribbonTopA,ribbonBottomA,19,true);face(ribbonTopB,ribbonBottomB,23);
   for(const i of [0,4])b.quad('#b2c0c0',ribbonBottomA[i],ribbonBottomB[i],ribbonTopB[i],ribbonTopA[i],metal);
   plate(ribbonBottomA,ribbonBottomB,12,false);
@@ -155,8 +216,9 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // Eastern nose: the high roof stops at the reveal; a separate lower apron
  // cantilevers forward. This step is visible in both top and east photographs.
  {const a=[48,55,-20],d=[32,55,12],e=[63,53.5,-13.7],f=[38,53.5,17.5],c=[58,40,-11],h=[35,40,14];
- b.quad('#c6d0ce',a,e,f,d,metal);b.quad('#bdc8c8',e,c,h,f,metal);
- b.quad('#b4c2c2',a,[45,40,-16],c,e,metal);b.quad('#b7c5c5',d,f,h,[30,40,10],metal);
+ outline([a,e,f,d,a]);outline([c,h]);outline([e,c]);outline([f,h]);
+ b.quad('#c6d0ce',a,e,f,d,metal);b.quad('#bdc8c8',e,c,h,f,15);
+ b.quad('#b4c2c2',a,[45,40,-16],c,e,15);b.quad('#b7c5c5',d,f,h,[30,40,10],15);
  b.quad('#53696d',[45,40,-16],[30,40,10],h,c);
  for(let i=0;i<=18;i++){const t=i/18;b.beam(mix(a,d,t),mix(e,f,t),.09,'#e6eae5');}
  for(let i=0;i<=9;i++){const t=i/9;b.beam(mix(a,e,t),mix(d,f,t),.1,'#dce4df');}
@@ -165,6 +227,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // Distinct auditorium mass behind the open foyer. Its eastern edge is recessed
  // 20–30 m behind the shell eaves, leaving the 33 m grand atrium open.
  const theatre=[[-55,-12],[-33,-15],[-12,-7],[8,7],[4,29],[-27,29],[-54,14]];
+ for(let y=30;y<58;y+=6.8)for(let i=0;i<theatre.length;i++){const a=theatre[i],q=theatre[(i+1)%theatre.length];lampBeam([a[0]*1.004,y,a[1]*1.004],[q[0]*1.004,y,q[1]*1.004],.13);}
  b.prism(theatre,24,58,'#687b7d',11);b.cap(theatre,24,'#596f74',12);b.facade([[8,7],[4,29]],24,50,4.3,2.7,'#516b74','#96adae',.12);
  // Deep rear wall of the naturally ventilated foyer: the court stays open in
  // front of this curved glazing. This is not a floor-to-roof fill at the eave.
@@ -175,6 +238,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  const south=[[-61,12],[-38,19],[-10,29],[18,44],[30,52],[23,57],[-5,43],[-39,32],[-66,23]];
  for(const [Q,start]of [[north,1],[south,2]])for(let f=0;f<3;f++){
   const R=scale(Q,1-f*.026),lo=start+f*4.5,hi=lo+3.8;b.prism(R,lo,hi,'#758d91',glass);b.facade(R,lo,hi,3.8,2.5,'#79969b','#b1c1c0',.14);b.prism(scale(R,1.06),hi,hi+.65,'#cad2cd');b.rim(scale(R,1.05),hi+1.2,'#b8c7c2',.1);
+  const corridor=scale(R,1.04);for(let i=0;i<corridor.length;i++)lampBeam([corridor[i][0],hi-.10,corridor[i][1]],[corridor[(i+1)%corridor.length][0],hi-.10,corridor[(i+1)%corridor.length][1]],.14,21);
  }
  for(const Q of [north,south]){const R=scale(Q,.87);b.facade(R,15.2,23.4,4.1,2.3,'#7e989c','#afbfbc',.14);b.prism(scale(R,1.12),23.4,24.1,'#bbc9c4');}
  // Continuous low glazed entrance hood on the north promenade, tucked below
@@ -187,7 +251,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  for(let x=35;x<82;x+=3)for(let z=-45;z<-7;z+=3)if(SGBV.inside(link,x,z)&&SGBV.inside(link,x+3,z))b.beam([x,linkY(x,z)+.04,z],[x+3,linkY(x+3,z)+.04,z],.08,'#c7d3cc');
  // Curving recessed glazed amphitheatre rim, with a true central opening.
  const arc=(r,zr,angle)=>[32+r*Math.cos(angle),8+zr*Math.sin(angle)];
- for(let k=0;k<11;k++)for(let j=0;j<32;j++){const t=-1.35+j/32*2.7,u=-1.35+(j+1)/32*2.7,r=12+k*1.95,zr=13+k*1.45,y=-1.8+k*.58,p=arc(r,zr,t),q=arc(r,zr,u),s=arc(r-1.95,zr-1.45,t),v=arc(r-1.95,zr-1.45,u);b.quad('#a6b7af',[...p.slice(0,1),y,p[1]],[q[0],y,q[1]],[v[0],y,v[1]],[s[0],y,s[1]]);b.quad('#84998e',[p[0],y-.58,p[1]],[q[0],y-.58,q[1]],[q[0],y,q[1]],[p[0],y,p[1]],13);}
+ for(let k=0;k<11;k++)for(let j=0;j<32;j++){const t=-1.35+j/32*2.7,u=-1.35+(j+1)/32*2.7,r=12+k*1.95,zr=13+k*1.45,y=-1.8+k*.58,p=arc(r,zr,t),q=arc(r,zr,u),s=arc(r-1.95,zr-1.45,t),v=arc(r-1.95,zr-1.45,u);b.quad('#a6b7af',[...p.slice(0,1),y,p[1]],[q[0],y,q[1]],[v[0],y,v[1]],[s[0],y,s[1]]);b.quad('#84998e',[p[0],y-.58,p[1]],[q[0],y-.58,q[1]],[q[0],y,q[1]],[p[0],y,p[1]],13);lampBeam([p[0]+.04,y-.055,p[1]],[q[0]+.04,y-.055,q[1]],.085,21);}
  for(let j=0;j<48;j++){const t=-1.4+j/48*2.8,u=-1.4+(j+1)/48*2.8,p=arc(37,30,t),q=arc(37,30,u),s=arc(32,25,t),v=arc(32,25,u);b.quad('#97b1b5',[p[0],5,p[1]],[q[0],5,q[1]],[v[0],6.8,v[1]],[s[0],6.8,s[1]],glass);b.beam([p[0],5,p[1]],[s[0],6.8,s[1]],.1,'#c7d3ce');}
  // A two-level curved retail rim beneath the amphitheatre canopy. The court
  // remains open: only the annular galleries are built, with a planted outer edge.
@@ -204,12 +268,21 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // Landscaped roof walk in the sinuous gap; roof equipment stays below the rim.
  const garden=[[-57,-15],[-34,-16],[-4,-8],[20,6],[34,23],[30,27],[16,10],[-6,-4],[-36,-12],[-57,-11]];
  b.garden(garden,55,false);for(let i=0;i<3;i++)b.box(-49+i*7,62,-32,4,1.4,3,'#a3b0af');
+ // Fountain lamps and crossed ribbons occupy the original recessed pool;
+ // no paving, canopy, steps or architectural surface is displaced.
+ for(let row=-2;row<=2;row++)for(let col=-2;col<=2;col++){
+  const x=32+col*3.1,z=8+row*3.1;if(col*col+row*row>6)continue;
+  const y=-1.48,h=1.5+((col*7+row*3+20)%5)*.43;
+  lamps.box(x,y,z,.30,.06,.30,'#b59ec8',0,22);
+  for(const [dx,dz]of [[.065,0],[0,.065]])lamps.quad('#b7a5df',[x-dx,y,z-dz],[x+dx,y,z+dz],[x+dx*.25,y+h,z+dz*.25],[x-dx*.25,y+h,z-dz*.25],22);
+ }
+ // Soft, spatially local reflected light on the existing paving below the hall.
  // Street context is a separate mesh, explicitly excluded from silhouette masks.
  const c=new SGBV.Batch(G.base),ctx=new THREE.Group();ctx.userData.svContext=true;
  c.prism(scale(D.parts[0].p,1.01),-.7,-.15,'#bbc3b9');
  for(const [x,z]of [[-77,-32],[-72,32],[-40,44],[-12,54],[43,57],[72,20],[70,-20],[-20,-50]]){c.box(x,0,z,5,.5,3,'#a9b3a4');c.tree(x,.5,z,1.05);}
  for(let i=0;i<7;i++)c.box(57+i*.8,-.2+i*.23,28,1.1,.25,14,'#c3cbc0',-.6);
  for(const Q of [[[-72,-18],[-63,-18],[-63,1],[-72,1]],[[42,-15],[59,-9],[58,-4],[41,-10]]]){c.prism(Q,5.3,5.6,'#c3d0cc');for(const p of Q)c.beam([p[0],0,p[1]],[p[0],5.3,p[1]],.2,'#b7c7c0');}
- c.flush(ctx);g.add(ctx);
+ c.flush(ctx);ctx.traverse(o=>{if(o.isMesh)courtCut(o.material,[32,G.base,8],false);});g.add(ctx);
 });
 }

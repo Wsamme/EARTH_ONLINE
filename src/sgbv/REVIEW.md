@@ -580,3 +580,179 @@ and roof equipment remain simplified, and its raw silhouette score includes
 terrain/model differences. Flat app grading and generic context limit street
 matches. Night intensities are visual approximations; the HRSC night source is
 historical. See each module review for documented versus inferred details.
+
+
+## Batch 3: Holland Piazza and Elementum
+
+Added separate modules for **Holland Piazza (way 152752624)** and **Elementum
+(way 981964001)**, using the WGS84 OSM extract at
+`/workspace/bv_data/map_ext.osm`. Footprint coordinates, anchors, heights and
+registration are in the regular catalogue/build flow. The previous eleven
+modules retain identical oriented triangle hashes against `9f02be6`.
+No reference images or Google meshes are shipped or loaded at runtime.
+PR #5's body is deliberately unchanged.
+
+These complete two targets deferred in the Batch-2 selection table. Nucleos
+and Fusionopolis Two remain deferred; Rochester Mall is already modeled, and
+the out-of-radius Alexandra/Queensway malls remain excluded.
+
+### Holland Piazza: completed facade versus construction-stage tiles
+
+Anchor: **1.310724717, 103.795249567**. The supplied measurement gives
+**39.1 − 27.0 = 12.1 m** including the roof tier; OSM's 2 levels / 9 m is low
+for the complete envelope. The preserved footprint supplies its bent sides
+and rounded end. Glazing bands, recessed ground shops, canopies, stairs and
+muted, undulating coloured fascia follow [LN9267's 2024 photo (61), CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Holland_Village_13-05-2024(61).jpg).
+That photo, supplied in the OHV directory, identifies **Holland Piazza** and is
+not an OHV reference. Roof accommodation/plant is smaller and set back, leaving
+visible planting. Individual panel placement, floor allocation and roof details
+remain photo interpretations. Warm shopfront/window occupancy and thin canopy
+lighting are inferred because no current night photograph was supplied.
+
+The tiles show blue construction hoarding and unfinished roof surfaces. They
+validate a general envelope and location, not the completed colours or panel
+layout. The model intentionally represents the completed photograph. The first
+roof block was too dominant and concealed planting; the revised northern block
+preserves the footprint/height but gives the garden space to read.
+
+Five-view raw silhouette IoU uses the same unchanged, manually traced masks
+for both rounds. Annotation hashes are recorded in the external JSON:
+
+| View | First | Final | Scoring scope |
+| --- | ---: | ---: | --- |
+| n | 0.745082 | 0.745825 | Visible construction-stage outer envelope |
+| e | 0.865831 | 0.861254 | Observable upper crop; foreground HRSC roof excluded |
+| s | 0.786100 | 0.786027 | Observable upper crop; adjacent foreground roof excluded |
+| w | 0.699190 | 0.709209 | Visible outer envelope, construction hoarding is not a material target |
+| top | 0.799067 | 0.799219 | Visible roof footprint |
+| street | — | — | Unavailable: fractured tiles / foreground obstruction |
+
+Mean: **0.779054 → 0.780307**. The small increase is below
+manual-boundary uncertainty and is not proof of replica fidelity. E and S are
+explicit observable crops; N/W/top are visible envelope checks. Street IoU is
+unavailable because the tile boundary is obscured by fractures and an adjacent
+building. Eight additional orbit poses are visual-only. The 14 poses actually
+recorded in metadata are rendered in day/night; unrecorded close-image files
+are not claimed as exact-camera checks. No masks were revised after the first
+model comparison. Approximately 5–10 annotation-pixel uncertainty applies.
+
+### Elementum: conflicting official data and photographic reconstruction
+
+Anchor: **1.306377973, 103.792762555**. The old tiles predate the building;
+their 21.7 m sample is not a current height. **Tile IoU is unavailable.** The
+recorded poses show historical context/ground level only and may crop the new
+building. The reconstructed lab plates and public realm use the OSM envelope,
+architect information and supplied photographs instead.
+
+[SOM](https://www.som.com/projects/biopolis-phase-6-at-one-north/) publishes
+**63 m / 12 storeys**. [CTBUH / Skyscraper Center](https://www.skyscrapercenter.com/building/elementum/50970)
+lists **92.6 m architectural/tip, 76 m occupied and 13 floors**. A speculative
+stack above a 63 m roof would not explain the higher occupied level. No distinct
+29.6 m tower/exhaust extension is supported by the inspected photos. The model
+therefore uses SOM's 63 m envelope, keeps the discrepancy unresolved, and does
+not claim that one source has been disproved. Its 2023/2024 completion metadata
+also differs between the sources. No invented 92.6 m silhouette is added.
+
+The model represents the U, retreating western arm and inner lab faces, sloped
+eaves and finer intermediate aluminium fins. The intermediate bands are not
+extra occupied floors. A genuinely open ground forum supports the L2–L3 podium
+to 18 m, with a skylight and a modeled 900 m² planted roof surface. An initial
+rectangular garden overlapped too much lab footprint; it is reshaped within the
+open U, and the triangulated planted area after subtracting the smaller skylight
+is independently checked. Aperture dimensions, individual upper plates, planters
+and paths are inferred rather than surveyed. No company logos or model lettering.
+
+The [LUCI / Light Collab project account](https://www.luci.co.jp/led/en/gallery/Elementum/)
+specifies 3000 K grazing/washing and credits DCA Architects and ND Photography.
+Its lobby photograph was viewed directly; it supports warm lower-level treatment,
+not an exterior night photometric claim. The app approximates warm wall/soffit
+light with shared emissive materials and lower-level shader emission; lab
+windows use cool white. Their exterior intensity and occupancy remain inferred.
+No new post-processing or dynamic light arrays are added.
+
+Marc Tan / Studio Periphery photographs supplied through SOM were checked for
+the rounded elevation (01), U/setbacks (08/11), garden (16), entrance (19) and
+atrium/skylight (20). The CTBUH interior credits include Kevin Siyuan / Shiya
+Creative Studio. These remain reference-only, with source copyright retained.
+The module review provides the full source notes and height decision.
+
+### Photo checks, context visibility and visual gaps
+
+The separate front, setback, garden and atrium cameras are **approximate**, with
+poses recorded in the render report. Initial cameras that landed in a neighbouring
+building or lab edge were rejected. Selected streamed/synthetic context and
+non-reference landmarks are suppressed only for photo diagnostics; Elementum
+and the adjacent Metropolis (or Piazza and HRSC) remain. Some separately generated
+rail/road/vehicle context remains. Normal reference-camera renders and the hero
+retain full app context. This visibility adjustment is not production code.
+
+`elementum_photo_check.jpg` shows manual photo outline guides, the rendered
+boundary and an unregistered 50% blend, with no alignment warp or quantitative
+photo IoU. The render is centre-cropped to 16:9. It exposes the remaining mismatch
+rather than asserting a surveyed camera. The U and rounded facade read at street
+and district scales, but exact facade proportions, inner corners, setback depths,
+garden detail and public-space grading remain simplified. Piazza still differs
+in fascia curvature, glazing depth and roof equipment. Both night treatments are
+visual approximations. Neither model reaches photographic replica fidelity.
+
+### Geometry, performance and full-app verification
+
+- `holland_piazza`: **3,706 triangles**, finite coordinates and zero degenerate triangles.
+- `elementum`: **18,169 triangles**, finite coordinates and zero degenerate triangles.
+
+Thirteen modules: **399,260 triangles**, plus unchanged EW rail detail
+**29,304**, for **428,564 total Buona Vista addition triangles**,
+below the existing 450,000 budget including rails. This is not a constant full-city
+frame total; streamed city counts vary with camera. All eleven previous modules
+hash identically to `9f02be6`. Elementum's actual green mesh measures
+**900.000018 m²** after triangulation. Bounds and
+height checks pass at 12.1 m / 63 m.
+
+All **28 recorded new-module poses** are captured in both day/night, plus
+approximate photo views. The final Elementum targeted run reports **zero page
+errors, zero console errors and 70 runnable shader programs**. The
+existing-eleven regression covers **66 established cameras and eleven
+night views**, also with zero page/console errors and all 66 programs
+runnable. The final photo-only diagnostic pass likewise reports zero errors.
+The last inner-setback/garden corrections are covered by the final targeted
+Elementum run; the prior modules remain geometry-identical. Software WebGL is
+used through the real r128 appshot/browser-lock flow; physical-GPU testing is
+not claimed. Source hashes in the latest Elementum report match the current
+source and regenerated test page.
+
+Shared materials, a small procedural reflection map and the existing night
+uniforms keep the additions inexpensive. Thin lights stop casting shadows after
+mesh merging, and the skylight owns a cloned material. No image assets, branding,
+Google runtime requests or API keys are introduced. `patch17.py` registers the
+two modules; `bv_build.sh --test` regenerates and syntax-checks production HTML.
+
+### Local outputs and reproduction
+
+- `/workspace/eo_codex_out/holland_piazza_compare.jpg`
+- `/workspace/eo_codex_out/elementum_compare.jpg`
+- `/workspace/eo_codex_out/elementum_photo_check.jpg` and `.json`
+- `/workspace/eo_codex_out/elementum_hero_day.jpg` and `_night.jpg`
+- `/workspace/eo_codex_out/bv_batch3/`: individual images, IoU, masks, geometry
+  provenance and browser reports. No images are committed or attached to PR #5.
+
+Temporary dependencies/logs stay under `/workspace/bv_wip_codex/`. The OSM extract,
+reference cameras and photos remain in their supplied `/workspace` directories.
+The local HTTP server serves `site/` on port 8047. Reproduce with:
+
+```sh
+BV_VENDOR=/workspace/bv_wip_codex/vendor TMPDIR=/workspace/bv_wip_codex bash tools/bv_build.sh --test
+PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch3_render.mjs final
+BV_PHOTOS_ONLY=1 PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch3_render.mjs photo_final
+BV_NEW_ONLY=elementum PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch3_render.mjs elementum_final
+PLAYWRIGHT_CORE=/workspace/bv_wip_codex/node_modules/playwright-core TMPDIR=/workspace/bv_wip_codex bash src/lm33/kit/browser.sh node tools/bv_batch3_regression.mjs
+python3 tools/bv_batch3_score.py final
+python3 tools/bv_batch3_sheet.py
+node tools/bv_batch3_check.cjs
+THREE_JS=/workspace/bv_wip_codex/vendor/package/build/three.min.js node tools/bv_geometry.cjs
+```
+
+The regression reuses preserved core poses from the external Batch-1 report and
+adds the Batch-2 mall poses from their metadata. The source photos are never
+production textures. SOM/CTBUH/LUCI images retain their source copyright; no open
+licence is claimed. The Piazza photo is LN9267 / CC BY-SA 4.0. References are
+used only in local comparisons and are not redistributed in the repository.

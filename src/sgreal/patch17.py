@@ -185,7 +185,7 @@ MODS += ['lm20/nus/nus.js', 'lm29/nuseng/nuseng.js', 'lm29/nuscentral/nuscentral
 if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules (by folder name), LM20= : none
     keep20 = set(x for x in os.environ['LM20'].split(',') if x); MODS = [m for m in MODS if not m.startswith('lm20/') or m.split('/')[1] in keep20]
 # Singapore landmark modules: same LANDMARKS / SG_PLACES format as the city groups.
-MODS += ['sgbv/core.js'] + ['sgbv/%s/%s.js' % (k, k) for k in ['star_vista', 'metropolis', 'buona_vista_mrt', 'biopolis', 'fusionopolis_one', 'solaris', 'galaxis', 'mediacorp', 'rochester', 'one_holland_village', 'holland_road_sc']] + ['sgbv/view.js']
+MODS += ['sgbv/core.js'] + ['sgbv/%s/%s.js' % (k, k) for k in ['star_vista', 'metropolis', 'buona_vista_mrt', 'biopolis', 'fusionopolis_one', 'solaris', 'galaxis', 'mediacorp', 'rochester', 'one_holland_village', 'holland_road_sc', 'holland_piazza', 'elementum']] + ['sgbv/view.js']
 MODS += [m for m in os.environ.get('EXTRA_MODS', '').split(',') if m]
 skip = set(m for m in os.environ.get('SKIP_MODS', '').split(',') if m)
 MODS = [m for m in MODS if m not in skip and os.path.exists(SC + m)] + ['sgreal/app/sgreal.js', 'sgreal/app/sgstats.js', 'sgreal/app/cityswitch.js']

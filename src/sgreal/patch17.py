@@ -1,7 +1,8 @@
 # v17: Singapore becomes the real island at 1:1 (real roads, buildings, coastline). Applies on top of the v16 build.
 # usage: python3 patch17.py <in.html> <out.html>
 import sys, re
-SC = '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/'
+from pathlib import Path
+SC = str(Path(__file__).resolve().parents[1]) + '/' 
 src = open(sys.argv[1]).read()
 def R(a, b, count=1):
     global src
@@ -183,6 +184,8 @@ MODS = ['sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm16/sg2/changi.j
 MODS += ['lm20/nus/nus.js', 'lm29/nuseng/nuseng.js', 'lm29/nuscentral/nuscentral.js', 'lm29/nussci/nussci.js', 'lm29/nusutown/nusutown.js', 'lm29/nushalls/nushalls.js', 'lm29/nussci/nusduke.js', 'lm29/nushalls/nusbt.js', 'lm20/ntu/ntu.js', 'lm20/changi/changi.js', 'lm20/w1/w1.js', 'lm20/w2/w2.js', 'lm20/w3/w3.js', 'lm20/w4/w4.js', 'lm20/w5/w5.js', 'lm22/marina/marina.js', 'lm27/flyer/flyer.js', 'lm22/rafflesplace/rafflesplace.js', 'lm22/tanjongpagar/tanjongpagar.js', 'lm22/civic/civic.js', 'lm22/heritage/heritage.js', 'lm22/orchardsport/orchardsport.js', 'lm22/gardens/gardens.js', 'lm26/sgcivic/sgcivic.js', 'lm26/sgriver/sgriver.js', 'lm26/sgcbd/sgcbd.js', 'lm26/sgbugis/sgbugis.js', 'lm26/sgouter/sgouter.js', 'lm20/air/air.js', 'lm20/signs/signs.js', 'lm20/hdb/hdb.js', 'lm20/port/port.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/f1track/f1track.js', 'lm20/traffic/traffic.js', 'lm20/crown/crown.js', 'lm20/audio/audio.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_sg/info_sg.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules (by folder name), LM20= : none
     keep20 = set(x for x in os.environ['LM20'].split(',') if x); MODS = [m for m in MODS if not m.startswith('lm20/') or m.split('/')[1] in keep20]
+# Singapore landmark modules: same LANDMARKS / SG_PLACES format as the city groups.
+MODS += ['sgbv/core.js'] + ['sgbv/%s/%s.js' % (k, k) for k in ['star_vista', 'metropolis', 'buona_vista_mrt', 'biopolis', 'fusionopolis_one', 'solaris', 'galaxis', 'mediacorp', 'rochester']] + ['sgbv/view.js']
 MODS += [m for m in os.environ.get('EXTRA_MODS', '').split(',') if m]
 skip = set(m for m in os.environ.get('SKIP_MODS', '').split(',') if m)
 MODS = [m for m in MODS if m not in skip and os.path.exists(SC + m)] + ['sgreal/app/sgreal.js', 'sgreal/app/sgstats.js', 'sgreal/app/cityswitch.js']
@@ -215,11 +218,18 @@ for pair in [x for x in os.environ.get('MOD_SWAP', '').split(',') if '=' in x]:
     std, work = pair.split('=', 1); MODS = [work if m == std else m for m in MODS]
 print('modules', MODS)
 mods = ''.join(open(SC + p).read() + '\n' for p in MODS)
+if CITY == 'sg':
+    import json
+    mods = mods.replace('/* BV_FOOTPRINTS */', json.dumps(json.load(open(SC + 'sgbv/footprints.json')), separators=(',', ':')))
 mods = mods.replace('</script', '<\\/script')
 R("/* ================= loop ================= */", "/* ================= v17 modules ================= */\nwindow.SGR_APP = true;\n" + mods + "\n/* ================= loop ================= */")
 # ---------- boot: load the data, then build ----------
 a = src.index('/* ================= boot ================= */'); b = src.index('requestAnimationFrame(loop);', a)
 src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nsgrBoot();\n" + src[b:]
+# Singapore landmark entry camera and the station's custom canopy.
+if CITY == 'sg':
+    R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
+    R("  for (const S of SGD.stations){\n    const mine = [];", "  for (const S of SGD.stations){\n    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }\n    const mine = [];")
 # titles
 R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
 # v23: the map switch under the title (both builds)

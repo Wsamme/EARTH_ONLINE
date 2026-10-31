@@ -3,13 +3,13 @@
 {
 const {register,out,scale,lerp,center,ellipse}=SGLI;
 register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.22:mode===4?1:mode===5?.8:mode===6?.1:0}));
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.35:mode===4?1.35:mode===5?1.0:mode===6?.18:0}));
  for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?9.6:part.id===178437069?26.9:part.id===47198841?21.2:22.5;
   if(bridge){
    // This mapped narrow part connects across the lane; keep the clearance open.
    b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,9.1,'#4a7970',2);b.facade(out(P,.04),5.7,9.1,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),9.1,H,'#cbd1be');continue;
   }
-  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06);
+  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06),mullions=out(P,.20);
   Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<2)return;const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/4));
    // Older pale hotel / retail block at the west, greener glazing on the extension.
    const old=part.id===47198841;
@@ -19,9 +19,18 @@ register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
     b.box(x,0,z,.42,4.6,.48,'#7c7d68',a);
     b.box(x,3.8,z,w-.15,.78,.22,['#d7d9b5','#8eb584','#d3bb93'][j%3],a,4);
     b.box(x,4.7,z,w,.2,1.4,'#dedbc5',a,4);
+    // Shop glazing transoms and door stiles, under the continuous canopy.
+    b.box(x,.3,z,.075,3.5,.22,'#d8ded1',a);
+    b.box(x,2.75,z,w-.24,.065,.23,'#d8ded1',a);
+
     for(let y=old?5.5:6;y<H-2;y+=old?3.7:4.1){
      b.box(x,y,z,w*(old?.55:.94),old?2.3:2.75,.17,old?'#41685d':'#477b71',a,2);
      b.box(x,y-.4,z,w,.38,.35,old?'#e5e4d5':'#abbcb0',a);
+     // Thin paired mullions divide the extension's broad green window bays.
+     if(!old)for(const k of [-1,1]){const u=lerp(mullions[i][0],mullions[(i+1)%Q.length][0],t)+Math.cos(a)*k*w*.23,v=lerp(mullions[i][1],mullions[(i+1)%Q.length][1],t)-Math.sin(a)*k*w*.23,c=Math.cos(a)*.033,d=-Math.sin(a)*.033;b.quad('#c0c9bc',[u-c,y,v-d],[u+c,y,v+d],[u+c,y+2.75,v+d],[u-c,y+2.75,v-d]);}
+     // Service/parking frontage: narrow open slots behind pale guard rails.
+     if(part.id===178437070&&i===2){b.box(x,y+.3,z,w*.82,.75,.24,'#394b48',a);for(const r of [.38,.7])b.box(x,y+r,z,w*.85,.055,.29,'#aebcae',a);}
+
      if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.5,.23,'#bdc7b6',a);
       const r=w*.275,pt=(t,R)=>[x+Math.cos(a)*Math.cos(t)*R,y+2.3+Math.sin(t)*R,z-Math.sin(a)*Math.cos(t)*R];
       for(let k=0;k<12;k++){const t=k/12*Math.PI,u=(k+1)/12*Math.PI;b.tri('#41685d',[x,y+2.3,z],pt(t,r),pt(u,r),2);b.quad('#c8d0bd',pt(t,r+.1),pt(u,r+.1),pt(u,r),pt(t,r));}

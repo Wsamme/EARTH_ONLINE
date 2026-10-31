@@ -1,0 +1,7 @@
+# Photo references and local comparison renders are never shipped.
+/uploads/
+/eo_codex_out/
+/site/t_bv.html
+/site/vend
+/src/sgbv/.render/
+__pycache__/

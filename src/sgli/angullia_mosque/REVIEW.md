@@ -55,3 +55,20 @@ These scores compare against the superseded building and are not a current-build
 Final full-app comparison and independent day/night detail runs have **zero page
 errors and zero console errors**; retired placement list is empty. Final images,
 verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+
+## Round 2
+
+Re-inspected all supplied images: they still depict the superseded red-roof,
+solid-dome mosque. Current Commons night and Extron day exteriors plus the official
+MUIS redevelopment fact sheet establish the current four-storey hall. Retained
+its estimated 19.9 m parapet / 25.6 m highest finial instead of compressing it to
+obsolete 13.3 m metadata. No geometry was added to match the historical roof.
+
+Added small upward sconces at the upper jali niches in the current night photo,
+illuminated those bronze screens, and replaced the office-window emission grid
+with quiet continuous interior light in a dedicated shared lmMat batch. The
+freestanding gate, side entry canopy and restrained roof remain. Night source:
+https://commons.wikimedia.org/wiki/File:Masjid_Angullia.jpg (saved commons.jpg).
+Geometry check passes. The historical-reference scores remain a limitation, not a
+certificate of the present-day massing. Lead still needs current-era reference
+renders and current-height metadata; no shared file was edited.

@@ -5,17 +5,17 @@
 | 键 | 中文 | English | OSM way | 高度 m | 高度来源 | 类型 | 级别 | 状态 |
 |---|---|---|---|---|---|---|---|---|
 | `s2001` | 卫斯理卫理公会教堂 | Wesley Methodist Church | 351305504 | 32 | photo tower | church | hero | fine |
-| `s2002` | 新加坡华族文化中心 | Singapore Chinese Cultural Centre | 1080516770 | 39.6 | osm-levels*3.6 | civic | hero | done |
+| `s2002` | 新加坡华族文化中心 | Singapore Chinese Cultural Centre | 1080516770 | 36 | finned hall | civic | hero | fine |
 | `s2003` | 圣伯多禄圣保禄堂 | Church of Saints Peter and Paul | 155986468 | 30 | spire above osm 20 | church | hero | fine |
 | `s2004` | 感恩堂卫理公会 | Kum Yan Methodist Church | 164182084 | 27 | osm-height | church | hero | fine |
-| `s2005` | 圣淘沙天空螺旋塔 | SkyHelix Sentosa | 176839464 | 35 | osm-height | block | hero | done |
+| `s2005` | 圣淘沙天空螺旋塔 | SkyHelix Sentosa | 176839464 | 36 | spiral mast | block | hero | fine |
 | `s2006` | 甘榜马六甲奥马尔回教堂 | Masjid Omar Kampung Melaka | 147104299 | 35 | osm-height | mosque | hero | fine |
 | `s2007` | 明古连回教堂 | Masjid Bencoolen | 172596716 | 26 | rebuilt hall; osm tag 40 | mosque | hero | fine |
-| `s2008` | 兴都庙（切蒂亚尔） | Sri Thendayuthapani Temple | 172748749 | 12 | osm-height | temple | hero | done |
+| `s2008` | 兴都庙（切蒂亚尔） | Sri Thendayuthapani Temple | 172748749 | 24 | gopuram above osm 12 | temple | hero | fine |
 | `s2009` | 圣心堂 | Church of the Sacred Heart | 172748913 | 34 | cupola above osm 25 | church | hero | fine |
-| `s2010` | 红点设计博物馆 | Red Dot Design Museum | 116801907 | 9 | osm-height | civic | hero | done |
+| `s2010` | 红点设计博物馆 | Red Dot Design Museum | 116801907 | 12 | brick hall plus porch | civic | hero | fine |
 | `s2011` | 仁慈会堂 | Chesed-El Synagogue | 172748756 | 18 | osm-height | civic | hero | fine |
-| `s2012` | 印度文化遗产中心 | Indian Heritage Centre | 176326997 | 14.4 | osm-levels*3.6 | civic | hero | done |
+| `s2012` | 印度文化遗产中心 | Indian Heritage Centre | 176326997 | 18 | cantilevered box | civic | hero | fine |
 | `s2013` | 陈氏宗祠保赤宫 | Tan Si Chong Su | 147102973 | 16 | hall and roof; osm tag 35 | temple | hero | fine |
 | `s2014` | 滨海湾雅居 | Marina Bay Residences | 116905045 | 245 | osm-height | tower | hero | done |
 | `s2015` | 莱佛士码头一号北塔 | One Raffles Quay North Tower | 172915345 | 245 | osm-height | tower | hero | done |
@@ -49,7 +49,7 @@
 | `s2043` | 科莫大都会 | COMO Metropolitan Singapore | 256974240 | 93.6 | osm-levels*3.6 | tower | medium | done |
 | `s2044` | 国防科技局肯特岗 | DSO @ Kent Ridge | 141910272 | 93.3085 | osm-height | tower | medium | done |
 | `s2045` | 东亚银行大厦 | Bank of East Asia | 172915367 | 91 | osm-height | tower | medium | done |
-| `s2046` | 中国文化中心 | China Cultural Centre | 173000485 | 55 | osm-height | civic | hero | done |
+| `s2046` | 中国文化中心 | China Cultural Centre | 173000485 | 48 | tower with open bay | civic | hero | fine |
 | `s2047` | 希尔顿乌节酒店 | Hilton Singapore Orchard | 41890074 | 90 | osm-height | tower | hero | done |
 | `s2048` | Mercure | Mercure | 351305505 | 90 | osm-levels*3.6 | tower | medium | done |
 | `s2049` | Pinetree Marina Resort | Pinetree Marina Resort | 531703538 | 90 | osm-levels*3.6 | tower | medium | done |

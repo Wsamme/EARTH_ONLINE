@@ -45787,6 +45787,124 @@ setBuild('s2013', 16, {m:0, c:'#ffd0a0', k:0.9, e:0.45}, function(){
   LBox(g, 3.2, 4.2, 0.4, front[0], 0.4, front[1], REDR);
   return g;
 });
+
+const FIN = {c:'#f4f1ea', m:0, lk:0.5, ds:true};
+const CONC = {c:'#b7b4ae', m:0, lk:0.25, ds:true};
+const DARKF = {c:'#2a2e33', m:0, lk:0.2, ds:true};
+const REDP = {c:'#c0392b', glow:'#ff6a4a', gk:0.7, m:0, ds:true};
+
+// Singapore Chinese Cultural Centre: glass base, white finned hall, deep roof.
+setBuild('s2002', 36, {m:1, c:'#f3efe6', k:0.45}, function(){
+  const it = BY.s2002, g = new THREE.Group(), P = it.P, c = ctr(P), F = frame(P);
+  LPoly(g, P, 0, 8, GLASS);
+  LPoly(g, scaleRing(P, 0.86, c), 8, 20, FIN);
+  const face = faceAlongV(F, F.v1 * 0.86, 1);
+  for (let u = F.u0 + 2; u < F.u1 - 2; u += 2.4){
+    const a = F.W(u, F.v1 * 0.9), b = F.W(u + 0.2, F.v1 * 0.9);
+    LBox(g, 0.22, 18, 0.5, a[0], 9, a[1], FIN);
+  }
+  LPoly(g, scaleRing(P, 1.12, c), 27.2, 1.4, FIN);
+  LPoly(g, scaleRing(P, 0.4, c), 8, 18, {c:'#8d2e2e', glow:'#ffb0a0', gk:0.6, m:0, ds:true});
+  return g;
+});
+
+// Red Dot Design Museum: brick colonial hall plus the glass porch with red hanging screens.
+setBuild('s2010', 12, WARM, function(){
+  const it = BY.s2010, g = new THREE.Group(), P = it.P, c = ctr(P), F = frame(P);
+  LPoly(g, P, 0, 7.5, BRICK);
+  LPoly(g, scaleRing(P, 1.02, c), 7.2, 0.6, CREAM);
+  const face = faceAlongV(F, F.v1, 1);
+  const n = Math.max(3, Math.round(F.du / 5));
+  for (let i = 0; i < n; i++) paintArch(g, face, F.u0 + F.du * (i + 0.5) / n, 1.2, 1.1, 4.2, 0, 0, CREAM, DARK);
+  const tp = F.W((F.u0 + F.u1) / 2, (F.v0 + F.v1) / 2);
+  LBox(g, 4.2, 6, 4.2, tp[0], 7, tp[1], BRICK);
+  LBox(g, 4.8, 0.5, 4.8, tp[0], 12.6, tp[1], CREAM);
+  // glass porch and the red mesh curtains, on the long front
+  const porch = [F.W(F.u0 + 2, F.v1), F.W(F.u1 - 2, F.v1), F.W(F.u1 - 2, F.v1 + 6), F.W(F.u0 + 2, F.v1 + 6)];
+  LPoly(g, porch, 0, 6.5, GLASS);
+  LPoly(g, scaleRing(porch, 1.04, ctr(porch)), 6.2, 0.35, FIN);
+  for (let i = 0; i < 5; i++){
+    const u = F.u0 + 4 + (F.du - 8) * i / 4;
+    const q = F.W(u, F.v1 + 3);
+    LBox(g, 1.1, 4.5, 0.12, q[0], 1.2, q[1], REDP);
+  }
+  return g;
+});
+
+// Indian Heritage Centre: hexagonal glass, a cantilevered concrete box, angled columns.
+setBuild('s2012', 18, {m:1, c:'#d5dde4', k:0.4}, function(){
+  const it = BY.s2012, g = new THREE.Group(), P = it.P, F = frame(P);
+  const uc = (F.u0 + F.u1) / 2, vc = (F.v0 + F.v1) / 2;
+  const glass = [F.W(F.u0, F.v0), F.W(uc, F.v0), F.W(uc, F.v1), F.W(F.u0, F.v1)];
+  LPoly(g, glass, 0, 14, {c:'#c5d0d8', m:1, fh:1.6, cw:1.6, ds:true});
+  const slab = [F.W(uc - 2, F.v0 + 1), F.W(F.u1 - 1, F.v0 + 1), F.W(F.u1 - 1, F.v1 - 1), F.W(uc - 2, F.v1 - 1)];
+  LPoly(g, slab, 7, 6.5, CONC);
+  LPoly(g, scaleRing(P, 0.7, ctr(P)), 14.5, 3.2, DARKF);
+  for (const u of [uc + 1, uc + 4]){
+    const q = F.W(u, vc);
+    const col = LBox(g, 0.7, 7, 0.7, q[0], 0, q[1], CONC);
+    col.rotation.z = u < uc + 2 ? 0.28 : -0.22;
+  }
+  const rib = F.W(F.u1 - 1.2, vc);
+  LBox(g, 1.4, 16, Math.max(4, F.dv * 0.5), rib[0], 0, rib[1], DARKF);
+  return g;
+});
+
+// Sri Thendayuthapani: a stepped, banded gopuram over a grey gateway. Sculpture is suggested by the tiers, not figures.
+setBuild('s2008', 24, {m:0, c:'#ffe0b0', k:0.8, e:0.35}, function(){
+  const it = BY.s2008, g = new THREE.Group(), P = it.P, c = ctr(P), F = frame(P);
+  LPoly(g, P, 0, 6, {c:'#e6e0d4', m:0, ds:true});
+  const door = faceAlongV(F, F.v1, 1);
+  paintArch(g, door, (F.u0 + F.u1) / 2, 0.4, 2.2, 5.2, 0, 0, {c:'#8d8a84', m:0, ds:true}, DARK);
+  const cols = ['#e7c56a','#d24b4b','#2f9d9a','#f2efe6','#6d4d92','#e7c56a','#d24b4b'];
+  let y = 6, w = Math.min(10, F.dv * 0.8), d = Math.min(7, F.du * 0.35);
+  const q = F.W((F.u0 + F.u1) / 2, F.v1 - d * 0.4);
+  for (let i = 0; i < 7; i++){
+    LBox(g, d, 2.0, w, q[0], y, q[1], {c:cols[i], m:0, glow: i % 2 ? '#ffd9a0' : '#000000', gk: i % 2 ? 0.25 : 0, ds:true});
+    y += 2.05; w *= 0.82; d *= 0.84;
+  }
+  LDome(g, w * 0.7, q[0], y, q[1], {c:'#e7c56a', m:0, ds:true}, 0.8, 10);
+  return g;
+});
+
+// China Cultural Centre: grey panel block, a white faceted blade, and a tower with an open bay and a red ring.
+setBuild('s2046', 48, WARM, function(){
+  const it = BY.s2046, g = new THREE.Group(), P = it.P, c = ctr(P), F = frame(P);
+  LPoly(g, P, 0, 22, CONC);
+  const face = faceAlongV(F, F.v1, 1);
+  for (let y = 3; y < 20; y += 4.2){
+    for (let u = F.u0 + 3; u < F.u1 - 3; u += 4){
+      const q = F.W(u, F.v1 + 0.2);
+      LBox(g, 2.2, 2.2, 0.25, q[0], y, q[1], GLASS);
+    }
+  }
+  const blade = F.W((F.u0 + F.u1) / 2, F.v1 - 1);
+  LBox(g, 3.2, 32, 7, blade[0], 0, blade[1], FIN);
+  const tw = F.W((F.u0 + F.u1) / 2, (F.v0 + F.v1) / 2);
+  LBox(g, 8, 16, 3, tw[0], 22, tw[1] - 2.2, CONC);
+  LBox(g, 8, 16, 3, tw[0], 22, tw[1] + 2.2, CONC);
+  LCyl(g, 2.2, 2.2, 0.6, tw[0], 28, tw[1], REDP, 16);
+  LBox(g, 14, 2.2, 12, tw[0], 38, tw[1], FIN);
+  return g;
+});
+
+// SkyHelix Sentosa: an open white spiral around a mast, with a ring at the top.
+setBuild('s2005', 36, {m:0, c:'#fff6e0', k:0.5, e:0.2}, function(){
+  const it = BY.s2005, g = new THREE.Group(), c = ctr(it.P);
+  LCyl(g, 1.1, 1.4, 32, c[0], 0, c[1], FIN, 10);
+  const turns = 36;
+  for (let i = 0; i < turns; i++){
+    const a = i / turns * PI * 2 * 2.4;
+    const y = 1.5 + i * 0.82;
+    const rad = 6.2;
+    const x = c[0] + Math.cos(a) * rad, z = c[1] + Math.sin(a) * rad;
+    const deck = LBox(g, 5.4, 0.35, 2.4, x, y, z, i % 6 === 0 ? GOLD : FIN);
+    deck.rotation.y = -a;
+  }
+  LCyl(g, 6.2, 6.2, 0.4, c[0], 32.5, c[1], FIN, 20);
+  LCyl(g, 0.8, 1.6, 3.2, c[0], 33, c[1], GOLD, 8);
+  return g;
+});
 }
 
 {

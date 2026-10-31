@@ -59,7 +59,20 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){
+ for(const mode of [3,4,5,8,9])if(b.buckets.has(mode)){
+  const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));
+  q.flush(g,()=>{
+   const mat=lmMat(mode===8?{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe6ca',lk:1.1}:mode===9?{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe5c7',lk:.12,glow:'#fff0d5',gk:.18}:mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85});
+   if(mode===8&&!mat.userData.liNicheWash){
+    const compile=mat.onBeforeCompile;
+    mat.onBeforeCompile=function(sh,r){compile.call(this,sh,r);sh.uniforms.uEven={value:1};};
+    mat.userData.liNicheWash=true;
+   }
+   return mat;
+  });b.buckets.delete(mode);
+ }
+}
 
 register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g)=>{
  const K=kit(b,.78),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
@@ -78,15 +91,17 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
   for(let j=0;j<n;j++){
    const u=(j+.5)*E.L/n,bw=E.L/n;
    if(i===2){
-    pointed(E.F,u,3.5,bw-.5,10.4,cream,.06,3);pointed(E.F,u,3.65,bw-.85,10.1,j===0?dark:coral,.09,j===0?2:3);
+    pointed(E.F,u,3.5,bw-.5,10.4,cream,.06,3);pointed(E.F,u,3.65,bw-.85,10.1,j===0?dark:coral,.09,j===0?9:3);
     if(j===0)for(let y=4;y<12;y+=1.7)beam(E.F(u-bw*.35,y,.13),E.F(u+bw*.35,y,.13),.07,bronze);
    }else{
-    for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,2);}
+    for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,9);}
    }
    const sub=i===2?2:1;
    for(let k=0;k<sub;k++){
     const v=u+(k+.5-sub/2)*bw/sub,sw=bw/sub;
-    pointed(E.F,v,15.2,sw-.65,3.35,cream,.08,3);pointed(E.F,v,15.38,sw-.95,3.02,bronze,.1);
+    pointed(E.F,v,15.2,sw-.65,3.35,cream,.08,3);pointed(E.F,v,15.38,sw-.95,3.02,bronze,.1,8);
+    // Small upward sconces visible in the saved current-building night photograph.
+    const lamp=E.F(v,15.08,.23);box(lamp[0],15.08,lamp[2],.28,.10,.24,'#e9dfcb',5);
     // Physical diamond jali lattice within each upper niche.
     for(let q=-sw*.31;q<sw*.32;q+=.45)for(let yy=15.6;yy<17.8;yy+=.5){beam(E.F(v+q,yy,.14),E.F(v+q+.22,yy+.25,.14),.045,cream);beam(E.F(v+q+.22,yy+.25,.14),E.F(v+q,yy+.5,.14),.045,cream);}
    }

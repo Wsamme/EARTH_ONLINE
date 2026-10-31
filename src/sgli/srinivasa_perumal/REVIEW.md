@@ -1,73 +1,52 @@
-# Sri Srinivasa Perumal Temple
+# Sri Srinivasa Perumal Temple — round 2 final
 
-Replaces `srinivasa`; compound anchor stays unchanged. All five supplied OSM parts
-are used: 481614952, 454182405, 454182408, 454182454 and 455155906. The oversized
-landuse way 686747406 is not used as a building or courtyard slab.
+All five supplied OSM parts are used: 481614952, 454182405, 454182408,
+454182454 and 455155906. Replaces `srinivasa`. The oversized landuse 686747406
+is not a building slab. The low tagged 481614952 building is northeast of the
+actual gateway; it is not the gopuram. The five-tier gateway remains at about
+**+37.5 m east / +24.5 m south** of the anchor, facing east toward Serangoon Road
+(image-based placement, approximately ±2 m). Painted figure bands now have
+rounded low-poly heads, tapered robes, lit arms and central dark shrine recesses.
 
-The full image set disproved the inherited old anchor: **481614952 is a low
-ancillary building northeast of the main entrance, not the gopuram**. It is a
-4.8 m building on its real footprint. The permanent five-tier gopuram is beside
-the southeast hall at approximately **+37.5 m east / +24.5 m south** of the anchor
-(visual image fit, roughly ±2 m). Painted geometric deity bands, guardian figures,
-sala crown and seven finials, timber doors, short striped wall wings, flagstaff
-and a narrow covered link to the mandapam replace the old isolated generic tower.
+External meta.json: max **18.0 m**, p90 **15.6 m**, p50 **7.5 m**. Model crown
+18.0 m; PGP Hall (455155906) eaves 14.8 m / shallow roof 15.4 m; low halls
+6.8–7.9 m. PGP Hall's three storeys and floral panels follow official HEB photos:
+https://pgphall.sspt.org.sg/HEB/Template3/about-pgp-hall .
 
-455155906 is **PGP Hall**, verified against HEB's official three-storey description
-and venue photographs: https://heb.org.sg/sspt/ and
-https://pgphall.sspt.org.sg/HEB/Template3/about-pgp-hall . It has 14.8 m eaves,
-a shallow 15.4 m roof, pale floral relief, glazing bands and a projecting canopy.
-Other mapped halls have 6.8–7.9 m eaves, arched verandahs and small sanctums.
+Night photo: Ahboy's Deepavali guide,
+https://ahboy.com/where-to-celebrate-deepavali-in-singapore/ , saved `night.jpg`.
+Warm golden tier floodlight, darker blue-grey base, gently lit guardians/door and
+small bright lintel follow that photo. PGP dusk reference is the official
+https://pgphall.sspt.org.sg/Content/Uploads/Banners/PGP5-3.jpg . Sources/photos
+remain in `/workspace/li_photo_refs/srinivasa_perumal/` outside git.
 
-Measured metadata: maximum **18.0 m**, p90 **15.6 m**, p50 **7.5 m**, from
-`/workspace/li_refs/srinivasa_perumal/meta.json`. Model crown is 18.0 m; the source
-mask partly excludes the actual gateway, so its own height remains uncertain.
-PGP roof agrees with p90 and low halls agree with p50. The shared data's 21 m
-provisional height is NOT the final model height; lead should regenerate it.
+Known gaps: supplied references show temporary roof/tower shrouds; permanent
+sculpture remains visible in the model. The actual gateway is partly outside the
+supplied footprint masks. The scorer fills between separate parts even in top
+view, adding **39,430 pixels / 16.9%** of its filled reference area. Official top
+IoU remains **0.624**; raw unfilled **0.743** is diagnostic only. No courtyard or
+car park was filled with fake building geometry. Some close views are obscured
+by adjacent generic buildings. Lead should include the gateway in the reference
+mask and disable column filling for top views. Fine iconography/interiors remain
+simplified; mean is unchanged at **0.719**.
 
-Night photo: Ahboy's Deepavali photograph, warm tower floodlighting and a lit
-entrance: https://ahboy.com/where-to-celebrate-deepavali-in-singapore/ .
-PGP Hall's official dusk exterior supports warm entry-canopy/window lighting:
-https://pgphall.sspt.org.sg/Content/Uploads/Banners/PGP5-3.jpg . Day and night
-photos/provenance stay outside git in `/workspace/li_photo_refs/srinivasa_perumal/`.
-No texture images, lettering, logos or extracted meshes are used.
+## Final validation
 
-## Validation and limits
+**84,654 triangles**, 5 shared material batches.
 
-Offline finite geometry validation passes. **70,954 triangles** in four shared material batches.
-The r3 full-app run and independent detail run had zero page and console errors,
-and no retired landmark types remained placed. r3 scores (before the gateway
-location correction): n 0.790, e 0.736, s 0.679, w 0.759, top 0.633, mean 0.719.
-These do not certify the corrected gateway; a new comparison follows.
-
-The actual gateway extends outside the supplied mapped temple outlines. The
-reference mask therefore clips part of it. The scorer also column-fills between
-separate footprint parts **even in the top camera**, marking some car-park and
-courtyard gaps as occupied. Those gaps have not been filled with invented geometry.
-Temporary construction shrouds in the references are omitted from the permanent
-model. Sculpture and hall interior carving are geometric abstractions.
-
-Lead action: review the role of 481614952, include the actual gateway in the
-reference mask, and disable column filling for top views before final acceptance.
-
-Final r4 matched-camera comparison after the gateway correction: n **0.792**,
-e **0.692**, s **0.715**, w **0.772**, top **0.624**, mean **0.719**; close NE
-0.773, close SW 0.772, street 0.767, all-view mean 0.738. Main mean is unchanged
-from r3 while close views improve. All page/console errors are zero; retired
-placement check is empty. The top view diagnostic **without** column filling is
-0.743, confirming the mask limitation; the official reported score remains 0.624.
-OSM API map read also found no separate mapped gateway footprint near the entrance:
-https://www.openstreetmap.org/way/481614952 . No shared footprint was edited.
-
-## Final verification snapshot
-
-Round **r8**; 70954 triangles.
-
-| n | e | s | w | top | close NE | close SW | street |
+| n | e | s | w | top | close_ne | close_sw | street |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0.792 | 0.692 | 0.715 | 0.772 | 0.624 | 0.773 | 0.772 | 0.767 |
 
-Mean n/e/s/w/top **0.719**; all-view mean **0.738**.
+Mean n/e/s/w/top **0.719**; all-view mean
+**0.738**. Final matched-camera run: **r2lighting**.
 
-Final full-app comparison and independent day/night detail runs have **zero page
-errors and zero console errors**; retired placement list is empty. Final images,
-verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+`bash tools/bv_build.sh --test` and the offline finite-geometry check pass.
+Matched-camera and independent detail checks have **zero page errors and zero
+console errors**, with no retired landmarks still placed. Results, overlays,
+comparison sheets, geometry and verification JSON stay under
+`/workspace/eo_li_out/heritage/`, outside git. References/photos are never runtime
+assets. No logos, brand text, photographic textures or external meshes are used.
+
+Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
+No shared source/data files were edited by this round-2 worker work.

@@ -62,16 +62,17 @@ function kit(b,a=0,ox=0,oz=0){
 function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
 
 register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,g)=>{
- const K=kit(b,2.467),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
+ const K=kit(b,2.467+Math.PI),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
  const cream='#ece6d6',white='#f6f1e6',green='#335e49',roof='#768974';
- b.prism(D.parts[0].p,-1,1.65,'#c9c4b2');
+ b.prism(D.parts[0].p,-1,.35,'#c9c4b2');
+ const mainStart=new Map([...b.buckets].map(([m,B])=>[m,B.p.length]));
  // Raised historic prayer hall within a real open arcade; eastern extension stays low.
  box(-7.4,1.65,-.6,17.8,7.6,23.2,cream,3);box(-7.4,9.05,-.6,18.2,.3,23.6,white,3);b.cap(K.P(rect(-7.4,-.6,17.8,23.2)),9.36,'#607967');
- box(12.2,1.65,0,14.5,7.5,29,cream,3);
+
  const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);b.cap(K.P(deck),7.11,'#72836b');
  const arcades=faces(deck);
  for(const [i,E]of arcades.entries()){
-  if(i===0)continue;const n=i%2===0?7:8,bay=E.L/n;
+  if(i===0)continue;const n=i===1?5:8,bay=E.L/n;
   for(let j=0;j<n;j++){
    const u=(j+.5)*bay,w=bay-.7,lo=1.7,hi=6.45;
    const p=E.F(j*bay,lo,.02);box(p[0],lo,p[2],.65,4.85,.65,cream,3);
@@ -82,7 +83,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
     quad(cream,E.F(x,y,.03),E.F(x1,y1,.03),E.F(x1,6.72,.03),E.F(x,6.72,.03),3);
    }
    arcTrim(E.F,u,lo,w,hi-lo,green,5);
-   if(!(i===2&&j===3)){
+   if(!(i===1&&j===2)){
     for(let v=-w/2+.15;v<w/2;v+=.38){const a=E.F(u+v,lo+.2,.1),q=E.F(u+v,lo+1,.1);beam(a,q,.11,white);}
     beam(E.F(u-w/2,lo+1.05,.1),E.F(u+w/2,lo+1.05,.1),.16,green);
    }
@@ -110,30 +111,52 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  }
  for(const [x,z]of [[-19,14],[4,14],[-19,-14],[4,-14]])turret(x,z,7.1,1.1,2.2);
  // Entrance sunburst: twenty-five geometric rays, blank panels instead of calligraphy.
- const F=(u,y,w=0)=>[u-7.5,y,14.65+w];
+ const F=(u,y,w=0)=>[4.85+w,y,u];
  const outline=[[-2.6,7],[-2.8,9.5],[-2,10.8],[-1,11.7],[0,13.6],[1,11.7],[2,10.8],[2.8,9.5],[2.6,7]];
  const t=THREE.ShapeUtils.triangulateShape(outline.map(p=>new THREE.Vector2(...p)),[]);for(const v of t)b.tri(white,...v.map(i=>K.T(...F(...outline[i],.14))),3);
  for(let i=0;i<25;i++){const a=i/25*Math.PI*2,c=(i+.65)/25*Math.PI*2;quad(i%2?green:'#c6ac65',F(Math.cos(a)*.24,9.25+Math.sin(a)*.48,.2),F(Math.cos(a)*.88,9.25+Math.sin(a)*1.75,.2),F(Math.cos(c)*.88,9.25+Math.sin(c)*1.75,.2),F(Math.cos(c)*.24,9.25+Math.sin(c)*.48,.2),3);}
  panel(F,0,6.4,3.5,.55,green,.23);panel(F,0,6.5,3.2,.25,'#e8d6a2',.25,5);
- for(const x of [-10.2,-4.8])turret(x,14.6,7,1.1,4.8);
- for(let i=0;i<6;i++)box(-7.5,.25+i*.23,16.1-i*.27,4.6,.23,.52,'#b7a998');
+ for(const z of [-2.7,2.7])turret(4.8,z,7,1.1,4.8);
+ for(let i=0;i<6;i++)box(6.4-i*.27,.25+i*.23,0,.52,.23,4.6,'#b7a998');
  // Hexagonal three-stage cupola with inset arched windows and small corner pinnacles.
  let y=9.3;for(let k=0;k<3;k++){
-  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-7.4,-1.3,r,6);prism(R,y,y+H,cream,3);
+  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-10.2,-.2,r,6);prism(R,y,y+H,cream,3);
   for(const E of faces(R)){arch(E.F,E.L/2,y+.25,.72,H-.45,'#547d72',.04,5);arcTrim(E.F,E.L/2,y+.25,.72,H-.45,white);}
-  prism(K.ring(-7.4,-1.3,r+.12,6),y+H-.16,y+H,white,3);y+=H;
+  prism(K.ring(-10.2,-.2,r+.12,6),y+H-.16,y+H,white,3);y+=H;
  }
- lathe(-7.4,-1.3,y,1.3,3.8,green,4,null,24);
- lathe(-7.4,-1.3,y+3.6,.38,1.05,green,4,null,16);
- lathe(-7.4,-1.3,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
- for(const p of K.ring(-7.4,-1.3,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
- // Extension's long arched window rhythm and restrained flat service roof.
- for(const E of faces(rect(12.2,0,14.55,29.05))){for(let u=1.5;u<E.L;u+=2.8){arch(E.F,u,2.2,1.35,3.2,'#456655',.08,2);arcTrim(E.F,u,2.2,1.35,3.2,white);}beam(E.F(0,8.7,.15),E.F(E.L,8.7,.15),.28,green);}
- box(12.2,9.15,0,14.6,.2,29.1,roof);box(13,9.35,-8,3,1.1,3,'#b7c2b6');
+ lathe(-10.2,-.2,y,1.3,3.8,green,4,null,24);
+ lathe(-10.2,-.2,y+3.6,.38,1.05,green,4,null,16);
+ lathe(-10.2,-.2,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
+ for(const p of K.ring(-10.2,-.2,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
  // Measured vertical levels: main deck 4.3 m, highest finial 10.8 m.
  // Keep the OSM plan unchanged; compress the old over-tall architectural sections.
+ // Fit the historic hall to the northwest quarter, with its sunburst facing
+ // southeast into the entrance court. OSM includes the low forecourt wings.
+ const A=2.467+Math.PI,C=Math.cos(A),S=Math.sin(A);
+ for(const [m,B]of b.buckets)for(let j=mainStart.get(m)||0;j<B.p.length;j+=3){
+  const x=B.p[j]*C-B.p[j+2]*S,z=B.p[j]*S+B.p[j+2]*C;
+  const u=x-.3,v=z*.78-4.2;B.p[j]=u*C+v*S;B.p[j+2]=-u*S+v*C;
+ }
  const fittedY=y=>y<=0?y:y<=9.3?y*(4.3/9.3):4.3+(y-9.3)*(6.5/10.77);
  for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+fittedY(B.p[i]-b.base);
+ // Low green-roofed frontage wings; the central court remains open.
+ box(0,.35,11.55,39.4,2.95,6.1,cream,3);
+ box(0,3.3,11.55,39.5,.16,6.2,roof);
+ const LF=(u,y,w=0)=>[u-19.7,y,14.63+w];
+ for(let u=1.5;u<39;u+=2.8){arch(LF,u,.65,1.25,2.1,'#456655',.06);arcTrim(LF,u,.65,1.25,2.1,white);}
+ for(const x of [-18.9,19])box(x,3.45,11.5,.22,.55,6.2,white);
+ box(14.8,3.5,11.5,8.5,.45,5.6,cream,3);
+ for(const x of [12,14.5,17]){box(x,3.95,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,4.71,z,1.6,.04,.07,'#6a8076');}
+ // Documented clay-roof ancillary wing along the eastern side of the court.
+ box(13.8,.35,-2.7,6.4,3.05,20.2,cream,3);
+ for(const side of [-1,1]){
+  quad('#ad694d',[13.8+side*3.35,3.45,-12.95],[13.8+side*3.35,3.45,7.55],[13.8,5.05,7.55],[13.8,5.05,-12.95]);
+  for(let z=-12.8;z<7.5;z+=.42)beam([13.8+side*3.35,3.46,z],[13.8,5.07,z],.045,'#bf7b59');
+ }
+ for(const z of [-12.95,7.55])b.tri(cream,K.T(10.45,3.4,z),K.T(17.15,3.4,z),K.T(13.8,5.05,z),3);
+ beam([13.8,5.08,-12.95],[13.8,5.08,7.55],.14,'#b97a5c');
+ const AF=(u,y,w=0)=>[10.57-w,y,u-12.8];
+ for(let u=1.2;u<20;u+=2.7){panel(AF,u,.5,1.15,2.25,'#566b62',.04);panel(AF,u,2.9,1.25,.3,'#b7b4a1',.05);}
  lights(b,g);
 },['sgabdulgafoor']);
 

@@ -1,49 +1,50 @@
-# Sri Veeramakaliamman Temple
+# Sri Veeramakaliamman Temple — round 2 final
 
-OSM 155991884 (hall) and 1078263462 (annex), replacing `sgveeramakali`.
-Low striped hall, sculpted parapet shrines, four-tier painted gateway, Kali
-vimana with domed crown, smaller sanctums, green ribbed roof, barrel skylight,
-white entrance canopy and silver flagstaff. Six-storey annex has paired windows,
-red end strips, floor cornices, roof service room and small plant. Geometry uses
-shared SGBV batches and dedicated shared lmMat architectural-light batches.
+OSM 155991884 hall and 1078263462 annex; replaces `sgveeramakali`.
+The four-tier gateway now straddles the actual east/southeast Serangoon Road wall
+at local z=24.1, 3 m farther toward the road than round 1. Entrance and white
+canopy move with it. Main Kali vimana remains above the sanctum by the annex,
+with four smaller side shrines, striped walls, parapet relief, green ribbed roof,
+barrel skylight, red side-bay roof, flagstaff and six-storey annex.
 
-Measured maximum **27.1 m**, p90 **23.8 m**, median **7.2 m**:
-`/workspace/li_refs/veeramakaliamman/meta.json`. Model maximum 26.9 m, annex
-parapet 24.6 m, hall 7.2 m, gateway 18.9 m. The shared footprint's provisional
-25 m metadata still needs regeneration by the lead.
+Measured max **27.1 m**, p90 **23.8 m**, p50 **7.2 m**, from the slug's external
+meta.json. Model maximum **26.9 m**, annex parapet 24.6 m, hall 7.2 m and gateway
+18.9 m. These are distinct elements; the gateway is not made 27.1 m tall.
 
-Night checked against ScribblingGeek's 7 October 2020 photograph:
+Round-2 relief has tapered robes, low-poly rounded heads/crowns and bent arms.
+The local beam helper routes arms through the sculpture material, avoiding dark
+arms on lit bodies. Shared lmMat batches separate warm tier wash, gentler
+blue-grey gateway/verandah wash and small entrance/canopy lights. Night exposure
+was reduced after an initial capture clipped the pale sculpture.
+
+Night photograph: ScribblingGeek, 7 October 2020, CC BY-SA 4.0,
 https://commons.wikimedia.org/wiki/File:Sri_Veeramakaliamman_Temple.jpg .
-Warm tower/relief floodlight and lit doorway; restrained annex glazing. All photos
-and provenance are outside git in `/workspace/li_photo_refs/veeramakaliamman/`.
-No photographic textures, lettering, logos or external meshes.
+Re-searched and re-inspected before round-2 lighting work; saved `night.jpg` and
+SOURCES.md are in `/workspace/li_photo_refs/veeramakaliamman/`.
 
-## Validation and limits
+Known gaps: relief remains an architectural abstraction rather than individual
+iconographic statues. Annex service layout is simplified. Nearby trees obscure
+part of the entry in some beauty views. Mask differences include the 3 m buffer
+and neighbouring geometry; no shell was enlarged to fill that buffer.
+Mean improved **0.805 → 0.811**, south **0.767 → 0.792**.
 
-**33,508 triangles**, four shared material batches. Build syntax and offline
-finite geometry validation pass. Final r3 comparison: n **0.813**, e **0.794**,
-s **0.767**, w **0.818**, top **0.832**; mean **0.805**. Close NE 0.854, close
-SW 0.821, street 0.752; all-view mean 0.806. Main-view scores stayed identical
-after the small vimana crown correction. r3 comparison and independent day/night
-detail run both report `pageErrors: []` and `consoleErrors: []`; retired placement
-check is empty. Artifacts: `/workspace/eo_li_out/heritage/`, never committed.
+## Final validation
 
-Overlays retain a wider reference base from its 3 m footprint buffer, tree and
-adjacent-building contamination, and column filling. Geometry has not been
-expanded into that buffer. Exact OSM wall positions and photographic proportions
-are retained. Roof service layout is simplified. Relief figures are geometric
-abstractions; temporary tents and overhead wires are omitted.
+**51,618 triangles**, 5 shared material batches.
 
-## Final verification snapshot
-
-Round **r8**; 33508 triangles.
-
-| n | e | s | w | top | close NE | close SW | street |
+| n | e | s | w | top | close_ne | close_sw | street |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0.813 | 0.794 | 0.767 | 0.818 | 0.832 | 0.854 | 0.821 | 0.752 |
+| 0.815 | 0.808 | 0.792 | 0.811 | 0.830 | 0.866 | 0.819 | 0.788 |
 
-Mean n/e/s/w/top **0.805**; all-view mean **0.806**.
+Mean n/e/s/w/top **0.811**; all-view mean
+**0.816**. Final matched-camera run: **r2lighting**.
 
-Final full-app comparison and independent day/night detail runs have **zero page
-errors and zero console errors**; retired placement list is empty. Final images,
-verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+`bash tools/bv_build.sh --test` and the offline finite-geometry check pass.
+Matched-camera and independent detail checks have **zero page errors and zero
+console errors**, with no retired landmarks still placed. Results, overlays,
+comparison sheets, geometry and verification JSON stay under
+`/workspace/eo_li_out/heritage/`, outside git. References/photos are never runtime
+assets. No logos, brand text, photographic textures or external meshes are used.
+
+Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
+No shared source/data files were edited by this round-2 worker work.

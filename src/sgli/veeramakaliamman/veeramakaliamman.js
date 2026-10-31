@@ -6,7 +6,10 @@ function kit(b,a=0,ox=0,oz=0){
  const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
  const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
  const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
- const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const beam=(p,q,w,c,m=0)=>{
+  const start=b.buckets.get(0)?.p.length||0;b.beam(T(...p),T(...q),w,c);
+  if(m){const A=b.buckets.get(0);if(!A||A.p.length===start)return;let B=b.buckets.get(m);if(!B){B={p:[],c:[]};b.buckets.set(m,B);}B.p.push(...A.p.splice(start));B.c.push(...A.c.splice(start));}
+ };
  const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
  const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
  const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
@@ -30,9 +33,12 @@ function kit(b,a=0,ox=0,oz=0){
  const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
   // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
   const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
-  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
-  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
-  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  const skirt=F(u,y,.25);frustum(skirt[0],skirt[2],y,.40*h,.34*h,.23*h,.24*h,.34*h,robe,m);
+  cube(0,.2*h,.24,.25*h,.36*h,.3*h,robe);
+  const head=F(u,y+.58*h,.27);
+  lathe(head[0],head[2],head[1],.115*h,.22*h,skin,m,[[0,0],[.85,.12],[1,.48],[.8,.87],[0,1]],8);
+  lathe(head[0],head[2],y+.79*h,.11*h,.18*h,'#e8c364',m,[[1,0],[.85,.35],[.4,.8],[0,1]],8);
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin,m);beam(B,Q,.09*h,skin,m);}
   panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
  };
  const tower=(x,z,w,d,base,top,tiers,m=3)=>{
@@ -59,7 +65,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?.65:1.45}));b.buckets.delete(mode);}}
 
 // OSM 155991884 (hall), 1078263462 (annex). Painted plaster relief is geometry.
 register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamman Temple',38,(b,D,G,g)=>{
@@ -87,22 +93,27 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
   for(let u=.7;u<E.L;u+=2.2){const p=E.F(u,7.45,.05);b.box(p[0],7.45,p[2],.85,.6,.65,'#a6bbc6');kit(b).deity(E.F,u,7.5,.9,Math.floor(u),3);}
  }
  b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
- // Entrance tower centred on the Serangoon Road edge, not on the whole compound.
- box(-.6,.35,21.1,10,6.6,5.9,'#a3c0c9',3);
- const F=(u,y,w=0)=>[u-.6,y,24.08+w];
- panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,5);
+ // Gateway straddles the measured street wall at local z=24.1 (east/southeast).
+ // The previous centre at z=21.1 put its front against the wall and read as a roof tower.
+ box(-.6,.35,24.1,10,6.6,5.9,'#a3c0c9',8);
+ const F=(u,y,w=0)=>[u-.6,y,27.08+w];
+ panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,8);
  for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
- tower(-.6,21.1,9.8,5.7,6.95,18.9,4);
+ tower(-.6,24.1,9.8,5.7,6.95,18.9,4);
  // Main Kali vimana plus smaller sanctum towers, clear of the front court.
  tower(-.5,2.2,5.7,5.7,7.3,14.1,2);lathe(-.5,2.2,13.7,1.03,1.4,'#cfb365',3,null,16);
  for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
  // Green ribbed hall roof and pale barrel skylight visible in the reference views.
  for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');
+ // Small red sheet-roofed side bay immediately north of the gateway.
+ box(11.5,7.35,20.1,7.4,.16,7.1,'#bb705f');
  for(let i=0;i<12;i++){const t=i/12*Math.PI,u=(i+1)/12*Math.PI;K.quad('#d0d2c4',[-8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2],[-8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2]);}
  lathe(-.6,16.6,.3,.55,10.9,'#c3c5b9',0,[[1,0],[.6,.1],[.2,.12],[.15,1]],8);
  // White entrance canopy: modest projection, no festival decorations or lettering.
- for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),24],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),24]);}
- for(const x of [-4.1,2.9])box(x,.1,26.7,.1,4.1,.1,'#adb9b8');
+ for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),26.9],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),26.9]);}
+ for(const x of [-4.1,2.9])box(x,.1,29.6,.1,4.1,.1,'#adb9b8');
+ for(const x of [-2.8,1.6])box(x,4.1,28.6,.22,.06,.55,'#e9d9b9',5);
+ for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,5.65,E.L-.2,1.05,'#bcb5a1',.055,8);
  lights(b,g);
 },['sgveeramakali']);
 

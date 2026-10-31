@@ -6,7 +6,10 @@ function kit(b,a=0,ox=0,oz=0){
  const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
  const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
  const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
- const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const beam=(p,q,w,c,m=0)=>{
+  const start=b.buckets.get(0)?.p.length||0;b.beam(T(...p),T(...q),w,c);
+  if(m){const A=b.buckets.get(0);if(!A||A.p.length===start)return;let B=b.buckets.get(m);if(!B){B={p:[],c:[]};b.buckets.set(m,B);}B.p.push(...A.p.splice(start));B.c.push(...A.c.splice(start));}
+ };
  const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
  const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
  const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
@@ -30,9 +33,12 @@ function kit(b,a=0,ox=0,oz=0){
  const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
   // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
   const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
-  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
-  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
-  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  const skirt=F(u,y,.25);frustum(skirt[0],skirt[2],y,.40*h,.34*h,.23*h,.24*h,.34*h,robe,m);
+  cube(0,.2*h,.24,.25*h,.36*h,.3*h,robe);
+  const head=F(u,y+.58*h,.27);
+  lathe(head[0],head[2],head[1],.115*h,.22*h,skin,m,[[0,0],[.85,.12],[1,.48],[.8,.87],[0,1]],8);
+  lathe(head[0],head[2],y+.79*h,.11*h,.18*h,'#e8c364',m,[[1,0],[.85,.35],[.4,.8],[0,1]],8);
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin,m);beam(B,Q,.09*h,skin,m);}
   panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
  };
  const tower=(x,z,w,d,base,top,tiers,m=3)=>{

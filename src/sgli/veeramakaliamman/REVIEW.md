@@ -68,3 +68,9 @@ s .792, w .811, top .830; close NE .866, close SW .819, street .788.
 Zero page/console errors. First night exposure clipped the pale sculpture; reduced
 tier wash before final capture and separated the verandah wash into a lower-power
 shared batch. This is an exposure correction, not added silhouette mass.
+
+Close night inspection also exposed dark arms on otherwise lit statues: the shared
+beam helper ignores material mode. The local helper now moves only those arm-beam
+triangles into the sculpture batch. Heads/crowns use small lathed profiles and
+robes are tapered, improving relief silhouettes without textures. 51,618 triangles;
+the annex and measured outer bounds are unchanged.

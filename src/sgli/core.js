@@ -7,12 +7,14 @@
 const SGLI = (() => {
   const data = /* LI_FOOTPRINTS */;
   const stats = {};
+  const NOHULL = new Set(['deepavali_lightup']);
   function register(slug, zh, en, r, build, replaces){
     SGBV.data[slug] = data[slug];            // only registered modules join the hull mask (SGBV.skip builds it lazily)
     SGBV.register(slug, zh, en, r, build);
     const L = LANDMARKS['sgbv_' + slug]; delete LANDMARKS['sgbv_' + slug]; LANDMARKS['sgli_' + slug] = L;
     for (let i = SG_PLACES.length - 1; i >= 0; i--) if (SG_PLACES[i].type === 'sgbv_' + slug){ SG_PLACES[i].type = 'sgli_' + slug; break; }
     for (const old of (replaces || [])) for (let i = SG_PLACES.length - 1; i >= 0; i--) if (SG_PLACES[i].type === old) SG_PLACES.splice(i, 1);
+    if (NOHULL.has(slug)) L.noHull = true;  // street decorations: keep the real shophouses beneath them
     Object.defineProperty(stats, slug, {enumerable: true, get: () => SGBV.stats[slug]});
   }
   return Object.assign({}, SGBV, {data, register, stats});

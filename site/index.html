@@ -80656,18 +80656,1051 @@ window.BuonaVista = {get stats(){return SGBV.stats;}};
  * register(slug, zh, en, r, build, replaces) — `replaces` lists older landmark types
  * (e.g. 'sgveeramakali') whose SG_PLACES entries are removed so the new module stands alone. */
 const SGLI = (() => {
-  const data = {"veeramakaliamman":{"lat":1.3079821310442226,"lon":103.85230356752689,"height":25,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":155991884,"name":"Sri Veeramakaliamman","tags":{"amenity":"place_of_worship","building":"yes","building:levels":"6","name":"Sri Veeramakaliamman","religion":"hindu","roof:shape":"many"},"p":[[-7.21,6.96],[13.39,19.83],[16.57,19.45],[28.54,-0.35],[22.0,-4.49],[18.46,1.02],[3.1,-8.7]]},{"id":1078263462,"name":"Sri Veeramakaliamman","tags":{"amenity":"place_of_worship","building":"yes","building:levels":"6","name":"Sri Veeramakaliamman","religion":"hindu"},"p":[[3.1,-8.7],[-15.49,-20.46],[-24.89,-10.98],[-23.69,-3.57],[-7.21,6.96]]}]},"srinivasa_perumal":{"lat":1.3135412145375682,"lon":103.855954904003,"height":21,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":481614952,"name":"Sri Srinivasa Perumal Temple","tags":{"addr:street":"Serangoon Road","amenity":"place_of_worship","building":"yes","name":"Sri Srinivasa Perumal Temple","religion":"hindu"},"p":[[46.02,6.02],[59.92,6.93],[60.96,-8.71],[47.08,-9.64]]},{"id":454182405,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[-2.73,42.0],[-2.68,39.76],[-5.62,39.72],[-5.51,33.2],[-2.57,33.24],[-2.52,29.77],[4.97,29.9],[5.04,25.72],[25.33,26.07],[25.27,28.75],[31.98,28.86],[31.75,42.58]]},{"id":454182408,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[-48.32,6.35],[-20.13,41.01],[-19.01,5.2],[-15.53,1.21],[-28.98,-11.38]]},{"id":454182454,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[14.33,-0.01],[25.54,0.13],[25.24,22.38],[14.03,22.23],[14.12,16.0],[10.24,15.96],[10.33,9.57],[14.2,9.62]]},{"id":455155906,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[-4.26,-4.73],[-8.37,-9.1],[-14.07,-3.82],[-23.84,-14.21],[-18.34,-19.3],[-22.91,-24.15],[5.88,-50.88],[24.33,-31.29]]}]},"abdul_gafoor":{"lat":1.3043997017539217,"lon":103.85373849517269,"height":21,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":176326990,"name":"Masjid Abdul Gafoor","tags":{"addr:housenumber":"41","addr:street":"Dunlop Street","amenity":"place_of_worship","building":"yes","building:levels":"1","name":"Masjid Abdul Gafoor","religion":"muslim"},"p":[[-5.72,-24.13],[24.92,0.93],[5.69,24.13],[-24.95,-0.93]]}]},"angullia_mosque":{"lat":1.3106302100147624,"lon":103.85406380318494,"height":16,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":396336447,"name":"Masjid Angullia","tags":{"addr:housenumber":"265","addr:street":"Serangoon Road","amenity":"place_of_worship","building":"yes","name":"Masjid Angullia","religion":"muslim"},"p":[[-6.07,-22.42],[-20.2,-8.26],[1.65,16.89],[-0.5,19.14],[3.81,23.07],[18.48,8.59]]}]},"tan_teng_niah":{"lat":1.3070569475607954,"lon":103.850954171632,"height":11,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":178436852,"name":"House of Tan Teng Niah","tags":{"addr:housenumber":"37","addr:street":"Kerbau Road","building":"retail","building:levels":"2","name":"House of Tan Teng Niah"},"p":[[4.33,-1.16],[6.78,0.68],[-2.61,13.05],[-14.29,4.32],[-4.94,-8.01],[-2.31,-6.04],[3.34,-13.48],[9.94,-8.55]]}]},"indian_heritage_centre":{"lat":1.305669446639553,"lon":103.85228370427755,"height":22,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":176326997,"name":"Indian Heritage Centre","tags":{"addr:housenumber":"5","addr:street":"Campbell Lane","building":"yes","building:levels":"4","name":"Indian Heritage Centre"},"p":[[-27.37,-13.97],[-31.83,-7.81],[4.97,16.18],[8.57,15.94],[32.98,-6.09],[-10.02,-8.19]]}]},"tekka_centre":{"lat":1.3062037861404063,"lon":103.85059755055798,"height":12,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":47198835,"name":"Tekka Centre","tags":{"addr:housenumber":"665","addr:street":"Buffalo Road","building":"retail","building:levels":"2","height":"10","name":"Tekka Centre"},"p":[[-55.98,-40.69],[-56.35,-42.91],[-69.56,-39.95],[-80.42,-47.03],[-77.98,-51.2],[-76.76,-50.05],[-74.67,-50.59],[-73.75,-49.85],[-74.8,-45.79],[-65.17,-44.21],[-64.43,-47.58],[-57.43,-49.26],[-57.75,-50.6],[-53.93,-51.52],[-53.18,-48.43],[-44.29,-50.56],[-45.08,-53.81],[-40.08,-55.19],[-42.31,-63.08],[-38.65,-64.1],[-37.81,-61.14],[-29.91,-63.33],[-31.02,-67.26],[-29.92,-68.48],[-27.16,-66.0],[-22.66,-70.96],[34.09,-25.8],[15.95,-2.2],[41.82,18.05],[49.21,9.01],[59.31,16.91],[50.65,30.51],[55.05,33.24],[65.4,39.95],[55.42,55.33],[54.85,54.98],[46.68,49.8],[37.88,44.17],[30.66,45.82],[21.18,47.99],[15.45,49.56],[7.8,58.39],[5.93,60.49],[8.03,62.41],[6.69,63.84],[4.62,61.98],[0.47,66.67],[-41.44,26.27],[-42.1,17.73],[-36.83,17.8],[-35.62,19.09],[-24.27,17.5],[-25.08,12.89],[-23.87,10.31],[-19.44,5.0],[-13.73,-2.63],[-11.85,-4.9]]}]},"mustafa_centre":{"lat":1.3095633004339293,"lon":103.85594061242352,"height":26,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":47198841,"name":"Mustafa Centre","tags":{"addr:housenumber":"145","addr:street":"Syed Alwi Road","building":"commercial","building:levels":"5","name":"Mustafa Centre"},"p":[[-25.58,-34.51],[-37.73,-21.24],[-113.36,-89.55],[-101.21,-102.82]]},{"id":178437069,"name":"Mustafa Centre","tags":{"addr:housenumber":"171","addr:street":"Syed Alwi Road","building":"yes","building:levels":"5","name":"Mustafa Centre"},"p":[[35.59,26.42],[42.72,18.68],[99.53,70.34],[81.58,89.81],[24.77,38.15]]},{"id":178437070,"name":"Mustafa Centre","tags":{"addr:housenumber":"151","addr:street":"Syed Alwi Road","building":"yes","building:levels":"5","name":"Mustafa Centre"},"p":[[35.59,26.42],[24.77,38.15],[-9.65,5.68],[-6.5,2.3],[-0.79,-3.81],[0.83,-5.55]]},{"id":178437071,"name":"Mustafa Centre","tags":{"addr:housenumber":"147","addr:street":"Syed Alwi Road","building":"yes","building:levels":"5","name":"Mustafa Centre"},"p":[[-37.73,-21.24],[-25.58,-34.51],[-12.14,-21.48],[-12.2,-18.86],[-13.95,-15.91],[-19.64,-9.8],[-22.0,-9.17],[-24.84,-9.79]]},{"id":178437074,"name":"Mustafa Centre","tags":{"building":"yes","building:levels":"3"},"p":[[-13.95,-15.91],[-8.77,-11.12],[-0.79,-3.81],[-6.5,2.3],[-13.85,-4.46],[-19.64,-9.8]]}]},"little_india_arcade":{"lat":1.305557511283814,"lon":103.85188635468467,"height":10,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":176326900,"name":"Little India Arcade","tags":{"addr:housenumber":"48","addr:street":"Serangoon Road","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[-50.59,-15.37],[-46.97,-20.95],[-25.19,-7.08],[-28.81,-1.49]]},{"id":176326798,"name":"Little India Arcade","tags":{"addr:housenumber":"2","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[-12.4,-21.03],[-7.74,-18.16],[-17.84,-1.96],[-22.5,-4.83]]},{"id":176326872,"name":"Little India Arcade","tags":{"addr:housenumber":"4","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[-7.74,-18.16],[-3.08,-15.29],[-13.17,0.91],[-17.84,-1.96]]},{"id":176326923,"name":"Little India Arcade","tags":{"addr:housenumber":"6","addr:street":"Campbell Lane","building":"yes"},"p":[[-3.08,-15.29],[0.8,-12.91],[-9.3,3.29],[-13.17,0.91]]},{"id":176326965,"name":"Little India Arcade","tags":{"addr:housenumber":"8","addr:street":"Campbell Lane","building":"yes"},"p":[[0.8,-12.91],[4.66,-10.54],[-5.44,5.66],[-9.3,3.29]]},{"id":176326698,"name":"Little India Arcade","tags":{"addr:housenumber":"10","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[4.66,-10.54],[8.89,-7.94],[-1.21,8.26],[-5.44,5.66]]},{"id":176326731,"name":"Little India Arcade","tags":{"addr:housenumber":"12","addr:street":"Campbell Lane","building":"yes"},"p":[[8.89,-7.94],[13.27,-5.24],[3.18,10.96],[-1.21,8.26]]},{"id":176326759,"name":"Little India Arcade","tags":{"addr:housenumber":"14","addr:street":"Campbell Lane","building":"yes"},"p":[[13.27,-5.24],[17.67,-2.54],[7.57,13.66],[3.18,10.96]]},{"id":176326784,"name":"Little India Arcade","tags":{"addr:housenumber":"16","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[17.67,-2.54],[21.55,-0.15],[11.46,16.05],[7.57,13.66]]},{"id":176326792,"name":"Little India Arcade","tags":{"addr:housenumber":"18","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[21.55,-0.15],[25.79,2.46],[15.7,18.66],[11.46,16.05]]},{"id":176326803,"name":"Little India Arcade","tags":{"addr:housenumber":"20","addr:street":"Campbell Lane","building":"yes"},"p":[[25.79,2.46],[30.43,5.31],[20.34,21.51],[15.7,18.66]]},{"id":176326811,"name":"Little India Arcade","tags":{"addr:housenumber":"22","addr:street":"Campbell Lane","building":"yes"},"p":[[30.43,5.31],[35.74,9.1],[35.88,12.06],[23.87,23.48],[20.34,21.51]]}]},"city_square_mall":{"lat":1.3114245138420242,"lon":103.8566435817492,"height":45,"height_source":"Provisional estimate; not tile measured yet","parts":[{"id":102429452,"name":"City Square Mall","tags":{"addr:housenumber":"180","addr:street":"Kitchener Road","building":"yes","building:levels":"4","building:part":"yes","name":"City Square Mall"},"p":[[-78.07,-1.16],[-8.99,72.04],[0.35,71.23],[6.46,65.1],[25.52,41.32],[45.98,16.82],[64.68,-5.59],[44.28,-22.39],[12.37,-48.67],[-8.17,-63.68],[-34.61,-51.11],[-65.43,-15.76],[-69.09,-11.76]]},{"id":361112097,"name":"City Square Mall","tags":{"building:levels":"9","building:part":"yes"},"p":[[12.37,-48.67],[44.28,-22.39],[64.68,-5.59],[45.98,16.82],[25.52,41.32],[15.24,32.85],[-9.58,12.42],[-14.92,8.02],[-26.79,-1.76]]}]},"deepavali_lightup":{"lat":1.308,"lon":103.8535,"height":12,"height_source":"Street decoration arches ~8-12 m over the carriageway (LISHA light-up photos)","parts":[],"streets":[{"name":"Dunlop Street","id":28382563,"oneway":"yes","lanes":"1","p":[[-87.7,246.7],[-93.2,243.7],[-104.7,237.2]]},{"name":"Campbell Lane","id":28382564,"oneway":null,"lanes":"2","p":[[-109.0,297.4],[-123.8,283.8],[-128.3,279.7]]},{"name":"Serangoon Road","id":33280680,"oneway":"yes","lanes":"5","p":[[-299.2,319.6],[-291.4,309.9],[-272.2,297.0]]},{"name":"Serangoon Road","id":75114255,"oneway":"yes","lanes":"4","p":[[212.3,-426.5],[217.8,-433.8],[221.6,-439.0],[254.9,-478.7]]},{"name":"Campbell Lane","id":351310939,"oneway":null,"lanes":null,"p":[[-128.3,279.7],[-134.2,278.6]]},{"name":"Serangoon Road","id":396336422,"oneway":"yes","lanes":"4","p":[[172.3,-370.0],[174.0,-372.5],[180.6,-381.7]]},{"name":"Serangoon Road","id":480697615,"oneway":"yes","lanes":"4","p":[[38.0,-184.1],[50.6,-202.3]]},{"name":"Serangoon Road","id":481642687,"oneway":"yes","lanes":"4","p":[[207.8,-420.2],[212.3,-426.5]]},{"name":"Serangoon Road","id":481678432,"oneway":"yes","lanes":"4","p":[[-254.2,267.3],[-227.6,219.8],[-224.3,214.8],[-221.9,211.3]]},{"name":"Serangoon Road","id":481678433,"oneway":"yes","lanes":"4","p":[[-191.4,164.7],[-185.1,155.6],[-182.6,152.1],[-178.7,146.4],[-171.4,134.3],[-145.3,94.7]]},{"name":"Serangoon Road","id":481678434,"oneway":"yes","lanes":"4","p":[[2.0,-128.9],[4.2,-132.6]]},{"name":"Serangoon Road","id":481678435,"oneway":"yes","lanes":"4","p":[[100.2,-275.2],[106.5,-284.3],[115.3,-297.1]]},{"name":"Serangoon Road","id":633590913,"oneway":"yes","lanes":"4","p":[[354.9,-598.3],[408.5,-665.8]]},{"name":"Serangoon Road","id":633590914,"oneway":"yes","lanes":"4","p":[[294.8,-527.1],[336.4,-576.4]]},{"name":"Serangoon Road","id":633802456,"oneway":"yes","lanes":"4","p":[[68.7,-229.4],[100.2,-275.2]]},{"name":"Serangoon Road","id":633809150,"oneway":"yes","lanes":"5","p":[[408.5,-665.8],[419.1,-678.8],[441.6,-706.5]]},{"name":"Campbell Lane","id":635586986,"oneway":null,"lanes":null,"p":[[-134.2,278.6],[-227.6,219.8]]},{"name":"Serangoon Road","id":638130552,"oneway":"yes","lanes":"4","p":[[273.5,-501.4],[276.2,-504.6],[294.8,-527.1]]},{"name":"Serangoon Road","id":639885994,"oneway":"yes","lanes":"4","p":[[254.9,-478.7],[273.5,-501.4]]},{"name":"Serangoon Road","id":654995724,"oneway":"yes","lanes":"4","p":[[136.1,-323.1],[150.0,-340.4]]},{"name":"Serangoon Road","id":654995725,"oneway":"yes","lanes":"4","p":[[115.3,-297.1],[136.1,-323.1]]},{"name":"Serangoon Road","id":655171480,"oneway":"yes","lanes":"4","p":[[-145.3,94.7],[-108.0,37.7]]},{"name":"Serangoon Road","id":655171481,"oneway":"yes","lanes":"4","p":[[-108.0,37.7],[-106.4,35.4],[-103.1,30.5],[-97.7,22.0],[-91.2,12.5]]},{"name":"Serangoon Road","id":655171482,"oneway":"yes","lanes":"4","p":[[-207.8,191.4],[-201.6,180.7],[-191.4,164.7]]},{"name":"Serangoon Road","id":661625382,"oneway":"yes","lanes":"4","p":[[16.6,-151.5],[38.0,-184.1]]},{"name":"Serangoon Road","id":661625383,"oneway":"yes","lanes":"4","p":[[-18.4,-98.3],[2.0,-128.9]]},{"name":"Serangoon Road","id":661625384,"oneway":"yes","lanes":"4","p":[[-78.8,-5.9],[-63.3,-29.9],[-51.4,-47.8]]},{"name":"Serangoon Road","id":661625385,"oneway":"yes","lanes":"4","p":[[-221.9,211.3],[-219.9,208.3],[-207.8,191.4]]},{"name":"Serangoon Road","id":661634629,"oneway":"yes","lanes":"4","p":[[336.4,-576.4],[350.7,-593.2],[354.9,-598.3]]},{"name":"Dunlop Street","id":665468541,"oneway":"yes","lanes":"1","p":[[40.1,360.1],[9.5,332.6]]},{"name":"Dunlop Street","id":665468542,"oneway":"yes","lanes":"1","p":[[45.8,365.2],[40.1,360.1]]},{"name":"Dunlop Street","id":665468543,"oneway":"yes","lanes":"1","p":[[80.5,396.8],[56.3,374.7]]},{"name":"Dunlop Street","id":665468546,"oneway":"yes","lanes":"1","p":[[-172.2,198.5],[-182.2,192.6]]},{"name":"Dunlop Street","id":665468547,"oneway":"yes","lanes":"1","p":[[-66.8,264.1],[-81.5,251.1],[-87.7,246.7]]},{"name":"Dunlop Street","id":665468548,"oneway":"yes","lanes":"1","p":[[9.5,332.6],[-13.5,312.0]]},{"name":"Dunlop Street","id":665468549,"oneway":"yes","lanes":"1","p":[[56.3,374.7],[45.8,365.2]]},{"name":"Dunlop Street","id":665468550,"oneway":"yes","lanes":"1","p":[[90.2,405.2],[80.5,396.8]]},{"name":"Dunlop Street","id":665468551,"oneway":"yes","lanes":"1","p":[[113.2,425.9],[109.5,422.5],[91.3,406.2],[90.2,405.2]]},{"name":"Dunlop Street","id":665473002,"oneway":"yes","lanes":"1","p":[[-104.7,237.2],[-140.6,217.3]]},{"name":"Dunlop Street","id":665473006,"oneway":"yes","lanes":"1","p":[[-140.6,217.3],[-172.2,198.5]]},{"name":"Serangoon Road","id":666585598,"oneway":"yes","lanes":"5","p":[[441.6,-706.5],[449.6,-717.1],[458.6,-728.9]]},{"name":"Campbell Lane","id":751798581,"oneway":null,"lanes":"2","p":[[-67.8,335.4],[-84.6,319.9]]},{"name":"Dunlop Street","id":751798582,"oneway":"yes","lanes":"1","p":[[-32.7,294.9],[-66.8,264.1]]},{"name":"Dunlop Street","id":751798583,"oneway":"yes","lanes":"1","p":[[-13.5,312.0],[-32.7,294.9]]},{"name":"Dunlop Street","id":752894395,"oneway":"yes","lanes":"1","p":[[-182.2,192.6],[-201.6,180.7]]},{"name":"Serangoon Road","id":784986729,"oneway":"yes","lanes":"4","p":[[61.0,-217.9],[68.7,-229.4]]},{"name":"Serangoon Road","id":784986730,"oneway":"yes","lanes":"4","p":[[50.6,-202.3],[61.0,-217.9]]},{"name":"Serangoon Road","id":785856832,"oneway":"yes","lanes":"4","p":[[150.0,-340.4],[166.8,-363.4]]},{"name":"Serangoon Road","id":786458589,"oneway":"yes","lanes":"5","p":[[-272.2,297.0],[-254.2,267.3]]},{"name":"Serangoon Road","id":786477043,"oneway":"yes","lanes":"4","p":[[-91.2,12.5],[-78.8,-5.9]]},{"name":"Campbell Lane","id":800333440,"oneway":null,"lanes":"2","p":[[-84.6,319.9],[-109.0,297.4]]},{"name":"Serangoon Road","id":829055026,"oneway":"yes","lanes":"4","p":[[4.2,-132.6],[16.6,-151.5]]},{"name":"Serangoon Road","id":1108464866,"oneway":"yes","lanes":"4","p":[[-51.4,-47.8],[-18.4,-98.3]]},{"name":"Serangoon Road","id":1512893971,"oneway":"yes","lanes":"4","p":[[180.6,-381.7],[202.2,-412.3],[207.8,-420.2]]},{"name":"Serangoon Road","id":1512893973,"oneway":"yes","lanes":"4","p":[[166.8,-363.4],[170.8,-368.1],[172.3,-370.0]]}]}};
+  const data = {"veeramakaliamman":{"lat":1.3079821310442226,"lon":103.85230356752689,"height":27.1,"height_source":"Tile roof max minus ground 27.1 m (p90 23.8, p50 7.2); refine per module","parts":[{"id":155991884,"name":"Sri Veeramakaliamman","tags":{"amenity":"place_of_worship","building":"yes","building:levels":"6","name":"Sri Veeramakaliamman","religion":"hindu","roof:shape":"many"},"p":[[-7.21,6.96],[13.39,19.83],[16.57,19.45],[28.54,-0.35],[22.0,-4.49],[18.46,1.02],[3.1,-8.7]]},{"id":1078263462,"name":"Sri Veeramakaliamman","tags":{"amenity":"place_of_worship","building":"yes","building:levels":"6","name":"Sri Veeramakaliamman","religion":"hindu"},"p":[[3.1,-8.7],[-15.49,-20.46],[-24.89,-10.98],[-23.69,-3.57],[-7.21,6.96]]}]},"srinivasa_perumal":{"lat":1.3135412145375682,"lon":103.855954904003,"height":18,"height_source":"Tile roof max minus ground 18.0 m (p90 15.6, p50 7.5); refine per module","parts":[{"id":481614952,"name":"Sri Srinivasa Perumal Temple","tags":{"addr:street":"Serangoon Road","amenity":"place_of_worship","building":"yes","name":"Sri Srinivasa Perumal Temple","religion":"hindu"},"p":[[46.02,6.02],[59.92,6.93],[60.96,-8.71],[47.08,-9.64]]},{"id":454182405,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[-2.73,42.0],[-2.68,39.76],[-5.62,39.72],[-5.51,33.2],[-2.57,33.24],[-2.52,29.77],[4.97,29.9],[5.04,25.72],[25.33,26.07],[25.27,28.75],[31.98,28.86],[31.75,42.58]]},{"id":454182408,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[-48.32,6.35],[-20.13,41.01],[-19.01,5.2],[-15.53,1.21],[-28.98,-11.38]]},{"id":454182454,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[14.33,-0.01],[25.54,0.13],[25.24,22.38],[14.03,22.23],[14.12,16.0],[10.24,15.96],[10.33,9.57],[14.2,9.62]]},{"id":455155906,"name":"Sri Srinivasa Perumal Temple","tags":{"building":"temple"},"p":[[-4.26,-4.73],[-8.37,-9.1],[-14.07,-3.82],[-23.84,-14.21],[-18.34,-19.3],[-22.91,-24.15],[5.88,-50.88],[24.33,-31.29]]}]},"abdul_gafoor":{"lat":1.3043997017539217,"lon":103.85373849517269,"height":10.8,"height_source":"Tile roof max minus ground 10.8 m (p90 4.3, p50 3.4); refine per module","parts":[{"id":176326990,"name":"Masjid Abdul Gafoor","tags":{"addr:housenumber":"41","addr:street":"Dunlop Street","amenity":"place_of_worship","building":"yes","building:levels":"1","name":"Masjid Abdul Gafoor","religion":"muslim"},"p":[[-5.72,-24.13],[24.92,0.93],[5.69,24.13],[-24.95,-0.93]]}]},"angullia_mosque":{"lat":1.3106302100147624,"lon":103.85406380318494,"height":13.3,"height_source":"Tile roof max minus ground 13.3 m (p90 9.0, p50 8.3); refine per module","parts":[{"id":396336447,"name":"Masjid Angullia","tags":{"addr:housenumber":"265","addr:street":"Serangoon Road","amenity":"place_of_worship","building":"yes","name":"Masjid Angullia","religion":"muslim"},"p":[[-6.07,-22.42],[-20.2,-8.26],[1.65,16.89],[-0.5,19.14],[3.81,23.07],[18.48,8.59]]}]},"tan_teng_niah":{"lat":1.3070569475607954,"lon":103.850954171632,"height":11.5,"height_source":"Tile roof max minus ground 11.5 m (p90 10.2, p50 8.6); refine per module","parts":[{"id":178436852,"name":"House of Tan Teng Niah","tags":{"addr:housenumber":"37","addr:street":"Kerbau Road","building":"retail","building:levels":"2","name":"House of Tan Teng Niah"},"p":[[4.33,-1.16],[6.78,0.68],[-2.61,13.05],[-14.29,4.32],[-4.94,-8.01],[-2.31,-6.04],[3.34,-13.48],[9.94,-8.55]]}]},"indian_heritage_centre":{"lat":1.305669446639553,"lon":103.85228370427755,"height":22.4,"height_source":"Tile roof max minus ground 22.4 m (p90 21.5, p50 20.5); refine per module","parts":[{"id":176326997,"name":"Indian Heritage Centre","tags":{"addr:housenumber":"5","addr:street":"Campbell Lane","building":"yes","building:levels":"4","name":"Indian Heritage Centre"},"p":[[-27.37,-13.97],[-31.83,-7.81],[4.97,16.18],[8.57,15.94],[32.98,-6.09],[-10.02,-8.19]]}]},"tekka_centre":{"lat":1.3062037861404063,"lon":103.85059755055798,"height":13.6,"height_source":"Tile roof max minus ground 68.9 m (p90 13.6, p50 12.1); refine per module","parts":[{"id":47198835,"name":"Tekka Centre","tags":{"addr:housenumber":"665","addr:street":"Buffalo Road","building":"retail","building:levels":"2","height":"10","name":"Tekka Centre"},"p":[[-55.98,-40.69],[-56.35,-42.91],[-69.56,-39.95],[-80.42,-47.03],[-77.98,-51.2],[-76.76,-50.05],[-74.67,-50.59],[-73.75,-49.85],[-74.8,-45.79],[-65.17,-44.21],[-64.43,-47.58],[-57.43,-49.26],[-57.75,-50.6],[-53.93,-51.52],[-53.18,-48.43],[-44.29,-50.56],[-45.08,-53.81],[-40.08,-55.19],[-42.31,-63.08],[-38.65,-64.1],[-37.81,-61.14],[-29.91,-63.33],[-31.02,-67.26],[-29.92,-68.48],[-27.16,-66.0],[-22.66,-70.96],[34.09,-25.8],[15.95,-2.2],[41.82,18.05],[49.21,9.01],[59.31,16.91],[50.65,30.51],[55.05,33.24],[65.4,39.95],[55.42,55.33],[54.85,54.98],[46.68,49.8],[37.88,44.17],[30.66,45.82],[21.18,47.99],[15.45,49.56],[7.8,58.39],[5.93,60.49],[8.03,62.41],[6.69,63.84],[4.62,61.98],[0.47,66.67],[-41.44,26.27],[-42.1,17.73],[-36.83,17.8],[-35.62,19.09],[-24.27,17.5],[-25.08,12.89],[-23.87,10.31],[-19.44,5.0],[-13.73,-2.63],[-11.85,-4.9]]}]},"mustafa_centre":{"lat":1.3095633004339293,"lon":103.85594061242352,"height":38.3,"height_source":"Tile roof max minus ground 38.3 m (p90 32.8, p50 21.2); refine per module","parts":[{"id":47198841,"name":"Mustafa Centre","tags":{"addr:housenumber":"145","addr:street":"Syed Alwi Road","building":"commercial","building:levels":"5","name":"Mustafa Centre"},"p":[[-25.58,-34.51],[-37.73,-21.24],[-113.36,-89.55],[-101.21,-102.82]]},{"id":178437069,"name":"Mustafa Centre","tags":{"addr:housenumber":"171","addr:street":"Syed Alwi Road","building":"yes","building:levels":"5","name":"Mustafa Centre"},"p":[[35.59,26.42],[42.72,18.68],[99.53,70.34],[81.58,89.81],[24.77,38.15]]},{"id":178437070,"name":"Mustafa Centre","tags":{"addr:housenumber":"151","addr:street":"Syed Alwi Road","building":"yes","building:levels":"5","name":"Mustafa Centre"},"p":[[35.59,26.42],[24.77,38.15],[-9.65,5.68],[-6.5,2.3],[-0.79,-3.81],[0.83,-5.55]]},{"id":178437071,"name":"Mustafa Centre","tags":{"addr:housenumber":"147","addr:street":"Syed Alwi Road","building":"yes","building:levels":"5","name":"Mustafa Centre"},"p":[[-37.73,-21.24],[-25.58,-34.51],[-12.14,-21.48],[-12.2,-18.86],[-13.95,-15.91],[-19.64,-9.8],[-22.0,-9.17],[-24.84,-9.79]]},{"id":178437074,"name":"Mustafa Centre","tags":{"building":"yes","building:levels":"3"},"p":[[-13.95,-15.91],[-8.77,-11.12],[-0.79,-3.81],[-6.5,2.3],[-13.85,-4.46],[-19.64,-9.8]]}]},"little_india_arcade":{"lat":1.305557511283814,"lon":103.85188635468467,"height":10.7,"height_source":"Tile roof max minus ground 10.7 m (p90 9.6, p50 8.1); refine per module","parts":[{"id":176326900,"name":"Little India Arcade","tags":{"addr:housenumber":"48","addr:street":"Serangoon Road","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[-50.59,-15.37],[-46.97,-20.95],[-25.19,-7.08],[-28.81,-1.49]]},{"id":176326798,"name":"Little India Arcade","tags":{"addr:housenumber":"2","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[-12.4,-21.03],[-7.74,-18.16],[-17.84,-1.96],[-22.5,-4.83]]},{"id":176326872,"name":"Little India Arcade","tags":{"addr:housenumber":"4","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[-7.74,-18.16],[-3.08,-15.29],[-13.17,0.91],[-17.84,-1.96]]},{"id":176326923,"name":"Little India Arcade","tags":{"addr:housenumber":"6","addr:street":"Campbell Lane","building":"yes"},"p":[[-3.08,-15.29],[0.8,-12.91],[-9.3,3.29],[-13.17,0.91]]},{"id":176326965,"name":"Little India Arcade","tags":{"addr:housenumber":"8","addr:street":"Campbell Lane","building":"yes"},"p":[[0.8,-12.91],[4.66,-10.54],[-5.44,5.66],[-9.3,3.29]]},{"id":176326698,"name":"Little India Arcade","tags":{"addr:housenumber":"10","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[4.66,-10.54],[8.89,-7.94],[-1.21,8.26],[-5.44,5.66]]},{"id":176326731,"name":"Little India Arcade","tags":{"addr:housenumber":"12","addr:street":"Campbell Lane","building":"yes"},"p":[[8.89,-7.94],[13.27,-5.24],[3.18,10.96],[-1.21,8.26]]},{"id":176326759,"name":"Little India Arcade","tags":{"addr:housenumber":"14","addr:street":"Campbell Lane","building":"yes"},"p":[[13.27,-5.24],[17.67,-2.54],[7.57,13.66],[3.18,10.96]]},{"id":176326784,"name":"Little India Arcade","tags":{"addr:housenumber":"16","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[17.67,-2.54],[21.55,-0.15],[11.46,16.05],[7.57,13.66]]},{"id":176326792,"name":"Little India Arcade","tags":{"addr:housenumber":"18","addr:street":"Campbell Lane","building":"retail","building:levels":"2","roof:shape":"gabled"},"p":[[21.55,-0.15],[25.79,2.46],[15.7,18.66],[11.46,16.05]]},{"id":176326803,"name":"Little India Arcade","tags":{"addr:housenumber":"20","addr:street":"Campbell Lane","building":"yes"},"p":[[25.79,2.46],[30.43,5.31],[20.34,21.51],[15.7,18.66]]},{"id":176326811,"name":"Little India Arcade","tags":{"addr:housenumber":"22","addr:street":"Campbell Lane","building":"yes"},"p":[[30.43,5.31],[35.74,9.1],[35.88,12.06],[23.87,23.48],[20.34,21.51]]}]},"city_square_mall":{"lat":1.3114245138420242,"lon":103.8566435817492,"height":55.7,"height_source":"Tile roof max minus ground 55.7 m (p90 51.6, p50 30.7); refine per module","parts":[{"id":102429452,"name":"City Square Mall","tags":{"addr:housenumber":"180","addr:street":"Kitchener Road","building":"yes","building:levels":"4","building:part":"yes","name":"City Square Mall"},"p":[[-78.07,-1.16],[-8.99,72.04],[0.35,71.23],[6.46,65.1],[25.52,41.32],[45.98,16.82],[64.68,-5.59],[44.28,-22.39],[12.37,-48.67],[-8.17,-63.68],[-34.61,-51.11],[-65.43,-15.76],[-69.09,-11.76]]},{"id":361112097,"name":"City Square Mall","tags":{"building:levels":"9","building:part":"yes"},"p":[[12.37,-48.67],[44.28,-22.39],[64.68,-5.59],[45.98,16.82],[25.52,41.32],[15.24,32.85],[-9.58,12.42],[-14.92,8.02],[-26.79,-1.76]]}]},"deepavali_lightup":{"lat":1.308,"lon":103.8535,"height":12,"height_source":"Street decoration arches ~8-12 m over the carriageway (LISHA light-up photos)","parts":[],"streets":[{"name":"Dunlop Street","id":28382563,"oneway":"yes","lanes":"1","p":[[-87.7,246.7],[-93.2,243.7],[-104.7,237.2]]},{"name":"Campbell Lane","id":28382564,"oneway":null,"lanes":"2","p":[[-109.0,297.4],[-123.8,283.8],[-128.3,279.7]]},{"name":"Serangoon Road","id":33280680,"oneway":"yes","lanes":"5","p":[[-299.2,319.6],[-291.4,309.9],[-272.2,297.0]]},{"name":"Serangoon Road","id":75114255,"oneway":"yes","lanes":"4","p":[[212.3,-426.5],[217.8,-433.8],[221.6,-439.0],[254.9,-478.7]]},{"name":"Campbell Lane","id":351310939,"oneway":null,"lanes":null,"p":[[-128.3,279.7],[-134.2,278.6]]},{"name":"Serangoon Road","id":396336422,"oneway":"yes","lanes":"4","p":[[172.3,-370.0],[174.0,-372.5],[180.6,-381.7]]},{"name":"Serangoon Road","id":480697615,"oneway":"yes","lanes":"4","p":[[38.0,-184.1],[50.6,-202.3]]},{"name":"Serangoon Road","id":481642687,"oneway":"yes","lanes":"4","p":[[207.8,-420.2],[212.3,-426.5]]},{"name":"Serangoon Road","id":481678432,"oneway":"yes","lanes":"4","p":[[-254.2,267.3],[-227.6,219.8],[-224.3,214.8],[-221.9,211.3]]},{"name":"Serangoon Road","id":481678433,"oneway":"yes","lanes":"4","p":[[-191.4,164.7],[-185.1,155.6],[-182.6,152.1],[-178.7,146.4],[-171.4,134.3],[-145.3,94.7]]},{"name":"Serangoon Road","id":481678434,"oneway":"yes","lanes":"4","p":[[2.0,-128.9],[4.2,-132.6]]},{"name":"Serangoon Road","id":481678435,"oneway":"yes","lanes":"4","p":[[100.2,-275.2],[106.5,-284.3],[115.3,-297.1]]},{"name":"Serangoon Road","id":633590913,"oneway":"yes","lanes":"4","p":[[354.9,-598.3],[408.5,-665.8]]},{"name":"Serangoon Road","id":633590914,"oneway":"yes","lanes":"4","p":[[294.8,-527.1],[336.4,-576.4]]},{"name":"Serangoon Road","id":633802456,"oneway":"yes","lanes":"4","p":[[68.7,-229.4],[100.2,-275.2]]},{"name":"Serangoon Road","id":633809150,"oneway":"yes","lanes":"5","p":[[408.5,-665.8],[419.1,-678.8],[441.6,-706.5]]},{"name":"Campbell Lane","id":635586986,"oneway":null,"lanes":null,"p":[[-134.2,278.6],[-227.6,219.8]]},{"name":"Serangoon Road","id":638130552,"oneway":"yes","lanes":"4","p":[[273.5,-501.4],[276.2,-504.6],[294.8,-527.1]]},{"name":"Serangoon Road","id":639885994,"oneway":"yes","lanes":"4","p":[[254.9,-478.7],[273.5,-501.4]]},{"name":"Serangoon Road","id":654995724,"oneway":"yes","lanes":"4","p":[[136.1,-323.1],[150.0,-340.4]]},{"name":"Serangoon Road","id":654995725,"oneway":"yes","lanes":"4","p":[[115.3,-297.1],[136.1,-323.1]]},{"name":"Serangoon Road","id":655171480,"oneway":"yes","lanes":"4","p":[[-145.3,94.7],[-108.0,37.7]]},{"name":"Serangoon Road","id":655171481,"oneway":"yes","lanes":"4","p":[[-108.0,37.7],[-106.4,35.4],[-103.1,30.5],[-97.7,22.0],[-91.2,12.5]]},{"name":"Serangoon Road","id":655171482,"oneway":"yes","lanes":"4","p":[[-207.8,191.4],[-201.6,180.7],[-191.4,164.7]]},{"name":"Serangoon Road","id":661625382,"oneway":"yes","lanes":"4","p":[[16.6,-151.5],[38.0,-184.1]]},{"name":"Serangoon Road","id":661625383,"oneway":"yes","lanes":"4","p":[[-18.4,-98.3],[2.0,-128.9]]},{"name":"Serangoon Road","id":661625384,"oneway":"yes","lanes":"4","p":[[-78.8,-5.9],[-63.3,-29.9],[-51.4,-47.8]]},{"name":"Serangoon Road","id":661625385,"oneway":"yes","lanes":"4","p":[[-221.9,211.3],[-219.9,208.3],[-207.8,191.4]]},{"name":"Serangoon Road","id":661634629,"oneway":"yes","lanes":"4","p":[[336.4,-576.4],[350.7,-593.2],[354.9,-598.3]]},{"name":"Dunlop Street","id":665468541,"oneway":"yes","lanes":"1","p":[[40.1,360.1],[9.5,332.6]]},{"name":"Dunlop Street","id":665468542,"oneway":"yes","lanes":"1","p":[[45.8,365.2],[40.1,360.1]]},{"name":"Dunlop Street","id":665468543,"oneway":"yes","lanes":"1","p":[[80.5,396.8],[56.3,374.7]]},{"name":"Dunlop Street","id":665468546,"oneway":"yes","lanes":"1","p":[[-172.2,198.5],[-182.2,192.6]]},{"name":"Dunlop Street","id":665468547,"oneway":"yes","lanes":"1","p":[[-66.8,264.1],[-81.5,251.1],[-87.7,246.7]]},{"name":"Dunlop Street","id":665468548,"oneway":"yes","lanes":"1","p":[[9.5,332.6],[-13.5,312.0]]},{"name":"Dunlop Street","id":665468549,"oneway":"yes","lanes":"1","p":[[56.3,374.7],[45.8,365.2]]},{"name":"Dunlop Street","id":665468550,"oneway":"yes","lanes":"1","p":[[90.2,405.2],[80.5,396.8]]},{"name":"Dunlop Street","id":665468551,"oneway":"yes","lanes":"1","p":[[113.2,425.9],[109.5,422.5],[91.3,406.2],[90.2,405.2]]},{"name":"Dunlop Street","id":665473002,"oneway":"yes","lanes":"1","p":[[-104.7,237.2],[-140.6,217.3]]},{"name":"Dunlop Street","id":665473006,"oneway":"yes","lanes":"1","p":[[-140.6,217.3],[-172.2,198.5]]},{"name":"Serangoon Road","id":666585598,"oneway":"yes","lanes":"5","p":[[441.6,-706.5],[449.6,-717.1],[458.6,-728.9]]},{"name":"Campbell Lane","id":751798581,"oneway":null,"lanes":"2","p":[[-67.8,335.4],[-84.6,319.9]]},{"name":"Dunlop Street","id":751798582,"oneway":"yes","lanes":"1","p":[[-32.7,294.9],[-66.8,264.1]]},{"name":"Dunlop Street","id":751798583,"oneway":"yes","lanes":"1","p":[[-13.5,312.0],[-32.7,294.9]]},{"name":"Dunlop Street","id":752894395,"oneway":"yes","lanes":"1","p":[[-182.2,192.6],[-201.6,180.7]]},{"name":"Serangoon Road","id":784986729,"oneway":"yes","lanes":"4","p":[[61.0,-217.9],[68.7,-229.4]]},{"name":"Serangoon Road","id":784986730,"oneway":"yes","lanes":"4","p":[[50.6,-202.3],[61.0,-217.9]]},{"name":"Serangoon Road","id":785856832,"oneway":"yes","lanes":"4","p":[[150.0,-340.4],[166.8,-363.4]]},{"name":"Serangoon Road","id":786458589,"oneway":"yes","lanes":"5","p":[[-272.2,297.0],[-254.2,267.3]]},{"name":"Serangoon Road","id":786477043,"oneway":"yes","lanes":"4","p":[[-91.2,12.5],[-78.8,-5.9]]},{"name":"Campbell Lane","id":800333440,"oneway":null,"lanes":"2","p":[[-84.6,319.9],[-109.0,297.4]]},{"name":"Serangoon Road","id":829055026,"oneway":"yes","lanes":"4","p":[[4.2,-132.6],[16.6,-151.5]]},{"name":"Serangoon Road","id":1108464866,"oneway":"yes","lanes":"4","p":[[-51.4,-47.8],[-18.4,-98.3]]},{"name":"Serangoon Road","id":1512893971,"oneway":"yes","lanes":"4","p":[[180.6,-381.7],[202.2,-412.3],[207.8,-420.2]]},{"name":"Serangoon Road","id":1512893973,"oneway":"yes","lanes":"4","p":[[166.8,-363.4],[170.8,-368.1],[172.3,-370.0]]}]}};
   const stats = {};
+  const NOHULL = new Set(['deepavali_lightup']);
   function register(slug, zh, en, r, build, replaces){
     SGBV.data[slug] = data[slug];            // only registered modules join the hull mask (SGBV.skip builds it lazily)
     SGBV.register(slug, zh, en, r, build);
     const L = LANDMARKS['sgbv_' + slug]; delete LANDMARKS['sgbv_' + slug]; LANDMARKS['sgli_' + slug] = L;
     for (let i = SG_PLACES.length - 1; i >= 0; i--) if (SG_PLACES[i].type === 'sgbv_' + slug){ SG_PLACES[i].type = 'sgli_' + slug; break; }
     for (const old of (replaces || [])) for (let i = SG_PLACES.length - 1; i >= 0; i--) if (SG_PLACES[i].type === old) SG_PLACES.splice(i, 1);
+    if (NOHULL.has(slug)) L.noHull = true;  // street decorations: keep the real shophouses beneath them
     Object.defineProperty(stats, slug, {enumerable: true, get: () => SGBV.stats[slug]});
   }
   return Object.assign({}, SGBV, {data, register, stats});
 })();
+
+{
+const {register,rect,scale,center,out}=SGLI;
+
+// Local architectural frame mapped back to the OSM east/south coordinates.
+function kit(b,a=0,ox=0,oz=0){
+ const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
+ const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
+ const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
+ const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
+ const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
+ const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
+ const lathe=(x,z,y,r,h,c,m=0,profile=null,n=12)=>{
+  const A=profile||[[.7,0],[1,.16],[1.08,.36],[.93,.58],[.58,.8],[.15,.96],[0,1]];
+  for(let j=0;j<A.length-1;j++)for(let i=0;i<n;i++){
+   const t=i/n*Math.PI*2,u=(i+1)/n*Math.PI*2,[r0,y0]=A[j],[r1,y1]=A[j+1];
+   quad(c,[x+r*r0*Math.cos(t),y+h*y0,z+r*r0*Math.sin(t)],[x+r*r0*Math.cos(u),y+h*y0,z+r*r0*Math.sin(u)],[x+r*r1*Math.cos(u),y+h*y1,z+r*r1*Math.sin(u)],[x+r*r1*Math.cos(t),y+h*y1,z+r*r1*Math.sin(t)],m);
+  }
+ };
+ const frustum=(x,z,y,w,d,wt,dt,h,c,m=0)=>{const R=rect(x,z,w,d),Q=rect(x,z,wt,dt);for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[...R[i].slice(0,1),y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]],m);}b.cap(P(Q),y+h,c,m);};
+ const faces=R=>{let area=0;R.forEach((p,i)=>{const q=R[(i+1)%R.length];area+=p[0]*q[1]-q[0]*p[1];});return R.map((p,i)=>{const q=R[(i+1)%R.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),ex=(q[0]-p[0])/L,ez=(q[1]-p[1])/L,s=area>0?1:-1;return {L,F:(u,y,w=0)=>[p[0]+ex*u+ez*s*w,y,p[1]+ez*u-ex*s*w]};});};
+ const panel=(F,u,y,w,h,c,off=.06,m=0)=>quad(c,F(u-w/2,y,off),F(u+w/2,y,off),F(u+w/2,y+h,off),F(u-w/2,y+h,off),m);
+ const arch=(F,u,y,w,h,c,off=.06,m=0,cusps=0)=>{
+  const O=[[-w/2,0],[w/2,0]],n=24;
+  for(let i=0;i<=n;i++){const t=i/n*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0));O.push([Math.cos(t)*r,h-w/2+Math.sin(t)*r]);}
+  const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
+ };
+ const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
+ const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
+  // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
+  const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
+  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
+  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
+ };
+ const tower=(x,z,w,d,base,top,tiers,m=3)=>{
+  const th=(top-base-2.3)/tiers;
+  for(let k=0;k<tiers;k++){
+   const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
+  }
+  // Barrel-shaped sala crown and a row of kalasam finials.
+  const Y=top-2.3,W=w*.51,D=d*.57;
+  box(x,Y,z,W,.4,D,'#97b4cf',m);
+  for(let i=0;i<12;i++){const t=i/12*Math.PI,q=(i+1)/12*Math.PI;quad('#bfa5c6',[x-W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],[x-W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],m);}
+  for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
+ };
+ const tiledRoof=(x,z,w,d,y,h,c)=>{
+  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
+  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
+  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
+  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+ };
+ return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
+}
+// Dedicated architectural illumination still uses the app's shared lmMat cache.
+// Ordinary surfaces continue through SGBV's shared batched PBR materials.
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+
+// OSM 155991884 (hall), 1078263462 (annex). Painted plaster relief is geometry.
+register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamman Temple',38,(b,D,G,g)=>{
+ const K=kit(b,1.012),{box,beam,faces,panel,arch,lathe,tower,deity}=K;
+ const hall=D.parts[0].p,annex=D.parts[1].p;
+ b.prism(hall,-1,7.2,'#bcb5a1');b.cap(hall,7.23,'#5f7964');
+ b.prism(annex,-1,24.2,'#ede5d3');b.cap(annex,24.22,'#a6a69a');
+ // Six-storey annex: red end walls, paired small windows and pedimented central bay.
+ for(const E of kit(b).faces(annex)){
+  const n=Math.max(1,Math.round(E.L/3.3));
+  for(let f=0;f<6;f++){const y=.55+f*3.8;
+   for(let j=0;j<n;j++){const u=(j+.5)*E.L/n;
+    for(const s of [-1,1]){kit(b).panel(E.F,u+s*.37,y+1,.45,1.25,'#35464c',.08,2);}
+    if(j===Math.floor(n/2)){kit(b).panel(E.F,u,y+.7,1.9,2,'#d0c9b7',.04);kit(b).arch(E.F,u,y+2.5,2,.7,'#f8ecdb',.11);}
+   }
+   const p=E.F(0,y+3.55,.15),q=E.F(E.L,y+3.55,.15);b.beam(p,q,.18,'#a36762');
+  }
+  for(const u of [.4,E.L-.4])kit(b).panel(E.F,u,.3,.8,23.6,'#a25151',.13);
+ }
+ b.rim(annex,24.6,'#e8ddc7',.3);b.prism(scale(annex,.45),24.2,26.9,'#d5d2c7');
+ b.roof(scale(annex,.86),24.25);
+ // Hall's alternating red/white compound panels and sculpted parapet shrines.
+ for(const E of kit(b).faces(hall)){
+  for(let u=.25;u<E.L;u+=.85)kit(b).panel(E.F,u,.7,.41,5.2,'#a3473c',.04);
+  for(let u=.7;u<E.L;u+=2.2){const p=E.F(u,7.45,.05);b.box(p[0],7.45,p[2],.85,.6,.65,'#a6bbc6');kit(b).deity(E.F,u,7.5,.9,Math.floor(u),3);}
+ }
+ b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
+ // Entrance tower centred on the Serangoon Road edge, not on the whole compound.
+ box(-.6,.35,21.1,10,6.6,5.9,'#a3c0c9',3);
+ const F=(u,y,w=0)=>[u-.6,y,24.08+w];
+ panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,5);
+ for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
+ tower(-.6,21.1,9.8,5.7,6.95,18.9,4);
+ // Main Kali vimana plus smaller sanctum towers, clear of the front court.
+ tower(-.5,2.2,5.7,5.7,7.3,15.1,2);
+ for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
+ // Green ribbed hall roof and pale barrel skylight visible in the reference views.
+ for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');
+ for(let i=0;i<12;i++){const t=i/12*Math.PI,u=(i+1)/12*Math.PI;K.quad('#d0d2c4',[-8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2],[-8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2]);}
+ lathe(-.6,16.6,.3,.55,10.9,'#c3c5b9',0,[[1,0],[.6,.1],[.2,.12],[.15,1]],8);
+ // White entrance canopy: modest projection, no festival decorations or lettering.
+ for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),24],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),24]);}
+ for(const x of [-4.1,2.9])box(x,.1,26.7,.1,4.1,.1,'#adb9b8');
+ lights(b,g);
+},['sgveeramakali']);
+
+}
+
+{
+const {register,rect,scale,center,out}=SGLI;
+
+// Local architectural frame mapped back to the OSM east/south coordinates.
+function kit(b,a=0,ox=0,oz=0){
+ const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
+ const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
+ const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
+ const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
+ const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
+ const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
+ const lathe=(x,z,y,r,h,c,m=0,profile=null,n=12)=>{
+  const A=profile||[[.7,0],[1,.16],[1.08,.36],[.93,.58],[.58,.8],[.15,.96],[0,1]];
+  for(let j=0;j<A.length-1;j++)for(let i=0;i<n;i++){
+   const t=i/n*Math.PI*2,u=(i+1)/n*Math.PI*2,[r0,y0]=A[j],[r1,y1]=A[j+1];
+   quad(c,[x+r*r0*Math.cos(t),y+h*y0,z+r*r0*Math.sin(t)],[x+r*r0*Math.cos(u),y+h*y0,z+r*r0*Math.sin(u)],[x+r*r1*Math.cos(u),y+h*y1,z+r*r1*Math.sin(u)],[x+r*r1*Math.cos(t),y+h*y1,z+r*r1*Math.sin(t)],m);
+  }
+ };
+ const frustum=(x,z,y,w,d,wt,dt,h,c,m=0)=>{const R=rect(x,z,w,d),Q=rect(x,z,wt,dt);for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[...R[i].slice(0,1),y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]],m);}b.cap(P(Q),y+h,c,m);};
+ const faces=R=>{let area=0;R.forEach((p,i)=>{const q=R[(i+1)%R.length];area+=p[0]*q[1]-q[0]*p[1];});return R.map((p,i)=>{const q=R[(i+1)%R.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),ex=(q[0]-p[0])/L,ez=(q[1]-p[1])/L,s=area>0?1:-1;return {L,F:(u,y,w=0)=>[p[0]+ex*u+ez*s*w,y,p[1]+ez*u-ex*s*w]};});};
+ const panel=(F,u,y,w,h,c,off=.06,m=0)=>quad(c,F(u-w/2,y,off),F(u+w/2,y,off),F(u+w/2,y+h,off),F(u-w/2,y+h,off),m);
+ const arch=(F,u,y,w,h,c,off=.06,m=0,cusps=0)=>{
+  const O=[[-w/2,0],[w/2,0]],n=24;
+  for(let i=0;i<=n;i++){const t=i/n*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0));O.push([Math.cos(t)*r,h-w/2+Math.sin(t)*r]);}
+  const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
+ };
+ const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
+ const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
+  // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
+  const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
+  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
+  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
+ };
+ const tower=(x,z,w,d,base,top,tiers,m=3)=>{
+  const th=(top-base-2.3)/tiers;
+  for(let k=0;k<tiers;k++){
+   const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
+  }
+  // Barrel-shaped sala crown and a row of kalasam finials.
+  const Y=top-2.3,W=w*.51,D=d*.57;
+  box(x,Y,z,W,.4,D,'#97b4cf',m);
+  for(let i=0;i<12;i++){const t=i/12*Math.PI,q=(i+1)/12*Math.PI;quad('#bfa5c6',[x-W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],[x-W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],m);}
+  for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
+ };
+ const tiledRoof=(x,z,w,d,y,h,c)=>{
+  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
+  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
+  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
+  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+ };
+ return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
+}
+// Dedicated architectural illumination still uses the app's shared lmMat cache.
+// Ordinary surfaces continue through SGBV's shared batched PBR materials.
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+
+// Gopuram is OSM 481614952 at the east entrance, not the anchor centroid.
+register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa Perumal Temple',80,(b,D,G,g)=>{
+ const K=kit(b,1.504,53.49,-.84),W=kit(b),{box,lathe,tower,panel,deity}=K;
+ const gate=D.parts.find(p=>p.id===481614952).p;
+ b.prism(gate,-.7,.3,'#c1b7a4');
+ box(0,.3,0,13.3,6.6,9.5,'#9fb7c4',3);
+ const F=(u,y,w=0)=>[u,y,4.78+w];
+ panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,5);
+ for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,3);deity(F,s*5.3,1.3,2.1,s+7,3);}
+ box(0,6.6,0,13.8,.38,10,'#caa3aa',3);tower(0,0,13.2,9.3,7,20,5);
+ // Temple halls and side buildings use all four mapped OSM temple outlines.
+ const heights={454182405:7.3,454182408:7.9,454182454:6.8,455155906:7.7};
+ for(const part of D.parts.filter(p=>p.id!==481614952)){
+  const P=part.p,H=heights[part.id];b.prism(P,-.7,H,'#e6d9ba');b.cap(P,H+.04,'#a49275');b.rim(P,H+.24,'#c3aa71',.32);
+  for(const E of W.faces(P)){
+   const n=Math.max(1,Math.floor(E.L/3.25));
+   for(let j=0;j<n;j++){
+    const u=(j+.5)*E.L/n;W.arch(E.F,u,.65,Math.min(2,E.L/n-.35),4,'#465a59',.06);W.arcTrim(E.F,u,.65,Math.min(2,E.L/n-.35),4,'#dfcdb1');
+    W.panel(E.F,u,H-1.6,Math.min(2,E.L/n-.2),.52,'#9a6257',.08);
+    const p=E.F(j*E.L/n,.1,.12);b.box(p[0],.1,p[2],.33,H-.1,.33,'#c0ab7d');
+    if(j%2===0){const q=E.F(u,H+.35,.03);b.box(q[0],H+.35,q[2],.7,.55,.7,'#c5bfaa');W.lathe(q[0],q[2],H+.9,.45,.6,'#ceac64',3,null,8);}
+   }
+  }
+ }
+ // Sanctum above the northeast/southwest axis of the main mandapam.
+ const S=kit(b,.017,20,10);S.tower(0,0,7.1,7.1,6.9,14.1,2);
+ for(const [x,z]of [[18.2,31.8],[-5,-26],[-28,10]]){
+  const T=kit(b,.017,x,z);T.tower(0,0,3.6,3.6,7.4,11.6,1);
+ }
+ // Red/white short boundary wings on either side of the entrance; no oversized landuse slab.
+ for(const s of [-1,1]){
+  box(s*12.1,.15,3.8,10.5,2.7,.42,'#ece4cd');box(s*12.1,2.8,3.8,10.8,.16,.65,'#d0b273');
+  for(let u=7;u<17;u+=.9)box(s*u,.3,4.03,.43,2.4,.035,'#a74839');
+ }
+ // Silver flagstaff and low stepped entrance plinth.
+ W.lathe(38,2,.3,.55,11.3,'#c7be8e',0,[[1,0],[.6,.08],[.2,.1],[.14,1]],10);
+ for(let i=0;i<3;i++)box(0,i*.13,6.4-i*.3,4.2,.13,.6,'#c4bca8');
+ lights(b,g);
+},['srinivasa']);
+
+}
+
+{
+const {register,rect,scale,center,out}=SGLI;
+
+// Local architectural frame mapped back to the OSM east/south coordinates.
+function kit(b,a=0,ox=0,oz=0){
+ const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
+ const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
+ const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
+ const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
+ const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
+ const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
+ const lathe=(x,z,y,r,h,c,m=0,profile=null,n=12)=>{
+  const A=profile||[[.7,0],[1,.16],[1.08,.36],[.93,.58],[.58,.8],[.15,.96],[0,1]];
+  for(let j=0;j<A.length-1;j++)for(let i=0;i<n;i++){
+   const t=i/n*Math.PI*2,u=(i+1)/n*Math.PI*2,[r0,y0]=A[j],[r1,y1]=A[j+1];
+   quad(c,[x+r*r0*Math.cos(t),y+h*y0,z+r*r0*Math.sin(t)],[x+r*r0*Math.cos(u),y+h*y0,z+r*r0*Math.sin(u)],[x+r*r1*Math.cos(u),y+h*y1,z+r*r1*Math.sin(u)],[x+r*r1*Math.cos(t),y+h*y1,z+r*r1*Math.sin(t)],m);
+  }
+ };
+ const frustum=(x,z,y,w,d,wt,dt,h,c,m=0)=>{const R=rect(x,z,w,d),Q=rect(x,z,wt,dt);for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[...R[i].slice(0,1),y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]],m);}b.cap(P(Q),y+h,c,m);};
+ const faces=R=>{let area=0;R.forEach((p,i)=>{const q=R[(i+1)%R.length];area+=p[0]*q[1]-q[0]*p[1];});return R.map((p,i)=>{const q=R[(i+1)%R.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),ex=(q[0]-p[0])/L,ez=(q[1]-p[1])/L,s=area>0?1:-1;return {L,F:(u,y,w=0)=>[p[0]+ex*u+ez*s*w,y,p[1]+ez*u-ex*s*w]};});};
+ const panel=(F,u,y,w,h,c,off=.06,m=0)=>quad(c,F(u-w/2,y,off),F(u+w/2,y,off),F(u+w/2,y+h,off),F(u-w/2,y+h,off),m);
+ const arch=(F,u,y,w,h,c,off=.06,m=0,cusps=0)=>{
+  const O=[[-w/2,0],[w/2,0]],n=24;
+  for(let i=0;i<=n;i++){const t=i/n*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0));O.push([Math.cos(t)*r,h-w/2+Math.sin(t)*r]);}
+  const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
+ };
+ const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
+ const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
+  // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
+  const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
+  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
+  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
+ };
+ const tower=(x,z,w,d,base,top,tiers,m=3)=>{
+  const th=(top-base-2.3)/tiers;
+  for(let k=0;k<tiers;k++){
+   const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
+  }
+  // Barrel-shaped sala crown and a row of kalasam finials.
+  const Y=top-2.3,W=w*.51,D=d*.57;
+  box(x,Y,z,W,.4,D,'#97b4cf',m);
+  for(let i=0;i<12;i++){const t=i/12*Math.PI,q=(i+1)/12*Math.PI;quad('#bfa5c6',[x-W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],[x-W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],m);}
+  for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
+ };
+ const tiledRoof=(x,z,w,d,y,h,c)=>{
+  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
+  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
+  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
+  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+ };
+ return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
+}
+// Dedicated architectural illumination still uses the app's shared lmMat cache.
+// Ordinary surfaces continue through SGBV's shared batched PBR materials.
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+
+register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,g)=>{
+ const K=kit(b,-.686),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
+ const cream='#ece6d6',white='#f6f1e6',green='#335e49',roof='#a7a89a';
+ b.prism(D.parts[0].p,-1,1.65,'#c9c4b2');
+ // Raised historic prayer hall within a real open arcade; eastern extension stays low.
+ box(-7.4,1.65,-.6,17.8,7.6,23.2,cream,3);box(-7.4,9.05,-.6,18.2,.3,23.6,white,3);
+ box(12.2,1.65,0,14.5,7.5,29,cream,3);
+ const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);
+ const arcades=faces(deck);
+ for(const [i,E]of arcades.entries()){
+  if(i===0)continue;const n=i%2===0?7:8,bay=E.L/n;
+  for(let j=0;j<n;j++){
+   const u=(j+.5)*bay,w=bay-.7,lo=1.7,hi=6.45;
+   const p=E.F(j*bay,lo,.02);box(p[0],lo,p[2],.65,4.85,.65,cream,3);
+   for(const off of [-.15,.15]){const q=E.F(j*bay+off,lo,.38);box(q[0],lo,q[2],.12,4.55,.12,white,3);}
+   for(let k=0;k<24;k++){
+    const t=k/24*Math.PI,v=(k+1)/24*Math.PI,r=w/2*(1-.13*(1-Math.abs(Math.sin(5*t)))),s=w/2*(1-.13*(1-Math.abs(Math.sin(5*v))));
+    const x=u+Math.cos(t)*r,x1=u+Math.cos(v)*s,y=hi-w/2+Math.sin(t)*r,y1=hi-w/2+Math.sin(v)*s;
+    quad(cream,E.F(x,y,.03),E.F(x1,y1,.03),E.F(x1,6.72,.03),E.F(x,6.72,.03),3);
+   }
+   arcTrim(E.F,u,lo,w,hi-lo,green,5);
+   if(!(i===2&&j===3)){
+    for(let v=-w/2+.15;v<w/2;v+=.38){const a=E.F(u+v,lo+.2,.1),q=E.F(u+v,lo+1,.1);beam(a,q,.11,white);}
+    beam(E.F(u-w/2,lo+1.05,.1),E.F(u+w/2,lo+1.05,.1),.16,green);
+   }
+   // Small floral rosettes above each pier, without inscription or star text.
+   const F=E.F;for(let s=0;s<6;s++){const t=s/6*Math.PI*2;panel(F,j*bay+Math.cos(t)*.18,6+Math.sin(t)*.18,.08,.08,green,.39);}
+  }
+  beam(E.F(0,7.05,.14),E.F(E.L,7.05,.14),.22,green);
+  // Balustrade slots and continuous upper rail.
+  for(let u=.25;u<E.L;u+=.6){panel(E.F,u,7.2,.24,.57,green,.08);}
+  beam(E.F(0,7.95,.03),E.F(E.L,7.95,.03),.22,white);
+ }
+ // Clerestory windows, paired pilasters, terrace and 22 slender parapet turrets.
+ for(const E of faces(rect(-7.4,-.6,17.9,23.3))){for(let u=1.5;u<E.L;u+=3){arch(E.F,u,7.35,1.05,1.45,green,.08);arcTrim(E.F,u,7.35,1.05,1.45,white);}}
+ const turret=(x,z,y,w,h)=>{
+  for(let i=0;i<3;i++){box(x,y+i*h/3,z,w*(1-i*.09),h/3,w*(1-i*.09),white,3);box(x,y+(i+1)*h/3-.12,z,w+.12,.13,w+.12,green);}
+  lathe(x,z,y+h,w*.55,w*1.25,green,4,null,12);lathe(x,z,y+h+w*1.15,.04,.45,'#bca775',3,[[1,0],[1,1]],6);
+ };
+ const R=rect(-7.4,-.6,17.9,23.3),per=82.4;
+ for(let i=0;i<22;i++){
+  let d=(i+.5)*per/22,x,z;if(d<17.9){x=-16.35+d;z=-12.25;}else if((d-=17.9)<23.3){x=1.55;z=-12.25+d;}else if((d-=23.3)<17.9){x=1.55-d;z=11.05;}else{d-=17.9;x=-16.35;z=11.05-d;}turret(x,z,9.4,.38,2.1);
+ }
+ for(const [x,z]of [[-19,14],[4,14],[-19,-14],[4,-14]])turret(x,z,7.1,1.1,2.2);
+ // Entrance sunburst: twenty-five geometric rays, blank panels instead of calligraphy.
+ const F=(u,y,w=0)=>[u-7.5,y,14.65+w];
+ const outline=[[-2.6,7],[-2.8,9.5],[-2,10.8],[-1,11.7],[0,13.6],[1,11.7],[2,10.8],[2.8,9.5],[2.6,7]];
+ const t=THREE.ShapeUtils.triangulateShape(outline.map(p=>new THREE.Vector2(...p)),[]);for(const v of t)b.tri(white,...v.map(i=>K.T(...F(...outline[i],.14))),3);
+ for(let i=0;i<25;i++){const a=i/25*Math.PI*2,c=(i+.65)/25*Math.PI*2;quad(i%2?green:'#c6ac65',F(Math.cos(a)*.48,9.25+Math.sin(a)*.48,.2),F(Math.cos(a)*1.75,9.25+Math.sin(a)*1.75,.2),F(Math.cos(c)*1.75,9.25+Math.sin(c)*1.75,.2),F(Math.cos(c)*.48,9.25+Math.sin(c)*.48,.2),3);}
+ panel(F,0,6.4,3.5,.55,green,.23);panel(F,0,6.5,3.2,.25,'#e8d6a2',.25,5);
+ for(const x of [-10.2,-4.8])turret(x,14.6,7,1.1,4.8);
+ for(let i=0;i<6;i++)box(-7.5,.25+i*.23,16.1-i*.27,4.6,.23,.52,'#b7a998');
+ // Hexagonal three-stage cupola with inset arched windows and small corner pinnacles.
+ let y=9.3;for(let k=0;k<3;k++){
+  const r=3.3-k*.55,H=1.9-k*.15,R=K.ring(-7.4,-1.3,r,6);prism(R,y,y+H,cream,3);
+  for(const E of faces(R)){arch(E.F,E.L/2,y+.25,.72,H-.45,'#547d72',.04,5);arcTrim(E.F,E.L/2,y+.25,.72,H-.45,white);}
+  prism(K.ring(-7.4,-1.3,r+.12,6),y+H-.16,y+H,white,3);y+=H;
+ }
+ lathe(-7.4,-1.3,y,1.7,3.8,green,4,null,24);
+ lathe(-7.4,-1.3,y+3.6,.46,1.05,green,4,null,16);
+ lathe(-7.4,-1.3,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
+ for(const p of K.ring(-7.4,-1.3,2.05,6))turret(p[0],p[1],14.5,.33,1.3);
+ // Extension's long arched window rhythm and restrained flat service roof.
+ for(const E of faces(rect(12.2,0,14.55,29.05))){for(let u=1.5;u<E.L;u+=2.8){arch(E.F,u,2.2,1.35,3.2,'#456655',.08,2);arcTrim(E.F,u,2.2,1.35,3.2,white);}beam(E.F(0,8.7,.15),E.F(E.L,8.7,.15),.28,green);}
+ box(12.2,9.15,0,14.6,.2,29.1,roof);box(13,9.35,-8,3,1.1,3,'#b7c2b6');
+ lights(b,g);
+},['sgabdulgafoor']);
+
+}
+
+{
+const {register,rect,scale,center,out}=SGLI;
+
+// Local architectural frame mapped back to the OSM east/south coordinates.
+function kit(b,a=0,ox=0,oz=0){
+ const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
+ const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
+ const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
+ const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
+ const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
+ const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
+ const lathe=(x,z,y,r,h,c,m=0,profile=null,n=12)=>{
+  const A=profile||[[.7,0],[1,.16],[1.08,.36],[.93,.58],[.58,.8],[.15,.96],[0,1]];
+  for(let j=0;j<A.length-1;j++)for(let i=0;i<n;i++){
+   const t=i/n*Math.PI*2,u=(i+1)/n*Math.PI*2,[r0,y0]=A[j],[r1,y1]=A[j+1];
+   quad(c,[x+r*r0*Math.cos(t),y+h*y0,z+r*r0*Math.sin(t)],[x+r*r0*Math.cos(u),y+h*y0,z+r*r0*Math.sin(u)],[x+r*r1*Math.cos(u),y+h*y1,z+r*r1*Math.sin(u)],[x+r*r1*Math.cos(t),y+h*y1,z+r*r1*Math.sin(t)],m);
+  }
+ };
+ const frustum=(x,z,y,w,d,wt,dt,h,c,m=0)=>{const R=rect(x,z,w,d),Q=rect(x,z,wt,dt);for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[...R[i].slice(0,1),y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]],m);}b.cap(P(Q),y+h,c,m);};
+ const faces=R=>{let area=0;R.forEach((p,i)=>{const q=R[(i+1)%R.length];area+=p[0]*q[1]-q[0]*p[1];});return R.map((p,i)=>{const q=R[(i+1)%R.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),ex=(q[0]-p[0])/L,ez=(q[1]-p[1])/L,s=area>0?1:-1;return {L,F:(u,y,w=0)=>[p[0]+ex*u+ez*s*w,y,p[1]+ez*u-ex*s*w]};});};
+ const panel=(F,u,y,w,h,c,off=.06,m=0)=>quad(c,F(u-w/2,y,off),F(u+w/2,y,off),F(u+w/2,y+h,off),F(u-w/2,y+h,off),m);
+ const arch=(F,u,y,w,h,c,off=.06,m=0,cusps=0)=>{
+  const O=[[-w/2,0],[w/2,0]],n=24;
+  for(let i=0;i<=n;i++){const t=i/n*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0));O.push([Math.cos(t)*r,h-w/2+Math.sin(t)*r]);}
+  const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
+ };
+ const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
+ const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
+  // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
+  const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
+  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
+  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
+ };
+ const tower=(x,z,w,d,base,top,tiers,m=3)=>{
+  const th=(top-base-2.3)/tiers;
+  for(let k=0;k<tiers;k++){
+   const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
+  }
+  // Barrel-shaped sala crown and a row of kalasam finials.
+  const Y=top-2.3,W=w*.51,D=d*.57;
+  box(x,Y,z,W,.4,D,'#97b4cf',m);
+  for(let i=0;i<12;i++){const t=i/12*Math.PI,q=(i+1)/12*Math.PI;quad('#bfa5c6',[x-W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],[x-W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],m);}
+  for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
+ };
+ const tiledRoof=(x,z,w,d,y,h,c)=>{
+  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
+  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
+  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
+  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+ };
+ return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
+}
+// Dedicated architectural illumination still uses the app's shared lmMat cache.
+// Ordinary surfaces continue through SGBV's shared batched PBR materials.
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+
+register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g)=>{
+ const K=kit(b,.78),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
+ const coral='#ac6560',cream='#eee0c4',dark='#425b5a',bronze='#a17d52';
+ b.prism(D.parts[0].p,-1,.25,'#c7bca5');
+ // Current 2020 prayer hall behind the independently conserved gatehouse.
+ const hall=[[-8.6,-20],[11.45,-20],[8,12.2],[-10.45,12.2]];
+ prism(hall,.25,19.2,coral,3);prism(hall,19.2,19.55,cream,3);
+ // Tall blind/ glazed pointed arches, slim cream bands and inset patterned screens.
+ const pointed=(F,u,y,w,h,c,off=.08,m=0)=>{
+  const O=[[-w/2,0],[w/2,0],[w/2,h*.68],[w*.36,h*.83],[0,h],[-w*.36,h*.83],[-w/2,h*.68]];
+  for(let i=1;i<O.length-1;i++)b.tri(c,K.T(...F(u+O[0][0],y+O[0][1],off)),K.T(...F(u+O[i][0],y+O[i][1],off)),K.T(...F(u+O[i+1][0],y+O[i+1][1],off)),m);
+ };
+ for(const [i,E]of faces(hall).entries()){
+  const n=i%2===0?3:6;
+  for(let j=0;j<n;j++){
+   const u=(j+.5)*E.L/n,bw=E.L/n;
+   if(i===2){
+    pointed(E.F,u,3.5,bw-.5,10.4,cream,.06,3);pointed(E.F,u,3.65,bw-.85,10.1,j===0?dark:coral,.09,j===0?2:3);
+    if(j===0)for(let y=4;y<12;y+=1.7)beam(E.F(u-bw*.35,y,.13),E.F(u+bw*.35,y,.13),.07,bronze);
+   }else{
+    for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,2);}
+   }
+   pointed(E.F,u,15.2,bw-.65,3.35,cream,.08,3);pointed(E.F,u,15.38,bw-.95,3.02,bronze,.1);
+   // Physical diamond jali lattice across the upper register.
+   for(let v=-bw*.31;v<bw*.32;v+=.45)for(let yy=15.6;yy<17.8;yy+=.5){beam(E.F(u+v,yy,.14),E.F(u+v+.22,yy+.25,.14),.045,cream);beam(E.F(u+v+.22,yy+.25,.14),E.F(u+v,yy+.5,.14),.045,cream);}
+   beam(E.F(j*bw,.3,.12),E.F(j*bw,19.4,.12),.2,cream);
+  }
+  for(const y of [4.8,9.3,14.6,19.45])beam(E.F(0,y,.13),E.F(E.L,y,.13),.17,cream);
+  for(let u=.2;u<E.L;u+=.45){const p=E.F(u,19.55,0);box(p[0],19.55,p[2],.24,.35,.24,coral);}
+ }
+ // Conserved three-arch gate, freestanding behind the Serangoon Road pavement.
+ const F=(u,y,w=0)=>[u-2.4,y,18.65+w];
+ box(-2.4,4.65,18.4,19.3,.55,1.1,cream,3);box(-2.4,5.13,18.4,19.5,.18,1.25,coral,3);
+ for(const x of [-11.75,-5.45,.85,7.15]){
+  box(x,.2,18.4,.72,4.6,1.1,cream,3);
+  for(let k=0;k<4;k++){box(x,5.3+k*.68,18.4,.6,.68,.6,cream,3);box(x,5.86+k*.68,18.4,.73,.12,.73,coral);}
+  lathe(x,18.4,8.02,.4,.55,coral,3,null,8);
+ }
+ for(const u of [-6.3,0,6.3]){
+  arcTrim(F,u,.25,5.35,4.15,cream);
+  // Narrow grille leaves retain a visible central passage.
+  if(u!==0)for(let v=-2.2;v<2.3;v+=.32)beam(F(u+v,.3,.1),F(u+v,3.1,.1),.055,'#547865');
+ }
+ for(let u=-9;u<9.3;u+=.4){const p=F(u,4.3,0);box(p[0],4.3,p[2],.13,.4,.13,'#52765d');}
+ box(-2.4,5.45,18.4,4,.65,.28,'#7b8f7e');
+ // Short rooftop corner tower, not a tall freestanding Ottoman minaret.
+ box(6.7,19.4,10.6,2.3,4.4,2.3,coral,3);
+ for(const E of faces(rect(6.7,10.6,2.32,2.32))){pointed(E.F,E.L/2,20.4,1.65,2.2,cream,.1,3);panel(E.F,E.L/2,21,1.05,.85,dark,.12);}
+ K.frustum(6.7,10.6,23.8,2.5,2.5,0,0,1.3,bronze);
+ lathe(6.7,10.6,25.1,.045,.5,bronze,3,[[1,0],[1,1]],6);
+ // Roof pavilion's light steel lattice, with service plant screened behind.
+ for(let i=0;i<16;i++){const a=i/16*Math.PI*2;beam([Math.cos(a)*4,19.7,-5+Math.sin(a)*4],[0,22.2,-5],.07,'#b7b5a6');}
+ box(-4,19.6,-14,3.5,1.2,3,'#b7b7aa');
+ for(let i=0;i<5;i++)box(-4+i*.55,20.82,-14,.08,.05,2.4,'#6b7572');
+ // Shallow entrance canopy and soffit lamps, observed in the night photograph.
+ box(-2.4,4.2,13.9,12,.18,3,'#b1bdb3');
+ for(const x of [-7,2])box(x,4.05,14,.3,.1,.3,'#efdcac',5);
+ lights(b,g);
+});
+
+}
+
+{
+const {register,rect,scale,center,out}=SGLI;
+
+// Local architectural frame mapped back to the OSM east/south coordinates.
+function kit(b,a=0,ox=0,oz=0){
+ const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
+ const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
+ const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
+ const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
+ const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
+ const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
+ const lathe=(x,z,y,r,h,c,m=0,profile=null,n=12)=>{
+  const A=profile||[[.7,0],[1,.16],[1.08,.36],[.93,.58],[.58,.8],[.15,.96],[0,1]];
+  for(let j=0;j<A.length-1;j++)for(let i=0;i<n;i++){
+   const t=i/n*Math.PI*2,u=(i+1)/n*Math.PI*2,[r0,y0]=A[j],[r1,y1]=A[j+1];
+   quad(c,[x+r*r0*Math.cos(t),y+h*y0,z+r*r0*Math.sin(t)],[x+r*r0*Math.cos(u),y+h*y0,z+r*r0*Math.sin(u)],[x+r*r1*Math.cos(u),y+h*y1,z+r*r1*Math.sin(u)],[x+r*r1*Math.cos(t),y+h*y1,z+r*r1*Math.sin(t)],m);
+  }
+ };
+ const frustum=(x,z,y,w,d,wt,dt,h,c,m=0)=>{const R=rect(x,z,w,d),Q=rect(x,z,wt,dt);for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[...R[i].slice(0,1),y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]],m);}b.cap(P(Q),y+h,c,m);};
+ const faces=R=>{let area=0;R.forEach((p,i)=>{const q=R[(i+1)%R.length];area+=p[0]*q[1]-q[0]*p[1];});return R.map((p,i)=>{const q=R[(i+1)%R.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),ex=(q[0]-p[0])/L,ez=(q[1]-p[1])/L,s=area>0?1:-1;return {L,F:(u,y,w=0)=>[p[0]+ex*u+ez*s*w,y,p[1]+ez*u-ex*s*w]};});};
+ const panel=(F,u,y,w,h,c,off=.06,m=0)=>quad(c,F(u-w/2,y,off),F(u+w/2,y,off),F(u+w/2,y+h,off),F(u-w/2,y+h,off),m);
+ const arch=(F,u,y,w,h,c,off=.06,m=0,cusps=0)=>{
+  const O=[[-w/2,0],[w/2,0]],n=24;
+  for(let i=0;i<=n;i++){const t=i/n*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0));O.push([Math.cos(t)*r,h-w/2+Math.sin(t)*r]);}
+  const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
+ };
+ const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
+ const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
+  // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
+  const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
+  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
+  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
+ };
+ const tower=(x,z,w,d,base,top,tiers,m=3)=>{
+  const th=(top-base-2.3)/tiers;
+  for(let k=0;k<tiers;k++){
+   const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
+  }
+  // Barrel-shaped sala crown and a row of kalasam finials.
+  const Y=top-2.3,W=w*.51,D=d*.57;
+  box(x,Y,z,W,.4,D,'#97b4cf',m);
+  for(let i=0;i<12;i++){const t=i/12*Math.PI,q=(i+1)/12*Math.PI;quad('#bfa5c6',[x-W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],[x-W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],m);}
+  for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
+ };
+ const tiledRoof=(x,z,w,d,y,h,c)=>{
+  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
+  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
+  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
+  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+ };
+ return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
+}
+// Dedicated architectural illumination still uses the app's shared lmMat cache.
+// Ordinary surfaces continue through SGBV's shared batched PBR materials.
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+
+register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)=>{
+ const K=kit(b,2.49),{box,faces,panel,arch,arcTrim,beam,quad,lathe}=K;
+ const P=[[-5.8,-12],[8.75,-12],[8.75,3.45],[5.5,3.45],[5.5,12.75],[-2.7,12.75],[-2.7,3.45],[-5.8,3.45]];
+ const colors=['#d94f67','#e5bd42','#367bb1','#3b9e79','#9766ad','#df7e46','#bd4540','#51aeb1'];
+ b.prism(D.parts[0].p,-.7,.32,'#8d897b');
+ // The upper floor projects above a recessed entrance five-foot way.
+ K.prism(P,3.85,7.6,'#91a8be');
+ const lower=[[-5.8,-12],[8.75,-12],[8.75,3.45],[5.5,3.45],[5.5,11.15],[-2.7,11.15],[-2.7,3.45],[-5.8,3.45]];
+ K.prism(lower,.32,3.85,'#eee3cf');
+ let index=0;
+ for(const E of faces(P)){
+  const front=E.F(E.L/2,0)[2]>12;
+  const n=Math.max(1,Math.round(E.L/2.65)),bay=E.L/n;
+  for(let j=0;j<n;j++,index++){
+   const u=(j+.5)*bay,w=Math.min(1.4,bay*.63),col=colors[index%8];
+   // Deep painted shutter rebates, contrasting lunettes and carved floral panels.
+   arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,3);arch(E.F,u,4.47,w+.07,2.53,colors[(index+2)%8],.09,3);
+   panel(E.F,u,4.48,w,1.94,'#454941',.11);
+   for(const s of [-1,1]){
+    panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,3);
+    for(let y=4.75;y<6.32;y+=.17)beam(E.F(u+s*w*.25-w*.18,y,.16),E.F(u+s*w*.25+w*.18,y,.16),.052,colors[(index+3)%8]);
+    panel(E.F,u+s*w*.25,4.58,w*.3,.4,colors[(index+5)%8],.18,3);
+   }
+   arcTrim(E.F,u,4.35,w+.35,2.78,colors[(index+1)%8]);
+   for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,3);}
+   for(const v of [j*bay,(j+1)*bay]){
+    panel(E.F,v,3.88,.26,3.5,colors[(index+3)%8],.15,3);
+    for(const s of [-1,1])beam(E.F(v+s*.08,4.15,.18),E.F(v+s*.08,6.95,.18),.042,'#e8c76c');
+    panel(E.F,v,7.04,.48,.28,colors[(index+5)%8],.2,3);
+   }
+   if(!front){arch(E.F,u,.75,w+.25,2.5,colors[(index+1)%8],.06);panel(E.F,u,.8,w,2,'#716046',.08);}
+  }
+  // Painted cornices, tiny bracket dentils, individually coloured fascia boards.
+  for(const [y,h,c]of [[3.65,.18,'#c49939'],[3.84,.16,'#438e6b'],[7.3,.15,'#d4af61'],[7.55,.16,'#6b648a']]){
+   beam(E.F(0,y,.15),E.F(E.L,y,.15),h,c);
+  }
+  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,colors[Math.floor(u/.28)%8],.3,3);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
+ }
+ // Recessed red front wall and richly carved timber doors, all inscription panels blank.
+ const F=(u,y,w=0)=>[u+1.4,y,11.18+w];
+ panel(F,0,.35,8.18,3.45,'#b9494e',.01,3);
+ for(const u of [-2.55,0,2.55]){
+  panel(F,u,.5,u===0?1.7:1.45,2.65,'#bfaa78',.05);
+  for(const s of [-1,1])for(let j=0;j<3;j++){
+   const x=u+s*(u===0?.4:.34),y=.7+j*.72;panel(F,x,y,.52,.55,'#8f7651',.075);panel(F,x,y+.05,.42,.44,'#c6b485',.085);
+  }
+  panel(F,u,3.2,1.9,.38,'#4e7587',.07,3);
+ }
+ for(const [x,c]of [[-2.48,'#3c78b4'],[5.28,'#d6bd4a']]){
+  box(x,.3,12.48,.55,3.55,.58,c,3);box(x,.3,12.48,.76,.25,.8,'#454f48');box(x,3.65,12.48,.75,.2,.8,'#b3a07a');
+  // Warm globe lamps in the 2023 night photograph.
+  lathe(x,12.8,3.85,.2,.35,'#efce83',5,null,10);
+ }
+ box(1.4,3.78,12,8.6,.15,2,'#c6b68c');
+ // Two intersecting Chinese bamboo-tile hip roofs, visible ridge and narrow tile rolls.
+ K.tiledRoof(1.47,-4.3,16.1,17.2,7.8,3.0,'#94755e');
+ const q=K.T(1.4,0,8.2),R=kit(b,2.49+Math.PI/2,q[0],q[2]);R.tiledRoof(0,0,10.5,9.4,7.8,2.55,'#997b60');
+ // Shallow over-door tiled canopy and modest rear air-conditioning plant.
+ box(1.4,3.8,11.8,8.7,.16,2.15,'#4e8076');
+ for(let u=-2.8;u<5.8;u+=.28)beam([u,3.95,10.8],[u,3.85,12.8],.08,'#5e927e');
+ for(const x of [-3.8,7.2])box(x,2.7,-11.9,1,.65,.5,'#c3bdb0');
+ lights(b,g);
+},['sgtantengniah']);
+
+}
+
+{
+const {register,rect,scale,center,out}=SGLI;
+
+// Local architectural frame mapped back to the OSM east/south coordinates.
+function kit(b,a=0,ox=0,oz=0){
+ const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
+ const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
+ const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
+ const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
+ const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
+ const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
+ const lathe=(x,z,y,r,h,c,m=0,profile=null,n=12)=>{
+  const A=profile||[[.7,0],[1,.16],[1.08,.36],[.93,.58],[.58,.8],[.15,.96],[0,1]];
+  for(let j=0;j<A.length-1;j++)for(let i=0;i<n;i++){
+   const t=i/n*Math.PI*2,u=(i+1)/n*Math.PI*2,[r0,y0]=A[j],[r1,y1]=A[j+1];
+   quad(c,[x+r*r0*Math.cos(t),y+h*y0,z+r*r0*Math.sin(t)],[x+r*r0*Math.cos(u),y+h*y0,z+r*r0*Math.sin(u)],[x+r*r1*Math.cos(u),y+h*y1,z+r*r1*Math.sin(u)],[x+r*r1*Math.cos(t),y+h*y1,z+r*r1*Math.sin(t)],m);
+  }
+ };
+ const frustum=(x,z,y,w,d,wt,dt,h,c,m=0)=>{const R=rect(x,z,w,d),Q=rect(x,z,wt,dt);for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[...R[i].slice(0,1),y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]],m);}b.cap(P(Q),y+h,c,m);};
+ const faces=R=>{let area=0;R.forEach((p,i)=>{const q=R[(i+1)%R.length];area+=p[0]*q[1]-q[0]*p[1];});return R.map((p,i)=>{const q=R[(i+1)%R.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),ex=(q[0]-p[0])/L,ez=(q[1]-p[1])/L,s=area>0?1:-1;return {L,F:(u,y,w=0)=>[p[0]+ex*u+ez*s*w,y,p[1]+ez*u-ex*s*w]};});};
+ const panel=(F,u,y,w,h,c,off=.06,m=0)=>quad(c,F(u-w/2,y,off),F(u+w/2,y,off),F(u+w/2,y+h,off),F(u-w/2,y+h,off),m);
+ const arch=(F,u,y,w,h,c,off=.06,m=0,cusps=0)=>{
+  const O=[[-w/2,0],[w/2,0]],n=24;
+  for(let i=0;i<=n;i++){const t=i/n*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0));O.push([Math.cos(t)*r,h-w/2+Math.sin(t)*r]);}
+  const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
+ };
+ const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
+ const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
+  // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
+  const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
+  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
+  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
+ };
+ const tower=(x,z,w,d,base,top,tiers,m=3)=>{
+  const th=(top-base-2.3)/tiers;
+  for(let k=0;k<tiers;k++){
+   const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
+  }
+  // Barrel-shaped sala crown and a row of kalasam finials.
+  const Y=top-2.3,W=w*.51,D=d*.57;
+  box(x,Y,z,W,.4,D,'#97b4cf',m);
+  for(let i=0;i<12;i++){const t=i/12*Math.PI,q=(i+1)/12*Math.PI;quad('#bfa5c6',[x-W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(t)*1.15,z+Math.cos(t)*D/2],[x+W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],[x-W/2,Y+.4+Math.sin(q)*1.15,z+Math.cos(q)*D/2],m);}
+  for(let i=0;i<7;i++)lathe(x+(i-3)*W/7,z,top-.72,.16,.72,'#d6b35d',m,null,8);
+ };
+ const tiledRoof=(x,z,w,d,y,h,c)=>{
+  const R=rect(x,z,w,d);const Q=[[x-w*.3,z],[x+w*.3,z],[x+w*.3,z],[x-w*.3,z]];
+  for(let i=0;i<4;i++){const j=(i+1)%4;quad(c,[R[i][0],y,R[i][1]],[R[j][0],y,R[j][1]],[Q[j][0],y+h,Q[j][1]],[Q[i][0],y+h,Q[i][1]]);}
+  beam([x-w*.3,y+h,z],[x+w*.3,y+h,z],.23,'#75614f');
+  for(let u=-w*.48;u<w*.49;u+=.28)for(const s of [-1,1])beam([x+u,y,z+s*d/2],[x+u*.6,y+h,z],.055,'#a88466');
+ };
+ return {T,P,box,beam,quad,prism,ring,lathe,frustum,faces,panel,arch,arcTrim,palette,deity,tower,tiledRoof};
+}
+// Dedicated architectural illumination still uses the app's shared lmMat cache.
+// Ordinary surfaces continue through SGBV's shared batched PBR materials.
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+
+register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,(b,D,G,g)=>{
+ const K=kit(b),{faces,panel,beam,quad}=K,P=D.parts[0].p,H=21.5;
+ b.prism(P,-1,H,'#bdb8aa');b.cap(P,H+.04,'#a7aca5');b.rim(P,H+.35,'#c9c8b9',.3);
+ const colors=['#b18430','#287d73','#b66435','#516f99','#b9aa43','#7e4162','#4b8c96','#c9a75a'];
+ for(const i of [1,3]){
+  const E=faces(P)[i],F=E.F,L=E.L;
+  // Recessed street-level lobby; diagonal supports carry the glazed upper volume.
+  panel(F,L/2,.2,L-.15,4.3,'#3e5d61',.04,2);
+  for(let u=0;u<L;u+=4.3){beam(F(u,.2,.12),F(u,4.5,.12),.12,'#7b8075');}
+  for(let u=1;u<L;u+=9){beam(F(u,.15,.7),F(Math.min(L,u+2.8),4.5,.7),.28,'#bdb9a7');}
+  // Abstract painted mural behind the glass: multicolour fields with small
+  // geometric figures/architectural motifs, no reproductions of photographs.
+  const nx=Math.ceil(L/2.4),ny=7;
+  for(let j=0;j<nx;j++)for(let k=0;k<ny;k++){
+   const u=(j+.5)*L/nx,y=4.65+k*2.38,w=L/nx-.025,h=Math.min(2.35,H-y-.15);
+   if(h<=0)continue;
+   panel(F,u,y,w,h,colors[(j*3+k*5+i)%8],.07,7);
+   if((j+k)%3===0){
+    // Stylised mural figures: coloured robe, head medallion and bent arms.
+    panel(F,u,y+.15,w*.26,1.1,colors[(j+k+4)%8],.09,7);
+    const O=Array.from({length:10},(_,n)=>F(u+Math.cos(n/10*Math.PI*2)*.18,y+1.6+Math.sin(n/10*Math.PI*2)*.22,.09));
+    for(let n=1;n<9;n++)b.tri('#dcc895',O[0],O[n],O[n+1],7);
+    for(const s of [-1,1]){const A=F(u+s*.1,y+1.05,.1),B=F(u+s*.4,y+.8,.1);b.beam(A,B,.09,'#d2b97c');}
+   }else{
+    for(const v of [-.3,0,.3])panel(F,u+v*w,y+.25,.05,Math.min(1.5,h-.3),'#dac586',.09,7);
+    for(const v of [.2,.65,1.1])if(v<h-.1)panel(F,u,y+v,w*.7,.055,'#ddbd67',.09,7);
+   }
+  }
+  // A real stair rhythm behind the stepped facade, with horizontal landings.
+  for(let j=0;j<36;j++){
+   const u=.3+j*(L-.6)/36,y=4.7+j*(H-5.4)/36;
+   beam(F(u,y,.12),F(u+(L-.6)/36,y,.12),.15,'#c3baa0');
+   beam(F(u+(L-.6)/36,y,.12),F(u+(L-.6)/36,y+.45,.12),.08,'#bcb39a');
+  }
+  // Translucent lightly tinted glass sheets let the mural remain visible.
+  const n=Math.ceil(L/2.5);
+  for(let j=0;j<n;j++)panel(F,(j+.5)*L/n,4.6,L/n-.025,H-4.7,j%3?'#b9c4bb':'#9bada8',.18,6);
+  // Baoli diamond lattice, clipped analytically at the facade's actual bounds.
+  for(const slope of [-.78,.78])for(let start=-25;start<L+25;start+=7.0){
+   const y0=4.6,y1=H-.05;
+   const u0=start,u1=start+(y1-y0)/slope;
+   let lo=0,hi=1;const d=u1-u0;
+   if(d>0){lo=Math.max(lo,-u0/d);hi=Math.min(hi,(L-u0)/d);}else{lo=Math.max(lo,(L-u0)/d);hi=Math.min(hi,-u0/d);}
+   if(hi<=lo)continue;
+   const a=F(u0+d*lo,y0+(y1-y0)*lo,.32),q=F(u0+d*hi,y0+(y1-y0)*hi,.32);
+   beam(a,q,.19,'#5c5b4f');const A=F(u0+d*lo,y0+(y1-y0)*lo+.08,.35),B=F(u0+d*hi,y0+(y1-y0)*hi+.08,.35);beam(A,B,.045,'#ad9b77');
+  }
+  for(const y of [4.55,H])beam(F(0,y,.26),F(L,y,.26),.22,'#736d57');
+  for(const u of [0,L])beam(F(u,4.5,.26),F(u,H,.26),.18,'#817b63');
+  // Entrance soffit, blank lit information panels and stone steps.
+  const a=F(L*.45,3.7,.25),q=F(L*.55,3.7,.25);beam(a,q,.12,'#ded3b7');
+  panel(F,L*.52,1.1,1.3,1.7,'#d6c49c',.28,5);
+  for(let j=0;j<3;j++){
+   const R=[F(L*.32,.1+j*.15,.5),F(L*.65,.1+j*.15,.5),F(L*.65,.1+j*.15,1.4-j*.3),F(L*.32,.1+j*.15,1.4-j*.3)];b.quad('#b5b4a7',...R);
+  }
+ }
+ // Opaque upper gallery walls and recessed roof plant stay quiet at night.
+ for(const i of [0,4,5]){
+  const E=faces(P)[i];if(E.L<2)continue;
+  for(const y of [4.4,9,13.6,18.2])beam(E.F(0,y,.05),E.F(E.L,y,.05),.09,'#aca99b');
+ }
+ const C=center(P);b.box(C[0]-2,H+.05,C[1]-1,8,1.2,5,'#a1aaa4');
+ for(let i=-3;i<=3;i++)b.box(C[0]-2+i,H+1.27,C[1]-1,.07,.04,4,'#586b69');
+ // Transparent glass and colour-preserving mural light each form one shared batch.
+ for(const mode of [6,7])if(b.buckets.has(mode)){
+  const B=new SGLI.Batch(b.base);B.buckets.set(mode,b.buckets.get(mode));
+  B.flush(g,()=>lmMat(mode===6?{c:'#ffffff',vc:true,ds:true,m:0,lk:.1,op:.23}:{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe4b6',lk:2.6}));b.buckets.delete(mode);
+ }
+ lights(b,g);
+});
+
+}
+
+/* OSM 47198835. Two-storey market only; adjacent HDB towers stay generic.
+ * Current purple paint from September 2023 reopening photographs. */
+{
+const {register,out,scale,lerp}=SGLI;
+register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
+ const P=D.parts[0].p,H=9.2,eave=9.0;
+ // Reference p50 12.1 m / p90 13.6 m; 68.9 m max is HDB contamination.
+ const verticalScale=1.32;
+ const flush=b.flush.bind(b);b.flush=g=>{for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+(B.p[i]-b.base)*verticalScale;return flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':undefined,gk:mode===4?.75:mode===5?.3:0}));};
+ b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#363d40');b.walls(P,7.42,9.0,'#9a7ab6');
+ // Sheltered market and first-floor galleries: the open bays sit behind the columns.
+ const Q=out(P,.06);
+ Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<6)return;
+  const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/5.5));
+  for(let j=0;j<n;j++){
+   const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t),w=L/n;
+   b.box(x,.25,z,.46,7.05,.46,'#e4e1d8',a);
+   b.box(x,3.65,z,w,.25,.42,'#eee9da',a);
+   b.box(x,4.0,z,w-.48,.85,.22,'#a49bbb',a);
+   for(let k=-2;k<=2;k++)b.box(x+Math.cos(a)*k*w/6,4.85,z-Math.sin(a)*k*w/6,.06,.7,.08,'#b9c0bb',a);
+   if(j%2===0)b.box(x,2.7,z,w*.65,.46,.12,'#e4d9ba',a,4);
+   b.box(x,6.98,z,w*.6,.06,.9,'#e5dfc9',a,5);
+  }
+  b.box((p[0]+q[0])/2,6.65,(p[1]+q[1])/2,L,.85,.65,'#9a7ab6',a);
+  b.box((p[0]+q[0])/2,7.42,(p[1]+q[1])/2,L,.14,.9,'#d4c7d9',a);
+  // Broken colour strokes follow the repainted façade, rather than invented signage.
+  for(let j=0;j<n;j+=2){const t=(j+.5)/n;b.box(lerp(p[0],q[0],t),6.9+(j%3)*.12,lerp(p[1],q[1],t),Math.min(5,L/n*.8),.13,.73,['#e6b637','#ed8b68','#a3bb53'][j%3],a);}
+ });
+ // Shallow pitched roof with deep eaves. Subdivided OSM triangles produce a
+ // continuous hip surface on the irregular market plan, without filling its notches.
+ const R=out(P,.65);
+ // Two broad parallel ridge lines follow the market wings. Boundary recesses
+ // remain plan details, not a source of tiny conical roof peaks.
+ const roof=p=>{const v=-.624*p[0]+.781*p[1];return [p[0],v<4?9.05:9.15,p[1]];};
+ const tris=THREE.ShapeUtils.triangulateShape(R.map(p=>new THREE.Vector2(...p)),[]);
+ function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#6596a1':'#819079',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
+ tris.forEach(t=>tile(...t.map(i=>R[i]),3));b.rim(R,eave,'#d9d2d7',.22);
+ // North hall: repeated sawtooth monitor roofs. The broad outer roof and
+ // south gridded sheet roof stay separate from these raised ventilator strips.
+ const UV=(u,v,y)=>[.781*u-.624*v,y,.624*u+.781*v];
+ for(let u=-57;u<6;u+=5){const A=UV(u,-33,9.2),B=UV(u,-7,9.2),C=UV(u+4.8,-7,10.3),E=UV(u+4.8,-33,10.3);
+  if([A,B,C,E].every(p=>SGLI.inside(P,p[0],p[2]))){b.quad('#66796b',A,B,C,E);b.quad('#344850',C,E,UV(u+4.8,-33,9.2),UV(u+4.8,-7,9.2));b.beam(C,E,.1,'#aab7ae');}
+ }
+ // Fine standing-seam grid and a few exhaust banks on the southern roof.
+ for(let u=-10;u<75;u+=3.2)for(let v=6;v<40;v+=4){const A=UV(u,v,9.2),B=UV(u,v+3.8,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.055,'#c4d0c4');}
+ for(let v=8;v<41;v+=8)for(let u=-10;u<72;u+=4){const A=UV(u,v,9.2),B=UV(u+3.8,v,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.05,'#b7c8c0');}
+ for(const [u,v]of [[16,10],[31,13],[50,23],[22,34]]){const c=UV(u,v,9.2);b.box(c[0],9.2,c[2],3,.35,1.4,'#d2d9d4',-.67);for(let k=-1;k<=1;k++)b.box(c[0]+k*.7,9.56,c[2],.5,.04,1.1,'#647c7c',-.67);}
+
+ // Entrance stair and short access ramp stay inside the front footprint.
+ {const p=P[25],q=P[26],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),F=(u,v,y)=>[p[0]+dx/L*u-dz/L*v,y,p[1]+dz/L*u+dx/L*v];
+  for(let j=0;j<8;j++){const c=F(L*.62,1+j*.32,.18);b.box(c[0],.18,c[2],5,(j+1)*.12,.34,'#c8b8a4',a);}
+  const A=F(L*.62+3.4,1,.18),B=F(L*.62+3.4,12,1.14),C=F(L*.62+5,12,1.14),E=F(L*.62+5,1,.18);
+  b.quad('#b9b3a4',A,B,C,E);b.beam(F(L*.62+5,1,1.0),F(L*.62+5,12,1.95),.065,'#c7ceca');
+  const c=F(L*.62,.9,3.4);b.box(c[0],3.4,c[2],7,.16,2.8,'#668d9d',a);
+ }
+ // Louvred entrance screens on the Buffalo Road / Serangoon corner.
+ for(const edge of [25,46]){const p=P[edge],q=P[edge+1],dx=q[0]-p[0],dz=q[1]-p[1],a=Math.atan2(-dz,dx),L=Math.hypot(dx,dz),x=lerp(p[0],q[0],.28),z=lerp(p[1],q[1],.28);
+  b.box(x,0,z,Math.min(13,L*.4),8.7,.5,'#9472ad',a);
+  for(let y=4.7;y<7.4;y+=.22)b.box(x,y,z,Math.min(7,L*.22),.09,.72,'#c8cccd',a);
+  b.box(lerp(p[0],q[0],.62),5.25,lerp(p[1],q[1],.62),6,1.1,.12,'#e7e0c6',a,4);
+ }
+},[]);
+}
+
+/* Mustafa's mapped Syed Alwi blocks. OSM 47198841, 178437069/70/71/74.
+ * Photo-derived green glazing, pale cladding and bright continuous shopfronts. */
+{
+const {register,out,scale,lerp,center,ellipse}=SGLI;
+register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.22:mode===4?1:mode===5?.8:mode===6?.1:0}));
+ for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?9.6:part.id===178437069?26.9:part.id===47198841?21.2:22.5;
+  if(bridge){
+   // This mapped narrow part connects across the lane; keep the clearance open.
+   b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,9.1,'#4a7970',2);b.facade(out(P,.04),5.7,9.1,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),9.1,H,'#cbd1be');continue;
+  }
+  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06);
+  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<2)return;const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/4));
+   // Older pale hotel / retail block at the west, greener glazing on the extension.
+   const old=part.id===47198841;
+   for(let j=0;j<n;j++){
+    const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t),w=L/n;
+    b.box(x,.3,z,w-.24,3.5,.16,'#99aa91',a,4);
+    b.box(x,0,z,.42,4.6,.48,'#7c7d68',a);
+    b.box(x,3.8,z,w-.15,.78,.22,['#d7d9b5','#8eb584','#d3bb93'][j%3],a,4);
+    b.box(x,4.7,z,w,.2,1.4,'#dedbc5',a,4);
+    for(let y=old?5.5:6;y<H-2;y+=old?3.7:4.1){
+     b.box(x,y,z,w*(old?.55:.94),old?2.3:2.75,.17,old?'#41685d':'#477b71',a,2);
+     b.box(x,y-.4,z,w,.38,.35,old?'#e5e4d5':'#abbcb0',a);
+     if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.5,.23,'#bdc7b6',a);
+      const r=w*.275,pt=(t,R)=>[x+Math.cos(a)*Math.cos(t)*R,y+2.3+Math.sin(t)*R,z-Math.sin(a)*Math.cos(t)*R];
+      for(let k=0;k<12;k++){const t=k/12*Math.PI,u=(k+1)/12*Math.PI;b.tri('#41685d',[x,y+2.3,z],pt(t,r),pt(u,r),2);b.quad('#c8d0bd',pt(t,r+.1),pt(u,r+.1),pt(u,r),pt(t,r));}
+     }
+    }
+    if(j%4===1)b.box(x,5,z,w*.84,2.5,.2,'#b7c1a2',a,5);
+   }
+   // Continuous green and off-white fascia bands, with narrow sunshades.
+   for(const y of (old?[5.1,8.8,12.5,16.2,19.9]:[5.2,9.8,14.0,18.1]))if(y<H-1){b.box((p[0]+q[0])/2,y,(p[1]+q[1])/2,L,.3,.52,'#6c927c',a);}
+  });
+  b.roof(P,H-.8,part.id%4);b.rim(P,H,'#e3e1d0',.35);
+  if(part.id===178437069){
+   // Broad green restaurant roof dome, visible in the measured south/top views.
+   // OSM footprint + measured 38.3 m maximum; no imported surface geometry.
+   b.cap(P,H-.74,'#4d5357');
+   const cx=80,cz=72,r=11.4,base=26.9,rise=11.4;
+   b.prism(ellipse(cx,cz,r,r,32),26.15,base,'#69847b');
+   for(let k=0;k<8;k++)for(let j=0;j<32;j++){
+    const pt=(i,n)=>{const t=i/8*Math.PI/2,a=n/32*Math.PI*2;return[cx+r*Math.cos(t)*Math.cos(a),base+rise*Math.sin(t),cz+r*Math.cos(t)*Math.sin(a)];};
+    b.quad(j%4===0?'#557d75':'#60857a',pt(k,j),pt(k,j+1),pt(k+1,j+1),pt(k+1,j));
+   }
+
+   // Stainless lamella spirals and the maintenance ladder are shown in the
+   // dome fabricator's 2018 photographs (Geometrica), not invented ornament.
+   const skin=(t,a)=>[cx+(r+.025)*Math.cos(t)*Math.cos(a),base+(rise+.025)*Math.sin(t),cz+(r+.025)*Math.cos(t)*Math.sin(a)];
+   for(const sign of [-1,1])for(let j=0;j<16;j++)for(let k=0;k<8;k++){
+    const t=k/8*Math.PI/2,u=(k+1)/8*Math.PI/2,a=j/16*Math.PI*2;
+    b.beam(skin(t,a+sign*t),skin(u,a+sign*u),.035,'#8da9a2');
+   }
+   const rail=(t,side)=>[cx-(r+.08)*Math.cos(t)*.74+side*.24*.67,base+(rise+.08)*Math.sin(t),cz+(r+.08)*Math.cos(t)*.67+side*.24*.74];
+   for(let k=0;k<36;k++){const t=k/36*Math.PI,u=(k+1)/36*Math.PI;for(const side of [-1,1])b.beam(rail(t,side),rail(u,side),.045,'#c3ceca');b.beam(rail(t,-1),rail(t,1),.04,'#c3ceca');}
+   // Diagonal metal cassettes on the modern, taller retail wing.
+   const R=out(P,.18);for(const edge of [1,3]){const p=R[edge],q=R[(edge+1)%R.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.floor(L/5.5));
+    for(let f=0;f<4;f++)for(let j=0;j<n;j++){const t=j/n,u=(j+1)/n,y=9+f*5.0,pt=(v,Y)=>[lerp(p[0],q[0],v),Y,lerp(p[1],q[1],v)];b.quad((j+f)%2?'#53616a':'#6c777b',pt(t,y),pt(u,y+1.25),pt(u,y+2.2),pt(t,y+3.5));}
+   }
+  }
+
+  // Recessed mechanical screens: real service equipment, no arbitrary towers.
+  const C=center(P);b.box(C[0],H-.5,C[1],5,1.2,4,'#a6b2a6',Math.atan2(-(P[1][1]-P[0][1]),P[1][0]-P[0][0]));
+ }
+},[]);
+}
+
+/* Conserved shophouse row, OSM 176326900 and supplied Campbell Lane parts.
+ * Ground arcades, plaster relief and individual shutter slats are geometry. */
+{
+const {register,scale,out,lerp}=SGLI;
+register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=>{
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#ffe5ba':mode===5?'#e7f5e5':undefined,gk:mode===4?.65:mode===5?.4:0}));
+ D.parts.forEach((part,index)=>{const P=part.p,eave=7.6,H=9.6,wall=['#edc99a','#e8b98d','#f0d3a7'][index%3],trim='#f4e6cc',blue='#377b8c';
+  b.prism(P,-.7,.18,'#b6a395');b.prism(out(P,-1.35),.18,3.6,'#6a8074',5);b.prism(P,3.55,eave,wall);
+  b.band(out(P,.09),3.55,.3,trim);b.band(out(P,.18),7.15,.18,trim);b.band(out(P,.27),7.45,.16,trim);
+  // The reference top view shows a continuous ridge parallel to Campbell
+  // Lane. The rear portion is a flat service terrace, not another tiled pitch.
+  const E=P.length===4?P:[P[0],P[1],P[3],P[4]],a=E[0],q=E[1],r=E[2],s=E[3],mix=(p,q,t)=>p.map((v,j)=>lerp(v,q[j],t));
+  const rearL=mix(a,s,.62),rearR=mix(q,r,.62),ridgeL=mix(a,rearL,.5),ridgeR=mix(q,rearR,.5);
+  const A=[a[0],eave,a[1]],B=[q[0],eave,q[1]],C=[rearR[0],eave,rearR[1]],F=[rearL[0],eave,rearL[1]],R=[ridgeL[0],H,ridgeL[1]],T=[ridgeR[0],H,ridgeR[1]];
+  b.quad('#b76a53',A,B,T,R);b.quad('#ad604f',C,F,R,T);b.tri(wall,A,R,F);b.tri(wall,B,C,T);b.beam(R,T,.14,'#d1ac86');
+  for(let k=1;k<14;k++){const t=k/14,M=(p,q)=>p.map((v,j)=>lerp(v,q[j],t));b.beam(M(A,R),M(B,T),.045,'#96634f');b.beam(M(F,R),M(C,T),.045,'#96634f');}
+  // Thin pale party-wall caps cross the terracotta slopes.
+  for(const ends of [[A,R,F],[B,T,C]])for(let j=0;j<2;j++)b.beam(ends[j],ends[j+1],.10,trim);
+  const court=[rearL,rearR,r,s];b.prism(court,7.6,8.1,'#b9bbb0');b.rim(court,8.3,'#d5d7c9',.18);
+  const c=mix(mix(rearL,s,.55),mix(rearR,r,.55),.5),ang=Math.atan2(-(q[1]-a[1]),q[0]-a[0]);
+  if(index%4===2){
+   b.box(c[0],8.1,c[1],1.5,1.8,1.6,'#c7c6b6',ang);
+   const Q=SGLI.rect(c[0],c[1],1.8,1.9,ang);for(let j=0;j<4;j++){const p=Q[j],q=Q[(j+1)%4];b.tri('#9b9e8e',[p[0],9.9,p[1]],[q[0],9.9,q[1]],[c[0],10.7,c[1]]);}
+  }else{b.box(c[0],8.1,c[1],1.8,.7,1.3,'#ced1ca',ang);for(let k=-1;k<=1;k++)b.box(c[0]+k*.45,8.82,c[1],.35,.04,1.1,'#78898a',ang);}
+  // First short edge faces Campbell Lane; first parcel is the Serangoon strip.
+  const edges=[0,2];
+  edges.forEach(edge=>{const p=P[edge],q=P[(edge+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.round(L/4.8)),ang=Math.atan2(-dz,dx),Q=(u,y,v=.07)=>[p[0]+dx/L*u-Math.sin(ang)*v,y,p[1]+dz/L*u-Math.cos(ang)*v];
+   const block=(u,y,w,h,d,c,mode=0)=>{const v=Q(u,y,d*.5);b.box(v[0],y,v[2],w,h,d,c,ang,mode);};
+   for(let j=0;j<n;j++){const u=(j+.5)*L/n,w=L/n;
+    block(j*L/n,.18,.4,7.15,.32,trim);block(j*L/n,.2,.62,.3,.45,trim);block(j*L/n,6.85,.62,.27,.45,trim);
+    // Open five-foot way behind the piers and a deep timber lintel.
+    block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);block(u,3.1,w-.4,.23,.9,'#577f70');
+    for(let win=0;win<3;win++){const v=u+(win-1)*w*.25,ww=Math.min(.88,w*.21);
+     block(v,4.5,ww+.18,2.25,.22,trim);block(v,4.6,ww,1.92,.29,blue);
+     block(v,4.59,.045,1.95,.35,'#b8d2c7');
+     for(let y=4.74;y<6.4;y+=.14)block(v,y,ww-.07,.055,.37,'#66a1a5');
+     // Arched shutter transom and its raised plaster archivolt.
+     for(let k=0;k<14;k++){const a=k/14*Math.PI,c=(k+1)/14*Math.PI;b.quad(trim,Q(v+Math.cos(a)*(ww/2+.13),6.48+Math.sin(a)*(ww/2+.13)),Q(v+Math.cos(c)*(ww/2+.13),6.48+Math.sin(c)*(ww/2+.13)),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2));}
+     block(v,4.35,ww+.28,.13,.4,trim);
+    }
+    // Small ornamental panels between window groups and cornice dentils.
+    block(u,6.97,w*.36,.12,.22,'#d6b084');for(let k=0;k<6;k++)block(j*L/n+(k+.5)*w/6,7.25,.12,.15,.3,trim);
+   }
+   block(L,0,.4,7.15,.32,trim);
+   if(edge===0&&[0,1,6,11].includes(index)){
+    // Raised plaster pediments punctuate the otherwise continuous eave.
+    b.tri(wall,Q(0,7.6,.10),Q(L/2,9.6,.10),Q(L,7.6,.10));
+    b.beam(Q(0,7.6,.24),Q(L/2,9.6,.24),.16,'#cf9f76');b.beam(Q(L/2,9.6,.24),Q(L,7.6,.24),.16,'#cf9f76');
+    block(L/2,7.75,.22,.46,.3,'#d5aa7e');
+   }
+
+  });
+ });
+},[]);
+}
+
+/* City Square Mall: four-storey retail plate + mapped nine-level annex.
+ * Curved glazed atrium, metal roof, planted setbacks and entrance eco-canopy. */
+{
+const {register,out,scale,lerp,inside}=SGLI;
+register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.35:mode===4?.85:mode===5?.45:0}));
+ const P=D.parts[0].p,T=D.parts[1].p,podium=25.0,top=51.6;
+ // Local front-parallel / rearward frame, derived from the OSM edge.
+ const a=P[0],q=P[1],dx=q[0]-a[0],dz=q[1]-a[1],L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L,nx=uz,nz=-ux;
+ const F=(u,y,v=0)=>[a[0]+ux*u+nx*v,y,a[1]+uz*u+nz*v];
+ const U=p=>(p[0]-a[0])*ux+(p[1]-a[1])*uz;
+ function half(R,k,sign){const out=[];R.forEach((p,i)=>{const q=R[(i+1)%R.length],vp=U(p)-k,vq=U(q)-k,A=sign*vp>=0,B=sign*vq>=0;if(A)out.push(p);if(A!==B){const t=vp/(vp-vq);out.push([lerp(p[0],q[0],t),lerp(p[1],q[1],t)]);}});return out;}
+ const slabs=[half(half(T,27,1),61,-1),half(half(T,72,1),103,-1)];
+ b.prism(P,-1,podium,'#b4b7b0');b.facade(out(P,.04),.5,podium-.6,5.8,3.3,'#506e71','#c8cfc6',.2);
+ for(let y=5.8;y<podium;y+=5.8)b.band(out(P,.13),y,.45,'#cfcec3');
+ b.roof(P,podium-.7);b.prism(T,podium,48.1,'#a4aaa4');for(const S of slabs)b.prism(S,48.1,51.2,'#a4aaa4');b.cap(T,48.15,'#789a92');
+ // The upper leased annex floors have long glazed bands and pale piers.
+ const Q=out(T,.05);Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/6.5));
+  for(let y=26.4;y<top-2;y+=5.1){b.box((p[0]+q[0])/2,y,(p[1]+q[1])/2,L,1.5,.1,'#526f72',a,2);for(let j=0;j<=n;j++)b.box(lerp(p[0],q[0],j/n),y-.1,lerp(p[1],q[1],j/n),.45,2,.35,'#bac1b6',a);}
+ });for(const S of slabs){b.roof(S,51.1,2);b.rim(S,51.6,'#c6cbbf',.4);}
+ // Highest measured element is roof plant/screen, not the adjacent residences.
+ {const c=F(45,51.2,94),ang=Math.atan2(-dz,dx);b.box(c[0],51.2,c[2],8,4.5,6,'#b8c2ba',ang);for(let y=51.6;y<55.5;y+=.38)b.box(c[0],y,c[2],8.05,.07,6.05,'#8a9d96',ang);}
+
+ // Main Serangoon/City Green front, inside the OSM retail plate.
+ // Pale western signage bay: the real frontage is not uninterrupted glass.
+ b.quad('#c5c4b9',F(.4,5,-.15),F(36.5,5,-.15),F(36.5,podium,-.15),F(.4,podium,-.15));
+ for(const u of [8,27])for(const y of [6.2,10.7,15.2]){const w=8.5,h=2.6;b.quad('#527174',F(u-w/2,y,-.18),F(u+w/2,y,-.18),F(u+w/2,y+h,-.18),F(u-w/2,y+h,-.18),2);}
+ for(const u of [1,18,36])b.beam(F(u,5,-.25),F(u,podium,-.25),.22,'#d8d7cb');
+ const glassStart=37,glassEnd=L-4,roofY=u=>28.2;
+ for(let u=glassStart;u<glassEnd;u+=2.8){const e=Math.min(glassEnd,u+2.8),v=.35+1.5*Math.sin((u-glassStart)/(glassEnd-glassStart)*Math.PI),w=.35+1.5*Math.sin((e-glassStart)/(glassEnd-glassStart)*Math.PI);
+  // Curtain wall above the retail floor, with visible mullions and curved eave.
+  b.quad('#739b9c',F(u,podium,v),F(e,podium,w),F(e,roofY(e)-.4,w),F(u,roofY(u)-.4,v),2);
+  b.beam(F(u,0,v),F(u,roofY(u),v),.14,'#c9d0c6');
+  for(let y=24;y<roofY(u)-.5;y+=2.2)b.beam(F(u,y,v),F(e,Math.min(y,roofY(e)-.4),w),.09,'#cbd3c8');
+  b.quad('#b8cbc4',F(u,28.2,v),F(e,28.2,w),F(e,28.2,7),F(u,28.2,7),2);
+  b.beam(F(u,roofY(u),v-.25),F(e,roofY(e),w-.25),.13,'#e4dfc8');
+  // Thin LED edge, not a large glowing opaque wall.
+  const A=F(u,roofY(u)-.22,v-.31),B=F(e,roofY(e)-.22,w-.31);b.quad('#c5d6db',A,B,[B[0],B[1]+.08,B[2]],[A[0],A[1]+.08,A[2]],5);
+ }
+ // Broad white barrel spans the retail hall. Green ribs/skylight strip
+ // follow the newly supplied top photograph; the rear slabs stay independent.
+ const roofV=v=>28.2+2.5*Math.sin(Math.max(0,Math.min(1,(v-7)/28))*Math.PI);
+ for(let u=4;u<103;u+=3){const e=Math.min(103,u+3);for(let k=0;k<16;k++){const v=7+k/16*28,w=7+(k+1)/16*28;b.quad('#d6dcd3',F(u,roofV(v),v),F(e,roofV(v),v),F(e,roofV(w),w),F(u,roofV(w),w));}}
+ for(const u of [4,103])for(let k=0;k<16;k++){const v=7+k/16*28,w=7+(k+1)/16*28;b.quad('#73999a',F(u,podium,v),F(u,podium,w),F(u,roofV(w),w),F(u,roofV(v),v),2);b.beam(F(u,podium,v),F(u,roofV(v),v),.12,'#b7c8bf');}
+ for(let u=6;u<103;u+=7)for(let k=0;k<16;k++){const v=7+k/16*28,w=7+(k+1)/16*28;b.beam(F(u,roofV(v)+.04,v),F(u,roofV(w)+.04,w),.11,'#8bab9d');}
+ for(let v=33;v<37;v+=.5)b.quad('#7ba197',F(4,roofV(v)+.07,v),F(103,roofV(v)+.07,v),F(103,roofV(v+.5)+.07,v+.5),F(4,roofV(v+.5)+.07,v+.5));
+ // Raised photovoltaic bed on the lower west roof, seen in the reference top.
+ {const c=F(13,25.1,56),ang=Math.atan2(-dz,dx);b.box(c[0],25.1,c[2],22,1.0,16,'#cbbfa5',ang);for(let u=3;u<23;u+=5)for(let v=49;v<63;v+=2){const c=F(u,26.14,v);b.box(c[0],26.14,c[2],4.6,.12,1.65,'#506c88',ang);}}
+ // Solid western entrance/signage bay; blank panels replace all retail branding.
+ const panelAngle=Math.atan2(-dz,dx);
+ for(const [u,y,w,h]of [[19,17,12,3.2],[30,11,7,2],[70,12,8,1.5]]){const v=F(u,y,-.12);b.box(v[0],y,v[2],w,h,.15,'#e8dfc4',panelAngle,4);}
+ // Roof garden beds restricted to the low roof outside the nine-level block.
+ for(let u=5;u<34;u+=7){const c=F(u,podium,75);if(inside(P,c[0],c[2])&&!inside(T,c[0],c[2])){b.box(c[0],podium,c[2],5,.5,3,'#b8b8a6',panelAngle);b.box(c[0],podium+.5,c[2],4.6,.3,2.6,'#658449',panelAngle);b.tree(c[0],podium+.7,c[2],.65);}}
+ // Compact edge of the park eco-canopy; full City Green park stays context.
+ for(let u=8;u<35;u+=3){const e=Math.min(35,u+3);for(let k=0;k<4;k++){const v=-2+k*1.5,w=v+1.5,Y=(u,v)=>5.6+.6*Math.sin((u-8)/27*Math.PI)-v*.06;b.quad(k%2?'#809979':'#b0c1b7',F(u,Y(u,v),v),F(e,Y(e,v),v),F(e,Y(e,w),w),F(u,Y(u,w),w),k%2?0:2);b.beam(F(u,Y(u,v),v),F(e,Y(e,v),v),.1,'#d4d7c7');}}
+ for(const u of [9,32]){const A=F(u,0,-1),B=F(u,5.8,-1);b.beam(A,B,.3,'#e0dfd2');}
+},[]);
+}
+
+/* 2024-inspired LISHA light-up, drawn from OSM road centrelines. Original
+ * ribbon geometry only: no letters, photographic textures or imported meshes. */
+{
+const {register,lerp}=SGLI;
+register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali Light-up',690,(b,D,G,g)=>{
+ const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>{
+  const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,lc:mode===10?'#ffd082':'#bfc0ad',glow:mode===10?'#ffffff':undefined,gk:mode===10?.95:0});
+  if(mode===10&&!m.userData.liFestival){const prior=m.onBeforeCompile;m.onBeforeCompile=function(sh,r){prior.call(this,sh,r);sh.fragmentShader=sh.fragmentShader.replace('em += uSelf * uSelfK;','em += vColor * uSelfK * (0.96 + 0.04 * sin(uTime * 0.65 + vWP.x * 0.13 + vWP.z * 0.09));');};m.customProgramCacheKey=()=> 'li-festival-ribbon-v1';m.userData.liFestival=true;}
+  return m;
+ });
+ const gold='#ffbc42',pink='#ea48ba',green='#78ca68',orange='#ee8241',blue='#866ce4';
+ const road=name=>{const A=D.streets.filter(s=>s.name===name).flatMap(s=>s.p),unique=[...new Map(A.map(p=>[p.join(','),p])).values()];return unique.sort((p,q)=>name==='Serangoon Road'?q[1]-p[1]:p[0]-q[0]);};
+ const ser=road('Serangoon Road').filter(p=>p[1]>=-600&&p[1]<=297),camp=road('Campbell Lane'),dun=road('Dunlop Street');
+ function sample(P,step,callback){let carry=step*.55,count=0;for(let i=0;i<P.length-1;i++){const p=P[i],q=P[i+1],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);while(carry<L){callback([lerp(p[0],q[0],carry/L),lerp(p[1],q[1],carry/L)],[dx/L,dz/L],count++);carry+=step;}carry-=L;}return count;}
+ // Every motif lives in the vertical plane across its actual road tangent.
+ function frame(c,t){const n=[-t[1],t[0]];const h=G.at(...c)-G.base+.04;return (u,y,v=0)=>[c[0]+n[0]*u+t[0]*v,h+y,c[1]+n[1]*u+t[1]*v];}
+ function line(F,A,c,w=.055){for(let i=0;i<A.length-1;i++){const p=A[i],q=A[i+1],dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy)||1,ox=-dy/L*w/2,oy=dx/L*w/2;b.quad(c,F(p[0]+ox,p[1]+oy),F(q[0]+ox,q[1]+oy),F(q[0]-ox,q[1]-oy),F(p[0]-ox,p[1]-oy),10);}}
+ const curve=(F,cx,cy,rx,ry,c,n=20)=>line(F,Array.from({length:n+1},(_,i)=>[cx+rx*Math.cos(i/n*Math.PI*2),cy+ry*Math.sin(i/n*Math.PI*2)]),c);
+ function petal(F,x,y,w,h,c){line(F,Array.from({length:17},(_,i)=>{const a=i/16*Math.PI*2;return [x+w*Math.sin(a)*(0.65+.35*Math.cos(a)),y+h*(1-Math.cos(a))/2];}),c);}
+ function lotus(F,x,y,s){for(let j=-2;j<=2;j++)petal(F,x+j*.29*s,y,.4*s,(1.1-Math.abs(j)*.18)*s,j%2?gold:pink);line(F,[[x-1.1*s,y],[x,y-.32*s],[x+1.1*s,y]],gold);}
+ function diya(F,x,y,s){line(F,Array.from({length:15},(_,i)=>{const a=i/14*Math.PI;return[x+Math.cos(a)*s,y-Math.sin(a)*s*.38];}),pink);line(F,[[x-s,y],[x+s,y]],gold);petal(F,x,y+.12*s,.27*s,1.0*s,orange);}
+ function flower(F,x,y,s){line(F,Array.from({length:49},(_,i)=>{const a=i/48*Math.PI*2,r=s*(.78+.22*Math.cos(a*8));return[x+Math.cos(a)*r,y+Math.sin(a)*r];}),pink);curve(F,x,y,s*.4,s*.4,gold,16);}
+ function peacock(F,x,y,sign){
+  // Open wire fan and teardrop eyes, rather than opaque billboards.
+  for(let j=0;j<7;j++){const a=-1.1+j*.29,tx=x+sign*(1.15+Math.cos(a)*1.25),ty=y+Math.sin(a)*1.25;line(F,[[x,y],[tx+sign*.65,ty+.6],[tx+sign*1.1,ty+.35],[tx+sign*.7,ty-.15],[x,y]],j%2?pink:gold);curve(F,tx+sign*.65,ty+.25,.18,.24,green,10);}
+  curve(F,x,y,.68,.42,blue,20);line(F,[[x-sign*.45,y],[x-sign*.85,y+.75],[x-sign*.7,y+1.15],[x-sign*.4,y+1.12],[x-sign*.35,y+.83]],gold);line(F,[[x-sign*.7,y+1.15],[x-sign*1.0,y+1.07]],orange);
+ }
+ const gates=[];
+ const archCount=sample(ser,32,(c,t,i)=>{const F=frame(c,t),w=i===21?4:i===20?5:6;gates.push({center:c,tangent:t,width:w});
+  for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u,4.8,.7);flower(F,u,7.6,.62);}
+  b.beam(F(-w,8),F(w,8),.07,'#8b8c81');
+  lotus(F,0,7.9,1.15);for(const u of [-(w-2.5),w-2.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
+  line(F,Array.from({length:49},(_,j)=>{let u=-w+j/48*w*2;return[u,8.25+.25*Math.cos(u*.9)];}),green);
+ });
+ // One peacock gateway near the southern arrival, no invented text panel.
+ if(gates.length>1){const F=frame(gates[1].center,gates[1].tangent);peacock(F,-1.7,9.1,-1);peacock(F,1.7,9.1,1);line(F,Array.from({length:33},(_,i)=>{const a=i/32*Math.PI;return[3.0*Math.cos(a),9.8+2.0*Math.sin(a)];}),gold,.09);}
+ // Longitudinal garlands between successive arches, following the road bend.
+ for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*(A.width-.25),7.7),q=E(side*(B.width-.25),7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
+ sample(camp,12,(c,t,i)=>{const F=frame(c,t);for(const u of [-3,3])b.beam(F(u,0),F(u,5.5),.07,'#8d8c7a');line(F,[[-3,5.4],[0,5.0],[3,5.4]],gold);flower(F,0,5.15,.45);
+  // Compact festival stalls inside the pedestrian lane, on one side only.
+  if(i%2===0){const p=F(2,0),a=Math.atan2(-t[1],t[0]);b.box(p[0],p[1],p[2],2.8,2.2,1.2,'#d4a474',a);b.box(p[0],p[1]+2.2,p[2],3,.18,1.5,i%4?pink:orange,a);}
+ });
+ sample(dun,22,(c,t)=>{const F=frame(c,t);line(F,[[-2.2,5.5],[0,5.1],[2.2,5.5]],gold);diya(F,0,5.25,.45);});
+ g.userData.liLightup={arches:archCount,spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
+},[]);
+}
 
 /* Public, read-only modelling statistics for the Little India modules (camera harness uses mktest.__t). */
 window.LittleIndia = {get stats(){ const s = {}; for (const k of Object.keys(SGLI.data)) if (SGBV.stats[k]) s[k] = SGBV.stats[k]; return s; }};
@@ -80825,7 +81858,7 @@ function sgrLandmarkHulls(){
   // the ground plan of every placed landmark (its lower 25 m), as a convex hull grown by 3 m
   const live = new Set(), changed = [];
   for (const L of landmarks){
-    live.add(L.id); if (SGR.hulls.has(L.id)) continue;
+    live.add(L.id); if (SGR.hulls.has(L.id) || (LANDMARKS[L.type] && LANDMARKS[L.type].noHull)) continue;
     const g = lmMeshes.get(L.id); if (!g) continue;
     g.updateMatrixWorld(true); const pts = [], v = new THREE.Vector3(), base = L.top || 0;
     g.traverse(o => { if (!o.isMesh || !o.geometry.attributes.position) return; const a = o.geometry.attributes.position; const st = Math.max(1, Math.floor(a.count/6000));
@@ -81292,7 +82325,7 @@ function sgLabels(){
 
 /* ---------- entering and leaving Singapore ---------- */
 const SG_SUB = 'City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';
-function sgView(){ if (new URLSearchParams(location.search).get('view') === 'li'){ const q = sgXY(1.3078, 103.8530); controls.target.set(q[0], 18, -q[1]); camera.position.set(q[0] + 620, 470, -q[1] + 760); return; } if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2300, y + 2600, -t[1] + 4300); }
+function sgView(){ if (new URLSearchParams(location.search).get('view') === 'li'){ const q = sgXY(1.3078, 103.8530); controls.target.set(q[0], 12, -q[1]); camera.position.set(q[0] + 150, 520, -q[1] + 820); return; } if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2300, y + 2600, -t[1] + 4300); }
 function sgFly(){ const t = sgXY(1.2868, 103.8560); flyTo(new THREE.Vector3(t[0] + 1500, 1050, -t[1] + 1900), new THREE.Vector3(t[0], 4, -t[1])); }
 function sgBuild(){
   SG.on = true; SGR.on = true; styleKey = 'singapore'; islandSeed = 1965; FLAVOR.singapore.park = 'sgpark';

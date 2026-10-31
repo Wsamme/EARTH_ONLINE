@@ -84,3 +84,8 @@ base. Ahboy's saved night photo supports a stronger warm golden tier wash and
 white entrance lintel lamp. Full-compound roof/courtyard geometry is retained;
 no car park or courtyard was filled to match the scorer's column filling.
 Offline geometry passes. Updated matched-camera results follow below.
+
+Final close-view refinement rounds the figure heads/crowns, tapers robes and routes
+arm beams through the same floodlit material as the sculpture. Six-sided head
+profiles keep the detailed compound near the temple budget. Outer measured massing
+and gateway location are unchanged; final rerender includes this detail correction.

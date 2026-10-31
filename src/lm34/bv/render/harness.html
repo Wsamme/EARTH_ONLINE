@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>bv-render</title>
+<style>html,body{margin:0;overflow:hidden;background:#111}canvas{display:block}</style>
+</head>
+<body>
+<script src="three.min.js"></script>
+<script>
+// 只给对照渲染用的精简版地标工具。页面里的 LTris / lmMat 做同样的事。
+const LANDMARKS = {}, SG_PLACES = [];
+const params = new URLSearchParams(location.search);
+window.BV_NIGHT = params.get('night') === '1' ? 1 : 0;
+function lmMat(spec) {
+  const sp = typeof spec === 'string' ? { c: spec } : (spec || { c: '#ccc' });
+  const m = new THREE.MeshLambertMaterial({ color: new THREE.Color(sp.c || '#ccc'), side: THREE.DoubleSide });
+  const mode = sp.m !== undefined ? sp.m : 0;
+  const glow = new THREE.Color(sp.glow || '#000000');
+  const gk = sp.glow ? (sp.gk || 1) : 0;
+  m.userData.shader = { mode: mode, glow: glow, gk: gk, fh: sp.fh || 3.8, cw: sp.cw || 3.0 };
+  m.onBeforeCompile = function (sh) {
+    const u = m.userData.shader;
+    sh.uniforms.uNight = { value: window.BV_NIGHT };
+    sh.uniforms.uMode = { value: u.mode };
+    sh.uniforms.uGlow = { value: u.glow };
+    sh.uniforms.uGk = { value: u.gk };
+    sh.uniforms.uFH = { value: u.fh };
+    sh.uniforms.uCW = { value: u.cw };
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWP;\nvarying vec3 vWN;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvWP = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvWN = normalize(mat3(modelMatrix) * objectNormal);');
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vWP;\nvarying vec3 vWN;\nuniform float uNight; uniform float uMode; uniform vec3 uGlow; uniform float uGk; uniform float uFH; uniform float uCW;')
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{\n  vec3 col = vec3(0.0);\n  if (uMode < 0.5) col = diffuseColor.rgb * vec3(1.0, 0.84, 0.62) * 0.45;\n  else {\n    float fl = floor(vWP.y / uFH);\n    float hz = abs(vWN.x) > abs(vWN.z) ? vWP.z : vWP.x;\n    float cl = floor(hz / uCW);\n    float r = fract(sin(fl * 12.9898 + cl * 78.233) * 43758.5453);\n    float on = step(r, 0.62) * step(0.22, fract(vWP.y / uFH)) * step(0.15, fract(hz / uCW)) * (1.0 - step(0.65, abs(vWN.y)));\n    col = mix(vec3(1.0, 0.78, 0.5), vec3(0.75, 0.86, 1.0), step(0.55, fract(r * 7.0))) * on * 0.95;\n    col += diffuseColor.rgb * 0.12;\n  }\n  col += uGlow * uGk;\n  totalEmissiveRadiance += col * uNight;\n}');
+  };
+  return m;
+}
+function LTris(g, pos, col) {
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.computeVertexNormals();
+  const sp = typeof col === 'string' ? { c: col, ds: true } : Object.assign({ ds: true }, col);
+  const mesh = new THREE.Mesh(geo, lmMat(sp));
+  g.add(mesh);
+  return mesh;
+}
+</script>
+<script src="../bv.js"></script>
+<script id="meta" type="application/json">{}</script>
+<script>
+const MX = 111290.5, MY = 110574;
+const KEY = {
+  star_vista: 'bvstar', metropolis: 'bvmetro', buona_vista_mrt: 'bvmrt', biopolis: 'bvbio',
+  fusionopolis_one: 'bvfusion', solaris: 'bvsolaris', galaxis: 'bvgalaxis', mediacorp: 'bvmedia', rochester: 'bvrochester'
+};
+const W = 1600, H = 1000;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.setClearColor(window.BV_NIGHT ? 0x101820 : 0xc5d0d2, 1);
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(window.BV_NIGHT ? 0x101820 : 0xc5d0d2);
+scene.add(new THREE.HemisphereLight(window.BV_NIGHT ? 0x223044 : 0xe7eef2, window.BV_NIGHT ? 0x0a0c10 : 0x8d8878, window.BV_NIGHT ? 0.25 : 0.72));
+const sun = new THREE.DirectionalLight(0xfff3e0, window.BV_NIGHT ? 0.08 : 1.25);
+sun.position.set(140, 460, -180);
+scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(4000, 4000), new THREE.MeshLambertMaterial({ color: window.BV_NIGHT ? 0x141a14 : 0x7d9a62 }));
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.05;
+scene.add(ground);
+
+function enOf(lat, lon, clat, clon) { return [(lon - clon) * MX, (lat - clat) * MY]; }
+
+function shotFrame(meta, view) {
+  const G = meta.height.ground_ellipsoidal_m;
+  const shot = meta.shots && meta.shots[view];
+  if (shot && shot.alt !== undefined) {
+    const e = enOf(shot.lat, shot.lon, meta.centroid.lat, meta.centroid.lon);
+    const pos = new THREE.Vector3(e[0], shot.alt - G, -e[1]);
+    let target;
+    if (shot.look_at_target) {
+      const t = shot.look_at_target;
+      const te = enOf(t.lat, t.lon, meta.centroid.lat, meta.centroid.lon);
+      target = new THREE.Vector3(te[0], t.alt - G, -te[1]);
+    } else if (shot.pitch <= -80) {
+      target = new THREE.Vector3(pos.x, 0, pos.z);
+    } else {
+      target = new THREE.Vector3(0, meta.height.value_m * 0.45, 0);
+    }
+    return { pos: pos, target: target, heading: shot.heading || 0, pitch: shot.pitch, synth: false };
+  }
+  // meta 里缺镜头时，按同一套 lookAt（俯角 -25°、距离约 1.85 倍最大边）补一个。
+  const ext = Math.max(meta.footprint_extent_m.ew, meta.footprint_extent_m.ns, meta.height.value_m);
+  const range = ext * 1.85, pitch = -25 * Math.PI / 180;
+  const horiz = range * Math.cos(-pitch), vert = range * Math.sin(-pitch);
+  const lookY = meta.height.value_m * 0.45;
+  const off = { n: [0, horiz], s: [0, -horiz], e: [horiz, 0], w: [-horiz, 0] }[view];
+  const head = { n: 180, e: 270, s: 0, w: 90 }[view];
+  if (view === 'top') {
+    const mpp = Math.max(meta.footprint_extent_m.ew, meta.footprint_extent_m.ns) * 2.4 / 1600;
+    const alt = mpp * 1600 / (2 * Math.tan(30 * Math.PI / 180));
+    return { pos: new THREE.Vector3(0, alt, 0), target: new THREE.Vector3(0, 0, 0), heading: 0, pitch: -90, synth: true };
+  }
+  return {
+    pos: new THREE.Vector3(off[0], lookY + vert, -off[1]),
+    target: new THREE.Vector3(0, lookY, 0),
+    heading: head, pitch: -25, synth: true
+  };
+}
+
+function applyCam(camera, fr) {
+  camera.fov = 39.7;
+  camera.aspect = W / H;
+  camera.near = 0.5;
+  camera.far = 8000;
+  camera.updateProjectionMatrix();
+  if (fr.pitch <= -80) {
+    const hd = fr.heading * Math.PI / 180;
+    camera.up.set(Math.sin(hd), 0, -Math.cos(hd));
+  } else camera.up.set(0, 1, 0);
+  camera.position.copy(fr.pos);
+  camera.lookAt(fr.target);
+}
+
+function heroRoot(which) {
+  const root = new THREE.Group();
+  const lat0 = 1.3016, lon0 = 103.7900, g0 = 20;
+  const slugs = which === 'north'
+    ? ['star_vista', 'buona_vista_mrt', 'metropolis', 'rochester', 'biopolis']
+    : which === 'south'
+      ? ['fusionopolis_one', 'galaxis', 'solaris', 'mediacorp']
+      : Object.keys(KEY);
+  slugs.forEach(function (slug) {
+    const F = BV_FP[slug];
+    const g = LANDMARKS[KEY[slug]].build();
+    const e = (F.lon - lon0) * MX, n = (F.lat - lat0) * MY;
+    g.position.set(e, 0, -n);
+    root.add(g);
+  });
+  return root;
+}
+
+try {
+  const camera = new THREE.PerspectiveCamera(39.7, W / H, 0.5, 8000);
+  const hero = params.get('hero');
+  if (hero) {
+    scene.add(heroRoot(hero));
+    // 原点在纬壹中部。北簇（星悦汇、车站、大都会、罗切斯特、生物城）在 -z，南簇在 +z。
+    const look = hero === 'south' ? new THREE.Vector3(-40, 40, 380) : hero === 'north' ? new THREE.Vector3(-20, 35, -430) : new THREE.Vector3(-30, 40, 40);
+    const cam = hero === 'south' ? [620, 340, 980] : hero === 'north' ? [780, 420, 280] : [1400, 1100, 1700];
+    camera.fov = hero === 'all' ? 38 : 34;
+    camera.position.set(cam[0], cam[1], cam[2]);
+    camera.up.set(0, 1, 0);
+    camera.lookAt(look);
+    camera.updateProjectionMatrix();
+  } else {
+    const slug = params.get('b') || 'star_vista';
+    const view = params.get('v') || 'n';
+    const meta = JSON.parse(document.getElementById('meta').textContent);
+    const g = LANDMARKS[KEY[slug]].build();
+    scene.add(g);
+    applyCam(camera, shotFrame(meta, view));
+  }
+  renderer.render(scene, camera);
+  document.title = 'READY';
+} catch (err) {
+  document.title = 'ERR ' + (err && err.message ? err.message : err);
+  var pre = document.createElement('pre');
+  pre.style.color = '#fff';
+  pre.textContent = err && err.stack ? err.stack : String(err);
+  document.body.appendChild(pre);
+}
+</script>
+</body>
+</html>

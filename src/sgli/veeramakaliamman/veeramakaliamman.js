@@ -59,7 +59,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:2.65}));b.buckets.delete(mode);}}
 
 // OSM 155991884 (hall), 1078263462 (annex). Painted plaster relief is geometry.
 register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamman Temple',38,(b,D,G,g)=>{
@@ -87,22 +87,27 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
   for(let u=.7;u<E.L;u+=2.2){const p=E.F(u,7.45,.05);b.box(p[0],7.45,p[2],.85,.6,.65,'#a6bbc6');kit(b).deity(E.F,u,7.5,.9,Math.floor(u),3);}
  }
  b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
- // Entrance tower centred on the Serangoon Road edge, not on the whole compound.
- box(-.6,.35,21.1,10,6.6,5.9,'#a3c0c9',3);
- const F=(u,y,w=0)=>[u-.6,y,24.08+w];
+ // Gateway straddles the measured street wall at local z=24.1 (east/southeast).
+ // The previous centre at z=21.1 put its front against the wall and read as a roof tower.
+ box(-.6,.35,24.1,10,6.6,5.9,'#a3c0c9',3);
+ const F=(u,y,w=0)=>[u-.6,y,27.08+w];
  panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,5);
  for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
- tower(-.6,21.1,9.8,5.7,6.95,18.9,4);
+ tower(-.6,24.1,9.8,5.7,6.95,18.9,4);
  // Main Kali vimana plus smaller sanctum towers, clear of the front court.
  tower(-.5,2.2,5.7,5.7,7.3,14.1,2);lathe(-.5,2.2,13.7,1.03,1.4,'#cfb365',3,null,16);
  for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
  // Green ribbed hall roof and pale barrel skylight visible in the reference views.
  for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');
+ // Small red sheet-roofed side bay immediately north of the gateway.
+ box(11.5,7.35,20.1,7.4,.16,7.1,'#bb705f');
  for(let i=0;i<12;i++){const t=i/12*Math.PI,u=(i+1)/12*Math.PI;K.quad('#d0d2c4',[-8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2],[-8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2]);}
  lathe(-.6,16.6,.3,.55,10.9,'#c3c5b9',0,[[1,0],[.6,.1],[.2,.12],[.15,1]],8);
  // White entrance canopy: modest projection, no festival decorations or lettering.
- for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),24],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),24]);}
- for(const x of [-4.1,2.9])box(x,.1,26.7,.1,4.1,.1,'#adb9b8');
+ for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),26.9],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),26.9]);}
+ for(const x of [-4.1,2.9])box(x,.1,29.6,.1,4.1,.1,'#adb9b8');
+ for(const x of [-2.8,1.6])box(x,4.1,28.6,.22,.06,.55,'#e9d9b9',5);
+ for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,6.25,E.L-.2,.55,'#d7c3a4',.06,3);
  lights(b,g);
 },['sgveeramakali']);
 

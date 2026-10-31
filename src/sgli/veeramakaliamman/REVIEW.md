@@ -47,3 +47,18 @@ Mean n/e/s/w/top **0.805**; all-view mean **0.806**.
 Final full-app comparison and independent day/night detail runs have **zero page
 errors and zero console errors**; retired placement list is empty. Final images,
 verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+
+## Round 2
+
+Merged lead branch without rebasing, including measured height metadata and the
+Deepavali noHull fix. Gateway centre moved 3 m toward Serangoon Road, from local
+z=21.1 to z=24.1, on the actual east/southeast street wall; the entrance and canopy
+move with it. Main vimana remains by the annex over the sanctum, with four small
+side shrines. Added the photographed red side-bay roof. Annex/hall/gateway heights
+remain 26.9/7.2/18.9 m against measured max 27.1 m and p90 23.8 m.
+
+Re-searched and re-inspected ScribblingGeek's Commons night photograph before
+lighting changes. Warm colour-preserving tier wash is stronger, with modest canopy
+soffit lamps and a lit verandah cornice. Roof/annex remain restrained. The saved
+photo and SOURCES.md remain outside git. Offline geometry passes; round-2 matched
+camera results are recorded below after the browser queue completes.

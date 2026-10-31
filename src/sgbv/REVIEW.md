@@ -756,3 +756,148 @@ adds the Batch-2 mall poses from their metadata. The source photos are never
 production textures. SOM/CTBUH/LUCI images retain their source copyright; no open
 licence is claimed. The Piazza photo is LN9267 / CC BY-SA 4.0. References are
 used only in local comparisons and are not redistributed in the repository.
+
+## Batch 4: Nucleos and Fusionopolis Two
+
+Two original OSM-anchored modules complete the six additions across batches 2–4.
+Existing thirteen model sources and core.js are untouched. New footprint data,
+module registration in patch17 and the normal generated page are the integration
+changes. No reference images, render outputs or credentials are included.
+
+- **Nucleos** uses relation 21450449, outer 305516250, inner 1562916650 and the
+  mapped building parts 1562916645–1562916649: two lab blocks, low planted wing,
+  open central corridor and elevated green link. The supplied maximum 54.7 m
+  includes the interpreted roof-service envelope; main walls at 47.5/49.5 m are
+  fitted estimates, distinct from lower OSM part-height estimates. Seven deep
+  lab bands, irregular panel/glazing cells, darker north skin, roof screens,
+  planting, entrance canopy and cool-white inferred lab/bridge lighting.
+- **Fusionopolis Two** follows ways 448605477/478/479: 18-storey Innovis with a
+  folded 105.2 m crown (105.43 m bounds with thin light/parapet), estimated 64 m
+  Kinesis / 11 storeys and 48 m Synthesis / five deep cleanroom bands. Blue glass,
+  dark belts, roof louvres, V lobby supports and expressed K-braces. Warm lobby,
+  blue-white lab glazing and crown accent follow the dusk photo in broad palette;
+  occupancy, exact circuits and intensity are inferred. The recessed terrace is
+  shallow with an opaque back wall; no claim of exact through-opening geometry.
+
+[CPG's Nucleos built project](https://cpgcorp.com.sg/project/nucleos-singapore/)
+credits CPG and concept designer Perkins+Will; its built photos take precedence
+over the supplied [AGWMS design render](https://www.agwms.com/nucleos). Hadid's
+campus masterplan role is distinct. The
+[CapitaLand property page](https://www.capitaland.com/sg/en/lease/businesspark-industrial-logistics1/campaign/global-property-listing/businesspark-industrial-logistics/nucleos.html)
+confirms the planted bridge and two seven-storey towers. Nucleos night lighting
+has no supplied as-built exterior night photo and is explicitly inferred.
+[SG Mark](https://sgmark.org/winners/fusionopolis-two/) confirms F2's P&T / ARUP /
+PB / DL-KPK team, tower storeys, cleanroom K-bracing and 2015 opening. Its supplied
+[img19-11 dusk photograph](https://sgmark.org/wp-content/uploads/winners/1326/img19-11.jpg)
+informs F2 lighting. CPG, AGWMS and SG Mark photos are reference-only, with no open
+licence claimed. See both module REVIEW files for full evidence and limitations.
+
+### Silhouette fit
+
+Both sites' tiles are current enough for envelope comparisons. Camera records
+were reconstructed from the shot-plan formula; street poses are unknown and
+**not scored**. Fixed manual target outlines at 800×500, rasterized at 1600×1000,
+are compared with raw-model white masks. Foreground-occluded regions use explicit
+crops: Nucleos north/east upper areas; F2 north/east upper areas and exposed west
+right-hand region. Other scored views use visible target unions. Annotation
+uncertainty is roughly 5–10 px, plus camera reconstruction and tile distortion.
+These numbers describe silhouette occupancy, not photographic resemblance.
+
+| View | Nucleos | Fusionopolis Two |
+|---|---:|---:|
+| n | 0.8723 | 0.8717 |
+| e | 0.9050 | 0.7868 |
+| s | 0.9171 | 0.8245 |
+| w | 0.8877 | 0.8650 |
+| top | 0.8726 | 0.7493 |
+| orbit_h0225_p15 | — | 0.8534 |
+| **Mean** | **0.8910** | **0.8251** |
+| street | unknown / unscored | unknown / unscored |
+
+Round 1: independent masses and panels, but dark/smooth F2 glazing, inaccurate
+crown slope and overly dense warm default night windows. Round 2: crown slope
+and private cool-white lab shaders; F2 mean **0.81314 → 0.82417**. Round 3: crown
+louvres, dark belts, red Nucleos entry canopy and lighting strips moved outside
+glazing; final F2 **0.82512**. Nucleos **0.89094 → 0.89094 → 0.89095**. One top-view
+annotation error associated a separate eastern-neighbour roof with F2; corrected
+once, with **all rounds rescored using identical revision-2 annotation hashes**.
+No camera/outline changes are concealed as model improvements.
+
+Approximate street-photo diagnostics use labelled display crops of the model
+images (no warp); they are not registered and not
+quantitatively scored. Generic/synthetic context and other landmarks are hidden
+only for those photo views so they do not obscure the target. Normal tile-pose
+comparisons and both area/Holland aerial pairs retain full context. The separate
+Holland pair gives the three malls enough screen area alongside the wide area
+view. No Google images are used as model textures or fetched at runtime.
+
+### Geometry and reproducibility
+
+| Module | Added triangles | Maximum geometry height |
+|---|---:|---:|
+| Nucleos | 10,522 | 54.70 m |
+| Fusionopolis Two | 8,970 | 105.43 m |
+| Previous thirteen | 399,260, unchanged | unchanged |
+| **All fifteen** | **418,752** | |
+| Unchanged EW rail detail | 29,304 | |
+| **Total Buona Vista addition** | **448,056** | |
+
+This stays below the existing 450,000-triangle area budget. The number is the
+area addition, not the full city frame's variable drawn-triangle count. New
+geometry has no nonfinite or degenerate triangles. Canonical oriented-triangle
+hashes prove all previous thirteen models identical to **ffd3bca**; Elementum's
+actual 900 m² roof-garden check also remains valid. Materials are batched; new
+shaders clone cached materials with private keys, never mutate shared definitions.
+All new thin lighting meshes have castShadow disabled after lmMerge.
+
+Reproduce with dependencies under `/workspace/bv_wip_codex/`:
+
+```bash
+BV_VENDOR=/workspace/bv_wip_codex/vendor TMPDIR=/workspace/bv_wip_codex bash tools/bv_build.sh --test
+node tools/bv_batch4_check.cjs
+THREE_JS=/workspace/bv_wip_codex/vendor/package/build/three.min.js node tools/bv_geometry.cjs
+# Local test server on 8048 returns 204 for the optional favicon:
+python3 tools/bv_batch4_serve.py
+# In another terminal (PLAYWRIGHT_CORE and TMPDIR set to persistent workspace paths):
+bash src/lm33/kit/browser.sh node tools/bv_batch4_render.mjs final
+python3 tools/bv_batch4_score.py final
+bash src/lm33/kit/browser.sh node tools/bv_batch4_regression.mjs
+bash src/lm33/kit/browser.sh node tools/bv_batch4_heroes.mjs area
+bash src/lm33/kit/browser.sh node tools/bv_batch4_heroes.mjs f2
+bash src/lm33/kit/browser.sh node tools/bv_batch4_heroes.mjs nucleos
+python3 tools/bv_batch4_sheet.py
+```
+
+Outputs remain under `/workspace/eo_codex_out/`: `nucleos_compare.jpg`,
+`fusionopolis_two_compare.jpg`, `bv_area_hero_day/night.jpg`, and
+`bv_area_hero_holland_day/night.jpg`. Detailed IoU masks, annotation hashes,
+source hashes, geometry and browser reports are under `bv_batch4/`.
+
+Remaining gaps: approximate secondary/service heights, simplified roof plant,
+bridge structure, panel depth and glass reflections; F2's Kinesis upper-terrace
+profile is still the weakest top-view match. Night lighting is an interpretation
+of the available evidence, particularly for Nucleos. Synthetic surrounding
+buildings, trees, roads and grading differ from the reference photographs.
+
+Validation: the full application completed **94 established day poses + 13 night
+views** for the previous thirteen modules with **zero page errors, zero console
+errors and 72 runnable shader programs** (`bv_batch4/existing/verification.json`,
+process exit 0). A final shader-only F2 mullion/pane refinement was then retested
+at **all eleven new-module poses in the full app**, again **zero page/console
+errors, 72 runnable programs**, process exit 0. Final captured source hashes match
+the module/data/test-page files. Both new modules and all fifteen registrations
+are present. The static test server returns 204 for the absent optional favicon;
+its requests contain no 404/500 responses. Prior interrupted diagnostic browser
+runs were discarded. Geometry checks, generated JavaScript syntax and diff
+whitespace checks pass; full-area triangle count remains 448,056 including rails.
+
+The final area/Holland aerial run also passed with zero page/console errors,
+**67 runnable programs** and exit 0 (`bv_batch4/heroes_area.json`). All fifteen
+module anchor midpoints fall within the wide frame; the closer Holland frame
+contains the three mall anchors. This is a frustum check, not an occlusion survey.
+Both new modules each have one merged thin-light mesh, **zero casting shadows**.
+The supplemental photo diagnostics have zero page/console errors and 64/63
+runnable programs respectively; their reports and labelled display crops are
+retained externally. Comparison sheets and all four final aerials were viewed
+before committing. Final model/data/page source hashes agree with the accepted
+targeted and area captures. The PR body is deliberately unchanged.

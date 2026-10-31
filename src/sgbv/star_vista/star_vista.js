@@ -18,7 +18,7 @@ function environment(){
 // Normal night is always the default. The URL override is deliberately explicit;
 // we do not infer a concert schedule from the app's time of day.
 const svClock={value:0},svShow={value:typeof location!=='undefined'&&new URLSearchParams(location.search).get('show')==='1'?1:0};
-if(typeof HOOKS!=='undefined')HOOKS.frame.push(t=>{svClock.value=t;});
+if(typeof HOOKS!=='undefined')HOOKS.frame.push(t=>{svClock.value=t;for(const L of landmarks){if(L.type!=='sgbv_star_vista')continue;const g=lmMeshes.get(L.id);if(g)for(const o of g.children)if(o.isMesh&&o.material.userData.svThinStrip)o.castShadow=false;}});
 function nightMaterial(m,mode,base){
  m.userData.svShow=svShow;
  const prior=m.onBeforeCompile;
@@ -26,7 +26,7 @@ function nightMaterial(m,mode,base){
  m.onBeforeCompile=function(sh,r){
   prior.call(this,sh,r);
   Object.assign(sh.uniforms,{svClock,svShow});
-  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvP=position-vec3(0.0,${base.toFixed(6)},0.0); svR=pow(1.0-abs(dot(normalize(normalMatrix*objectNormal),normalize(-(modelViewMatrix*vec4(position,1.0)).xyz))),2.0);`);
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvP=position-vec3(0.0,${base.toFixed(6)},0.0); svR=pow(max(0.0,1.0-abs(dot(normalize(normalMatrix*objectNormal),normalize(-(modelViewMatrix*vec4(position,1.0)).xyz)))),2.0);`);
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR; uniform float svClock; uniform float svShow;');
   // Replace the inherited office-window lighting only on this landmark. Preserve
   // lmShader's shared uNight, diffuse shading, environment and fog integration.
@@ -44,8 +44,8 @@ vec3 showHue=segment<1.0?mix(vec3(.035,.07,.68),vec3(.015,.53,.60),smoothstep(0.
  segment<3.0?mix(violet,magenta,smoothstep(2.0,3.0,segment)):
  mix(magenta,vec3(.035,.07,.68),smoothstep(3.0,4.0,segment));
 blue=mix(blue,showHue,svShow);
-float softness=.23+.58*exp(-pow((svP.y-53.0+3.0*sin(svP.x*.03))/10.0,2.0))+.07*cos(svP.z*.16);
-float sweep=pow(.5+.5*sin(svP.x*.055+svP.y*.025-svClock*.48),8.0);
+float softness=.23+.58*exp(-pow(abs((svP.y-53.0+3.0*sin(svP.x*.03))/10.0),2.0))+.07*cos(svP.z*.16);
+float sweep=pow(max(0.0,.5+.5*sin(svP.x*.055+svP.y*.025-svClock*.48)),8.0);
 float pulse=.5+.5*sin(svClock*1.3+svP.x*.07+svP.z*.09);
 vec3 svE=vec3(0.0);
 ${mode===9||mode===11||mode===15?`
@@ -109,20 +109,22 @@ totalEmissiveRadiance+=svE*uNight;
 // fragments inside its original ellipse; retain every original vertex. Without
 // this, the island's continuous ground and v3 context paving bury its lights.
 function courtCut(m,center,world=true){
- if(m.userData.svCourtCut)return;m.userData.svCourtCut=true;
- const previous=m.onBeforeCompile;
+ if(m.userData.svCourtCut)return m;
+ const source=m,previous=source.onBeforeCompile,sourceKey=source.customProgramCacheKey();
+ m=source.clone();m.userData=Object.assign({},source.userData,{svCourtCut:true,svCourtOwner:'star_vista'});
+ m.defines=Object.assign({},source.defines,{SV_OWN_COURT:1});
  m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);
   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svCourt;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvCourt=${world?'(modelMatrix*vec4(position,1.0)).xyz':'position'};`);
   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svCourt;').replace('#include <clipping_planes_fragment>',`#include <clipping_planes_fragment>
 vec3 court=svCourt-vec3(${center?center.map(v=>v.toFixed(6)).join(','):'32.0,0.0,8.0'});
 if(dot(court.xz/vec2(13.0,14.0),court.xz/vec2(13.0,14.0))<.998 && court.y>-.9 && court.y<1.25)discard;`);
  };
- m.customProgramCacheKey=()=> 'sv-court-cut-v1-'+(world?'world':'local');m.needsUpdate=true;
+ m.customProgramCacheKey=()=> sourceKey+':sv-court-v2:'+world+':'+center.join(',');m.needsUpdate=true;if(!world&&typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set('sv-owned-court:'+source.uuid,m);return m;
 }
 register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  const metal=3,glass=2,light=4;
  if(typeof terrain!=='undefined'&&terrain?.material&&typeof sgXY==='function'){
-  const a=sgXY(D.lat,D.lon);courtCut(terrain.material,[a[0]+32,hC(...a),-a[1]+8]);
+  const a=sgXY(D.lat,D.lon);terrain.material=courtCut(terrain.material,[a[0]+32,hC(...a),-a[1]+8]);
  }
  // Lighting is a separate, tagged batch: v3's oriented triangles stay intact.
  const lamps=new SGBV.Batch(G.base);
@@ -135,10 +137,10 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
   const m=lmMat({c:'#ffffff',vc:true,ds:true,m:mode===glass?1:0,lc:'#'+(0xffe2a0+mode).toString(16),lk:mode===glass?.22:.12,fh:4.4,cw:2.6,glow:mode===light?'#ffe5ba':mode===9?'#3768de':mode===metal?'#c0d6df':undefined,gk:mode===light?.8:mode===9?.55:mode===metal?.065:undefined});
   if(mode===metal||mode===glass||mode===5||mode===6||mode===9||mode===15){m.envMap=environment();m.combine=THREE.MixOperation;m.reflectivity=mode===glass?.32:(mode===metal||mode===9)?.19:.025;if(mode===metal||mode===9)m.emissive=new THREE.Color('#101b20');m.flatShading=true;m.needsUpdate=true;}
   return nightMaterial(m,mode,G.base);
- });const modes=[...b.buckets.keys()];group.children.slice(-modes.length).forEach((m,i)=>{m.userData.svMode=modes[i];if(modes[i]===0||modes[i]===light)m.castShadow=false;});
+ });const modes=[...b.buckets.keys()];group.children.slice(-modes.length).forEach((m,i)=>{m.userData.svMode=modes[i];if([0,4,10,20,21,22].includes(modes[i])){m.castShadow=false;m.material.userData.svThinStrip=true;}});
  const lampGroup=new THREE.Group();lampGroup.userData.svLighting=true;
  lamps.flush(lampGroup,mode=>nightMaterial(lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#'+(0xffd000+mode).toString(16),lk:0}),mode,G.base));
- lampGroup.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;}});
+ lampGroup.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;o.material.userData.svThinStrip=true;}});
  group.add(lampGroup);group.userData.svBaseTriangles=group.userData.bvTriangles;
  group.userData.svLightingTriangles=lampGroup.userData.bvTriangles;
  group.userData.bvTriangles+=lampGroup.userData.bvTriangles;
@@ -257,7 +259,7 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  // remains open: only the annular galleries are built, with a planted outer edge.
  const rimOuter=[],rimInner=[];for(let j=0;j<=48;j++){const t=-1.4+j/48*2.8;rimOuter.push(arc(37,30,t));rimInner.push(arc(31.5,24.5,t));}
  const rimPlan=[...rimOuter,...rimInner.slice().reverse()];b.prism(rimPlan,-.5,1.7,'#879f9e',glass);b.cap(rimPlan,3.3,'#bcc8be');
- b.facade(rimOuter,1.7,5.1,3.4,2.5,'#718e94','#b7c7c1',.1);b.rim(rimOuter,5.05,'#d4ded4',.18);for(let i=0;i<rimOuter.length-1;i++)glowBeam([rimOuter[i][0],5.2,rimOuter[i][1]],[rimOuter[i+1][0],5.2,rimOuter[i+1][1]],.18);
+ b.facade(rimOuter,1.7,5.1,3.4,2.5,'#718e94','#b7c7c1',.1,false);b.rim(rimOuter,5.05,'#d4ded4',.18,false);for(let i=0;i<rimOuter.length-1;i++)glowBeam([rimOuter[i][0],5.2,rimOuter[i][1]],[rimOuter[i+1][0],5.2,rimOuter[i+1][1]],.18);
  const plantOuter=rimOuter.map(p=>[p[0]-.8,p[1]]),plantInner=rimOuter.map(p=>[p[0]-2,p[1]]);b.cap([...plantOuter,...plantInner.reverse()],2.7,'#55764a');
  // Foyer supports: pale sloping columns and shaded soffits, not a filled podium.
  for(const [x,z,dx,dz]of [[-54,-18,3,2],[-31,-10,3,1],[-5,1,3,-1],[18,13,1,-2],[27,30,-2,-2],[-45,25,3,-2],[-20,30,3,-2]])b.beam([x,0,z],[x+dx,35,z+dz],1.05,'#d3d9d2');
@@ -283,6 +285,6 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
  for(const [x,z]of [[-77,-32],[-72,32],[-40,44],[-12,54],[43,57],[72,20],[70,-20],[-20,-50]]){c.box(x,0,z,5,.5,3,'#a9b3a4');c.tree(x,.5,z,1.05);}
  for(let i=0;i<7;i++)c.box(57+i*.8,-.2+i*.23,28,1.1,.25,14,'#c3cbc0',-.6);
  for(const Q of [[[-72,-18],[-63,-18],[-63,1],[-72,1]],[[42,-15],[59,-9],[58,-4],[41,-10]]]){c.prism(Q,5.3,5.6,'#c3d0cc');for(const p of Q)c.beam([p[0],0,p[1]],[p[0],5.3,p[1]],.2,'#b7c7c0');}
- c.flush(ctx);ctx.traverse(o=>{if(o.isMesh)courtCut(o.material,[32,G.base,8],false);});g.add(ctx);
+ c.flush(ctx);ctx.traverse(o=>{if(o.isMesh)o.material=courtCut(o.material,[32,G.base,8],false);});g.add(ctx);
 });
 }

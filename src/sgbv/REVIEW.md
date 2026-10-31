@@ -258,3 +258,137 @@ comparison rows use eye-height SW, front, E/NE and close-court cameras; generic
 context/traffic is hidden only for these comparisons, while other landmarks
 remain. Heroes and animation restore full context. Outputs and validation JSON
 are under `/workspace/eo_codex_out/` and are not committed.
+
+
+## Batch 1: existing module refinement and Bugbot fixes
+
+Baseline: `a69f9f2`. No new buildings. Fusionopolis One receives recessed sky
+gardens, separate glazing rhythms and unequal swept crowns; Metropolis receives
+unequal floor-band offsets, measured 113.4/104 m envelopes and an English-only
+label; Biopolis receives seven distinct facade treatments and curved enclosed
+bridges. Low entrance glazing, sheltered canopies and planter beds attach to
+these three modules' street edges. Shared cached standard materials improve
+all default Buona Vista batches with roughness/metalness differences, subtle
+face tone, glass spandrels and base darkening. Star Vista retains its specialized
+night shader. No photographs, logos, advertising or new post-processing are used.
+
+### Matched camera evidence and triangle budget
+
+All nine modules have six before/after full-app images at the supplied
+N/E/S/W/top/street cameras: **54 pairs**, with original context retained.
+The 12 manually annotated, observable views below supply the silhouette metric:
+two each for the three focus modules and one top/partial control for the others.
+Thus these scores are limited visible-envelope checks, not complete six-view
+IoUs or measurements of facade fidelity. Street furnishings below 3 m,
+vegetation, and Star Vista lighting/context are excluded from architecture masks.
+The same fixed masks, validity windows and camera transforms are used for both
+versions. Per-view values and annotation hashes are in the external `iou.json`.
+
+| Module | Scored views | IoU before → after | Triangles before → after |
+| --- | ---: | ---: | ---: |
+| mediacorp | 1 | 0.599365 → 0.599365 | 13,833 → 13,833 |
+| fusionopolis_one | 2 | 0.897970 → 0.898284 | 47,039 → 50,985 |
+| buona_vista_mrt | 1 | 0.690773 → 0.690773 | 5,122 → 5,122 |
+| solaris | 1 | 0.788923 → 0.788923 | 38,403 → 38,403 |
+| rochester | 1 | 0.688578 → 0.688578 | 29,835 → 29,835 |
+| star_vista | 1 | 0.788432 → 0.788783 | 81,680 → 81,416 |
+| metropolis | 2 | 0.778045 → 0.782347 | 22,688 → 37,051 |
+| biopolis | 2 | 0.764847 → 0.765756 | 68,257 → 72,871 |
+| galaxis | 1 | 0.579285 → 0.579285 | 12,676 → 12,676 |
+
+Model totals: **319,533 → 342,192**. EW rail detail remains **29,304**;
+total added geometry is **348,837 → 371,496**, below the 400,000 budget.
+Finite-coordinate and height checks pass. Mediacorp, MRT, Solaris, Rochester and
+Galaxis retain identical oriented triangle-coordinate hashes. Star Vista deletes
+only 264 erroneous arc-closing triangles; remaining v3 architecture matches the
+original after that explicitly permitted deletion. Lighting remains 5,448 triangles.
+
+### Iteration and annotation audit
+
+1. The first matched-camera round exposed silhouette loss from shrinking entire
+   Fusionopolis tower bodies. The outer bodies were restored while retaining the
+   deeper sky-garden recesses. Protruding Biopolis shade ends were shortened.
+2. The next round restored full-width bridge floors/roofs and improved entrance
+   placement. Those low street details are assessed visually rather than in the
+   architecture mask. Broad facade and garden improvements remain modest at
+   district distance.
+3. A photo-only annotation audit found that the initial Biopolis outline included
+   unmodelled later-phase buildings and that the Star Vista mask filled exposed
+   courtyard ground. Revision 2 corrects those two errors, and **both baseline
+   and final are rescored with revision 2**. The initial annotations remain in
+   `tools/bv_refine_annotations_v1.json`; final ones are in
+   `tools/bv_refine_annotations.json`. This correction is not a geometry gain.
+   The model-mask vegetation filter was also corrected to retain the mint MRT
+   canopy and remove tree trunks, then regenerated for both versions.
+
+The final acceptance masks yield no decrease in any of the 12 scored views.
+Gains are small relative to roughly 4–8 annotation-pixel uncertainty at 800 px;
+these numbers support non-regression, not a claim of statistically meaningful
+replica improvement. For transparency, the initial, erroneous masks gave mean
+Biopolis 0.56997 → 0.56894 and Star Vista 0.78513 → 0.78470. Those are retained
+as diagnostic history and are not the acceptance masks. Annotated reference
+boundaries are never generated from the model.
+
+### Bugbot fixes and verification
+
+- **Underground MRT mask:** way 823046125 is omitted from replacement masks;
+  the modeled surface station parts still suppress overlapping generic boxes.
+  The actual restored decoded records, local OSM associations and conservative
+  triangle/prism collision results are in `after/bugbot_osm_join.json`.
+  Three shipped records reappear: 374/689 (9.8 m, way 827002002), 374/713
+  (9.6 m, way 827002001), and 375/1537 (9.7 m, matching coincident footprints
+  in local snapshots 736566589 / 852002643; historical ID ambiguous). All are
+  unnamed `building=yes`. All three have zero conservative station overlap
+  candidates (5 cm vertical tolerance); OSM vertex matching errors are 0.33–0.53 m.
+- **Names:** Metropolis is English-only; Fusionopolis One retains 启汇城一期.
+  The source contract checks both registered labels.
+- **Open amphitheatre arc:** `facade` and `rim` skip the closing chord when
+  `closed=false`. An open-path segment check and oriented-triangle comparison
+  verify the change.
+- **Safe GLSL powers:** every Star Vista `pow` base is explicitly nonnegative
+  through `max` or `abs`, including the Fresnel rounding case. The full app
+  compiles the shaders successfully under r128 software WebGL. Physical-GPU
+  execution was not available; the undefined negative-base expression is removed.
+- **Thin-strip shadows:** all strip materials, including mode 10, carry a tag;
+  the frame hook disables casting after `lmMerge` resets new meshes. Both a test
+  executing the real merge routine and the final placed meshes verify this.
+- **Court material isolation:** `courtCut` owns a clone, defines and cache key,
+  preserves the prior compiler callback, and never modifies cached `lmMat`.
+  A shared-cache test builds Rochester before Star Vista and compares its
+  callback/defines/user data afterwards. Runtime checks find no neighbouring
+  landmark with a court-cut material. Low Rochester/Metropolis/MRT captures
+  supply the visual check against local-coordinate holes.
+
+`node tools/bv_bugbot_check.cjs`, `node tools/bv_refine_geometry.cjs`,
+`node tools/bv_geometry.cjs`, `node tools/sv3_check.cjs` and
+`node tools/sv_night_check.cjs` record the independent contracts. The normal
+`bv_build.sh --test` flow regenerates and syntax-checks `site/index.html`.
+The final appshot/browser-lock run covers all 54 cameras, nine night views and
+three low neighbour views: **zero page errors, zero console errors and all 63
+shader programs runnable**. See `after/verification.json` for the full results. Only accepted, completed runs count; interrupted harness attempts
+are retained in external logs and do not count as successful verification.
+
+### References, outputs and honest limits
+
+Per-module `REVIEW.md` files explain changes, source licences and limitations.
+Local reference cameras and metadata are in `/workspace/bv_refs/<slug>/`.
+Real photographs are listed in `/workspace/bv_photo_refs/existing/SOURCES.md`:
+Biopolis (yeowatzup CC BY 2.0, Henry Leong CC BY-SA 2.0), MRT (Fanz226 and
+Wzhkevin CC BY-SA 4.0), and Metropolis (Erwin Soo CC BY 2.0). Their Commons
+file links are in the corresponding module reviews. Photos are consulted only;
+no tiles or reference meshes are loaded or extracted.
+
+The local outputs are `/workspace/eo_codex_out/bv_refine_<slug>.jpg` for all nine
+modules, each containing reference | baseline | final at six cameras, plus
+`/workspace/eo_codex_out/bv_batch1/` with masks, scores, audits and night/neighbour
+captures. `tools/bv_refine_render.mjs`, `bv_refine_score.py` and
+`bv_refine_sheet.py` reproduce the final flow. No photos or renders are committed.
+
+The models still do not reach photographic replica fidelity. Fusionopolis crown
+curves/trusses and some slots are simplified; Metropolis offsets are approximate;
+Biopolis block elevations, heights and bridge bends remain interpretations.
+Existing district grading, generic context and sparse landscaping still limit
+street resemblance. The five control modules gain shading, with their previous
+street geometry retained. No additional malls or buildings are introduced in
+this batch. PR #5's body is deliberately left unchanged for the owner's later
+batch summary.

@@ -267,3 +267,34 @@ pass with zero page/console errors and runnable shader programs. Initial
 the generated page before any source reload. The generated page contains the
 exact reviewed module. Other eight geometry records match the v3 baseline.
 The final comparison, heroes and animation strip were inspected directly.
+
+## Batch 1 Bugbot corrections
+
+The curved retail/amphitheatre rim is an open path. `facade` and `rim` now accept
+`closed=false` and omit its accidental end-to-start chord. This removes exactly
+264 architectural triangles. The remaining 75,968 v3 triangles are identical to
+v3 after that single permitted deletion; 5,448 lighting triangles remain,
+for 81,416 total. This supersedes the historical pass-2 statement that all v3
+triangles remain. `node tools/sv_night_check.cjs` compares oriented coordinates
+against the original source with only those two open-path calls corrected.
+
+All GLSL `pow` bases are guarded with `max(0.0,...)` or `abs(...)`; the Fresnel
+expression cannot acquire a negative base through floating-point rounding.
+Mode 10 and all other thin lighting/outline modes have material tags. The frame
+hook disables their shadows after the app's `lmMerge` recreates meshes (which
+otherwise resets `castShadow=true`). This is checked against the actual merge
+routine, as well as placed meshes in the browser.
+
+`courtCut` clones its input material, preserves its existing compiler callback,
+uses owned defines and a distinct shader cache key, and assigns the clone only
+to Star Vista context or the intended world terrain. Cached `lmMat` instances
+are never mutated. A shared-cache unit check builds Rochester first, then Star
+Vista, and proves its compiler/defines/user data are unchanged. Full-app low
+neighbour views are saved as `bv_batch1/after/neighbor_*.jpg` outside git;
+runtime inspection checks that no other landmark material has a court cut.
+Software WebGL captures check shader compilation; no physical-GPU test is
+claimed. Nonnegative shader bases are verified statically.
+
+The batch's limited, fixed-camera IoU and visual comparisons are recorded in
+[the area review](../REVIEW.md#batch-1-existing-module-refinement-and-bugbot-fixes).
+The curved shell, site grading and lighting limitations above still apply.

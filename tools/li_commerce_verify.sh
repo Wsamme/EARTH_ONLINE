@@ -11,5 +11,5 @@ exec bash src/lm33/kit/browser.sh bash -c '
  trap '\''kill "$commerce_http_pid" 2>/dev/null || true'\'' EXIT
  node tools/li_commerce_audit.cjs
  python3 tools/li_commerce_roads.py
- node tools/li_commerce_review.mjs
+ node tools/li_commerce_review.mjs "${LI_SLUGS:-tekka_centre,mustafa_centre,deepavali_lightup,little_india_arcade,city_square_mall}"
 '

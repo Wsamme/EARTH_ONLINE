@@ -26,21 +26,21 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   curve(F,x,y,.68,.42,blue,20);line(F,[[x-sign*.45,y],[x-sign*.85,y+.75],[x-sign*.7,y+1.15],[x-sign*.4,y+1.12],[x-sign*.35,y+.83]],gold);line(F,[[x-sign*.7,y+1.15],[x-sign*1.0,y+1.07]],orange);
  }
  const gates=[];
- const archCount=sample(ser,32,(c,t,i)=>{const F=frame(c,t),w=6.0;gates.push({center:c,tangent:t});
+ const archCount=sample(ser,32,(c,t,i)=>{const F=frame(c,t),w=i===21?4:i===20?5:6;gates.push({center:c,tangent:t,width:w});
   for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u,4.8,.7);flower(F,u,7.6,.62);}
   b.beam(F(-w,8),F(w,8),.07,'#8b8c81');
-  lotus(F,0,7.9,1.15);for(const u of [-3.5,3.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
+  lotus(F,0,7.9,1.15);for(const u of [-(w-2.5),w-2.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
   line(F,Array.from({length:49},(_,j)=>{let u=-w+j/48*w*2;return[u,8.25+.25*Math.cos(u*.9)];}),green);
  });
  // One peacock gateway near the southern arrival, no invented text panel.
  if(gates.length>1){const F=frame(gates[1].center,gates[1].tangent);peacock(F,-1.7,9.1,-1);peacock(F,1.7,9.1,1);line(F,Array.from({length:33},(_,i)=>{const a=i/32*Math.PI;return[3.0*Math.cos(a),9.8+2.0*Math.sin(a)];}),gold,.09);}
  // Longitudinal garlands between successive arches, following the road bend.
- for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*5.75,7.7),q=E(side*5.75,7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
+ for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*(A.width-.25),7.7),q=E(side*(B.width-.25),7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
  sample(camp,12,(c,t,i)=>{const F=frame(c,t);for(const u of [-3,3])b.beam(F(u,0),F(u,5.5),.07,'#8d8c7a');line(F,[[-3,5.4],[0,5.0],[3,5.4]],gold);flower(F,0,5.15,.45);
   // Compact festival stalls inside the pedestrian lane, on one side only.
   if(i%2===0){const p=F(2,0),a=Math.atan2(-t[1],t[0]);b.box(p[0],p[1],p[2],2.8,2.2,1.2,'#d4a474',a);b.box(p[0],p[1]+2.2,p[2],3,.18,1.5,i%4?pink:orange,a);}
  });
  sample(dun,22,(c,t)=>{const F=frame(c,t);line(F,[[-2.2,5.5],[0,5.1],[2.2,5.5]],gold);diya(F,0,5.25,.45);});
- g.userData.liLightup={arches:archCount,spacingMetres:32,clearanceMetres:7.1,roadIds:D.streets.map(s=>s.id)};
+ g.userData.liLightup={arches:archCount,spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
 },[]);
 }

@@ -4,12 +4,12 @@
 const {register,out,scale,lerp,center}=SGLI;
 register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
  const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.22:mode===4?1:mode===5?.8:mode===6?.1:0}));
- for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?13.2:part.id===178437069?25.8:22.5;
+ for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?9.6:part.id===178437069?25.8:22.5;
   if(bridge){
    // This mapped narrow part connects across the lane; keep the clearance open.
-   b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,12.7,'#4a7970',2);b.facade(out(P,.04),5.7,12.7,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),12.7,H,'#cbd1be');continue;
+   b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,9.1,'#4a7970',2);b.facade(out(P,.04),5.7,9.1,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),9.1,H,'#cbd1be');continue;
   }
-  b.prism(P,-1,H,'#d5d5c5',6);const Q=out(P,.06);
+  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06);
   Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<2)return;const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/4));
    // Older pale hotel / retail block at the west, greener glazing on the extension.
    const old=part.id===47198841;
@@ -22,7 +22,10 @@ register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
     for(let y=6;y<H-2;y+=4.1){
      b.box(x,y,z,w*(old?.55:.94),2.75,.17,old?'#41685d':'#477b71',a,2);
      b.box(x,y-.4,z,w,.38,.35,old?'#e5e4d5':'#abbcb0',a);
-     if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.9,.23,'#bdc7b6',a);}
+     if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.9,.23,'#bdc7b6',a);
+      const r=w*.275,pt=(t,R)=>[x+Math.cos(a)*Math.cos(t)*R,y+2.75+Math.sin(t)*R,z-Math.sin(a)*Math.cos(t)*R];
+      for(let k=0;k<12;k++){const t=k/12*Math.PI,u=(k+1)/12*Math.PI;b.tri('#41685d',[x,y+2.75,z],pt(t,r),pt(u,r),2);b.quad('#c8d0bd',pt(t,r+.1),pt(u,r+.1),pt(u,r),pt(t,r));}
+     }
     }
     if(j%4===1)b.box(x,5,z,w*.84,2.5,.2,'#b7c1a2',a,5);
    }

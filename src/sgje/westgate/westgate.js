@@ -59,7 +59,14 @@ register('westgate','西城购物中心','Westgate',112,(b,D,G,g)=>{
  // Dark vertical split between the rounded and flat wings on the public face.
  const p=T[0],q=T[1];b.quad('#263f4c',[p[0],16,p[1]],[q[0],16,q[1]],[q[0],H-4,q[1]],[p[0],H-4,p[1]],2);
  b.cap(T,H-3.8,'#687a73');b.garden(scale(T,.82),H-3.7,false);
- b.walls(T,H-4,H,'#82938e');b.rim(T,H,'#b8c2b7',.32);
+ const tc=center(T),service=rect(tc[0],tc[1],24,16,.06);
+ b.prism(service,H-3.65,H-1.4,'#9ca79e');b.cap(service,H-1.35,'#7d8e86');
+ for(let k=-1;k<=1;k++){
+  b.box(tc[0]+k*6.5,H-1.3,tc[1],4.9,.6,9,'#a9b4aa',.06);
+  for(let j=-3;j<=3;j++)b.box(tc[0]+k*6.5,H-.68,tc[1]+j,4.1,.06,.35,'#526663',.06);
+ }
+
+ b.walls(T,H-4,H,'#82938e');b.rim(T,H-.16,'#b8c2b7',.32);
  for(let i=0;i<T.length;i++){const p=T[i],q=T[(i+1)%T.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/1.4);for(let j=0;j<n;j++){const t=j/n,x=p[0]+(q[0]-p[0])*t,z=p[1]+(q[1]-p[1])*t;b.box(x,H-3.8,z,.10,3.8,.10,'#b4bfb6');}}
  // LED lines are their own batched lmMat surface, preserving night uniforms.
  const led=new Batch(G.base),Q=out(T,.45);

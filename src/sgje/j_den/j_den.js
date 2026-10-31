@@ -32,17 +32,25 @@ register('j_den','聚鼎',"J'Den",83,(b,D,G,g)=>{
    b.prism(scale(T,.965),lo,hi,'#657c86');
    b.facade(T,lo,hi,fh,2.8,'#6f8994','#3c4c52',.12);
   }
-  // Thin projecting balcony slabs, glass rails and vertical bronze dividers.
+  // Residential floor fronts: dark inset living-room doors behind deep balconies,
+  // pale projecting slabs and substantial bronze party-wall/divider stacks.
   for(let f=0;f<38;f++){
    const y=base+f*fh;if(f===21)continue;
-   b.band(out(T,.75),y,.24,'#aeb5ae');
-   b.band(out(T,.78),y+.28,.62,'#62777e');
-   b.rim(out(T,.8),y+.96,'#4c5c60',.085);
-   // Three recessed balcony stacks along the broad elevations.
+   b.band(out(T,.75),y,.23,'#c7ccc2');
+   b.band(out(T,.78),y+.28,.60,'#738890');
+   b.rim(out(T,.8),y+.94,'#53676c',.075);
    for(const x of [-17,0,17])for(const side of [-1,1]){
-    const z=(wi?15:-6)+side*7.35,c=pt(x+(wi?-3:0),z),a=angle;
-    b.box(c[0],y+.3,c[1],6.6,1.0,.12,'#475f68',a,2);
-    const d=pt(x+(wi?-3:0)-3.45,z);b.box(d[0],y,d[1],.22,fh,.8,'#a3977b',a);
+    const cx=x+(wi?-3:0),z0=wi?15:-6,zBack=z0+side*6.94,zFront=z0+side*8.45;
+    const front=pt(cx,zFront),floor=pt(cx,z0+side*7.6),a=angle;
+    // Flat recess backs and inset doors use oriented planes; the slabs and
+    // divider walls supply their depth. Offset doors along the local normal.
+    const pane=(w,z,lo,hi,col,mode=0)=>{const A=pt(cx-w/2,z),B=pt(cx+w/2,z);b.quad(col,[A[0],lo,A[1]],[B[0],lo,B[1]],[B[0],hi,B[1]],[A[0],hi,A[1]],mode);};
+    pane(7.2,zBack,y+.25,y+fh-.05,'#263a40');
+    pane(5.2,zBack+side*.025,y+.55,y+2.55,'#49616a',2);
+    b.box(floor[0],y,floor[1],8.1,.26,2.25,'#cbd0c5',a);
+    b.box(front[0],y+.3,front[1],6.85,.80,.10,'#647e86',a,2);
+    b.box(front[0],y+1.12,front[1],7.0,.07,.12,'#b1bbb1',a);
+    for(const edge of [-1,1]){const d=pt(cx+edge*3.95,z0+side*7.55);b.box(d[0],y,d[1],1.0,fh,2.2,'#b3a07d',a);}
    }
   }
   b.cap(out(T,.65),H-2.1,'#929b94');b.rim(out(T,.65),H-1.65,'#b7b6a7',.24);
@@ -52,7 +60,7 @@ register('j_den','聚鼎',"J'Den",83,(b,D,G,g)=>{
  }
  // Recessed roof services and a slender, bronze-edged crown.
  b.prism(poly(-2,4,18,14),H-2.1,H,'#858a7d');
- for(const x of [-31,-21,21,31]){const c=pt(x,-6);b.box(c[0],base,c[1],.5,H-base,.55,'#978a70',angle);}
+ for(const x of [-31,31]){const c=pt(x,-6);b.box(c[0],base,c[1],.75,H-base,.75,'#9d8d70',angle);}
  // L24 shrubs are small enough to preserve the open terrace silhouette.
  for(const x of [-25,-12,12,25])for(const z of [-6,15]){const c=pt(x,z);b.tree(c[0],sky+.2,c[1],.48);}
  // Roof garden, 50 m lake pool, curved leisure water and sheltered clubhouse.
@@ -68,6 +76,29 @@ register('j_den','聚鼎',"J'Den",83,(b,D,G,g)=>{
  // Blank canopy fascia and short J'Walk connector at retail level two.
  const A=[38,7],B=[58,3];b.beam([A[0],5.7,A[1]],[B[0],5.7,B[1]],3.0,'#b9b5a5');b.beam([A[0],8.4,A[1]],[B[0],8.4,B[1]],3.4,'#b7b9ab');
  for(const side of [-1,1]){b.beam([38,6,7+side*1.45],[58,6,3+side*1.45],.12,'#6c7d7e');b.beam([38,7.15,7+side*1.45],[58,7.15,3+side*1.45],.12,'#6c7d7e');for(let t=0;t<=1;t+=.2)b.beam([38+20*t,5.9,7-4*t+side*1.45],[38+20*t,8.35,7-4*t+side*1.45],.12,'#76827c');}
+ // Landmark-local PBR surfaces retain lmMat's shared night/time/fog uniforms.
+ // Apartment occupancy is sparse and warm rather than the default office grid.
+ const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>{
+  const key='jden-residential-v2-'+mode;
+  if(typeof LMCTX!=='undefined'&&LMCTX.mats.has(key))return LMCTX.mats.get(key);
+  const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0});
+  const m=new THREE.MeshStandardMaterial({color:source.color,side:source.side,vertexColors:true,roughness:mode===2?.32:.74,metalness:mode===2?.12:.025});
+  const previous=source.onBeforeCompile;
+  m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);if(mode===2){
+   sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 jdP;').replace('#include <begin_vertex>','#include <begin_vertex>\njdP=position-vec3(0.0,'+G.base.toFixed(6)+',0.0);');
+   sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 jdP;').replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+float jdTower=step(16.0,jdP.y), jdFH=mix(4.5,3.3,jdTower);
+float jdFloor=floor((jdP.y-11.2)/jdFH), jdY=fract((jdP.y-11.2)/jdFH);
+float jdX=jdP.x*.9824-jdP.z*.1869, jdZ=jdP.x*.1869+jdP.z*.9824;
+float jdBay=floor(jdX/3.6),jdSide=floor(jdZ/9.0);
+float jdHash=fract(sin(jdFloor*83.13+jdBay*17.27+jdSide*36.87)*43758.5453);
+float jdLit=step(jdHash,mix(.42,.17,jdTower))*step(.17,jdY)*(1.0-step(.82,jdY));
+float jdPane=step(.12,fract(jdX/3.6))*(1.0-step(.91,fract(jdX/3.6)));
+totalEmissiveRadiance+=vec3(1.0,.63,.30)*jdLit*jdPane*uNight*mix(.42,.30,jdTower);
+`);
+  }};
+  m.customProgramCacheKey=()=>key;if(typeof LMCTX!=='undefined')LMCTX.mats.set(key,m);return m;
+ });
 });
 // Keep labels and night-height uniforms at the modeled crown until shared data is regenerated.
 LANDMARKS.sgje_j_den.h=139;

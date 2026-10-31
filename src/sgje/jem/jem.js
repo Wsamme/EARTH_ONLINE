@@ -59,8 +59,21 @@ register('jem','裕廊东广场','Jem',112,(b,D,G,g)=>{
   const y=31.7+f*4.65;if(y>H-4)break;
   b.beam([p[0],y,p[1]],[q[0],y,q[1]],.78,'#e0e0d2');
   const end=O[2];b.beam([q[0],y,q[1]],[end[0],y,end[1]],.78,'#e0e0d2');
-  lights.quad('#fff0c6',[q[0],y-.35,q[1]],[end[0],y-.35,end[1]],[end[0]+.7,y-.35,end[1]-.8],[q[0]+.7,y-.35,q[1]-.8]);
-  lights.quad('#fff0c6',[p[0],y-.35,p[1]],[q[0],y-.35,q[1]],[q[0]+.7,y-.35,q[1]+.5],[p[0]+.7,y-.35,p[1]+.5]);
+  lights.quad('#fff0c6',[q[0],y-.405,q[1]],[end[0],y-.405,end[1]],[end[0]+.7,y-.405,end[1]-.8],[q[0]+.7,y-.405,q[1]-.8]);
+  lights.quad('#fff0c6',[p[0],y-.405,p[1]],[q[0],y-.405,q[1]],[q[0]+.7,y-.405,q[1]+.5],[p[0]+.7,y-.405,p[1]+.5]);
+  // Slender warm fascia just beyond the slab edge stays visible from above
+  // while the underside strip supplies the closer ground-level night view.
+  for(const [a,c]of [[p,q],[q,end]]){const ex=c[0]-a[0],ez=c[1]-a[1],L=Math.hypot(ex,ez),nx=-ez/L*.405,nz=ex/L*.405;
+   lights.quad('#fff0c6',[a[0]+nx,y-.28,a[1]+nz],[c[0]+nx,y-.28,c[1]+nz],[c[0]+nx,y-.16,c[1]+nz],[a[0]+nx,y-.16,a[1]+nz]);
+  }
+  // The short southwest elevation continues the terrace treatment: glass
+  // rails, three vine piers and planted ledges, as in SAA's night hero.
+  b.quad('#82a09b',[q[0],y+.4,q[1]],[end[0],y+.4,end[1]],[end[0],y+1.25,end[1]],[q[0],y+1.25,q[1]],2);
+  for(const t of [.12,.43,.74]){
+   edgePanel(q,end,y+.5,3.85,f%2?'#527444':'#63834d',0,t,t+.09);
+   const a=[lerp(q[0],end[0],t+.10),lerp(q[1],end[1],t+.10)],c=[lerp(q[0],end[0],t+.23),lerp(q[1],end[1],t+.23)];
+   b.beam([a[0],y+.65,a[1]],[c[0],y+.65,c[1]],.5,'#698452');
+  }
   // Glass balustrade above the luminous slab and staggered vine piers.
   b.quad('#82a09b',[p[0],y+.4,p[1]],[q[0],y+.4,q[1]],[q[0],y+1.25,q[1]],[p[0],y+1.25,p[1]],2);
   for(let j=0;j<6;j++){

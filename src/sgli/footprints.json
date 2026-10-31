@@ -2,8 +2,8 @@
  "veeramakaliamman": {
   "lat": 1.3079821310442226,
   "lon": 103.85230356752689,
-  "height": 25,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 27.1,
+  "height_source": "Tile roof max minus ground 27.1 m (p90 23.8, p50 7.2); refine per module",
   "parts": [
    {
     "id": 155991884,
@@ -85,8 +85,8 @@
  "srinivasa_perumal": {
   "lat": 1.3135412145375682,
   "lon": 103.855954904003,
-  "height": 21,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 18,
+  "height_source": "Tile roof max minus ground 18.0 m (p90 15.6, p50 7.5); refine per module",
   "parts": [
    {
     "id": 481614952,
@@ -290,8 +290,8 @@
  "abdul_gafoor": {
   "lat": 1.3043997017539217,
   "lon": 103.85373849517269,
-  "height": 21,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 10.8,
+  "height_source": "Tile roof max minus ground 10.8 m (p90 4.3, p50 3.4); refine per module",
   "parts": [
    {
     "id": 176326990,
@@ -473,8 +473,8 @@
  "tekka_centre": {
   "lat": 1.3062037861404063,
   "lon": 103.85059755055798,
-  "height": 12,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 13.6,
+  "height_source": "Tile roof max minus ground 68.9 m (p90 13.6, p50 12.1); refine per module",
   "parts": [
    {
     "id": 47198835,
@@ -723,8 +723,8 @@
  "mustafa_centre": {
   "lat": 1.3095633004339293,
   "lon": 103.85594061242352,
-  "height": 26,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 38.3,
+  "height_source": "Tile roof max minus ground 38.3 m (p90 32.8, p50 21.2); refine per module",
   "parts": [
    {
     "id": 47198841,

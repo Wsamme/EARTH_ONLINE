@@ -62,16 +62,17 @@ function kit(b,a=0,ox=0,oz=0){
 function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
 
 register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,g)=>{
- const K=kit(b,2.467),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
+ const K=kit(b,2.467+Math.PI),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
  const cream='#ece6d6',white='#f6f1e6',green='#335e49',roof='#768974';
- b.prism(D.parts[0].p,-1,1.65,'#c9c4b2');
+ b.prism(D.parts[0].p,-1,.35,'#c9c4b2');
+ const mainStart=new Map([...b.buckets].map(([m,B])=>[m,B.p.length]));
  // Raised historic prayer hall within a real open arcade; eastern extension stays low.
  box(-7.4,1.65,-.6,17.8,7.6,23.2,cream,3);box(-7.4,9.05,-.6,18.2,.3,23.6,white,3);b.cap(K.P(rect(-7.4,-.6,17.8,23.2)),9.36,'#607967');
- box(12.2,1.65,0,14.5,7.5,29,cream,3);
+
  const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);b.cap(K.P(deck),7.11,'#72836b');
  const arcades=faces(deck);
  for(const [i,E]of arcades.entries()){
-  if(i===0)continue;const n=i%2===0?7:8,bay=E.L/n;
+  if(i===0)continue;const n=i===2?5:8,bay=E.L/n;
   for(let j=0;j<n;j++){
    const u=(j+.5)*bay,w=bay-.7,lo=1.7,hi=6.45;
    const p=E.F(j*bay,lo,.02);box(p[0],lo,p[2],.65,4.85,.65,cream,3);
@@ -119,21 +120,33 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  for(let i=0;i<6;i++)box(-7.5,.25+i*.23,16.1-i*.27,4.6,.23,.52,'#b7a998');
  // Hexagonal three-stage cupola with inset arched windows and small corner pinnacles.
  let y=9.3;for(let k=0;k<3;k++){
-  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-7.4,-1.3,r,6);prism(R,y,y+H,cream,3);
+  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-10.2,-.2,r,6);prism(R,y,y+H,cream,3);
   for(const E of faces(R)){arch(E.F,E.L/2,y+.25,.72,H-.45,'#547d72',.04,5);arcTrim(E.F,E.L/2,y+.25,.72,H-.45,white);}
-  prism(K.ring(-7.4,-1.3,r+.12,6),y+H-.16,y+H,white,3);y+=H;
+  prism(K.ring(-10.2,-.2,r+.12,6),y+H-.16,y+H,white,3);y+=H;
  }
- lathe(-7.4,-1.3,y,1.3,3.8,green,4,null,24);
- lathe(-7.4,-1.3,y+3.6,.38,1.05,green,4,null,16);
- lathe(-7.4,-1.3,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
- for(const p of K.ring(-7.4,-1.3,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
- // Extension's long arched window rhythm and restrained flat service roof.
- for(const E of faces(rect(12.2,0,14.55,29.05))){for(let u=1.5;u<E.L;u+=2.8){arch(E.F,u,2.2,1.35,3.2,'#456655',.08,2);arcTrim(E.F,u,2.2,1.35,3.2,white);}beam(E.F(0,8.7,.15),E.F(E.L,8.7,.15),.28,green);}
- box(12.2,9.15,0,14.6,.2,29.1,roof);box(13,9.35,-8,3,1.1,3,'#b7c2b6');
+ lathe(-10.2,-.2,y,1.3,3.8,green,4,null,24);
+ lathe(-10.2,-.2,y+3.6,.38,1.05,green,4,null,16);
+ lathe(-10.2,-.2,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
+ for(const p of K.ring(-10.2,-.2,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
  // Measured vertical levels: main deck 4.3 m, highest finial 10.8 m.
  // Keep the OSM plan unchanged; compress the old over-tall architectural sections.
+ // Fit the historic hall to the northwest quarter, with its sunburst facing
+ // southwest into the entrance court. OSM includes the low forecourt wings.
+ const A=2.467+Math.PI,C=Math.cos(A),S=Math.sin(A);
+ for(const [m,B]of b.buckets)for(let j=mainStart.get(m)||0;j<B.p.length;j+=3){
+  const x=B.p[j]*C-B.p[j+2]*S,z=B.p[j]*S+B.p[j+2]*C;
+  const u=x-.3,v=z*.78-4.2;B.p[j]=u*C+v*S;B.p[j+2]=-u*S+v*C;
+ }
  const fittedY=y=>y<=0?y:y<=9.3?y*(4.3/9.3):4.3+(y-9.3)*(6.5/10.77);
  for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+fittedY(B.p[i]-b.base);
+ // Low green-roofed frontage wings; the central court remains open.
+ box(0,.35,11.55,39.4,2.95,6.1,cream,3);
+ box(0,3.3,11.55,39.5,.16,6.2,roof);
+ const LF=(u,y,w=0)=>[u-19.7,y,14.63+w];
+ for(let u=1.5;u<39;u+=2.8){arch(LF,u,.65,1.25,2.1,'#456655',.06);arcTrim(LF,u,.65,1.25,2.1,white);}
+ for(const x of [-18.9,19])box(x,3.45,11.5,.22,.55,6.2,white);
+ box(14.8,3.5,11.5,8.5,.45,5.6,cream,3);
+ for(const x of [12,14.5,17]){box(x,3.95,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,4.71,z,1.6,.04,.07,'#6a8076');}
  lights(b,g);
 },['sgabdulgafoor']);
 

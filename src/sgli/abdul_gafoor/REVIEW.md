@@ -60,3 +60,25 @@ Mean n/e/s/w/top **0.698**; all-view mean **0.686**.
 Final full-app comparison and independent day/night detail runs have **zero page
 errors and zero console errors**; retired placement list is empty. Final images,
 verification.json and li_iou.json are under `/workspace/eo_li_out/heritage/`, outside git.
+
+## Round 2 — corrected architectural frame
+
+The top/n/e references exposed a 180-degree reversal in the inherited frame:
+the green prayer hall/cupola belonged northwest, with low frontage wings southwest,
+not southeast beside a full-height northwest extension. Corrected the frame to
+2.467 + PI, shortened the hall/arcade depth to match the photographed roof edge,
+and moved the cupola to its roof position. Frontage has five cusped bays and low
+green-roofed wings, roof plant and an open court; the oversized full-height
+extension is removed. These changes follow visible architecture rather than the
+reference's 3 m buffer. The plinth stays on OSM 176326990.
+
+Height rechecked against ground 14.65 m / roof max 25.42 m ellipsoidal in meta.json:
+10.8 m is retained as the provisional image-fit finial height, main roof 4.3 m,
+front wings about 3.5 m. The unusually low p90 4.3 m / p50 3.4 m and courtyard
+sampling mean these are not a survey of each architectural element. Contemporary
+NHB restoration photos determine the white/green paint and five-arch frontage.
+
+Repeated web searches did not locate a reliable contemporary dome-visible night
+photo. Retained the saved NHB/URA 1992 night image as frontage-light evidence;
+green dome wash remains brief-led and explicitly unverified. Offline geometry
+passes at 44,591 triangles. New exact-camera scores follow below.

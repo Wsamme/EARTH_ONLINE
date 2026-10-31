@@ -3,9 +3,11 @@
 {
 const {register,out,scale,lerp}=SGLI;
 register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
- const P=D.parts[0].p,H=10,eave=7.5;
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':undefined,gk:mode===4?.75:mode===5?.3:0}));
- b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#363d40');
+ const P=D.parts[0].p,H=9.2,eave=9.0;
+ // Reference p50 12.1 m / p90 13.6 m; 68.9 m max is HDB contamination.
+ const verticalScale=1.32;
+ const flush=b.flush.bind(b);b.flush=g=>{for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+(B.p[i]-b.base)*verticalScale;return flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':undefined,gk:mode===4?.75:mode===5?.3:0}));};
+ b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#363d40');b.walls(P,7.42,9.0,'#9a7ab6');
  // Sheltered market and first-floor galleries: the open bays sit behind the columns.
  const Q=out(P,.06);
  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<6)return;
@@ -26,11 +28,31 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
  });
  // Shallow pitched roof with deep eaves. Subdivided OSM triangles produce a
  // continuous hip surface on the irregular market plan, without filling its notches.
- const R=out(P,.65),dist=(x,z)=>Math.min(...R.map((p,i)=>{const q=R[(i+1)%R.length],dx=q[0]-p[0],dz=q[1]-p[1],t=Math.max(0,Math.min(1,((x-p[0])*dx+(z-p[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-p[0]-t*dx,z-p[1]-t*dz);}));
- const roof=p=>[p[0],Math.min(H,eave+dist(...p)*.19),p[1]];
+ const R=out(P,.65);
+ // Two broad parallel ridge lines follow the market wings. Boundary recesses
+ // remain plan details, not a source of tiny conical roof peaks.
+ const roof=p=>{const v=-.624*p[0]+.781*p[1];return [p[0],v<4?9.05:9.15,p[1]];};
  const tris=THREE.ShapeUtils.triangulateShape(R.map(p=>new THREE.Vector2(...p)),[]);
- function tile(a,c,d,n){if(n===0){b.tri('#867d84',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
+ function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#6596a1':'#819079',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
  tris.forEach(t=>tile(...t.map(i=>R[i]),3));b.rim(R,eave,'#d9d2d7',.22);
+ // North hall: repeated sawtooth monitor roofs. The broad outer roof and
+ // south gridded sheet roof stay separate from these raised ventilator strips.
+ const UV=(u,v,y)=>[.781*u-.624*v,y,.624*u+.781*v];
+ for(let u=-57;u<6;u+=5){const A=UV(u,-33,9.2),B=UV(u,-7,9.2),C=UV(u+4.8,-7,10.3),E=UV(u+4.8,-33,10.3);
+  if([A,B,C,E].every(p=>SGLI.inside(P,p[0],p[2]))){b.quad('#66796b',A,B,C,E);b.quad('#344850',C,E,UV(u+4.8,-33,9.2),UV(u+4.8,-7,9.2));b.beam(C,E,.1,'#aab7ae');}
+ }
+ // Fine standing-seam grid and a few exhaust banks on the southern roof.
+ for(let u=-10;u<75;u+=3.2)for(let v=6;v<40;v+=4){const A=UV(u,v,9.2),B=UV(u,v+3.8,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.055,'#c4d0c4');}
+ for(let v=8;v<41;v+=8)for(let u=-10;u<72;u+=4){const A=UV(u,v,9.2),B=UV(u+3.8,v,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.05,'#b7c8c0');}
+ for(const [u,v]of [[16,10],[31,13],[50,23],[22,34]]){const c=UV(u,v,9.2);b.box(c[0],9.2,c[2],3,.35,1.4,'#d2d9d4',-.67);for(let k=-1;k<=1;k++)b.box(c[0]+k*.7,9.56,c[2],.5,.04,1.1,'#647c7c',-.67);}
+
+ // Entrance stair and short access ramp stay inside the front footprint.
+ {const p=P[25],q=P[26],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),F=(u,v,y)=>[p[0]+dx/L*u-dz/L*v,y,p[1]+dz/L*u+dx/L*v];
+  for(let j=0;j<8;j++){const c=F(L*.62,1+j*.32,.18);b.box(c[0],.18,c[2],5,(j+1)*.12,.34,'#c8b8a4',a);}
+  const A=F(L*.62+3.4,1,.18),B=F(L*.62+3.4,12,1.14),C=F(L*.62+5,12,1.14),E=F(L*.62+5,1,.18);
+  b.quad('#b9b3a4',A,B,C,E);b.beam(F(L*.62+5,1,1.0),F(L*.62+5,12,1.95),.065,'#c7ceca');
+  const c=F(L*.62,.9,3.4);b.box(c[0],3.4,c[2],7,.16,2.8,'#668d9d',a);
+ }
  // Louvred entrance screens on the Buffalo Road / Serangoon corner.
  for(const edge of [25,46]){const p=P[edge],q=P[edge+1],dx=q[0]-p[0],dz=q[1]-p[1],a=Math.atan2(-dz,dx),L=Math.hypot(dx,dz),x=lerp(p[0],q[0],.28),z=lerp(p[1],q[1],.28);
   b.box(x,0,z,Math.min(13,L*.4),8.7,.5,'#9472ad',a);

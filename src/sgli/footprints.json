@@ -329,8 +329,8 @@
  "angullia_mosque": {
   "lat": 1.3106302100147624,
   "lon": 103.85406380318494,
-  "height": 16,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 13.3,
+  "height_source": "Tile roof max minus ground 13.3 m (p90 9.0, p50 8.3); refine per module",
   "parts": [
    {
     "id": 396336447,
@@ -375,8 +375,8 @@
  "tan_teng_niah": {
   "lat": 1.3070569475607954,
   "lon": 103.850954171632,
-  "height": 11,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 11.5,
+  "height_source": "Tile roof max minus ground 11.5 m (p90 10.2, p50 8.6); refine per module",
   "parts": [
    {
     "id": 178436852,
@@ -428,8 +428,8 @@
  "indian_heritage_centre": {
   "lat": 1.305669446639553,
   "lon": 103.85228370427755,
-  "height": 22,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 22.4,
+  "height_source": "Tile roof max minus ground 22.4 m (p90 21.5, p50 20.5); refine per module",
   "parts": [
    {
     "id": 176326997,
@@ -909,8 +909,8 @@
  "little_india_arcade": {
   "lat": 1.305557511283814,
   "lon": 103.85188635468467,
-  "height": 10,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 10.7,
+  "height_source": "Tile roof max minus ground 10.7 m (p90 9.6, p50 8.1); refine per module",
   "parts": [
    {
     "id": 176326900,
@@ -1257,8 +1257,8 @@
  "city_square_mall": {
   "lat": 1.3114245138420242,
   "lon": 103.8566435817492,
-  "height": 45,
-  "height_source": "Provisional estimate; not tile measured yet",
+  "height": 55.7,
+  "height_source": "Tile roof max minus ground 55.7 m (p90 51.6, p50 30.7); refine per module",
   "parts": [
    {
     "id": 102429452,

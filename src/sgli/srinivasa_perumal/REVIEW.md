@@ -89,3 +89,6 @@ Final close-view refinement rounds the figure heads/crowns, tapers robes and rou
 arm beams through the same floodlit material as the sculpture. Six-sided head
 profiles keep the detailed compound near the temple budget. Outer measured massing
 and gateway location are unchanged; final rerender includes this detail correction.
+
+The entrance guardians and timber door use a lower-power shared wash than the
+upper sculpture, preserving their colours; the small entrance lintel stays lit.

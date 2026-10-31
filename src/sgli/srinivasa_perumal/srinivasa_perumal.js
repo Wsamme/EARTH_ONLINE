@@ -65,7 +65,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:1.65}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?.65:1.65}));b.buckets.delete(mode);}}
 
 // The legacy anchor/OSM 481614952 is an ancillary building; see REVIEW.md.
 register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa Perumal Temple',80,(b,D,G,g)=>{
@@ -77,8 +77,8 @@ register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa 
  b.box(54.5,4.85,1.4,5,.13,8,'#87b3bd');
  box(0,.3,0,13.3,6.6,9.5,'#718894');
  const F=(u,y,w=0)=>[u,y,4.78+w];
- panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,5);
- for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,3);deity(F,s*5.3,1.3,2.1,s+7,3);}
+ panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,8);
+ for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,8);deity(F,s*5.3,1.3,2.1,s+7,8);}
  box(0,6.6,0,13.8,.38,10,'#caa3aa',3);tower(0,0,13.2,9.3,7,18,5);
  // Central shrine recesses interrupt the figure bands on the road-facing tiers.
  for(let k=0;k<5;k++){

@@ -80679,7 +80679,10 @@ function kit(b,a=0,ox=0,oz=0){
  const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
  const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
  const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
- const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const beam=(p,q,w,c,m=0)=>{
+  const start=b.buckets.get(0)?.p.length||0;b.beam(T(...p),T(...q),w,c);
+  if(m){const A=b.buckets.get(0);if(!A||A.p.length===start)return;let B=b.buckets.get(m);if(!B){B={p:[],c:[]};b.buckets.set(m,B);}B.p.push(...A.p.splice(start));B.c.push(...A.c.splice(start));}
+ };
  const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
  const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
  const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
@@ -80703,9 +80706,12 @@ function kit(b,a=0,ox=0,oz=0){
  const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
   // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
   const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
-  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
-  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
-  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  const skirt=F(u,y,.25);frustum(skirt[0],skirt[2],y,.40*h,.34*h,.23*h,.24*h,.34*h,robe,m);
+  cube(0,.2*h,.24,.25*h,.36*h,.3*h,robe);
+  const head=F(u,y+.58*h,.27);
+  lathe(head[0],head[2],head[1],.115*h,.22*h,skin,m,[[0,0],[.85,.12],[1,.48],[.8,.87],[0,1]],8);
+  lathe(head[0],head[2],y+.79*h,.11*h,.18*h,'#e8c364',m,[[1,0],[.85,.35],[.4,.8],[0,1]],8);
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin,m);beam(B,Q,.09*h,skin,m);}
   panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
  };
  const tower=(x,z,w,d,base,top,tiers,m=3)=>{
@@ -80732,7 +80738,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?.65:1.45}));b.buckets.delete(mode);}}
 
 // OSM 155991884 (hall), 1078263462 (annex). Painted plaster relief is geometry.
 register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamman Temple',38,(b,D,G,g)=>{
@@ -80760,22 +80766,27 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
   for(let u=.7;u<E.L;u+=2.2){const p=E.F(u,7.45,.05);b.box(p[0],7.45,p[2],.85,.6,.65,'#a6bbc6');kit(b).deity(E.F,u,7.5,.9,Math.floor(u),3);}
  }
  b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
- // Entrance tower centred on the Serangoon Road edge, not on the whole compound.
- box(-.6,.35,21.1,10,6.6,5.9,'#a3c0c9',3);
- const F=(u,y,w=0)=>[u-.6,y,24.08+w];
- panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,5);
+ // Gateway straddles the measured street wall at local z=24.1 (east/southeast).
+ // The previous centre at z=21.1 put its front against the wall and read as a roof tower.
+ box(-.6,.35,24.1,10,6.6,5.9,'#a3c0c9',8);
+ const F=(u,y,w=0)=>[u-.6,y,27.08+w];
+ panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,8);
  for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
- tower(-.6,21.1,9.8,5.7,6.95,18.9,4);
+ tower(-.6,24.1,9.8,5.7,6.95,18.9,4);
  // Main Kali vimana plus smaller sanctum towers, clear of the front court.
  tower(-.5,2.2,5.7,5.7,7.3,14.1,2);lathe(-.5,2.2,13.7,1.03,1.4,'#cfb365',3,null,16);
  for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
  // Green ribbed hall roof and pale barrel skylight visible in the reference views.
  for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');
+ // Small red sheet-roofed side bay immediately north of the gateway.
+ box(11.5,7.35,20.1,7.4,.16,7.1,'#bb705f');
  for(let i=0;i<12;i++){const t=i/12*Math.PI,u=(i+1)/12*Math.PI;K.quad('#d0d2c4',[-8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2],[-8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2]);}
  lathe(-.6,16.6,.3,.55,10.9,'#c3c5b9',0,[[1,0],[.6,.1],[.2,.12],[.15,1]],8);
  // White entrance canopy: modest projection, no festival decorations or lettering.
- for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),24],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),27],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),24]);}
- for(const x of [-4.1,2.9])box(x,.1,26.7,.1,4.1,.1,'#adb9b8');
+ for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),26.9],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),26.9]);}
+ for(const x of [-4.1,2.9])box(x,.1,29.6,.1,4.1,.1,'#adb9b8');
+ for(const x of [-2.8,1.6])box(x,4.1,28.6,.22,.06,.55,'#e9d9b9',5);
+ for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,5.65,E.L-.2,1.05,'#bcb5a1',.055,8);
  lights(b,g);
 },['sgveeramakali']);
 
@@ -80789,7 +80800,10 @@ function kit(b,a=0,ox=0,oz=0){
  const C=Math.cos(a),S=Math.sin(a),T=(x,y,z)=>[ox+x*C+z*S,y,oz-x*S+z*C];
  const P=R=>R.map(([x,z])=>{const q=T(x,0,z);return [q[0],q[2]];});
  const box=(x,y,z,w,h,d,c,m=0)=>{const q=T(x,y,z);b.box(q[0],y,q[2],w,h,d,c,a,m);};
- const beam=(p,q,w,c)=>b.beam(T(...p),T(...q),w,c);
+ const beam=(p,q,w,c,m=0)=>{
+  const start=b.buckets.get(0)?.p.length||0;b.beam(T(...p),T(...q),w,c);
+  if(m){const A=b.buckets.get(0);if(!A||A.p.length===start)return;let B=b.buckets.get(m);if(!B){B={p:[],c:[]};b.buckets.set(m,B);}B.p.push(...A.p.splice(start));B.c.push(...A.c.splice(start));}
+ };
  const quad=(c,p,q,r,s,m=0)=>b.quad(c,T(...p),T(...q),T(...r),T(...s),m);
  const prism=(R,lo,hi,c,m=0)=>b.prism(P(R),lo,hi,c,m);
  const ring=(x,z,r,n=12)=>Array.from({length:n},(_,i)=>[x+r*Math.cos(i/n*Math.PI*2),z+r*Math.sin(i/n*Math.PI*2)]);
@@ -80813,9 +80827,12 @@ function kit(b,a=0,ox=0,oz=0){
  const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
   // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
   const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
-  cube(0,0,.25,.40*h,.18*h,.34*h,robe);cube(0,.16*h,.24,.25*h,.4*h,.3*h,robe);
-  cube(0,.58*h,.27,.19*h,.2*h,.23*h,skin);cube(0,.79*h,.27,.16*h,.16*h,.21*h,'#e8c364');
-  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin);beam(B,Q,.09*h,skin);}
+  const skirt=F(u,y,.25);frustum(skirt[0],skirt[2],y,.40*h,.34*h,.23*h,.24*h,.34*h,robe,m);
+  cube(0,.2*h,.24,.25*h,.36*h,.3*h,robe);
+  const head=F(u,y+.58*h,.27);
+  lathe(head[0],head[2],head[1],.115*h,.22*h,skin,m,[[0,0],[.85,.12],[1,.48],[.8,.87],[0,1]],6);
+  lathe(head[0],head[2],y+.79*h,.11*h,.18*h,'#e8c364',m,[[1,0],[.85,.35],[.4,.8],[0,1]],6);
+  for(const s of [-1,1]){const A=F(u+s*.1*h,y+.49*h,.3),B=F(u+s*.32*h,y+.39*h,.42),Q=F(u+s*.34*h,y+.6*h,.46);beam(A,B,.1*h,skin,m);beam(B,Q,.09*h,skin,m);}
   panel(F,u,y+.3*h,.06*h,.24*h,'#e8c364',.43,m);
  };
  const tower=(x,z,w,d,base,top,tiers,m=3)=>{
@@ -80842,7 +80859,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?.65:1.65}));b.buckets.delete(mode);}}
 
 // The legacy anchor/OSM 481614952 is an ancillary building; see REVIEW.md.
 register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa Perumal Temple',80,(b,D,G,g)=>{
@@ -80852,11 +80869,17 @@ register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa 
  b.cap(gate,4.85,'#e8e8dd');b.rim(gate,5,'#bbc9c6',.16);
  for(const E of W.faces(gate))for(let u=1.3;u<E.L;u+=2.5){W.panel(E.F,u,.9,1.2,2.3,'#7eaaa9',.06,2);}
  b.box(54.5,4.85,1.4,5,.13,8,'#87b3bd');
- box(0,.3,0,13.3,6.6,9.5,'#9fb7c4',3);
+ box(0,.3,0,13.3,6.6,9.5,'#718894');
  const F=(u,y,w=0)=>[u,y,4.78+w];
- panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,5);
- for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,3);deity(F,s*5.3,1.3,2.1,s+7,3);}
+ panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,8);
+ for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,8);deity(F,s*5.3,1.3,2.1,s+7,8);}
  box(0,6.6,0,13.8,.38,10,'#caa3aa',3);tower(0,0,13.2,9.3,7,18,5);
+ // Central shrine recesses interrupt the figure bands on the road-facing tiers.
+ for(let k=0;k<5;k++){
+  const Y=7+k*1.74,D=9.3*(1-.43*k/5);
+  panel((u,y,w=0)=>[u,y,D/2+w],0,Y+.12,.85,1.3,'#334d51',.08);
+ }
+ panel(F,0,5.7,3.1,.14,'#e5d3ac',.13,5);
  // Temple halls and side buildings use all four mapped OSM temple outlines.
  const heights={454182405:7.3,454182408:7.9,454182454:6.8,455155906:14.8};
  for(const part of D.parts.filter(p=>p.id!==481614952)){
@@ -80980,16 +81003,17 @@ function kit(b,a=0,ox=0,oz=0){
 function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
 
 register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,g)=>{
- const K=kit(b,2.467),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
+ const K=kit(b,2.467+Math.PI),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
  const cream='#ece6d6',white='#f6f1e6',green='#335e49',roof='#768974';
- b.prism(D.parts[0].p,-1,1.65,'#c9c4b2');
+ b.prism(D.parts[0].p,-1,.35,'#c9c4b2');
+ const mainStart=new Map([...b.buckets].map(([m,B])=>[m,B.p.length]));
  // Raised historic prayer hall within a real open arcade; eastern extension stays low.
  box(-7.4,1.65,-.6,17.8,7.6,23.2,cream,3);box(-7.4,9.05,-.6,18.2,.3,23.6,white,3);b.cap(K.P(rect(-7.4,-.6,17.8,23.2)),9.36,'#607967');
- box(12.2,1.65,0,14.5,7.5,29,cream,3);
+
  const deck=rect(-7.5,0,24.4,29);prism(deck,6.7,7.1,cream,3);b.cap(K.P(deck),7.11,'#72836b');
  const arcades=faces(deck);
  for(const [i,E]of arcades.entries()){
-  if(i===0)continue;const n=i%2===0?7:8,bay=E.L/n;
+  if(i===0)continue;const n=i===1?5:8,bay=E.L/n;
   for(let j=0;j<n;j++){
    const u=(j+.5)*bay,w=bay-.7,lo=1.7,hi=6.45;
    const p=E.F(j*bay,lo,.02);box(p[0],lo,p[2],.65,4.85,.65,cream,3);
@@ -81000,7 +81024,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
     quad(cream,E.F(x,y,.03),E.F(x1,y1,.03),E.F(x1,6.72,.03),E.F(x,6.72,.03),3);
    }
    arcTrim(E.F,u,lo,w,hi-lo,green,5);
-   if(!(i===2&&j===3)){
+   if(!(i===1&&j===2)){
     for(let v=-w/2+.15;v<w/2;v+=.38){const a=E.F(u+v,lo+.2,.1),q=E.F(u+v,lo+1,.1);beam(a,q,.11,white);}
     beam(E.F(u-w/2,lo+1.05,.1),E.F(u+w/2,lo+1.05,.1),.16,green);
    }
@@ -81028,30 +81052,52 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  }
  for(const [x,z]of [[-19,14],[4,14],[-19,-14],[4,-14]])turret(x,z,7.1,1.1,2.2);
  // Entrance sunburst: twenty-five geometric rays, blank panels instead of calligraphy.
- const F=(u,y,w=0)=>[u-7.5,y,14.65+w];
+ const F=(u,y,w=0)=>[4.85+w,y,u];
  const outline=[[-2.6,7],[-2.8,9.5],[-2,10.8],[-1,11.7],[0,13.6],[1,11.7],[2,10.8],[2.8,9.5],[2.6,7]];
  const t=THREE.ShapeUtils.triangulateShape(outline.map(p=>new THREE.Vector2(...p)),[]);for(const v of t)b.tri(white,...v.map(i=>K.T(...F(...outline[i],.14))),3);
  for(let i=0;i<25;i++){const a=i/25*Math.PI*2,c=(i+.65)/25*Math.PI*2;quad(i%2?green:'#c6ac65',F(Math.cos(a)*.24,9.25+Math.sin(a)*.48,.2),F(Math.cos(a)*.88,9.25+Math.sin(a)*1.75,.2),F(Math.cos(c)*.88,9.25+Math.sin(c)*1.75,.2),F(Math.cos(c)*.24,9.25+Math.sin(c)*.48,.2),3);}
  panel(F,0,6.4,3.5,.55,green,.23);panel(F,0,6.5,3.2,.25,'#e8d6a2',.25,5);
- for(const x of [-10.2,-4.8])turret(x,14.6,7,1.1,4.8);
- for(let i=0;i<6;i++)box(-7.5,.25+i*.23,16.1-i*.27,4.6,.23,.52,'#b7a998');
+ for(const z of [-2.7,2.7])turret(4.8,z,7,1.1,4.8);
+ for(let i=0;i<6;i++)box(6.4-i*.27,.25+i*.23,0,.52,.23,4.6,'#b7a998');
  // Hexagonal three-stage cupola with inset arched windows and small corner pinnacles.
  let y=9.3;for(let k=0;k<3;k++){
-  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-7.4,-1.3,r,6);prism(R,y,y+H,cream,3);
+  const r=2.3-k*.35,H=1.9-k*.15,R=K.ring(-10.2,-.2,r,6);prism(R,y,y+H,cream,3);
   for(const E of faces(R)){arch(E.F,E.L/2,y+.25,.72,H-.45,'#547d72',.04,5);arcTrim(E.F,E.L/2,y+.25,.72,H-.45,white);}
-  prism(K.ring(-7.4,-1.3,r+.12,6),y+H-.16,y+H,white,3);y+=H;
+  prism(K.ring(-10.2,-.2,r+.12,6),y+H-.16,y+H,white,3);y+=H;
  }
- lathe(-7.4,-1.3,y,1.3,3.8,green,4,null,24);
- lathe(-7.4,-1.3,y+3.6,.38,1.05,green,4,null,16);
- lathe(-7.4,-1.3,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
- for(const p of K.ring(-7.4,-1.3,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
- // Extension's long arched window rhythm and restrained flat service roof.
- for(const E of faces(rect(12.2,0,14.55,29.05))){for(let u=1.5;u<E.L;u+=2.8){arch(E.F,u,2.2,1.35,3.2,'#456655',.08,2);arcTrim(E.F,u,2.2,1.35,3.2,white);}beam(E.F(0,8.7,.15),E.F(E.L,8.7,.15),.28,green);}
- box(12.2,9.15,0,14.6,.2,29.1,roof);box(13,9.35,-8,3,1.1,3,'#b7c2b6');
+ lathe(-10.2,-.2,y,1.3,3.8,green,4,null,24);
+ lathe(-10.2,-.2,y+3.6,.38,1.05,green,4,null,16);
+ lathe(-10.2,-.2,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
+ for(const p of K.ring(-10.2,-.2,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
  // Measured vertical levels: main deck 4.3 m, highest finial 10.8 m.
  // Keep the OSM plan unchanged; compress the old over-tall architectural sections.
+ // Fit the historic hall to the northwest quarter, with its sunburst facing
+ // southeast into the entrance court. OSM includes the low forecourt wings.
+ const A=2.467+Math.PI,C=Math.cos(A),S=Math.sin(A);
+ for(const [m,B]of b.buckets)for(let j=mainStart.get(m)||0;j<B.p.length;j+=3){
+  const x=B.p[j]*C-B.p[j+2]*S,z=B.p[j]*S+B.p[j+2]*C;
+  const u=x-.3,v=z*.78-4.2;B.p[j]=u*C+v*S;B.p[j+2]=-u*S+v*C;
+ }
  const fittedY=y=>y<=0?y:y<=9.3?y*(4.3/9.3):4.3+(y-9.3)*(6.5/10.77);
  for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+fittedY(B.p[i]-b.base);
+ // Low green-roofed frontage wings; the central court remains open.
+ box(0,.35,11.55,39.4,2.95,6.1,cream,3);
+ box(0,3.3,11.55,39.5,.16,6.2,roof);
+ const LF=(u,y,w=0)=>[u-19.7,y,14.63+w];
+ for(let u=1.5;u<39;u+=2.8){arch(LF,u,.65,1.25,2.1,'#456655',.06);arcTrim(LF,u,.65,1.25,2.1,white);}
+ for(const x of [-18.9,19])box(x,3.45,11.5,.22,.55,6.2,white);
+ box(14.8,3.5,11.5,8.5,.45,5.6,cream,3);
+ for(const x of [12,14.5,17]){box(x,3.95,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,4.71,z,1.6,.04,.07,'#6a8076');}
+ // Documented clay-roof ancillary wing along the eastern side of the court.
+ box(13.8,.35,-2.7,6.4,3.05,20.2,cream,3);
+ for(const side of [-1,1]){
+  quad('#ad694d',[13.8+side*3.35,3.45,-12.95],[13.8+side*3.35,3.45,7.55],[13.8,5.05,7.55],[13.8,5.05,-12.95]);
+  for(let z=-12.8;z<7.5;z+=.42)beam([13.8+side*3.35,3.46,z],[13.8,5.07,z],.045,'#bf7b59');
+ }
+ for(const z of [-12.95,7.55])b.tri(cream,K.T(10.45,3.4,z),K.T(17.15,3.4,z),K.T(13.8,5.05,z),3);
+ beam([13.8,5.08,-12.95],[13.8,5.08,7.55],.14,'#b97a5c');
+ const AF=(u,y,w=0)=>[10.57-w,y,u-12.8];
+ for(let u=1.2;u<20;u+=2.7){panel(AF,u,.5,1.15,2.25,'#566b62',.04);panel(AF,u,2.9,1.25,.3,'#b7b4a1',.05);}
  lights(b,g);
 },['sgabdulgafoor']);
 
@@ -81118,7 +81164,20 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){
+ for(const mode of [3,4,5,8,9])if(b.buckets.has(mode)){
+  const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));
+  q.flush(g,()=>{
+   const mat=lmMat(mode===8?{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe6ca',lk:1.1}:mode===9?{c:'#ffffff',vc:true,ds:true,m:0,lc:'#ffe5c7',lk:.12,glow:'#fff0d5',gk:.18}:mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85});
+   if(mode===8&&!mat.userData.liNicheWash){
+    const compile=mat.onBeforeCompile;
+    mat.onBeforeCompile=function(sh,r){compile.call(this,sh,r);sh.uniforms.uEven={value:1};};
+    mat.userData.liNicheWash=true;
+   }
+   return mat;
+  });b.buckets.delete(mode);
+ }
+}
 
 register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g)=>{
  const K=kit(b,.78),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
@@ -81137,15 +81196,17 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
   for(let j=0;j<n;j++){
    const u=(j+.5)*E.L/n,bw=E.L/n;
    if(i===2){
-    pointed(E.F,u,3.5,bw-.5,10.4,cream,.06,3);pointed(E.F,u,3.65,bw-.85,10.1,j===0?dark:coral,.09,j===0?2:3);
+    pointed(E.F,u,3.5,bw-.5,10.4,cream,.06,3);pointed(E.F,u,3.65,bw-.85,10.1,j===0?dark:coral,.09,j===0?9:3);
     if(j===0)for(let y=4;y<12;y+=1.7)beam(E.F(u-bw*.35,y,.13),E.F(u+bw*.35,y,.13),.07,bronze);
    }else{
-    for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,2);}
+    for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,9);}
    }
    const sub=i===2?2:1;
    for(let k=0;k<sub;k++){
     const v=u+(k+.5-sub/2)*bw/sub,sw=bw/sub;
-    pointed(E.F,v,15.2,sw-.65,3.35,cream,.08,3);pointed(E.F,v,15.38,sw-.95,3.02,bronze,.1);
+    pointed(E.F,v,15.2,sw-.65,3.35,cream,.08,3);pointed(E.F,v,15.38,sw-.95,3.02,bronze,.1,8);
+    // Small upward sconces visible in the saved current-building night photograph.
+    const lamp=E.F(v,15.08,.23);box(lamp[0],15.08,lamp[2],.28,.10,.24,'#e9dfcb',5);
     // Physical diamond jali lattice within each upper niche.
     for(let q=-sw*.31;q<sw*.32;q+=.45)for(let yy=15.6;yy<17.8;yy+=.5){beam(E.F(v+q,yy,.14),E.F(v+q+.22,yy+.25,.14),.045,cream);beam(E.F(v+q+.22,yy+.25,.14),E.F(v+q,yy+.5,.14),.045,cream);}
    }
@@ -81261,7 +81322,7 @@ function kit(b,a=0,ox=0,oz=0){
 }
 // Dedicated architectural illumination still uses the app's shared lmMat cache.
 // Ordinary surfaces continue through SGBV's shared batched PBR materials.
-function lights(b,g){for(const mode of [3,4,5])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:.85}));b.buckets.delete(mode);}}
+function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q=new SGLI.Batch(b.base);q.buckets.set(mode,b.buckets.get(mode));q.flush(g,()=>lmMat(mode===5?{c:'#ffffff',vc:true,ds:true,glow:'#ffe0ad',gk:.85}:{c:'#ffffff',vc:true,ds:true,m:0,lc:mode===4?'#85e998':'#ffe3bf',lk:mode===4?.8:mode===8?1.25:.7}));b.buckets.delete(mode);}}
 
 register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)=>{
  const K=kit(b,2.49),{box,faces,panel,arch,arcTrim,beam,quad,lathe}=K;
@@ -81275,23 +81336,24 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
  let index=0;
  for(const E of faces(P)){
   const front=E.F(E.L/2,0)[2]>12;
+  const lit=front?8:3;
   const n=Math.max(1,Math.round(E.L/2.65)),bay=E.L/n;
   for(let j=0;j<n;j++,index++){
    const u=(j+.5)*bay,w=Math.min(1.4,bay*.63),col=colors[index%8];
    // Deep painted shutter rebates, contrasting lunettes and carved floral panels.
-   arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,3);arch(E.F,u,4.47,w+.07,2.53,colors[(index+2)%8],.09,3);
+   arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,lit);arch(E.F,u,4.47,w+.07,2.53,colors[(index+2)%8],.09,lit);
    panel(E.F,u,4.48,w,1.94,'#454941',.11);
    for(const s of [-1,1]){
-    panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,3);
+    panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,lit);
     for(let y=4.75;y<6.32;y+=.17)beam(E.F(u+s*w*.25-w*.18,y,.16),E.F(u+s*w*.25+w*.18,y,.16),.052,colors[(index+3)%8]);
-    panel(E.F,u+s*w*.25,4.58,w*.3,.4,colors[(index+5)%8],.18,3);
+    panel(E.F,u+s*w*.25,4.58,w*.3,.4,colors[(index+5)%8],.18,lit);
    }
    arcTrim(E.F,u,4.35,w+.35,2.78,colors[(index+1)%8]);
-   for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,3);}
+   for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,lit);}
    for(const v of [j*bay,(j+1)*bay]){
-    panel(E.F,v,3.88,.26,3.5,colors[(index+3)%8],.15,3);
+    panel(E.F,v,3.88,.26,3.5,colors[(index+3)%8],.15,lit);
     for(const s of [-1,1])beam(E.F(v+s*.08,4.15,.18),E.F(v+s*.08,6.95,.18),.042,'#e8c76c');
-    panel(E.F,v,7.04,.48,.28,colors[(index+5)%8],.2,3);
+    panel(E.F,v,7.04,.48,.28,colors[(index+5)%8],.2,lit);
    }
    if(!front){arch(E.F,u,.75,w+.25,2.5,colors[(index+1)%8],.06);panel(E.F,u,.8,w,2,'#716046',.08);}
   }
@@ -81299,11 +81361,11 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
   for(const [y,h,c]of [[3.65,.18,'#c49939'],[3.84,.16,'#438e6b'],[7.3,.15,'#d4af61'],[7.55,.16,'#6b648a']]){
    beam(E.F(0,y,.15),E.F(E.L,y,.15),h,c);
   }
-  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,colors[Math.floor(u/.28)%8],.3,3);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
+  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,colors[Math.floor(u/.28)%8],.3,lit);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
  }
  // Recessed red front wall and richly carved timber doors, all inscription panels blank.
  const F=(u,y,w=0)=>[u+1.4,y,11.18+w];
- panel(F,0,.35,8.18,3.45,'#b9494e',.01,3);
+ panel(F,0,.35,8.18,3.45,'#b9494e',.01,8);
  for(const u of [-2.55,0,2.55]){
   panel(F,u,.5,u===0?1.7:1.45,2.65,'#bfaa78',.05);
   for(const s of [-1,1])for(let j=0;j<3;j++){
@@ -81312,7 +81374,7 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
   panel(F,u,3.2,1.9,.38,'#4e7587',.07,3);
  }
  for(const [x,c]of [[-2.48,'#3c78b4'],[5.28,'#d6bd4a']]){
-  box(x,.3,12.48,.55,3.55,.58,c,3);box(x,.3,12.48,.76,.25,.8,'#454f48');box(x,3.65,12.48,.75,.2,.8,'#b3a07a');
+  box(x,.3,12.48,.55,3.55,.58,c,8);box(x,.3,12.48,.76,.25,.8,'#454f48');box(x,3.65,12.48,.75,.2,.8,'#b3a07a');
   // Warm globe lamps in the 2023 night photograph.
   lathe(x,12.8,3.85,.2,.35,'#efce83',5,null,10);
  }
@@ -81420,6 +81482,13 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
     for(const v of [.2,.65,1.1])if(v<h-.1)panel(F,u,y+v,w*.7,.055,'#ddbd67',.09,7);
    }
   }
+  // Original architectural motifs give the backlit mural a readable scale.
+  for(let j=0;j<5;j++){
+   const u=3.2+j*(L-6.4)/4,y=5.1+(j%2)*3.5;
+   for(let tier=0;tier<4;tier++)panel(F,u,y+tier*.52,2.25-tier*.42,.42,j%2?'#d6b75f':'#3f8791',.105,7);
+   panel(F,u,y-.12,2.8,.18,'#dac586',.11,7);
+   for(const dx of [-.8,0,.8])panel(F,u+dx,y-.95,.14,.8,'#c8b783',.108,7);
+  }
   // A real stair rhythm behind the stepped facade, with horizontal landings.
   for(let j=0;j<36;j++){
    const u=.3+j*(L-.6)/36,y=4.7+j*(H-5.4)/36;
@@ -81429,15 +81498,23 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
   // Translucent lightly tinted glass sheets let the mural remain visible.
   const n=Math.ceil(L/2.5);
   for(let j=0;j<n;j++)panel(F,(j+.5)*L/n,4.6,L/n-.025,H-4.7,j%3?'#8ea9b1':'#77949f',.18,6);
-  // Baoli diamond lattice, clipped analytically at the facade's actual bounds.
-  for(const slope of [-.78,.78])for(let start=-25;start<L+25;start+=7.0){
-   const y0=4.6,y1=H-.05;
-   const u0=start,u1=start+(y1-y0)/slope;
-   let lo=0,hi=1;const d=u1-u0;
-   if(d>0){lo=Math.max(lo,-u0/d);hi=Math.min(hi,(L-u0)/d);}else{lo=Math.max(lo,(L-u0)/d);hi=Math.min(hi,-u0/d);}
-   if(hi<=lo)continue;
-   const a=F(u0+d*lo,y0+(y1-y0)*lo,.32),q=F(u0+d*hi,y0+(y1-y0)*hi,.32);
-   beam(a,q,.19,'#5c5b4f');const A=F(u0+d*lo,y0+(y1-y0)*lo+.08,.35),B=F(u0+d*hi,y0+(y1-y0)*hi+.08,.35);beam(A,B,.045,'#ad9b77');
+  // Baoli frame: short horizontal junctions between diagonal members, as in
+  // the lighting designer's night photograph. Clip every member to the facade.
+  const member=(a,q)=>{
+   const du=q[0]-a[0],dy=q[1]-a[1];let lo=0,hi=1;
+   for(const [v,d,min,max]of [[a[0],du,0,L],[a[1],dy,4.6,H-.05]]){
+    if(Math.abs(d)<1e-8){if(v<min||v>max)return;continue;}
+    const t=(min-v)/d,r=(max-v)/d;lo=Math.max(lo,Math.min(t,r));hi=Math.min(hi,Math.max(t,r));
+   }
+   if(hi<=lo)return;
+   const x=a[0]+du*lo,y=a[1]+dy*lo,u=a[0]+du*hi,v=a[1]+dy*hi;
+   beam(F(x,y,.32),F(u,v,.32),.17,'#5c5b4f');
+   beam(F(x,y+.065,.35),F(u,v+.065,.35),.035,'#ad9b77');
+  };
+  for(const sign of [-1,1])for(let start=-25;start<L+25;start+=7)for(let k=-1;k<6;k++){
+   const u=start+sign*k*3.5,y=4.6+k*2.73;
+   member([u-sign*.36,y],[u+sign*.36,y]);
+   member([u+sign*.36,y],[u+sign*(3.5-.36),y+2.73]);
   }
   for(const y of [4.55,H])beam(F(0,y,.26),F(L,y,.26),.22,'#736d57');
   for(const u of [0,L])beam(F(u,4.5,.26),F(u,H,.26),.18,'#817b63');
@@ -81453,6 +81530,7 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
  for(const i of [0,3,4,5]){
   const E=faces(P)[i];if(E.L<2)continue;
   panel(E.F,E.L/2,.15,E.L-.08,3.8,'#49585b',.045);
+  if(i===4)for(const u of [E.L*.13,E.L*.23])panel(E.F,u,.65,1.1,1.8,'#3c5155',.07);
   if(i===4)for(const u of [E.L*.3,E.L*.46])for(let f=0;f<3;f++){
    panel(E.F,u,4.4+f*4.6,f===0?1:1.8,2.8,'#647e7b',.06,2);
    panel(E.F,u+2.7,4.4+f*4.6,.6,2.8,'#627371',.06,2);

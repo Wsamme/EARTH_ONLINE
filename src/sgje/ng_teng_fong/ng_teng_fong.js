@@ -4,6 +4,8 @@
  */
 {
 const {register,scale,out,center,lerp,inside}=SGJE;
+// Measured reference envelope, applied locally without editing shared data.
+SGJE.data.ng_teng_fong.height=94.2;
 register('ng_teng_fong','黄廷方综合医院','Ng Teng Fong General Hospital',255,(b,D,G)=>{
  const stone='#d6d9cf',edge='#eef0e5',glass='#567475',dark='#46524e';
  // Hospital-specific batches: dark vegetation / cladding, cool ward windows,
@@ -38,9 +40,11 @@ register('ng_teng_fong','黄廷方综合医院','Ng Teng Fong General Hospital',
  }
  function terraceRing(P,y){
   // Opaque rounded balcony front, inset dark green planting, and a fine rail.
-  b.prism(P,y,y+.24,edge);b.band(P,y+.24,.65,stone);
+  b.prism(P,y,y+.24,edge);b.band(P,y+.24,.65,edge);
   b.walls(scale(P,.987),y+.82,y+1.22,'#4c6c43');b.capHole(scale(P,.987),[scale(P,.96)],y+1.22,'#547449');
   b.walls(scale(P,.993),y+1.17,y+1.25,'#b6c3b6');
+  // Recessed warm soffit strips, sheltered behind the dark planter edge.
+  const I=scale(P,.94);P.forEach((p,i)=>{if(i%3)return;const j=(i+1)%P.length,q=P[j];b.quad('#dfd7b5',[p[0],y-.04,p[1]],[q[0],y-.04,q[1]],[I[j][0],y-.04,I[j][1]],[I[i][0],y-.04,I[i][1]],4);});
  }
  function ward(P,lo,hi,floors){
   // Sawtooth ward bays sit behind the projecting balcony edge. This is a
@@ -62,28 +66,41 @@ register('ng_teng_fong','黄廷方综合医院','Ng Teng Fong General Hospital',
     for(let j=0;j<n;j++){const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.beam([x,y+1.0,z],[x+nx*.85,y+fh-.15,z+nz*.85],.24,stone);}
    });
   }
-  b.cap(scale(P,.95),hi+.3,'#929c91');b.rim(P,hi+1.1,stone,.28);
+  b.cap(scale(P,.95),hi+.3,'#8d9da3');b.rim(P,hi+1.1,stone,.28);
+  const c=center(P),Q=scale(P,.80);for(let x=c[0]-30;x<c[0]+30;x+=6)for(let z=c[1]-25;z<c[1]+25;z+=7){if(inside(Q,x-2,z-2)&&inside(Q,x+2,z+2)){b.box(x,hi+.35,z,3.6,.16,4.5,'#59717c');b.box(x,hi+.52,z,.07,.03,4.5,'#b3c2c7');}}
  }
  const B=D.parts.find(p=>p.id===368005263).p,C=D.parts.find(p=>p.id===368005259).p,A=D.parts.find(p=>p.id===320763066).p;
- panels(B,-.5,17);panels(C,-.5,17);panels(A,-.5,34);
- // Two articulated ward wings. Their long footprint, rounded lobes and gables
- // are OSM-derived; height split is a photographic estimate pending references.
- const Bnorth=cut(B,p=>5-p[0]-p[1]),Bsouth=cut(B,p=>p[0]+p[1]-5);
- ward(scale(Bnorth,.98),17,54.35,9);ward(scale(Bsouth,.98),17,71,13);
- // Continuous high north-east service/window face; broad blank crown on top.
- const spine=cut([B[0],...B.slice(1,6),B[61],B[62],[-16,-22]],p=>p[0]+p[1]-10);
- panels(spine,17,69);b.walls(out(spine,.12),69,75,stone);b.cap(spine,75,stone);
- // Round external stair drums with individual white landing edges.
- for(const [x,z,h]of [[-20,40,54.35],[-17,-44,71],[52,52,71]]){
-  const R=SGJE.ellipse(x,z,2.3,2.3,14);b.prism(R,17,h,'#a6ada1');
-  for(let y=17;y<h;y+=4.15){b.band(out(R,.3),y,.24,edge);b.band(R,y+1.0,.075,'#dce2d4');}
- }
- // Community hospital's broad podium supports the more compact ward slab.
- const CW=cut(C,p=>p[0]-100);ward(scale(CW,.94),17,49.5,8);
- // Plant-screened roof courts and limited mechanical enclosures.
- for(const [P,h]of [[A,34],[Bnorth,55.45],[Bsouth,72.1],[CW,50.6]]){
+ panels(B,-.5,20);panels(C,-.5,18);panels(A,-.5,14);
+ const AT=cut(A,p=>-p[0]-p[1]-212);panels(AT,14,44.5);b.prism(scale(AT,.96),44.5,47,stone);
+ // Ward plates are inset from the diagnostic podium, leaving roof gardens.
+ // OSM podium outlines remain intact; the upper lobes follow the roof/close views.
+ const Bnorth=SGJE.smooth([[-64,-10],[-68,-19],[-62,-29],[-52,-37],[-43,-41],[-31,-42],[-20,-40],[-12,-24],[-24,-25],[-35,-21],[-42,-13],[-51,-4]]);
+ const Bsouth=[[-23,15],[-14,2],[-3,-6],[12,-12],[23,-11],[35,-8],[42,-14],[53,-9],[57,-4],[55,2],[48,7],[44,18],[36,25],[28,26],[25,35],[13,35],[8,30],[0,34],[-8,27],[-15,27]];
+ ward(Bnorth,20,57.5,8);ward(scale(Bsouth,1.08),20,81.3,13);
+ // Tall transverse service core with pale rounded plant crown; a separate
+ // long low entrance canopy toward the northeast road.
+ const spine=SGJE.ellipse(5,-8,12,28,28,-.65);
+ b.prism(spine,20,86,stone);b.facade(scale(spine,1.002),20,86,4.7,2.2,glass,'#c0cbc3',.15);
+ b.walls(scale(spine,1.08),86,94.2,stone);b.cap(scale(spine,1.08),94.2,stone);
+ for(const p of scale(spine,1.081))b.beam([p[0],86,p[1]],[p[0],94.2,p[1]],.055,'#b9c1bb');
+ const crown=scale(spine,1.08),recess=scale(spine,.97);crown.forEach((p,i)=>{const j=(i+1)%crown.length,q=crown[j];b.quad('#dfd7b5',[p[0],85.98,p[1]],[q[0],85.98,q[1]],[recess[j][0],85.98,recess[j][1]],[recess[i][0],85.98,recess[i][1]],4);});
+ const back=SGJE.ellipse(12,-36,25,6,24,-.65);
+ b.prism(back,4.6,5.1,stone);glowQuad(back,4.59);
+ for(const t of [-.6,.6])b.box(12+20*t,0,-36+15*t,.55,4.6,.55,stone);
+ // Community wards form a curved plate, rather than filling their podium.
+ const CW=scale(cut(C,p=>p[0]-105),.76);
+ ward(CW,18,57,9);
+ const CP=SGJE.ellipse(140,94,10,22,24,-.65);
+ b.prism(CP,18,61,stone);for(const p of scale(CP,1.003))b.beam([p[0],51,p[1]],[p[0],61,p[1]],.055,'#b9c1bb');b.facade(scale(CP,1.005),18,51,4,2.5,glass,'#c0cbc3',.12);
+ // Roof plant is confined to actual upper plates and clinic roof.
+ for(const [P,h]of [[AT,47],[Bnorth,58.6],[Bsouth,82.4],[CW,58.1]]){
   const c=center(P);b.box(c[0],h,c[1],12,1.2,7,'#89938a');
   for(let k=0;k<5;k++)b.box(c[0]-5+k*2.4,h+1.2,c[1],1.7,.18,5,'#53656a');
+ }
+ // White external stair landings at the ward tips.
+ for(const [x,z,h]of [[-54,-14,57.5],[48,-3,81.3],[24,31,81.3]]){
+  const R=SGJE.ellipse(x,z,2,2,12);b.prism(R,20,h,'#a6ada1');
+  for(let y=20;y<h;y+=4.7)b.band(out(R,.3),y,.24,edge);
  }
  // Sheltered clinic-to-ward public bridge across the internal street.
  function bridge(p,q,y,width){
@@ -92,8 +109,8 @@ register('ng_teng_fong','黄廷方综合医院','Ng Teng Fong General Hospital',
   b.prism(P,y,y+.45,stone);b.facade(P,y+.45,y+4.0,3.55,2.8,glass,'#c6d2ca',.12);b.prism(out(P,.4),y+4,y+4.35,edge);
   for(let t=0;t<=1;t+=.08){const x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.beam([x+nx,y+4.35,z+nz],[x-nx,y+4.35,z-nz],.12,'#a6b9b2');}
  }
- bridge([-109,-75],[-59,-40],9,7);
- bridge([66,53],[104,79],9,6);
+ bridge([-109,-75],[-59,-40],12,7);
+ bridge([66,53],[104,79],12,6);
  // Deep entrance overhangs with pale columns, recessed glazing and blank signs.
  function entrance(P,indices){const Q=out(P,.6);for(const i of indices){const p=Q[i],q=Q[(i+1)%Q.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<9)continue;
   const dx=(q[0]-p[0])/L,dz=(q[1]-p[1])/L,nx=dz*5,nz=-dx*5;
@@ -104,6 +121,6 @@ register('ng_teng_fong','黄廷方综合医院','Ng Teng Fong General Hospital',
  }}
  entrance(B,[24,37]);entrance(C,[18,20]);entrance(A,[2]);
  // Roof greenery stays inside the mapped podiums; no speculative helipad.
- for(const P of [B,C]){const Q=scale(P,.88);for(let i=0;i<Q.length;i+=8){const p=Q[i];if(inside(P,...p))b.tree(p[0],17.1,p[1],.55);}}
+ for(const [P,h] of [[B,20],[C,18],[A,14]]){const Q=scale(P,.90);b.cap(P,h+.06,'#6b8253');b.capHole(scale(P,.94),[scale(P,.90)],h+.09,'#c4c3ad');for(let i=0;i<Q.length;i+=8){const p=Q[i];if(inside(P,...p)&&!inside(Bnorth,...p)&&!inside(Bsouth,...p)&&!inside(CW,...p)&&!inside(AT,...p))b.tree(p[0],h+.1,p[1],.55);}}
 });
 }

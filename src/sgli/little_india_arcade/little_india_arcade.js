@@ -29,13 +29,18 @@ register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=
    for(let j=0;j<n;j++){const u=(j+.5)*L/n,w=L/n;
     block(j*L/n,.18,.4,7.15,.32,trim);block(j*L/n,.2,.62,.3,.45,trim);block(j*L/n,6.85,.62,.27,.45,trim);
     // Open five-foot way behind the piers and a deep timber lintel.
+    // Glazed shop doors sit behind the sheltered five-foot way.
+    b.quad('#a1b7a5',Q(u-w*.4,.3,-1.15),Q(u+w*.4,.3,-1.15),Q(u+w*.4,2.8,-1.15),Q(u-w*.4,2.8,-1.15),5);
+    for(const v of [-.4,0,.4])b.beam(Q(u+w*v,.3,-1.12),Q(u+w*v,2.8,-1.12),.065,'#e8e5d3');
+    b.beam(Q(u-w*.4,2.2,-1.1),Q(u+w*.4,2.2,-1.1),.06,'#e8e5d3');
+    for(const v of [-.4,.4])b.beam(Q(u+w*v,2.65,.12),Q(u+w*v,3.12,.8),.045,'#587268');
     block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);block(u,3.1,w-.4,.23,.9,'#577f70');
     for(let win=0;win<3;win++){const v=u+(win-1)*w*.25,ww=Math.min(.88,w*.21);
      block(v,4.5,ww+.18,2.25,.22,trim);block(v,4.6,ww,1.92,.29,blue);
      block(v,4.59,.045,1.95,.35,'#b8d2c7');
      for(let y=4.74;y<6.4;y+=.14)block(v,y,ww-.07,.055,.37,'#66a1a5');
      // Arched shutter transom and its raised plaster archivolt.
-     for(let k=0;k<14;k++){const a=k/14*Math.PI,c=(k+1)/14*Math.PI;b.quad(trim,Q(v+Math.cos(a)*(ww/2+.13),6.48+Math.sin(a)*(ww/2+.13)),Q(v+Math.cos(c)*(ww/2+.13),6.48+Math.sin(c)*(ww/2+.13)),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2));}
+     for(let k=0;k<14;k++){const a=k/14*Math.PI,c=(k+1)/14*Math.PI;b.tri(blue,Q(v,6.48,.12),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2,.12),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2,.12));b.quad(trim,Q(v+Math.cos(a)*(ww/2+.13),6.48+Math.sin(a)*(ww/2+.13)),Q(v+Math.cos(c)*(ww/2+.13),6.48+Math.sin(c)*(ww/2+.13)),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2));}
      block(v,4.35,ww+.28,.13,.4,trim);
     }
     // Small ornamental panels between window groups and cornice dentils.

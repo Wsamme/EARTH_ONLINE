@@ -72,3 +72,9 @@ https://commons.wikimedia.org/wiki/File:Masjid_Angullia.jpg (saved commons.jpg).
 Geometry check passes. The historical-reference scores remain a limitation, not a
 certificate of the present-day massing. Lead still needs current-era reference
 renders and current-height metadata; no shared file was edited.
+
+Current night-photo check separated the upward-lit niche screens into an even
+local wash batch: their lights originate at the high sconces, so they should not
+use a ground floodlight's height falloff. This also avoids relying on the shared
+13.3 m historical height for those high-level lights. Runtime maximum metadata
+still needs the lead's correction. No shared shader/core was changed.

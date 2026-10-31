@@ -24,6 +24,8 @@ def refmask(p):
             ys = np.where(m[:, x])[0]; m[ys[0]:ys[-1] + 1, x] = True
     return m
 for slug in sys.argv[4:]:
+    if not (refs / slug / 'meta.json').exists():
+        print('skip (no refs)', slug); continue
     meta = json.loads((refs / slug / 'meta.json').read_text())
     rows = {}
     for v in SCORED:

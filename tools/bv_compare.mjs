@@ -20,6 +20,9 @@ for(const slug of slugs){const meta=JSON.parse(fs.readFileSync(path.join(refs,sl
 }
 for(const night of [false,true]){const jpeg=await page.evaluate(night=>{window.__bvShot=null;const t=__t,q=t.sgXY(1.3013,103.7900);t.camera.up.set(0,1,0);t.setTod(night?20.5:13);t.controls.target.set(q[0],42,-q[1]);t.camera.position.set(q[0]+1050,830,-q[1]+1320);t.camera.fov=42;t.camera.updateProjectionMatrix();t.controls.update();t.camera.near=1;t.camera.updateProjectionMatrix();t.ev("runHooks('frame',1,0);runHooks('prerender',1,0)");t.renderer.render(t.scene,t.camera);return t.renderer.domElement.toDataURL('image/jpeg',.94).split(',')[1];},night);fs.writeFileSync(path.join(out,night?'hero_night.jpg':'hero_day.jpg'),Buffer.from(jpeg,'base64'));}
 const stats=await page.evaluate(()=>({models:BuonaVista.stats,render:__t.renderer.info.render,tiles:__t.SGR.tiles.size}));
+const totalTriangles=Object.values(stats.models).reduce((n,m)=>n+m.triangles+(m.railTriangles||0),0);if(totalTriangles>=400000)throw new Error('Buona Vista triangle budget exceeded: '+totalTriangles);stats.totalModelTriangles=totalTriangles;
+for(const c of cameraReport){const h=c.shot.heading*Math.PI/180,p=c.shot.pitch*Math.PI/180,expected=[Math.sin(h)*Math.cos(p),Math.sin(p),-Math.cos(h)*Math.cos(p)];if(Math.hypot(...c.direction.map((x,i)=>x-expected[i]))>1e-5)throw new Error('Camera direction mismatch '+c.slug+'/'+c.view);}
+
 fs.writeFileSync(path.join(dest,'verification.json'),JSON.stringify({pageErrors:app.errors,consoleErrors:app.consoleErrors,cameras:cameraReport,...stats},null,2));
 await browser.close();
 execFileSync('python3',[path.join(root,'tools/bv_sheet.py'),refs,dest,out,...slugs],{stdio:'inherit'});

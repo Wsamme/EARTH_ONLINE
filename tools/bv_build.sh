@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
-# Regenerate the production Singapore page, plus the optional appshot test page.
+# Atomically regenerate the production Singapore page and optional appshot copy.
 set -euo pipefail
 TASK_ROOT=$(cd "$(dirname "$0")/.." && pwd)
+TASK_BUILD=$(mktemp -d "${TMPDIR:-/tmp}/earth-online-bv.XXXXXX")
+trap 'rm -rf "$TASK_BUILD"' EXIT
 cd "$TASK_ROOT"
-CITY=sg python3 src/sgreal/patch17.py src/city-brush-v16.html site/index.html
-python3 - <<'PYCODE'
-import re
+CITY=sg python3 src/sgreal/patch17.py src/city-brush-v16.html "$TASK_BUILD/index.html"
+python3 - "$TASK_BUILD" <<'PY'
+import re, sys
 from pathlib import Path
-s = Path('site/index.html').read_text()
-Path('/tmp/earth-online-bv-app.js').write_text(max(re.findall(r'<script>(.*?)</script>', s, re.S), key=len))
-PYCODE
-node --check /tmp/earth-online-bv-app.js
+p = Path(sys.argv[1])
+s = (p/'index.html').read_text()
+(p/'app.js').write_text(max(re.findall(r'<script>(.*?)</script>', s, re.S), key=len))
+PY
+node --check "$TASK_BUILD/app.js"
+cp "$TASK_BUILD/index.html" site/index.html
 if [[ "${1:-}" == "--test" ]]; then
   BV_VENDOR="${BV_VENDOR:-${TMPDIR:-/tmp}/earth-online-vendor}"
   mkdir -p "$BV_VENDOR/package/build" "$BV_VENDOR/package/examples/js/controls"

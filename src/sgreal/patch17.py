@@ -228,6 +228,8 @@ a = src.index('/* ================= boot ================= */'); b = src.index('
 src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nsgrBoot();\n" + src[b:]
 # Singapore landmark entry camera and the station's custom canopy.
 if CITY == 'sg':
+    # Keep the Singapore page free of Google service requests, including fonts.
+    src = re.sub(r'<link[^>]*href="https://fonts\.(?:googleapis|gstatic)\.com[^>]*>\n?', '', src)
     R("function sgrSkipB(B){\n  if (B.foreign) return false;", "function sgrSkipB(B){\n  if (B.foreign) return false;\n  if (SGBV.skip(B)) return true;")
     R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
     R("  for (const S of SGD.stations){\n    const mine = [];", "  for (const S of SGD.stations){\n    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }\n    const mine = [];")

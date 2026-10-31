@@ -13,8 +13,8 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D)=>{
  for(let f=0;f<3;f++)for(const Q of [north,south]){const R=scale(Q,1-f*.026);b.prism(R,3+f*5.3,7+f*5.3,'#627b7d',2);b.facade(scale(R,1.003),3+f*5.3,7+f*5.3,4,3.3,'#668180','#afbdb8',.18);b.prism(scale(R,1.025),7+f*5.3,7.8+f*5.3,'#c5ccc5');b.rim(scale(R,1.02),8.9+f*5.3,'#bec7c0',.25);}
  // Rock auditorium bulk held above the plaza, with a dark faceted underside.
  b.prism([[-67,-32],[-40,-40],[-6,-29],[27,-10],[30,12],[-5,18],[-63,4]],27,49,'#687b7c');
- function shell(s){const n=28,top=[],bottom=[];const Z=(t,inner)=>s===0?(inner?-10+32*t*t:-51+33*t*t):(inner?1+39*t*t:29+34*t*t);const Y=(t,u)=>s===0?65.5-5*t-3*u:74.5-12*t-2*u;
-  for(let i=0;i<=n;i++){const t=i/n,x=-66+(s===0?138:117)*t;top.push([[x,Y(t,0),Z(t,false)],[x,Y(t,1),Z(t,true)]]);bottom.push([[x*.91,43-7*t,Z(t,false)*.82],[x*.91,37-5*t,Z(t,true)*.84]]);}
+ function shell(s){const n=28,top=[],bottom=[];const Z=(t,inner)=>s===0?(inner?-16+52*t*t:-51+45*t*t):(inner?53*t*t:29+34*t*t);const ease=t=>{const u=Math.max(0,Math.min(1,(t-.7)/.3));return u*u*(3-2*u);};const Y=(t,u)=>s===0?65.5-3*t-10*ease(t)-3*u:74.5-6*t-13*ease(t)-2*u;
+  for(let i=0;i<=n;i++){const t=i/n,x=-66+(s===0?138:113)*t;top.push([[x+(s?8:0)*t*t*t,Y(t,0),Z(t,false)],[x-(s?8:9)*t*t*t,Y(t,1),Z(t,true)]]);bottom.push([[(x+(s?8:0)*t*t*t)*.91,(s?43-7*t:43-2*t),Z(t,false)*.82],[(x-(s?8:9)*t*t*t)*.91,37-5*t,Z(t,true)*.84]]);}
   for(let i=0;i<n;i++){const A=top[i],B=top[i+1],C=bottom[i],E=bottom[i+1];b.quad(i%3?'#c9cec7':'#b8c2bc',A[0],B[0],B[1],A[1]);for(let k=0;k<2;k++){b.quad(i%4?'#b9c4be':'#a8b8b1',C[k],E[k],B[k],A[k]);for(let j=0;j<4;j++){const t=j/4,u=(j+1)/4;const L=A[k].map((v,l)=>lerp(v,B[k][l],t)),R=A[k].map((v,l)=>lerp(v,B[k][l],u));const V=C[k].map((v,l)=>lerp(v,E[k][l],t));b.beam(V,L,.15,'#e0e4dc');if(j===0)b.beam(L,R,.16,'#dce1d8');}}
    b.quad('#596b6b',C[0],C[1],E[1],E[0]);
    // Diagonal lattice follows the sloping, faceted roof, not a flat decal.
@@ -23,17 +23,26 @@ register('star_vista','星悦汇','The Star Vista',97,(b,D)=>{
   }
   for(const i of [0,n])b.quad('#bec9c2',bottom[i][0],bottom[i][1],top[i][1],top[i][0]);
   for(let u=0;u<=1;u+=.125)for(let i=0;i<n;i++)b.beam(top[i][0].map((v,k)=>lerp(v,top[i][1][k],u)+(k===1?.18:0)),top[i+1][0].map((v,k)=>lerp(v,top[i+1][1][k],u)+(k===1?.18:0)),.17,'#e1e5dc');
+  for(let f=0;f<9;f++)for(let i=0;i<n;i++){const u=f/8*i/n,v=f/8*(i+1)/n;b.beam(top[i][0].map((a,k)=>lerp(a,top[i][1][k],u)+(k===1?.26:0)),top[i+1][0].map((a,k)=>lerp(a,top[i+1][1][k],v)+(k===1?.26:0)),.25,'#e4e8df');}
+
  }
  shell(0);shell(1);
  // A second folded aluminium ribbon under the northern auditorium shell.
  const ribbon=[[-70,-45],[-32,-42],[11,-30],[53,-14],[73,-6],[69,6],[35,-2],[-7,-15],[-67,-17]];
  b.prism(ribbon,22,(x,z)=>39-(x+65)*.045,'#b5c1ba');b.rim(ribbon,39,'#d8dfd5',.55);
- // Two large diagonal roof fans distinguish the shells in plan.
- for(const s of [0,1]){const p=[-60,s?74:65,s?2:-47];for(let k=0;k<10;k++){const t=k/9,x=-60+(s?108:127)*t,z=s?30+33*t*t:-12+32*t*t,y=s?74-12*t:65-5*t;b.beam(p,[x,y+.4,z],.32,'#e5e9e0');}}
-
+// Narrow planted roof terraces along the atrium slot.
+ b.garden([[-59,-14],[-25,-10],[5,0],[31,15],[46,29],[43,32],[28,19],[2,3],[-27,-7],[-59,-11]],33,false);
  // Fan-shaped amphitheatre seating, steps and the open-air atrium.
- for(let k=0;k<9;k++){const R=ellipse(41,15,18+k*2.2,13+k*1.4,32);const arc=R.filter(p=>p[0]>36);if(arc.length>2){b.prism(arc,2+k*.53,2.4+k*.53,k%2?'#aeb6a8':'#c5cbbb');}}
- for(const [x,z]of [[-56,-25],[-10,-19],[18,-4],[12,26]])b.beam([x,3,z],[x+4,36,z],1.4,'#c4ccc2');
+ for(let k=0;k<9;k++)for(let j=0;j<32;j++){const t=-Math.PI/2+j/32*Math.PI,u=-Math.PI/2+(j+1)/32*Math.PI,y=4+k*1.05,r=18+k*2.2,rz=13+k*1.4;
+  const p=(a,r,rz,h)=>[41+Math.cos(a)*r,h,15+Math.sin(a)*rz];
+  b.quad(k%2?'#b6c2b5':'#cbd3c4',p(t,r,rz,y),p(u,r,rz,y),p(u,r-2.2,rz-1.4,y),p(t,r-2.2,rz-1.4,y));
+  b.quad('#8ea79c',p(t,r,rz,y-1),p(u,r,rz,y-1),p(u,r,rz,y),p(t,r,rz,y));
+  if(j%4===0)b.beam(p(t,r,rz,y),p(t,r,rz,y+.7),.14,'#cdd8c9');
+ }
+
+ for(const [x,z]of [[-56,-25],[-10,-19],[18,-4],[12,26],[45,4],[38,32]])b.beam([x,3,z],[x+4,36,z],1.4,'#c4ccc2');
+ // Tucked-in fourth gallery under the metal ribbon, leaving the atrium open.
+ for(const Q of [north,south]){let R=scale(Q,.89);b.facade(R,18,23,5,3,'#718c89','#c3cec3',.3);b.prism(scale(R,1.03),23,23.6,'#bcc8be');}
  for(const [x,z]of [[-81,-32],[-72,41],[-27,47],[8,62],[69,35],[78,-27]])b.tree(x,0,z,1.6);
 });
 }

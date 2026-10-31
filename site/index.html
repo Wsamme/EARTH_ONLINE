@@ -81412,9 +81412,11 @@ register('indian_heritage_centre','印度文化馆','Indian Heritage Centre',42,
 {
 const {register,out,scale,lerp}=SGLI;
 register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
- const P=D.parts[0].p,H=10,eave=7.5;
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':undefined,gk:mode===4?.75:mode===5?.3:0}));
- b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#363d40');
+ const P=D.parts[0].p,H=9.2,eave=9.0;
+ // Reference p50 12.1 m / p90 13.6 m; 68.9 m max is HDB contamination.
+ const verticalScale=1.32;
+ const flush=b.flush.bind(b);b.flush=g=>{for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+(B.p[i]-b.base)*verticalScale;return flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':undefined,gk:mode===4?.75:mode===5?.3:0}));};
+ b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#363d40');b.walls(P,7.42,9.0,'#9a7ab6');
  // Sheltered market and first-floor galleries: the open bays sit behind the columns.
  const Q=out(P,.06);
  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<6)return;
@@ -81435,11 +81437,31 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
  });
  // Shallow pitched roof with deep eaves. Subdivided OSM triangles produce a
  // continuous hip surface on the irregular market plan, without filling its notches.
- const R=out(P,.65),dist=(x,z)=>Math.min(...R.map((p,i)=>{const q=R[(i+1)%R.length],dx=q[0]-p[0],dz=q[1]-p[1],t=Math.max(0,Math.min(1,((x-p[0])*dx+(z-p[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-p[0]-t*dx,z-p[1]-t*dz);}));
- const roof=p=>[p[0],Math.min(H,eave+dist(...p)*.19),p[1]];
+ const R=out(P,.65);
+ // Two broad parallel ridge lines follow the market wings. Boundary recesses
+ // remain plan details, not a source of tiny conical roof peaks.
+ const roof=p=>{const v=-.624*p[0]+.781*p[1];return [p[0],v<4?9.05:9.15,p[1]];};
  const tris=THREE.ShapeUtils.triangulateShape(R.map(p=>new THREE.Vector2(...p)),[]);
- function tile(a,c,d,n){if(n===0){b.tri('#867d84',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
+ function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#6596a1':'#819079',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
  tris.forEach(t=>tile(...t.map(i=>R[i]),3));b.rim(R,eave,'#d9d2d7',.22);
+ // North hall: repeated sawtooth monitor roofs. The broad outer roof and
+ // south gridded sheet roof stay separate from these raised ventilator strips.
+ const UV=(u,v,y)=>[.781*u-.624*v,y,.624*u+.781*v];
+ for(let u=-57;u<6;u+=5){const A=UV(u,-33,9.2),B=UV(u,-7,9.2),C=UV(u+4.8,-7,10.3),E=UV(u+4.8,-33,10.3);
+  if([A,B,C,E].every(p=>SGLI.inside(P,p[0],p[2]))){b.quad('#66796b',A,B,C,E);b.quad('#344850',C,E,UV(u+4.8,-33,9.2),UV(u+4.8,-7,9.2));b.beam(C,E,.1,'#aab7ae');}
+ }
+ // Fine standing-seam grid and a few exhaust banks on the southern roof.
+ for(let u=-10;u<75;u+=3.2)for(let v=6;v<40;v+=4){const A=UV(u,v,9.2),B=UV(u,v+3.8,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.055,'#c4d0c4');}
+ for(let v=8;v<41;v+=8)for(let u=-10;u<72;u+=4){const A=UV(u,v,9.2),B=UV(u+3.8,v,9.2);if([A,B].every(p=>SGLI.inside(P,p[0],p[2])))b.beam(A,B,.05,'#b7c8c0');}
+ for(const [u,v]of [[16,10],[31,13],[50,23],[22,34]]){const c=UV(u,v,9.2);b.box(c[0],9.2,c[2],3,.35,1.4,'#d2d9d4',-.67);for(let k=-1;k<=1;k++)b.box(c[0]+k*.7,9.56,c[2],.5,.04,1.1,'#647c7c',-.67);}
+
+ // Entrance stair and short access ramp stay inside the front footprint.
+ {const p=P[25],q=P[26],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),F=(u,v,y)=>[p[0]+dx/L*u-dz/L*v,y,p[1]+dz/L*u+dx/L*v];
+  for(let j=0;j<8;j++){const c=F(L*.62,1+j*.32,.18);b.box(c[0],.18,c[2],5,(j+1)*.12,.34,'#c8b8a4',a);}
+  const A=F(L*.62+3.4,1,.18),B=F(L*.62+3.4,12,1.14),C=F(L*.62+5,12,1.14),E=F(L*.62+5,1,.18);
+  b.quad('#b9b3a4',A,B,C,E);b.beam(F(L*.62+5,1,1.0),F(L*.62+5,12,1.95),.065,'#c7ceca');
+  const c=F(L*.62,.9,3.4);b.box(c[0],3.4,c[2],7,.16,2.8,'#668d9d',a);
+ }
  // Louvred entrance screens on the Buffalo Road / Serangoon corner.
  for(const edge of [25,46]){const p=P[edge],q=P[edge+1],dx=q[0]-p[0],dz=q[1]-p[1],a=Math.atan2(-dz,dx),L=Math.hypot(dx,dz),x=lerp(p[0],q[0],.28),z=lerp(p[1],q[1],.28);
   b.box(x,0,z,Math.min(13,L*.4),8.7,.5,'#9472ad',a);
@@ -81455,12 +81477,12 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
 const {register,out,scale,lerp,center}=SGLI;
 register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
  const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#e1eee0':mode===4?'#fff1d3':mode===5?'#6dde87':mode===6?'#eedcc4':undefined,gk:mode===2?.22:mode===4?1:mode===5?.8:mode===6?.1:0}));
- for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?13.2:part.id===178437069?25.8:22.5;
+ for(const part of D.parts){const P=part.p,bridge=part.id===178437074,H=bridge?9.6:part.id===178437069?25.8:22.5;
   if(bridge){
    // This mapped narrow part connects across the lane; keep the clearance open.
-   b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,12.7,'#4a7970',2);b.facade(out(P,.04),5.7,12.7,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),12.7,H,'#cbd1be');continue;
+   b.prism(P,5.4,5.7,'#b6bdad');b.prism(scale(P,.98),5.7,9.1,'#4a7970',2);b.facade(out(P,.04),5.7,9.1,3.5,2.2,'#658d80','#d4dacb',.14);b.prism(out(P,.2),9.1,H,'#cbd1be');continue;
   }
-  b.prism(P,-1,H,'#d5d5c5',6);const Q=out(P,.06);
+  b.prism(P,-1,H,'#d5d5c5',6);if(part.id===178437071)b.prism(P,5.4,H-.6,'#477b71',2);const Q=out(P,.06);
   Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<2)return;const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/4));
    // Older pale hotel / retail block at the west, greener glazing on the extension.
    const old=part.id===47198841;
@@ -81473,7 +81495,10 @@ register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
     for(let y=6;y<H-2;y+=4.1){
      b.box(x,y,z,w*(old?.55:.94),2.75,.17,old?'#41685d':'#477b71',a,2);
      b.box(x,y-.4,z,w,.38,.35,old?'#e5e4d5':'#abbcb0',a);
-     if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.9,.23,'#bdc7b6',a);}
+     if(old){b.box(x-w*.32*Math.cos(a),y,z+w*.32*Math.sin(a),.16,2.9,.23,'#bdc7b6',a);
+      const r=w*.275,pt=(t,R)=>[x+Math.cos(a)*Math.cos(t)*R,y+2.75+Math.sin(t)*R,z-Math.sin(a)*Math.cos(t)*R];
+      for(let k=0;k<12;k++){const t=k/12*Math.PI,u=(k+1)/12*Math.PI;b.tri('#41685d',[x,y+2.75,z],pt(t,r),pt(u,r),2);b.quad('#c8d0bd',pt(t,r+.1),pt(u,r+.1),pt(u,r),pt(t,r));}
+     }
     }
     if(j%4===1)b.box(x,5,z,w*.84,2.5,.2,'#b7c1a2',a,5);
    }
@@ -81492,23 +81517,23 @@ register('mustafa_centre','慕达发中心','Mustafa Centre',155,(b,D)=>{
 {
 const {register,scale,out,lerp}=SGLI;
 register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=>{
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#ffe5ba':undefined,gk:mode===4?.65:0}));
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#ffe5ba':mode===5?'#e7f5e5':undefined,gk:mode===4?.65:mode===5?.4:0}));
  D.parts.forEach((part,index)=>{const P=part.p,eave=7.6,H=9.7,wall=['#edc99a','#e8b98d','#f0d3a7'][index%3],trim='#f4e6cc',blue='#377b8c';
-  b.prism(P,-.7,.18,'#b6a395');b.prism(out(P,-1.35),.18,3.6,'#555951');b.prism(P,3.55,eave,wall);
+  b.prism(P,-.7,.18,'#b6a395');b.prism(out(P,-1.35),.18,3.6,'#6a8074',5);b.prism(P,3.55,eave,wall);
   b.band(out(P,.09),3.55,.3,trim);b.band(out(P,.18),7.15,.18,trim);b.band(out(P,.27),7.45,.16,trim);
-  // Roof pitches run away from the street towards each rear lane.
+  // Long ridges run from each street gable to the backlane.
   const E=P.length===4?P:[P[0],P[1],P[3],P[4]],a=E[0],q=E[1],r=E[2],s=E[3];
-  const A=[a[0],eave,a[1]],B=[q[0],eave,q[1]],C=[r[0],eave,r[1]],F=[s[0],eave,s[1]],R=[(a[0]+s[0])/2,H,(a[1]+s[1])/2],T=[(q[0]+r[0])/2,H,(q[1]+r[1])/2];
-  b.quad('#a97058',A,B,T,R);b.quad('#b97c60',C,F,R,T);b.tri(wall,A,R,F);b.tri(wall,B,C,T);b.beam(R,T,.18,'#d1ac86');
-  for(let k=1;k<14;k++){const t=k/14,M=(p,q)=>p.map((v,j)=>lerp(v,q[j],t));b.beam(M(A,R),M(B,T),.045,'#96634f');b.beam(M(F,R),M(C,T),.045,'#96634f');}
+  const A=[a[0],eave,a[1]],B=[q[0],eave,q[1]],C=[r[0],eave,r[1]],F=[s[0],eave,s[1]],R=[(a[0]+q[0])/2,H,(a[1]+q[1])/2],T=[(s[0]+r[0])/2,H,(s[1]+r[1])/2];
+  b.quad('#a97058',A,F,T,R);b.quad('#b97c60',B,R,T,C);b.tri(wall,A,R,B);b.tri(wall,F,C,T);b.beam(R,T,.18,'#d1ac86');
+  for(let k=1;k<14;k++){const t=k/14,M=(p,q)=>p.map((v,j)=>lerp(v,q[j],t));b.beam(M(A,R),M(F,T),.045,'#96634f');b.beam(M(B,R),M(C,T),.045,'#96634f');}
   // First short edge faces Campbell Lane; first parcel is the Serangoon strip.
-  const edges=index===0?[1,3]:[0,2];
-  edges.forEach(edge=>{const p=P[edge],q=P[(edge+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.round(L/4.8)),ang=Math.atan2(-dz,dx),Q=(u,y,v=.07)=>[p[0]+dx/L*u+Math.sin(ang)*v,y,p[1]+dz/L*u+Math.cos(ang)*v];
+  const edges=[0,2];
+  edges.forEach(edge=>{const p=P[edge],q=P[(edge+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.round(L/4.8)),ang=Math.atan2(-dz,dx),Q=(u,y,v=.07)=>[p[0]+dx/L*u-Math.sin(ang)*v,y,p[1]+dz/L*u-Math.cos(ang)*v];
    const block=(u,y,w,h,d,c,mode=0)=>{const v=Q(u,y,d*.5);b.box(v[0],y,v[2],w,h,d,c,ang,mode);};
    for(let j=0;j<n;j++){const u=(j+.5)*L/n,w=L/n;
     block(j*L/n,.18,.4,7.15,.32,trim);block(j*L/n,.2,.62,.3,.45,trim);block(j*L/n,6.85,.62,.27,.45,trim);
     // Open five-foot way behind the piers and a deep timber lintel.
-    block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);
+    block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);block(u,3.1,w-.4,.23,.9,'#577f70');
     for(let win=0;win<3;win++){const v=u+(win-1)*w*.25,ww=Math.min(.88,w*.21);
      block(v,4.5,ww+.18,2.25,.22,trim);block(v,4.6,ww,1.92,.29,blue);
      block(v,4.59,.045,1.95,.35,'#b8d2c7');
@@ -81521,6 +81546,12 @@ register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=
     block(u,6.97,w*.36,.12,.22,'#d6b084');for(let k=0;k<6;k++)block(j*L/n+(k+.5)*w/6,7.25,.12,.15,.3,trim);
    }
    block(L,0,.4,7.15,.32,trim);
+   if(edge===0){
+    // Campbell Lane photograph: plaster gable with a raised keystone.
+    b.beam(Q(0,7.6,.24),Q(L/2,9.7,.24),.16,'#cf9f76');b.beam(Q(L/2,9.7,.24),Q(L,7.6,.24),.16,'#cf9f76');
+    block(L/2,7.75,.22,.46,.3,'#d5aa7e');
+   }
+
   });
  });
 },[]);
@@ -81594,22 +81625,22 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   curve(F,x,y,.68,.42,blue,20);line(F,[[x-sign*.45,y],[x-sign*.85,y+.75],[x-sign*.7,y+1.15],[x-sign*.4,y+1.12],[x-sign*.35,y+.83]],gold);line(F,[[x-sign*.7,y+1.15],[x-sign*1.0,y+1.07]],orange);
  }
  const gates=[];
- const archCount=sample(ser,32,(c,t,i)=>{const F=frame(c,t),w=6.0;gates.push({center:c,tangent:t});
+ const archCount=sample(ser,32,(c,t,i)=>{const F=frame(c,t),w=i===21?4:i===20?5:6;gates.push({center:c,tangent:t,width:w});
   for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u,4.8,.7);flower(F,u,7.6,.62);}
   b.beam(F(-w,8),F(w,8),.07,'#8b8c81');
-  lotus(F,0,7.9,1.15);for(const u of [-3.5,3.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
+  lotus(F,0,7.9,1.15);for(const u of [-(w-2.5),w-2.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
   line(F,Array.from({length:49},(_,j)=>{let u=-w+j/48*w*2;return[u,8.25+.25*Math.cos(u*.9)];}),green);
  });
  // One peacock gateway near the southern arrival, no invented text panel.
  if(gates.length>1){const F=frame(gates[1].center,gates[1].tangent);peacock(F,-1.7,9.1,-1);peacock(F,1.7,9.1,1);line(F,Array.from({length:33},(_,i)=>{const a=i/32*Math.PI;return[3.0*Math.cos(a),9.8+2.0*Math.sin(a)];}),gold,.09);}
  // Longitudinal garlands between successive arches, following the road bend.
- for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*5.75,7.7),q=E(side*5.75,7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
+ for(let i=0;i<gates.length-1;i++){const A=gates[i],B=gates[i+1];for(const side of [-1,1]){const F=frame(A.center,A.tangent),E=frame(B.center,B.tangent),p=F(side*(A.width-.25),7.7),q=E(side*(B.width-.25),7.7);for(let j=0;j<12;j++){const t=j/12,u=(j+1)/12,pt=v=>[lerp(p[0],q[0],v),lerp(p[1],q[1],v)-Math.sin(v*Math.PI)*.55,lerp(p[2],q[2],v)];const a=pt(t),d=pt(u);b.quad(j%3?gold:pink,a,d,[d[0],d[1]+.045,d[2]],[a[0],a[1]+.045,a[2]],10);}}}
  sample(camp,12,(c,t,i)=>{const F=frame(c,t);for(const u of [-3,3])b.beam(F(u,0),F(u,5.5),.07,'#8d8c7a');line(F,[[-3,5.4],[0,5.0],[3,5.4]],gold);flower(F,0,5.15,.45);
   // Compact festival stalls inside the pedestrian lane, on one side only.
   if(i%2===0){const p=F(2,0),a=Math.atan2(-t[1],t[0]);b.box(p[0],p[1],p[2],2.8,2.2,1.2,'#d4a474',a);b.box(p[0],p[1]+2.2,p[2],3,.18,1.5,i%4?pink:orange,a);}
  });
  sample(dun,22,(c,t)=>{const F=frame(c,t);line(F,[[-2.2,5.5],[0,5.1],[2.2,5.5]],gold);diya(F,0,5.25,.45);});
- g.userData.liLightup={arches:archCount,spacingMetres:32,clearanceMetres:7.1,roadIds:D.streets.map(s=>s.id)};
+ g.userData.liLightup={arches:archCount,spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
 },[]);
 }
 

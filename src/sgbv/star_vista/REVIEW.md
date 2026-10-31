@@ -56,8 +56,9 @@ The model creates a small six-face procedural cube environment in memory; it has
 no asset request or photo content. r128 Lambert materials retain the app's
 `lmShader` night integration while adding cube reflections, subtle panel tones
 and flat shading. Brighter diffuse fill compensates for shaded pale cladding.
-Blue theatre floodlighting and warm reveal/atrium strips are steady; there is no
-animated advertising or brand text.
+Blue theatre floodlighting now follows the documented slow cycle, with an
+optional artistic show variant described below. There is no animated advertising
+or brand text.
 
 ## Silhouette protocol
 
@@ -135,3 +136,79 @@ node tools/sv3_check.cjs
 node tools/bv_geometry.cjs
 python3 tools/sv3_measure.py
 ```
+## Night and show lighting
+
+Normal night is the default whenever the app's `nightF` is on. Use
+`site/index.html?view=bv&show=1` for the artistic show variant; `show=0` forces
+normal lighting. An absent or unrecognised value also means normal lighting.
+There is no automatic concert schedule, exterior beam, logo or media facade.
+
+The [LPA project](https://www.lighting.co.jp/en/projects/the-star-vista-and-the-star/)
+provides the outline-light / luminous-theatre intent. The
+[LEDinside article](https://www.ledinside.com/lighting/2013/10/surreal_architecture_falling_on_the_ground_the_star_performing_arts_centre_star_vista)
+and [Toshio Kaneko/LPA gallery](https://ledinside.com/gallery/view/24) document
+the 20-second blue/turquoise cycle, RGB bowl wash, cool-white fibre contours,
+5000K outlines against 3000K interiors, corridor lines, reflected soffit light,
+colour-changing fountain and step LEDs. These inform the implemented palette,
+existing slab-edge emitters, retail glazing, escalator rails, soffits, step risers
+and fountain floor emitters. Colour temperatures are visual RGB approximations.
+
+The local originals were viewed before tuning: `ledinside_01` supplies the
+blue-hour warm-base / white-line balance; `02` supplies the violet foyer and fibre
+curves; `04–06` supply retail and corridor brightness; `07–08` supply fountain
+and under-nosing details. The larger Commons front and side photographs constrain
+the distant read. The source images remain outside the repository and are never
+textures or runtime assets. LEDinside images are credited press references, not
+asserted to have a Creative Commons licence.
+
+Commons file-page credits/licences for the reviewed night photographs:
+
+- [Front, 8527566637](https://commons.wikimedia.org/wiki/File:Star_Vista..._in_your_face!_(8527566637).jpg),
+  [side, 8522414945](https://commons.wikimedia.org/wiki/File:Star_Vista_(8522414945).jpg),
+  [side, 8522630927](https://commons.wikimedia.org/wiki/File:Star_Vista_(8522630927).jpg),
+  [dusk, 8523297048](https://commons.wikimedia.org/wiki/File:Star_Vista_at_dusk_(8523297048).jpg),
+  [observation deck](https://commons.wikimedia.org/wiki/File:Star_Vista_from_the_observation_deck_(8523389346).jpg):
+  Erwin Soo, CC BY 2.0.
+- [Distant night, 20130303](https://commons.wikimedia.org/wiki/File:The_Star_Vista,_Singapore,_at_night_-_20130303.jpg):
+  Erwin Soo, CC BY 2.0; attribution accompanies the external comparison artefacts.
+- [Foyer](https://commons.wikimedia.org/wiki/File:The_Star_Performing_Arts_Center_in_Singapore.jpg):
+  Aedas, CC BY-SA 2.0.
+- [Fountain](https://commons.wikimedia.org/wiki/File:Fountain_at_The_Star_Vista,_Singapore_-_20121021.jpg):
+  Jacklee, CC BY-SA 4.0. File-page author credits are included with external review outputs.
+
+[Shioklist](https://shioklist.sg/venues/the-star-theatre) describes the etched-glass
+lantern effect (supplied reference; page unavailable during this verification).
+[Wikipedia](https://en.wikipedia.org/wiki/The_Star_Performing_Arts_Centre)
+supplies venue/concert context, not evidence for a specific exterior show cue.
+[Attendees reporting foyer queues](https://www.reddit.com/r/askSingapore/comments/149no3r/)
+and a [first-person concert account](https://thefangirlverdict.com/2023/12/18/i-was-there-junho-the-moment-singapore-2023/)
+support brighter occupied foyers. They do not establish a programmed exterior
+show. The eight-second blue/turquoise/violet/magenta palette, broad slow sweep,
+soft moving leakage pulses and extra foyer brightness are explicitly **inferred**
+art direction. No claim is made that a real concert uses these exact cues.
+
+Implementation uses the existing r128 Lambert `onBeforeCompile` path and shared
+`uNight`; one frame hook updates one shared time uniform. Material zones share
+the same clock and show override. There are no added meshes, textures, lights,
+postprocessing passes or per-frame allocations. Existing triangles receive new
+lighting material assignments. Daylight lighting effects are gated by `uNight`.
+The pre-existing environment and diffuse materials are retained where applicable.
+
+Limits: procedural emission approximates etched glass and reflected light;
+there is no light transport, volumetric haze, true translucency or bloom. The
+fountain is represented by animated pool/nozzle light on its existing floor,
+without water-jet geometry. Existing v3 terraces and canopy occlude much of
+the recessed step/fountain detail in the chosen exterior cameras. Fibre paths follow the approximate v3 folds rather
+than a surveyed installation. No people or seasonal decorations were added.
+Reference camera matches are approximate, not calibrated photo reconstructions.
+
+Reproduce with `bash tools/bv_build.sh --test`, `node tools/sv3_check.cjs`,
+`node tools/sv_night_check.cjs`, `node tools/bv_geometry.cjs`, then
+`bash src/lm33/kit/browser.sh node tools/sv_night_render.mjs` against the local
+server on port 8047. Output goes to `/workspace/eo_codex_out/`.
+
+Night acceptance: 28 full-app captures (four views, nine time samples and one
+daylight check per mode) pass with zero page/console errors and runnable shader
+programs. Both heroes, the labelled comparison and nine-frame strip were viewed.
+The companion GIF contains eight one-second frames across the show palette.
+The geometry hash is identical to v3, and all nine geometry records match.

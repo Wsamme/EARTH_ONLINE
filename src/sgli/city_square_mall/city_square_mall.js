@@ -3,7 +3,7 @@
 {
 const {register,out,scale,lerp,inside}=SGLI;
 register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.35:mode===4?.85:mode===5?.45:0}));
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.65:mode===4?1.0:mode===5?.8:0}));
  const P=D.parts[0].p,T=D.parts[1].p,podium=25.0,top=51.6;
  // Local front-parallel / rearward frame, derived from the OSM edge.
  const a=P[0],q=P[1],dx=q[0]-a[0],dz=q[1]-a[1],L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L,nx=uz,nz=-ux;
@@ -27,11 +27,11 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
  for(const u of [8,27])for(const y of [6.2,10.7,15.2]){const w=8.5,h=2.6;b.quad('#527174',F(u-w/2,y,-.18),F(u+w/2,y,-.18),F(u+w/2,y+h,-.18),F(u-w/2,y+h,-.18),2);}
  for(const u of [1,18,36])b.beam(F(u,5,-.25),F(u,podium,-.25),.22,'#d8d7cb');
  const glassStart=37,glassEnd=L-4,roofY=u=>28.2;
- for(let u=glassStart;u<glassEnd;u+=2.8){const e=Math.min(glassEnd,u+2.8),v=.35+1.5*Math.sin((u-glassStart)/(glassEnd-glassStart)*Math.PI),w=.35+1.5*Math.sin((e-glassStart)/(glassEnd-glassStart)*Math.PI);
+ for(let u=glassStart;u<glassEnd;u+=2.8){const e=Math.min(glassEnd,u+2.8),v=-.35-1.5*Math.sin((u-glassStart)/(glassEnd-glassStart)*Math.PI),w=-.35-1.5*Math.sin((e-glassStart)/(glassEnd-glassStart)*Math.PI);
   // Curtain wall above the retail floor, with visible mullions and curved eave.
-  b.quad('#739b9c',F(u,podium,v),F(e,podium,w),F(e,roofY(e)-.4,w),F(u,roofY(u)-.4,v),2);
+  b.quad('#739b9c',F(u,5.8,v),F(e,5.8,w),F(e,roofY(e)-.4,w),F(u,roofY(u)-.4,v),2);
   b.beam(F(u,0,v),F(u,roofY(u),v),.14,'#c9d0c6');
-  for(let y=24;y<roofY(u)-.5;y+=2.2)b.beam(F(u,y,v),F(e,Math.min(y,roofY(e)-.4),w),.09,'#cbd3c8');
+  for(let y=5.8;y<roofY(u)-.5;y+=2.2)b.beam(F(u,y,v),F(e,Math.min(y,roofY(e)-.4),w),.09,'#cbd3c8');
   b.quad('#b8cbc4',F(u,28.2,v),F(e,28.2,w),F(e,28.2,7),F(u,28.2,7),2);
   b.beam(F(u,roofY(u),v-.25),F(e,roofY(e),w-.25),.13,'#e4dfc8');
   // Thin LED edge, not a large glowing opaque wall.
@@ -51,6 +51,10 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
  for(const [u,y,w,h]of [[19,17,12,3.2],[30,11,7,2],[70,12,8,1.5]]){const v=F(u,y,-.12);b.box(v[0],y,v[2],w,h,.15,'#e8dfc4',panelAngle,4);}
  // Roof garden beds restricted to the low roof outside the nine-level block.
  for(let u=5;u<34;u+=7){const c=F(u,podium,75);if(inside(P,c[0],c[2])&&!inside(T,c[0],c[2])){b.box(c[0],podium,c[2],5,.5,3,'#b8b8a6',panelAngle);b.box(c[0],podium+.5,c[2],4.6,.3,2.6,'#658449',panelAngle);b.tree(c[0],podium+.7,c[2],.65);}}
+ // Planted roof terrace behind the barrel hall, outside the taller annex.
+ for(let u=42;u<101;u+=12){const c=F(u,podium,43);if(inside(P,c[0],c[2])&&!inside(T,c[0],c[2])){b.box(c[0],podium,c[2],7,.45,2.5,'#b3b9a8',panelAngle);b.box(c[0],podium+.45,c[2],6.6,.35,2.2,'#5d8245',panelAngle);}}
+ // Ground floor entrance glazing and canopy stanchions.
+ for(let u=40;u<L-6;u+=5.6){const c=F(u,.3,-.2);b.box(c[0],.3,c[2],4.8,4.5,.12,'#7c9d97',panelAngle,2);const a=F(u-2.4,.3,-.3),e=F(u-2.4,5,-.3);b.beam(a,e,.12,'#d1d7c9');}
  // Compact edge of the park eco-canopy; full City Green park stays context.
  for(let u=8;u<35;u+=3){const e=Math.min(35,u+3);for(let k=0;k<4;k++){const v=-2+k*1.5,w=v+1.5,Y=(u,v)=>5.6+.6*Math.sin((u-8)/27*Math.PI)-v*.06;b.quad(k%2?'#809979':'#b0c1b7',F(u,Y(u,v),v),F(e,Y(e,v),v),F(e,Y(e,w),w),F(u,Y(u,w),w),k%2?0:2);b.beam(F(u,Y(u,v),v),F(e,Y(e,v),v),.1,'#d4d7c7');}}
  for(const u of [9,32]){const A=F(u,0,-1),B=F(u,5.8,-1);b.beam(A,B,.3,'#e0dfd2');}

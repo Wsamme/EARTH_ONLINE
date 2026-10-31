@@ -186,6 +186,9 @@ if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules
     keep20 = set(x for x in os.environ['LM20'].split(',') if x); MODS = [m for m in MODS if not m.startswith('lm20/') or m.split('/')[1] in keep20]
 # Singapore landmark modules: same LANDMARKS / SG_PLACES format as the city groups.
 MODS += ['sgbv/core.js'] + ['sgbv/%s/%s.js' % (k, k) for k in ['star_vista', 'metropolis', 'buona_vista_mrt', 'biopolis', 'fusionopolis_one', 'solaris', 'galaxis', 'mediacorp', 'rochester', 'one_holland_village', 'holland_road_sc', 'holland_piazza', 'elementum']] + ['sgbv/view.js']
+# Jurong East / Jurong Gateway (sgje): same kit, own footprints; missing slug files are skipped below.
+JE_SLUGS = ['westgate', 'jem', 'j_den', 'imm', 'perennial_business_city', 'jurong_east_mrt', 'ng_teng_fong', 'vision_exchange', 'jtc_summit', 'cpf_jurong', 'jurong_town_hall']
+MODS += ['sgje/core.js'] + ['sgje/%s/%s.js' % (k, k) for k in JE_SLUGS] + ['sgje/view.js']
 MODS += [m for m in os.environ.get('EXTRA_MODS', '').split(',') if m]
 skip = set(m for m in os.environ.get('SKIP_MODS', '').split(',') if m)
 MODS = [m for m in MODS if m not in skip and os.path.exists(SC + m)] + ['sgreal/app/sgreal.js', 'sgreal/app/sgstats.js', 'sgreal/app/cityswitch.js']
@@ -221,6 +224,7 @@ mods = ''.join(open(SC + p).read() + '\n' for p in MODS)
 if CITY == 'sg':
     import json
     mods = mods.replace('/* BV_FOOTPRINTS */', json.dumps(json.load(open(SC + 'sgbv/footprints.json')), separators=(',', ':')))
+    mods = mods.replace('/* JE_FOOTPRINTS */', json.dumps(json.load(open(SC + 'sgje/footprints.json')), separators=(',', ':')))
 mods = mods.replace('</script', '<\\/script')
 R("/* ================= loop ================= */", "/* ================= v17 modules ================= */\nwindow.SGR_APP = true;\n" + mods + "\n/* ================= loop ================= */")
 # ---------- boot: load the data, then build ----------
@@ -231,8 +235,9 @@ if CITY == 'sg':
     # Keep the Singapore page free of Google service requests, including fonts.
     src = re.sub(r'<link[^>]*href="https://fonts\.(?:googleapis|gstatic)\.com[^>]*>\n?', '', src)
     R("function sgrSkipB(B){\n  if (B.foreign) return false;", "function sgrSkipB(B){\n  if (B.foreign) return false;\n  if (SGBV.skip(B)) return true;")
-    R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
-    R("  for (const S of SGD.stations){\n    const mine = [];", "  for (const S of SGD.stations){\n    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }\n    const mine = [];")
+    R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } if (new URLSearchParams(location.search).get('view') === 'je'){ const q = sgXY(1.3330, 103.7430); controls.target.set(q[0], 45, -q[1]); camera.position.set(q[0] + 1150, 900, -q[1] + 1350); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
+    JE_MRT = "\n    if (S.en === 'Jurong East'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW24 / NS1']}); continue; }" if os.path.exists(SC + 'sgje/jurong_east_mrt/jurong_east_mrt.js') else ''
+    R("  for (const S of SGD.stations){\n    const mine = [];", "  for (const S of SGD.stations){\n    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }" + JE_MRT + "\n    const mine = [];")
 # titles
 R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
 # v23: the map switch under the title (both builds)

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>bv-render</title>
+<style>
+  html,body{margin:0;background:#1c1c1c;color:#eee;font:14px/1.3 sans-serif}
+  #sheet{display:block}
+</style>
+</head>
+<body>
+<canvas id="sheet"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// 对照渲染页：用 meta.json 里的相机（已换算进 BV.shots）拍模型，和参考图并排。
+// 打开 ?slug=star_vista 得到这一栋的五向对照；?hero=day 或 night 是整片纬壹。
+(async function(){
+  const q = new URLSearchParams(location.search);
+  const slug = q.get('slug');
+  const hero = q.get('hero');
+  const THREE = window.THREE;
+  const data = await (await fetch('bv_data.js')).text();
+  const src = await (await fetch('bv.js')).text();
+  const LANDMARKS = {}, SG_PLACES = [];
+  // 天空盒：六张渐变画布，给玻璃当环境反射。没有这张图，玻璃只会是一块平涂的塑料。
+  function makeEnv(){
+    const mk = (top, mid, bot, sun) => {
+      const c = document.createElement('canvas'); c.width = c.height = 128;
+      const g = c.getContext('2d');
+      const grd = g.createLinearGradient(0, 0, 0, 128);
+      grd.addColorStop(0, top); grd.addColorStop(0.62, mid); grd.addColorStop(1, bot);
+      g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
+      if (sun){ g.fillStyle = 'rgba(255,248,230,0.9)'; g.beginPath(); g.arc(78, 36, 14, 0, 6.3); g.fill(); }
+      return c;
+    };
+    const tex = new THREE.CubeTexture([
+      mk('#8eb8dc', '#d7e6f0', '#8aa46c', 1),
+      mk('#7eadd4', '#d2e3ee', '#7e9a64', 1),
+      mk('#c5dff0', '#e7f1f6', '#d5e4ef', 0),
+      mk('#6d8a58', '#7f9a68', '#5c7848', 0),
+      mk('#8eb8dc', '#d7e6f0', '#8aa46c', 1),
+      mk('#7eadd4', '#d2e3ee', '#7e9a64', 0)
+    ]);
+    tex.needsUpdate = true;
+    return tex;
+  }
+  const ENV = makeEnv();
+  function LTris(g, pos, col){
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.computeVertexNormals();
+    const spec = typeof col === 'string' ? {c:col} : (col || {});
+    const rf = spec.rf || 0;
+    let mat;
+    if (rf > 0.08){
+      mat = new THREE.MeshPhongMaterial({
+        color: spec.c || '#ffffff', side: THREE.DoubleSide,
+        shininess: 8 + rf * 10, specular: new THREE.Color('#7d90a0'),
+        reflectivity: rf, envMap: ENV, combine: THREE.MultiplyOperation
+      });
+    } else {
+      mat = new THREE.MeshLambertMaterial({color: spec.c || '#ffffff', side: THREE.DoubleSide});
+    }
+    if (spec.op && spec.op < 1){ mat.transparent = true; mat.opacity = spec.op; mat.depthWrite = false; }
+    mat.userData.night = spec.m === 1 ? 1 : 0;
+    const m = new THREE.Mesh(geo, mat);
+    g.add(m);
+    return m;
+  }
+  new Function('THREE','LANDMARKS','SG_PLACES','LTris', data + '\n' + src)(THREE, LANDMARKS, SG_PLACES, LTris);
+  const BV = new Function(data + '\nreturn BV;')();
+
+  const CTX = new Function(await (await fetch('context.js')).text() + '\nreturn BV_CTX;')();
+  const W = 760, H = 475;
+  const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+  renderer.setSize(W, H);
+  renderer.setClearColor(hero === 'night' ? 0x0c1420 : 0xb7cfe2, 1);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(hero === 'night' ? 0x0c1420 : 0xb7cfe2);
+  // 天光偏蓝、地面反光偏绿，主光从镜头那一侧打过来，立面才不会变成一块剪影。
+  scene.add(new THREE.HemisphereLight(hero === 'night' ? 0x1c3048 : 0xd5e6f2, hero === 'night' ? 0x0a100c : 0x6a7d52, hero === 'night' ? 0.4 : 0.52));
+  const sun = new THREE.DirectionalLight(hero === 'night' ? 0x8aa0c0 : 0xfff3df, hero === 'night' ? 0.22 : 0.62);
+  sun.position.set(-220, 480, 160);
+  scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xc5d4e4, hero === 'night' ? 0.05 : 0.28);
+  fill.position.set(180, 140, -220);
+  scene.add(fill);
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(2400, 48), new THREE.MeshBasicMaterial({color: hero === 'night' ? 0x121810 : 0x7d9a5c}));
+  ground.rotation.x = -Math.PI/2; ground.position.y = -0.08; scene.add(ground);
+  const ctxRoot = new THREE.Group(); scene.add(ctxRoot);
+  // 把 one-north 的道路和绿地挪到「当前这栋楼的中心是原点」。
+  function setContext(lat, lon){
+    while (ctxRoot.children.length){ const ch = ctxRoot.children.pop(); if (ch.geometry) ch.geometry.dispose(); }
+    if (hero === 'night') return;
+    const MX = 111290.5, MY = 110574;
+    const ox = (lon - CTX.lon0) * MX, oz = -(lat - CTX.lat0) * MY;
+    const near = (x, z) => x * x + z * z < 680 * 680;
+    const grass = [];
+    for (const poly of CTX.greens){
+      const P = []; let ok = false;
+      for (const p of poly){ const x = p[0] - ox, z = p[1] - oz; P.push([x, z]); if (near(x, z)) ok = true; }
+      if (!ok || P.length < 3) continue;
+      let faces; try { faces = THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []); } catch (e){ continue; }
+      for (const f of faces){
+        if (!f || f.length < 3) continue;
+        const a = P[f[0]], b = P[f[1]], c = P[f[2]];
+        if (!a || !b || !c) continue;
+        grass.push(a[0], 0.02, a[1], b[0], 0.02, b[1], c[0], 0.02, c[1]);
+      }
+    }
+    if (grass.length){
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(grass, 3));
+      ctxRoot.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color: 0x6a8a48, side: THREE.DoubleSide})));
+    }
+    const road = [], pave = [];
+    for (const r of CTX.roads){
+      const pts = []; let ok = false;
+      for (const p of r.pts){ const x = p[0] - ox, z = p[1] - oz; pts.push([x, z]); if (near(x, z)) ok = true; }
+      if (!ok || pts.length < 2) continue;
+      const bucket = r.w >= 5 ? road : pave, y = r.w >= 5 ? 0.05 : 0.03, hw = r.w * 0.5;
+      for (let i = 0; i < pts.length - 1; i++){
+        const a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz) || 1;
+        const nx = dz / L * hw, nz = -dx / L * hw;
+        bucket.push(a[0] + nx, y, a[1] + nz, b[0] + nx, y, b[1] + nz, b[0] - nx, y, b[1] - nz, a[0] + nx, y, a[1] + nz, b[0] - nx, y, b[1] - nz, a[0] - nx, y, a[1] - nz);
+      }
+    }
+    const addStrip = (arr, color) => {
+      if (!arr.length) return;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(arr, 3));
+      ctxRoot.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color, side: THREE.DoubleSide})));
+    };
+    addStrip(road, 0x5c6366); addStrip(pave, 0xc9c3b6);
+    // 绿地里撒树。每栋楼附近一两百棵就够让画面有层次。
+    const trunks = [], leaves = [];
+    let planted = 0;
+    for (const poly of CTX.greens){
+      if (planted > 220) break;
+      let x0 = 1e9, z0 = 1e9, x1 = -1e9, z1 = -1e9; const P = [];
+      for (const p of poly){ const x = p[0] - ox, z = p[1] - oz; P.push([x, z]); if (x < x0) x0 = x; if (z < z0) z0 = z; if (x > x1) x1 = x; if (z > z1) z1 = z; }
+      if (x1 < -700 || x0 > 700 || z1 < -700 || z0 > 700) continue;
+      for (let x = x0; x < x1 && planted < 220; x += 16) for (let z = z0; z < z1 && planted < 220; z += 16){
+        if (x * x + z * z > 620 * 620) continue;
+        let inside = false;
+        for (let i = 0, j = P.length - 1; i < P.length; j = i++){
+          const yi = P[i][1], yj = P[j][1];
+          if ((yi > z) !== (yj > z) && x < (P[j][0] - P[i][0]) * (z - yi) / (yj - yi + 1e-9) + P[i][0]) inside = !inside;
+        }
+        if (!inside) continue;
+        const s = 2.2 + ((x * 13 + z * 7) % 5) * 0.35, h = 3.2 * s;
+        trunks.push(x, 0, z, x, h * 0.45, z);
+        for (let k = 0; k < 5; k++){
+          const a0 = k / 5 * Math.PI * 2, a1 = (k + 1) / 5 * Math.PI * 2, r = 1.3 * s;
+          leaves.push(x + Math.cos(a0) * r, h * 0.45, z + Math.sin(a0) * r, x + Math.cos(a1) * r, h * 0.45, z + Math.sin(a1) * r, x, h, z);
+        }
+        planted++;
+      }
+    }
+    const lineMesh = (arr, color) => {
+      if (arr.length < 6) return;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(arr, 3));
+      ctxRoot.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color, side: THREE.DoubleSide})));
+    };
+    // trunks were stored as segments; rebuild as thin boxes is heavier, use triangles already in leaves and a line-less trunk cone
+    lineMesh(leaves, 0x3c7a38);
+  }
+
+  function nightify(root){
+    if (hero !== 'night') return;
+    root.traverse(o => {
+      if (!o.isMesh) return;
+      const m = o.material;
+      if (m.userData.night){
+        m.emissive = m.color.clone().multiplyScalar(0.9);
+        m.color.multiplyScalar(0.22);
+      } else {
+        m.emissive = new THREE.Color(0x22180e);
+        m.color.multiplyScalar(0.25);
+      }
+    });
+  }
+
+  const cam = new THREE.PerspectiveCamera(39.7, W/H, 0.5, 8000);
+  function aimSun(shot){
+    const dx = shot.cam[0] - shot.look[0], dz = shot.cam[2] - shot.look[2], L = Math.hypot(dx, dz) || 1;
+    sun.position.set(shot.look[0] + dx / L * 380, shot.look[1] + 260, shot.look[2] + dz / L * 380);
+    if (shot.pitch <= -80) sun.position.set(180, 700, 140);
+  }
+  function shoot(group, shot, lat, lon){
+    setContext(lat, lon);
+    aimSun(shot);
+    scene.add(group);
+    cam.fov = shot.vfov || 39.7;
+    cam.aspect = W/H;
+    // 顶视图的 meta 没有单独的注视点，相机就在中心正上方。
+    // 注视点必须在地面附近，不能和相机同一高度，否则会拍到地平线。
+    if (shot.pitch <= -80){
+      cam.up.set(0, 0, -1); // 画面上方 = 北（本地 -z）
+      cam.position.set(shot.cam[0], Math.max(30, shot.cam[1]), shot.cam[2]);
+      cam.lookAt(shot.cam[0], 0, shot.cam[2]);
+    } else {
+      cam.up.set(0, 1, 0);
+      cam.position.set(shot.cam[0], shot.cam[1], shot.cam[2]);
+      cam.lookAt(shot.look[0], shot.look[1], shot.look[2]);
+    }
+    cam.updateProjectionMatrix();
+    renderer.render(scene, cam);
+    scene.remove(group);
+    return renderer.domElement;
+  }
+
+  const sheet = document.getElementById('sheet');
+  const ctx = sheet.getContext('2d');
+  const keys = {
+    star_vista:'bvstar', metropolis:'bvmetropolis', buona_vista_mrt:'bvmrt', biopolis:'bvbiopolis',
+    fusionopolis_one:'bvfusion', solaris:'bvsolaris', galaxis:'bvgalaxis', mediacorp:'bvmediacorp', rochester:'bvrochester'
+  };
+  const zh = {
+    star_vista:'星悦汇', metropolis:'大都会', buona_vista_mrt:'波纳维斯达站', biopolis:'启奥城',
+    fusionopolis_one:'启汇城一期', solaris:'索拉里斯', galaxis:'盖拉西斯', mediacorp:'新传媒', rochester:'罗切斯特'
+  };
+
+  if (hero){
+    sheet.width = 1280; sheet.height = 800;
+    const HW = 1280, HH = 800;
+    renderer.setSize(HW, HH);
+    const lat0 = 1.3022, lon0 = 103.7896, MX = 111290.5, MY = 110574;
+    for (const s of Object.keys(keys)){
+      const B = BV[s];
+      const g = LANDMARKS[keys[s]].build();
+      nightify(g);
+      g.position.set((B.lon - lon0) * MX, 0, -(B.lat - lat0) * MY);
+      scene.add(g);
+    }
+    setContext(1.3022, 103.7896);
+    cam.fov = 48; cam.aspect = HW/HH;
+    cam.up.set(0, 1, 0);
+    cam.position.set(900, 640, 1080);
+    cam.lookAt(0, 24, 80);
+    cam.updateProjectionMatrix();
+    renderer.setClearColor(hero === 'night' ? 0x0d1524 : 0xc5d6e2, 1);
+    renderer.render(scene, cam);
+    ctx.drawImage(renderer.domElement, 0, 0);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.fillRect(0, HH - 36, HW, 36);
+    ctx.fillStyle = '#fff'; ctx.font = '20px sans-serif';
+    ctx.fillText(hero === 'night' ? '纬壹 one-north · 夜景' : '纬壹 one-north · 日景', 16, HH - 12);
+    document.title = 'READY';
+    return;
+  }
+
+  const order = ['n','e','s','w','top'];
+  const label = {n:'北', e:'东', s:'南', w:'西', top:'顶'};
+  sheet.width = W * 2 + 8; sheet.height = 36 + order.length * (H + 8);
+  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, sheet.width, sheet.height);
+  ctx.fillStyle = '#fff'; ctx.font = '18px sans-serif';
+  ctx.fillText((zh[slug] || slug) + '  ·  左参考  右模型', 12, 24);
+
+  const B = BV[slug];
+  const group = LANDMARKS[keys[slug]].build();
+  let row = 0;
+  for (const view of order){
+    const shot = B.shots[view];
+    const img = new Image();
+    img.src = '/bv_refs/' + slug + '/' + view + '.jpg';
+    await new Promise((res, rej) => { img.onload = res; img.onerror = () => res(); });
+    const y = 36 + row * (H + 8);
+    if (img.width) ctx.drawImage(img, 0, y, W, H);
+    else { ctx.fillStyle = '#333'; ctx.fillRect(0, y, W, H); }
+    shoot(group, shot, B.lat, B.lon);
+    ctx.drawImage(renderer.domElement, W + 8, y, W, H);
+    ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(8, y + 8, 120, 22);
+    ctx.fillStyle = '#fff'; ctx.font = '14px sans-serif';
+    ctx.fillText(label[view] + (shot.synthetic ? ' · 推算机位' : ''), 14, y + 24);
+    row++;
+  }
+  document.title = 'READY';
+})().catch(e => { document.title = 'ERR ' + e.message; document.body.textContent = e.stack; });
+</script>
+</body>
+</html>

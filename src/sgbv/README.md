@@ -61,3 +61,18 @@ labelled six-view JPG sheets, hero day/night JPGs, camera logs and page errors.
 References and renders are ignored by git and are never PR attachments.
 
 See `REVIEW.md` for the comparison rounds and remaining limitations.
+
+For independent appshot smoke views (with the same server running):
+
+```bash
+NEAR=1.3013,103.7900,2500 bash src/lm33/kit/browser.sh \
+  node src/lm20/kit/appshot.js /workspace/eo_codex_out/appshot \
+  "$(cat src/sgbv/tools/views.json)"
+```
+
+The replacement mask also includes three legacy Metropolis podium polygons from
+`site/sgdata/sg_bld.txt`; their generic height estimates otherwise obscure the
+replacement towers. Source polygons are recorded in `context_parts`. The added
+geometry totals 293,236 triangles, including rails; existing city context is
+retained. Singapore's generated page omits its former Google Fonts links, so the
+comparison flow makes no Google service requests.

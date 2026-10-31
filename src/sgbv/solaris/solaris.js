@@ -31,7 +31,9 @@ register('solaris','索拉里斯','Solaris',90,(b,D)=>{
  for(const [i,j]of [[0,5],[1,5],[1,6],[2,6],[2,7],[3,8],[4,8]]){let a=R[i],q=R[j];b.beam([a[0],79.4,a[1]],[q[0],77.8,q[1]],.75,'#edf0e3');}
  for(const i of [0,2,4,6,8]){let p=R[i];b.beam([p[0],75,p[1]],[p[0],79.5,p[1]],.6,'#e6ecdc');}
  // Garden paths and deeper planting beds break up both flat roof lawns.
- for(const [Q,y]of [[North,48.3],[South,75.3]]){const C=center(Q);for(let i=0;i<Q.length;i+=3){let p=Q[i];b.beam([C[0],y+.1,C[1]],[p[0]*.85+C[0]*.15,y+.1,p[1]*.85+C[1]*.15],.5,'#b8b9a0');if(i%2===0)b.tree(p[0]*.8+C[0]*.2,y+.2,p[1]*.8+C[1]*.2,1.1);}for(let x=C[0]-10;x<C[0]+11;x+=10)for(let z=C[1]-6;z<C[1]+7;z+=9){const R=SGBV.rect(x,z,7,4);if(R.every(p=>SGBV.inside(Q,...p)))b.prism(R,y+.05,y+.4,'#6c8554');}}
+ for(const [Q,y]of [[North,48.3],[South,75.3]]){const C=center(Q);b.rim(scale(Q,.72),y+.12,'#b9bba4',.7);for(let i=0;i<Q.length;i+=3){let p=Q[i];if(i%2===0)b.tree(p[0]*.8+C[0]*.2,y+.2,p[1]*.8+C[1]*.2,.7);}for(let x=C[0]-10;x<C[0]+11;x+=10)for(let z=C[1]-6;z<C[1]+7;z+=9){const R=SGBV.rect(x,z,7,4);if(R.every(p=>SGBV.inside(Q,...p)))b.prism(R,y+.05,y+.4,'#6c8554');}}
+ for(const [path,y]of [[[[-8,-45],[10,-36],[23,-24],[32,-12],[19,-7]],48.5],[[[-44,14],[-34,23],[-10,32],[11,37]],75.5]])for(let i=0;i<path.length-1;i++){const p=path[i],q=path[i+1];b.beam([p[0],y,p[1]],[q[0],y,q[1]],.9,'#bac0a8');}
+ b.box(34,48.4,-20,8,2.2,6,'#cdd5c6',.4);b.box(33,50.6,-20,6,.3,4,'#9fae9e',.4);
  for(const [x,z]of [[-62,3],[-48,41],[19,52],[53,-27],[8,-66]])b.tree(x,0,z,1.3);
 });
 }

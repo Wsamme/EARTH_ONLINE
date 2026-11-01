@@ -28,6 +28,21 @@ register('li_shophouses','小印度店屋街区','Little India Shophouse Rows',8
   const F=(u,y,v=0)=>[p[0]+ux*u+nx*v,y,p[1]+uz*u+nz*v],V=r=>(r[0]-p[0])*nx+(r[1]-p[1])*nz,ang=Math.atan2(-uz,ux);
   const panel=(u,y,w,h,c,v=.04,mode=0)=>b.quad(c,F(u-w/2,y,v),F(u+w/2,y,v),F(u+w/2,y+h,v),F(u-w/2,y+h,v),mode);
   const bar=(u,y,w,h,d,c,v=0)=>{const r=F(u,y,v);b.box(r[0],y,r[2],w,h,d,c,ang);};
+  // OSM 664 Buffalo Road is a Tekka market/gallery wing, not a row of
+  // shuttered houses. February 2024 Street View overrides its ambiguous
+  // three-level tag: two open galleries, purple fascia and ochre piers.
+  if(part.id===178436581){
+   const R=clip(P,V,-2,-1),h=8.3;if(R.length>=3)b.prism(R,-.25,7.2,'#6b776d');
+   b.walls(P,7.2,h,'#9b80ac');b.cap(P,h+.1,'#9da7a4');
+   const bays=Math.max(1,Math.round(L/5.2)),w=L/bays;
+   bar(L/2,3.8,L,.28,.7,'#e0ded7');bar(L/2,4.08,L,.65,.2,'#aa96b5');bar(L/2,7.15,L,.18,.8,'#dcd6dc');bar(L/2,h,L,.17,.85,'#dcd6dc');
+   for(let j=0;j<=bays;j++){bar(j*w,0,.48,7.3,.48,'#dba342');bar(j*w,3.65,.65,.17,.65,'#eee2c4');}
+   for(let j=0;j<bays;j++){
+    const u=(j+.5)*w;panel(u,.2,w-.55,2.75,'#87917d',-1.98,5);panel(u,3.05,w*.78,.4,'#e7d9ba',.08,4);
+    for(const y of [4.9,5.2,5.5])bar(u,y,w-.5,.065,.16,'#e4e7e2');
+   }
+   used.push({id:part.id,levels:2,height:h,ground:b.base,profile:'market_gallery'});continue;
+  }
   // Real 1.8 m deep five-foot way: no opaque wall across the column line.
   const rear=clip(P,V,-1.8,-1);if(rear.length>=3)b.prism(rear,-.25,ground,wall);
   b.prism(P,ground,eave,wall);
@@ -57,6 +72,6 @@ register('li_shophouses','小印度店屋街区','Little India Shophouse Rows',8
   used.push({id:part.id,levels,height:H,ground:b.base});
  }
  b.base=originalBase;
- g.userData.liRows={units:used.length,excluded:excluded.map(p=>p.id),providedParts,contextInTekka:[...contextIds],minHeight:Math.min(...used.map(p=>p.height)),maxHeight:Math.max(...used.map(p=>p.height)),groundRange:[Math.min(...used.map(p=>p.ground)),Math.max(...used.map(p=>p.ground))]};
+ g.userData.liRows={units:used.length,shophouses:used.filter(p=>!p.profile).length,marketGalleryIds:[178436581],excluded:excluded.map(p=>p.id),providedParts,contextInTekka:[...contextIds],minHeight:Math.min(...used.map(p=>p.height)),maxHeight:Math.max(...used.map(p=>p.height)),groundRange:[Math.min(...used.map(p=>p.ground)),Math.max(...used.map(p=>p.ground))]};
 },[]);
 }

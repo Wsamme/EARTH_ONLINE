@@ -46,3 +46,19 @@ assets. No logos, brand text, photographic textures or external meshes are used.
 
 Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
 No shared source/data files were edited by this round-2 worker work.
+
+## Round 3 — Street View evidence audit
+
+Inspected the local contact sheet first, then its manifest. The 2024-03/06
+exterior panos point predominantly at the opposite shophouse row; 2019-09 and
+2018-02 entries include shops/interiors. None provides an unobstructed view of
+the IHC baoli glass facade. These images cannot justify a new facade colour,
+storey height or screen pattern. Retained the measured 22.4 m maximum, 19.1 m
+gallery edge and existing glass/stepped screen geometry. The previously saved
+ONG&ONG night photograph remains the lighting reference; no new Street View
+images were requested, copied into the repository or exposed at runtime.
+
+The round-3 matched-camera sheets and skyline scores are recorded with the
+final validation below. Their whole-scene skyline agreement includes opposite
+shops and should not be read as a facade-specific IHC accuracy score. A correctly
+aimed exterior reference is still needed from the lead; no shared change made.

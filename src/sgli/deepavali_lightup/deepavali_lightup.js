@@ -25,17 +25,27 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   for(let j=0;j<7;j++){const a=-1.1+j*.29,tx=x+sign*(1.15+Math.cos(a)*1.25),ty=y+Math.sin(a)*1.25;line(F,[[x,y],[tx+sign*.65,ty+.6],[tx+sign*1.1,ty+.35],[tx+sign*.7,ty-.15],[x,y]],j%2?pink:gold);curve(F,tx+sign*.65,ty+.25,.18,.24,green,10);}
   curve(F,x,y,.68,.42,blue,20);line(F,[[x-sign*.45,y],[x-sign*.85,y+.75],[x-sign*.7,y+1.15],[x-sign*.4,y+1.12],[x-sign*.35,y+.83]],gold);line(F,[[x-sign*.7,y+1.15],[x-sign*1.0,y+1.07]],orange);
  }
+ // September 2024 panos: cool white crossed floral outlines around
+ // violet loops and gold centres. The daytime wires stay narrow and open.
+ function crossed(F,x,y,s){
+  for(const sign of [-1,1]){const A=Array.from({length:25},(_,j)=>{const a=j/24*Math.PI*2;return[x+Math.cos(a)*s*.85+sign*Math.sin(a)*s*.22,y+sign*Math.cos(a)*s*.55-Math.sin(a)*s*.30];});line(F,A,'#fff4dd',.08);}
+  curve(F,x,y,s*.30,s*.30,blue,16);curve(F,x,y,s*.12,s*.12,gold,12);
+ }
+ // September 2024 visible poles: pano bearings + OSM street-side facades.
+ // Scene-projected anchors for the three directly observed spans; widths
+ // include a 0.7 m facade stand-off and remain estimates, not a survey.
+ const svPins={"15":{"center":[6.022,-131.14],"tangent":[0.4939419,-0.8694949],"width":9.0},"8":{"center":[-119.067,62.481],"tangent":[0.544639,-0.8386706],"width":8.674},"12":{"center":[-54.881,-40.946],"tangent":[0.5533915,-0.8329212],"width":12.0}};
  const gates=[];
- sample(ser,32,(c,t,i)=>{if(i===3)return;const F=frame(c,t),w=({4:5.5,5:5,6:4.5,7:4.5,8:4.5,20:5,21:4,32:5,33:5.5})[i]||6;gates.push({center:c,tangent:t,width:w});
+ sample(ser,32,(c,t,i)=>{if(i===3)return;const pin=svPins[i];if(pin){c=pin.center;t=pin.tangent;}const F=frame(c,t),w=pin?pin.width:({4:5.5,5:5,6:4.5,7:4.5,8:4.5,20:5,21:4,32:5,33:5.5})[i]||6;gates.push({center:c,tangent:t,width:w});
   for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u-Math.sign(u)*.75,4.8,.7);flower(F,u-Math.sign(u)*.7,7.6,.62);}
   b.beam(F(-w,8),F(w,8),.07,'#8b8c81');
-  lotus(F,0,7.9,1.15);for(const u of [-(w-2.5),w-2.5]){diya(F,u,7.9,.65);flower(F,u*.62,8.4,.47);}
-  line(F,Array.from({length:49},(_,j)=>{let u=-w+j/48*w*2;return[u,8.25+.25*Math.cos(u*.9)];}),green);
+  lotus(F,0,7.9,1.15);for(const u of [-(w-2.1),w-2.1]){crossed(F,u,8.45,.95);diya(F,u,7.9,.45);}
+  line(F,Array.from({length:49},(_,j)=>{let u=-w+j/48*w*2;return[u,8.25+.25*Math.cos(u*.9)];}),'#ece7ff');
   // Dense floral scrollwork seen around the 2024 diya/lotus panels.
   // Keep every outline in the span plane and inside its existing supports.
   for(const sign of [-1,1]){
    line(F,Array.from({length:33},(_,j)=>{const a=j/32*Math.PI*2.7,r=.52*(1-j/40);return[sign*(w-1.1)+Math.cos(a)*r,8.75+Math.sin(a)*r];}),pink,.085);
-   lotus(F,sign*(w-1.0),5.9,.55);
+   crossed(F,sign*(w-1.0),5.9,.55);
    diya(F,sign*1.6,7.6,.48);
   }
 
@@ -49,6 +59,6 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   if(i%2===0){const p=F(2,0),a=Math.atan2(-t[1],t[0]);b.box(p[0],p[1],p[2],2.8,2.2,1.2,'#d4a474',a);b.box(p[0],p[1]+2.2,p[2],3,.18,1.5,i%4?pink:orange,a);}
  });
  sample(dun,22,(c,t)=>{const F=frame(c,t);line(F,[[-2.2,5.5],[0,5.1],[2.2,5.5]],gold);diya(F,0,5.25,.45);});
- g.userData.liLightup={arches:gates.length,omittedSampleIndices:[3],spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
+ g.userData.liLightup={arches:gates.length,omittedSampleIndices:[3],spacingMetres:32,streetViewSamples:Object.keys(svPins).map(Number),streetViewSpans:Object.values(svPins).map(p=>p.width*2),clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
 },[]);
 }

@@ -7,19 +7,26 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
  // Reference p50 12.1 m / p90 13.6 m; 68.9 m max is HDB contamination.
  const verticalScale=1.32;
  const flush=b.flush.bind(b);b.flush=g=>{for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+(B.p[i]-b.base)*verticalScale;return flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#fff0d5':mode===5?'#ffe1b5':mode===6?'#ffe5b5':undefined,gk:mode===4?1.2:mode===5?.85:mode===6?.65:0}));};
- b.prism(P,-1,.22,'#a8a59b');b.prism(scale(P,.965),.22,6.8,'#8a8571',5);b.walls(P,7.42,9.0,'#9a7ab6');
+ b.prism(P,-1,.22,'#a8a59b');b.prism(out(P,-2.0),.22,6.8,'#737a70');b.walls(P,7.42,9.0,'#9a7ab6');
  // Sheltered market and first-floor galleries: the open bays sit behind the columns.
  const Q=out(P,.06);
  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz);if(L<6)return;
   const a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/5.5));
   for(let j=0;j<n;j++){
    const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t),w=L/n;
-   b.box(x,.25,z,.46,7.05,.46,'#e4e1d8',a);
+   b.box(x,.25,z,.46,7.05,.46,'#dfa846',a);
    b.box(x,3.65,z,w,.25,.42,'#eee9da',a);
    b.box(x,4.0,z,w-.48,.85,.22,'#a49bbb',a);
    for(let k=-2;k<=2;k++)b.box(x+Math.cos(a)*k*w/6,4.85,z-Math.sin(a)*k*w/6,.06,.7,.08,'#b9c0bb',a);
    if(j%2===0)b.box(x,2.7,z,w*.65,.46,.12,'#e4d9ba',a,4);
    b.box(x,6.98,z,w*.6,.06,.9,'#e5dfc9',a,5);
+   // February 2024 Buffalo Road: open gallery, yellow/orange piers,
+   // white horizontal rails and recessed stall glazing below the fascia.
+   const cx=SGLI.center(P),sgn=((cx[0]-x)*(-Math.sin(a))+(cx[1]-z)*(-Math.cos(a)))>0?1:-1;
+   const sx=x-Math.sin(a)*sgn*1.94,sz=z-Math.cos(a)*sgn*1.94;
+   b.box(sx,.25,sz,w-.55,2.4,.08,'#9da48a',a,5);
+   for(const yy of [4.85,5.16,5.5])b.box(x,yy,z,w-.45,.065,.16,'#e1e5df',a);
+   b.box(x,3.12,z,w-.4,.32,.18,'#e6ddc1',a,4);
   }
   b.box((p[0]+q[0])/2,6.65,(p[1]+q[1])/2,L,.85,.65,'#9a7ab6',a);
   b.box((p[0]+q[0])/2,7.42,(p[1]+q[1])/2,L,.14,.9,'#d4c7d9',a);
@@ -33,7 +40,7 @@ register('tekka_centre','竹脚中心','Tekka Centre',100,(b,D)=>{
  // remain plan details, not a source of tiny conical roof peaks.
  const roof=p=>{const v=-.624*p[0]+.781*p[1];let d=Infinity;R.forEach((a,i)=>{const q=R[(i+1)%R.length],dx=q[0]-a[0],dz=q[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dz)/(dx*dx+dz*dz)));d=Math.min(d,Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dz));});return [p[0],(v<4?8.6:8.8)+Math.min(.95,d*.12),p[1]];};
  const tris=THREE.ShapeUtils.triangulateShape(R.map(p=>new THREE.Vector2(...p)),[]);
- function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#8db4b7':'#a4b397',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
+ function tile(a,c,d,n){if(n===0){b.tri((-.624*a[0]+.781*a[1])<4?'#8da3a6':'#9da89a',roof(a),roof(c),roof(d));return;}const ac=a.map((v,k)=>(v+c[k])/2),cd=c.map((v,k)=>(v+d[k])/2),da=d.map((v,k)=>(v+a[k])/2);tile(a,ac,da,n-1);tile(ac,c,cd,n-1);tile(da,cd,d,n-1);tile(ac,cd,da,n-1);}
  tris.forEach(t=>tile(...t.map(i=>R[i]),3));b.rim(R,eave,'#d9d2d7',.22);
  // North hall: repeated sawtooth monitor roofs. The broad outer roof and
  // south gridded sheet roof stay separate from these raised ventilator strips.

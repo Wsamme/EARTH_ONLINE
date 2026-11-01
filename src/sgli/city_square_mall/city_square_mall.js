@@ -3,7 +3,7 @@
 {
 const {register,out,scale,lerp,inside}=SGLI;
 register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
- const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.65:mode===4?1.0:mode===5?.8:0}));
+ const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===2?'#ffddb1':mode===4?'#fff0d7':mode===5?'#b7d9e9':undefined,gk:mode===2?.28:mode===4?1.0:mode===5?.8:0}));
  const P=D.parts[0].p,T=D.parts[1].p,podium=25.0,top=51.6;
  // Local front-parallel / rearward frame, derived from the OSM edge.
  const a=P[0],q=P[1],dx=q[0]-a[0],dz=q[1]-a[1],L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L,nx=uz,nz=-ux;
@@ -13,11 +13,29 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
  const slabs=[half(half(T,27,1),61,-1),half(half(T,72,1),103,-1)];
  b.prism(P,-1,podium,'#b4b7b0');b.facade(out(P,.04),.5,podium-.6,5.8,3.3,'#506e71','#c8cfc6',.2);
  for(let y=5.8;y<podium;y+=5.8)b.band(out(P,.13),y,.45,'#cfcec3');
+ // January 2023 / March 2024 service-road elevations: broad off-white
+ // metal wall panels above a low stone plinth, not all-over green glazing.
+ const cladding=out(P,.21);
+ for(const edge of [6,7,8,9,10]){const a=cladding[edge],q=cladding[(edge+1)%P.length],dx=q[0]-a[0],dz=q[1]-a[1],len=Math.hypot(dx,dz),ang=Math.atan2(-dz,dx),n=Math.max(1,Math.round(len/3));
+  b.quad('#e0e1db',[a[0],4.8,a[1]],[q[0],4.8,q[1]],[q[0],podium,q[1]],[a[0],podium,a[1]]);
+  b.quad('#b8b6a6',[a[0],.2,a[1]],[q[0],.2,q[1]],[q[0],4.8,q[1]],[a[0],4.8,a[1]]);
+  for(let y=6.5;y<podium;y+=2.4)b.beam([a[0],y,a[1]],[q[0],y,q[1]],.035,'#c7cbc5');
+  for(let j=0;j<n;j++){const t=(j+.5)/n,x=lerp(a[0],q[0],t),z=lerp(a[1],q[1],t);if(j%3===1)b.box(x,9.4,z,.42,2.7,.10,'#72858a',ang);}
+ }
+
  b.roof(P,podium-.7);b.prism(T,podium,48.1,'#a4aaa4');for(const S of slabs)b.prism(S,48.1,51.2,'#a4aaa4');b.cap(T,48.15,'#789a92');
  // The upper leased annex floors have long glazed bands and pale piers.
  const Q=out(T,.05);Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/6.5));
   for(let y=26.4;y<top-2;y+=5.1){b.box((p[0]+q[0])/2,y,(p[1]+q[1])/2,L,1.5,.1,'#526f72',a,2);for(let j=0;j<=n;j++)b.box(lerp(p[0],q[0],j/n),y-.1,lerp(p[1],q[1],j/n),.45,2,.35,'#bac1b6',a);}
  });for(const S of slabs){b.roof(S,51.1,2);b.rim(S,51.6,'#c6cbbf',.4);}
+ // The tall north/northwest service faces are also opaque; the eastern
+ // glazed feature bay and occupied terrace elevations remain exposed.
+ const upperClad=out(T,.23);
+ for(const edge of [0,8]){const p=upperClad[edge],q=upperClad[(edge+1)%T.length];
+  b.quad('#dce0da',[p[0],podium,p[1]],[q[0],podium,q[1]],[q[0],48.1,q[1]],[p[0],48.1,p[1]]);
+  for(let y=27;y<48;y+=2.4)b.beam([p[0],y,p[1]],[q[0],y,q[1]],.035,'#cbd0c9');
+ }
+
  // Highest measured element is roof plant/screen, not the adjacent residences.
  {const c=F(45,51.2,94),ang=Math.atan2(-dz,dx);b.box(c[0],51.2,c[2],8,4.5,6,'#b8c2ba',ang);for(let y=51.6;y<55.5;y+=.38)b.box(c[0],y,c[2],8.05,.07,6.05,'#8a9d96',ang);}
 

@@ -28,6 +28,14 @@ register('city_square_mall','城市广场','City Square Mall',114,(b,D)=>{
  const Q=out(T,.05);Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),a=Math.atan2(-dz,dx),n=Math.max(1,Math.round(L/6.5));
   for(let y=26.4;y<top-2;y+=5.1){b.box((p[0]+q[0])/2,y,(p[1]+q[1])/2,L,1.5,.1,'#526f72',a,2);for(let j=0;j<=n;j++)b.box(lerp(p[0],q[0],j/n),y-.1,lerp(p[1],q[1],j/n),.45,2,.35,'#bac1b6',a);}
  });for(const S of slabs){b.roof(S,51.1,2);b.rim(S,51.6,'#c6cbbf',.4);}
+ // The tall north/northwest service faces are also opaque; the eastern
+ // glazed feature bay and occupied terrace elevations remain exposed.
+ const upperClad=out(T,.23);
+ for(const edge of [0,8]){const p=upperClad[edge],q=upperClad[(edge+1)%T.length];
+  b.quad('#dce0da',[p[0],podium,p[1]],[q[0],podium,q[1]],[q[0],48.1,q[1]],[p[0],48.1,p[1]]);
+  for(let y=27;y<48;y+=2.4)b.beam([p[0],y,p[1]],[q[0],y,q[1]],.035,'#cbd0c9');
+ }
+
  // Highest measured element is roof plant/screen, not the adjacent residences.
  {const c=F(45,51.2,94),ang=Math.atan2(-dz,dx);b.box(c[0],51.2,c[2],8,4.5,6,'#b8c2ba',ang);for(let y=51.6;y<55.5;y+=.38)b.box(c[0],y,c[2],8.05,.07,6.05,'#8a9d96',ang);}
 

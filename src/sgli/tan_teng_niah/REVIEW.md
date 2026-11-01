@@ -44,3 +44,23 @@ assets. No logos, brand text, photographic textures or external meshes are used.
 
 Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
 No shared source/data files were edited by this round-2 worker work.
+
+## Round 3 — local Street View pass
+
+Inspected the richly painted frontal 2018-02 view and 2019-09 entry, then
+2024-02 and newest 2026-04 rear/side views. The newest views show a predominantly
+blue side wall and quieter green shutters; they do not show the current front.
+Changed the upper shell from grey to blue, kept three individually coloured
+front shutter bays with red/green/blue trim, and replaced side ground-floor rainbow
+arches with rectangular green louvred openings. The red recessed entry and
+blue/yellow columns remain, with blank signage panels.
+
+The 11.5 m ridge / 7.8 m eaves and 3.85 m floor line remain tile-derived. The
+saved 2023 Commons night photograph remains newer evidence for the front paint
+and warm entry/globe lamps than the frontal Street View; no neon added. Gaps:
+front-versus-side date conflict, fine carving and curved tile edges. No modern
+rear equipment was copied from Street View imagery into runtime textures.
+
+Round-3 night cross-check: re-inspected the saved external night photograph
+listed above; reference remains outside the repository and no photographic
+texture is used.

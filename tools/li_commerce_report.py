@@ -1,12 +1,13 @@
 """Summarise locally rendered commerce comparisons, matching Street View filenames."""
-import json
+import json, sys
 from pathlib import Path
 root = Path('/workspace/eo_li_out')
 out = root / 'commerce'
 before = json.loads((out / 'li_iou_r2_final.json').read_text())
 after = json.loads((out / 'li_iou.json').read_text())
 sv_before = json.loads((root / 'li_sv_iou_before.json').read_text())
-sv_after = json.loads((out / 'li_sv_iou_s1.json').read_text())
+round_name = sys.argv[1] if len(sys.argv) > 1 else 's2'
+sv_after = json.loads((out / f'li_sv_iou_{round_name}.json').read_text())
 report = {}
 for slug in sorted(set(before) | set(after) | set(sv_after)):
     row = {}

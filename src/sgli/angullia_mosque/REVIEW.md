@@ -66,6 +66,10 @@ and (320,80). The new upper hall flank is therefore placed near x=9 m rather
 than carrying forward the tapered x=11.45 corner of the old OSM building.
 Original OSM ground paving and the freestanding gate stay in place.
 
+A separate rear/side roof check in pano 04_1, around pixels (320,303–315),
+puts the roof edge at approximately 19.2–20.6 m on the opposite facade plane,
+consistent with retaining the current roof height within image-reading error.
+
 The four-storey hall remains an estimated 19.9 m parapet / 25.6 m corner finial,
 consistent with the manifest's near cameras and pitched-up roof views to roughly
 2 m precision. This is an image-based estimate, not a surveyed height. Local

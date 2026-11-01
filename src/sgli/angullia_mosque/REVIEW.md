@@ -82,3 +82,19 @@ and the current hall's unsurveyed height. Screens are geometric abstractions.
 Round-3 night cross-check: re-inspected the saved external night photograph
 listed above; reference remains outside the repository and no photographic
 texture is used.
+
+## Round 3 final validation
+
+Model **35,869 triangles**, 5 shared batches; maximum 25.60 m above anchor datum.
+
+| n | e | s | w | top | close_ne | close_sw | street |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.552 | 0.575 | 0.584 | 0.518 | 0.816 | 0.572 | 0.560 | 0.454 |
+
+Tile n/e/s/w/top mean **0.619 → 0.609**; final all-view mean **0.579**.
+Nominal skyline mean **0.561 → 0.559**.
+The originally supplied Angullia baseline was 0.559; the completed lead before captures re-score to 0.561. Stale tile comparison remains exempt from fitting.
+
+Build syntax and finite-geometry checks pass. Six-slug tile and Street View round **s1** both report **zero page errors and zero console errors**. Sheets and verification remain outside git under `/workspace/eo_li_out/heritage/`.
+
+**Shared skyline metric limitation:** the all-scene mask retains a blue/purple sky gradient, which the scorer's magenta threshold counts as solid. For example, an Angullia clear-sky pixel is RGB (134,162,221), and only 0.06% of that frame is detected as void. These nominal skyline scores cannot establish facade or precise skyline accuracy. The tile black/white landmark masks are unaffected. Diagnostic evidence is in `round3_skyline_mask_audit.json` outside git. The lead needs to apply background/sky overrides after frame hooks and explicitly suppress sky/weather in the mask pass. Shared tools were not edited.

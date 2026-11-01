@@ -86,16 +86,16 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
   const lit=front?8:3;
   const n=Math.max(1,Math.round(E.L/2.65)),bay=E.L/n;
   for(let j=0;j<n;j++,index++){
-   const u=(j+.5)*bay,w=Math.min(1.4,bay*.63),col=front?['#d48f9c','#e2c34e','#71b0b5'][j%3]:'#8fba9b';
-   if(front)panel(E.F,u,3.92,bay-.06,3.35,['#a65d65','#447363','#a65a52'][j%3],.025,lit);
+   const u=(j+.5)*bay,w=Math.min(1.4,bay*.63),col=front?['#71b0b5','#e2c34e','#d48f9c'][j%3]:'#8fba9b';
+   if(front)panel(E.F,u,3.92,bay-.06,3.35,['#466c8d','#447363','#a65d65'][j%3],.025,lit);
    // Deep painted shutter rebates, contrasting lunettes and carved floral panels.
    if(front){arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,lit);arch(E.F,u,4.47,w+.07,2.53,'#577c60',.09,lit);}
    else{panel(E.F,u,4.35,w+.32,2.75,'#c9d6bd',.06,lit);panel(E.F,u,4.47,w+.07,2.53,'#94b397',.09,lit);}
    panel(E.F,u,4.48,w,1.94,'#454941',.11);
    for(const s of [-1,1]){
     panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,lit);
-    for(let y=4.75;y<6.32;y+=.17)beam(E.F(u+s*w*.25-w*.18,y,.16),E.F(u+s*w*.25+w*.18,y,.16),.052,front?['#4a9f94','#d0b848','#5d85b1'][j%3]:'#a2bb9d');
-    panel(E.F,u+s*w*.25,4.58,w*.3,.4,front?['#6ba5b7','#a5bd80','#c897aa'][j%3]:'#a2be9f',.18,lit);
+    for(let y=4.75;y<6.32;y+=.17)beam(E.F(u+s*w*.25-w*.18,y,.16),E.F(u+s*w*.25+w*.18,y,.16),.052,front?['#5d85b1','#d0b848','#4a9f94'][j%3]:'#a2bb9d');
+    panel(E.F,u+s*w*.25,4.58,w*.3,.4,front?['#c897aa','#a5bd80','#c897aa'][j%3]:'#a2be9f',.18,lit);
    }
    if(front)arcTrim(E.F,u,4.35,w+.35,2.78,'#d7b044');
    if(front)for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,lit);}

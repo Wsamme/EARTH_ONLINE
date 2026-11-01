@@ -66,3 +66,8 @@ rear equipment was copied from Street View imagery into runtime textures.
 Round-3 night cross-check: re-inspected the saved external night photograph
 listed above; reference remains outside the repository and no photographic
 texture is used.
+
+The matched frontal Street View render exposed a left/right bay paint reversal
+in the local edge traversal. Final front shutters read pink on the viewer's
+left, yellow/green in the centre and blue on the right, following the frontal
+reference and the 2023 night photo. Round s2 refreshes this final paint pass.

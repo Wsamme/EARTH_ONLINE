@@ -79,7 +79,7 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
  // The upper floor projects above a recessed entrance five-foot way.
  K.prism(P,3.85,7.6,'#4d8bc3');
  const lower=[[-5.8,-12],[8.75,-12],[8.75,3.45],[5.5,3.45],[5.5,11.15],[-2.7,11.15],[-2.7,3.45],[-5.8,3.45]];
- K.prism(lower,.32,3.85,'#eee3cf');
+ K.prism(lower,.32,3.85,'#548ec4');
  let index=0;
  for(const E of faces(P)){
   const front=E.F(E.L/2,0)[2]>12;
@@ -89,16 +89,17 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
    const u=(j+.5)*bay,w=Math.min(1.4,bay*.63),col=front?['#d48f9c','#e2c34e','#71b0b5'][j%3]:'#8fba9b';
    if(front)panel(E.F,u,3.92,bay-.06,3.35,['#a65d65','#447363','#a65a52'][j%3],.025,lit);
    // Deep painted shutter rebates, contrasting lunettes and carved floral panels.
-   arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,lit);arch(E.F,u,4.47,w+.07,2.53,front?'#577c60':'#94b397',.09,lit);
+   if(front){arch(E.F,u,4.35,w+.32,2.75,'#d9c58f',.06,lit);arch(E.F,u,4.47,w+.07,2.53,'#577c60',.09,lit);}
+   else{panel(E.F,u,4.35,w+.32,2.75,'#c9d6bd',.06,lit);panel(E.F,u,4.47,w+.07,2.53,'#94b397',.09,lit);}
    panel(E.F,u,4.48,w,1.94,'#454941',.11);
    for(const s of [-1,1]){
     panel(E.F,u+s*w*.25,4.52,w*.45,1.89,col,.13,lit);
     for(let y=4.75;y<6.32;y+=.17)beam(E.F(u+s*w*.25-w*.18,y,.16),E.F(u+s*w*.25+w*.18,y,.16),.052,front?['#4a9f94','#d0b848','#5d85b1'][j%3]:'#a2bb9d');
     panel(E.F,u+s*w*.25,4.58,w*.3,.4,front?['#6ba5b7','#a5bd80','#c897aa'][j%3]:'#a2be9f',.18,lit);
    }
-   arcTrim(E.F,u,4.35,w+.35,2.78,front?'#d7b044':'#a5bda2');
-   for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,lit);}
-   for(const v of [j*bay,(j+1)*bay]){
+   if(front)arcTrim(E.F,u,4.35,w+.35,2.78,'#d7b044');
+   if(front)for(let t=0;t<5;t++){const a=t/5*Math.PI;panel(E.F,u+Math.cos(a)*w*.32,6.65+Math.sin(a)*.23,.1,.12,'#d8bb65',.19,lit);}
+   if(front)for(const v of [j*bay,(j+1)*bay]){
     panel(E.F,v,3.88,.26,3.5,colors[(index+3)%8],.15,lit);
     for(const s of [-1,1])beam(E.F(v+s*.08,4.15,.18),E.F(v+s*.08,6.95,.18),.042,'#e8c76c');
     panel(E.F,v,7.04,.48,.28,colors[(index+5)%8],.2,lit);
@@ -107,9 +108,9 @@ register('tan_teng_niah','陈东龄故居','House of Tan Teng Niah',23,(b,D,G,g)
   }
   // Painted cornices, tiny bracket dentils, individually coloured fascia boards.
   for(const [y,h,c]of [[3.65,.18,'#c49939'],[3.84,.16,'#438e6b'],[7.3,.15,'#d4af61'],[7.55,.16,'#6b648a']]){
-   beam(E.F(0,y,.15),E.F(E.L,y,.15),h,c);
+   beam(E.F(0,y,.15),E.F(E.L,y,.15),h,front?c:'#b2c3ad');
   }
-  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,colors[Math.floor(u/.28)%8],.3,lit);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
+  for(let u=.12;u<E.L;u+=.28){panel(E.F,u,7.7,.23,.52,front?colors[Math.floor(u/.28)%8]:'#c2cebb',.3,lit);const p=E.F(u,7.25,.18),q=E.F(u,7.5,.4);beam(p,q,.10,'#c4b39b');}
  }
  // Recessed red front wall and richly carved timber doors, all inscription panels blank.
  const F=(u,y,w=0)=>[u+1.4,y,11.18+w];

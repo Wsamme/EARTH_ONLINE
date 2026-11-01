@@ -50,9 +50,11 @@ No shared source/data files were edited by this round-2 worker work.
 Inspected the richly painted frontal 2018-02 view and 2019-09 entry, then
 2024-02 and newest 2026-04 rear/side views. The newest views show a predominantly
 blue side wall and quieter green shutters; they do not show the current front.
-Changed the upper shell from grey to blue, kept three individually coloured
+Changed the upper shell from grey and the lower side walls from cream to blue, kept three individually coloured
 front shutter bays with red/green/blue trim, and replaced side ground-floor rainbow
-arches with rectangular green louvred openings. The red recessed entry and
+arches with rectangular green louvred openings. Upper side shutters also have
+rectangular lintels; rainbow lunettes, pilasters and fascia are concentrated on
+the front, with pale quieter side fascia. The red recessed entry and
 blue/yellow columns remain, with blank signage panels.
 
 The 11.5 m ridge / 7.8 m eaves and 3.85 m floor line remain tile-derived. The

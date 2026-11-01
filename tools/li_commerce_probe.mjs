@@ -13,5 +13,6 @@ const result=await app.page.evaluate(()=>{
  for(const p of R.parts){const c=kit.center(p.p),B={cx:q[0]+c[0],cy:q[1]-c[1],rings:[p.p.flatMap(v=>[q[0]+v[0],q[1]-v[1]])]};if(kit.skip(B))masked++;}
  return {landmarks,replacementMasks:{parts:R.parts.length,masked},rowHullPresent:t.SGR.hulls.has(t.landmarks.find(L=>L.type==='sgli_li_shophouses').id)};
 });
+if(!result.landmarks.li_shophouses.rows.arcadeContextIds)throw Error('Stale app build: missing current row profile metadata');
 const report={pageErrors:app.errors,consoleErrors:app.consoleErrors,...result};const out=process.env.LI_OUT||'/workspace/eo_li_out/commerce';fs.writeFileSync(out+'/integration_'+(process.env.LI_ROUND||'s2')+'.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));await app.browser.close();
 if(app.errors.length||app.consoleErrors.length||result.rowHullPresent||result.replacementMasks.parts!==result.replacementMasks.masked)process.exitCode=1;

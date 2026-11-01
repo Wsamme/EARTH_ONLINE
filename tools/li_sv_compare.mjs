@@ -26,8 +26,8 @@ for(const set of sets){
     if(masks){/* silhouette pass: normal materials, magenta void instead of sky/fog; sky dome, sprites, points hidden */
      const S=t.scene,bg=S.background,fog=S.fog,hid=[];S.background=new THREE.Color(0xff00ff);const fn=fog&&[fog.near,fog.far,fog.density];if(fog){fog.near=1e9;fog.far=2e9;if('density' in fog)fog.density=0;}
      S.traverse(o=>{if(!o.visible)return;let big=false;if(o.geometry){if(!o.geometry.boundingSphere)o.geometry.computeBoundingSphere();const bs=o.geometry.boundingSphere;big=!!bs&&bs.radius*o.matrixWorld.getMaxScaleOnAxis()>15000&&!o.isInstancedMesh;}
-      const m=Array.isArray(o.material)?o.material[0]:o.material;if(o.isSprite||o.isPoints||big||(m&&(m.blending===THREE.AdditiveBlending||(m.transparent&&m.opacity<.5)))){hid.push(o);o.visible=false;}});
-     R();all=t.renderer.domElement.toDataURL('image/png').split(',')[1];
+      const m=Array.isArray(o.material)?o.material[0]:o.material;if(o.name==='lgSky'||o.renderOrder<=-100||o.isSprite||o.isPoints||big||(m&&(m.blending===THREE.AdditiveBlending||(m.transparent&&m.opacity<.5)))){hid.push(o);o.visible=false;}});
+     t.camera.children.forEach(o=>{if(o.visible){hid.push(o);o.visible=false;}});const ac=t.renderer.autoClear;t.renderer.autoClear=true;t.renderer.setRenderTarget(null);t.renderer.setClearColor(0xff00ff,1);t.renderer.render(S,t.camera);t.renderer.autoClear=ac;all=t.renderer.domElement.toDataURL('image/png').split(',')[1];
      const Lm=slug&&t.landmarks.find(L=>L.type==='sgli_'+slug),g=Lm&&t.ev('lmMeshes').get(Lm.id);if(g){const ov=S.overrideMaterial;S.background=new THREE.Color(0);S.overrideMaterial=new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide});g.traverse(o=>o.layers.enable(7));t.camera.layers.set(7);t.renderer.render(S,t.camera);lm=t.renderer.domElement.toDataURL('image/png').split(',')[1];t.camera.layers.set(0);g.traverse(o=>o.layers.disable(7));S.overrideMaterial=ov;}
      hid.forEach(o=>o.visible=true);S.background=bg;if(fog){[fog.near,fog.far]=fn;if('density' in fog)fog.density=fn[2];}}
     return {beauty,all,lm};},{s,W,H,tod,slug,masks:tod===13});

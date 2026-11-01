@@ -83,3 +83,20 @@ arcade. Its recessed surface now uses a quieter shaded green material rather
 than the frontage wash. The physical arcade opening and silhouette are unchanged;
 Abdul-only round s2 refreshes both tile and Street View sheets for this final
 material adjustment.
+
+## Round 3 final validation
+
+Model **47,385 triangles**, 4 shared batches; maximum 18.34 m above anchor datum.
+
+| n | e | s | w | top | close_ne | close_sw | street |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.658 | 0.660 | 0.619 | 0.636 | 0.834 | 0.660 | 0.662 | 0.512 |
+
+Tile n/e/s/w/top mean **0.688 → 0.681**; all-view mean **0.678 → 0.655**.
+Nominal skyline mean **0.676 → 0.670**.
+
+Final targeted tile and Street View round **s2** both report **zero page errors and zero console errors**. The complete six-slug s1 runs also report zero errors. Build syntax and finite-geometry checks pass. Sheets and verification remain outside git under `/workspace/eo_li_out/heritage/`.
+
+**Shared skyline metric limitation:** the all-scene mask retains a blue/purple sky gradient, which the scorer's magenta threshold counts as solid. For example, an Angullia clear-sky pixel is RGB (134,162,221), and only 0.06% of that frame is detected as void. These nominal skyline scores cannot establish facade or precise skyline accuracy. The tile black/white landmark masks are unaffected. Diagnostic evidence is in `round3_skyline_mask_audit.json` outside git. The lead needs to apply background/sky overrides after frame hooks and explicitly suppress sky/weather in the mask pass. Shared tools were not edited.
+
+Abdul's nominal skyline mean shifts from 0.682 in s1 to 0.670 in s2 after a material-only change, with identical tile masks. No skyline improvement is claimed. The official five-view tile mean declines by 0.007 (within tolerance), while the all-view mean declines by 0.023; both are disclosed. Current 10.8 m runtime height metadata remains stale relative to this 18.34 m image-based model and requires lead review. Entrance stair and square-bay variations remain simplified.

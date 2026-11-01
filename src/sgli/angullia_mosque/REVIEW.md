@@ -50,3 +50,25 @@ assets. No logos, brand text, photographic textures or external meshes are used.
 
 Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
 No shared source/data files were edited by this round-2 worker work.
+
+## Round 3 — local Street View pass
+
+Inspected contact sheet and 2024-02 facade-facing panos 00/01, rear/alley 03/04,
+and 2024-09 night pano 05. The long flank has four structural bays, cream
+horizontal framing at the ground-storey head and below the upper niche band,
+broad recessed two-level glazing and reddish jali at the sill/ground storey.
+Replaced three rows of office-window rectangles with that rhythm, added physical
+diamond relief, and changed coral/cream/glass colours to the newer views. The
+separate three-arch conserved gate and its approximately 6.9 m finials remain.
+
+The four-storey hall remains an estimated 19.9 m parapet / 25.6 m corner finial,
+consistent with the manifest's near cameras and pitched-up roof views to roughly
+2 m precision. This is an image-based estimate, not a surveyed height. Local
+2024-09 night evidence supports warm upper niches and a darker facade. The old
+13.3 m tile mosque is a different structure and is reported without fitting it.
+Known gaps: exact jali motifs, diagonal recess returns, roof pavilion joints,
+and the current hall's unsurveyed height. Screens are geometric abstractions.
+
+Round-3 night cross-check: re-inspected the saved external night photograph
+listed above; reference remains outside the repository and no photographic
+texture is used.

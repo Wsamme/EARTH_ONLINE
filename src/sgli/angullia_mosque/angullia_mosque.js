@@ -76,7 +76,7 @@ function lights(b,g){
 
 register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g)=>{
  const K=kit(b,.78),{box,prism,faces,panel,arch,arcTrim,lathe,beam,quad}=K;
- const coral='#ac6560',cream='#eee0c4',dark='#425b5a',bronze='#a17d52';
+ const coral='#a65f58',cream='#eee7d7',dark='#526b79',bronze='#967457';
  b.prism(D.parts[0].p,-1,.25,'#c7bca5');
  // Current 2020 prayer hall behind the independently conserved gatehouse.
  const hall=[[-8.6,-20],[11.45,-20],[8,12.2],[-10.45,12.2]];
@@ -87,14 +87,35 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
   for(let i=1;i<O.length-1;i++)b.tri(c,K.T(...F(u+O[0][0],y+O[0][1],off)),K.T(...F(u+O[i][0],y+O[i][1],off)),K.T(...F(u+O[i+1][0],y+O[i+1][1],off)),m);
  };
  for(const [i,E]of faces(hall).entries()){
-  const n=i===2?2:i===0?3:6;
+  const n=i===2?2:i===0?3:4;
   for(let j=0;j<n;j++){
    const u=(j+.5)*E.L/n,bw=E.L/n;
    if(i===2){
     pointed(E.F,u,3.5,bw-.5,10.4,cream,.06,3);pointed(E.F,u,3.65,bw-.85,10.1,j===0?dark:coral,.09,j===0?9:3);
     if(j===0)for(let y=4;y<12;y+=1.7)beam(E.F(u-bw*.35,y,.13),E.F(u+bw*.35,y,.13),.07,bronze);
    }else{
-    for(let f=0;f<3;f++){panel(E.F,u,.8+f*4.5,bw-.65,3.3,cream,.08);panel(E.F,u,1+f*4.5,bw-.95,2.9,dark,.1,9);}
+    // 2024-02 street views: a low screened ground storey, broad two-level
+    // recessed glazing, and a separate upper niche band, not office windows.
+    panel(E.F,u,.3,bw-.25,4.15,cream,.08);
+    panel(E.F,u,1.3,bw-1.1,1.95,bronze,.11);
+    panel(E.F,u,4.8,bw-.35,10.0,cream,.08);
+    const glazed=i===1?j>0:i===3?j<3:false;
+    if(glazed){
+     pointed(E.F,u,6.4,bw-1.05,8.0,dark,.12,9);
+     for(let y=7;y<13.7;y+=1.65)beam(E.F(u-bw*.4,y,.16),E.F(u+bw*.4,y,.16),.065,bronze);
+     for(let v=-bw*.38;v<bw*.4;v+=1.35)beam(E.F(u+v,6.5,.16),E.F(u+v,13.4,.16),.065,bronze);
+     panel(E.F,u,5.05,bw-.8,1.25,bronze,.18);
+    }else{
+     pointed(E.F,u,5.2,bw-1.0,9.1,bronze,.12);
+    }
+    // Diamond relief on the reddish jali; kept close to the physical screen.
+    const lattice=(lo,hi,width)=>{
+     for(let y=lo;y<hi-.35;y+=.66)for(let v=-width/2+.2;v<width/2-.35;v+=.66){
+      const x=u+v;for(const [a,c]of [[[x,y],[x+.3,y+.33]],[[x+.3,y+.33],[x,y+.66]],[[x,y+.66],[x-.3,y+.33]],[[x-.3,y+.33],[x,y]]])beam(E.F(a[0],a[1],.2),E.F(c[0],c[1],.2),.035,coral);
+     }
+    };
+    lattice(1.4,3.2,bw-1.1);
+    if(glazed)lattice(5.1,6.25,bw-.9);else lattice(5.35,12.4,bw-1.25);
    }
    const sub=i===2?2:1;
    for(let k=0;k<sub;k++){
@@ -107,7 +128,7 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
    }
    beam(E.F(j*bw,.3,.12),E.F(j*bw,19.4,.12),.2,cream);
   }
-  for(const y of [4.8,9.3,14.6,19.45])beam(E.F(0,y,.13),E.F(E.L,y,.13),.17,cream);
+  for(const y of [4.65,14.85,19.45])beam(E.F(0,y,.13),E.F(E.L,y,.13),.17,cream);
   for(let u=.2;u<E.L;u+=.45){const p=E.F(u,19.55,0);box(p[0],19.55,p[2],.24,.35,.24,coral);}
  }
  const gateStart=new Map([...b.buckets].map(([mode,B])=>[mode,B.p.length]));

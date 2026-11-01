@@ -139,6 +139,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  }
  const fittedY=y=>y<=0?y:y<=9.3?y*(6.6/9.3):6.6+(y-9.3)*(6.5/10.77);
  for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+fittedY(B.p[i]-b.base);
+ const frontStart=new Map([...b.buckets].map(([m,B])=>[m,B.p.length]));
  // Low green-roofed frontage wings; the central court remains open.
  // 2024-06: open cusped arcade, raised parapet and scalloped street wall.
  // The former solid row of small applied arches hid the characteristic verandah.
@@ -177,6 +178,8 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  for(const x of [-18.9,19])turret(x,14.4,5.6,.65,1.65);
  box(14.8,5.7,11.5,8.5,.3,5.6,cream,3);
  for(const x of [12,14.5,17]){box(x,6,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,6.76,z,1.6,.04,.07,'#6a8076');}
+ // The street parapet sits slightly higher than the inner verandah.
+ for(const [m,B]of b.buckets)for(let j=(frontStart.get(m)||0)+1;j<B.p.length;j+=3)B.p[j]=b.base+(B.p[j]-b.base)*1.1;
  // Documented clay-roof ancillary wing along the eastern side of the court.
  box(13.8,.35,-2.7,6.4,3.05,20.2,cream,3);
  for(const side of [-1,1]){
@@ -188,8 +191,8 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  const AF=(u,y,w=0)=>[10.57-w,y,u-12.8];
  for(let u=1.2;u<20;u+=2.7){panel(AF,u,.5,1.15,2.25,'#566b62',.04);panel(AF,u,2.9,1.25,.3,'#b7b4a1',.05);}
  // Street-camera ray intersection at the Dunlop facade (local z=14.63):
- // 2024-06 pano 01's parapet is about 8.8 m above road, not 3.3 m.
- // A common 1.4 vertical calibration gives 8.68 m street rail, 9.24 m
+ // 2024-06 pano 01's cornice is about 8.9 m above road, not 3.3 m.
+ // A common 1.4 vertical calibration gives 9.55 m street rail, 9.24 m
  // main roof and 18.34 m finial. It preserves every horizontal OSM dimension.
  for(const B of b.buckets.values())for(let j=1;j<B.p.length;j+=3)B.p[j]=b.base+(B.p[j]-b.base)*1.4;
  lights(b,g);

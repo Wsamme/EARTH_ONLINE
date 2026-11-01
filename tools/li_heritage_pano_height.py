@@ -3,7 +3,7 @@
 No imagery or network is accessed. Heights depend on the assumed facade plane
 and camera ground datum; this is an estimate, not a survey.
 
-Abdul Gafoor parapet example:
+Abdul Gafoor upper-cornice example:
   python3 tools/li_heritage_pano_height.py abdul_gafoor \
     --file abdul_gafoor_01_0.jpg --pixel 320 180 \
     --angle 5.608592653589793 --axis z --plane 14.63

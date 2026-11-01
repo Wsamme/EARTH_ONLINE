@@ -58,12 +58,12 @@ Inspected 2024-06 panos 00/01/02 first; 2024-03 rear views and the 2015-12
 interior/courtyard view are secondary. The old 4.3 m main-roof compression and
 3.3 m solid street wing do not match the raised arcade and balustrade visible
 from Dunlop Street. Initial test used a 6.6 m main roof / 13.1 m maximum. A further
-Street View ray check put the Dunlop facade parapet near 8.8 m: final candidate
-uses 9.24 m main roof / 18.34 m finial, 7.56 m street slab and 8.68 m rail. Replaced the solid row of applied arches with
+Street View ray check put the Dunlop facade upper cornice near 8.9 m: final candidate
+uses 9.24 m main roof / 18.34 m finial, 8.32 m street slab and 9.55 m rail. Replaced the solid row of applied arches with
 open cusped bays, piers, low scalloped wall panels and green grille rods.
 
 For pano 01 (2024-06, heading 73 degrees, pitch 3.5, fov 92), the
-central parapet pixel around (320,180) intersects the OSM facade plane at local
+central upper-cornice pixel around (320,180) intersects the OSM facade plane at local
 z=14.63 m at about 8.86 m above the assumed road datum. Pixel/plane/ground
 uncertainty is roughly 1–2 m. These heights are image-based estimates, not official data. The 10.8 m tile
 maximum and low percentiles include an uncertain ground/roof sample; a street

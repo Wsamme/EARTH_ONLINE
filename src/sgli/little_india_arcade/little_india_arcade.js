@@ -4,7 +4,7 @@
 const {register,scale,out,lerp}=SGLI;
 register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=>{
  const flush=b.flush.bind(b);b.flush=g=>flush(g,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#ffe5ba':mode===5?'#e7f5e5':undefined,gk:mode===4?.65:mode===5?.4:0}));
- D.parts.forEach((part,index)=>{const P=part.p,eave=7.6,H=9.6,wall=['#edc99a','#e8b98d','#f0d3a7'][index%3],trim='#f4e6cc',blue='#377b8c';
+ D.parts.forEach((part,index)=>{const P=part.p,eave=7.6,H=9.6,wall=['#dfaa48','#e4b453','#e8bc61'][index%3],trim='#f1d895',blue='#315f50';
   b.prism(P,-.7,.18,'#b6a395');b.prism(out(P,-1.35),.18,3.6,'#6a8074',5);b.prism(P,3.55,eave,wall);
   b.band(out(P,.09),3.55,.3,trim);b.band(out(P,.18),7.15,.18,trim);b.band(out(P,.27),7.45,.16,trim);
   // The reference top view shows a continuous ridge parallel to Campbell
@@ -34,11 +34,11 @@ register('little_india_arcade','小印度拱廊','Little India Arcade',66,(b,D)=
     for(const v of [-.4,0,.4])b.beam(Q(u+w*v,.3,-1.12),Q(u+w*v,2.8,-1.12),.065,'#e8e5d3');
     b.beam(Q(u-w*.4,2.2,-1.1),Q(u+w*.4,2.2,-1.1),.06,'#e8e5d3');
     for(const v of [-.4,.4])b.beam(Q(u+w*v,2.65,.12),Q(u+w*v,3.12,.8),.045,'#587268');
-    block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);block(u,3.1,w-.4,.23,.9,'#577f70');
+    block(u,3.0,w-.42,.48,.28,wall);block(u,2.7,w*.76,.32,.15,'#e8d4a6',4);block(u,3.1,w-.4,.23,.9,'#486e56');
     for(let win=0;win<3;win++){const v=u+(win-1)*w*.25,ww=Math.min(.88,w*.21);
      block(v,4.5,ww+.18,2.25,.22,trim);block(v,4.6,ww,1.92,.29,blue);
      block(v,4.59,.045,1.95,.35,'#b8d2c7');
-     for(let y=4.74;y<6.4;y+=.14)block(v,y,ww-.07,.055,.37,'#66a1a5');
+     for(let y=4.74;y<6.4;y+=.14)block(v,y,ww-.07,.055,.37,'#648473');
      // Arched shutter transom and its raised plaster archivolt.
      for(let k=0;k<14;k++){const a=k/14*Math.PI,c=(k+1)/14*Math.PI;b.tri(blue,Q(v,6.48,.12),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2,.12),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2,.12));b.quad(trim,Q(v+Math.cos(a)*(ww/2+.13),6.48+Math.sin(a)*(ww/2+.13)),Q(v+Math.cos(c)*(ww/2+.13),6.48+Math.sin(c)*(ww/2+.13)),Q(v+Math.cos(c)*ww/2,6.48+Math.sin(c)*ww/2),Q(v+Math.cos(a)*ww/2,6.48+Math.sin(a)*ww/2));}
      block(v,4.35,ww+.28,.13,.4,trim);

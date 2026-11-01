@@ -28,7 +28,7 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
  // September 2024 panos: cool white crossed floral outlines around
  // violet loops and gold centres. The daytime wires stay narrow and open.
  function crossed(F,x,y,s){
-  for(const sign of [-1,1]){const A=Array.from({length:25},(_,j)=>{const a=j/24*Math.PI*2;return[x+Math.sin(a)*s,y+sign*Math.sin(a)*Math.cos(a)*s*.72];});line(F,A,'#fff4dd',.08);}
+  for(const sign of [-1,1]){const A=Array.from({length:25},(_,j)=>{const a=j/24*Math.PI*2;return[x+Math.cos(a)*s*.85+sign*Math.sin(a)*s*.22,y+sign*Math.cos(a)*s*.55-Math.sin(a)*s*.30];});line(F,A,'#fff4dd',.08);}
   curve(F,x,y,s*.30,s*.30,blue,16);curve(F,x,y,s*.12,s*.12,gold,12);
  }
  const gates=[];

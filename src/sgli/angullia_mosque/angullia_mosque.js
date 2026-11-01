@@ -79,7 +79,10 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
  const coral='#a65f58',cream='#eee7d7',dark='#526b79',bronze='#967457';
  b.prism(D.parts[0].p,-1,.25,'#c7bca5');
  // Current 2020 prayer hall behind the independently conserved gatehouse.
- const hall=[[-8.6,-20],[11.45,-20],[8,12.2],[-10.45,12.2]];
+ // Two near side-camera roof rays (2024-02, panos 00/01) put the upper
+ // flank near local x=9 at a 19.55 m parapet: the new hall sets back from
+ // the old OSM corner rather than inheriting its sharply tapering side.
+ const hall=[[-8.6,-20],[9,-20],[9,12.2],[-10.45,12.2]];
  prism(hall,.25,19.2,coral,3);prism(hall,19.2,19.55,cream,3);
  // Tall blind/ glazed pointed arches, slim cream bands and inset patterned screens.
  const pointed=(F,u,y,w,h,c,off=.08,m=0)=>{

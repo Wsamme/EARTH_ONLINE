@@ -60,6 +60,11 @@ broad recessed two-level glazing and reddish jali at the sill/ground storey.
 Replaced three rows of office-window rectangles with that rhythm, added physical
 diamond relief, and changed coral/cream/glass colours to the newer views. The
 separate three-arch conserved gate and its approximately 6.9 m finials remain.
+The side roof rays in 2024-02 panos 00/01 intersect a 19.55 m roof plane at
+local (9.08,-5.58) and (8.96,-11.28), using approximate roof pixels (320,110)
+and (320,80). The new upper hall flank is therefore placed near x=9 m rather
+than carrying forward the tapered x=11.45 corner of the old OSM building.
+Original OSM ground paving and the freestanding gate stay in place.
 
 The four-storey hall remains an estimated 19.9 m parapet / 25.6 m corner finial,
 consistent with the manifest's near cameras and pitched-up roof views to roughly

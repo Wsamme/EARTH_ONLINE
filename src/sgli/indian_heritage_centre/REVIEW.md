@@ -49,7 +49,7 @@ No shared source/data files were edited by this round-2 worker work.
 
 ## Round 3 — Street View evidence audit
 
-Inspected the local contact sheet first, then its manifest. The 2024-03/06
+Inspected the local contact sheet first, then its manifest. The 2024-03
 exterior panos point predominantly at the opposite shophouse row; 2019-09 and
 2018-02 entries include shops/interiors. None provides an unobstructed view of
 the IHC baoli glass facade. These images cannot justify a new facade colour,
@@ -62,3 +62,22 @@ The round-3 matched-camera sheets and skyline scores are recorded with the
 final validation below. Their whole-scene skyline agreement includes opposite
 shops and should not be read as a facade-specific IHC accuracy score. A correctly
 aimed exterior reference is still needed from the lead; no shared change made.
+
+Round-3 night cross-check: re-inspected the saved external night photograph
+listed above; reference remains outside the repository and no photographic
+texture is used.
+
+## Round 3 final validation
+
+Model **11,790 triangles**, 5 shared batches; maximum 22.40 m above anchor datum.
+
+| n | e | s | w | top | close_ne | close_sw | street |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.647 | 0.689 | 0.722 | 0.688 | 0.860 | 0.760 | 0.799 | 0.854 |
+
+Tile n/e/s/w/top mean **0.721 → 0.721**; final all-view mean **0.752**.
+Nominal skyline mean **0.693 → 0.693**.
+
+Build syntax and finite-geometry checks pass. Six-slug tile and Street View round **s1** both report **zero page errors and zero console errors**. Sheets and verification remain outside git under `/workspace/eo_li_out/heritage/`.
+
+**Shared skyline metric limitation:** the all-scene mask retains a blue/purple sky gradient, which the scorer's magenta threshold counts as solid. For example, an Angullia clear-sky pixel is RGB (134,162,221), and only 0.06% of that frame is detected as void. These nominal skyline scores cannot establish facade or precise skyline accuracy. The tile black/white landmark masks are unaffected. Diagnostic evidence is in `round3_skyline_mask_audit.json` outside git. The lead needs to apply background/sky overrides after frame hooks and explicitly suppress sky/weather in the mask pass. Shared tools were not edited.

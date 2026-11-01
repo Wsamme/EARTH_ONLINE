@@ -6,7 +6,7 @@ const {register,center}=SGLI;
 // Keep those in the ordinary city pass rather than turning them into shophouses.
 const source=SGLI.data.li_shophouses,contextIds=new Set([178436578,178436579,178436580]);
 const excluded=source.parts.filter(p=>!contextIds.has(p.id)&&((p.area>600&&!+p.tags['building:levels']&&p.tags.building==='residential')||p.area>1500||/Tekka Place|Hilton Garden/i.test(p.tags.name||'')));
-const excludeIds=new Set(excluded.map(p=>p.id));
+const providedParts=source.parts.length,excludeIds=new Set(excluded.map(p=>p.id));
 source.parts=source.parts.filter(p=>!excludeIds.has(p.id));
 register('li_shophouses','小印度店屋街区','Little India Shophouse Rows',850,(b,D,G,g)=>{
  const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:0,glow:mode===4?'#ffdfac':mode===5?'#ffedc9':undefined,gk:mode===4?.8:mode===5?.45:0}));
@@ -57,6 +57,6 @@ register('li_shophouses','小印度店屋街区','Little India Shophouse Rows',8
   used.push({id:part.id,levels,height:H,ground:b.base});
  }
  b.base=originalBase;
- g.userData.liRows={units:used.length,excluded:excluded.map(p=>p.id),providedParts:1313,contextInTekka:[...contextIds],minHeight:Math.min(...used.map(p=>p.height)),maxHeight:Math.max(...used.map(p=>p.height)),groundRange:[Math.min(...used.map(p=>p.ground)),Math.max(...used.map(p=>p.ground))]};
+ g.userData.liRows={units:used.length,excluded:excluded.map(p=>p.id),providedParts,contextInTekka:[...contextIds],minHeight:Math.min(...used.map(p=>p.height)),maxHeight:Math.max(...used.map(p=>p.height)),groundRange:[Math.min(...used.map(p=>p.ground)),Math.max(...used.map(p=>p.ground))]};
 },[]);
 }

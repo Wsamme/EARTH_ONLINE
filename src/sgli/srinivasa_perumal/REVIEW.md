@@ -50,3 +50,23 @@ assets. No logos, brand text, photographic textures or external meshes are used.
 
 Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
 No shared source/data files were edited by this round-2 worker work.
+
+## Round 3 — local Street View pass
+
+Inspected the 2024-06 gateway view 01 and the newer 2026-04 views 02/03.
+The newer views are mostly tree-obscured; they do not establish new sculpture
+colours. Kept the five diminishing tiers and 18.0 m measured crown. Narrowed the
+gateway base from 13.3 to 10.4 m and aligned it to the Serangoon Road frontage
+rather than almost north/south. Recessed opening remains 3.1 by 5.15 m; base
+height 6.6 m. Upper bands are quieter grey/lilac, with small coloured figures.
+
+Restoration hoarding is temporary and is not modelled. Permanent wall wings,
+gateway, halls and compound remain; no courtyard was filled. Existing saved
+Ahboy night photo is still the lighting reference. Exact iconography and
+obstructed 2026 paint scheme remain unresolved. Nearby generic trees obscure
+much more of the model gateway than the real 2024 camera; vegetation is outside
+heritage ownership and has not been edited.
+
+Round-3 night cross-check: re-inspected the saved external night photograph
+listed above; reference remains outside the repository and no photographic
+texture is used.

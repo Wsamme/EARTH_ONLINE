@@ -45,8 +45,8 @@ function kit(b,a=0,ox=0,oz=0){
   const th=(top-base-2.3)/tiers;
   for(let k=0;k<tiers;k++){
    const f=k/tiers,W=w*(1-.49*f),D=d*(1-.43*f),Y=base+k*th;
-   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#9ba9ba',m);
-   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#cba5c1',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#738bb8',m);
+   frustum(x,z,Y,W,D,W-.65,D-.42,th-.30,'#a8aebb',m);
+   box(x,Y+th-.34,z,W+.45,.22,D+.4,'#b5a9bb',m);box(x,Y+th-.12,z,W+.65,.12,D+.6,'#8693ae',m);
    for(const {F,L}of faces(rect(x,z,W,D))){const n=Math.max(2,Math.floor(L/1.05));for(let j=0;j<n;j++){const u=(j+.5)*L/n;panel(F,u,Y+.22,.78,th-.5,'#4d728e',.035,m);deity(F,u,Y+.26,Math.min(1.6,th-.5),j+k*7,m);if(j%2===0){const p=F(u,Y+th,.12);lathe(p[0],p[2],p[1],.22,.42,palette[(j+k)%8],m,null,8);}}}
   }
   // Barrel-shaped sala crown and a row of kalasam finials.
@@ -69,20 +69,20 @@ function lights(b,g){for(const mode of [3,4,5,8])if(b.buckets.has(mode)){const q
 
 // The legacy anchor/OSM 481614952 is an ancillary building; see REVIEW.md.
 register('srinivasa_perumal','斯里尼维沙柏鲁马兴都庙','Sri Srinivasa Perumal Temple',80,(b,D,G,g)=>{
- const K=kit(b,1.504,37.5,24.5),W=kit(b),{box,lathe,tower,panel,deity}=K;
+ const K=kit(b,1.012,37.5,24.5),W=kit(b),{box,lathe,tower,panel,deity}=K;
  const gate=D.parts.find(p=>p.id===481614952).p;
  b.prism(gate,-.7,4.8,'#dbdcd0');
  b.cap(gate,4.85,'#e8e8dd');b.rim(gate,5,'#bbc9c6',.16);
  for(const E of W.faces(gate))for(let u=1.3;u<E.L;u+=2.5){W.panel(E.F,u,.9,1.2,2.3,'#7eaaa9',.06,2);}
  b.box(54.5,4.85,1.4,5,.13,8,'#87b3bd');
- box(0,.3,0,13.3,6.6,9.5,'#718894');
- const F=(u,y,w=0)=>[u,y,4.78+w];
+ box(0,.3,0,10.4,6.6,7.1,'#8fa9ac');
+ const F=(u,y,w=0)=>[u,y,3.58+w];
  panel(F,0,.35,3.1,5.15,'#263f3f',.05);panel(F,0,.4,2.6,4.5,'#87714b',.07,8);
- for(const s of [-1,1]){panel(F,s*6.1,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*3.35,1,2.75,s+4,8);deity(F,s*5.3,1.3,2.1,s+7,8);}
- box(0,6.6,0,13.8,.38,10,'#caa3aa',3);tower(0,0,13.2,9.3,7,18,5);
+ for(const s of [-1,1]){panel(F,s*4.7,.5,.4,5.8,'#d7cba7',.12,3);deity(F,s*2.8,1,2.75,s+4,8);deity(F,s*4.3,1.3,2.1,s+7,8);}
+ box(0,6.6,0,10.9,.38,7.6,'#caa3aa',3);tower(0,0,10.3,7.1,7,18,5);
  // Central shrine recesses interrupt the figure bands on the road-facing tiers.
  for(let k=0;k<5;k++){
-  const Y=7+k*1.74,D=9.3*(1-.43*k/5);
+  const Y=7+k*1.74,D=7.1*(1-.43*k/5);
   panel((u,y,w=0)=>[u,y,D/2+w],0,Y+.12,.85,1.3,'#334d51',.08);
  }
  panel(F,0,5.7,3.1,.14,'#e5d3ac',.13,5);

@@ -99,17 +99,24 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
    }else{
     // 2024-02 street views: a low screened ground storey, broad two-level
     // recessed glazing, and a separate upper niche band, not office windows.
-    panel(E.F,u,.3,bw-.25,4.15,cream,.08);
+    panel(E.F,u,.3,bw-.25,4.15,i===3?coral:cream,.08);
     panel(E.F,u,1.3,bw-1.1,1.95,bronze,.11);
-    panel(E.F,u,4.8,bw-.35,10.0,cream,.08);
-    const glazed=i===1?j>0:i===3?j<3:false;
+    const glazed=i===1?j>0:i===3?j>=2:false,screened=i===1&&j===0;
+    panel(E.F,u,4.8,bw-.35,10.0,glazed||screened?cream:coral,.08);
     if(glazed){
      pointed(E.F,u,6.4,bw-1.05,8.0,dark,.12,9);
      for(let y=7;y<13.7;y+=1.65)beam(E.F(u-bw*.4,y,.16),E.F(u+bw*.4,y,.16),.065,bronze);
      for(let v=-bw*.38;v<bw*.4;v+=1.35)beam(E.F(u+v,6.5,.16),E.F(u+v,13.4,.16),.065,bronze);
      panel(E.F,u,5.05,bw-.8,1.25,bronze,.18);
+    }else if(screened){
+     // The large corner jali has a nearly flat head with rounded corners.
+     const w=bw-1,h=9.1,y=5.2,R=[[-w/2,0],[w/2,0],[w/2,h-.5],[w/2-.5,h],[-w/2+.5,h],[-w/2,h-.5]];
+     for(let k=1;k<R.length-1;k++)b.tri(bronze,...[R[0],R[k],R[k+1]].map(([x,v])=>K.T(...E.F(u+x,y+v,.12))));
     }else{
-     pointed(E.F,u,5.2,bw-1.0,9.1,bronze,.12);
+     for(const y of [5.2,9.2,12.8]){
+      panel(E.F,u,y,bw*.42,.75,dark,.13,9);
+      beam(E.F(u,y,.17),E.F(u,y+.75,.17),.055,bronze);
+     }
     }
     // Diamond relief on the reddish jali; kept close to the physical screen.
     const lattice=(lo,hi,width)=>{
@@ -118,9 +125,9 @@ register('angullia_mosque','安古利亚清真寺','Masjid Angullia',34,(b,D,G,g
      }
     };
     lattice(1.4,3.2,bw-1.1);
-    if(glazed)lattice(5.1,6.25,bw-.9);else lattice(5.35,12.4,bw-1.25);
+    if(glazed)lattice(5.1,6.25,bw-.9);else if(screened)lattice(5.35,13.4,bw-1.25);
    }
-   const sub=i===2?2:1;
+   const sub=i===0?1:2;
    for(let k=0;k<sub;k++){
     const v=u+(k+.5-sub/2)*bw/sub,sw=bw/sub;
     pointed(E.F,v,15.2,sw-.65,3.35,cream,.08,3);pointed(E.F,v,15.38,sw-.95,3.02,bronze,.1,8);

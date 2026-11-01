@@ -54,11 +54,12 @@ No shared source/data files were edited by this round-2 worker work.
 ## Round 3 — local Street View pass
 
 Inspected contact sheet and 2024-02 facade-facing panos 00/01, rear/alley 03/04,
-and 2024-09 night pano 05. The long flank has four structural bays, cream
+and 2024-09 night pano 05. The long flank has four structural bays with paired upper niches, cream
 horizontal framing at the ground-storey head and below the upper niche band,
 broad recessed two-level glazing and reddish jali at the sill/ground storey.
 Replaced three rows of office-window rectangles with that rhythm, added physical
-diamond relief, and changed coral/cream/glass colours to the newer views. The
+diamond relief, a flat-headed large corner jali, the opposite flank's two large
+glazed openings and small slit-window service bays, and changed coral/cream/glass colours to the newer views. The
 separate three-arch conserved gate and its approximately 6.9 m finials remain.
 The side roof rays in 2024-02 panos 00/01 intersect a 19.55 m roof plane at
 local (9.08,-5.58) and (8.96,-11.28), using approximate roof pixels (320,110)

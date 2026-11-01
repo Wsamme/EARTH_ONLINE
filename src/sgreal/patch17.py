@@ -187,7 +187,7 @@ if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules
 # Singapore landmark modules: same LANDMARKS / SG_PLACES format as the city groups.
 MODS += ['sgbv/core.js'] + ['sgbv/%s/%s.js' % (k, k) for k in ['star_vista', 'metropolis', 'buona_vista_mrt', 'biopolis', 'fusionopolis_one', 'solaris', 'galaxis', 'mediacorp', 'rochester', 'one_holland_village', 'holland_road_sc', 'holland_piazza', 'elementum', 'nucleos', 'fusionopolis_two']] + ['sgbv/view.js']
 # Little India (sgli): same kit, own footprints; missing slug files are skipped below.
-LI_SLUGS = ['veeramakaliamman', 'srinivasa_perumal', 'abdul_gafoor', 'angullia_mosque', 'tan_teng_niah', 'indian_heritage_centre', 'tekka_centre', 'mustafa_centre', 'little_india_arcade', 'city_square_mall', 'deepavali_lightup']
+LI_SLUGS = ['veeramakaliamman', 'srinivasa_perumal', 'abdul_gafoor', 'angullia_mosque', 'tan_teng_niah', 'indian_heritage_centre', 'tekka_centre', 'mustafa_centre', 'little_india_arcade', 'city_square_mall', 'deepavali_lightup', 'li_shophouses']
 MODS += ['sgli/core.js'] + ['sgli/%s/%s.js' % (k, k) for k in LI_SLUGS] + ['sgli/view.js']
 MODS += [m for m in os.environ.get('EXTRA_MODS', '').split(',') if m]
 skip = set(m for m in os.environ.get('SKIP_MODS', '').split(',') if m)

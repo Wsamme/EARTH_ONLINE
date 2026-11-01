@@ -7,7 +7,7 @@
 const SGLI = (() => {
   const data = /* LI_FOOTPRINTS */;
   const stats = {};
-  const NOHULL = new Set(['deepavali_lightup']);
+  const NOHULL = new Set(['deepavali_lightup', 'li_shophouses']);
   function register(slug, zh, en, r, build, replaces){
     SGBV.data[slug] = data[slug];            // only registered modules join the hull mask (SGBV.skip builds it lazily)
     SGBV.register(slug, zh, en, r, build);

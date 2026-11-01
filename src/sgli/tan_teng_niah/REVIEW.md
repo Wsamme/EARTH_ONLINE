@@ -71,3 +71,18 @@ The matched frontal Street View render exposed a left/right bay paint reversal
 in the local edge traversal. Final front shutters read pink on the viewer's
 left, yellow/green in the centre and blue on the right, following the frontal
 reference and the 2023 night photo. Round s2 refreshes this final paint pass.
+
+## Round 3 final validation
+
+Model **15,518 triangles**, 4 shared batches; maximum 11.50 m above anchor datum.
+
+| n | e | s | w | top | close_ne | close_sw | street |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.696 | 0.711 | 0.646 | 0.719 | 0.749 | 0.706 | 0.721 | 0.770 |
+
+Tile n/e/s/w/top mean **0.704 → 0.704**; all-view mean **0.715 → 0.715**.
+Nominal skyline mean **0.765 → 0.765**.
+
+Final targeted tile and Street View round **s2** both report **zero page errors and zero console errors**. The complete six-slug s1 runs also report zero errors. Build syntax and finite-geometry checks pass. Sheets and verification remain outside git under `/workspace/eo_li_out/heritage/`.
+
+**Shared skyline metric limitation:** the all-scene mask retains a blue/purple sky gradient, which the scorer's magenta threshold counts as solid. For example, an Angullia clear-sky pixel is RGB (134,162,221), and only 0.06% of that frame is detected as void. These nominal skyline scores cannot establish facade or precise skyline accuracy. The tile black/white landmark masks are unaffected. Diagnostic evidence is in `round3_skyline_mask_audit.json` outside git. The lead needs to apply background/sky overrides after frame hooks and explicitly suppress sky/weather in the mask pass. Shared tools were not edited.

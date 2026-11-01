@@ -86,3 +86,9 @@ Nominal skyline mean **0.765 → 0.765**.
 Final targeted tile and Street View round **s2** both report **zero page errors and zero console errors**. The complete six-slug s1 runs also report zero errors. Build syntax and finite-geometry checks pass. Sheets and verification remain outside git under `/workspace/eo_li_out/heritage/`.
 
 **Shared skyline metric limitation:** the all-scene mask retains a blue/purple sky gradient, which the scorer's magenta threshold counts as solid. For example, an Angullia clear-sky pixel is RGB (134,162,221), and only 0.06% of that frame is detected as void. These nominal skyline scores cannot establish facade or precise skyline accuracy. The tile black/white landmark masks are unaffected. Diagnostic evidence is in `round3_skyline_mask_audit.json` outside git. The lead needs to apply background/sky overrides after frame hooks and explicitly suppress sky/weather in the mask pass. Shared tools were not edited.
+
+Process-status note: the final s2 Street View shell wrapper ultimately returned
+143 after writing every expected capture, both skyline scores and its
+zero-page/console-error JSON. All 12 manifest entries across the two final slugs
+have day, night, scene-mask and landmark-mask files. This status anomaly is
+recorded in the external round3_manifest.json; no missing captures were found.

@@ -100,3 +100,9 @@ Final targeted tile and Street View round **s2** both report **zero page errors 
 **Shared skyline metric limitation:** the all-scene mask retains a blue/purple sky gradient, which the scorer's magenta threshold counts as solid. For example, an Angullia clear-sky pixel is RGB (134,162,221), and only 0.06% of that frame is detected as void. These nominal skyline scores cannot establish facade or precise skyline accuracy. The tile black/white landmark masks are unaffected. Diagnostic evidence is in `round3_skyline_mask_audit.json` outside git. The lead needs to apply background/sky overrides after frame hooks and explicitly suppress sky/weather in the mask pass. Shared tools were not edited.
 
 Abdul's nominal skyline mean shifts from 0.682 in s1 to 0.670 in s2 after a material-only change, with identical tile masks. No skyline improvement is claimed. The official five-view tile mean declines by 0.007 (within tolerance), while the all-view mean declines by 0.023; both are disclosed. Current 10.8 m runtime height metadata remains stale relative to this 18.34 m image-based model and requires lead review. Entrance stair and square-bay variations remain simplified.
+
+Process-status note: the final s2 Street View shell wrapper ultimately returned
+143 after writing every expected capture, both skyline scores and its
+zero-page/console-error JSON. All 12 manifest entries across the two final slugs
+have day, night, scene-mask and landmark-mask files. This status anomaly is
+recorded in the external round3_manifest.json; no missing captures were found.

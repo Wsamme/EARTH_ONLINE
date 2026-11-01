@@ -119,7 +119,7 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),26.9],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),26.9]);}
  for(const x of [-4.1,2.9])box(x,.1,29.6,.1,4.1,.1,'#adb9b8');
  for(const x of [-2.8,1.6])box(x,4.1,28.6,.22,.06,.55,'#e9d9b9',5);
- for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,2.2,E.L-.2,.65,'#bcb5a1',.055,8);
+ for(const E of kit(b).faces(hall)){const q=E.F(E.L/2,0),streetZ=q[0]*Math.sin(1.012)+q[2]*Math.cos(1.012);if(streetZ>20)kit(b).panel(E.F,E.L/2,2.2,E.L-.2,.65,'#bcb5a1',.055,8);}
  lights(b,g);
 },['sgveeramakali']);
 

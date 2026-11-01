@@ -160,9 +160,18 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
    const v=u-w/2+(k+.5)*w/10,h=1.0+.32*Math.pow(Math.abs((k-4.5)/4.5),2);
    panel(LF,v,.25,w/10+.02,h,cream,.3,3);
    beam(LF(v,.25+h,.34),LF(v,2.65,.34),.045,green);
+   const v0=u-w/2+k*w/10,v1=v0+w/10,h0=1.0+.32*Math.pow(Math.abs((k-5)/5),2),h1=1.0+.32*Math.pow(Math.abs((k-4)/5),2);
+   beam(LF(v0,.25+h0,.35),LF(v1,.25+h1,.35),.07,green);
   }
   for(const v of [u-bay/2,u+bay/2]){const p=LF(v,.25,.3);box(p[0],.25,p[2],.38,2.7,.4,cream,3);box(p[0],2.95,p[2],.48,.15,.5,green);}
   for(const v of [-.3,0,.3])panel(LF,u+v,5.55,.1,.6,cream,.12,3);
+  // Small photographed floral/star relief in the arch spandrels.
+  for(const side of [-1,1])for(let k=0;k<8;k++){
+   const t=k*Math.PI/4;panel(LF,u+side*w*.38+Math.cos(t)*.13,4.9+Math.sin(t)*.13,.065,.065,green,.17);
+  }
+  for(let v=j*bay+.2;v<(j+1)*bay;v+=.38){
+   panel(LF,v,5.05,.16,.2,green,.15);panel(LF,v,5.23,.21,.1,cream,.18,3);
+  }
  }
  beam(LF(0,6.2,.1),LF(39.4,6.2,.1),.18,cream);
  for(const x of [-18.9,19])turret(x,14.4,5.6,.65,1.65);

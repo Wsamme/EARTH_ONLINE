@@ -29,7 +29,7 @@ function kit(b,a=0,ox=0,oz=0){
   const I=THREE.ShapeUtils.triangulateShape(O.map(p=>new THREE.Vector2(...p)),[]);for(const t of I)b.tri(c,...t.map(i=>T(...F(u+O[i][0],y+O[i][1],off))),m);
  };
  const arcTrim=(F,u,y,w,h,c,cusps=0)=>{let prev=null;for(let i=0;i<=32;i++){const t=i/32*Math.PI,r=w/2*(1-(cusps?.13*(1-Math.abs(Math.sin(cusps*t))):0)),p=F(u+Math.cos(t)*r,y+h-w/2+Math.sin(t)*r,.16);if(prev)beam(prev,p,.13,c);prev=p;}for(const s of [-1,1])beam(F(u+s*w/2,y,.16),F(u+s*w/2,y+h-w/2,.16),.14,c);};
- const palette=['#739ec5','#dc9baf','#c4b0d3','#ecc15c','#f0dfcc','#64a8a0','#d76352','#747ac0'];
+ const palette=['#98b1c5','#c6a7b5','#c4b9ca','#d5bf80','#e8dfcf','#90b1a7','#b78d81','#999db7'];
  const deity=(F,u,y,h,i,m=3)=>{const skin=i%3?'#d6b29b':'#6a9fc7',robe=palette[i%palette.length];
   // Projected three-dimensional relief: skirt, torso, head, crown and bent arms.
   const cube=(du,dy,dw,w,hh,d,c)=>{const p=F(u+du,y+dy,dw);box(p[0],p[1],p[2],w,hh,d,c,m);};
@@ -89,7 +89,7 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  b.roof(scale(annex,.86),24.25);
  // Hall's alternating red/white compound panels and sculpted parapet shrines.
  for(const E of kit(b).faces(hall)){
-  for(let u=.25;u<E.L;u+=.85)kit(b).panel(E.F,u,.7,.41,5.2,'#a3473c',.04);
+  for(let u=.25;u<E.L;u+=.85)kit(b).panel(E.F,u,.7,.41,6.1,'#a3473c',.04);
   for(let u=.7;u<E.L;u+=2.2){const p=E.F(u,7.45,.05);b.box(p[0],7.45,p[2],.85,.6,.65,'#a6bbc6');kit(b).deity(E.F,u,7.5,.9,Math.floor(u),3);}
  }
  b.rim(hall,7.25,'#d1b365',.25);b.rim(hall,7.5,'#9eb9cf',.25);
@@ -100,6 +100,11 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  panel(F,0,.45,3.4,5.1,'#243a38',.05);panel(F,0,.6,2.9,4.5,'#8f7340',.075,8);
  for(const u of [-4,-2.9,2.9,4]){panel(F,u,.7,.25,5.8,'#e1d8b0',.12,3);deity(F,u,1.4,2.2,Math.floor(u+5),3);}
  tower(-.6,24.1,9.8,5.7,6.95,18.9,4);
+ // Four diminishing sculpture storeys, with dark central shrine niches.
+ for(let k=0;k<4;k++){
+  const Y=6.95+k*(18.9-6.95-2.3)/4,D=5.7*(1-.43*k/4);
+  panel((u,y,w=0)=>[u-.6,y,24.1+D/2+w],0,Y+.23,.7,1.45,'#405b60',.07);
+ }
  // Main Kali vimana plus smaller sanctum towers, clear of the front court.
  tower(-.5,2.2,5.7,5.7,7.3,14.1,2);lathe(-.5,2.2,13.7,1.03,1.4,'#cfb365',3,null,16);
  for(const [x,z]of [[-6.5,5.4],[5.2,5.4],[-6.8,12],[5.8,12]])tower(x,z,2.5,2.5,7.3,10.9,1);
@@ -107,13 +112,14 @@ register('veeramakaliamman','维拉马卡里亚曼兴都庙','Sri Veeramakaliamm
  for(let z=0;z<17;z+=3.1)box(0,7.3,z,17.4,.16,.13,'#a7ad8b');
  // Small red sheet-roofed side bay immediately north of the gateway.
  box(11.5,7.35,20.1,7.4,.16,7.1,'#bb705f');
+ box(11.5,7.55,20.1,2.2,.55,2.2,'#c7d2c9',3);lathe(11.5,20.1,8.1,1.1,1.55,'#d4dfd0',3,null,12);lathe(11.5,20.1,9.65,.12,.45,'#bdab78',3,null,8);
  for(let i=0;i<12;i++){const t=i/12*Math.PI,u=(i+1)/12*Math.PI;K.quad('#d0d2c4',[-8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(t)*1.3,9+Math.cos(t)*2],[8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2],[-8,7.4+Math.sin(u)*1.3,9+Math.cos(u)*2]);}
  lathe(-.6,16.6,.3,.55,10.9,'#c3c5b9',0,[[1,0],[.6,.1],[.2,.12],[.15,1]],8);
  // White entrance canopy: modest projection, no festival decorations or lettering.
  for(let i=0;i<10;i++){const t=i/10*Math.PI,u=(i+1)/10*Math.PI;K.quad('#deded3',[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),26.9],[-.6+3.5*Math.cos(t),4.2+1.4*Math.sin(t),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),29.9],[-.6+3.5*Math.cos(u),4.2+1.4*Math.sin(u),26.9]);}
  for(const x of [-4.1,2.9])box(x,.1,29.6,.1,4.1,.1,'#adb9b8');
  for(const x of [-2.8,1.6])box(x,4.1,28.6,.22,.06,.55,'#e9d9b9',5);
- for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,5.65,E.L-.2,1.05,'#bcb5a1',.055,8);
+ for(const E of kit(b).faces(hall))kit(b).panel(E.F,E.L/2,2.2,E.L-.2,.65,'#bcb5a1',.055,8);
  lights(b,g);
 },['sgveeramakali']);
 

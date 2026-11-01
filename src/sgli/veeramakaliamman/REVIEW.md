@@ -48,3 +48,22 @@ assets. No logos, brand text, photographic textures or external meshes are used.
 
 Lead branch was merged without rebasing; its Deepavali `noHull` fix remains.
 No shared source/data files were edited by this round-2 worker work.
+
+## Round 3 — local Street View pass
+
+Inspected all 2024-02 contact-sheet views and frontal pitched-up pano 05.
+Retained the four diminishing sculpture tiers, 18.9 m gateway and measured annex
+maximum 26.9 m (tile max 27.1 m). Added dark central shrine niches, softened the
+saturated figure palette toward the photographed pale blue/lilac/cream relief,
+continued the red/white wall stripes toward the parapet, and lowered the blank
+wall signage band. Added the pale domed side shrine above the north sheet roof.
+
+The saved 2020 Commons night photograph remains the lighting reference. The
+2024 facade does not justify neon or general window emission. Four small shrine
+towers and the existing main vimana remain. Gaps: individual statue iconography,
+small roof curves, and generic tree occlusion in the model's entrance view.
+Nearby vegetation is outside heritage ownership; no shared geometry was changed.
+
+Round-3 night cross-check: re-inspected the saved external night photograph
+listed above; reference remains outside the repository and no photographic
+texture is used.

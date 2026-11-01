@@ -290,8 +290,8 @@
  "abdul_gafoor": {
   "lat": 1.3043997017539217,
   "lon": 103.85373849517269,
-  "height": 10.8,
-  "height_source": "Tile roof max minus ground 10.8 m (p90 4.3, p50 3.4); refine per module",
+  "height": 18.3,
+  "height_source": "Street View r3: roof ~9.2 m, finial ~18.3 m (tile roof max 10.8 m)",
   "parts": [
    {
     "id": 176326990,
@@ -329,8 +329,8 @@
  "angullia_mosque": {
   "lat": 1.3106302100147624,
   "lon": 103.85406380318494,
-  "height": 13.3,
-  "height_source": "Tile roof max minus ground 13.3 m (p90 9.0, p50 8.3); refine per module",
+  "height": 25.6,
+  "height_source": "Street View r3: hall parapet ~19.9 m, finial ~25.6 m (tile max 13.3 m was stale, pre-2024 hall)",
   "parts": [
    {
     "id": 396336447,

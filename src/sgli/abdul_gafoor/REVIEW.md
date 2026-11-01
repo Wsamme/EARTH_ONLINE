@@ -77,3 +77,9 @@ metric evidence. The court and clay-roof wing remain open/low.
 Round-3 night cross-check: re-inspected the saved external night photograph
 listed above; reference remains outside the repository and no photographic
 texture is used.
+
+The first oblique browser render showed the rear wall washing out the open
+arcade. Its recessed surface now uses a quieter shaded green material rather
+than the frontage wash. The physical arcade opening and silhouette are unchanged;
+Abdul-only round s2 refreshes both tile and Street View sheets for this final
+material adjustment.

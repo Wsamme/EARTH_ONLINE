@@ -143,7 +143,7 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  // Low green-roofed frontage wings; the central court remains open.
  // 2024-06: open cusped arcade, raised parapet and scalloped street wall.
  // The former solid row of small applied arches hid the characteristic verandah.
- box(0,.35,9.2,39.4,4.8,.3,cream,3);
+ box(0,.35,9.2,39.4,4.8,.3,'#627463');
  box(0,5.4,11.55,39.5,.28,6.2,roof);
  const LF=(u,y,w=0)=>[u-19.7,y,14.63+w],bay=39.4/9;
  for(let j=0;j<9;j++){

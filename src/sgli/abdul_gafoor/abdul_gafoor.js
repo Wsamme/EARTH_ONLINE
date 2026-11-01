@@ -128,8 +128,8 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  lathe(-10.2,-.2,y+3.6,.38,1.05,green,4,null,16);
  lathe(-10.2,-.2,y+4.62,.05,.9,'#b7a464',3,[[1,0],[1,1]],6);
  for(const p of K.ring(-10.2,-.2,1.45,6))turret(p[0],p[1],14.5,.27,1.3);
- // Measured vertical levels: main deck 4.3 m, highest finial 10.8 m.
- // Keep the OSM plan unchanged; compress the old over-tall architectural sections.
+ // Measured vertical levels: main roof 6.6 m, highest finial 13.1 m (Street View fit).
+ // Keep the OSM plan unchanged; retain separate hall and cupola proportions.
  // Fit the historic hall to the northwest quarter, with its sunburst facing
  // southeast into the entrance court. OSM includes the low forecourt wings.
  const A=2.467+Math.PI,C=Math.cos(A),S=Math.sin(A);
@@ -137,16 +137,37 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
   const x=B.p[j]*C-B.p[j+2]*S,z=B.p[j]*S+B.p[j+2]*C;
   const u=x-.3,v=z*.78-4.2;B.p[j]=u*C+v*S;B.p[j+2]=-u*S+v*C;
  }
- const fittedY=y=>y<=0?y:y<=9.3?y*(4.3/9.3):4.3+(y-9.3)*(6.5/10.77);
+ const fittedY=y=>y<=0?y:y<=9.3?y*(6.6/9.3):6.6+(y-9.3)*(6.5/10.77);
  for(const B of b.buckets.values())for(let i=1;i<B.p.length;i+=3)B.p[i]=b.base+fittedY(B.p[i]-b.base);
  // Low green-roofed frontage wings; the central court remains open.
- box(0,.35,11.55,39.4,2.95,6.1,cream,3);
- box(0,3.3,11.55,39.5,.16,6.2,roof);
- const LF=(u,y,w=0)=>[u-19.7,y,14.63+w];
- for(let u=1.5;u<39;u+=2.8){arch(LF,u,.65,1.25,2.1,'#456655',.06);arcTrim(LF,u,.65,1.25,2.1,white);}
- for(const x of [-18.9,19])box(x,3.45,11.5,.22,.55,6.2,white);
- box(14.8,3.5,11.5,8.5,.45,5.6,cream,3);
- for(const x of [12,14.5,17]){box(x,3.95,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,4.71,z,1.6,.04,.07,'#6a8076');}
+ // 2024-06: open cusped arcade, raised parapet and scalloped street wall.
+ // The former solid row of small applied arches hid the characteristic verandah.
+ box(0,.35,9.2,39.4,4.8,.3,cream,3);
+ box(0,5.4,11.55,39.5,.28,6.2,roof);
+ const LF=(u,y,w=0)=>[u-19.7,y,14.63+w],bay=39.4/9;
+ for(let j=0;j<9;j++){
+  const u=(j+.5)*bay,w=bay-.65;
+  box(j*bay-19.7,.35,14.55,.55,5.05,.55,cream,3);
+  for(let k=0;k<20;k++){
+   const t=k/20*Math.PI,v=(k+1)/20*Math.PI;
+   const r=w/2*(1-.1*(1-Math.abs(Math.sin(5*t)))),r1=w/2*(1-.1*(1-Math.abs(Math.sin(5*v))));
+   const x=u+Math.cos(t)*r,x1=u+Math.cos(v)*r1,y=5.05-w/2+Math.sin(t)*r,y1=5.05-w/2+Math.sin(v)*r1;
+   quad(cream,LF(x,y,.02),LF(x1,y1,.02),LF(x1,5.4,.02),LF(x,5.4,.02),3);
+  }
+  arcTrim(LF,u,.85,w,4.2,green,5);
+  // Low curved wall and metal grille; no blank solid glazing.
+  for(let k=0;k<10;k++){
+   const v=u-w/2+(k+.5)*w/10,h=1.0+.32*Math.pow(Math.abs((k-4.5)/4.5),2);
+   panel(LF,v,.25,w/10+.02,h,cream,.3,3);
+   beam(LF(v,.25+h,.34),LF(v,2.65,.34),.045,green);
+  }
+  for(const v of [u-bay/2,u+bay/2]){const p=LF(v,.25,.3);box(p[0],.25,p[2],.38,2.7,.4,cream,3);box(p[0],2.95,p[2],.48,.15,.5,green);}
+  for(const v of [-.3,0,.3])panel(LF,u+v,5.55,.1,.6,cream,.12,3);
+ }
+ beam(LF(0,6.2,.1),LF(39.4,6.2,.1),.18,cream);
+ for(const x of [-18.9,19])turret(x,14.4,5.6,.65,1.65);
+ box(14.8,5.7,11.5,8.5,.3,5.6,cream,3);
+ for(const x of [12,14.5,17]){box(x,6,11.5,1.7,.75,3.6,'#aab6ab');for(let z=10;z<13;z+=.45)box(x,6.76,z,1.6,.04,.07,'#6a8076');}
  // Documented clay-roof ancillary wing along the eastern side of the court.
  box(13.8,.35,-2.7,6.4,3.05,20.2,cream,3);
  for(const side of [-1,1]){
@@ -157,6 +178,11 @@ register('abdul_gafoor','阿都卡夫回教堂','Masjid Abdul Gafoor',34,(b,D,G,
  beam([13.8,5.08,-12.95],[13.8,5.08,7.55],.14,'#b97a5c');
  const AF=(u,y,w=0)=>[10.57-w,y,u-12.8];
  for(let u=1.2;u<20;u+=2.7){panel(AF,u,.5,1.15,2.25,'#566b62',.04);panel(AF,u,2.9,1.25,.3,'#b7b4a1',.05);}
+ // Street-camera ray intersection at the Dunlop facade (local z=14.63):
+ // 2024-06 pano 01's parapet is about 8.8 m above road, not 3.3 m.
+ // A common 1.4 vertical calibration gives 8.68 m street rail, 9.24 m
+ // main roof and 18.34 m finial. It preserves every horizontal OSM dimension.
+ for(const B of b.buckets.values())for(let j=1;j<B.p.length;j+=3)B.p[j]=b.base+(B.p[j]-b.base)*1.4;
  lights(b,g);
 },['sgabdulgafoor']);
 

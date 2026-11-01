@@ -31,8 +31,12 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   for(const sign of [-1,1]){const A=Array.from({length:25},(_,j)=>{const a=j/24*Math.PI*2;return[x+Math.cos(a)*s*.85+sign*Math.sin(a)*s*.22,y+sign*Math.cos(a)*s*.55-Math.sin(a)*s*.30];});line(F,A,'#fff4dd',.08);}
   curve(F,x,y,s*.30,s*.30,blue,16);curve(F,x,y,s*.12,s*.12,gold,12);
  }
+ // September 2024 visible poles: pano bearings + OSM street-side facades.
+ // Scene-projected anchors for the three directly observed spans; widths
+ // include a 0.7 m facade stand-off and remain estimates, not a survey.
+ const svPins={"15":{"center":[6.022,-131.14],"tangent":[0.4939419,-0.8694949],"width":9.0},"8":{"center":[-119.067,62.481],"tangent":[0.544639,-0.8386706],"width":8.674},"12":{"center":[-54.881,-40.946],"tangent":[0.5533915,-0.8329212],"width":12.0}};
  const gates=[];
- sample(ser,32,(c,t,i)=>{if(i===3)return;const F=frame(c,t),w=({4:5.5,5:5,6:4.5,7:4.5,8:4.5,20:5,21:4,32:5,33:5.5})[i]||6;gates.push({center:c,tangent:t,width:w});
+ sample(ser,32,(c,t,i)=>{if(i===3)return;const pin=svPins[i];if(pin){c=pin.center;t=pin.tangent;}const F=frame(c,t),w=pin?pin.width:({4:5.5,5:5,6:4.5,7:4.5,8:4.5,20:5,21:4,32:5,33:5.5})[i]||6;gates.push({center:c,tangent:t,width:w});
   for(const u of [-w,w]){b.beam(F(u,0),F(u,8.2),.12,'#79817c');line(F,[[u,3.6],[u,8.3]],gold,.065);diya(F,u-Math.sign(u)*.75,4.8,.7);flower(F,u-Math.sign(u)*.7,7.6,.62);}
   b.beam(F(-w,8),F(w,8),.07,'#8b8c81');
   lotus(F,0,7.9,1.15);for(const u of [-(w-2.1),w-2.1]){crossed(F,u,8.45,.95);diya(F,u,7.9,.45);}
@@ -55,6 +59,6 @@ register('deepavali_lightup','小印度屠妖节灯饰','Little India Deepavali 
   if(i%2===0){const p=F(2,0),a=Math.atan2(-t[1],t[0]);b.box(p[0],p[1],p[2],2.8,2.2,1.2,'#d4a474',a);b.box(p[0],p[1]+2.2,p[2],3,.18,1.5,i%4?pink:orange,a);}
  });
  sample(dun,22,(c,t)=>{const F=frame(c,t);line(F,[[-2.2,5.5],[0,5.1],[2.2,5.5]],gold);diya(F,0,5.25,.45);});
- g.userData.liLightup={arches:gates.length,omittedSampleIndices:[3],spacingMetres:32,clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
+ g.userData.liLightup={arches:gates.length,omittedSampleIndices:[3],spacingMetres:32,streetViewSamples:Object.keys(svPins).map(Number),streetViewSpans:Object.values(svPins).map(p=>p.width*2),clearanceMetres:7.1,widths:gates.map(v=>v.width),centres:gates.map(v=>v.center),tangents:gates.map(v=>v.tangent),roadIds:D.streets.map(s=>s.id)};
 },[]);
 }

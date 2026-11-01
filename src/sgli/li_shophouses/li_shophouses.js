@@ -1,7 +1,7 @@
 /* OSM per-parcel Little India rows. Street View is an external visual reference,
  * never a texture. Compact front panels keep the district below 250k triangles. */
 {
-const {register,center,inside}=SGLI;
+const {register,center}=SGLI;
 // The extract also contains modern hotels, a bus terminal and untagged HDBs.
 // Keep those in the ordinary city pass rather than turning them into shophouses.
 const source=SGLI.data.li_shophouses,contextIds=new Set([178436578,178436579,178436580]);

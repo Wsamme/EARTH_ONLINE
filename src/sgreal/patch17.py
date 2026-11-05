@@ -1,7 +1,10 @@
 # v17: Singapore becomes the real island at 1:1 (real roads, buildings, coastline). Applies on top of the v16 build.
 # usage: python3 patch17.py <in.html> <out.html>
-import sys, re
-SC = '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/'
+import sys, re, os
+# 从这份仓库的 src/ 生成页面，不写死某台机器上的绝对路径。
+# Build from this checkout's src/, not from a machine-specific absolute path.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+SC = os.path.dirname(_HERE) + os.sep
 src = open(sys.argv[1]).read()
 def R(a, b, count=1):
     global src

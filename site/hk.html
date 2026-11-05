@@ -1,6 +1,5 @@
-<!doctype html>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="citybrush-map" content="hk">
+<meta name="citybrush-map" content="hk">
 <title>City Brush · Hong Kong</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +38,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .cityseg{margin-top:9px;max-width:250px}.cityseg button{line-height:1.25;padding:6px 6px}.cityseg button small{display:block;font:400 9.5px var(--font-mono);color:var(--muted)}.cityseg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}.cityseg button[aria-pressed="true"] small{color:var(--panel);opacity:.75}
 .brand .sub{display:block;margin-top:4px;font:400 10.5px/1.45 var(--font-mono);color:var(--muted)}
 .icon-btn{border:1px solid var(--rule);background:var(--panel);border-radius:6px;padding:4px 9px;font-size:12px;cursor:pointer;flex:none}
+#collapse small{display:block;font:400 9px var(--font-mono);color:var(--muted);letter-spacing:0}
 .tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule);padding:0 8px}
 .tab{border:0;background:none;padding:8px 2px 8px;font-size:12.5px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;display:flex;flex-direction:column;align-items:center;gap:1px}
 .tab small{font:400 9.5px var(--font-mono);letter-spacing:.04em}
@@ -187,7 +187,9 @@ body.noui .panel,body.noui .stats,body.noui .dock,body.noui .timebar,body.noui .
 .lmbar .ghost{padding:6px 8px;font-size:11.5px;white-space:nowrap}
 .slider.mini{gap:6px;white-space:nowrap}
 #lmChips{max-height:120px;overflow:auto}
-.busy{position:fixed;left:calc(50% + 30px);top:calc(82px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);font:500 12px var(--font-mono);padding:6px 12px;border-radius:6px;z-index:4;white-space:nowrap}
+/* 载入提示放在时间条下面，不要盖住「黎明 / 正午 / 黄昏 / 夜晚」。
+   The loading pill sits under the time bar, so it does not cover Dawn / Noon / Dusk / Night. */
+.busy{position:fixed;left:50%;top:calc(118px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);font:500 12px var(--font-mono);padding:6px 12px;border-radius:6px;z-index:6;white-space:nowrap;max-width:min(420px,calc(100% - 32px));overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 
 .timebar{position:fixed;left:calc(50% + 30px);transform:translateX(-50%);top:calc(16px + env(safe-area-inset-top,0px));width:min(600px, calc(100% - 680px));display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--rule);border-radius:10px;box-shadow:0 10px 32px rgba(27,30,28,.16);padding:9px 12px;z-index:3;box-sizing:border-box}
 .tplay{width:34px;height:34px;border-radius:50%;border:1px solid var(--rule);background:var(--panel-2);cursor:pointer;font-size:12px;flex:none}
@@ -209,7 +211,7 @@ body.night .lbl.n.bridge{color:#f2dfb5}
 .scalebar b{display:block;height:5px;border:1.5px solid var(--ink);border-top:0;width:100px;box-sizing:border-box}
 @media (max-width:1240px) and (min-width:761px){.scalebar{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
 @media (max-width:760px){.scalebar{display:none}}
-@media (max-width:1240px) and (min-width:761px){.timebar{left:348px;right:288px;width:auto;transform:none}.dock{left:348px;right:16px;width:auto;transform:none}.busy{left:60%}}
+@media (max-width:1240px) and (min-width:761px){.timebar{left:348px;right:16px;width:auto;transform:none}.dock{left:348px;right:16px;width:auto;transform:none}}
 @media (max-width:760px){
   .panel{top:auto;left:16px;right:16px;width:auto;height:min(52%,470px)}
   .panel.collapsed{height:auto}
@@ -242,14 +244,16 @@ body.night .lbl.n.bridge{color:#f2dfb5}
 <div id="stage" aria-label="香港城市三维视图 Hong Kong 3D view"></div>
 <div id="labels"></div>
 
-<aside class="panel" id="panel">
+<aside class="panel collapsed" id="panel">
   <header class="panel-head">
     <div class="brand">
       <h1>城市笔刷</h1>
       <span class="sub">City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap</span>
       <div class="seg cityseg" role="group" aria-label="地图 Map"><button type="button" data-city="sg">新加坡<small>Singapore</small></button><button type="button" data-city="bay">旧金山湾区<small>SF Bay Area</small></button><button type="button" data-city="nyc">纽约<small>New York</small></button></div>
     </div>
-    <button class="icon-btn" id="collapse" aria-expanded="true" aria-controls="panelBody">收起</button>
+    <!-- 默认收起。点开才看到种子、风格、分区编辑这些生成器工具。
+         Collapsed by default. The generator tools open only after this is pressed. -->
+    <button class="icon-btn" id="collapse" aria-expanded="false" aria-controls="panelBody" title="生成器工具 Generator tools">高级<small>Advanced</small></button>
   </header>
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-plan" aria-selected="true" aria-controls="pane-plan">规划<small>PLAN</small></button>
@@ -384,12 +388,6 @@ body.night .lbl.n.bridge{color:#f2dfb5}
       </section>
     </div>
   </div>
-</aside>
-
-<aside class="stats" id="stats" aria-live="polite">
-  <div class="stats-head"><p class="city" id="cityTitle">澄湾岛</p><button class="icon-btn" id="statsToggle" aria-expanded="true" aria-controls="statList" title="收起统计 Collapse stats">收起</button></div>
-  <div class="cityen"><span id="cityEnTitle">Chengwan Island</span><span id="genTime">—</span></div>
-  <dl id="statList"></dl>
 </aside>
 
 <div class="timebar" id="timebar" role="group" aria-label="时间 Time of day">
@@ -2829,7 +2827,9 @@ function stepQueue(){
 }
 function onGenDone(){
   hideBusy();
-  $('#genTime').textContent = `${STYLES[styleKey].zh} · 重算 ${queueTotal} 块 · ${Math.round(performance.now() - genT0)} ms`;
+  // 右上角统计卡已经删掉。没有 #genTime 时跳过，不要因此让城市载入失败。
+  // The stats card is gone. Skip the timing line when that element is not there.
+  const gt = $('#genTime'); if (gt) gt.textContent = `${STYLES[styleKey].zh} · 重算 ${queueTotal} 块 · ${Math.round(performance.now() - genT0)} ms`;
   buildBridges();
   computeDistricts(forceDivide); forceDivide = false;
   buildForest(); drawTex(); renderStats();
@@ -5396,6 +5396,9 @@ function totals(){
 }
 const fmtPop = p => p >= 1e4 ? (p/1e4).toFixed(1) + ' 万' : Math.round(p).toLocaleString();
 function renderStats(){ if (SGR.on && SGR.stats){ sgrRenderStats(); return; }
+  // 统计卡不在页面上，就不要再扫整张地图来填那些数字。
+  // No stats card on the page, so do not scan the whole map to fill it.
+  if (!$('#statList')) return;
   const t = totals(), floorAll = t.floor[1] + t.floor[2] + t.floor[3] + t.floor[5] + t.floor[6];
   let nPub = 0; for (const c of cache.values()) for (const q of c.pois || []) if (POI[q.t] && POI[q.t][3] >= 1300 && !['busstop','street','wheel'].includes(q.t)) nPub++;
   let zoned = 0; for (let k = 0; k < N*N; k++) if (zones[k]) zoned++;
@@ -5470,13 +5473,13 @@ function renderDistrictList(){
 }
 function selectTab(name){
   for (const t of ['plan','dist','traffic','terrain']){ $('#tab-' + t).setAttribute('aria-selected', String(t === name)); $('#pane-' + t).hidden = t !== name; }
-  if ($('#panel').classList.contains('collapsed')){ $('#panel').classList.remove('collapsed'); $('#collapse').textContent = '收起'; }
+  if ($('#panel').classList.contains('collapsed')){ $('#panel').classList.remove('collapsed'); $('#collapse').innerHTML = '收起<small>Hide</small>'; }
 }
 for (const t of ['plan','dist','traffic','terrain']) $('#tab-' + t).addEventListener('click', () => selectTab(t));
-function setStatsCollapsed(c){ $('#stats').classList.toggle('collapsed', c); const b = $('#statsToggle'); b.textContent = c ? '展开' : '收起'; b.setAttribute('aria-expanded', String(!c)); b.title = c ? '展开统计 Expand stats' : '收起统计 Collapse stats'; try { localStorage.setItem('cb-stats-collapsed', c ? '1' : '0'); } catch (e) {} }
-$('#statsToggle').addEventListener('click', () => setStatsCollapsed(!$('#stats').classList.contains('collapsed')));
-try { if (localStorage.getItem('cb-stats-collapsed') === '1') setStatsCollapsed(true); } catch (e) {}
-$('#collapse').addEventListener('click', () => { const c = $('#panel').classList.toggle('collapsed'); $('#collapse').textContent = c ? '展开' : '收起'; $('#collapse').setAttribute('aria-expanded', String(!c)); });
+// 右上角统计卡已删除。这些函数留着，是为了旧的调用点不会报错。
+// The stats card is gone. These stay so older call sites do not throw.
+function setStatsCollapsed(){}
+$('#collapse').addEventListener('click', () => { const c = $('#panel').classList.toggle('collapsed'); $('#collapse').innerHTML = c ? '高级<small>Advanced</small>' : '收起<small>Hide</small>'; $('#collapse').setAttribute('aria-expanded', String(!c)); });
 function setSeed(v){ seed = Math.max(1, Math.floor(v) % 2147483647 || 1); $('#seedIn').value = seed; buildSkeleton(); requestRegen(); }
 const shuffle = () => setSeed((seed*48271 + 11) % 2147483647);
 $('#reseed').addEventListener('click', shuffle);
@@ -5520,8 +5523,8 @@ $('#viewIsland').addEventListener('click', () => setView('island'));
 $('#kDist').addEventListener('input', e => { kWanted = +e.target.value === 1 ? 0 : +e.target.value; $('#kOut').textContent = kWanted ? String(kWanted) : '自动'; });
 $('#redivide').addEventListener('click', () => { computeDistricts(true); drawTex(); renderStats(); });
 $('#showBounds').addEventListener('change', e => { showBounds = e.target.checked; boundGroup.visible = showBounds; syncLabels(); });
-$('#cityName').addEventListener('input', e => { $('#cityTitle').textContent = e.target.value || '未命名地区'; });
-$('#cityEn').addEventListener('input', e => { $('#cityEnTitle').textContent = e.target.value; });
+$('#cityName').addEventListener('input', e => { const ct = $('#cityTitle'); if (ct) ct.textContent = e.target.value || '未命名地区'; });
+$('#cityEn').addEventListener('input', e => { const cet = $('#cityEnTitle'); if (cet) cet.textContent = e.target.value; });
 $('#runTraffic').addEventListener('click', () => startTraffic());
 let lmCat = 'old';
 function renderLmChips(){
@@ -14384,7 +14387,7 @@ function sgSkirt(){
 
 /* ---------- entering and leaving Singapore ---------- */
 
-function sgNames(on){ const [zh, en] = on ? ['香港', 'Hong Kong'] : ['澄湾岛', 'Chengwan Island']; $('#cityName').value = zh; $('#cityEn').value = en; $('#cityTitle').textContent = zh; $('#cityEnTitle').textContent = en;
+function sgNames(on){ const [zh, en] = on ? ['香港', 'Hong Kong'] : ['澄湾岛', 'Chengwan Island']; $('#cityName').value = zh; $('#cityEn').value = en; const ct = $('#cityTitle'); if (ct) ct.textContent = zh; const cet = $('#cityEnTitle'); if (cet) cet.textContent = en;
   $('#sample').innerHTML = on ? '还原<small>Reset Hong Kong</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '中环<small>Central</small>' : '去首府<small>Capital</small>'; const sub = document.querySelector('.brand .sub'); if (sub) sub.textContent = on ? SG_SUB : ISL_SUB; }
 /* sgView: replaced in v17 */
 /* sgFly: replaced in v17 */
@@ -61798,7 +61801,7 @@ function sgrRoadKm(){
   }
   for (const k in km) km[k] /= 1000; SGR.roadKm = km; return km;
 }
-function sgrRenderStats(){
+function sgrRenderStats(){ if (!document.getElementById('statList')) return;
   const t = totals(), S = SGR.stats, km = sgrRoadKm();
   const pop = S.pop + t.floor[1]/40, jobs = S.jobs + jobsOf(t.floor);
   let zoned = 0; for (let k = 0; k < N*N; k++) if (zones[k]) zoned++;

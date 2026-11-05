@@ -8,11 +8,10 @@ def apply(src):
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)
     # ---------- names, titles ----------
     R("function sgNames(on){ const [zh, en] = on ? ['新加坡', 'Singapore'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['旧金山湾区', 'San Francisco Bay Area'] : ['澄湾岛', 'Chengwan Island'];")
-    R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
-      "$('#sample').innerHTML = on ? '还原<small>Reset Bay Area</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '旧金山市中心<small>Downtown SF</small>' : '去首府<small>Capital</small>';")
+    R("if (sample) sample.innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; if (tc) tc.innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
+      "if (sample) sample.innerHTML = on ? '还原<small>Reset Bay Area</small>' : '示例城市<small>Sample</small>'; if (tc) tc.innerHTML = on ? '旧金山市中心<small>Downtown SF</small>' : '去首府<small>Capital</small>';")
     R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="旧金山湾区三维视图 San Francisco Bay Area 3D view"')
     R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · 旧金山湾区 San Francisco Bay Area 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>')
-    R('回到新加坡 · Back to Singapore', '回到湾区 · Back to the Bay Area')
     R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原湾区… Restoring the Bay Area')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · San Francisco Bay Area</title>', src, count=1)
     # ---------- the overview camera: the whole bay ----------
@@ -34,11 +33,6 @@ def apply(src):
     # ---------- the sun over the bay (Pacific Time with daylight saving) ----------
     R("sg:{lat:1.3521, lon:103.8198, tz:8, name:'Singapore'}",
       "sg:{lat:37.70, lon:-122.25, get tz(){ const y = LG.ymd[0], v = LG.ymd[1]*100 + LG.ymd[2], dw = (m, d) => new Date(Date.UTC(y, m - 1, d)).getUTCDay(), s = 8 + (7 - dw(3, 8)) % 7, e = 1 + (7 - dw(11, 1)) % 7; return v >= 300 + s && v < 1100 + e ? -7 : -8; }, name:'San Francisco Bay Area'}")
-    # ---------- F1 free drive: keep right; no street circuit in the bay ----------
-    R("sx = best.px - uy*off, sy = best.py + ux*off;   // keep left", "sx = best.px + uy*off, sy = best.py - ux*off;   // keep right")
-    R("x -= Math.sin(hx)*RD_WID[l.c][0]*0.25; y += Math.cos(hx)*RD_WID[l.c][0]*0.25; }   // keep left", "x += Math.sin(hx)*RD_WID[l.c][0]*0.25; y -= Math.cos(hx)*RD_WID[l.c][0]*0.25; }   // keep right")
-    R("spawnFree(sgXY(1.2905, 103.8545)[0], sgXY(1.2905, 103.8545)[1], [1, 0])", "spawnFree(sgXY(37.7920, -122.3990)[0], sgXY(37.7920, -122.3990)[1], [1, 0])")
-    R('<button class="f1card" id="f1GoRace" type="button">', '<button class="f1card" id="f1GoRace" type="button" style="display:none">')
     # ---------- 156 cities and neighbourhoods: small ones are labelled only from nearer ----------
     R("labelItems.push({el, x:d.lx, y:d.ly, lift:40, maxD:SGR.on ? 42000 : 7500, minD:SGR.on ? 2600 : 0});",
       "labelItems.push({el, x:d.lx, y:d.ly, lift:40, maxD:SGR.on ? Math.min(42000, 9000 + Math.sqrt((d.area || 0)/1e6)*2600) : 7500, minD:SGR.on ? 2600 : 0});")

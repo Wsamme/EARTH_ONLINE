@@ -11,9 +11,8 @@ Five real cities at 1:1 in the browser, built with three.js r128 and OpenStreetM
 | `site/hk.html` | Hong Kong 香港 | 189 landmarks and parks; Victoria Harbour rebuilt from photos, neon streets, Symphony of Lights, Shenzhen skyline |
 | `site/tyo.html` | Tokyo 东京 | 111 landmarks and parks, Mount Fuji on the horizon |
 
-Real roads, rail, buildings, terrain and water; landmark models; intro cards; 中 / EN / 双 language switch; driving,
-flying, races, multiplayer, Cthulhu mode; weather; speed or local time. Every city opens in View mode.
-真实的道路、铁路、建筑、地形和水面；地标模型；介绍卡；中 / EN / 双 语言切换；驾驶、飞行、比赛、多人、克苏鲁模式；天气；倍速或当地时间。每个城市打开时默认是视角模式。
+Real roads, rail, buildings, terrain and water; landmark models; intro cards; 中 / EN / 双 language switch; painting zones, roads, styles, landmarks and terrain; viewing the city. Weather, time of day, the scale bar and the OpenStreetMap credit stay with the view. Every city opens in View mode.
+真实的道路、铁路、建筑、地形和水面；地标模型；介绍卡；中 / EN / 双 语言切换；在城市上刷分区、道路、风格、地标和地形；看这座城市。天气、一天中的时间、比例尺和 OpenStreetMap 署名留在观看里。每个城市打开时默认是视角模式。
 
 ## Run it 运行
 

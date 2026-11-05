@@ -13,11 +13,10 @@ def apply(src):
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)
     # ---------- names, titles ----------
     R("function sgNames(on){ const [zh, en] = on ? ['新加坡', 'Singapore'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['东京', 'Tokyo'] : ['澄湾岛', 'Chengwan Island'];")
-    R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
-      "$('#sample').innerHTML = on ? '还原<small>Reset Tokyo</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '东京站<small>Tokyo Station</small>' : '去首府<small>Capital</small>';")
+    R("if (sample) sample.innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; if (tc) tc.innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
+      "if (sample) sample.innerHTML = on ? '还原<small>Reset Tokyo</small>' : '示例城市<small>Sample</small>'; if (tc) tc.innerHTML = on ? '东京站<small>Tokyo Station</small>' : '去首府<small>Capital</small>';")
     R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="东京城市三维视图 Tokyo 3D view"')
     R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · 东京 Tokyo 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>')
-    R('回到新加坡 · Back to Singapore', '回到东京 · Back to Tokyo')
     R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原东京… Restoring Tokyo')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Tokyo</title>', src, count=1)
     # ---------- the overview camera: the whole 56 km square ----------
@@ -36,8 +35,6 @@ def apply(src):
     R("sub:'新加坡 ⇄ 大阪  SIN ⇄ KIX'", "sub:'东京 ⇄ 新加坡  HND ⇄ SIN'")
     # ---------- the sun over Tokyo: Japan Standard Time (UTC+9, no daylight saving) ----------
     R("sg:{lat:1.3521, lon:103.8198, tz:8, name:'Singapore'}", "sg:{lat:35.66, lon:139.75, tz:9, name:'Tokyo'}")
-    # ---------- F1 free drive: keep left (as Singapore), start at Tokyo Station (Marunouchi side) ----------
-    R("spawnFree(sgXY(1.2905, 103.8545)[0], sgXY(1.2905, 103.8545)[1], [1, 0])", "spawnFree(sgXY(35.6815, 139.7645)[0], sgXY(35.6815, 139.7645)[1], [1, 0])")
     # ---------- ~250 districts: small ones are labelled only from nearer ----------
     R("labelItems.push({el, x:d.lx, y:d.ly, lift:40, maxD:SGR.on ? 42000 : 7500, minD:SGR.on ? 2600 : 0});",
       "labelItems.push({el, x:d.lx, y:d.ly, lift:40, maxD:SGR.on ? Math.min(42000, 7000 + Math.sqrt((d.area || 0)/1e6)*2600) : 7500, minD:SGR.on ? 2000 : 0});")
@@ -71,7 +68,4 @@ def apply(src):
     [35.7135, 139.7775, 260], [35.6985, 139.7730, 220], [35.6715, 139.7650, 260], [35.4660, 139.6225, 300], [35.5310, 139.6975, 260], [35.9060, 139.6240, 260],
     [35.7490, 139.8045, 220], [35.7030, 139.5795, 220], [35.5070, 139.6175, 200], [35.7015, 139.9855, 220], [35.8620, 139.9710, 200], [35.5425, 139.4460, 200],
     [35.6115, 139.6265, 200], [35.7060, 139.6655, 200], [35.6965, 139.8140, 200]]""" + src[b:]
-    # ---------- modules that place Singapore data in map metres (lm24/admin: the seats of government) see an unknown city here, so they
-    # show nothing instead of Singapore's stars in the middle of Tokyo ----------
-    R("const admCity = () => { try { if (typeof SGR_NYC !== 'undefined' && SGR_NYC) return 'nyc';", "const admCity = () => { try { if (typeof SGR_PATH === 'string' && SGR_PATH.startsWith('tyo')) return 'tyo'; if (typeof SGR_NYC !== 'undefined' && SGR_NYC) return 'nyc';")
     return src

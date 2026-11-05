@@ -18,33 +18,76 @@ const SGR_TRAIN = c => c[0] === 'K' ? {sp:4.2, gap:9.5, sc:[8.4, 3.3, 2.5], side
 
 /* ---------- loading ---------- */
 async function sgrFetch(name){
-  // the data files are gzip, stored as base64 text (artifact hosting serves text, not raw binary)
-  const r = await fetch(SGR_PATH + name); if (!r.ok) throw new Error(name + ' ' + r.status);
-  const b64 = (await r.text()).trim(), bin = atob(b64), bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  let buf = bytes.buffer; const u = bytes;
-  if (u[0] === 0x1f && u[1] === 0x8b){
-    if (typeof DecompressionStream === 'undefined') throw new Error('this browser cannot unpack the map data (DecompressionStream)');
-    buf = await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+  // 先要去掉 base64 的 gzip 文件（.bin），没有再退回旧的 .txt。
+  // 解压放在 Worker 里，主线程可以继续把已经到的地形画出来。
+  // Ask for the raw gzip (.bin) first, then the old base64 .txt.
+  // Unpacking runs in a Worker so the main thread can keep drawing.
+  const stem = String(name).replace(/\.txt$/, '');
+  let buf = null;
+  const bin = await fetch(SGR_PATH + stem + '.bin');
+  if (bin.ok) buf = await bin.arrayBuffer();
+  else {
+    const txt = await fetch(SGR_PATH + stem + '.txt');
+    if (!txt.ok) throw new Error(name + ' ' + txt.status);
+    const b64 = (await txt.text()).trim(), raw = atob(b64), bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    buf = bytes.buffer;
   }
-  return buf;
+  return sgrUnpack(buf);
+}
+function sgrUnpack(buf){
+  const u = new Uint8Array(buf);
+  if (u.length < 2 || u[0] !== 0x1f || u[1] !== 0x8b) return Promise.resolve(buf);
+  if (typeof Worker === 'undefined' || typeof DecompressionStream === 'undefined') return sgrUnpackHere(buf);
+  if (!sgrUnpack.pool){
+    const src = "self.onmessage=async e=>{try{const out=await new Response(new Blob([e.data.buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();self.postMessage({id:e.data.id,buf:out},[out]);}catch(err){self.postMessage({id:e.data.id,err:String(err)});}};";
+    const url = URL.createObjectURL(new Blob([src], {type:'text/javascript'}));
+    sgrUnpack.pool = [0, 1].map(() => new Worker(url));
+    sgrUnpack.n = 0;
+  }
+  const id = ++sgrUnpack.n, w = sgrUnpack.pool[id % sgrUnpack.pool.length];
+  return new Promise((res, rej) => {
+    const on = ev => { if (!ev.data || ev.data.id !== id) return; w.removeEventListener('message', on); if (ev.data.err) rej(new Error(ev.data.err)); else res(ev.data.buf); };
+    w.addEventListener('message', on);
+    try { w.postMessage({id, buf}, [buf]); }
+    catch (e){ w.removeEventListener('message', on); sgrUnpackHere(buf).then(res, rej); }
+  });
+}
+function sgrUnpackHere(buf){
+  return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+}
+function sgrApplyBase(buf, img){
+  const base = JSON.parse(new TextDecoder().decode(buf));
+  const hb = atob(base.H), n = hb.length >> 1, h16 = new Int16Array(n);
+  for (let i = 0; i < n; i++) h16[i] = (hb.charCodeAt(i*2) | (hb.charCodeAt(i*2 + 1) << 8)) << 16 >> 16;
+  const Hm = new Float32Array(n); for (let i = 0; i < n; i++) Hm[i] = h16[i] / 10;
+  SGR.H = Hm; base.H = null; SGR.base = base; SGR.img = img;
+  SG.lon0 = base.lon0; SG.lat0 = base.lat0; SG.MX = base.MX; SG.MY = base.MY;
+  SGD = {pas:base.PAS, regs:base.REGS, mrt:base.mrt, stations:base.stations, f1:base.f1};
+}
+function sgrPreview(){
+  // 地形和地面图一到就先画，街道和房子随后按镜头远近补上。
+  // Show the terrain as soon as it arrives. Streets and buildings stream in by camera distance.
+  if (SGR.previewed) return; SGR.previewed = true;
+  SG.on = true; SGR.on = true;
+  allocWorld(SGR.base.HALF, SGR.base.CELL, SGR.base.TS);
+  genSingapore(); buildTerrainMesh(); sgSkirt(); sgrGroundInit();
+  sgView(); drawTex(); applyTime();
+  showBusy('地形已显示，正在载入街道和建筑… Terrain is up, loading streets and buildings');
 }
 function sgrLoad(){
   if (SGR.loading) return SGR.loading;
   SGR.loading = (async () => {
     const img = new Image(); img.decoding = 'async'; img.src = SGR_PATH + 'ground.webp';
-    let done = 0; const step = p => p.then(v => { done++; showBusy(`正在载入真实旧金山湾区地图 ${done}/5 · Loading the real map of the San Francisco Bay Area`); return v; });
-    const [b, r, wb, bl] = await Promise.all([step(sgrFetch('bay_base.txt')), step(sgrFetch('bay_roads.txt')), step(sgrFetch('bay_water.txt')), step(sgrFetch('bay_bld0.txt')), step(img.decode())]);
-    const base = JSON.parse(new TextDecoder().decode(b));
-    const hb = atob(base.H), h16 = new Int16Array(hb.length >> 1);
-    for (let i = 0; i < h16.length; i++) h16[i] = (hb.charCodeAt(2*i) | (hb.charCodeAt(2*i + 1) << 8)) << 16 >> 16;
-    SGR.H = new Float32Array(h16.length); for (let i = 0; i < h16.length; i++) SGR.H[i] = h16[i]/10;
-    base.H = null; SGR.base = base; SGR.img = img;
-    SG.lon0 = base.lon0; SG.lat0 = base.lat0; SG.MX = base.MX; SG.MY = base.MY;
-    SGD = {pas:base.PAS, regs:base.REGS, mrt:base.mrt, stations:base.stations, f1:base.f1};
-    SGR.lines = SGRoads.decode(r, base.names, base.refs);
+    showBusy('正在载入地形… Loading the terrain');
+    const b = await sgrFetch('bay_base.txt');
+    await img.decode();
+    sgrApplyBase(b, img);
+    sgrPreview();
+    const [r, wb, bl] = await Promise.all([sgrFetch('bay_roads.txt'), sgrFetch('bay_water.txt'), sgrFetch('bay_bld0.txt')]);
+    SGR.lines = SGRoads.decode(r, SGR.base.names, SGR.base.refs);
     SGR.bldData = SGBld.decode(bl);
-    sgrLoadParts(base.bldParts || 0);
+    sgrLoadParts(SGR.base.bldParts || 0);
     SGR.water = sgrReadWater(wb);
   })();
   return SGR.loading;
@@ -87,7 +130,7 @@ function allocWorld(half, cell, ts){
   satB = new Int32Array((N+1)*(N+1)); satG = new Int32Array((N+1)*(N+1)); satZ = new Int32Array((N+1)*(N+1)); sbOf = new Int32Array(N*N).fill(-1);
   TRN = Math.ceil(2*HALF/TR); trev = new Uint16Array(TRN*TRN); touched = new Uint8Array(N*N); RN = Math.ceil(2*HALF/RG);
   const S = tex || N; texCv.width = texCv.height = S; imgData = texCtx.createImageData(N, N);
-  terrTex.dispose(); terrTex.generateMipmaps = !!tex; terrTex.minFilter = tex ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; terrTex.anisotropy = tex ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 1;
+  terrTex.dispose(); terrTex.generateMipmaps = !!tex; terrTex.minFilter = tex ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; terrTex.anisotropy = tex ? Math.min(window.CB_MOBILE ? 2 : 8, renderer.capabilities.getMaxAnisotropy()) : 1;
   skeleton = []; sbDist = new Int32Array(0); undoStack.length = 0;
   scene.fog.near = SGR.on ? 46000 : 22000; scene.fog.far = SGR.on ? 150000 : 68000; controls.maxDistance = SGR.on ? 92000 : 50000;
   sea.position.y = SGR.on ? -1.6 : 0;
@@ -230,11 +273,25 @@ function sgrTileDispose(T, all){
   if (T.extra){ for (const o of T.extra){ kill(o); if (o.userData.dispose) o.userData.dispose(); } T.extra = null; }
   if (all){ for (const k of ['major', 'minor', 'paths']) kill(T.road && T.road[k]); T.road = null; kill(T.trees); T.trees = null; T.treesDone = false; }
 }
+function sgrNear(T, r){
+  if (!window.CB_MOBILE) return true;
+  return Math.hypot(T.cx - controls.target.x, T.cy + controls.target.z) < r;
+}
+function sgrCullFar(){
+  // 手机内存紧：镜头 8 公里内的瓦片才建，超过 11 公里的拆掉并释放几何体。
+  // Phones keep the tiles within 8 km and dispose geometry past 11 km.
+  const keep = 11000, load = 8000, tx = controls.target.x, ty = -controls.target.z;
+  for (const T of SGR.tiles.values()){
+    const d = Math.hypot(T.cx - tx, T.cy - ty);
+    if ((T.done || T.road || T.bld || T.trees) && d > keep){ sgrTileDispose(T, true); T.done = false; T.treesDone = false; T.lvl = 0; }
+    else if (!T.done && d < load && !SGR.queue.includes(T)) SGR.queue.push(T);
+  }
+}
 function sgrTilesInit(){
   sgrTilesClear();
   const T = SGR.base.TILE, TX = Math.round(2*HALF/T);
   for (let ti = 0; ti < TX*TX; ti++){ const c = sgrTileC(ti); SGR.tiles.set(ti, {ti, cx:c[0], cy:c[1], road:null, bld:null, trees:null, treesDone:false, done:false}); }
-  SGR.queue = [...SGR.tiles.values()]; SGR.total = SGR.queue.length; SGR.t0 = performance.now(); sgrSortQueue();
+  SGR.queue = [...SGR.tiles.values()].filter(T => sgrNear(T, 9000)); SGR.total = SGR.queue.length; SGR.t0 = performance.now(); sgrSortQueue();
   for (const T of SGR.tiles.values()) T.want = sgrTileDist(T) < SGR_NEAR_IN ? 1 : 0;
 }
 function sgrSortQueue(){ const tx = controls.target.x, ty = -controls.target.z; SGR.queue.sort((a, b) => Math.hypot(a.cx - tx, a.cy - ty) - Math.hypot(b.cx - tx, b.cy - ty)); }
@@ -259,11 +316,12 @@ function sgrBuildTile(T){
 }
 function sgrStep(){
   if (!SGR.on) return;
+  if (window.CB_MOBILE && (sgrStep.c = (sgrStep.c || 0) + 1) % 45 === 0) sgrCullFar();
   if (SGR.lodQ){ SGR.lodQ = false; sgrSortQueue(); }
   if (SGR.queue.length){
     if ((sgrStep.n = (sgrStep.n || 0) + 1) % 40 === 0) sgrSortQueue();
     const t = performance.now();
-    while (SGR.queue.length && performance.now() - t < 16){ const T = SGR.queue.shift(); if (T.done && !SGR.dirty.has(T.ti)) continue; SGR.dirty.delete(T.ti); sgrBuildTile(T); SGR.built++; }
+    while (SGR.queue.length && performance.now() - t < (window.CB_MOBILE ? 10 : 16)){ const T = SGR.queue.shift(); if (window.CB_MOBILE && !SGR.dirty.has(T.ti) && !sgrNear(T, 10000)) continue; if (T.done && !SGR.dirty.has(T.ti)) continue; SGR.dirty.delete(T.ti); sgrBuildTile(T); SGR.built++; }
     if (SGR.total && SGR.built <= SGR.total && !sgrAfterBuild.done) showBusy(`真实城市 ${Math.min(SGR.built, SGR.total)}/${SGR.total} · Building the real city`);
     if (!SGR.queue.length){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
   }

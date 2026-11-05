@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
 <title>城市笔刷 City Brush</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +23,9 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
-html,body{height:100%}
-body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);overflow:hidden;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;position:fixed;inset:0;width:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);overflow:hidden;-webkit-font-smoothing:antialiased;touch-action:manipulation}
+button,a,input,label{touch-action:manipulation}
 #stage{position:fixed;inset:0}
 #stage canvas{display:block;touch-action:none;outline:none}
 button{font:inherit;color:var(--ink)}
@@ -211,21 +213,20 @@ body.night .lbl.n.bridge{color:#f2dfb5}
 @media (max-width:760px){.scalebar{display:none}}
 @media (max-width:1240px) and (min-width:761px){.timebar{left:348px;right:16px;width:auto;transform:none}.dock{left:348px;right:16px;width:auto;transform:none}}
 @media (max-width:760px){
-  .panel{top:auto;left:16px;right:16px;width:auto;height:min(52%,470px)}
-  .panel.collapsed{height:auto}
-  .stats{left:16px;right:16px;width:auto;padding:10px 12px}
-  .stats .city{font-size:17px}
-  .stats .cityen{margin-bottom:6px}
-  .stats dl{grid-template-columns:repeat(3,minmax(0,1fr) auto);gap:3px 8px;font-size:11px}
-  .stats dt small{display:none}
-  .stats dd{font-size:11.5px}
-  .stats dd.pop{font-size:11.5px}
-  .timebar{left:16px;right:16px;width:auto;transform:none;top:auto;bottom:calc(min(52%, 470px) + 92px);gap:8px;padding:7px 10px}
-  .dock{left:16px;right:16px;width:auto;transform:none;bottom:calc(min(52%, 470px) + 26px)}
-  .dtab{grid-template-columns:1fr;justify-items:center}.dtab i{grid-row:auto}.dtab small{display:none}.dtab span{font-size:11px;text-align:center}
+  /* 竖屏手机：标题卡贴在顶部安全区，时间条和底栏贴在底部，手指够得到，也不挡地图中心。 */
+  .panel.collapsed{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto;left:10px;right:10px;width:auto;height:auto}
+  .panel:not(.collapsed){top:auto;bottom:calc(8px + env(safe-area-inset-bottom,0px));left:10px;right:10px;width:auto;height:min(62dvh,520px)}
+  .timebar{left:10px;right:10px;width:auto;transform:none;top:auto;bottom:calc(78px + env(safe-area-inset-bottom,0px));gap:6px;padding:6px 8px}
+  .panel:not(.collapsed) ~ .timebar{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto}
+  .dock{left:8px;right:8px;width:auto;transform:none;bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+  .dock-tabs{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .dtab{flex:0 0 auto;min-width:56px;grid-template-columns:1fr;justify-items:center}
+  .dtab i{grid-row:auto}.dtab small{display:none}.dtab span{font-size:11px;text-align:center}
+  .busy{top:auto;bottom:calc(196px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 24px)}
   .lmbar{grid-template-columns:1fr 1fr}
   .tpre{width:100%;justify-content:space-between}
   .tpre button{flex:1}
+  .cityseg{max-width:none}
 }
 /* tilt-shift row in the View tray (v16 tilt) */
 .tiltrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
@@ -2649,8 +2650,22 @@ function disposeGroup(g){
 
 /* ================= three.js scene ================= */
 const stage = $('#stage');
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+// 窄屏触控当成手机：像素比最多 1.5，阴影贴图缩小，少占 Safari 的标签页内存。桌面仍是 2 和 2048。
+window.CB_MOBILE = window.matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 900;
+const renderer = new THREE.WebGLRenderer({antialias: !window.CB_MOBILE, powerPreference: window.CB_MOBILE ? 'low-power' : 'high-performance'});
+function viewPixelRatio(){ return Math.min(window.devicePixelRatio || 1, window.CB_MOBILE ? 1.5 : 2); }
+function tuneForDevice(){
+  renderer.setPixelRatio(viewPixelRatio());
+  const sh = window.CB_MOBILE ? 1024 : 2048;
+  if (sun.shadow.mapSize.x !== sh){ sun.shadow.mapSize.set(sh, sh); if (sun.shadow.map){ sun.shadow.map.dispose(); sun.shadow.map = null; } }
+  if (terrTex && window.CB_MOBILE && terrTex.anisotropy > 2) terrTex.anisotropy = 2;
+  if (window.CB_MOBILE && typeof SGR !== 'undefined' && SGR.lines){
+    controls.maxDistance = Math.min(controls.maxDistance, 28000);
+    scene.fog.near = Math.min(scene.fog.near, 14000);
+    scene.fog.far = Math.min(scene.fog.far, 48000);
+  }
+}
+renderer.setPixelRatio(viewPixelRatio());
 renderer.setSize(stage.clientWidth || innerWidth, stage.clientHeight || innerHeight);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
@@ -2665,7 +2680,7 @@ controls.mouseButtons = {LEFT:-1, MIDDLE:THREE.MOUSE.DOLLY, RIGHT:THREE.MOUSE.PA
 controls.touches = {ONE:-1, TWO:THREE.TOUCH.DOLLY_PAN};
 const hemi = new THREE.HemisphereLight(0xffffff, 0xb7b1a2, 0.78); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffffff, 0.72); sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.8; scene.add(sun); scene.add(sun.target);
+sun.shadow.mapSize.set(window.CB_MOBILE ? 1024 : 2048, window.CB_MOBILE ? 1024 : 2048); sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.8; scene.add(sun); scene.add(sun.target);
 let shadowSpan = 0;
 
 const sea = new THREE.Mesh(new THREE.PlaneGeometry(200000, 200000), new THREE.MeshLambertMaterial({color:0x93aab0, transparent:true, opacity:0.86, depthWrite:false}));
@@ -5614,7 +5629,9 @@ window.addEventListener('keydown', e => {
 window.addEventListener('keyup', e => { keysHeld.delete(e.code); if (e.code === 'Space'){ spaceHeld = false; applyControlMode(); } });
 window.addEventListener('blur', () => keysHeld.clear());
 canvas.addEventListener('pointerdown', () => { if (tour) startTour(false); });
-window.addEventListener('resize', () => { const w = stage.clientWidth || innerWidth, h = stage.clientHeight || innerHeight; renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setSize(w, h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
+window.addEventListener('resize', () => { const w = stage.clientWidth || innerWidth, h = stage.clientHeight || innerHeight; tuneForDevice(); renderer.setSize(w, h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
+document.addEventListener('gesturestart', e => e.preventDefault());
+canvas.addEventListener('touchmove', e => { if (e.cancelable) e.preventDefault(); }, {passive:false});
 
 /* ================= region: several cities joined by motorways, railways, an airport and ferry ports ================= */
 const regionGroup = new THREE.Group(); scene.add(regionGroup);
@@ -15630,6 +15647,7 @@ function industryBlock16(b, LP, rng, X){
 /* ================= loop ================= */
 let lastT = performance.now();
 function loop(now){
+  if (window.CB_MOBILE && typeof SGR !== 'undefined' && SGR.lines && !loop.fitCity){ loop.fitCity = true; tuneForDevice(); }
   const dt = Math.min(0.05, (now - lastT)/1000); lastT = now;
   navStep(dt);
   if (fly){ const k = Math.min(1, (now - fly.t0)/fly.dur), e = k < 0.5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2)/2; camera.position.lerpVectors(fly.from, fly.to, e); controls.target.lerpVectors(fly.tf, fly.tt, e); if (k >= 1) fly = null; }
@@ -15643,7 +15661,7 @@ function loop(now){
   { const above = camera.position.y - Math.max(0, hAt(camera.position.x, -camera.position.z)), nr = Math.max(1, Math.min(D*0.25, above*0.5)), fr = D + HALF*4.5;
     if (Math.abs(nr - camera.near) > camera.near*0.05 || Math.abs(fr - camera.far) > camera.far*0.05){ camera.near = nr; camera.far = fr; camera.updateProjectionMatrix(); } }
   // shadow camera snapped to its texel grid so shadows don't swim while panning
-  { const tx = 2*(shadowSpan || span)/2048, sx = Math.round(controls.target.x/tx)*tx, sz = Math.round(controls.target.z/tx)*tx;
+  { const sh = sun.shadow.mapSize.x || 2048, tx = 2*(shadowSpan || span)/sh, sx = Math.round(controls.target.x/tx)*tx, sz = Math.round(controls.target.z/tx)*tx;
     sun.target.position.set(sx, controls.target.y, sz); sun.position.copy(sunDir).multiplyScalar(span*2.6 + 600).add(sun.target.position); }
   if (todPlay){ tod = (tod + dt*0.66) % 24; applyTime(); }
   if (Math.abs(span - shadowSpan) > shadowSpan*0.08){ shadowSpan = span; Object.assign(sun.shadow.camera, {left:-span, right:span, top:span, bottom:-span, near:10, far:span*8 + 3000}); sun.shadow.camera.updateProjectionMatrix(); }

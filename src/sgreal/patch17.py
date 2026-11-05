@@ -241,5 +241,15 @@ POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_de
 for _p in POSTS + [x for x in os.environ.get('EXTRA_POSTS', '').split(',') if x]:
     _ns = {'__file__': SC + _p}; exec(compile(open(SC + _p).read(), SC + _p, 'exec'), _ns); src = _ns['apply'](src, CITY); print('post', _p)
 src = src.replace('<title>', '<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is (the map switch reads it)
+# 把整段脚本挪到单独的 js 文件。HTML 只剩壳子，浏览器可以先画出标题，脚本也能单独缓存。
+# Move the program into its own file so the HTML shell paints first and the script can be cached.
+_js = {'sg':'app.js', 'bay':'bay-app.js', 'nyc':'nyc-app.js', 'hk':'hk-app.js', 'tyo':'tyo-app.js'}[CITY]
+_i = src.rfind('<script>')
+_j = src.rfind('</script>')
+if _i < 0 or _j < _i: raise SystemExit('no inline script to extract')
+_code = src[_i + len('<script>'):_j]
+if 'sgrBoot' not in _code: raise SystemExit('extracted script is not the app')
+open(os.path.join(os.path.dirname(os.path.abspath(sys.argv[2])), _js), 'w').write(_code.lstrip('\n'))
+src = src[:_i] + '<script src="%s" defer></script>\n' % _js + src[_j + len('</script>'):]
 open(sys.argv[2], 'w').write(src)
-print('ok', len(src))
+print('ok', len(src), 'js', len(_code))

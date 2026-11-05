@@ -1,7 +1,10 @@
 # v17: Singapore becomes the real island at 1:1 (real roads, buildings, coastline). Applies on top of the v16 build.
 # usage: python3 patch17.py <in.html> <out.html>
-import sys, re
-SC = '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/'
+import sys, re, os
+# 页面从这份源码生成。SC 指 src/ 目录，不再写死原来那台机器上的 scratchpad 路径。
+# Build from this checkout. SC is the src/ directory, not the old scratchpad path.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+SC = os.path.dirname(_HERE) + os.sep
 src = open(sys.argv[1]).read()
 def R(a, b, count=1):
     global src
@@ -213,6 +216,17 @@ for env, std in [('ROADS_MOD', 'sgreal/mod_roads/roads.js'), ('BLD_MOD', 'sgreal
 # v22: MOD_SWAP=std1=work1,std2=work2 swaps any module for a work copy (e.g. MOD_SWAP=lm20/f1d/f1d.js=lm20/roaddrive/f1d.js)
 for pair in [x for x in os.environ.get('MOD_SWAP', '').split(',') if '=' in x]:
     std, work = pair.split('=', 1); MODS = [work if m == std else m for m in MODS]
+# 公开产品只保留笔刷和看城市。下面这些是驾驶、赛道、飞行、比赛、怪物、多人、烟花、军队、导航、行政区编辑和音效面板，不打进页面。
+# The public app is the brush and the view. Leave the drive, race, flight, creature, multiplayer and other game modules out.
+DROP = {
+    'lm18/f1/f1.js', 'lm18/f2/f2.js',
+    'lm20/f1d/f1d.js', 'lm20/f1track/f1track.js', 'lm20/audio/audio.js',
+    'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js',
+    'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js',
+    'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js',
+    'nyc/nyrace/nyrace.js',
+}
+MODS = [m for m in MODS if m not in DROP]
 print('modules', MODS)
 mods = ''.join(open(SC + p).read() + '\n' for p in MODS)
 mods = mods.replace('</script', '<\\/script')

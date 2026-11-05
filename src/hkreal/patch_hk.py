@@ -10,15 +10,12 @@ def apply(src):
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)
     # ---------- names, titles ----------
     R("function sgNames(on){ const [zh, en] = on ? ['新加坡', 'Singapore'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['香港', 'Hong Kong'] : ['澄湾岛', 'Chengwan Island'];")
-    R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
-      "$('#sample').innerHTML = on ? '还原<small>Reset Hong Kong</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '中环<small>Central</small>' : '去首府<small>Capital</small>';")
+    R("if (sample) sample.innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; if (tc) tc.innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
+      "if (sample) sample.innerHTML = on ? '还原<small>Reset Hong Kong</small>' : '示例城市<small>Sample</small>'; if (tc) tc.innerHTML = on ? '中环<small>Central</small>' : '去首府<small>Capital</small>';")
     R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="香港城市三维视图 Hong Kong 3D view"')
     R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>')
-    R('回到新加坡 · Back to Singapore', '回到香港 · Back to Hong Kong')
     R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原香港… Restoring Hong Kong')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Hong Kong</title>', src, count=1)
-    # ---------- the administrative stars (lm24/admin) have no Hong Kong data yet: no Singapore CDC stars here ----------
-    R("const admCity = () => { try { if (typeof SGR_NYC !== 'undefined' && SGR_NYC) return 'nyc';", "const admCity = () => { try { if (typeof SGR_PATH === 'string' && SGR_PATH.startsWith('hk')) return 'hk'; if (typeof SGR_NYC !== 'undefined' && SGR_NYC) return 'nyc';")
     # ---------- the overview camera: the whole 56 km square (from the south, over the Lamma Channel) ----------
     R("else if (SGR.on){ const c = sgXY(1.345, 103.83); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 4000, 30000, -c[1] + 33000); }",
       "else if (SGR.on){ const c = sgXY(22.340, 114.120); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 3500, 31000, -c[1] + 34000); }")
@@ -54,8 +51,6 @@ def apply(src):
     R("sub:'新加坡 ⇄ 大阪  SIN ⇄ KIX'", "sub:'香港 ⇄ 新加坡  HKG ⇄ SIN'")
     # ---------- the sun over Hong Kong (Hong Kong Time, UTC+8, no daylight saving) ----------
     R("sg:{lat:1.3521, lon:103.8198, tz:8, name:'Singapore'}", "sg:{lat:22.34, lon:114.12, tz:8, name:'Hong Kong'}")
-    # ---------- F1 free drive (keep left, as in Singapore): start on Nathan Road, Tsim Sha Tsui ----------
-    R("spawnFree(sgXY(1.2905, 103.8545)[0], sgXY(1.2905, 103.8545)[1], [1, 0])", "spawnFree(sgXY(22.2985, 114.1722)[0], sgXY(22.2985, 114.1722)[1], [0, 1])")
     # ---------- ~250 neighbourhoods: small ones are labelled only from nearer ----------
     R("labelItems.push({el, x:d.lx, y:d.ly, lift:40, maxD:SGR.on ? 42000 : 7500, minD:SGR.on ? 2600 : 0});",
       "labelItems.push({el, x:d.lx, y:d.ly, lift:40, maxD:SGR.on ? Math.min(42000, 7000 + Math.sqrt((d.area || 0)/1e6)*2600) : 7500, minD:SGR.on ? 2000 : 0});")

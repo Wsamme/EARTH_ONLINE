@@ -2229,11 +2229,6 @@ function tuneForDevice(){
   const sh = window.CB_MOBILE ? 1024 : 2048;
   if (sun.shadow.mapSize.x !== sh){ sun.shadow.mapSize.set(sh, sh); if (sun.shadow.map){ sun.shadow.map.dispose(); sun.shadow.map = null; } }
   if (terrTex && window.CB_MOBILE && terrTex.anisotropy > 2) terrTex.anisotropy = 2;
-  if (window.CB_MOBILE && typeof SGR !== 'undefined' && SGR.lines){
-    controls.maxDistance = Math.min(controls.maxDistance, 28000);
-    scene.fog.near = Math.min(scene.fog.near, 14000);
-    scene.fog.far = Math.min(scene.fog.far, 48000);
-  }
 }
 renderer.setPixelRatio(viewPixelRatio());
 renderer.setSize(stage.clientWidth || innerWidth, stage.clientHeight || innerHeight);
@@ -59179,37 +59174,90 @@ function sgrRelease(obj){ obj.traverse(o => { const g = o.geometry; if (!g || o.
 const sgrTileC = ti => { const T = SGR.base.TILE, TX = Math.round(2*HALF/T), tx = ti % TX, ty = (ti - tx)/TX; return [-HALF + (tx + 0.5)*T, -HALF + (ty + 0.5)*T]; };
 function sgrTilesClear(){
   for (const T of SGR.tiles.values()) sgrTileDispose(T, true);
-  SGR.tiles.clear(); SGR.queue = []; SGR.built = 0; SGR.total = 0;
+  SGR.tiles.clear(); SGR.queue = []; SGR.farQ = []; SGR.built = 0; SGR.total = 0;
 }
 function sgrTileDispose(T, all){
-  const kill = o => { if (!o) return; SGR.group.remove(o); o.traverse(q => { if (q.geometry && q.geometry !== treeGeo) q.geometry.dispose(); }); };
+  const kill = o => { if (!o) return; SGR.group.remove(o); o.traverse(q => { if (q.geometry && q.geometry !== treeGeo && !(q.geometry.userData && q.geometry.userData.keep)) q.geometry.dispose(); }); };
   kill(T.bld && T.bld.group); T.bld = null;
   if (T.extra){ for (const o of T.extra){ kill(o); if (o.userData.dispose) o.userData.dispose(); } T.extra = null; }
   if (all){ for (const k of ['major', 'minor', 'paths']) kill(T.road && T.road[k]); T.road = null; kill(T.trees); T.trees = null; T.treesDone = false; }
 }
-function sgrNear(T, r){
-  if (!window.CB_MOBILE) return true;
-  return Math.hypot(T.cx - controls.target.x, T.cy + controls.target.z) < r;
+function sgrCamDist(T){ return Math.hypot(T.cx - controls.target.x, T.cy + controls.target.z); }
+function sgrWantLod(T){
+  // 手机：近处完整，其余整座城市用粗盒子。桌面一律完整。
+  // Phones draw the whole city as coarse boxes, and full detail only nearby. Desktop stays full.
+  if (!window.CB_MOBILE) return 'full';
+  return sgrCamDist(T) < (SGR.phoneNear || 16000) ? 'full' : 'far';
 }
-function sgrCullFar(){
-  // 手机内存紧：镜头 8 公里内的瓦片才建，超过 11 公里的拆掉并释放几何体。
-  // Phones keep the tiles within 8 km and dispose geometry past 11 km.
-  const keep = 11000, load = 8000, tx = controls.target.x, ty = -controls.target.z;
-  for (const T of SGR.tiles.values()){
-    const d = Math.hypot(T.cx - tx, T.cy - ty);
-    if ((T.done || T.road || T.bld || T.trees) && d > keep){ sgrTileDispose(T, true); T.done = false; T.treesDone = false; T.lvl = 0; }
-    else if (!T.done && d < load && !SGR.queue.includes(T)) SGR.queue.push(T);
+function sgrBoxGeo(){
+  if (sgrBoxGeo.g) return sgrBoxGeo.g;
+  const g = new THREE.BoxGeometry(1, 1, 1); g.translate(0, 0.5, 0); g.userData.keep = true; sgrBoxGeo.g = g; return g;
+}
+function sgrFarList(ti){
+  let list = null;
+  if (SGR.bldData && SGR.bldData.big) list = SGR.bldData.big(ti);
+  else if (SGR.bldData && SGR.bldData.tiles) list = SGR.bldData.tiles.get(ti);
+  if (!list || !list.length) return [];
+  const out = [];
+  for (const B of list){ if (!B || B.foreign || (B.h || 0) < 12) continue; out.push(B); }
+  if (out.length > 80){ out.sort((a, b) => b.h - a.h); out.length = 80; }
+  return out;
+}
+function sgrBuildFar(T){
+  if (T.lod === 'far' && T.done && !SGR.dirty.has(T.ti)) return;
+  sgrTileDispose(T, true); T.treesDone = true; T.road = null;
+  const list = sgrFarList(T.ti);
+  if (list.length){
+    if (!sgrBuildFar.mat) sgrBuildFar.mat = new THREE.MeshLambertMaterial({color:0xffffff});
+    const im = new THREE.InstancedMesh(sgrBoxGeo(), sgrBuildFar.mat, list.length);
+    im.castShadow = false; im.receiveShadow = false; im.frustumCulled = false;
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color();
+    list.forEach((B, i) => {
+      const R = B.rings && B.rings[0];
+      let x0 = B.cx, y0 = B.cy, x1 = B.cx, y1 = B.cy;
+      if (R && R.length >= 4){ x0 = 1e9; y0 = 1e9; x1 = -1e9; y1 = -1e9; for (let k = 0; k < R.length; k += 2){ const x = R[k], y = R[k+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } }
+      const w = Math.max(8, x1 - x0), d = Math.max(8, y1 - y0), h = Math.max(8, B.h || 12), cx = (x0 + x1)/2, cy = (y0 + y1)/2;
+      let gy = 0; try { gy = hC(cx, cy); } catch (e){ gy = 0; }
+      p.set(cx, gy, -cy); sc.set(w, h, d); m.compose(p, q, sc); im.setMatrixAt(i, m);
+      const k = Math.min(1, h/90); c.setRGB(0.74 - k*0.1, 0.72 - k*0.08, 0.68 - k*0.05); im.setColorAt(i, c);
+    });
+    im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true;
+    T.bld = {group:im}; SGR.group.add(im);
   }
+  T.lod = 'far'; T.done = true;
+}
+function sgrAdapt(){
+  const now = performance.now(), dt = now - (sgrAdapt.last || now); sgrAdapt.last = now;
+  if (dt <= 0 || dt > 250) return;
+  const avg = sgrAdapt.avg = (sgrAdapt.avg || dt)*0.86 + dt*0.14;
+  const mem = navigator.deviceMemory || 0;
+  const cap = mem >= 8 ? 24000 : mem >= 4 ? 18000 : mem ? 12000 : 20000;
+  let near = SGR.phoneNear || 16000;
+  if (avg > 46) near = Math.max(8000, near - 2000);
+  else if (avg < 26 && SGR.built > 40) near = Math.min(cap, near + 2000);
+  if (near === SGR.phoneNear) return;
+  SGR.phoneNear = near;
+  const full = [], far = [];
+  const put = T => { const want = sgrWantLod(T); if (T.done && T.lod && T.lod !== want) SGR.dirty.add(T.ti); (want === 'far' ? far : full).push(T); };
+  for (const T of SGR.queue || []) put(T);
+  for (const T of SGR.farQ || []) put(T);
+  SGR.queue = full; SGR.farQ = far;
+  for (const T of SGR.tiles.values()) if (SGR.dirty.has(T.ti)){ const q = sgrWantLod(T) === 'far' ? SGR.farQ : SGR.queue; if (!q.includes(T)) q.push(T); }
 }
 function sgrTilesInit(){
   sgrTilesClear();
   const T = SGR.base.TILE, TX = Math.round(2*HALF/T);
   for (let ti = 0; ti < TX*TX; ti++){ const c = sgrTileC(ti); SGR.tiles.set(ti, {ti, cx:c[0], cy:c[1], road:null, bld:null, trees:null, treesDone:false, done:false}); }
-  SGR.queue = [...SGR.tiles.values()].filter(T => sgrNear(T, 9000)); SGR.total = SGR.queue.length; SGR.t0 = performance.now(); sgrSortQueue();
+  SGR.phoneNear = window.CB_MOBILE ? (navigator.deviceMemory >= 8 ? 20000 : navigator.deviceMemory >= 4 ? 14000 : navigator.deviceMemory ? 11000 : 16000) : 1e9;
+  SGR.farQ = []; SGR.queue = [];
+  for (const T of SGR.tiles.values()) (sgrWantLod(T) === 'far' ? SGR.farQ : SGR.queue).push(T);
+  SGR.total = SGR.tiles.size; SGR.t0 = performance.now(); sgrSortQueue();
   for (const T of SGR.tiles.values()) T.want = sgrTileDist(T) < SGR_NEAR_IN ? 1 : 0;
 }
-function sgrSortQueue(){ const tx = controls.target.x, ty = -controls.target.z; SGR.queue.sort((a, b) => Math.hypot(a.cx - tx, a.cy - ty) - Math.hypot(b.cx - tx, b.cy - ty)); }
+function sgrSortQueue(){ const tx = controls.target.x, ty = -controls.target.z, d = T => Math.hypot(T.cx - tx, T.cy - ty); SGR.queue.sort((a, b) => d(a) - d(b)); if (SGR.farQ) SGR.farQ.sort((a, b) => d(a) - d(b)); }
 function sgrBuildTile(T){
+  if (sgrWantLod(T) === 'far'){ sgrBuildFar(T); return; }
+  if (T.lod === 'far'){ sgrTileDispose(T, true); T.done = false; T.road = null; T.lod = ''; }
   const rl = T.want ? 1 : 0;
   if (T.road && T.roadLvl !== rl){ for (const k of ['major', 'minor', 'paths']) if (T.road[k]){ SGR.group.remove(T.road[k]); T.road[k].traverse(q => { if (q.geometry) q.geometry.dispose(); }); } T.road = null; }
   if (!T.road){
@@ -59226,18 +59274,30 @@ function sgrBuildTile(T){
   if (list && list.length){ const b = SGBld.buildTile(T.ti, list, {skip:sgrSkipB, release:true}); if (b.group.children.length){ T.bld = b; SGR.group.add(b.group); } }
   // add-on modules (signs, ads, lights ...) decorate the tile's real buildings: HOOKS.tile(T, list, skip) returns an Object3D or null
   if (list && list.length) for (const f of HOOKS.tile){ let o = null; try { o = f(T, list, sgrSkipB); } catch (e){ console.error('tile hook', e); } if (o){ SGR.group.add(o); (T.extra || (T.extra = [])).push(o); } }
-  T.done = true; sgrLodTile(T);
+  T.lod = 'full'; T.done = true; sgrLodTile(T);
 }
 function sgrStep(){
   if (!SGR.on) return;
-  if (window.CB_MOBILE && (sgrStep.c = (sgrStep.c || 0) + 1) % 45 === 0) sgrCullFar();
   if (SGR.lodQ){ SGR.lodQ = false; sgrSortQueue(); }
-  if (SGR.queue.length){
-    if ((sgrStep.n = (sgrStep.n || 0) + 1) % 40 === 0) sgrSortQueue();
-    const t = performance.now();
-    while (SGR.queue.length && performance.now() - t < (window.CB_MOBILE ? 10 : 16)){ const T = SGR.queue.shift(); if (window.CB_MOBILE && !SGR.dirty.has(T.ti) && !sgrNear(T, 10000)) continue; if (T.done && !SGR.dirty.has(T.ti)) continue; SGR.dirty.delete(T.ti); sgrBuildTile(T); SGR.built++; }
-    if (SGR.total && SGR.built <= SGR.total && !sgrAfterBuild.done) showBusy(`真实城市 ${Math.min(SGR.built, SGR.total)}/${SGR.total} · Building the real city`);
-    if (!SGR.queue.length){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
+  if (window.CB_MOBILE && (sgrStep.c = (sgrStep.c || 0) + 1) % 30 === 0) sgrAdapt();
+  const drain = (q, budget) => {
+    if (!q || !q.length) return;
+    const t0 = performance.now();
+    while (q.length && performance.now() - t0 < budget){
+      const T = q.shift();
+      if (T.done && !SGR.dirty.has(T.ti) && T.lod === sgrWantLod(T)) continue;
+      SGR.dirty.delete(T.ti); sgrBuildTile(T); SGR.built++;
+    }
+  };
+  if ((sgrStep.n = (sgrStep.n || 0) + 1) % 40 === 0) sgrSortQueue();
+  drain(SGR.queue, window.CB_MOBILE ? 12 : 16);
+  if (window.CB_MOBILE) drain(SGR.farQ, 8);
+  const left = (SGR.queue ? SGR.queue.length : 0) + (SGR.farQ ? SGR.farQ.length : 0);
+  if (SGR.total && left && SGR.built <= SGR.total) showBusy(`真实城市 ${Math.min(SGR.built, SGR.total)}/${SGR.total} · Building the real city`);
+  if (SGR.total && !left){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
+  if ((sgrStep.pub = (sgrStep.pub || 0) + 1) % 20 === 0){
+    let full = 0, far = 0; for (const T of SGR.tiles.values()){ if (T.lod === 'full') full++; else if (T.lod === 'far') far++; }
+    window.CB_VIEW = {built:SGR.built, total:SGR.tiles.size, full, far, near:SGR.phoneNear || 0};
   }
 }
 function sgrQueueTiles(set){ for (const ti of set){ const T = SGR.tiles.get(ti); if (!T) continue; SGR.dirty.add(ti); if (!SGR.queue.includes(T)) SGR.queue.push(T); } sgrSortQueue(); }

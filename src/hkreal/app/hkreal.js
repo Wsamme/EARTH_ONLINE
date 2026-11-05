@@ -78,13 +78,13 @@ function sgrPreview(){
   allocWorld(SGR.base.HALF, SGR.base.CELL, SGR.base.TS);
   genSingapore(); buildTerrainMesh(); sgSkirt(); sgrGroundInit();
   sgView(); drawTex(); applyTime();
-  showBusy('地形已显示，正在载入街道和建筑… Terrain is up, loading streets and buildings');
+  showBusy('Terrain is up. Loading streets and buildings');
 }
 function sgrLoad(){
   if (SGR.loading) return SGR.loading;
   SGR.loading = (async () => {
     const img = new Image(); img.decoding = 'async'; img.src = SGR_PATH + 'ground.webp';
-    showBusy('正在载入地形… Loading the terrain');
+    showBusy('Loading the terrain');
     const b = await sgrFetch('hk_base.txt');
     await img.decode();
     sgrApplyBase(b, img);
@@ -159,7 +159,7 @@ function sgZoning(){
   zones.fill(0); dens.fill(0); arch.fill(0); resv.fill(0); roads = [];
   for (let k = 0; k < N*N; k++) if (nat[k] === 5) resv[k] = 8;     // foreign land is context only
   SG.regMap = {}; cityDefs = [];
-  SGD.regs.forEach((r, i) => { SG.regMap[i + 1] = cityDefs.length; cityDefs.push({x:r.x, y:r.y, r:r.r, cap:r.en === 'Central and Western', name:r.zh, en:r.en, style:0, custom:false}); });
+  SGD.regs.forEach((r, i) => { SG.regMap[i + 1] = cityDefs.length; cityDefs.push({x:r.x, y:r.y, r:r.r, cap:r.en === 'Central and Western', name:r.en || r.zh, en:r.en, style:0, custom:false}); });
 }
 const sgrTexPx = (x, y) => [(x + HALF)/(2*HALF)*SGR_TEX, (HALF - y)/(2*HALF)*SGR_TEX];
 function sgrGroundInit(){
@@ -389,7 +389,7 @@ function sgrStep(){
   drain(SGR.queue, window.CB_MOBILE ? 12 : 16);
   if (window.CB_MOBILE) drain(SGR.farQ, 8);
   const left = (SGR.queue ? SGR.queue.length : 0) + (SGR.farQ ? SGR.farQ.length : 0);
-  if (SGR.total && left && SGR.built <= SGR.total) showBusy(`真实城市 ${Math.min(SGR.built, SGR.total)}/${SGR.total} · Building the real city`);
+  if (SGR.total && left && SGR.built <= SGR.total) showBusy(`Building the real city ${Math.min(SGR.built, SGR.total)}/${SGR.total}`);
   if (SGR.total && !left){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
   if ((sgrStep.pub = (sgrStep.pub || 0) + 1) % 20 === 0){
     let full = 0, far = 0; for (const T of SGR.tiles.values()){ if (T.lod === 'full') full++; else if (T.lod === 'far') far++; }
@@ -748,9 +748,9 @@ const SGR_POI_ICON = {theme_park:'🎢', zoo:'🦒', aquarium:'🐠', attraction
 function sgLabels(){
   const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
   const mk2 = (cls, html, it) => { const el = document.createElement('div'); el.className = cls; el.innerHTML = html; labelsEl.appendChild(el); labelItems.push(Object.assign({el}, it)); };
-  const nm = (zh, en) => `${esc(zh || en)}${zh && en && zh !== en ? `<small>${esc(en)}</small>` : ''}`;
-  for (const s of sgSites) mk2('lbl n lm', `${s.key === 'gardens' ? '🌿' : s.key === 'uss' ? '🎢' : s.key.startsWith('changi') ? '✈' : '🎓'} ${esc(s.zh)}<small>${esc(s.en)}</small>`, {x:s.x, y:s.y, abs:s.top + 20, maxD:16000});
-  for (const s of sgSites) if (s.labels) for (const L of s.labels) mk2('lbl n poi', `${L.ic || '🏛'} ${esc(L.zh || L.en)}${L.zh && L.en && L.zh !== L.en ? `<small>${esc(L.en)}</small>` : ''}`, {x:L.x, y:L.y, abs:L.abs + 6, near:L.near || 1500});
+  const nm = (zh, en) => esc(en || zh || '');
+  for (const s of sgSites) mk2('lbl n lm', `${s.key === 'gardens' ? '🌿' : s.key === 'uss' ? '🎢' : s.key.startsWith('changi') ? '✈' : '🎓'} ${esc(s.en || s.zh)}`, {x:s.x, y:s.y, abs:s.top + 20, maxD:16000});
+  for (const s of sgSites) if (s.labels) for (const L of s.labels) mk2('lbl n poi', `${L.ic || '🏛'} ${esc(L.en || L.zh)}${L.zh && L.en && L.zh !== L.en ? `<small>${esc(L.en)}</small>` : ''}`, {x:L.x, y:L.y, abs:L.abs + 6, near:L.near || 1500});
   const B = SGR.base; if (!B) return;
   if (showNatLabels){
     const seen = new Set(SGD.pas.map(p => p.en.toLowerCase()));
@@ -764,13 +764,14 @@ function sgLabels(){
   const subLab = (x, y) => { for (const S of sgSites) if (S.labels && Math.hypot(S.x - x, S.y - y) < 3000) for (const L of S.labels) if (Math.hypot(L.x - x, L.y - y) < 60) return true; return false; };
   if (showPoi) for (const p of B.pois){ if (onLm(p.x, p.y) || siteDup(p) || subLab(p.x, p.y)) continue; const ic = SGR_POI_ICON[p.k] || '•', near = p.pr <= 1 ? 9000 : p.pr === 2 ? 1900 : 900; mk2('lbl n poi' + (p.pr <= 1 ? ' big' : ''), `${ic} ${nm(p.zh, p.en)}`, {x:p.x, y:p.y, lift:18, near}); }
   if (showNet){
-    for (const r of SGR.roadLabels){ const hw = r.cls <= 1; mk2('lbl n road' + (hw ? ' hw' : ''), `${esc(r.zh || r.en)}${r.ref ? ` <b class="ref">${esc(r.ref)}</b>` : ''}${r.zh && r.en ? `<small>${esc(r.en)}</small>` : ''}`, {x:r.x, y:r.y, abs:r.z + (hw ? 9 : 5), near:hw ? 3000 : r.cls <= 4 ? 1500 : 750}); }
-    for (const S of net.stations) if (S.mrt) mk2('lbl n tr', `🚇 ${esc(S.name[0])}<small>${esc(S.name[1])}</small>`, {x:S.p[0], y:S.p[1], lift:S.elev ? 26 : 10, near:3200});
+    for (const r of SGR.roadLabels){ const hw = r.cls <= 1; mk2('lbl n road' + (hw ? ' hw' : ''), `${esc(r.en || r.zh)}${r.ref ? ` <b class="ref">${esc(r.ref)}</b>` : ''}${r.zh && r.en ? `<small>${esc(r.en)}</small>` : ''}`, {x:r.x, y:r.y, abs:r.z + (hw ? 9 : 5), near:hw ? 3000 : r.cls <= 4 ? 1500 : 750}); }
+    for (const S of net.stations) if (S.mrt) mk2('lbl n tr', `🚇 ${esc(S.name[1] || S.name[0])}`, {x:S.p[0], y:S.p[1], lift:S.elev ? 26 : 10, near:3200});
   }
 }
 
 /* ---------- entering and leaving Singapore ---------- */
-const SG_SUB = 'City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';
+const SG_SUB = 'City Brush · Hong Kong 1:1 · Real map · © OpenStreetMap', ISL_SUB = 'City Brush · Map 24 × 24 km';
+window.CB_LOOK = (lat, lon, dx, dy, dz) => { const t = sgXY(lat, lon); controls.target.set(t[0], 8, -t[1]); camera.position.set(t[0] + dx, dy, -t[1] + dz); };
 function sgView(){ const t = sgXY(22.2880, 114.1650), y = 10; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 1200, y + 1700, -t[1] - 4200); }
 function sgFly(){ const t = sgXY(22.2850, 114.1600); flyTo(new THREE.Vector3(t[0] + 900, 900, -t[1] - 2600), new THREE.Vector3(t[0], 30, -t[1])); }
 function sgBuild(){
@@ -811,7 +812,7 @@ function sgReset(){
   forceDivide = true; buildSkeleton(); drawTex(); renderStats(); requestRegen(); sgFly(); hideBusy();
 }
 function sgEnter(){
-  showBusy('正在载入香港… Loading Hong Kong');
+  showBusy('Loading Hong Kong');
   sgrLoad().then(() => setTimeout(() => {
     sgBuild(); renderStyle();
     tRes = null; buildFlow(); buildCars(); trafficRan = true; renderTrafficStats();
@@ -820,7 +821,7 @@ function sgEnter(){
 }
 function sgrBoot(){
   showFlow = false; { const f = $('#showFlow'); if (f) f.checked = false; } flowGroup.visible = false;   // the real roads read better without the flow overlay; it is one click away
-  showBusy('正在载入真实香港地图… Loading the real map of Hong Kong');
+  showBusy('Loading the real map of Hong Kong');
   sgrLoad().then(() => {
     sgView(); sgBuild();
     setTool('R'); renderStyle(); renderIslandStats(); syncLabels();

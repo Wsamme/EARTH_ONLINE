@@ -49,7 +49,7 @@ R("const sg20 = (x, y) => Math.min(1199, Math.max(0, Math.floor((y + HALF)/20)))
 # ---------- Singapore functions replaced by the v17 module ----------
 for f in ['genSingapore', 'sgZoning', 'placeSites', 'sgMRT', 'buildNetworkSG', 'sgMakeCuts', 'computeDistrictsSG', 'sgLabels', 'sgView', 'sgFly', 'sgBuild', 'sgExit', 'sgReset', 'sgEnter', 'lodTick']:
     drop_func(f)
-R("const SG_SUB = 'City Brush · 新加坡 Singapore 1:1 · 24 × 24 km', ISL_SUB = 'City Brush · 地图 24 × 24 km';", "")
+R("const SG_SUB = 'City Brush · Singapore 1:1 · 24 × 24 km', ISL_SUB = 'City Brush · Map 24 × 24 km';", "")
 # the port: Tuas too; anchored ships are placed by sgrShips
 R("const boxes = [[[1.262, 103.745], [1.293, 103.795]], [[1.253, 103.822], [1.276, 103.850]], [[1.293, 103.700], [1.312, 103.727]]];",
   "const boxes = [[[1.262, 103.745], [1.293, 103.795]], [[1.253, 103.822], [1.276, 103.850]], [[1.293, 103.700], [1.312, 103.727]], [[1.205, 103.595], [1.285, 103.665]]];")
@@ -224,10 +224,10 @@ R("/* ================= loop ================= */", "/* ================= v17 mo
 a = src.index('/* ================= boot ================= */'); b = src.index('requestAnimationFrame(loop);', a)
 src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nsgrBoot();\n" + src[b:]
 # titles
-R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
+R('<span class="sub">City Brush · Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>')
 # v23: the map switch under the title (both builds)
-R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>',
-  '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>\n      <div class="seg cityseg" role="group" aria-label="地图 Map"><button type="button" data-city="sg">新加坡<small>Singapore</small></button><button type="button" data-city="bay">旧金山湾区<small>SF Bay Area</small></button><button type="button" data-city="nyc">纽约<small>New York</small></button></div>')
+R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>',
+  '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>\n      <div class="seg cityseg" role="group" aria-label="Map"><button type="button" data-city="sg">Singapore</button><button type="button" data-city="bay">SF Bay Area</button><button type="button" data-city="nyc">New York</button></div>')
 R('.brand .sub{', '.cityseg{margin-top:9px;max-width:250px}.cityseg button{line-height:1.25;padding:6px 6px}.cityseg button small{display:block;font:400 9.5px var(--font-mono);color:var(--muted)}.cityseg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}.cityseg button[aria-pressed="true"] small{color:var(--panel);opacity:.75}\n.brand .sub{')
 if CITY == 'bay': src = patch_bay.apply(src)
 elif CITY == 'nyc': src = patch_nyc.apply(src)

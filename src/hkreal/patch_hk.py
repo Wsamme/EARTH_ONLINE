@@ -9,13 +9,12 @@ def apply(src):
         nonlocal src
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)
     # ---------- names, titles ----------
-    R("function sgNames(on){ const [zh, en] = on ? ['新加坡', 'Singapore'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['香港', 'Hong Kong'] : ['澄湾岛', 'Chengwan Island'];")
-    R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
-      "$('#sample').innerHTML = on ? '还原<small>Reset Hong Kong</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '中环<small>Central</small>' : '去首府<small>Capital</small>';")
-    R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="香港城市三维视图 Hong Kong 3D view"')
-    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
-    R('回到新加坡 · Back to Singapore', '回到香港 · Back to Hong Kong')
-    R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原香港… Restoring Hong Kong')")
+    R("function sgNames(on){ const [zh, en] = on ? ['Singapore', 'Singapore'] : ['Chengwan', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['Hong Kong', 'Hong Kong'] : ['Chengwan', 'Chengwan Island'];")
+    R("$('#sample').textContent = on ? 'Reset Singapore' : 'Sample'; $('#toCap').textContent = on ? 'Marina Bay' : 'Capital';", "$('#sample').textContent = on ? 'Reset Hong Kong' : 'Sample'; $('#toCap').textContent = on ? 'Central' : 'Capital';")
+    R('aria-label="City Brush 3D view"', 'aria-label="Hong Kong 3D view"')
+    R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · Hong Kong 1:1 · Real map · © OpenStreetMap</span>')
+    R('Back to Singapore', 'Back to Hong Kong')
+    R("showBusy('Restoring Singapore')", "showBusy('Restoring Hong Kong')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Hong Kong</title>', src, count=1)
     # ---------- the administrative stars (lm24/admin) have no Hong Kong data yet: no Singapore CDC stars here ----------
     R("const admCity = () => { try { if (typeof SGR_NYC !== 'undefined' && SGR_NYC) return 'nyc';", "const admCity = () => { try { if (typeof SGR_PATH === 'string' && SGR_PATH.startsWith('hk')) return 'hk'; if (typeof SGR_NYC !== 'undefined' && SGR_NYC) return 'nyc';")

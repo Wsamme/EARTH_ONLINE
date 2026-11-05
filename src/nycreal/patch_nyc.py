@@ -9,13 +9,12 @@ def apply(src):
         nonlocal src
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)
     # ---------- names, titles ----------
-    R("function sgNames(on){ const [zh, en] = on ? ['新加坡', 'Singapore'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['纽约', 'New York City'] : ['澄湾岛', 'Chengwan Island'];")
-    R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
-      "$('#sample').innerHTML = on ? '还原<small>Reset New York</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '曼哈顿中城<small>Midtown</small>' : '去首府<small>Capital</small>';")
-    R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="纽约城市三维视图 New York City 3D view"')
-    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 纽约 New York City 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
-    R('回到新加坡 · Back to Singapore', '回到纽约 · Back to New York')
-    R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原纽约… Restoring New York')")
+    R("function sgNames(on){ const [zh, en] = on ? ['Singapore', 'Singapore'] : ['Chengwan', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['New York City', 'New York City'] : ['Chengwan', 'Chengwan Island'];")
+    R("$('#sample').textContent = on ? 'Reset Singapore' : 'Sample'; $('#toCap').textContent = on ? 'Marina Bay' : 'Capital';", "$('#sample').textContent = on ? 'Reset New York' : 'Sample'; $('#toCap').textContent = on ? 'Midtown' : 'Capital';")
+    R('aria-label="City Brush 3D view"', 'aria-label="New York City 3D view"')
+    R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · New York City 1:1 · Real map · © OpenStreetMap</span>')
+    R('Back to Singapore', 'Back to New York')
+    R("showBusy('Restoring Singapore')", "showBusy('Restoring New York')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · New York City</title>', src, count=1)
     # ---------- the overview camera: the whole 56 km square ----------
     R("else if (SGR.on){ const c = sgXY(1.345, 103.83); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 4000, 30000, -c[1] + 33000); }",

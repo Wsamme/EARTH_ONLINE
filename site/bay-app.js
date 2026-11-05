@@ -4903,8 +4903,8 @@ canvas.addEventListener('pointerleave', () => { cursor.visible = false; });
 
 /* ================= UI ================= */
 let toastT = null;
-function showToast(t){ const b = $('#busy'); b.textContent = t; b.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { if (!queue.length) b.hidden = true; }, 2200); }
-function showBusy(t){ const b = $('#busy'); b.textContent = t; b.hidden = false; }
+function showToast(t){ if (window.SGLang && SGLang.txt) t = SGLang.txt(t); const b = $('#busy'); b.textContent = t; b.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { if (!queue.length) b.hidden = true; }, 2200); }
+function showBusy(t){ if (window.SGLang && SGLang.txt) t = SGLang.txt(t); const b = $('#busy'); b.textContent = t; b.hidden = false; }
 function hideBusy(){ $('#busy').hidden = true; }
 TOOLS.forEach((t, idx) => {
   const b = document.createElement('button'); b.className = 'tool'; b.dataset.tool = t.id; b.id = 'tool-' + t.id; const n = idx + 1;
@@ -4965,7 +4965,7 @@ function totals(){
   for (const c of cache.values()){ const s = c.st; for (const k of ['nBlocks','nParcels','nBld','devArea','greenArea','roadLen','resBlocks','covered','autoParks']) t[k] += s[k]; t.tallest = Math.max(t.tallest, s.tallest); for (let z = 0; z < 7; z++) t.floor[z] += s.floor[z] || 0; }
   return t;
 }
-const fmtPop = p => p >= 1e4 ? (p/1e4).toFixed(1) + ' 万' : Math.round(p).toLocaleString();
+const fmtPop = p => p >= 1e6 ? (p/1e6).toFixed(2) + ' million' : p >= 1e3 ? Math.round(p/1e3).toLocaleString() + 'k' : Math.round(p).toLocaleString();
 function renderStats(){ if (SGR.on && SGR.stats){ sgrRenderStats(); return; }
   // 统计卡不在页面上，就不要再扫整张地图来填那些数字。
   // No stats card on the page, so do not scan the whole map to fill it.
@@ -5024,33 +5024,45 @@ function renderDistrictList(){
   for (const ci of cis){
   const c = cityDefs[ci], head = document.createElement('div'); head.className = 'dcity';
   if (c){
-    head.innerHTML = `<input id="cname-${ci}" maxlength="10" aria-label="城市名 City name"><button>定位</button><span class="meta"></span>`;
+    head.innerHTML = `<input id="cname-${ci}" maxlength="16" aria-label="City name"><button>Find</button><span class="meta"></span>`;
     const inp = head.querySelector('input'); inp.value = c.name;
-    head.querySelector('.meta').textContent = `${c.en}${c.cap && !SG.on ? ' · 首府 Capital' : ''} · 人口 ${fmtPop(c.pop || 0)}`;
+    head.querySelector('.meta').textContent = `${c.en}${c.cap && !SG.on ? ' · capital' : ''} · pop ${fmtPop(c.pop || 0)}`;
     inp.addEventListener('input', () => { if (inp.value.trim()){ c.name = inp.value.trim(); c.custom = true; syncLabels(); } });
     head.querySelector('button').addEventListener('click', () => flyToCityIdx(ci));
-  } else head.innerHTML = '<b class="un">城外 Outside the cities</b>';
+  } else head.innerHTML = '<b class="un">Outside the cities</b>';
   list.appendChild(head);
   for (const d of live.filter(d => d.city === ci)){
     const row = document.createElement('div'); row.className = 'drow';
-    row.innerHTML = `<i style="--sw:${d.color}"></i><input id="dname-${d.id}" maxlength="12" aria-label="区名 District name"><span class="meta"></span>`;
+    row.innerHTML = `<i style="--sw:${d.color}"></i><input id="dname-${d.id}" maxlength="12" aria-label="District name"><span class="meta"></span>`;
     const inp = row.querySelector('input'); inp.value = d.name;
-    row.querySelector('.meta').textContent = `${d.en} · ${(d.area/1e6).toFixed(2)} km² · 人口 ${fmtPop(d.pop)}`;
+    row.querySelector('.meta').textContent = `${d.en} · ${(d.area/1e6).toFixed(2)} km² · pop ${fmtPop(d.pop)}`;
     inp.addEventListener('input', () => { if (inp.value.trim()){ d.name = inp.value.trim(); d.custom = true; syncLabels(); } });
     list.appendChild(row);
   }
   }
-  $('#kOut').textContent = kWanted ? String(kWanted) : `自动 (${live.length})`;
+  $('#kOut').textContent = kWanted ? String(kWanted) : `Auto (${live.length})`;
 }
 function selectTab(name){
   for (const t of ['plan','dist','traffic','terrain']){ $('#tab-' + t).setAttribute('aria-selected', String(t === name)); $('#pane-' + t).hidden = t !== name; }
-  if ($('#panel').classList.contains('collapsed')){ $('#panel').classList.remove('collapsed'); $('#collapse').innerHTML = '收起<small>Hide</small>'; }
+  if ($('#panel').classList.contains('collapsed')){ $('#panel').classList.remove('collapsed'); $('#collapse').textContent = 'Hide tools'; }
 }
 for (const t of ['plan','dist','traffic','terrain']) $('#tab-' + t).addEventListener('click', () => selectTab(t));
-// 右上角统计卡已删除。这些函数留着，是为了旧的调用点不会报错。
-// The stats card is gone. These stay so older call sites do not throw.
 function setStatsCollapsed(){}
-$('#collapse').addEventListener('click', () => { const c = $('#panel').classList.toggle('collapsed'); $('#collapse').innerHTML = c ? '高级<small>Advanced</small>' : '收起<small>Hide</small>'; $('#collapse').setAttribute('aria-expanded', String(!c)); });
+$('#collapse').addEventListener('click', () => { const c = $('#panel').classList.toggle('collapsed'); $('#collapse').textContent = c ? 'Advanced' : 'Hide tools'; $('#collapse').setAttribute('aria-expanded', String(!c)); });
+function setPanelAway(away, store){
+  document.body.classList.toggle('panel-away', !!away);
+  const peek = $('#panelPeek'); if (peek) peek.hidden = !away;
+  const b = $('#panelHide'); if (b) b.setAttribute('aria-expanded', String(!away));
+  if (store){ try { localStorage.setItem('cb-panel-away', away ? '1' : '0'); } catch (e) {} }
+}
+function initPanelAway(){
+  let away = window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches;
+  try { const s = localStorage.getItem('cb-panel-away'); if (s === '1' || s === '0') away = s === '1'; } catch (e) {}
+  setPanelAway(away, false);
+}
+$('#panelHide').addEventListener('click', () => setPanelAway(true, true));
+$('#panelPeek').addEventListener('click', () => setPanelAway(false, true));
+initPanelAway();
 function setSeed(v){ seed = Math.max(1, Math.floor(v) % 2147483647 || 1); $('#seedIn').value = seed; buildSkeleton(); requestRegen(); }
 const shuffle = () => setSeed((seed*48271 + 11) % 2147483647);
 $('#reseed').addEventListener('click', shuffle);
@@ -5075,7 +5087,7 @@ for (const [k, zh, en] of BTYPES){
 function renderBtypes(){ document.querySelectorAll('.btype').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === VAR.bridge))); $('#btypeNote').textContent = BT_NOTE[VAR.bridge]; }
 renderBtypes(); $('#seedIn').value = seed;
 $('#undo').addEventListener('click', undo);
-$('#sample').addEventListener('click', () => { pushUndo(); if (SG.on){ showBusy('正在还原湾区… Restoring the Bay Area'); setTimeout(sgReset, 30); return; } showBusy('正在规划城市和交通网… Planning cities and transport'); setTimeout(() => { clearNetwork(true); sampleCity(); buildNetwork(); drawUserRoads(); forceDivide = true; buildSkeleton(); drawTex(); renderStats(); requestRegen(); flyToCity(); }, 30); });
+$('#sample').addEventListener('click', () => { pushUndo(); if (SG.on){ showBusy('Restoring the Bay Area'); setTimeout(sgReset, 30); return; } showBusy('Planning cities and transport'); setTimeout(() => { clearNetwork(true); sampleCity(); buildNetwork(); drawUserRoads(); forceDivide = true; buildSkeleton(); drawTex(); renderStats(); requestRegen(); flyToCity(); }, 30); });
 $('#clear').addEventListener('click', () => { pushUndo(); zones.fill(0); dens.fill(0); arch.fill(0); cityDefs = []; landmarks = []; rebuildLandmarks(); roads = []; drawUserRoads(); tRes = null; buildFlow(); buildCars(); trafficRan = false; renderTrafficStats(); forceDivide = true; buildSkeleton(); drawTex(); syncLabels(); requestRegen(); });
 $('#rebuildNet').addEventListener('click', () => { if (!cityDefs.length){ showToast('先生成示例城市 · Generate the sample cities first'); return; } showBusy('正在规划交通网… Routing the network'); setTimeout(() => { if (SG.on) buildNetworkSG(); else { buildNetwork(); buildElevated(); } requestRegen(); drawTex(); renderStats(); hideBusy(); if (trafficRan && autoTraffic) startTraffic(); }, 30); });
 $('#toCap').addEventListener('click', () => flyToCity());
@@ -5720,7 +5732,7 @@ function hwName(l){ if (l.zh) return [l.zh, l.en]; if (l.air) return [`G${l.gid}
 function flyToCityIdx(i){ const c = cityDefs[i]; if (!c) return; const p = c.labelPos || [c.x, c.y], y = hAt(p[0], p[1]); flyTo(new THREE.Vector3(p[0] + c.r*0.9, y + c.r*1.2, -p[1] + c.r*1.3), new THREE.Vector3(p[0], y, -p[1])); }
 function regionLabels(){
   const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
-  cityDefs.forEach((c, i) => { const p = c.labelPos || [c.x, c.y], el = document.createElement('button'); el.className = 'lbl city'; el.innerHTML = '<b></b><small></small>'; el.querySelector('b').textContent = c.name; el.querySelector('small').textContent = c.en + (c.pop ? ' · ' + fmtPop(c.pop) : '') + (c.cap && !SG.on ? ' · 首府' : ''); el.addEventListener('click', () => flyToCityIdx(i)); labelsEl.appendChild(el); labelItems.push({el, x:p[0], y:p[1], lift:160, minD:2600}); });
+  cityDefs.forEach((c, i) => { const p = c.labelPos || [c.x, c.y], el = document.createElement('button'); el.className = 'lbl city'; el.innerHTML = '<b></b><small></small>'; el.querySelector('b').textContent = c.en || c.name; el.querySelector('small').textContent = (c.pop ? fmtPop(c.pop) : '') + (c.cap && !SG.on ? ' · capital' : ''); el.addEventListener('click', () => flyToCityIdx(i)); labelsEl.appendChild(el); labelItems.push({el, x:p[0], y:p[1], lift:160, minD:2600}); });
   if (!showNet) return;
   const add = (cls, nm, x, y, abs, maxD, icon) => { const el = document.createElement('div'); el.className = 'lbl n ' + cls; el.innerHTML = `${icon || ''}${esc(nm[0])}<small>${esc(nm[1])}</small>`; labelsEl.appendChild(el); labelItems.push({el, x, y, abs, lift:20, maxD}); };
   if (net.airport){ const A = net.airport; add('tr', airportName(), A.c[0] + A.v[0]*200, A.c[1] + A.v[1]*200, A.y + 60, 18000, '✈ '); }
@@ -13959,8 +13971,8 @@ function sgSkirt(){
 
 /* ---------- entering and leaving Singapore ---------- */
 
-function sgNames(on){ const [zh, en] = on ? ['旧金山湾区', 'San Francisco Bay Area'] : ['澄湾岛', 'Chengwan Island']; $('#cityName').value = zh; $('#cityEn').value = en; const ct = $('#cityTitle'); if (ct) ct.textContent = zh; const cet = $('#cityEnTitle'); if (cet) cet.textContent = en;
-  $('#sample').innerHTML = on ? '还原<small>Reset Bay Area</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '旧金山市中心<small>Downtown SF</small>' : '去首府<small>Capital</small>'; const sub = document.querySelector('.brand .sub'); if (sub) sub.textContent = on ? SG_SUB : ISL_SUB; }
+function sgNames(on){ const [zh, en] = on ? ['San Francisco Bay Area', 'San Francisco Bay Area'] : ['Chengwan', 'Chengwan Island']; $('#cityName').value = zh; $('#cityEn').value = en; const ct = $('#cityTitle'); if (ct) ct.textContent = zh; const cet = $('#cityEnTitle'); if (cet) cet.textContent = en;
+  $('#sample').textContent = on ? 'Reset Bay Area' : 'Sample'; $('#toCap').textContent = on ? 'Downtown SF' : 'Capital'; const sub = document.querySelector('.brand .sub'); if (sub) sub.textContent = on ? SG_SUB : ISL_SUB; }
 /* sgView: replaced in v17 */
 /* sgFly: replaced in v17 */
 /* sgBuild: replaced in v17 */
@@ -32383,7 +32395,7 @@ function flyTrayUI(){
 <div class="flyspec" id="flySpec"></div>
 <div class="flylab">出发 · START</div><div class="flyplaces" id="flyPlaces" role="group" aria-label="出发地点 Start"></div>
 <div class="flyfoot"><div class="flylivs" id="flyLivs" role="group" aria-label="涂装 Livery"></div>
-<div class="seg" role="group" aria-label="辅助 Assist">${ASSN.map((a, i) => `<button type="button" data-fa="${i}" aria-pressed="false" title="${['直接操纵：杆量 = 舵面，手动配平', '标准：电传式姿态保持、协调转弯、失速保护', '新手：松杆改平，坡度 / 俯仰限制'][i]}">${a[0]}<small style="display:block;font:400 8.5px var(--font-mono)">${a[1]}</small></button>`).join('')}</div>
+<div class="seg" role="group" aria-label="辅助 Assist">${ASSN.map((a, i) => `<button type="button" data-fa="${i}" aria-pressed="false" title="${['Direct: stick equals control surface, trim by hand', 'Standard: attitude hold, coordinated turns, stall protection', 'Beginner: release the stick to level, bank and pitch limits'][i]}">${a[0]}<small style="display:block;font:400 8.5px var(--font-mono)">${a[1]}</small></button>`).join('')}</div>
 <button type="button" class="flygo" id="flyGo">起飞 Fly ▸</button></div>
 <dl class="flykeys"><dt>W S · A D</dt><dd>俯仰 · 横滚 Pitch · roll (直升机: 周期变距 cyclic)</dd><dt>↑ ↓ · Q E</dt><dd>油门 / 总距 · 方向舵 Throttle / collective · rudder</dd><dt>G · F V · 空格</dt><dd>起落架 · 襟翼 · 刹车 Gear · flaps · brakes</dd><dt>C · R · Esc</dt><dd>视角 · 复位 · 退出 Camera · respawn · exit</dd><dt>手机 Phone</dt><dd>左摇杆 · 右油门滑块 Stick left · throttle right</dd></dl>`;
   pane.appendChild(box);
@@ -46271,14 +46283,15 @@ function txtFor1(s, mode){
 
 // ---------------------------------------------------------------- state
 let apply = () => {}, pass = () => {};   // the DOM side (assigned below when there is a document; the page script is strict)
-const S = {mode:'both', fns:[], obs:null, pend:new Set(), pendA:new Set(), raf:0, nodes:0, attrs:0, batches:0, ms:0, msMax:0, fms:0, fmax:0, swMs:0, busy:false};
+const S = {mode:'en', fns:[], obs:null, pend:new Set(), pendA:new Set(), raf:0, nodes:0, attrs:0, batches:0, ms:0, msMax:0, fms:0, fmax:0, swMs:0, busy:false};
 const norm = m => { m = String(m || '').toLowerCase(); return m === 'cn' || m === '中' || m === 'zh-cn' ? 'zh' : m === '双' || m === 'bi' ? 'both' : MODES.includes(m) ? m : null; };
-try { const q = typeof location !== 'undefined' && /[?&]lang=([a-z]+)/i.exec(location.search); const v = norm(q && q[1]) || norm(typeof localStorage !== 'undefined' && localStorage.getItem(LANG_KEY)); if (v) S.mode = v; } catch (e){ /* private mode */ }
+// English is the only interface language. A saved 中 / 双 choice is not restored.
+try { const q = typeof location !== 'undefined' && /[?&]lang=([a-z]+)/i.exec(location.search); const v = norm(q && q[1]); if (v === 'en') S.mode = 'en'; } catch (e){ /* private mode */ }
 const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
 const L = {
   get mode(){ return S.mode; },
-  set(m){ m = norm(m); if (!m) return S.mode; const was = S.mode; S.mode = m; try { localStorage.setItem(LANG_KEY, m); } catch (e){ /* */ }
-    if (typeof document !== 'undefined') apply(was); for (const f of S.fns.slice()) try { f(m, was); } catch (e){ console.error('[i18n] listener', e); } return m; },
+  set(m){ m = norm(m); if (m !== 'en') return S.mode; const was = S.mode; S.mode = 'en'; try { localStorage.setItem(LANG_KEY, 'en'); } catch (e){ /* */ }
+    if (typeof document !== 'undefined') apply(was); for (const f of S.fns.slice()) try { f('en', was); } catch (e){ console.error('[i18n] listener', e); } return 'en'; },
   on(fn){ if (typeof fn === 'function') S.fns.push(fn); return () => { const i = S.fns.indexOf(fn); if (i >= 0) S.fns.splice(i, 1); }; },
   pick(zh, en){ zh = zh == null ? '' : String(zh); en = en == null ? '' : String(en); if (S.mode === 'zh') return zh || en; if (S.mode === 'en') return en || zh; return zh && en && zh !== en ? zh + ' ' + en : (zh || en); },
   sel(both, zh, en){ return S.mode === 'both' ? both : L.pick(zh, en); },
@@ -46462,14 +46475,7 @@ html.lang-en .dtab{grid-template-columns:1fr;justify-items:center;row-gap:2px;mi
   (document.head || document.documentElement).appendChild(css);
   htmlCls();
   // the switch: 中 / EN / 双 under the city switch in the title panel
-  function mountUI(){
-    if (document.querySelector('.langseg')) return;
-    const at = document.querySelector('.cityseg') || document.querySelector('.brand'); if (!at) return;
-    const seg = document.createElement('div'); seg.className = 'seg langseg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Language 语言'); seg.setAttribute('data-i18n-off', '');
-    seg.innerHTML = [['zh', '中', '中文 Chinese only'], ['en', 'EN', 'English only 仅英文'], ['both', '双', '双语 Bilingual (中文 + English)']].map(([k, t, ti]) => `<button type="button" data-lang="${k}" title="${ti}" aria-pressed="${k === S.mode}">${t}</button>`).join('');
-    if (at.classList.contains('cityseg')) at.after(seg); else at.appendChild(seg);
-    seg.addEventListener('click', e => { const b = e.target.closest('button[data-lang]'); if (b) L.set(b.dataset.lang); });
-  }
+  function mountUI(){}
   const boot = () => { try { mountUI(); htmlCls(); if (S.mode !== 'both') apply('both'); } catch (e){ console.error('[i18n] boot', e); } };
   if (typeof HOOKS !== 'undefined' && HOOKS.boot) HOOKS.boot.push(boot);
   else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else setTimeout(boot, 0);
@@ -66847,13 +66853,13 @@ function sgrPreview(){
   allocWorld(SGR.base.HALF, SGR.base.CELL, SGR.base.TS);
   genSingapore(); buildTerrainMesh(); sgSkirt(); sgrGroundInit();
   sgView(); drawTex(); applyTime();
-  showBusy('地形已显示，正在载入街道和建筑… Terrain is up, loading streets and buildings');
+  showBusy('Terrain is up. Loading streets and buildings');
 }
 function sgrLoad(){
   if (SGR.loading) return SGR.loading;
   SGR.loading = (async () => {
     const img = new Image(); img.decoding = 'async'; img.src = SGR_PATH + 'ground.webp';
-    showBusy('正在载入地形… Loading the terrain');
+    showBusy('Loading the terrain');
     const b = await sgrFetch('bay_base.txt');
     await img.decode();
     sgrApplyBase(b, img);
@@ -66928,7 +66934,7 @@ function sgZoning(){
   zones.fill(0); dens.fill(0); arch.fill(0); resv.fill(0); roads = [];
   for (let k = 0; k < N*N; k++) if (nat[k] === 5) resv[k] = 8;     // foreign land is context only
   SG.regMap = {}; cityDefs = [];
-  SGD.regs.forEach((r, i) => { SG.regMap[i + 1] = cityDefs.length; cityDefs.push({x:r.x, y:r.y, r:r.r, cap:r.en === 'San Francisco', name:r.zh, en:r.en, style:0, custom:false}); });
+  SGD.regs.forEach((r, i) => { SG.regMap[i + 1] = cityDefs.length; cityDefs.push({x:r.x, y:r.y, r:r.r, cap:r.en === 'San Francisco', name:r.en || r.zh, en:r.en, style:0, custom:false}); });
 }
 const sgrTexPx = (x, y) => [(x + HALF)/(2*HALF)*SGR_TEX, (HALF - y)/(2*HALF)*SGR_TEX];
 function sgrGroundInit(){
@@ -67158,7 +67164,7 @@ function sgrStep(){
   drain(SGR.queue, window.CB_MOBILE ? 12 : 16);
   if (window.CB_MOBILE) drain(SGR.farQ, 8);
   const left = (SGR.queue ? SGR.queue.length : 0) + (SGR.farQ ? SGR.farQ.length : 0);
-  if (SGR.total && left && SGR.built <= SGR.total) showBusy(`真实城市 ${Math.min(SGR.built, SGR.total)}/${SGR.total} · Building the real city`);
+  if (SGR.total && left && SGR.built <= SGR.total) showBusy(`Building the real city ${Math.min(SGR.built, SGR.total)}/${SGR.total}`);
   if (SGR.total && !left){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
   if ((sgrStep.pub = (sgrStep.pub || 0) + 1) % 20 === 0){
     let full = 0, far = 0; for (const T of SGR.tiles.values()){ if (T.lod === 'full') full++; else if (T.lod === 'far') far++; }
@@ -67516,9 +67522,9 @@ const SGR_POI_ICON = {theme_park:'🎢', zoo:'🦒', aquarium:'🐠', attraction
 function sgLabels(){
   const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
   const mk2 = (cls, html, it) => { const el = document.createElement('div'); el.className = cls; el.innerHTML = html; labelsEl.appendChild(el); labelItems.push(Object.assign({el}, it)); };
-  const nm = (zh, en) => `${esc(zh || en)}${zh && en && zh !== en ? `<small>${esc(en)}</small>` : ''}`;
-  for (const s of sgSites) mk2('lbl n lm', `${s.key === 'gardens' ? '🌿' : /^uss$|disney|oceanpark/i.test(s.key) ? '🎢' : s.key.startsWith('changi') ? '✈' : '🎓'} ${esc(s.zh)}<small>${esc(s.en)}</small>`, {x:s.x, y:s.y, abs:s.top + 20, maxD:16000});
-  for (const s of sgSites) if (s.labels) for (const L of s.labels) mk2('lbl n poi', `${L.ic || '🏛'} ${esc(L.zh || L.en)}${L.zh && L.en && L.zh !== L.en ? `<small>${esc(L.en)}</small>` : ''}`, {x:L.x, y:L.y, abs:L.abs + 6, near:L.near || 1500});
+  const nm = (zh, en) => esc(en || zh || '');
+  for (const s of sgSites) mk2('lbl n lm', `${s.key === 'gardens' ? '🌿' : /^uss$|disney|oceanpark/i.test(s.key) ? '🎢' : s.key.startsWith('changi') ? '✈' : '🎓'} ${esc(s.en || s.zh)}`, {x:s.x, y:s.y, abs:s.top + 20, maxD:16000});
+  for (const s of sgSites) if (s.labels) for (const L of s.labels) mk2('lbl n poi', `${L.ic || '🏛'} ${esc(L.en || L.zh)}${L.zh && L.en && L.zh !== L.en ? `<small>${esc(L.en)}</small>` : ''}`, {x:L.x, y:L.y, abs:L.abs + 6, near:L.near || 1500});
   const B = SGR.base; if (!B) return;
   if (showNatLabels){
     const seen = new Set(SGD.pas.map(p => p.en.toLowerCase()));
@@ -67535,13 +67541,14 @@ function sgLabels(){
   const inPark = (x, y) => { for (const Q of PARKS){ const b = Q.bb; if (x < b[0] || x > b[2] || y < b[1] || y > b[3]) continue; if (pip(Q.P, x, y)) return true; } return false; };
   if (showPoi) for (const p of B.pois){ if (onLm(p.x, p.y) || siteDup(p) || subLab(p.x, p.y) || inPark(p.x, p.y)) continue; const ic = SGR_POI_ICON[p.k] || '•', near = p.pr <= 1 ? 9000 : p.pr === 2 ? 1900 : 900; mk2('lbl n poi' + (p.pr <= 1 ? ' big' : ''), `${ic} ${nm(p.zh, p.en)}`, {x:p.x, y:p.y, lift:18, near}); }
   if (showNet){
-    for (const r of SGR.roadLabels){ const hw = r.cls <= 1; mk2('lbl n road' + (hw ? ' hw' : ''), `${esc(r.zh || r.en)}${r.ref ? ` <b class="ref">${esc(r.ref)}</b>` : ''}${r.zh && r.en ? `<small>${esc(r.en)}</small>` : ''}`, {x:r.x, y:r.y, abs:r.z + (hw ? 9 : 5), near:hw ? 3000 : r.cls <= 4 ? 1500 : 750}); }
-    for (const S of net.stations) if (S.mrt) mk2('lbl n tr', `🚇 ${esc(S.name[0])}<small>${esc(S.name[1])}</small>`, {x:S.p[0], y:S.p[1], lift:S.elev ? 26 : 10, near:3200});
+    for (const r of SGR.roadLabels){ const hw = r.cls <= 1; mk2('lbl n road' + (hw ? ' hw' : ''), `${esc(r.en || r.zh)}${r.ref ? ` <b class="ref">${esc(r.ref)}</b>` : ''}${r.zh && r.en ? `<small>${esc(r.en)}</small>` : ''}`, {x:r.x, y:r.y, abs:r.z + (hw ? 9 : 5), near:hw ? 3000 : r.cls <= 4 ? 1500 : 750}); }
+    for (const S of net.stations) if (S.mrt) mk2('lbl n tr', `🚇 ${esc(S.name[1] || S.name[0])}`, {x:S.p[0], y:S.p[1], lift:S.elev ? 26 : 10, near:3200});
   }
 }
 
 /* ---------- entering and leaving Singapore ---------- */
-const SG_SUB = 'City Brush · 旧金山湾区 San Francisco Bay Area 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';
+const SG_SUB = 'City Brush · San Francisco Bay Area 1:1 · Real map · © OpenStreetMap', ISL_SUB = 'City Brush · Map 24 × 24 km';
+window.CB_LOOK = (lat, lon, dx, dy, dz) => { const t = sgXY(lat, lon); controls.target.set(t[0], 8, -t[1]); camera.position.set(t[0] + dx, dy, -t[1] + dz); };
 function sgView(){ const t = sgXY(37.7905, -122.3990), y = 20; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2600, y + 2300, -t[1] + 3600); }
 function sgFly(){ const t = sgXY(37.7905, -122.3990); flyTo(new THREE.Vector3(t[0] + 1700, 1150, -t[1] + 2100), new THREE.Vector3(t[0], 20, -t[1])); }
 function sgBuild(){
@@ -67582,7 +67589,7 @@ function sgReset(){
   forceDivide = true; buildSkeleton(); drawTex(); renderStats(); requestRegen(); sgFly(); hideBusy();
 }
 function sgEnter(){
-  showBusy('正在载入旧金山湾区… Loading the San Francisco Bay Area');
+  showBusy('Loading the San Francisco Bay Area');
   sgrLoad().then(() => setTimeout(() => {
     sgBuild(); renderStyle();
     tRes = null; buildFlow(); buildCars(); trafficRan = true; renderTrafficStats();
@@ -67591,7 +67598,7 @@ function sgEnter(){
 }
 function sgrBoot(){
   showFlow = false; { const f = $('#showFlow'); if (f) f.checked = false; } flowGroup.visible = false;   // the real roads read better without the flow overlay; it is one click away
-  showBusy('正在载入真实旧金山湾区地图… Loading the real map of the San Francisco Bay Area');
+  showBusy('Loading the real map of the San Francisco Bay Area');
   sgrLoad().then(() => {
     sgView(); sgBuild();
     setTool('view'); $('#tray').classList.add('closed'); renderStyle(); renderIslandStats(); syncLabels();
@@ -67888,11 +67895,11 @@ function sgrRenderIslandStats(){
    three builds; the current city is pressed. */
 HOOKS.boot.push(() => {
   const CITIES = [
-    {id:'sg',  zh:'新加坡',     en:'Singapore',   busy:'正在切换到新加坡… Switching to Singapore'},
-    {id:'bay', zh:'旧金山湾区', en:'SF Bay Area', busy:'正在切换到旧金山湾区… Switching to the San Francisco Bay Area'},
-    {id:'nyc', zh:'纽约',       en:'New York',    busy:'正在切换到纽约… Switching to New York City'},
-    {id:'hk',  zh:'香港',       en:'Hong Kong',   busy:'正在切换到香港… Switching to Hong Kong'},
-    {id:'tyo', zh:'东京',       en:'Tokyo',       busy:'正在切换到东京… Switching to Tokyo'}];
+    {id:'sg',  zh:'Singapore', en:'Singapore',   busy:'Switching to Singapore'},
+    {id:'bay', zh:'SF Bay Area', en:'SF Bay Area', busy:'Switching to the San Francisco Bay Area'},
+    {id:'nyc', zh:'New York', en:'New York',    busy:'Switching to New York City'},
+    {id:'hk',  zh:'Hong Kong', en:'Hong Kong',   busy:'Switching to Hong Kong'},
+    {id:'tyo', zh:'Tokyo', en:'Tokyo',       busy:'Switching to Tokyo'}];
   // each city's own artifact (opened in a new tab when that city is not published next to this page)
   const CB_LINKS = {sg:'https://claude.ai/artifact/JWrenra2o84JDA2TNcp3kR', bay:'https://claude.ai/artifact/KAqSgP5xdvToctTQQr28kE',
     nyc:'https://claude.ai/artifact/VqyeDs374SMPZAMikpYTos', hk:'https://claude.ai/artifact/46pYczMQtS1PANp9iE91nR', tyo:'https://claude.ai/artifact/PoNpCj8MxrjFFFUxddfzMn'};
@@ -67900,7 +67907,7 @@ HOOKS.boot.push(() => {
   try { if (typeof SGR_NYC !== 'undefined' && SGR_NYC) cur = 'nyc'; else if (typeof SGR_BAY !== 'undefined' && SGR_BAY) cur = 'bay';
     else if (typeof SGR_PATH === 'string' && /^(hk|tyo)data\//.test(SGR_PATH)) cur = SGR_PATH.split('data/')[0]; } catch (e){ cur = 'sg'; }
   const seg = document.querySelector('.cityseg'); if (!seg) return;
-  seg.innerHTML = CITIES.map(c => `<button type="button" data-city="${c.id}" aria-pressed="${c.id === cur}" title="${c.zh} ${c.en}">${c.zh}<small>${c.en}</small></button>`).join('');
+  seg.innerHTML = CITIES.map(c => `<button type="button" data-city="${c.id}" aria-pressed="${c.id === cur}" title="${c.en}">${c.en}</button>`).join('');
   seg.style.display = ''; seg.hidden = false; seg.classList.add('city3', 'city5');
   // three buttons in the brand column (~230 px next to the collapse button, on phones too): tighter padding, the English line may clip
   const st = document.createElement('style');
@@ -67946,7 +67953,7 @@ HOOKS.boot.push(() => {
   const openExt = to => { const u = CB_LINKS[to]; if (!okLink(u)) return false;
     let w = null; try { w = window.open(u, '_blank', 'noopener'); } catch (e){ w = null; }
     if (!w){ try { window.top.location.href = u; return true; } catch (e){ /* sandboxed */ } }
-    showToast(`已在新标签页打开 · Opened in a new tab: ${u}`); return true; };
+    showToast(`Opened in a new tab: ${u}`); return true; };
   for (const b of seg.querySelectorAll('button')){
     b.addEventListener('click', async () => {
       const to = b.dataset.city, C = CITIES.find(c => c.id === to); if (!C || to === cur || b.disabled) return;

@@ -35,6 +35,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .panel{position:fixed;left:16px;top:calc(16px + env(safe-area-inset-top,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:316px;background:var(--panel);border:1px solid var(--rule);border-radius:10px;box-shadow:0 10px 32px rgba(27,30,28,.13);display:flex;flex-direction:column;overflow:hidden;z-index:3}
 .panel.collapsed{bottom:auto}
 .panel.collapsed .tabs,.panel.collapsed .panel-body{display:none}
+.panel-peek{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px));z-index:5;width:36px;height:36px;border:1px solid var(--rule);border-radius:8px;background:var(--panel);box-shadow:0 6px 18px rgba(27,30,28,.16);font-size:18px;line-height:1;cursor:pointer}
+body.panel-away .panel{display:none}
+body:not(.panel-away) .panel-peek{display:none}
 .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px 10px}
 .brand h1{font-size:19px;font-weight:700;letter-spacing:.04em;margin:0;line-height:1.2}
 .cityseg{margin-top:9px;max-width:250px}.cityseg button{line-height:1.25;padding:6px 6px}.cityseg button small{display:block;font:400 9.5px var(--font-mono);color:var(--muted)}.cityseg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}.cityseg button[aria-pressed="true"] small{color:var(--panel);opacity:.75}
@@ -251,196 +254,196 @@ body.night .lbl.n.bridge{color:#f2dfb5}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
-<div id="stage" aria-label="东京城市三维视图 Tokyo 3D view"></div>
+<div id="stage" aria-label="Tokyo 3D view"></div>
 <div id="labels"></div>
+<button type="button" class="panel-peek" id="panelPeek" hidden aria-label="Show panel" title="Show panel">☰</button>
 
 <aside class="panel collapsed" id="panel">
   <header class="panel-head">
     <div class="brand">
-      <h1>城市笔刷</h1>
-      <span class="sub">City Brush · 东京 Tokyo 1:1 · 真实地图 Real map · © OpenStreetMap</span>
-      <div class="seg cityseg" role="group" aria-label="地图 Map"><button type="button" data-city="sg">新加坡<small>Singapore</small></button><button type="button" data-city="bay">旧金山湾区<small>SF Bay Area</small></button><button type="button" data-city="nyc">纽约<small>New York</small></button></div>
+      <h1>City Brush</h1>
+      <span class="sub">City Brush · Tokyo 1:1 · Real map · © OpenStreetMap</span>
+      <div class="seg cityseg" role="group" aria-label="Map"><button type="button" data-city="sg">Singapore</button><button type="button" data-city="bay">SF Bay Area</button><button type="button" data-city="nyc">New York</button></div>
     </div>
-    <!-- 默认收起。点开才看到种子、风格、分区编辑这些生成器工具。
-         Collapsed by default. The generator tools open only after this is pressed. -->
-    <button class="icon-btn" id="collapse" aria-expanded="false" aria-controls="panelBody" title="生成器工具 Generator tools">高级<small>Advanced</small></button>
+    <button class="icon-btn" id="panelHide" type="button" aria-label="Hide panel" title="Hide panel">‹</button>
+    <button class="icon-btn" id="collapse" aria-expanded="false" aria-controls="panelBody" title="Generator tools">Advanced</button>
   </header>
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-plan" aria-selected="true" aria-controls="pane-plan">规划<small>PLAN</small></button>
-    <button class="tab" role="tab" id="tab-dist" aria-selected="false" aria-controls="pane-dist">行政区<small>DISTRICTS</small></button>
-    <button class="tab" role="tab" id="tab-traffic" aria-selected="false" aria-controls="pane-traffic">交通<small>TRAFFIC</small></button>
-    <button class="tab" role="tab" id="tab-terrain" aria-selected="false" aria-controls="pane-terrain">地理<small>TERRAIN</small></button>
+    <button class="tab" role="tab" id="tab-plan" aria-selected="true" aria-controls="pane-plan">Plan</button>
+    <button class="tab" role="tab" id="tab-dist" aria-selected="false" aria-controls="pane-dist">Districts</button>
+    <button class="tab" role="tab" id="tab-traffic" aria-selected="false" aria-controls="pane-traffic">Traffic</button>
+    <button class="tab" role="tab" id="tab-terrain" aria-selected="false" aria-controls="pane-terrain">Terrain</button>
   </div>
   <div class="panel-body" id="panelBody">
 
     <div class="pane" id="pane-plan" role="tabpanel" aria-labelledby="tab-plan">
       <section>
-        <h2>城市风格 <span>Style preset</span></h2>
+        <h2>Style preset</h2>
         <div class="chips" id="styles"></div>
         <p class="note" id="styleNote"></p>
         <dl class="params" id="params"></dl>
       </section>
       <section>
-        <h2>随机与特性 <span>Variation</span></h2>
+        <h2>Variation</h2>
         <div class="seedrow">
-          <label class="field" for="seedIn">随机种子 Seed<input class="txt mono" id="seedIn" inputmode="numeric" maxlength="10"></label>
-          <button class="ghost" id="seedRoll">换一个<br><small>Shuffle</small></button>
+          <label class="field" for="seedIn">Seed<input class="txt mono" id="seedIn" inputmode="numeric" maxlength="10"></label>
+          <button class="ghost" id="seedRoll">Shuffle</button>
         </div>
-        <label class="slider" for="varR"><span>随机程度 Randomness</span><output id="varOut" for="varR">50%</output></label>
+        <label class="slider" for="varR"><span>Randomness</span><output id="varOut" for="varR">50%</output></label>
         <input type="range" id="varR" min="0" max="100" step="5" value="50">
-        <p class="note">同一个种子永远生成同一座城。随机程度 0% 像统一规划的新城：高度、退线、桥型都很整齐；100% 像自然生长的老城：高低错落、形体和桥型都更多样。<br>The same seed always gives the same city. 0% looks planned and uniform; 100% looks grown over time.</p>
-        <p class="note">建筑特性 Building traits</p>
+        <p class="note">The same seed always gives the same city. 0% looks planned and uniform; 100% looks grown over time.</p>
+        <p class="note">Building traits</p>
         <div class="chips" id="traits"></div>
-        <p class="note">桥型 Bridge type</p>
+        <p class="note">Bridge type</p>
         <div class="chips" id="btypes"></div>
         <p class="note" id="btypeNote"></p>
       </section>
       <section>
-        <h2>生成 <span>Generate</span></h2>
+        <h2>Generate</h2>
         <div class="row3">
-          <button id="reseed">换方案<small>Reseed</small></button>
-          <button id="undo">撤销<small>Undo</small></button>
-          <button id="sample">示例城市<small>Sample</small></button>
+          <button id="reseed">Reseed</button>
+          <button id="undo">Undo</button>
+          <button id="sample">Sample</button>
         </div>
-        <button class="ghost" id="clear">清空城市（保留交通网）· Clear cities</button>
+        <button class="ghost" id="clear">Clear cities (keep the network)</button>
         <div class="row2">
-          <button id="rebuildNet">重建交通网<small>Rebuild network</small></button>
-          <button id="toCap">去首府<small>Capital</small></button>
+          <button id="rebuildNet">Rebuild network</button>
+          <button id="toCap">Capital</button>
         </div>
         <div class="checks">
-          <label for="showNet"><input type="checkbox" id="showNet" checked> 高速、铁路、机场和港口 <small>Regional transport</small></label>
+          <label for="showNet"><input type="checkbox" id="showNet" checked> Regional transport</label>
         </div>
         <div class="checks">
-          <label for="tint"><input type="checkbox" id="tint" checked> 建筑按用地着色 <small>Tint</small></label>
+          <label for="tint"><input type="checkbox" id="tint" checked> Tint buildings by zone</label>
         </div>
         <div>
-          <p class="note" style="margin-bottom:6px">地面图层 Ground layer</p>
-          <div class="seg" role="group" aria-label="地面图层">
-            <button id="ov-zone" aria-pressed="true">用地 Zoning</button>
-            <button id="ov-dist" aria-pressed="false">行政区 Districts</button>
-            <button id="ov-arch" aria-pressed="false">风格 Style</button>
-            <button id="ov-none" aria-pressed="false">无 None</button>
+          <p class="note" style="margin-bottom:6px">Ground layer</p>
+          <div class="seg" role="group" aria-label="Ground layer">
+            <button id="ov-zone" aria-pressed="true">Zoning</button>
+            <button id="ov-dist" aria-pressed="false">Districts</button>
+            <button id="ov-arch" aria-pressed="false">Style</button>
+            <button id="ov-none" aria-pressed="false">None</button>
           </div>
         </div>
         <div class="checks">
-          <label for="showPoi"><input type="checkbox" id="showPoi" checked> 医院、学校、酒店等设施名称 <small>Facility labels</small></label>
+          <label for="showPoi"><input type="checkbox" id="showPoi" checked> Facility labels</label>
         </div>
       </section>
     </div>
 
     <div class="pane" id="pane-dist" role="tabpanel" aria-labelledby="tab-dist" hidden>
       <section>
-        <h2>命名 <span>Names</span></h2>
-        <label class="field" for="cityName">地区名称 Region name<input class="txt" id="cityName" value="澄湾岛" maxlength="16"></label>
-        <label class="field" for="cityEn">英文名 English name<input class="txt" id="cityEn" value="Chengwan Island" maxlength="24"></label>
-        <p class="note">每座城市的名字在下面的列表里改，地图上的车站、港口和高速名会跟着变。Rename cities in the list below; stations, ports and expressways follow.</p>
+        <h2>Names</h2>
+        <label class="field" for="cityName">Region name<input class="txt" id="cityName" value="Chengwan" maxlength="16"></label>
+        <label class="field" for="cityEn">English name<input class="txt" id="cityEn" value="Chengwan Island" maxlength="24"></label>
+        <p class="note">Rename cities in the list below. Stations, ports and expressways follow.</p>
       </section>
       <section>
-        <h2>行政区划分 <span>Divisions</span></h2>
-        <label class="slider" for="kDist"><span>每座城市的区数 Districts per city</span><output id="kOut" for="kDist">自动</output></label>
+        <h2>Divisions</h2>
+        <label class="slider" for="kDist"><span>Districts per city</span><output id="kOut" for="kDist">Auto</output></label>
         <input type="range" id="kDist" min="1" max="9" step="1" value="1">
-        <button class="primary" id="redivide">重新划分行政区 Re-divide</button>
-        <p class="note">以超级街区为单元聚类，区界沿主干道走；跨河、跨海会加成本，所以区界会尽量顺着水系。新建成的街区归入最近的区，已有区名不变。<br>Superblocks are clustered; boundaries follow arterials and avoid crossing water. New blocks join the nearest district.</p>
+        <button class="primary" id="redivide">Re-divide</button>
+        <p class="note">Superblocks are clustered. Boundaries follow arterials and avoid crossing water. New blocks join the nearest district.</p>
         <div class="checks">
-          <label for="showBounds"><input type="checkbox" id="showBounds" checked> 显示区界和区名 <small>Boundaries &amp; labels</small></label>
+          <label for="showBounds"><input type="checkbox" id="showBounds" checked> Boundaries and labels</label>
         </div>
       </section>
       <section>
-        <h2>各区 <span>District list</span></h2>
-        <p class="note">点区名就能改名，也可以直接点地图上的区名。Click a name to rename it.</p>
+        <h2>District list</h2>
+        <p class="note">Click a name to rename it.</p>
         <div class="dlist" id="dlist"></div>
       </section>
     </div>
 
     <div class="pane" id="pane-traffic" role="tabpanel" aria-labelledby="tab-traffic" hidden>
       <section>
-        <h2>早高峰模拟 <span>AM peak</span></h2>
-        <button class="primary" id="runTraffic">运行交通模拟 Run</button>
+        <h2>AM peak</h2>
+        <button class="primary" id="runTraffic">Run</button>
         <div class="progress" aria-hidden="true"><b id="tProg"></b></div>
-        <p class="note" id="tStatus">按居住人口生成出行，按就业岗位和距离分配目的地，再在路网上做增量分配，路段越拥堵通行时间越长（BPR 函数）。<br>Trips start from homes, pick jobs by gravity, and are assigned to roads incrementally with BPR congestion.</p>
+        <p class="note" id="tStatus">Trips start from homes, pick jobs by gravity, and are assigned to roads incrementally with BPR congestion.</p>
         <div class="checks">
-          <label for="showFlow"><input type="checkbox" id="showFlow" checked> 流量图层 <small>Flow</small></label>
-          <label for="showCars"><input type="checkbox" id="showCars" checked> 车辆动画 <small>Vehicles</small></label>
-          <label for="autoTraffic"><input type="checkbox" id="autoTraffic" checked> 改动后自动重算 <small>Auto rerun</small></label>
+          <label for="showFlow"><input type="checkbox" id="showFlow" checked> Flow</label>
+          <label for="showCars"><input type="checkbox" id="showCars" checked> Vehicles</label>
+          <label for="autoTraffic"><input type="checkbox" id="autoTraffic" checked> Auto rerun</label>
         </div>
         <div class="ramp">
-          <span><i style="background:#4e9a6c"></i>畅通 &lt;0.5</span>
+          <span><i style="background:#4e9a6c"></i>Free &lt;0.5</span>
           <span><i style="background:#d9b247"></i>0.5–0.8</span>
           <span><i style="background:#e07c3c"></i>0.8–1.0</span>
-          <span><i style="background:#c43f39"></i>拥堵 &gt;1.0</span>
+          <span><i style="background:#c43f39"></i>Congested &gt;1.0</span>
         </div>
-        <p class="note">颜色是路段饱和度 v/c（流量 ÷ 通行能力），线宽是流量。Color is volume ÷ capacity, width is volume.</p>
+        <p class="note">Color is volume ÷ capacity. Width is volume.</p>
       </section>
       <section>
-        <h2>结果 <span>Results</span></h2>
+        <h2>Results</h2>
         <dl class="kv" id="tStats"></dl>
       </section>
     </div>
 
     <div class="pane" id="pane-terrain" role="tabpanel" aria-labelledby="tab-terrain" hidden>
       <section>
-        <h2>岛屿 <span>Island</span></h2>
+        <h2>Island</h2>
         <div class="row2">
-          <button id="newIsland">新岛屿<small>New island</small></button>
-          <button id="newIslandCity">新岛屿 + 示例城市<small>Island + city</small></button>
+          <button id="newIsland">New island</button>
+          <button id="newIslandCity">Island + city</button>
         </div>
-        <button class="ghost" id="sgBack">回到东京 · Back to Tokyo</button>
-        <p class="note">地形由多层噪声生成。河流按 D8 汇流算法从山上流向大海，集水面积越大河越宽；洼地蓄水形成湖泊。主干道跨河时自动架桥。<br>Rivers follow D8 flow routing; width grows with catchment. Filled depressions become lakes. Arterials bridge rivers.</p>
+        <button class="ghost" id="sgBack">Back to Tokyo</button>
+        <p class="note">Rivers follow D8 flow routing. Width grows with catchment. Filled depressions become lakes. Arterials bridge rivers.</p>
         <dl class="kv" id="islandStats"></dl>
       </section>
       <section>
-        <h2>显示 <span>Display</span></h2>
+        <h2>Display</h2>
         <div class="checks">
-          <label for="showContours"><input type="checkbox" id="showContours" checked> 等高线 25 m <small>Contours</small></label>
-          <label for="showForest"><input type="checkbox" id="showForest" checked> 森林 <small>Forest</small></label>
-          <label for="showNatLabels"><input type="checkbox" id="showNatLabels" checked> 山峰、河流与桥梁名称 <small>Peak, river &amp; bridge names</small></label>
+          <label for="showContours"><input type="checkbox" id="showContours" checked> Contours, 25 m</label>
+          <label for="showForest"><input type="checkbox" id="showForest" checked> Forest</label>
+          <label for="showNatLabels"><input type="checkbox" id="showNatLabels" checked> Peak, river and bridge names</label>
         </div>
       </section>
     </div>
   </div>
 </aside>
 
-<div class="timebar" id="timebar" role="group" aria-label="时间 Time of day">
-  <button class="tplay" id="tPlay" aria-pressed="false" title="播放一天 Play the day">▶</button>
-  <div class="tread"><b id="tClock">12:00</b><small id="tPhase">正午 Noon</small></div>
-  <input type="range" id="tSlider" min="0" max="24" step="0.05" value="12" aria-label="一天中的时间 Time of day">
+<div class="timebar" id="timebar" role="group" aria-label="Time of day">
+  <button class="tplay" id="tPlay" aria-pressed="false" title="Play the day">▶</button>
+  <div class="tread"><b id="tClock">12:00</b><small id="tPhase">Noon</small></div>
+  <input type="range" id="tSlider" min="0" max="24" step="0.05" value="12" aria-label="Time of day">
   <div class="tpre">
-    <button data-t="6.4">黎明</button><button data-t="12">正午</button><button data-t="18.5">黄昏</button><button data-t="22">夜晚</button>
+    <button data-t="6.4">Dawn</button><button data-t="12">Noon</button><button data-t="18.5">Dusk</button><button data-t="22">Night</button>
   </div>
 </div>
-<nav class="dock" id="dock" aria-label="建造工具 Build tools">
+<nav class="dock" id="dock" aria-label="Build tools">
   <div class="tray" id="tray">
-    <div class="tray-head"><b id="trayTitle">分区</b><span id="trayNote"></span><button class="tray-x" id="trayClose" aria-label="收起 Close">×</button></div>
+    <div class="tray-head"><b id="trayTitle">Zones</b><span id="trayNote"></span><button class="tray-x" id="trayClose" aria-label="Close">×</button></div>
     <div class="tray-pane" data-cat="zone"><div class="tiles" id="tools"></div>
-      <div class="densrow"><span>密度 Density</span><div class="seg" role="group" aria-label="密度 Density"><button class="dbtn" data-d="1" aria-pressed="false">低 Low</button><button class="dbtn" data-d="2" aria-pressed="true">中 Medium</button><button class="dbtn" data-d="3" aria-pressed="false">高 High</button></div></div>
+      <div class="densrow"><span>Density</span><div class="seg" role="group" aria-label="Density"><button class="dbtn" data-d="1" aria-pressed="false">Low</button><button class="dbtn" data-d="2" aria-pressed="true">Medium</button><button class="dbtn" data-d="3" aria-pressed="false">High</button></div></div>
       <p class="note" id="densNote"></p></div>
     <div class="tray-pane" data-cat="road" hidden><div class="tiles" id="rtools"></div>
-      <p class="note">高架路画成直线，两端自动放坡；高速公路会绕开城市和陡坡自动选线。沿海路、河堤、城市高架、收费站、服务区、公交站、过街天桥和斑马线会随城市自动生成。橡皮可以擦掉自己画的高架和高速。<br>Elevated roads are straight with ramps at both ends; motorways route around towns and hills. Seafronts, river walls, urban expressways, toll plazas, service areas, bus stops, footbridges and crossings come with the cities.</p></div>
-    <div class="tray-pane" data-cat="arch" hidden><div class="chips" id="archChips"></div><p class="note" id="archNote" style="white-space:pre-line">选一种风格，在地图上刷。刷到的所有分区都会换成这个风格：住宅、商业、办公楼顶、工业厂房、公共建筑的墙和屋顶，还有公园里的树种和小品（比如东京的樱花和鸟居）。路网不变。Pick a style and paint it: homes, shops, office crowns, factories, public buildings and parks (trees and features) all follow it.</p></div>
+      <p class="note">Elevated roads are straight with ramps at both ends. Motorways route around towns and hills. Seafronts, river walls, urban expressways, toll plazas, service areas, bus stops, footbridges and crossings come with the cities. The eraser removes elevated roads and motorways you drew.</p></div>
+    <div class="tray-pane" data-cat="arch" hidden><div class="chips" id="archChips"></div><p class="note" id="archNote" style="white-space:pre-line">Pick a style and paint it. Homes, shops, office crowns, factories, public buildings and parks all follow it. Roads stay.</p></div>
     <div class="tray-pane" data-cat="lm" hidden>
-      <div class="lmbar"><div class="seg" role="group" aria-label="地标类别"><button id="lmCatOld" aria-pressed="true">古迹 Historic</button><button id="lmCatNew" aria-pressed="false">现代 Modern</button></div>
-        <label class="slider mini" for="lmRot"><span>朝向 R</span><output id="lmRotOut" for="lmRot">0°</output></label><input type="range" id="lmRot" min="0" max="345" step="15" value="0" aria-label="朝向 Rotation">
-        <button class="ghost" id="lmAuto">自动摆放 Auto</button><button class="ghost" id="lmClear">移除全部 Remove</button></div>
+      <div class="lmbar"><div class="seg" role="group" aria-label="Landmark category"><button id="lmCatOld" aria-pressed="true">Historic</button><button id="lmCatNew" aria-pressed="false">Modern</button></div>
+        <label class="slider mini" for="lmRot"><span>Rotation</span><output id="lmRotOut" for="lmRot">0°</output></label><input type="range" id="lmRot" min="0" max="345" step="15" value="0" aria-label="Rotation">
+        <button class="ghost" id="lmAuto">Auto</button><button class="ghost" id="lmClear">Remove all</button></div>
       <div class="chips" id="lmChips"></div></div>
-    <div class="tray-pane" data-cat="terra" hidden><div class="tiles" id="ttools"></div><p class="note">「填海造地」把海面填成海拔约 3.5 m 的平地；变成水面或陡坡的地方会自动清掉用地。Reclaim turns sea into flat land 3.5 m above sea level.</p></div>
+    <div class="tray-pane" data-cat="terra" hidden><div class="tiles" id="ttools"></div><p class="note">Reclaim turns sea into flat land about 3.5 m above sea level. Water and steep slopes clear the zone.</p></div>
     <div class="tray-pane" data-cat="view" hidden><div class="tiles" id="vtools"></div>
-      <div class="seg" role="group" aria-label="视角 View"><button id="viewBird" aria-pressed="true">鸟瞰 Bird</button><button id="viewTop" aria-pressed="false">俯视 Plan</button><button id="viewIsland" aria-pressed="false">全岛 Island</button></div>
-      <div class="seg" role="group" aria-label="游览 Tour"><button id="kbTour" aria-pressed="false">自动游览 Tour (O)</button><button id="kbText" aria-pressed="false">关闭文字 Text off (L)</button><button id="kbUi" aria-pressed="false">隐藏界面 Hide UI (H)</button></div>
-      <div class="tiltrow" id="tiltRow"><button id="kbTilt" aria-pressed="false" title="像拍微缩模型一样：注视点清晰，上下渐虚 · The place you look at stays sharp, the rest melts away like a model city">移轴微缩 Tilt-shift (M)</button><div class="tp"><label class="slider mini" for="tiltStr"><span>虚化 Blur</span><output id="tiltStrOut" for="tiltStr">60%</output></label><input type="range" id="tiltStr" min="0" max="100" step="5" value="60" aria-label="虚化强度 Blur strength"></div><div class="tp"><label class="slider mini" for="tiltBand"><span>清晰带 Band</span><output id="tiltBandOut" for="tiltBand">40%</output></label><input type="range" id="tiltBand" min="0" max="100" step="5" value="40" aria-label="清晰带宽度 Sharp band width"></div></div>
-      <dl class="keys"><dt>W A S D / 方向键</dt><dd>移动 Move</dd><dt>Q E</dt><dd>转向 Turn</dd><dt>Z X / + −</dt><dd>拉近拉远 Zoom</dd><dt>T G</dt><dd>俯仰 Tilt</dd><dt>Shift</dt><dd>加速 Faster</dd><dt>H · L · O · M · Esc</dt><dd>界面 · 文字 · 游览 · 移轴 · 退出</dd><dt>鼠标 Mouse</dt><dd>左键涂刷 · 右键平移 · 滚轮缩放 · 空格+拖动旋转</dd><dt>1–9 · [ ] · R · Ctrl+Z</dt><dd>工具 · 笔刷大小 · 地标旋转 · 撤销</dd></dl></div>
-    <div class="tray-foot" id="brushRow"><label class="slider" for="brush"><span>笔刷半径 Brush</span><output id="brushOut" for="brush">80 m</output></label><input type="range" id="brush" min="20" max="300" step="10" value="80"></div>
+      <div class="seg" role="group" aria-label="View"><button id="viewBird" aria-pressed="true">Bird</button><button id="viewTop" aria-pressed="false">Plan</button><button id="viewIsland" aria-pressed="false">Island</button></div>
+      <div class="seg" role="group" aria-label="Tour"><button id="kbTour" aria-pressed="false">Tour (O)</button><button id="kbText" aria-pressed="false">Text off (L)</button><button id="kbUi" aria-pressed="false">Hide UI (H)</button></div>
+      <div class="tiltrow" id="tiltRow"><button id="kbTilt" aria-pressed="false" title="The place you look at stays sharp. The rest melts away like a model city.">Tilt-shift (M)</button><div class="tp"><label class="slider mini" for="tiltStr"><span>Blur</span><output id="tiltStrOut" for="tiltStr">60%</output></label><input type="range" id="tiltStr" min="0" max="100" step="5" value="60" aria-label="Blur strength"></div><div class="tp"><label class="slider mini" for="tiltBand"><span>Band</span><output id="tiltBandOut" for="tiltBand">40%</output></label><input type="range" id="tiltBand" min="0" max="100" step="5" value="40" aria-label="Sharp band width"></div></div>
+      <dl class="keys"><dt>W A S D / arrows</dt><dd>Move</dd><dt>Q E</dt><dd>Turn</dd><dt>Z X / + −</dt><dd>Zoom</dd><dt>T G</dt><dd>Tilt</dd><dt>Shift</dt><dd>Faster</dd><dt>H · L · O · M · Esc</dt><dd>UI · text · tour · tilt-shift · exit</dd><dt>Mouse</dt><dd>Left drag paints · right drag pans · wheel zooms · Space + drag rotates</dd><dt>1–9 · [ ] · R · Ctrl+Z</dt><dd>Tools · brush size · landmark rotation · undo</dd></dl></div>
+    <div class="tray-foot" id="brushRow"><label class="slider" for="brush"><span>Brush</span><output id="brushOut" for="brush">80 m</output></label><input type="range" id="brush" min="20" max="300" step="10" value="80"></div>
   </div>
   <div class="dock-tabs" role="tablist">
-    <button class="dtab" role="tab" data-cat="zone" aria-selected="true"><i>▦</i><span>分区</span><small>Zones</small></button>
-    <button class="dtab" role="tab" data-cat="road" aria-selected="false"><i>╪</i><span>道路</span><small>Roads</small></button>
-    <button class="dtab" role="tab" data-cat="arch" aria-selected="false"><i>◧</i><span>风格</span><small>Styles</small></button>
-    <button class="dtab" role="tab" data-cat="lm" aria-selected="false"><i>⌂</i><span>地标</span><small>Landmarks</small></button>
-    <button class="dtab" role="tab" data-cat="terra" aria-selected="false"><i>▲</i><span>地形</span><small>Terrain</small></button>
-    <button class="dtab" role="tab" data-cat="view" aria-selected="false"><i>◎</i><span>视角</span><small>View</small></button>
+    <button class="dtab" role="tab" data-cat="zone" aria-selected="true"><i>▦</i><span>Zones</span></button>
+    <button class="dtab" role="tab" data-cat="road" aria-selected="false"><i>╪</i><span>Roads</span></button>
+    <button class="dtab" role="tab" data-cat="arch" aria-selected="false"><i>◧</i><span>Styles</span></button>
+    <button class="dtab" role="tab" data-cat="lm" aria-selected="false"><i>⌂</i><span>Landmarks</span></button>
+    <button class="dtab" role="tab" data-cat="terra" aria-selected="false"><i>▲</i><span>Terrain</span></button>
+    <button class="dtab" role="tab" data-cat="view" aria-selected="false"><i>◎</i><span>View</span></button>
   </div>
 </nav>
 <div class="busy" id="busy" hidden></div>
-<div class="uihint" id="uiHint" hidden>按 H 显示界面 · Press H to show the interface</div>
+<div class="uihint" id="uiHint" hidden>Press H to show the interface</div>
 <div class="scalebar" id="scalebar" aria-hidden="true"><b id="sbBar"></b><span id="sbTxt">100 m</span></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

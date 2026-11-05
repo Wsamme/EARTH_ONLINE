@@ -205,6 +205,16 @@ body.night .lbl.n.bridge{color:#f2dfb5}
 .scalebar b{display:block;height:5px;border:1.5px solid var(--ink);border-top:0;width:100px;box-sizing:border-box}
 @media (max-width:1240px) and (min-width:761px){.scalebar{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
 @media (max-width:760px){.scalebar{display:none}}
+/* Map credit. ODbL wants “© OpenStreetMap contributors” on the map itself.
+   This chip stays when the side panel is collapsed and when Hide UI (H) hides the other chrome.
+   地图署名。ODbL 要求在地图上能看见 “© OpenStreetMap contributors”。
+   收起侧栏、或按 H 隐藏界面时，这一小条仍然留着。 */
+.osmcredit{position:fixed;right:16px;bottom:calc(58px + env(safe-area-inset-bottom,0px));z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:1px;max-width:min(280px,calc(100% - 32px));background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:4px 8px 5px;font:400 10.5px/1.35 var(--font-mono);color:var(--muted);pointer-events:auto}
+.osmcredit a{color:var(--ink);text-decoration:none}
+.osmcredit a:hover{text-decoration:underline}
+body.noui .osmcredit{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+@media (max-width:1240px) and (min-width:761px){.osmcredit{bottom:calc(128px + env(safe-area-inset-bottom,0px))}body.noui .osmcredit{bottom:calc(12px + env(safe-area-inset-bottom,0px))}}
+@media (max-width:760px){.osmcredit{right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));font-size:10px}}
 @media (max-width:1240px) and (min-width:761px){.timebar{left:348px;right:288px;width:auto;transform:none}.dock{left:348px;right:16px;width:auto;transform:none}.busy{left:60%}}
 @media (max-width:760px){
   .panel{top:auto;left:16px;right:16px;width:auto;height:min(52%,470px)}
@@ -428,6 +438,7 @@ body.night .lbl.n.bridge{color:#f2dfb5}
 </nav>
 <div class="busy" id="busy" hidden></div>
 <div class="uihint" id="uiHint" hidden>按 H 显示界面 · Press H to show the interface</div>
+<div class="osmcredit"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a><span>Terrain · USGS / NOAA</span></div>
 <div class="scalebar" id="scalebar" aria-hidden="true"><b id="sbBar"></b><span id="sbTxt">100 m</span></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

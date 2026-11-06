@@ -10,11 +10,11 @@
    three builds; the current city is pressed. */
 HOOKS.boot.push(() => {
   const CITIES = [
-    {id:'sg',  zh:'新加坡',     en:'Singapore',   busy:'正在切换到新加坡… Switching to Singapore'},
-    {id:'bay', zh:'旧金山湾区', en:'SF Bay Area', busy:'正在切换到旧金山湾区… Switching to the San Francisco Bay Area'},
-    {id:'nyc', zh:'纽约',       en:'New York',    busy:'正在切换到纽约… Switching to New York City'},
-    {id:'hk',  zh:'香港',       en:'Hong Kong',   busy:'正在切换到香港… Switching to Hong Kong'},
-    {id:'tyo', zh:'东京',       en:'Tokyo',       busy:'正在切换到东京… Switching to Tokyo'}];
+    {id:'sg',  zh:'Singapore', en:'Singapore',   busy:'Switching to Singapore'},
+    {id:'bay', zh:'SF Bay Area', en:'SF Bay Area', busy:'Switching to the San Francisco Bay Area'},
+    {id:'nyc', zh:'New York', en:'New York',    busy:'Switching to New York City'},
+    {id:'hk',  zh:'Hong Kong', en:'Hong Kong',   busy:'Switching to Hong Kong'},
+    {id:'tyo', zh:'Tokyo', en:'Tokyo',       busy:'Switching to Tokyo'}];
   // each city's own artifact (opened in a new tab when that city is not published next to this page)
   const CB_LINKS = {sg:'https://claude.ai/artifact/JWrenra2o84JDA2TNcp3kR', bay:'https://claude.ai/artifact/KAqSgP5xdvToctTQQr28kE',
     nyc:'https://claude.ai/artifact/VqyeDs374SMPZAMikpYTos', hk:'https://claude.ai/artifact/46pYczMQtS1PANp9iE91nR', tyo:'https://claude.ai/artifact/PoNpCj8MxrjFFFUxddfzMn'};
@@ -22,7 +22,7 @@ HOOKS.boot.push(() => {
   try { if (typeof SGR_NYC !== 'undefined' && SGR_NYC) cur = 'nyc'; else if (typeof SGR_BAY !== 'undefined' && SGR_BAY) cur = 'bay';
     else if (typeof SGR_PATH === 'string' && /^(hk|tyo)data\//.test(SGR_PATH)) cur = SGR_PATH.split('data/')[0]; } catch (e){ cur = 'sg'; }
   const seg = document.querySelector('.cityseg'); if (!seg) return;
-  seg.innerHTML = CITIES.map(c => `<button type="button" data-city="${c.id}" aria-pressed="${c.id === cur}" title="${c.zh} ${c.en}">${c.zh}<small>${c.en}</small></button>`).join('');
+  seg.innerHTML = CITIES.map(c => `<button type="button" data-city="${c.id}" aria-pressed="${c.id === cur}" title="${c.en}">${c.en}</button>`).join('');
   seg.style.display = ''; seg.hidden = false; seg.classList.add('city3', 'city5');
   // three buttons in the brand column (~230 px next to the collapse button, on phones too): tighter padding, the English line may clip
   const st = document.createElement('style');
@@ -68,7 +68,7 @@ HOOKS.boot.push(() => {
   const openExt = to => { const u = CB_LINKS[to]; if (!okLink(u)) return false;
     let w = null; try { w = window.open(u, '_blank', 'noopener'); } catch (e){ w = null; }
     if (!w){ try { window.top.location.href = u; return true; } catch (e){ /* sandboxed */ } }
-    showToast(`已在新标签页打开 · Opened in a new tab: ${u}`); return true; };
+    showToast(`Opened in a new tab: ${u}`); return true; };
   for (const b of seg.querySelectorAll('button')){
     b.addEventListener('click', async () => {
       const to = b.dataset.city, C = CITIES.find(c => c.id === to); if (!C || to === cur || b.disabled) return;

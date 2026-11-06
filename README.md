@@ -15,6 +15,26 @@ Real roads, rail, buildings, terrain and water; landmark models; intro cards; �
 flying, races, multiplayer, Cthulhu mode; weather; speed or local time. Every city opens in View mode.
 真实的道路、铁路、建筑、地形和水面；地标模型；介绍卡；中 / EN / 双 语言切换；驾驶、飞行、比赛、多人、克苏鲁模式；天气；倍速或当地时间。每个城市打开时默认是视角模式。
 
+## Demo 演示
+
+[![Singapore at night, Marina Bay](docs/media/night-singapore.jpg)](docs/media/earth-online-promo.mp4)
+
+Night fly-through of the five cities, plus a short brush stroke. Silent, about 30 seconds.
+五座城市的夜景飞过，加一小段笔刷。无声，大约 30 秒。
+
+- [16:9 video](docs/media/earth-online-promo.mp4)
+- [16:9 视频](docs/media/earth-online-promo.mp4)
+- [Square video](docs/media/earth-online-promo-square.mp4)
+- [方形视频](docs/media/earth-online-promo-square.mp4)
+
+| Singapore | San Francisco Bay | New York |
+|---|---|---|
+| [![Singapore](docs/media/night-singapore.jpg)](docs/media/night-singapore.jpg) | [![San Francisco Bay](docs/media/night-bay.jpg)](docs/media/night-bay.jpg) | [![New York](docs/media/night-nyc.jpg)](docs/media/night-nyc.jpg) |
+
+| Hong Kong | Tokyo |
+|---|---|
+| [![Hong Kong](docs/media/night-hk.jpg)](docs/media/night-hk.jpg) | [![Tokyo](docs/media/night-tokyo.jpg)](docs/media/night-tokyo.jpg) |
+
 ## Run it 运行
 
 `site/` is a plain static site — no build step. Serve the folder with any static server:
@@ -30,8 +50,8 @@ Deploy to Vercel: import this repo and set the **Root Directory** to `site` (fra
 The city switch opens the other cities in place when their pages sit in the same folder (they do here).
 城市切换按钮会在同一个文件夹里找其他城市的页面，所以这里可以直接互相切换。
 
-The map data is gzip stored as base64 text (`<city>data/*.txt`), up to ~14 MB per file, ~280 MB in all.
-地图数据是 base64 文本格式的 gzip（`<city>data/*.txt`），单个文件最大约 14 MB，总共约 280 MB。
+The map data is raw gzip (`<city>data/*.bin`, same bytes as the old base64 `.txt` without the text encoding), up to about 10 MB per file, about 188 MB in all. The page asks for `.bin` first.
+地图数据是原始 gzip（`<city>data/*.bin`，就是原来的 base64 `.txt` 去掉文本编码后的字节），单个文件大约不超过 10 MB，总共约 188 MB。页面会优先请求 `.bin`。
 
 ## Source 源码
 

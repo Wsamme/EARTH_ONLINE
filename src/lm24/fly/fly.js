@@ -2484,7 +2484,7 @@ function flyTrayUI(){
 <div class="flyspec" id="flySpec"></div>
 <div class="flylab">出发 · START</div><div class="flyplaces" id="flyPlaces" role="group" aria-label="出发地点 Start"></div>
 <div class="flyfoot"><div class="flylivs" id="flyLivs" role="group" aria-label="涂装 Livery"></div>
-<div class="seg" role="group" aria-label="辅助 Assist">${ASSN.map((a, i) => `<button type="button" data-fa="${i}" aria-pressed="false" title="${['直接操纵：杆量 = 舵面，手动配平', '标准：电传式姿态保持、协调转弯、失速保护', '新手：松杆改平，坡度 / 俯仰限制'][i]}">${a[0]}<small style="display:block;font:400 8.5px var(--font-mono)">${a[1]}</small></button>`).join('')}</div>
+<div class="seg" role="group" aria-label="辅助 Assist">${ASSN.map((a, i) => `<button type="button" data-fa="${i}" aria-pressed="false" title="${['Direct: stick equals control surface, trim by hand', 'Standard: attitude hold, coordinated turns, stall protection', 'Beginner: release the stick to level, bank and pitch limits'][i]}">${a[0]}<small style="display:block;font:400 8.5px var(--font-mono)">${a[1]}</small></button>`).join('')}</div>
 <button type="button" class="flygo" id="flyGo">起飞 Fly ▸</button></div>
 <dl class="flykeys"><dt>W S · A D</dt><dd>俯仰 · 横滚 Pitch · roll (直升机: 周期变距 cyclic)</dd><dt>↑ ↓ · Q E</dt><dd>油门 / 总距 · 方向舵 Throttle / collective · rudder</dd><dt>G · F V · 空格</dt><dd>起落架 · 襟翼 · 刹车 Gear · flaps · brakes</dd><dt>C · R · Esc</dt><dd>视角 · 复位 · 退出 Camera · respawn · exit</dd><dt>手机 Phone</dt><dd>左摇杆 · 右油门滑块 Stick left · throttle right</dd></dl>`;
   pane.appendChild(box);

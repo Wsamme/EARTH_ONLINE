@@ -1,5 +1,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<script>
+/* Phone / iPad (including iPadOS pretending to be a Mac) before first paint, so the slim bar does not flash. */
+(function(){
+  var ua = navigator.userAgent || '';
+  var iPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  var iOS = /iPhone|iPad|iPod/.test(ua) || iPadOS;
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  var small = Math.min(screen.width || 0, screen.height || 0) < 900;
+  var low = navigator.deviceMemory && navigator.deviceMemory <= 4;
+  window.CB_MOBILE = !!(iOS || (coarse && small) || (coarse && low));
+  window.CB_PHONE = window.CB_MOBILE && window.matchMedia('(max-width: 900px)').matches;
+  if (window.CB_MOBILE) document.documentElement.classList.add('cb-mobile');
+  if (window.CB_PHONE) document.documentElement.classList.add('cb-phone');
+})();
+</script>
 <meta name="citybrush-map" content="nyc">
 <title>City Brush · New York City</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -252,6 +267,53 @@ body.noui .osmcredit{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   .tpre button{flex:1}
   .cityseg{max-width:none}
 }
+/* Phone: only View and Drive. The rest of the chrome stays on a desktop. */
+html.cb-phone .timebar,
+html.cb-phone .scalebar,
+html.cb-phone .sndmenu,
+html.cb-phone .wxmenu{display:none!important}
+html.cb-phone .dock{
+  left:50%;right:auto;width:min(420px,calc(100% - 24px));transform:translateX(-50%);
+  bottom:calc(10px + env(safe-area-inset-bottom,0px));
+}
+html.cb-phone .dock-tabs{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px;overflow:visible!important;
+  padding:6px;border-radius:18px;
+  background:rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(18px) saturate(1.25);
+  backdrop-filter:blur(18px) saturate(1.25);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 10px 30px rgba(16,22,26,.18);
+}
+html.cb-phone .dock-tabs .dtab:not([data-cat="view"]):not([data-cat="f1"]){display:none!important}
+html.cb-phone .dtab[data-cat="view"],
+html.cb-phone .dtab[data-cat="f1"]{
+  width:100%;min-height:52px;min-width:0!important;padding:8px 12px;border-radius:14px;overflow:visible!important;
+  display:flex!important;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.5);color:#1b1e1c;
+}
+html.cb-phone .dtab i,html.cb-phone .dtab small{display:none!important}
+html.cb-phone .dtab span{font-size:17px!important;font-weight:650;line-height:1.1;letter-spacing:.01em;text-align:center;color:inherit!important;max-width:none!important;white-space:nowrap}
+html.cb-phone .dtab[aria-selected="true"]{background:#1f2a2f;color:#f6f4ee}
+html.cb-phone .dtab[aria-selected="true"] span{color:#f6f4ee!important}
+html.cb-phone .busy{
+  top:auto;bottom:calc(86px + env(safe-area-inset-bottom,0px));
+  max-width:min(340px,calc(100% - 28px));
+}
+html.cb-phone .osmcredit{
+  top:calc(8px + env(safe-area-inset-top,0px));
+  right:10px;bottom:auto;left:auto;
+  flex-direction:row;align-items:center;gap:0;
+  max-width:calc(100% - 64px);
+  background:transparent;border:0;box-shadow:none;padding:0;border-radius:0;
+  font:500 9px/1.2 var(--font-mono);
+  color:rgba(27,30,28,.78);
+  text-shadow:0 1px 0 rgba(255,255,255,.9), 0 0 8px rgba(255,255,255,.95);
+  white-space:nowrap;
+}
+html.cb-phone .osmcredit a{color:inherit}
+html.cb-phone .osmcredit span::before{content:"  ·  "}
+html.cb-phone body.noui .osmcredit{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto}
 /* tilt-shift row in the View tray (v16 tilt) */
 .tiltrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
 .tiltrow>button{border:1px solid var(--rule);background:var(--panel);border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex:none}
@@ -452,6 +514,7 @@ body.noui .osmcredit{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
     <button class="dtab" role="tab" data-cat="view" aria-selected="false"><i>◎</i><span>View</span></button>
   </div>
 </nav>
+<script>if (window.CB_PHONE){ var tray = document.getElementById('tray'); if (tray) tray.classList.add('closed'); }</script>
 <div class="busy" id="busy" hidden></div>
 <div class="uihint" id="uiHint" hidden>Press H to show the interface</div>
 

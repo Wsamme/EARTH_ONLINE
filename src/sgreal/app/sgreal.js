@@ -737,7 +737,7 @@ function sgLabels(){
 }
 
 /* ---------- entering and leaving Singapore ---------- */
-const SG_SUB = 'City Brush · Singapore 1:1 · Real map · © OpenStreetMap', ISL_SUB = 'City Brush · Map 24 × 24 km';
+const SG_SUB = 'City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors', ISL_SUB = 'City Brush · Map 24 × 24 km';
 window.CB_LOOK = (lat, lon, dx, dy, dz) => { const t = sgXY(lat, lon); controls.target.set(t[0], 8, -t[1]); camera.position.set(t[0] + dx, dy, -t[1] + dz); };
 function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2300, y + 2600, -t[1] + 4300); }
 function sgFly(){ const t = sgXY(1.2868, 103.8560); flyTo(new THREE.Vector3(t[0] + 1500, 1050, -t[1] + 1900), new THREE.Vector3(t[0], 4, -t[1])); }

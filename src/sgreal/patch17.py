@@ -224,10 +224,10 @@ R("/* ================= loop ================= */", "/* ================= v17 mo
 a = src.index('/* ================= boot ================= */'); b = src.index('requestAnimationFrame(loop);', a)
 src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nsgrBoot();\n" + src[b:]
 # titles
-R('<span class="sub">City Brush · Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>')
+R('<span class="sub">City Brush · Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>')
 # v23: the map switch under the title (both builds)
-R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>',
-  '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>\n      <div class="seg cityseg" role="group" aria-label="Map"><button type="button" data-city="sg">Singapore</button><button type="button" data-city="bay">SF Bay Area</button><button type="button" data-city="nyc">New York</button></div>')
+R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>',
+  '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>\n      <div class="seg cityseg" role="group" aria-label="Map"><button type="button" data-city="sg">Singapore</button><button type="button" data-city="bay">SF Bay Area</button><button type="button" data-city="nyc">New York</button></div>')
 R('.brand .sub{', '.cityseg{margin-top:9px;max-width:250px}.cityseg button{line-height:1.25;padding:6px 6px}.cityseg button small{display:block;font:400 9.5px var(--font-mono);color:var(--muted)}.cityseg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}.cityseg button[aria-pressed="true"] small{color:var(--panel);opacity:.75}\n.brand .sub{')
 if CITY == 'bay': src = patch_bay.apply(src)
 elif CITY == 'nyc': src = patch_nyc.apply(src)

@@ -74,8 +74,24 @@ Note: the build scripts still use the absolute workspace path they were written 
 
 - Map data © OpenStreetMap contributors, available under the Open Database License (ODbL): https://www.openstreetmap.org/copyright
 - 地图数据 © OpenStreetMap 贡献者，按开放数据库许可（ODbL）提供：https://www.openstreetmap.org/copyright
-- Terrain: AWS Terrain Tiles (Mapzen terrarium) — https://registry.opendata.aws/terrain-tiles/
-- 地形：AWS Terrain Tiles（Mapzen terrarium）—— https://registry.opendata.aws/terrain-tiles/
+- Terrain: AWS Terrain Tiles (Mapzen / Tilezen terrarium) — https://registry.opendata.aws/terrain-tiles/
+- 地形：AWS Terrain Tiles（Mapzen / Tilezen terrarium）—— https://registry.opendata.aws/terrain-tiles/
+- For these five cities that is USGS 3DEP (San Francisco and New York), SRTM and GMTED2010, and NOAA ETOPO1 for the sea floor. Credit: “3DEP, SRTM and GMTED2010 terrain data courtesy of the U.S. Geological Survey. ETOPO1 terrain data courtesy of the U.S. National Oceanic and Atmospheric Administration.” The full Tilezen list is https://github.com/tilezen/joerd/blob/master/docs/attribution.md
+- 这五座城市用到的是 USGS 3DEP（旧金山和纽约）、SRTM 与 GMTED2010，以及 NOAA 的 ETOPO1 海底。署名：“3DEP、SRTM 和 GMTED2010 地形数据由美国地质调查局（USGS）提供。ETOPO1 地形数据由美国国家海洋和大气管理局（NOAA）提供。” Tilezen 的完整清单：https://github.com/tilezen/joerd/blob/master/docs/attribution.md
+
+## License 许可
+
+The code in this repository — the pages, the programs in `src/`, and the original landmark models — is under the MIT License, copyright (c) 2026 Aster Wang. The text is in `LICENSE`.
+本仓库的代码（网页、`src/` 里的程序、原创地标模型）使用 MIT 许可证，版权所有 (c) 2026 Aster Wang。全文在 `LICENSE`。
+
+The map data is not MIT. `site/<city>data/*.txt`, and anything else derived from OpenStreetMap, is under the Open Database License (ODbL) 1.0. Credit “© OpenStreetMap contributors”, and if you share a derived database, offer it under the ODbL. Details, including the Singapore Overture / HDB3D note and the terrain credit above, are in `DATA_LICENSE`.
+地图数据不是 MIT。`site/<city>data/*.txt` 以及任何从 OpenStreetMap 派生的内容，使用开放数据库许可 ODbL 1.0。请署名 “© OpenStreetMap contributors”；如果再发布派生数据库，也必须用 ODbL。说明（含新加坡的 Overture / HDB3D，以及上面的地形署名）在 `DATA_LICENSE`。
+
+The running map keeps a “© OpenStreetMap contributors” link in the corner, including when the rest of the interface is hidden. The line under the city name repeats it. Leave both in place.
+运行中的地图在角落有一条 “© OpenStreetMap contributors” 链接，隐藏界面时也还在。城市名下面的那一行会再写一次。请两处都留着。
+
+three.js r128 is loaded from a CDN and stays under its own MIT licence. The Noto Sans SC and JetBrains Mono fonts are loaded from Google Fonts and are not in this repository.
+three.js r128 从 CDN 加载，仍使用它自己的 MIT 许可证。Noto Sans SC 和 JetBrains Mono 字体从 Google Fonts 加载，不在本仓库里。
 - Landmark models are original, simplified works. No company logos or characters are used.
 - 地标模型都是自己做的简化模型，没有使用公司标志或卡通角色。
 - Hong Kong's signs follow the position, size, colour and style of real signs, but every name on them is invented; no real brands, look-alike names or logo shapes.

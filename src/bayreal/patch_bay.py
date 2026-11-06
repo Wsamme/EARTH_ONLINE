@@ -10,7 +10,7 @@ def apply(src):
     R("function sgNames(on){ const [zh, en] = on ? ['Singapore', 'Singapore'] : ['Chengwan', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['San Francisco Bay Area', 'San Francisco Bay Area'] : ['Chengwan', 'Chengwan Island'];")
     R("$('#sample').textContent = on ? 'Reset Singapore' : 'Sample'; $('#toCap').textContent = on ? 'Marina Bay' : 'Capital';", "$('#sample').textContent = on ? 'Reset Bay Area' : 'Sample'; $('#toCap').textContent = on ? 'Downtown SF' : 'Capital';")
     R('aria-label="City Brush 3D view"', 'aria-label="San Francisco Bay Area 3D view"')
-    R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · San Francisco Bay Area 1:1 · Real map · © OpenStreetMap</span>')
+    R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · San Francisco Bay Area 1:1 · Real map · © OpenStreetMap contributors</span>')
     R('Back to Singapore', 'Back to the Bay Area')
     R("showBusy('Restoring Singapore')", "showBusy('Restoring the Bay Area')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · San Francisco Bay Area</title>', src, count=1)

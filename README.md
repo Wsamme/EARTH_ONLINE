@@ -5,7 +5,7 @@ Five real cities at 1:1 in the browser, built with three.js r128 and OpenStreetM
 
 | page 页面 | city 城市 | landmarks 地标 |
 |---|---|---|
-| `site/index.html` | Singapore 新加坡 | Marina Bay, NUS, Changi, Gardens by the Bay … |
+| `site/index.html` | Singapore 新加坡 | 217 landmarks and parks: Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, the cable car … |
 | `site/bay.html` | San Francisco Bay Area 旧金山湾区 | Golden Gate, Bay Bridge, company HQs … |
 | `site/nyc.html` | New York City 纽约 | ~420 landmarks |
 | `site/hk.html` | Hong Kong 香港 | 189 landmarks and parks; Victoria Harbour rebuilt from photos, neon streets, Symphony of Lights, Shenzhen skyline |
@@ -44,6 +44,8 @@ The map data is gzip stored as base64 text (`<city>data/*.txt`), up to ~14 MB pe
 - `src/sgreal/patch17.py`：拼出一个城市的网页：`CITY=sg|bay|nyc|hk|tyo python3 sgreal/patch17.py city-brush-v16.html out.html`。
 - `src/lm*/`, `src/bay/`, `src/nyc/`, `src/hk/`, `src/tyo/`: the feature modules and the landmark models.
 - `src/lm*/`、`src/bay/`、`src/nyc/`、`src/hk/`、`src/tyo/`：功能模块和地标模型。
+- `src/lm40/`: Singapore v40, 96 new landmarks and parks in 8 areas (`sg40a` … `sg40h`); `lm40/INTEGRATE.md` lists the open checks.
+- `src/lm40/`：新加坡 v40，8 个片区新增 96 个地标和园区（`sg40a` … `sg40h`）；待核实的事项写在 `lm40/INTEGRATE.md`。
 - `src/<city>real/`: the data pipelines that turn OpenStreetMap + AWS terrain tiles into the map data. Each has a README with its stages.
 - `src/<city>real/`：把 OpenStreetMap 和 AWS 地形图块转换成地图数据的流程，每个文件夹都有 README 说明各个步骤。
 

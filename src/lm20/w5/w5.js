@@ -557,7 +557,7 @@ const PATHS = [[-123.0,132.0,0,-140.5,106.0,0],[-140.5,106.0,0,-148.0,94.0,0],[-
 const MX0 = -322.06, MZ0 = -214.35, MASK = 'wwwwwwwwwwwwww....ww...|wwwwwwwwww.........w...|wwwwwwwww...........ww.|..wwwwww.............ww|....wwww......ww......w|....www....ww.ww.......|....www...www.ww.......|...www...wwww..w.......|...www...wwww...w......|...ww.....w.....w......|...ww............w.....|...ww....w.......ww....|...www...w......wwww...|.w.wwww........wwwwwww.|....wwww..wwwwwwwwwwwww|....wwwwwwwwwwwwwwwwwww|.....wwwwwwwwwww.....ww'.split('|');
 const ISL = [[-125,-135],[-97,-150],[-75,-185],[10,-200],[115,-205],[150,-175],[172,-140],[182,-90],[186,-40],[182,20],[163,70],[138,108],[60,118],[-20,122],[-90,145],[-128,138],[-132,90],[-142,40],[-150,-20],[-140,-90]];
 const wet = (x, z) => { const i = Math.floor((x - MX0)/25), j = Math.floor((z - MZ0)/25); return j >= 0 && j < MASK.length && i >= 0 && i < MASK[0].length && MASK[j][i] === 'w'; };
-LANDMARKS.chinesegarden = {zh:'裕华园（星和园）', en:'Chinese Garden (Jurong Lake Gardens)', cat:'old', r:RR, h:48, water:true, lt:{m:0, c:'#ffd69c', k:0.95, e:0.8, anim:'breathe'}, build(){
+LANDMARKS.chinesegarden = {zh:'裕华园', en:'Chinese Garden (Jurong Lake Gardens)', cat:'old', r:RR, h:48, water:true, lt:{m:0, c:'#ffd69c', k:0.95, e:0.8, anim:'breathe'}, build(){
   const g = new THREE.Group(), B = mkB(), r = LMCTX.rng;
   const G = -0.6, WL = -0.32;                                 // map ground and lake level (local)
   const WALL = {c:'#efe6d1', m:0, lk:0.8}, RED = {c:'#a3332b', m:0, lk:0.6}, RG = {c:'#3f7550', m:0, lk:0.35}, RGR = {c:'#5d6266', m:0, lk:0.3}, GOLD = {c:'#c9a246', m:0, lc:'#ffe2a0', lk:1.2};

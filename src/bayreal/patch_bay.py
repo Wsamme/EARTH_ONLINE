@@ -11,7 +11,7 @@ def apply(src):
     R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
       "$('#sample').innerHTML = on ? '还原<small>Reset Bay Area</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '旧金山市中心<small>Downtown SF</small>' : '去首府<small>Capital</small>';")
     R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="旧金山湾区三维视图 San Francisco Bay Area 3D view"')
-    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 旧金山湾区 San Francisco Bay Area 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
+    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · 旧金山湾区 San Francisco Bay Area 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>')
     R('回到新加坡 · Back to Singapore', '回到湾区 · Back to the Bay Area')
     R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原湾区… Restoring the Bay Area')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · San Francisco Bay Area</title>', src, count=1)

@@ -647,7 +647,9 @@ function sgLabels(){
 }
 
 /* ---------- entering and leaving Singapore ---------- */
-const SG_SUB = 'City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';
+// 这行会显示在城市名下面。ODbL 要求保留 “© OpenStreetMap contributors”，不要删掉 contributors。
+// Shown under the city name. ODbL requires “© OpenStreetMap contributors”; do not drop that word.
+const SG_SUB = 'City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap contributors', ISL_SUB = 'City Brush · 地图 24 × 24 km';
 function sgView(){ const t = sgXY(22.2880, 114.1650), y = 10; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 1200, y + 1700, -t[1] - 4200); }
 function sgFly(){ const t = sgXY(22.2850, 114.1600); flyTo(new THREE.Vector3(t[0] + 900, 900, -t[1] - 2600), new THREE.Vector3(t[0], 30, -t[1])); }
 function sgBuild(){

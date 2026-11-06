@@ -16,7 +16,7 @@ def apply(src):
     R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
       "$('#sample').innerHTML = on ? '还原<small>Reset Tokyo</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '东京站<small>Tokyo Station</small>' : '去首府<small>Capital</small>';")
     R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="东京城市三维视图 Tokyo 3D view"')
-    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 东京 Tokyo 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
+    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · 东京 Tokyo 1:1 · 真实地图 Real map · © OpenStreetMap contributors</span>')
     R('回到新加坡 · Back to Singapore', '回到东京 · Back to Tokyo')
     R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原东京… Restoring Tokyo')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Tokyo</title>', src, count=1)

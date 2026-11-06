@@ -134,14 +134,15 @@ function txtFor1(s, mode){
 
 // ---------------------------------------------------------------- state
 let apply = () => {}, pass = () => {};   // the DOM side (assigned below when there is a document; the page script is strict)
-const S = {mode:'both', fns:[], obs:null, pend:new Set(), pendA:new Set(), raf:0, nodes:0, attrs:0, batches:0, ms:0, msMax:0, fms:0, fmax:0, swMs:0, busy:false};
+const S = {mode:'en', fns:[], obs:null, pend:new Set(), pendA:new Set(), raf:0, nodes:0, attrs:0, batches:0, ms:0, msMax:0, fms:0, fmax:0, swMs:0, busy:false};
 const norm = m => { m = String(m || '').toLowerCase(); return m === 'cn' || m === '中' || m === 'zh-cn' ? 'zh' : m === '双' || m === 'bi' ? 'both' : MODES.includes(m) ? m : null; };
-try { const q = typeof location !== 'undefined' && /[?&]lang=([a-z]+)/i.exec(location.search); const v = norm(q && q[1]) || norm(typeof localStorage !== 'undefined' && localStorage.getItem(LANG_KEY)); if (v) S.mode = v; } catch (e){ /* private mode */ }
+// English is the only interface language. A saved 中 / 双 choice is not restored.
+try { const q = typeof location !== 'undefined' && /[?&]lang=([a-z]+)/i.exec(location.search); const v = norm(q && q[1]); if (v === 'en') S.mode = 'en'; } catch (e){ /* private mode */ }
 const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
 const L = {
   get mode(){ return S.mode; },
-  set(m){ m = norm(m); if (!m) return S.mode; const was = S.mode; S.mode = m; try { localStorage.setItem(LANG_KEY, m); } catch (e){ /* */ }
-    if (typeof document !== 'undefined') apply(was); for (const f of S.fns.slice()) try { f(m, was); } catch (e){ console.error('[i18n] listener', e); } return m; },
+  set(m){ m = norm(m); if (m !== 'en') return S.mode; const was = S.mode; S.mode = 'en'; try { localStorage.setItem(LANG_KEY, 'en'); } catch (e){ /* */ }
+    if (typeof document !== 'undefined') apply(was); for (const f of S.fns.slice()) try { f('en', was); } catch (e){ console.error('[i18n] listener', e); } return 'en'; },
   on(fn){ if (typeof fn === 'function') S.fns.push(fn); return () => { const i = S.fns.indexOf(fn); if (i >= 0) S.fns.splice(i, 1); }; },
   pick(zh, en){ zh = zh == null ? '' : String(zh); en = en == null ? '' : String(en); if (S.mode === 'zh') return zh || en; if (S.mode === 'en') return en || zh; return zh && en && zh !== en ? zh + ' ' + en : (zh || en); },
   sel(both, zh, en){ return S.mode === 'both' ? both : L.pick(zh, en); },
@@ -325,14 +326,7 @@ html.lang-en .dtab{grid-template-columns:1fr;justify-items:center;row-gap:2px;mi
   (document.head || document.documentElement).appendChild(css);
   htmlCls();
   // the switch: 中 / EN / 双 under the city switch in the title panel
-  function mountUI(){
-    if (document.querySelector('.langseg')) return;
-    const at = document.querySelector('.cityseg') || document.querySelector('.brand'); if (!at) return;
-    const seg = document.createElement('div'); seg.className = 'seg langseg'; seg.setAttribute('role', 'group'); seg.setAttribute('aria-label', 'Language 语言'); seg.setAttribute('data-i18n-off', '');
-    seg.innerHTML = [['zh', '中', '中文 Chinese only'], ['en', 'EN', 'English only 仅英文'], ['both', '双', '双语 Bilingual (中文 + English)']].map(([k, t, ti]) => `<button type="button" data-lang="${k}" title="${ti}" aria-pressed="${k === S.mode}">${t}</button>`).join('');
-    if (at.classList.contains('cityseg')) at.after(seg); else at.appendChild(seg);
-    seg.addEventListener('click', e => { const b = e.target.closest('button[data-lang]'); if (b) L.set(b.dataset.lang); });
-  }
+  function mountUI(){}
   const boot = () => { try { mountUI(); htmlCls(); if (S.mode !== 'both') apply('both'); } catch (e){ console.error('[i18n] boot', e); } };
   if (typeof HOOKS !== 'undefined' && HOOKS.boot) HOOKS.boot.push(boot);
   else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else setTimeout(boot, 0);

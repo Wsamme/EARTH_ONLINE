@@ -1,7 +1,10 @@
 # v17: Singapore becomes the real island at 1:1 (real roads, buildings, coastline). Applies on top of the v16 build.
 # usage: python3 patch17.py <in.html> <out.html>
-import sys, re
-SC = '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/'
+import sys, re, os
+# 从这份仓库的 src/ 生成页面，不写死某台机器上的绝对路径。
+# Build from this checkout's src/, not from a machine-specific absolute path.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+SC = os.path.dirname(_HERE) + os.sep
 src = open(sys.argv[1]).read()
 def R(a, b, count=1):
     global src
@@ -46,7 +49,7 @@ R("const sg20 = (x, y) => Math.min(1199, Math.max(0, Math.floor((y + HALF)/20)))
 # ---------- Singapore functions replaced by the v17 module ----------
 for f in ['genSingapore', 'sgZoning', 'placeSites', 'sgMRT', 'buildNetworkSG', 'sgMakeCuts', 'computeDistrictsSG', 'sgLabels', 'sgView', 'sgFly', 'sgBuild', 'sgExit', 'sgReset', 'sgEnter', 'lodTick']:
     drop_func(f)
-R("const SG_SUB = 'City Brush · 新加坡 Singapore 1:1 · 24 × 24 km', ISL_SUB = 'City Brush · 地图 24 × 24 km';", "")
+R("const SG_SUB = 'City Brush · Singapore 1:1 · 24 × 24 km', ISL_SUB = 'City Brush · Map 24 × 24 km';", "")
 # the port: Tuas too; anchored ships are placed by sgrShips
 R("const boxes = [[[1.262, 103.745], [1.293, 103.795]], [[1.253, 103.822], [1.276, 103.850]], [[1.293, 103.700], [1.312, 103.727]]];",
   "const boxes = [[[1.262, 103.745], [1.293, 103.795]], [[1.253, 103.822], [1.276, 103.850]], [[1.293, 103.700], [1.312, 103.727]], [[1.205, 103.595], [1.285, 103.665]]];")
@@ -221,10 +224,10 @@ R("/* ================= loop ================= */", "/* ================= v17 mo
 a = src.index('/* ================= boot ================= */'); b = src.index('requestAnimationFrame(loop);', a)
 src = src[:a] + "/* ================= boot ================= */\nsetTool('R'); renderStyle(); applyTime();\nrunHooks('boot');\nsgrBoot();\n" + src[b:]
 # titles
-R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
+R('<span class="sub">City Brush · Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>')
 # v23: the map switch under the title (both builds)
-R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>',
-  '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>\n      <div class="seg cityseg" role="group" aria-label="地图 Map"><button type="button" data-city="sg">新加坡<small>Singapore</small></button><button type="button" data-city="bay">旧金山湾区<small>SF Bay Area</small></button><button type="button" data-city="nyc">纽约<small>New York</small></button></div>')
+R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>',
+  '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>\n      <div class="seg cityseg" role="group" aria-label="Map"><button type="button" data-city="sg">Singapore</button><button type="button" data-city="bay">SF Bay Area</button><button type="button" data-city="nyc">New York</button></div>')
 R('.brand .sub{', '.cityseg{margin-top:9px;max-width:250px}.cityseg button{line-height:1.25;padding:6px 6px}.cityseg button small{display:block;font:400 9.5px var(--font-mono);color:var(--muted)}.cityseg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}.cityseg button[aria-pressed="true"] small{color:var(--panel);opacity:.75}\n.brand .sub{')
 if CITY == 'bay': src = patch_bay.apply(src)
 elif CITY == 'nyc': src = patch_nyc.apply(src)
@@ -238,5 +241,15 @@ POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_de
 for _p in POSTS + [x for x in os.environ.get('EXTRA_POSTS', '').split(',') if x]:
     _ns = {'__file__': SC + _p}; exec(compile(open(SC + _p).read(), SC + _p, 'exec'), _ns); src = _ns['apply'](src, CITY); print('post', _p)
 src = src.replace('<title>', '<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is (the map switch reads it)
+# 把整段脚本挪到单独的 js 文件。HTML 只剩壳子，浏览器可以先画出标题，脚本也能单独缓存。
+# Move the program into its own file so the HTML shell paints first and the script can be cached.
+_js = {'sg':'app.js', 'bay':'bay-app.js', 'nyc':'nyc-app.js', 'hk':'hk-app.js', 'tyo':'tyo-app.js'}[CITY]
+_i = src.rfind('<script>')
+_j = src.rfind('</script>')
+if _i < 0 or _j < _i: raise SystemExit('no inline script to extract')
+_code = src[_i + len('<script>'):_j]
+if 'sgrBoot' not in _code: raise SystemExit('extracted script is not the app')
+open(os.path.join(os.path.dirname(os.path.abspath(sys.argv[2])), _js), 'w').write(_code.lstrip('\n'))
+src = src[:_i] + '<script src="%s" defer></script>\n' % _js + src[_j + len('</script>'):]
 open(sys.argv[2], 'w').write(src)
-print('ok', len(src))
+print('ok', len(src), 'js', len(_code))

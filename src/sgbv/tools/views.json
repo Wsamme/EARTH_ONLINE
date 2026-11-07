@@ -1,0 +1,61 @@
+[
+  {
+    "name": "one_north_day",
+    "lat": 1.3013,
+    "lon": 103.79,
+    "dx": 1050,
+    "dy": 830,
+    "dz": 1320,
+    "tod": 13
+  },
+  {
+    "name": "one_north_night",
+    "lat": 1.3013,
+    "lon": 103.79,
+    "dx": 1050,
+    "dy": 830,
+    "dz": 1320,
+    "tod": 20.5
+  },
+  {
+    "name": "star_vista_close",
+    "lat": 1.30687671,
+    "lon": 103.78846253,
+    "dx": 250,
+    "dy": 150,
+    "dz": 0,
+    "targetY": 34,
+    "fov": 39.68334,
+    "tod": 13
+  },
+  {
+    "name": "fusionopolis_close",
+    "lat": 1.29918909,
+    "lon": 103.78757021,
+    "dx": 190,
+    "dy": 190,
+    "dz": 200,
+    "targetY": 60,
+    "tod": 13
+  },
+  {
+    "name": "solaris_close",
+    "lat": 1.29802585,
+    "lon": 103.79006548,
+    "dx": 160,
+    "dy": 145,
+    "dz": 150,
+    "targetY": 35,
+    "tod": 13
+  },
+  {
+    "name": "mrt_tracks",
+    "lat": 1.30681268,
+    "lon": 103.79043386,
+    "dx": -100,
+    "dy": 110,
+    "dz": -180,
+    "targetY": 10,
+    "tod": 13
+  }
+]

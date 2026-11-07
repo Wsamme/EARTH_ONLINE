@@ -1,5 +1,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<script>
+/* Phone / iPad (including iPadOS pretending to be a Mac) before first paint, so the slim bar does not flash. */
+(function(){
+  var ua = navigator.userAgent || '';
+  var iPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+  var iOS = /iPhone|iPad|iPod/.test(ua) || iPadOS;
+  var coarse = window.matchMedia('(pointer: coarse)').matches;
+  var small = Math.min(screen.width || 0, screen.height || 0) < 900;
+  var low = navigator.deviceMemory && navigator.deviceMemory <= 4;
+  window.CB_MOBILE = !!(iOS || (coarse && small) || (coarse && low));
+  window.CB_PHONE = window.CB_MOBILE && window.matchMedia('(max-width: 900px)').matches;
+  if (window.CB_MOBILE) document.documentElement.classList.add('cb-mobile');
+  if (window.CB_PHONE) document.documentElement.classList.add('cb-phone');
+})();
+</script>
 <title>City Brush</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -250,6 +265,53 @@ body.noui .osmcredit{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   .tpre button{flex:1}
   .cityseg{max-width:none}
 }
+/* Phone: only View and Drive. The rest of the chrome stays on a desktop. */
+html.cb-phone .timebar,
+html.cb-phone .scalebar,
+html.cb-phone .sndmenu,
+html.cb-phone .wxmenu{display:none!important}
+html.cb-phone .dock{
+  left:50%;right:auto;width:min(420px,calc(100% - 24px));transform:translateX(-50%);
+  bottom:calc(10px + env(safe-area-inset-bottom,0px));
+}
+html.cb-phone .dock-tabs{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px;overflow:visible!important;
+  padding:6px;border-radius:18px;
+  background:rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(18px) saturate(1.25);
+  backdrop-filter:blur(18px) saturate(1.25);
+  border:1px solid rgba(255,255,255,.7);
+  box-shadow:0 10px 30px rgba(16,22,26,.18);
+}
+html.cb-phone .dock-tabs .dtab:not([data-cat="view"]):not([data-cat="f1"]){display:none!important}
+html.cb-phone .dtab[data-cat="view"],
+html.cb-phone .dtab[data-cat="f1"]{
+  width:100%;min-height:52px;min-width:0!important;padding:8px 12px;border-radius:14px;overflow:visible!important;
+  display:flex!important;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.5);color:#1b1e1c;
+}
+html.cb-phone .dtab i,html.cb-phone .dtab small{display:none!important}
+html.cb-phone .dtab span{font-size:17px!important;font-weight:650;line-height:1.1;letter-spacing:.01em;text-align:center;color:inherit!important;max-width:none!important;white-space:nowrap}
+html.cb-phone .dtab[aria-selected="true"]{background:#1f2a2f;color:#f6f4ee}
+html.cb-phone .dtab[aria-selected="true"] span{color:#f6f4ee!important}
+html.cb-phone .busy{
+  top:auto;bottom:calc(86px + env(safe-area-inset-bottom,0px));
+  max-width:min(340px,calc(100% - 28px));
+}
+html.cb-phone .osmcredit{
+  top:calc(8px + env(safe-area-inset-top,0px));
+  right:10px;bottom:auto;left:auto;
+  flex-direction:row;align-items:center;gap:0;
+  max-width:calc(100% - 64px);
+  background:transparent;border:0;box-shadow:none;padding:0;border-radius:0;
+  font:500 9px/1.2 var(--font-mono);
+  color:rgba(27,30,28,.78);
+  text-shadow:0 1px 0 rgba(255,255,255,.9), 0 0 8px rgba(255,255,255,.95);
+  white-space:nowrap;
+}
+html.cb-phone .osmcredit a{color:inherit}
+html.cb-phone .osmcredit span::before{content:"  ·  "}
+html.cb-phone body.noui .osmcredit{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto}
 /* tilt-shift row in the View tray (v16 tilt) */
 .tiltrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
 .tiltrow>button{border:1px solid var(--rule);background:var(--panel);border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer;white-space:nowrap;flex:none}
@@ -449,6 +511,7 @@ body.noui .osmcredit{bottom:calc(12px + env(safe-area-inset-bottom,0px))}
     <button class="dtab" role="tab" data-cat="view" aria-selected="false"><i>◎</i><span>View</span></button>
   </div>
 </nav>
+<script>if (window.CB_PHONE){ var tray = document.getElementById('tray'); if (tray) tray.classList.add('closed'); }</script>
 <div class="busy" id="busy" hidden></div>
 <div class="uihint" id="uiHint" hidden>Press H to show the interface</div>
 
@@ -2675,8 +2738,8 @@ function disposeGroup(g){
 /* ================= three.js scene ================= */
 const stage = $('#stage');
 // 窄屏触控当成手机：像素比最多 1.5，阴影贴图缩小，少占 Safari 的标签页内存。桌面仍是 2 和 2048。
-window.CB_MOBILE = window.matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 900;
-const renderer = new THREE.WebGLRenderer({antialias: !window.CB_MOBILE, powerPreference: window.CB_MOBILE ? 'low-power' : 'high-performance'});
+if (typeof window.CB_MOBILE !== 'boolean') window.CB_MOBILE = window.matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) < 900;
+const renderer = new THREE.WebGLRenderer({antialias: !window.CB_MOBILE, powerPreference: window.CB_MOBILE ? 'low-power' : 'high-performance', failIfMajorPerformanceCaveat: false});
 function viewPixelRatio(){ return Math.min(window.devicePixelRatio || 1, window.CB_MOBILE ? 1.5 : 2); }
 function tuneForDevice(){
   renderer.setPixelRatio(viewPixelRatio());
@@ -2686,9 +2749,12 @@ function tuneForDevice(){
 }
 renderer.setPixelRatio(viewPixelRatio());
 renderer.setSize(stage.clientWidth || innerWidth, stage.clientHeight || innerHeight);
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = !window.CB_MOBILE; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.appendChild(renderer.domElement);
 const canvas = renderer.domElement; canvas.tabIndex = 0;
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); window.CB_LOST = true; const b = document.getElementById('busy'); if (b){ b.hidden = false; b.textContent = 'Graphics reset. Tap to reload.'; } });
+canvas.addEventListener('webglcontextrestored', () => { location.reload(); });
+canvas.addEventListener('pointerdown', () => { if (window.CB_LOST) location.reload(); });
 const scene = new THREE.Scene();
 const BG = new THREE.Color('#e3e1d9'); scene.background = BG; scene.fog = new THREE.Fog(BG, 22000, 68000);
 const camera = new THREE.PerspectiveCamera(38, (stage.clientWidth || innerWidth)/(stage.clientHeight || innerHeight), 5, 130000);
@@ -2698,7 +2764,7 @@ controls.maxPolarAngle = 1.38; controls.minDistance = 60; controls.maxDistance =
 controls.mouseButtons = {LEFT:-1, MIDDLE:THREE.MOUSE.DOLLY, RIGHT:THREE.MOUSE.PAN};
 controls.touches = {ONE:-1, TWO:THREE.TOUCH.DOLLY_PAN};
 const hemi = new THREE.HemisphereLight(0xffffff, 0xb7b1a2, 0.78); scene.add(hemi);
-const sun = new THREE.DirectionalLight(0xffffff, 0.72); sun.castShadow = true;
+const sun = new THREE.DirectionalLight(0xffffff, 0.72); sun.castShadow = !window.CB_MOBILE;
 sun.shadow.mapSize.set(window.CB_MOBILE ? 1024 : 2048, window.CB_MOBILE ? 1024 : 2048); sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.8; scene.add(sun); scene.add(sun.target);
 let shadowSpan = 0;
 
@@ -5334,6 +5400,11 @@ function showCat(c, open){
 }
 document.querySelectorAll('.dtab').forEach(b => b.addEventListener('click', () => {
   const c = b.dataset.cat, tr = $('#tray');
+  if (document.documentElement.classList.contains('cb-phone') && c === 'view'){
+    setTool('view'); tr.classList.add('closed');
+    document.querySelectorAll('.dtab').forEach(x => x.setAttribute('aria-selected', String(x.dataset.cat === 'view')));
+    return;
+  }
   if (c === dockCat && !tr.classList.contains('closed')){ tr.classList.add('closed'); return; }
   showCat(c, true); if (catOf(tool) !== c) setTool(CATS[c][2]);
 }));
@@ -5463,9 +5534,14 @@ function setPanelAway(away, store){
   if (store){ try { localStorage.setItem('cb-panel-away', away ? '1' : '0'); } catch (e) {} }
 }
 function initPanelAway(){
-  let away = window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches;
+  let away = document.documentElement.classList.contains('cb-phone') || window.matchMedia('(max-width: 760px) and (orientation: portrait)').matches;
   try { const s = localStorage.getItem('cb-panel-away'); if (s === '1' || s === '0') away = s === '1'; } catch (e) {}
   setPanelAway(away, false);
+  if (document.documentElement.classList.contains('cb-phone')){
+    tool = 'view'; applyControlMode();
+    const tr = $('#tray'); if (tr) tr.classList.add('closed');
+    document.querySelectorAll('.dtab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.cat === 'view')));
+  }
 }
 $('#panelHide').addEventListener('click', () => setPanelAway(true, true));
 $('#panelPeek').addEventListener('click', () => setPanelAway(false, true));

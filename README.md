@@ -58,7 +58,7 @@ Each still links to that city’s live page.
     <td align="center" colspan="2" width="33%">
       <a href="https://earth-online-wsammes-projects.vercel.app/"><img src="docs/media/night-singapore.jpg" alt="Singapore at night, looking across Marina Bay toward Marina Bay Sands and Gardens by the Bay" width="100%"></a><br>
       <a href="https://earth-online-wsammes-projects.vercel.app/"><b>Singapore</b></a><br>
-      <sub>Marina Bay, the Flyer, Gardens by the Bay</sub>
+      <sub>217 landmarks and parks, including Marina Bay</sub>
     </td>
     <td align="center" colspan="2" width="33%">
       <a href="https://earth-online-wsammes-projects.vercel.app/bay.html"><img src="docs/media/night-bay.jpg" alt="San Francisco at night, downtown between the Golden Gate and the Bay Bridge" width="100%"></a><br>
@@ -87,7 +87,7 @@ Each still links to that city’s live page.
 
 ## Features
 
-- **Five real cities.** Singapore, the San Francisco Bay Area, New York, Hong Kong and Tokyo, each on its own page, each built from real roads and building footprints.
+- **Five real cities.** Singapore, the San Francisco Bay Area, New York, Hong Kong and Tokyo, each on its own page, each built from real roads and building footprints. Singapore has 217 labelled landmarks and parks: 198 landmarks and 19 sites, across Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, and the cable car.
 - **Paint.** Zones, roads, architectural styles, landmarks and terrain. The brush is a real change on the map, with undo.
 - **Look around.** Orbit, pan, zoom, a tour, labels, and a tilt-shift that leaves one band sharp.
 - **Time of day.** Dawn, noon, dusk, night, or play the day. Windows and street lamps follow the clock.
@@ -103,7 +103,7 @@ The generator (plan, districts, traffic, terrain tools, seeds, presets) is still
 
 | City | Live | Page in `site/` | What the source builds |
 |---|---|---|---|
-| Singapore | [Open](https://earth-online-wsammes-projects.vercel.app/) | `index.html` | The island: roads, buildings, coastline, reservoirs. A 56 km square. |
+| Singapore | [Open](https://earth-online-wsammes-projects.vercel.app/) | `index.html` | The island, a 56 km square. 217 labelled landmarks and parks (198 landmarks + 19 sites), including Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, and the cable car. |
 | San Francisco Bay | [Open](https://earth-online-wsammes-projects.vercel.app/bay.html) | `bay.html` | The bay, about 1.3 million building footprints, the bridges and the downtown HQs. |
 | New York | [Open](https://earth-online-wsammes-projects.vercel.app/nyc.html) | `nyc.html` | The five boroughs, plus Jersey City and Newark. About 1.65 million footprints. |
 | Hong Kong | [Open](https://earth-online-wsammes-projects.vercel.app/hk.html) | `hk.html` | Hong Kong Island, Kowloon, the New Territories, Lantau and the islands. Shenzhen is context, not the subject. |
@@ -152,6 +152,7 @@ flowchart LR
 - `src/sgreal/patch17.py` concatenates the city engine, the landmark modules and the extras (drive, fly, weather, Cthulhu, the multiplayer client), then lifts the big script out into a sibling `.js` file.
 - `src/sgreal/`, `src/bayreal/`, `src/nycreal/`, `src/hkreal/` and `src/tyoreal/` turn OpenStreetMap and AWS terrain tiles into the `.bin` files. Hong Kong, New York, Tokyo and the Bay each have a pipeline note in that folder.
 - `src/lm*/`, `src/bay/`, `src/nyc/`, `src/hk/` and `src/tyo/` are the feature modules and the landmark models. The models are original and simplified. Hong Kong’s signs follow the size and colour of real signs, and every name on them is invented.
+- `src/lm40/` is Singapore v40: `sg40a` through `sg40h` add the landmarks and parks that bring the labelled set to 217 (198 landmarks + 19 sites). `src/lm40/INTEGRATE.md` lists checks that are still open.
 - On a phone the viewer keeps full buildings near the camera and coarse boxes farther out, and it widens or narrows that radius from the frame time. On a desktop every tile is full detail.
 - The corner credit is in the HTML shell, so a rebuild keeps it. Hiding the panel, or pressing `H`, does not hide it.
 

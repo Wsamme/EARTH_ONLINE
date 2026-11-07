@@ -36,3 +36,6 @@ files in SC/gba/<group>/ (src, tools, shots, logs); review, finish, test, report
   in the new frame, 'gba' already in the map switch (shown in szluohu shots). Read gbareal/README.md and the newest gbareal/shots/m*
   logs before continuing. Known: hk/hkx_nt W0()/baseOf() sample hC in the HK frame (wrong base on the gba map).
 - Nothing of the Greater Bay map is published yet. Disk ~1.1 GB free.
+- 28 Oct 13:3x: PREVIEW PUBLISHED https://claude.ai/artifact/2u3c2QDM1QfzUZtNLAyMiD (pub39/gba/index.html, GBALM=szoct,szluohu,
+  szhouhai,szcbd + all HK modules; data = sgreal/site/gbadata minus gba_roads.txt / ground8k.webp). App check: ready 76 s, JS heap
+  1253 MB (HK v39 page 1256), 0 page errors, 11 expected 404s; shots gba/pubshots/. The other cities' switch doesn't list 'gba' yet.

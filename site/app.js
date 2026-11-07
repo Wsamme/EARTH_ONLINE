@@ -13721,6 +13721,7 @@ function drawMRT(R, B){
 }
 function sgStations(B, lines){
   for (const S of SGD.stations){
+    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }
     const mine = []; for (const c of S.codes){ const p = sgLineCode(c); for (const R of lines) if (R.line.code === p) mine.push({R, ug:c.trim() in SG_UGO ? SG_UGO[c.trim()] : S.ug}); }
     if (!mine.length) continue;
     let elev = false, col = mine[0].R.col; const done = new Set();
@@ -85632,6 +85633,1057 @@ return {hps, fast:() => C.rate >= 600, setRate, setLocal, localNow, RATES,
 })();
 window.SGClock = SGClock;
 
+/* Buona Vista modelling kit, metres: +x east, +z south, y up.
+ * Original hand-built landmarks; OSM contributors' footprint coordinates, ODbL.
+ * Photo references inform the massing only. No image textures, external meshes,
+ * logos or model text. Geometry is batched by material like the other landmarks.
+ */
+const SGBV = (() => {
+  const data = {"mediacorp":{"lat":1.2956017525719636,"lon":103.79223760127441,"height":76.0,"parts":[{"id":352920078,"name":"Mediacorp","tags":{"building":"yes","building:levels":"10","name":"Mediacorp"},"p":[[-19.36,-85.99],[30.64,-63.89],[27.2,-56.71],[35.71,-57.89],[41.68,-58.33],[48.77,-57.56],[53.94,-55.99],[35.74,3.65],[22.57,43.88],[13.08,65.99],[10.34,72.35],[-11.11,107.82],[-24.01,128.28],[-26.83,107.2],[-27.88,91.63],[-28.47,69.24],[-28.77,40.18],[-23.39,-3.11],[-20.61,-12.48],[-16.97,-24.75],[-30.48,-31.72],[-36.68,-38.1],[-40.19,-45.29],[-41.16,-50.18],[-40.85,-60.41],[-38.7,-70.72],[-36.68,-76.87],[-33.4,-82.21],[-28.25,-85.69]]}]},"fusionopolis_one":{"lat":1.2991890899151337,"lon":103.78757021124271,"height":135.9,"parts":[{"id":175841411,"name":"Fusionopolis 1","tags":{"building":"yes","name":"Fusionopolis 1","name:zh":"\u542f\u6c47\u57ce 1"},"p":[[-20.51,-45.08],[-18.25,-52.21],[-15.36,-57.01],[-11.63,-61.09],[-6.17,-64.92],[1.25,-67.65],[8.51,-68.27],[17.12,-66.52],[25.71,-61.44],[23.26,-53.89],[21.12,-45.1],[19.88,-32.63],[20.68,-19.78],[23.27,-10.65],[25.76,-1.21],[33.35,12.91],[38.74,19.97],[46.18,27.58],[54.14,33.81],[47.43,48.96],[41.57,53.94],[34.99,56.28],[27.99,56.3],[19.02,53.04],[-14.7,40.07],[-21.65,37.1],[-30.17,33.45],[-53.12,24.29],[-54.22,21.3],[-50.56,7.76],[-28.16,-33.03]]},{"id":173033567,"name":"Symbiosis","tags":{"alt_name":"Fusionopolis Tower B","building:levels":"24","building:material":"glass","building:part":"yes","name":"Symbiosis","start_date":"2008"},"p":[[47.43,48.96],[41.57,53.94],[34.99,56.28],[27.99,56.3],[19.02,53.04],[-14.7,40.07],[-5.88,21.53],[-0.85,12.92],[5.03,8.48],[12.47,3.32],[16.73,1.07],[25.76,-1.21],[33.35,12.91],[38.74,19.97],[46.18,27.58],[54.14,33.81]]},{"id":173033568,"name":"Connexis North","tags":{"alt_name":"Fusionopolis Tower C","building:levels":"22","building:material":"glass","building:part":"yes","name":"Connexis North","start_date":"2008"},"p":[[-18.25,-52.21],[-20.51,-45.08],[-20.08,-38.37],[-16.72,-29.67],[-5.21,-6.12],[-0.0,-10.78],[5.81,-14.7],[10.35,-16.69],[14.09,-18.26],[20.68,-19.78],[19.88,-32.63],[21.12,-45.1],[23.26,-53.89],[25.71,-61.44],[17.12,-66.52],[8.51,-68.27],[1.25,-67.65],[-6.17,-64.92],[-11.63,-61.09],[-15.36,-57.01]]},{"id":173033570,"name":"Connexis South","tags":{"alt_name":"Fusionopolis Tower A","building:levels":"22","building:material":"glass","building:part":"yes","name":"Connexis South","start_date":"2008"},"p":[[-28.16,-33.03],[-50.56,7.76],[-54.22,21.3],[-53.12,24.29],[-30.17,33.45],[-18.79,9.9],[-16.67,-7.0],[-20.53,-19.45],[-25.26,-28.71]]}]},"buona_vista_mrt":{"lat":1.306812684438743,"lon":103.79043386090288,"height":19.0,"parts":[{"id":152592566,"name":"0","tags":{"building":"train_station","height":"12"},"p":[[-115.48,-68.1],[-117.51,-45.74],[-12.72,-35.5],[-7.64,-32.53],[0.89,-27.71],[-6.24,-14.87],[-10.08,-7.83],[0.64,-2.07],[11.76,4.29],[15.1,6.18],[16.0,6.69],[20.73,-2.16],[33.01,-25.11],[38.11,-34.62],[38.77,-40.85],[40.0,-52.61],[3.73,-56.23]]},{"id":823046125,"name":"Buona Vista","tags":{"name":"Buona Vista","name:en":"Buona Vista","name:ms":"Buona Vista","name:ta":"\u0baa\u0bc1\u0bb5\u0ba9 \u0bb5\u0bbf\u0bb8\u0bcd\u0ba4\u0bbe","name:th":"\u0e1a\u0e31\u0e27\u0e19\u0e32\u0e27\u0e34\u0e2a\u0e15\u0e32","name:zh":"\u6ce2\u90a3\u7ef4\u65af\u8fbe","name:zh-Hans":"\u6ce2\u90a3\u7ef4\u65af\u8fbe","name:zh-Hant":"\u6ce2\u90a3\u7dad\u65af\u9054","start_date":"1988-03-12"},"p":[[-115.48,-68.1],[-117.51,-45.74],[-12.72,-35.5],[0.89,-27.71],[-21.92,13.8],[-20.56,18.52],[-5.63,26.38],[-24.18,61.65],[-38.21,54.69],[-53.76,83.13],[-3.84,109.43],[22.64,59.86],[38.71,69.07],[35.08,75.14],[48.66,83.23],[96.36,0.47],[97.73,-13.18],[78.34,-15.08],[70.38,-15.87],[68.73,-9.12],[46.86,-21.71],[41.87,-20.14],[33.01,-25.11],[38.11,-34.62],[39.88,-52.71],[22.69,-54.38],[3.73,-56.23]]},{"id":1131873757,"name":"2","tags":{"building":"train_station"},"p":[[47.71,58.96],[52.71,49.77],[65.84,56.8],[60.86,66.0]]},{"id":1187773826,"name":"3","tags":{"building":"roof"},"p":[[24.6,16.3],[26.95,17.5],[-0.7,70.64],[-1.55,70.21],[-3.03,69.45]]}]},"solaris":{"lat":1.2980258493449053,"lon":103.79006548337016,"height":80.1,"parts":[{"id":123988232,"name":"Solaris","tags":{"building":"yes","building:levels":"11","name":"Solaris"},"p":[[3.65,-56.79],[1.01,-53.05],[-5.95,-40.81],[-16.47,-22.4],[-20.61,-15.59],[-24.34,-12.49],[-26.24,-10.96],[-28.25,-9.45],[-32.56,-6.47],[-56.36,7.7],[-58.04,9.25],[-60.97,12.54],[-62.72,16.2],[-62.58,21.46],[-61.24,25.99],[-58.11,29.44],[-54.45,31.54],[-43.51,35.86],[-14.3,44.91],[-2.96,49.96],[3.55,50.48],[10.2,49.37],[15.49,47.13],[20.36,43.06],[26.22,32.48],[30.17,24.18],[33.38,17.77],[38.37,9.22],[42.31,2.36],[48.54,-7.58],[50.87,-13.09],[51.31,-19.47],[50.55,-23.72],[48.0,-28.57],[32.18,-43.99],[18.94,-59.18],[15.69,-60.58],[12.2,-61.26],[9.15,-60.9],[5.6,-59.03]]},{"id":777420337,"name":"Solaris South Tower","tags":{"building:levels":"15","building:part":"yes","name":"Solaris South Tower"},"p":[[-32.56,-6.47],[-27.03,4.05],[-10.48,15.78],[26.22,32.48],[20.36,43.06],[15.49,47.13],[10.2,49.37],[3.55,50.48],[-2.96,49.96],[-14.3,44.91],[-43.51,35.86],[-54.45,31.54],[-58.11,29.44],[-61.24,25.99],[-62.58,21.46],[-62.72,16.2],[-60.97,12.54],[-58.04,9.25],[-56.36,7.7]]},{"id":777420338,"name":"Solaris North Tower","tags":{"building:levels":"9","building:part":"yes","name":"Solaris North Tower"},"p":[[-16.47,-22.4],[-7.34,-17.28],[38.37,9.22],[42.31,2.36],[48.54,-7.58],[50.87,-13.09],[51.31,-19.47],[50.55,-23.72],[48.0,-28.57],[32.18,-43.99],[18.94,-59.18],[15.69,-60.58],[12.2,-61.26],[9.15,-60.9],[5.6,-59.03],[3.65,-56.79],[1.01,-53.05],[-5.95,-40.81]]}]},"rochester":{"lat":1.3054099247685886,"lon":103.78833474557163,"height":138.0,"parts":[{"id":167472309,"name":"The Rochester","tags":{"building":"residential","building:flats":"366","building:levels":"37","height":"120","name":"The Rochester","start_date":"2011"},"p":[[-26.2,40.38],[-28.6,13.78],[-16.43,13.03],[34.78,-3.06],[40.44,-4.46],[44.24,5.62],[38.12,8.06],[41.41,16.29],[14.32,36.24]]},{"id":167472303,"name":"Park Avenue Hotel","tags":{"building":"commercial","height":"102","name":"Park Avenue Hotel"},"p":[[48.94,62.62],[92.0,34.98],[86.86,27.49],[83.35,30.08],[78.87,23.33],[70.78,27.28],[54.02,35.56],[50.51,38.68],[44.04,44.35],[39.39,49.43]]},{"id":167472305,"name":"Rochester Mall","tags":{"building":"commercial","height":"36","name":"Rochester Mall"},"p":[[34.78,-3.06],[32.0,-11.35],[-4.4,-31.09],[-61.87,-68.29],[-58.52,-53.6],[-64.19,-44.12],[-60.6,-27.07],[-58.37,-27.74],[-55.83,-19.22],[-39.49,-9.35],[-36.43,-12.09],[-31.43,-8.82],[-21.13,-2.31],[-16.43,13.03]]}]},"star_vista":{"lat":1.306876710817204,"lon":103.78846253021207,"height":74.5,"parts":[{"id":104352121,"name":"The Star Vista","tags":{"building":"retail","building:levels":"11","height":"42","name":"The Star Vista","name:en":"The Star Vista","name:zh":"\u661f\u60a6\u6c47"},"p":[[-70.43,-33.88],[-71.17,-15.28],[-76.86,1.33],[-80.72,9.18],[-83.34,11.56],[-83.64,14.44],[-83.12,16.59],[-85.05,18.67],[-83.64,19.56],[-85.72,22.01],[-80.94,26.59],[-76.39,29.79],[-66.24,32.45],[-57.0,33.27],[-52.51,33.79],[4.43,59.29],[6.74,59.14],[8.38,57.88],[16.59,61.07],[27.11,70.01],[37.71,54.47],[36.14,50.09],[39.57,50.32],[39.57,48.47],[41.44,47.8],[43.46,50.25],[46.88,51.87],[49.88,51.95],[52.26,49.95],[54.5,47.65],[63.08,38.9],[63.75,36.16],[63.01,33.27],[66.14,26.45],[68.83,26.23],[69.88,22.53],[71.67,13.33],[70.84,7.55],[68.75,-0.23],[65.17,-4.91],[66.36,-6.61],[67.61,-7.05],[69.72,-7.79],[72.48,-6.98],[75.24,-3.79],[78.52,2.43],[80.47,-3.57],[79.28,-5.65],[82.11,-7.65],[83.45,-8.91],[83.45,-17.06],[80.62,-18.02],[80.25,-39.15],[82.18,-39.08],[81.53,-41.17],[79.27,-47.45],[50.62,-38.71],[43.46,-41.15],[30.62,-44.34],[20.54,-45.52],[21.29,-41.38],[10.91,-40.34],[-2.22,-46.56],[-9.75,-46.26],[-11.4,-50.42],[-14.75,-53.16],[-17.89,-54.5],[-45.28,-58.13],[-47.21,-58.05],[-48.7,-57.09],[-57.3,-58.79],[-59.23,-50.34],[-61.61,-50.42],[-62.29,-48.42],[-67.99,-48.45]]}]},"metropolis":{"lat":1.3059605454076324,"lon":103.79148421434259,"height":113.4,"parts":[{"id":1563020894,"name":"The Metropolis Tower 1","tags":{"building":"office","name":"The Metropolis Tower 1"},"p":[[-22.81,3.1],[-12.44,-15.81],[1.12,-40.56],[7.44,-52.1],[-0.88,-59.07],[-0.12,-61.16],[-22.48,-81.44],[-30.35,-67.1],[-38.88,-51.57],[-61.53,-10.25],[-62.99,-7.6],[-33.32,15.64],[9.63,50.49],[16.24,41.87],[17.91,39.7],[13.49,31.51],[4.16,14.25],[-3.25,18.4]]},{"id":1563020891,"name":"The Metropolis Tower 2","tags":{"building":"office","name":"The Metropolis Tower 2"},"p":[[22.7,-9.78],[29.45,-13.37],[66.59,55.37],[45.59,66.56],[44.48,64.48],[36.9,68.52],[34.24,69.93],[30.3,66.82],[9.63,50.49],[16.24,41.87],[17.91,39.7],[13.49,31.51],[4.16,14.25],[-0.36,5.9],[9.77,0.5],[8.35,-2.13]]},{"id":1563020893,"name":"2","tags":{"building":"roof","height":"5","roof:material":"glass"},"p":[[-0.36,5.9],[-12.44,-15.81],[1.12,-40.56],[22.7,-9.78],[8.35,-2.13],[9.77,0.5]]}],"context_parts":[{"name":"Legacy OSM Metropolis podium 1","source":"site/sgdata/sg_bld.txt (legacy OSM record, ID not encoded)","p":[[-97,90.7],[-90.7,86.2],[-89.7,86],[-88.7,86],[-88,86.2],[-67.2,98.2],[-66.2,99],[-66,100.2],[-65.5,104.7],[-52,106],[-38.7,106],[-30,104.7],[-22.2,102.5],[-7.2,85.2],[-61.5,42],[-59.7,37.7],[-83,18.7],[-88.5,23],[-102.7,10.5],[-129,40.2],[-131.5,45],[-133.7,54.5],[-133.2,59.2],[-130.2,62.7]]},{"name":"Legacy OSM Metropolis podium 2","source":"site/sgdata/sg_bld.txt (legacy OSM record, ID not encoded)","p":[[-71,103.7],[-71,102],[-89,91.5],[-92.5,94],[-77,102.5]]},{"name":"Legacy OSM Metropolis podium 3","source":"site/sgdata/sg_bld.txt (legacy OSM record, ID not encoded)","p":[[-92.5,94],[-89,91.5],[-71,102],[-71,103.7],[-65.5,104.7],[-66,100.2],[-66.2,99],[-67.2,98.2],[-88,86.2],[-88.7,86],[-89.7,86],[-90.7,86.2],[-97,90.7],[-94.2,93]]}]},"biopolis":{"lat":1.3037103487913217,"lon":103.79231104182472,"height":77.7,"parts":[{"id":168243403,"name":"Chromos","tags":{"building":"office","height":"30","name":"Chromos"},"p":[[-140.62,-58.73],[-109.6,-53.04],[-81.94,-45.94],[-81.55,-34.77],[-81.08,-7.08],[-92.98,-12.32],[-106.78,-16.79],[-118.22,-19.41],[-128.36,-20.84],[-130.78,-31.9],[-135.01,-44.18]]},{"id":168243404,"name":"Matrix","tags":{"building":"office","height":"39","name":"Matrix"},"p":[[-2.38,-13.85],[15.81,-5.18],[46.73,9.57],[46.41,84.86],[32.09,74.65],[7.15,56.88],[5.75,40.98]]},{"id":168243405,"name":"Genome","tags":{"building":"office","height":"33","name":"Genome"},"p":[[8.0,77.44],[31.64,93.47],[46.51,103.23],[45.59,156.55],[27.19,151.39],[16.13,115.75]]},{"id":168243407,"name":"Proteos","tags":{"building":"office","building:levels":"8","height":"33","name":"Proteos"},"p":[[78.43,100.53],[123.28,115.54],[136.64,93.96],[99.76,23.91],[71.77,15.85],[71.92,98.35]]},{"id":168243409,"name":"Helios","tags":{"alt_name:zh":"\u548c\u6613\u697c","building":"office","height":"45","name":"Helios"},"p":[[-29.2,-45.86],[-27.14,-66.03],[-24.69,-64.55],[-19.8,-89.81],[-56.22,-113.72],[-77.37,-127.53],[-93.76,-111.28],[-95.55,-112.54],[-122.19,-86.3],[-92.25,-69.98],[-67.74,-59.13],[-51.33,-53.32],[-34.47,-47.93]]},{"id":168243410,"name":"Centros","tags":{"building":"office","height":"33","name":"Centros"},"p":[[-64.96,2.99],[-19.28,34.17],[-20.99,-16.55],[-21.18,-22.56],[-29.15,-25.64],[-66.92,-40.16],[-66.81,-34.49]]},{"id":168243411,"name":"Nanos","tags":{"building":"office","height":"36","name":"Nanos"},"p":[[14.27,-106.13],[29.44,-72.18],[33.79,-62.07],[37.22,-52.55],[42.11,-36.85],[45.28,-20.01],[46.34,-7.81],[12.29,-27.04],[3.73,-31.84],[-0.66,-83.01],[0.62,-87.91],[2.49,-91.11]]}]},"galaxis":{"lat":1.2998001860522548,"lon":103.78831252844084,"height":93.7,"parts":[{"id":175841412,"name":"Galaxis","tags":{"building":"commercial","building:levels":"17","name":"Galaxis","name:zh":"\u661f\u6865\u5927\u53a6"},"p":[[4.82,-20.57],[-32.04,-42.35],[-18.51,-66.36],[-22.76,-68.66],[-19.58,-74.45],[-15.33,-72.15],[10.04,-57.92],[30.64,-52.29],[52.13,-49.62],[29.1,-1.09],[12.78,33.3],[5.98,47.63],[8.89,52.53],[8.34,58.59],[-0.77,62.76],[-15.9,69.03],[-34.99,76.95],[-42.95,72.54],[-44.74,68.09],[-43.66,62.63],[-36.81,39.14],[-30.6,24.67],[-22.11,15.24],[-16.64,17.55]]}]},"one_holland_village":{"lat":1.3110930916666665,"lon":103.79418361249999,"height":112,"parts":[{"id":1226724186,"name":"One Holland Village","p":[[-50.9057,-14.7294],[-74.2655,-67.8934],[-48.1234,-78.995],[-37.1947,-83.6391],[-29.6158,-65.1732],[-10.5629,-72.7476],[0.9557,-45.1262],[38.2937,-19.1081],[29.2458,-5.9387],[32.2283,1.326],[43.4019,-3.3624],[56.7456,28.4719],[45.828,33.0386],[47.9537,38.3683],[56.7011,44.1844],[32.4509,78.385],[28.144,75.3663],[19.5523,69.3732],[-0.4243,55.4077],[-15.9716,39.7504],[-24.6411,28.4719],[-39.8434,-7.2325],[-49.0471,-13.4688]]},{"id":1115524529,"name":"Sereen","p":[[-110.268,-146.3235],[-107.7306,-146.9538],[-107.8864,-147.584],[-105.5938,-148.159],[-106.2059,-150.5806],[-102.7003,-151.4541],[-101.732,-147.6504],[-99.5841,-148.1811],[-100.4856,-151.7306],[-94.2199,-153.3007],[-93.6746,-151.1224],[-91.0815,-151.7637],[-91.4711,-153.3118],[-89.2564,-153.8646],[-89.7015,-155.6338],[-86.0846,-156.5295],[-85.7285,-155.081],[-79.8968,-156.5405],[-79.2959,-154.1742],[-76.8809,-154.7824],[-76.7807,-154.3954],[-74.1209,-155.0588],[-72.5072,-148.7008],[-78.2052,-147.2855],[-77.8046,-145.6932],[-79.6186,-145.2399],[-78.9286,-142.4976],[-82.2562,-141.6683],[-81.7999,-139.8439],[-76.981,-141.0491],[-76.6917,-139.9323],[-75.3451,-140.2751],[-73.9762,-134.8791],[-76.7251,-134.1935],[-76.6249,-133.8065],[-78.9843,-133.2205],[-78.2943,-130.5114],[-81.722,-129.6489],[-82.4454,-132.4796],[-85.9065,-131.6172],[-86.296,-133.1873],[-86.9081,-133.0325],[-86.6299,-131.9599],[-89.9352,-131.1306],[-90.169,-132.1037],[-90.6809,-131.971],[-90.2914,-130.4782],[-93.7303,-129.6158],[-93.2851,-127.8687],[-102.0103,-125.6793],[-102.7448,-128.5432],[-105.0485,-127.9682],[-106.6733,-134.3704],[-100.7749,-135.8521],[-101.732,-139.6559],[-99.4506,-140.2309],[-99.8401,-141.7568],[-102.8227,-141.0049],[-102.9785,-141.602],[-108.71,-140.1645]]},{"id":1115524527,"name":"Quincy","p":[[-44.1837,-120.3275],[-43.3824,-117.143],[-42.6368,-117.3199],[-43.5939,-121.2564],[-18.3198,-127.5812],[-13.935,-110.2653],[-39.2536,-103.9737],[-40.589,-103.6419],[-40.4555,-103.1222],[-42.1248,-102.7021],[-42.0136,-102.2487],[-44.5955,-101.5963],[-44.384,-100.756],[-49.2252,-99.5396],[-48.6576,-97.2839],[-54.2666,-95.8907],[-54.5894,-97.1955],[-64.4942,-94.7186],[-65.1508,-97.306],[-73.7759,-95.1498],[-77.4596,-94.2321],[-79.4851,-102.2045],[-75.4897,-103.1996],[-75.946,-105.002],[-79.8746,-104.0179],[-80.4088,-106.1298],[-82.0336,-112.5763],[-79.1512,-113.295],[-79.3293,-113.9695],[-74.0541,-115.2854],[-74.5772,-117.3642],[-68.1668,-118.9675],[-67.8997,-117.9281],[-60.7326,-119.7194],[-60.8996,-120.3939],[-57.405,-121.2785],[-57.8947,-123.2135],[-47.3221,-125.8562],[-45.8086,-119.9184]]},{"id":1115524518,"name":"Leven","p":[[-24.7413,-143.0505],[-27.0672,-152.2392],[-29.4822,-153.7872],[-34.5905,-145.9365],[-48.9581,-155.1362],[-43.8721,-162.987],[-48.3349,-165.8509],[-53.4653,-157.9559],[-68.1223,-167.3436],[-63.0029,-175.2165],[-67.6771,-178.213],[-72.8299,-170.2849],[-87.3756,-179.5952],[-86.207,-181.4197],[-88.6888,-183.0119],[-83.102,-191.6257],[-77.237,-187.8772],[-77.8825,-186.882],[-25.7874,-153.5219],[-22.1037,-138.9482],[-20.6569,-139.302],[-18.943,-132.5349],[-29.0816,-130.0028],[-29.805,-132.8777],[-31.6858,-132.4022],[-33.8114,-140.7837]]}],"height_source":"Official 34/28/3 storeys; 112/98/12 m model envelopes estimated, not tile measured"},"holland_road_sc":{"lat":1.3103143999999998,"lon":103.79539755384616,"height":19.7,"parts":[{"id":152638469,"name":"Holland Road Shopping Centre","p":[[22.8865,-21.4735],[21.7068,-16.575],[20.0152,-11.4334],[5.9369,14.8501],[-1.82,21.8826],[-17.5231,34.4106],[-21.4517,34.4106],[-33.3598,27.9973],[-17.2894,7.2979],[-6.4942,-10.8252],[1.6077,-29.7886],[2.8987,-29.28]]}],"height_source":"Tile roof 45.6 minus ground 25.9 ellipsoidal m; includes rooftop plant"},"holland_piazza":{"lat":1.3107247166666667,"lon":103.79524956666667,"height":12.1,"height_source":"Supplied valid tile roof 39.1 minus ground 27.0 ellipsoidal m; construction-stage exterior, current facade from photographs.","parts":[{"id":152752624,"name":"Holland Piazza","p":[[10.8545,12.3419],[15.4397,-5.6153],[16.2187,-12.1171],[14.26,-14.3064],[2.8082,-14.6271],[1.5729,-13.5324],[-1.4542,-11.0334],[-5.4829,-10.4253],[-7.4305,-8.8551],[-8.0982,-7.1634],[-7.9869,-4.2995],[-8.4878,-2.7846],[-10.4799,-0.7943],[-14.7534,15.7918],[-14.3082,17.4172],[0.8495,22.957],[5.6239,24.7041]]}]},"elementum":{"lat":1.3063779727272726,"lon":103.79276255454546,"height":63,"height_source":"SOM official 63 m / 12 storeys. CTBUH 92.6 m / 13 floors conflicts; no speculative stacks added.","parts":[{"id":981964001,"name":"Elementum (one-north)","p":[[-56.4971,-0.965],[-18.1687,68.575],[-5.6596,56.4561],[-4.9251,57.1969],[22.8307,25.2963],[30.699,16.4615],[29.0296,14.9908],[32.7022,8.9867],[34.3382,2.7945],[34.2603,-4.7798],[32.7801,-10.5186],[29.8532,-16.2242],[25.6909,-20.415],[21.6511,-23.4005],[16.0086,-25.5235],[10.0768,-26.1095],[10.2327,-31.5277],[-39.0802,-32.9098],[-39.2582,-27.6797],[-54.4716,-28.2878],[-55.5957,-1.4515]]}]},"nucleos":{"lat":1.3017442930232557,"lon":103.79215854883721,"height":54.7,"parts":[{"id":1562916645,"name":"nucleos","tags":{"building:levels":"7","building:part":"office","height":"38","source:height":"floor_heights"},"p":[[37.7,25.774],[35.229,31.878],[30.878,40.889],[27.472,46.075],[23.488,50.111],[19.303,53.285],[13.405,56.315],[7.217,57.719],[2.109,57.995],[-2.454,57.288],[-31.412,49.558],[-34.494,47.48],[-36.731,44.461],[-38.846,40.724],[-39.625,36.389],[-39.825,30.374],[-40.671,3.239],[-40.76,1.359],[-26.192,1.304],[-3.177,10.117],[4.658,13.124],[9.955,15.148]]},{"id":1562916646,"name":"nucleos","tags":{"building:levels":"3","building:part":"office","height":"19","roof:material":"grass","source:height":"floor_heights"},"p":[[-9.521,-60.197],[-10.789,-55.686],[-32.28,-62.055],[-38.401,-63.017],[-37.878,-46.121],[-31.835,-44.485],[-33.259,-39.818],[-28.774,-38.193],[-30.488,-31.957],[-37.21,-33.814],[-36.164,-16.178],[-2.131,-7.277],[-2.432,-5.054],[-15.72,-8.449],[-41.15,-14.95],[-42.93,-60.241],[-42.351,-63.625],[-40.693,-66.356],[-38.045,-68.059],[-34.761,-68.745],[-30.755,-67.971]]},{"id":1562916647,"name":"nucleos","tags":{"building:levels":"7","building:part":"office","height":"41","source:height":"floor_heights"},"p":[[-37.21,-33.814],[-36.164,-16.178],[-2.131,-7.277],[-2.432,-5.054],[8.697,-2.212],[15.664,-0.421],[42.563,6.446],[43.91,-1.869],[44.21,-8.614],[43.965,-18.61],[43.287,-24.305],[42.074,-29.447],[39.67,-35.196],[37.511,-39.686],[33.026,-43.368],[28.763,-46.165],[-9.521,-60.197],[-10.789,-55.686],[-32.28,-62.055],[-38.401,-63.017],[-37.878,-46.121],[-31.835,-44.485],[-33.259,-39.818],[-28.774,-38.193],[-30.488,-31.957]]},{"id":1562916648,"name":"nucleos","tags":{"building:part":"roof","height":"18"},"p":[[-2.432,-5.054],[8.697,-2.212],[4.658,13.124],[-3.177,10.117],[-2.654,-0.233],[-15.72,-8.449]]},{"id":1562916649,"name":"nucleos","tags":{"building:levels":"7","building:min_level":"5","building:part":"office","height":"39.5","min_height":"28","source:height":"floor_heights"},"p":[[15.664,-0.421],[42.563,6.446],[41.372,13.854],[38.546,23.695],[37.7,25.774],[9.955,15.148]]}],"context_parts":[{"id":305516250,"name":"nucleos","tags":{},"p":[[-42.93,-60.241],[-41.15,-14.95],[-15.72,-8.449],[-2.654,-0.233],[-3.177,10.117],[-26.192,1.304],[-40.76,1.359],[-40.671,3.239],[-39.825,30.374],[-39.625,36.389],[-38.846,40.724],[-36.731,44.461],[-34.494,47.48],[-31.412,49.558],[-2.454,57.288],[2.109,57.995],[7.217,57.719],[13.405,56.315],[19.303,53.285],[23.488,50.111],[27.472,46.075],[30.878,40.889],[35.229,31.878],[37.7,25.774],[38.546,23.695],[41.372,13.854],[42.563,6.446],[43.91,-1.869],[44.21,-8.614],[43.965,-18.61],[43.287,-24.305],[42.074,-29.447],[39.67,-35.196],[37.511,-39.686],[33.026,-43.368],[28.763,-46.165],[-9.521,-60.197],[-30.755,-67.971],[-34.761,-68.745],[-38.045,-68.059],[-40.693,-66.356],[-42.351,-63.625]]}]},"fusionopolis_two":{"lat":1.29868822,"lon":103.78899170333334,"height":105.2,"parts":[{"id":448605477,"name":"Innovis","tags":{"addr:housenumber":"2","addr:street":"Fusionopolis Way","building":"commercial","building:levels":"18","building:material":"glass","name":"Innovis","source":"https://web.p-t-group.com/en/project-detail.php?projects_id=65&projects_category_id=&projects_name=Fusionopolis-2A"},"p":[[-60.186,33.893],[-46.397,-3.802],[5.575,15.56],[-13.656,71.057],[-27.289,64.799],[-51.339,53.763]]},{"id":448605478,"name":"Synthesis","tags":{"addr:housenumber":"6","addr:street":"Fusionopolis Way","building":"commercial","building:levels":"5","building:material":"glass","name":"Synthesis","source":"https://web.p-t-group.com/en/project-detail.php?projects_id=65&projects_category_id=&projects_name=Fusionopolis-2A"},"p":[[-34.868,-58.403],[-42.458,-41.43],[-37.082,-28.824],[-30.093,-23.815],[-6.644,-18.508],[33.131,-20.067],[31.05,-36.421],[25.385,-34.464],[15.68,-74.79],[19.654,-75.232],[21.056,-77.521],[16.204,-82.055],[-15.514,-74.569]]},{"id":448605479,"name":"Kinesis","tags":{"building":"commercial","building:levels":"11","building:material":"glass","name":"Kinesis","source":"https://web.p-t-group.com/en/project-detail.php?projects_id=65&projects_category_id=&projects_name=Fusionopolis-2A"},"p":[[14.924,19.176],[-5.342,73.125],[20.388,83.961],[38.829,80.611],[58.672,60.143],[60.241,52.591],[48.778,29.968],[41.433,16.588]]}]}};
+  const TAU = Math.PI*2, lerp = (a,b,t) => a+(b-a)*t;
+  const center = P => { let a=0,x=0,z=0; P.forEach((p,i)=>{const q=P[(i+1)%P.length],v=p[0]*q[1]-q[0]*p[1];a+=v;x+=(p[0]+q[0])*v;z+=(p[1]+q[1])*v;});return [x/(3*a),z/(3*a)]; };
+  const scale = (P,s,c=center(P)) => P.map(p=>[c[0]+(p[0]-c[0])*s,c[1]+(p[1]-c[1])*s]);
+  const move = (P,x,z) => P.map(p=>[p[0]+x,p[1]+z]);
+  const rect = (x,z,w,d,a=0) => [[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]].map(p=>[x+p[0]*Math.cos(a)+p[1]*Math.sin(a),z-p[0]*Math.sin(a)+p[1]*Math.cos(a)]);
+  const ellipse = (x,z,rx,rz,n=32,a=0) => Array.from({length:n},(_,i)=>{let t=i/n*TAU;return [x+rx*Math.cos(t)*Math.cos(a)+rz*Math.sin(t)*Math.sin(a),z-rx*Math.cos(t)*Math.sin(a)+rz*Math.sin(t)*Math.cos(a)];});
+  function smooth(P,n=1){for(let k=0;k<n;k++){let Q=[];P.forEach((p,i)=>{let q=P[(i+1)%P.length];Q.push([lerp(p[0],q[0],.2),lerp(p[1],q[1],.2)],[lerp(p[0],q[0],.8),lerp(p[1],q[1],.8)]);});P=Q;}return P;}
+  const inside = (P,x,z) => {let b=false;P.forEach((p,i)=>{const q=P[(i+1)%P.length];if((p[1]>z)!==(q[1]>z)&&x<(q[0]-p[0])*(z-p[1])/(q[1]-p[1])+p[0])b=!b;});return b;};
+  // The same base sampling as placeLandmarkMesh; compensate to the anchor ground.
+  function ground(D,r){if(typeof hC!=='function')return {base:0,at:()=>0};const q=sgXY(D.lat,D.lon);let hi=-1e9;for(let a=0;a<12;a++)for(const f of [0,.35,.7])hi=Math.max(hi,hC(q[0]+Math.cos(a/12*TAU)*r*f,q[1]+Math.sin(a/12*TAU)*r*f));const top=hi+.6;return {base:hC(q[0],q[1])-top,at:(x,z)=>hC(q[0]+x,q[1]-z)-top};}
+  const colors = new Map();
+  function rgb(c){if(!colors.has(c))colors.set(c,new THREE.Color(c));return colors.get(c);}
+  let env=null;
+  function material(mode,base){
+    const spec={c:'#ffffff',vc:true,ds:true,m:mode===2?1:0,lk:mode===2?.32:.16,fh:4,cw:2.8};
+    const old=lmMat(spec);
+    if(typeof LMCTX==='undefined'||!LMCTX)return old;
+    const key='sgbv-surface-'+mode;
+    if(LMCTX.mats.has(key))return LMCTX.mats.get(key);
+    if(!env&&typeof document!=='undefined'){
+      const faces=[];for(let i=0;i<6;i++){const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,32);g.addColorStop(0,'#b3cad9');g.addColorStop(.55,'#879b9d');g.addColorStop(1,'#626c65');x.fillStyle=g;x.fillRect(0,0,32,32);faces.push(c);}env=new THREE.CubeTexture(faces);env.needsUpdate=true;
+    }
+    const glass=mode===2,m=new THREE.MeshStandardMaterial({color:old.color,side:old.side,vertexColors:true,roughness:glass?.30:.77,metalness:glass?.18:.035,envMap:env,envMapIntensity:glass?.42:.12});
+    const previous=old.onBeforeCompile;
+    m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);
+      sh.uniforms.bvBase={value:base};
+      sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 bvP;').replace('#include <begin_vertex>','#include <begin_vertex>\nbvP=position;');
+      sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 bvP; uniform float bvBase;').replace('#include <color_fragment>',`#include <color_fragment>
+float baseShade=mix(.74,1.0,smoothstep(bvBase,bvBase+11.0,bvP.y));
+float faceTone=.96+.04*abs(dot(normalize(vWN),normalize(vec3(.4,.2,.7))));
+diffuseColor.rgb*=baseShade*faceTone;
+${glass?`float band=smoothstep(.76,.83,fract((bvP.y-bvBase)/4.1))*(1.0-smoothstep(.96,1.0,fract((bvP.y-bvBase)/4.1)));
+diffuseColor.rgb*=mix(1.0,.68,band);`:''}`);
+    };
+    m.customProgramCacheKey=()=> 'sgbv-pbr-v1-'+mode;
+    LMCTX.mats.set(key,m);return m;
+  }
+  class Batch {
+    constructor(base=0){this.base=base;this.buckets=new Map();}
+    tri(c,a,b,d,mode=0){let B=this.buckets.get(mode);if(!B){B={p:[],c:[]};this.buckets.set(mode,B);}const C=rgb(c);for(const p of [a,b,d]){B.p.push(p[0],p[1]+this.base,p[2]);B.c.push(C.r,C.g,C.b);}}
+    quad(c,a,b,d,e,mode=0){this.tri(c,a,b,d,mode);this.tri(c,a,d,e,mode);}
+    cap(P,y,c,mode=0){const T=THREE.ShapeUtils.triangulateShape(P.map(p=>new THREE.Vector2(...p)),[]);const Y=typeof y==='function'?y:()=>y;for(const t of T)this.tri(c,...t.map(i=>[P[i][0],Y(P[i][0],P[i][1]),P[i][1]]),mode);}
+    capHole(P,holes,y,c){const Q=[P,...holes],all=Q.flat(),T=THREE.ShapeUtils.triangulateShape(Q[0].map(p=>new THREE.Vector2(...p)),Q.slice(1).map(R=>R.map(p=>new THREE.Vector2(...p))));const Y=typeof y==='function'?y:()=>y;for(const t of T)this.tri(c,...t.map(i=>[all[i][0],Y(...all[i]),all[i][1]]));}
+    walls(P,lo,hi,c,mode=0){const Y=typeof hi==='function'?hi:()=>hi;P.forEach((p,i)=>{const q=P[(i+1)%P.length];this.quad(c,[p[0],lo,p[1]],[q[0],lo,q[1]],[q[0],Y(...q),q[1]],[p[0],Y(...p),p[1]],mode);});}
+    prism(P,lo,hi,c,mode=0){this.walls(P,lo,hi,c,mode);this.cap(P,hi,c,mode);}
+    box(x,y,z,w,h,d,c,a=0,mode=0){this.prism(rect(x,z,w,d,a),y,y+h,c,mode);this.cap(rect(x,z,w,d,a),y,c,mode);}
+    beam(a,b,w,c){const A=new THREE.Vector3(...a),D=new THREE.Vector3(...b).sub(A),L=D.length();if(L<.001)return;const U=new THREE.Vector3(0,1,0);if(Math.abs(D.y/L)>.98)U.set(1,0,0);const V=new THREE.Vector3().crossVectors(D,U).normalize().multiplyScalar(w/2),W=new THREE.Vector3().crossVectors(D,V).normalize().multiplyScalar(w/2);let R=p=>[[-1,-1],[1,-1],[1,1],[-1,1]].map(v=>[p[0]+V.x*v[0]+W.x*v[1],p[1]+V.y*v[0]+W.y*v[1],p[2]+V.z*v[0]+W.z*v[1]]),P=R(a),Q=R(b);for(let i=0;i<4;i++)this.quad(c,P[i],P[(i+1)%4],Q[(i+1)%4],Q[i]);}
+    band(P,y,h,c,grow=1){this.walls(scale(P,grow),y,y+h,c);}
+    rim(P,y,c,w=.4,closed=true){P.forEach((p,i)=>{if(!closed&&i===P.length-1)return;const q=P[(i+1)%P.length];this.beam([p[0],y,p[1]],[q[0],y,q[1]],w,c);});}
+    // Original fake reflections: floor/bay colour modulation, with physical mullions.
+    facade(P,lo,hi,fh=4,bay=2.8,c='#4c6972',frame='#9baeb0',rail=.22,closed=true){const C=rgb(c);P.forEach((p,i)=>{if(!closed&&i===P.length-1)return;const q=P[(i+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.round(L/bay)),nf=Math.max(1,Math.round((hi-lo)/fh));for(let j=0;j<n;j++){const t=j/n,u=(j+1)/n,a=[lerp(p[0],q[0],t),lerp(p[1],q[1],t)],b=[lerp(p[0],q[0],u),lerp(p[1],q[1],u)];for(let f=0;f<nf;f++){const y=lerp(lo,hi,f/nf),y1=lerp(lo,hi,(f+1)/nf),k=.83+.17*Math.sin(j*.58+i*1.3+f*.21)+.06*Math.cos(f*.85);const cc=C.clone().multiplyScalar(k);this.quad('#'+cc.getHexString(),[a[0],y,a[1]],[b[0],y,b[1]],[b[0],y1,b[1]],[a[0],y1,a[1]],2);}if(bay<5&&L>2)this.beam([a[0],lo,a[1]],[a[0],hi,a[1]],.12,frame);}if(rail)for(let y=lo;y<=hi+.01;y+=fh)this.beam([p[0],y,p[1]],[q[0],y,q[1]],rail,frame);});}
+    roof(P,y,seed=0){const Q=scale(P,.82),bb=[Math.min(...Q.map(p=>p[0])),Math.min(...Q.map(p=>p[1])),Math.max(...Q.map(p=>p[0])),Math.max(...Q.map(p=>p[1]))];this.cap(P,y+.05,'#a5aaa6');this.rim(P,y+.6,'#c1c6c0',.55);let n=0;for(let x=bb[0]+3;x<bb[2]-3;x+=9)for(let z=bb[1]+3;z<bb[3]-3;z+=9){if(!inside(Q,x,z)||!inside(Q,x+3,z+3))continue;if((n+++seed)%3===0){this.box(x,y+.1,z,5,1.4,3,'#bac2bd');for(let a=-1;a<=1;a++)this.box(x+a*1.4,y+1.51,z,1,.08,2,'#69777a');}else if(n%3===0){this.box(x,y+.1,z,6,.18,5,'#526975');for(let a=-2;a<=2;a++)this.box(x+a*1.1,y+.3,z,.06,.03,5,'#9eacaf');}}
+    }
+    tree(x,y,z,s=1){this.box(x,y,z,.28*s,3.4*s,.28*s,'#685f4b');for(let j=0;j<2;j++){const r=(2.55-j*.55)*s,cy=y+(3.3+j*1.5)*s,n=7,R=[[-.65,.12],[-.4,.8],[0,1],[.5,.7],[.8,.05]].map(([h,k])=>ellipse(x+(j?.4:0)*s,z+(j?-.35:0)*s,r*k,r*k*.9,n).map(p=>[p[0],cy+h*r,p[1]]));for(let k=0;k<R.length-1;k++)for(let i=0;i<n;i++)this.quad((i+k+j)%3?'#527748':'#66894f',R[k][i],R[k][(i+1)%n],R[k+1][(i+1)%n],R[k+1][i]);}}
+    garden(P,y,trees=true){this.cap(P,y,'#5b7848');this.rim(P,y+.35,'#bbc4b4',.45);const Q=scale(P,.8);if(trees)Q.forEach((p,i)=>{if(i%3===0)this.tree(p[0],y,p[1],.6);});}
+    flush(g,materialFactory){let tris=0;for(const [mode,B]of this.buckets){const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(B.p,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(B.c,3));geo.computeVertexNormals();const mat=materialFactory?materialFactory(mode):material(mode,this.base);const m=new THREE.Mesh(geo,mat);m.castShadow=m.receiveShadow=true;g.add(m);tris+=B.p.length/9;}g.userData.bvTriangles=tris;return g;}
+  }
+  let masks=null;
+  function skip(B){
+    if(!masks){masks=Object.values(data).flatMap(D=>{const a=sgXY(D.lat,D.lon);return [...D.parts,...(D.context_parts||[])].filter(part=>part.id!==823046125).map(part=>{const P=part.p.map(p=>[a[0]+p[0],a[1]-p[1]]);return {P,bb:[Math.min(...P.map(p=>p[0])),Math.min(...P.map(p=>p[1])),Math.max(...P.map(p=>p[0])),Math.max(...P.map(p=>p[1]))]};});});}
+    const R=B.rings[0],P=[];for(let i=0;i<R.length;i+=2)P.push([R[i],R[i+1]]);
+    const bb=[Math.min(...P.map(p=>p[0])),Math.min(...P.map(p=>p[1])),Math.max(...P.map(p=>p[0])),Math.max(...P.map(p=>p[1]))];
+    return masks.some(M=>{const q=M.bb;if(bb[0]>q[2]||bb[2]<q[0]||bb[1]>q[3]||bb[3]<q[1])return false;return inside(M.P,B.cx,B.cy)||P.some(p=>inside(M.P,...p))||M.P.some(p=>inside(P,...p));});
+  }
+  // Constant-distance outward ring offset, for screens and cladding over glass.
+  function out(P,d){let a=0;P.forEach((p,i)=>{const q=P[(i+1)%P.length];a+=p[0]*q[1]-q[0]*p[1];});const sign=a>0?1:-1;return P.map((p,i)=>{const a=P[(i+P.length-1)%P.length],c=P[(i+1)%P.length],u=[p[1]-a[1],a[0]-p[0]],v=[c[1]-p[1],p[0]-c[0]],L=Math.hypot(...u)||1,R=Math.hypot(...v)||1;const n=[sign*(u[0]/L+v[0]/R),sign*(u[1]/L+v[1]/R)],k=Math.max(.35,(n[0]*u[0]/L+n[1]*u[1]/L)*sign);return [p[0]+n[0]*d/k,p[1]+n[1]*d/k];});}
+  const stats={};
+  function register(slug,zh,en,r,build){const D=data[slug];const key='sgbv_'+slug;LANDMARKS[key]={zh,en,cat:'new',r,h:D.height,lt:{m:1,c:'#ffe1b1',k:.32,fh:4,cw:2.8,anim:'none'},build(){const G=ground(D,r),b=new Batch(G.base),g=new THREE.Group();build(b,D,G,g);stats[slug]={height:D.height,anchor:[D.lat,D.lon],osm:D.parts.map(p=>p.id)};b.flush(g);let triangles=0;g.traverse(m=>{if(m.isMesh)triangles+=m.geometry.index?m.geometry.index.count/3:m.geometry.attributes.position.count/3;});g.userData.bvTriangles=triangles;stats[slug].triangles=triangles;return g;}};SG_PLACES.push({type:key,lat:D.lat,lon:D.lon,rot:0});}
+  return {data,register,Batch,skip,out,center,scale,move,rect,ellipse,smooth,inside,lerp,TAU,stats};
+})();
+
+/* ★ The Star Vista / Star Performing Arts Centre. OSM way 104352121.
+ * Original folded surfaces, metre control sections checked against the supplied
+ * photo cameras. 74.5 m measured maximum; public project height 75 m.
+ * No photograph textures, extracted meshes, signs or logos. See REVIEW.md.
+ */
+{
+const {register,scale,lerp}=SGBV;
+// Procedural environment: pale sky, distant dark tree line and abstract blocks.
+// CubeTexture exists in r128; no network assets or render-target recursion.
+let svEnv=null;
+function environment(){
+ if(svEnv||typeof document==='undefined')return svEnv;
+ const faces=[];
+ for(let k=0;k<6;k++){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,128);g.addColorStop(0,'#cfdeea');g.addColorStop(.48,'#9cb8c8');g.addColorStop(.52,'#667c77');g.addColorStop(1,'#b1b7af');x.fillStyle=g;x.fillRect(0,0,128,128);if(k!==2&&k!==3)for(let i=0;i<10;i++){const h=12+(i*13+k*7)%30;x.fillStyle=i%2?'#879c9f':'#c0cccd';x.fillRect(i*15-5,69-h,10,h);}faces.push(c);}
+ svEnv=new THREE.CubeTexture(faces);svEnv.needsUpdate=true;return svEnv;
+}
+// One shared clock, independent of model rebuilds; no per-frame allocations.
+// Normal night is always the default. The URL override is deliberately explicit;
+// we do not infer a concert schedule from the app's time of day.
+const svClock={value:0},svShow={value:typeof location!=='undefined'&&new URLSearchParams(location.search).get('show')==='1'?1:0};
+if(typeof HOOKS!=='undefined')HOOKS.frame.push(t=>{svClock.value=t;for(const L of landmarks){if(L.type!=='sgbv_star_vista')continue;const g=lmMeshes.get(L.id);if(g)for(const o of g.children)if(o.isMesh&&o.material.userData.svThinStrip)o.castShadow=false;}});
+function nightMaterial(m,mode,base){
+ m.userData.svShow=svShow;
+ const prior=m.onBeforeCompile;
+ m.customProgramCacheKey=()=> 'sv-night-v2-'+mode;
+ m.onBeforeCompile=function(sh,r){
+  prior.call(this,sh,r);
+  Object.assign(sh.uniforms,{svClock,svShow});
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvP=position-vec3(0.0,${base.toFixed(6)},0.0); svR=pow(max(0.0,1.0-abs(dot(normalize(normalMatrix*objectNormal),normalize(-(modelViewMatrix*vec4(position,1.0)).xyz)))),2.0);`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svP; varying float svR; uniform float svClock; uniform float svShow;');
+  // Replace the inherited office-window lighting only on this landmark. Preserve
+  // lmShader's shared uNight, diffuse shading, environment and fog integration.
+  const start=sh.fragmentShader.indexOf('\n',sh.fragmentShader.indexOf('#include <emissivemap_fragment>'));
+  const end=sh.fragmentShader.indexOf('#include <',start);
+  const lighting=`
+vec3 warm=vec3(1.0,.66,.32),white=vec3(.83,.92,1.0);
+float phase=svClock*6.2831853/mix(20.0,8.0,svShow);
+float cycle=.5-.5*cos(phase);
+vec3 blue=mix(vec3(.035,.07,.68),vec3(.015,.53,.60),cycle);
+float segment=mod(svClock/8.0,1.0)*4.0;
+vec3 violet=vec3(.32,.035,.78),magenta=vec3(.65,.025,.40);
+vec3 showHue=segment<1.0?mix(vec3(.035,.07,.68),vec3(.015,.53,.60),smoothstep(0.0,1.0,segment)):
+ segment<2.0?mix(vec3(.015,.53,.60),violet,smoothstep(1.0,2.0,segment)):
+ segment<3.0?mix(violet,magenta,smoothstep(2.0,3.0,segment)):
+ mix(magenta,vec3(.035,.07,.68),smoothstep(3.0,4.0,segment));
+blue=mix(blue,showHue,svShow);
+float softness=.23+.58*exp(-pow(abs((svP.y-53.0+3.0*sin(svP.x*.03))/10.0),2.0))+.07*cos(svP.z*.16);
+float sweep=pow(max(0.0,.5+.5*sin(svP.x*.055+svP.y*.025-svClock*.48)),8.0);
+float pulse=.5+.5*sin(svClock*1.3+svP.x*.07+svP.z*.09);
+vec3 svE=vec3(0.0);
+${mode===9||mode===11||mode===15?`
+// Continuous etched-glass lantern across every enclosure facet, no lit rectangle.
+float contour=.78+.12*cos(svP.y*.18+svP.x*.045)+.10*sin(svP.z*.12);
+vec3 lantern=mix(vec3(.62,.73,.87),blue,.30+svShow*.25);
+svE=lantern*(1.0+.65*svR)*contour*(.85+svShow*(.25+.16*pulse+.22*sweep));
+${mode===11?'svE=blue*(.55+.25*svShow)*contour;':''}
+`:''}
+${mode===2?`
+// Recessed warm rooms seen through dark glass; stable occupancy and a thin
+// bright ceiling above each bay, with dark mullions and a shaded lower reveal.
+float retail=1.0-smoothstep(26.0,35.0,svP.y);
+float hz=abs(vWN.x)>abs(vWN.z)?svP.z:svP.x;
+vec2 cell=vec2(hz/3.1,svP.y/4.5);
+vec2 uv=fract(cell);
+float occupied=fract(sin(dot(floor(cell),vec2(12.9898,78.233)))*43758.5453);
+float frame=smoothstep(.035,.09,uv.x)*(1.0-smoothstep(.93,.98,uv.x));
+float ceiling=smoothstep(.75,.83,uv.y)*(1.0-smoothstep(.86,.94,uv.y));
+float room=(.06+.27*step(.24,occupied))*(.45+.55*smoothstep(.10,.65,uv.y));
+float window=frame*(room+ceiling*.72);
+float vertical=1.0-smoothstep(.25,.65,abs(vWN.y));
+svE=warm*window*retail*vertical*(1.0+.65*svShow);
+svE+=mix(warm,blue,.35)*(.20+.20*svShow)*(1.0-retail)*vertical;
+diffuseColor.rgb*=mix(1.0,.26,uNight);
+`:''}
+${mode===4?`svE=mix(white,warm,1.0-smoothstep(8.0,28.0,svP.y))*(.63+.14*svShow);`:''}
+${mode===3?'svE=white*.055+warm*.07*(1.0-smoothstep(30.0,45.0,svP.y));':''}
+${mode===10?'svE=white*.72;':''}
+${mode===12?'svE=mix(warm,white,.52)*(.64+.24*svShow);':''}
+${mode===13?`float nosing=1.0-smoothstep(.055,.15,mod(4.0-svP.y,.58));
+svE=warm*.32+vec3(1.0,.83,.61)*.65*nosing;`:''}
+${mode===14?`vec2 f=svP.xz-vec2(32.0,8.0);
+float ring=length(f/vec2(10.0,11.0));
+vec2 cell=mod(f+1.4,2.8)-1.4;
+float spot=(1.0-smoothstep(.10,.38,length(cell)))*(1.0-smoothstep(.80,.96,ring));
+vec3 water=mix(vec3(.07,.06,.85),vec3(.85,.02,.45),.5+.5*sin(svClock*mix(.28,1.05,svShow)));
+svE=vec3(.44,.39,.30)+water*(spot*1.2+.055*max(0.0,1.0-ring));`:''}
+${mode===0?`// Soft reflected soffit light and corridor spill, no extra light sources.
+svE=warm*(.07+.16*exp(-dot(svP.xz-vec2(8.0,8.0),svP.xz-vec2(8.0,8.0))/1600.0))*(1.0-smoothstep(0.0,24.0,svP.y));`:''}
+${mode===20?'svE=white*2.4;':''}
+${mode===21?'svE=vec3(1.0,.83,.61)*1.25;':''}
+${mode===22?`vec3 water=mix(vec3(.30,.10,.95),vec3(.85,.08,.52),.5+.5*sin(svClock*mix(.28,1.05,svShow)));
+float jetR=length(mod(svP.xz-vec2(32.0,8.0)+1.55,3.1)-1.55);
+float core=exp(-jetR*jetR/.0010);
+vec2 jetCell=floor((svP.xz-vec2(32.0,8.0))/3.1+.5);
+float jetH=1.5+mod(jetCell.x*7.0+jetCell.y*3.0+20.0,5.0)*.43;
+float tip=1.0-smoothstep(jetH*.65,jetH,svP.y+1.48);
+svE=water*(.60+.55*core+.12*sin(svP.y*2.0+svClock*1.4))*tip;
+diffuseColor.a*=(.28+.62*core)*tip;`:''}
+${mode===23?'svE=warm*(.16+.10*svShow);':''}
+totalEmissiveRadiance+=svE*uNight;
+`;
+  if(start<0||end<0)throw new Error('Star Vista: lmShader injection point missing');
+  sh.fragmentShader=sh.fragmentShader.slice(0,start)+ '\n'+lighting+'\n'+sh.fragmentShader.slice(end);
+ };
+ if(mode===22){m.transparent=true;m.opacity=.85;m.depthWrite=false;}
+ return m;
+}
+// The v3 court is below grade. Mask only the overlapping terrain/context
+// fragments inside its original ellipse; retain every original vertex. Without
+// this, the island's continuous ground and v3 context paving bury its lights.
+function courtCut(m,center,world=true){
+ if(m.userData.svCourtCut)return m;
+ const source=m,previous=source.onBeforeCompile,sourceKey=source.customProgramCacheKey();
+ m=source.clone();m.userData=Object.assign({},source.userData,{svCourtCut:true,svCourtOwner:'star_vista'});
+ m.defines=Object.assign({},source.defines,{SV_OWN_COURT:1});
+ m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 svCourt;').replace('#include <begin_vertex>',`#include <begin_vertex>\nsvCourt=${world?'(modelMatrix*vec4(position,1.0)).xyz':'position'};`);
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 svCourt;').replace('#include <clipping_planes_fragment>',`#include <clipping_planes_fragment>
+vec3 court=svCourt-vec3(${center?center.map(v=>v.toFixed(6)).join(','):'32.0,0.0,8.0'});
+if(dot(court.xz/vec2(13.0,14.0),court.xz/vec2(13.0,14.0))<.998 && court.y>-.9 && court.y<1.25)discard;`);
+ };
+ m.customProgramCacheKey=()=> sourceKey+':sv-court-v2:'+world+':'+center.join(',');m.needsUpdate=true;if(!world&&typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set('sv-owned-court:'+source.uuid,m);return m;
+}
+register('star_vista','星悦汇','The Star Vista',97,(b,D,G,g)=>{
+ const metal=3,glass=2,light=4;
+ if(typeof terrain!=='undefined'&&terrain?.material&&typeof sgXY==='function'){
+  const a=sgXY(D.lat,D.lon);terrain.material=courtCut(terrain.material,[a[0]+32,hC(...a),-a[1]+8]);
+ }
+ // Lighting is a separate, tagged batch: v3's oriented triangles stay intact.
+ const lamps=new SGBV.Batch(G.base);
+ const lampBeam=(a,q,w=.23,mode=20)=>{const tri=lamps.tri.bind(lamps);lamps.tri=(c,p,q,r)=>tri(c,p,q,r,mode);lamps.beam(a,q,w,'#d7dedb');lamps.tri=tri;};
+ const offset=p=>[p[0]*1.0018,p[1]+.035,p[2]*1.0018];
+ const outline=E=>{for(let i=0;i<E.length-1;i++)lampBeam(offset(E[i]),offset(E[i+1]));};
+ const oldFlush=b.flush.bind(b);
+ b.flush=(group)=>{const result=oldFlush(group,mode=>{
+  // Unique lc keys keep the app's material cache from aliasing lighting zones.
+  const m=lmMat({c:'#ffffff',vc:true,ds:true,m:mode===glass?1:0,lc:'#'+(0xffe2a0+mode).toString(16),lk:mode===glass?.22:.12,fh:4.4,cw:2.6,glow:mode===light?'#ffe5ba':mode===9?'#3768de':mode===metal?'#c0d6df':undefined,gk:mode===light?.8:mode===9?.55:mode===metal?.065:undefined});
+  if(mode===metal||mode===glass||mode===5||mode===6||mode===9||mode===15){m.envMap=environment();m.combine=THREE.MixOperation;m.reflectivity=mode===glass?.32:(mode===metal||mode===9)?.19:.025;if(mode===metal||mode===9)m.emissive=new THREE.Color('#101b20');m.flatShading=true;m.needsUpdate=true;}
+  return nightMaterial(m,mode,G.base);
+ });const modes=[...b.buckets.keys()];group.children.slice(-modes.length).forEach((m,i)=>{m.userData.svMode=modes[i];if([0,4,10,20,21,22].includes(modes[i])){m.castShadow=false;m.material.userData.svThinStrip=true;}});
+ const lampGroup=new THREE.Group();lampGroup.userData.svLighting=true;
+ lamps.flush(lampGroup,mode=>nightMaterial(lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#'+(0xffd000+mode).toString(16),lk:0}),mode,G.base));
+ lampGroup.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;o.material.userData.svThinStrip=true;}});
+ group.add(lampGroup);group.userData.svBaseTriangles=group.userData.bvTriangles;
+ group.userData.svLightingTriangles=lampGroup.userData.bvTriangles;
+ group.userData.bvTriangles+=lampGroup.userData.bvTriangles;
+ return result;};
+ const plazaHole=SGBV.ellipse(32,8,13,14,48);b.capHole(scale(D.parts[0].p,.985),[plazaHole],1.2,'#a6b6af');b.walls(scale(D.parts[0].p,.985),-.5,1.2,'#9caea6');b.cap(plazaHole,-1.6,'#8b9f98',14);
+ const glowBeam=(a,q,w=.25,mode=light)=>{const tri=b.tri.bind(b);b.tri=(c,p,q,r)=>tri(c,p,q,r,mode);b.beam(a,q,w,'#f4e5cc');b.tri=tri;};
+ const mix=(a,q,t)=>a.map((v,k)=>lerp(v,q[k],t));
+ const tone=(i,j)=>['#ccd5d6','#ced7d8','#cbd4d5','#d0d9da','#cdd6d7'][(i*7+j*3)%5];
+ // Roof sections follow the bend of each shell. Crossfall and the east fan are
+ // independent: neither shell is a constant-height extrusion or a swept box.
+ const Nouter=[[-58,66,-44.6],[-27,71,-44],[1,73.5,-41],[27,71,-30],[48,68,-20]];
+ const Ninner=[[-60,63,-17.5],[-36,65,-19.3],[0,69,-9.3],[18,69,1],[32,66,12]];
+ const Sinner=[[-60,65,-8.8],[-42,70,-9.6],[-10,74,-.2],[3,74,7.4],[38,74.3,48.9]];
+ const Souter=[[-62,66,13.1],[-34,69,31.4],[-15,69,35],[6,70,40.5],[29,66,63.6]];
+ function edge(A,t){const v=t*(A.length-1),i=Math.min(A.length-2,Math.floor(v));return mix(A[i],A[i+1],v-i);}
+ function surface(A,B,t,u){return mix(edge(A,t),edge(B,t),u);}
+ function plate(A,B,mode=metal,up=true){const n=32;for(let i=0;i<n;i++){
+  const t=i/n,v=(i+1)/n;for(let j=0;j<12;j++){const u=j/12,w=(j+1)/12,a=surface(A,B,t,u),q=surface(A,B,v,u),r=surface(A,B,v,w),s=surface(A,B,t,w);const color=mode===5?['#b4b5ad','#b5b6af','#b6b7b1'][i%3]:mode===6?['#879c9f','#8a9ea1','#8c9fa2'][i%3]:mode===0?'#718285':tone(i,j);if(up)b.quad(color,a,s,r,q,mode);else b.quad(color,a,q,r,s,mode);}
+ }}
+ function face(top,bottom,seed,reverse=false){
+  // Large folds are fixed by control sections; narrow panel seams subdivide the
+  // planes without smoothing their normals. Every vertex is non-indexed.
+  for(let seg=0;seg<top.length-1;seg++){const A=top[seg],B=top[seg+1],C=bottom[seg],E=bottom[seg+1];
+   outline([A,B]);outline([C,E]);if(seg===0)outline([C,A]);outline([E,B]);
+   const L=Math.hypot(B[0]-A[0],B[2]-A[2]),n=Math.ceil(L/1.25);
+   for(let i=0;i<n;i++)for(let j=0;j<16;j++){const t=i/n,u=(i+1)/n,v=j/16,w=(j+1)/16;const at=(t,v)=>t+v<=1?C.map((a,k)=>a+t*(E[k]-a)+v*(A[k]-a)):B.map((a,k)=>a+(1-t)*(A[k]-a)+(1-v)*(E[k]-a));const p=at(t,v),q=at(u,v),r=at(u,w),s=at(t,w);const poly=[[t,v],[u,v],[u,w],[t,w]];
+    for(const sign of [-1,1]){let result=[];for(let k=0;k<poly.length;k++){const a=poly[k],d=poly[(k+1)%poly.length],fa=sign*(a[0]+a[1]-1),fd=sign*(d[0]+d[1]-1);if(fa>=-1e-8)result.push(a);if((fa>0&&fd<0)||(fa<0&&fd>0)){const f=fa/(fa-fd);result.push([lerp(a[0],d[0],f),lerp(a[1],d[1],f)]);}}if(result.length>=3)for(let k=1;k<result.length-1;k++)b.tri(tone(i+seed,j+seg),at(...result[0]),at(...result[reverse?k+1:k]),at(...result[reverse?k:k+1]),seed<12||seed===31||seed===37?15:metal);}}
+   for(let i=0;i<=n;i++){const t=i/n,a=mix(C,E,t),q=mix(A,B,t);b.beam(a,q,.045,'#8d9e9f');}
+   for(let j=1;j<16;j++)b.beam(mix(C,A,j/16),mix(E,B,j/16),.035,'#a4b2b2');
+   // Quiet diagonal structural lines read through the pale screened cladding.
+   b.beam(seg%2?A:C,seg%2?E:B,.095,'#a4b5b8');if(seed<12)lampBeam(offset(A),offset(E),.13);
+   if(seg===1||seg===3){const p=mix(mix(C,E,.4),mix(A,B,.4),.52),q=mix(mix(C,E,.47),mix(A,B,.47),.52),r=mix(mix(C,E,.47),mix(A,B,.47),.57),s=mix(mix(C,E,.4),mix(A,B,.4),.57);b.quad('#839ca0',p,q,r,s,metal);}
+  }
+ }
+ function shell(A,B,north){
+  const lowerA=A.map((p,i)=>[p[0]*.94+(north?0:1)-11*(1-i/4),north?41-i*.15:39-i*.5,p[2]*.93]);
+  const lowerB=B.map((p,i)=>[p[0]*.95-10*(1-i/4),north?42-i*.2:39-i*.45,p[2]*.93]);
+  outline(A);outline(B);outline([A[0],B[0]]);outline([A[4],B[4]]);
+  plate(A,B,north?5:6);face(A,lowerA,north?2:5,true);face(B,lowerB,north?7:11);
+  // Western end: two folded planes separated by a real recessed glass slot.
+  const U=A[0],V=B[0],C=lowerA[0],E=lowerB[0],lo=55.5,hi=59;
+  const atY=(p,q,y)=>mix(p,q,(y-p[1])/(q[1]-p[1]));
+  const c=atY(C,U,lo),e=atY(E,V,lo),a=atY(C,U,hi),d=atY(E,V,hi);
+  face([c,e],[C,E],31);face([U,V],[a,d],37);
+  const inset=p=>[p[0]+2.7,p[1],p[2]];b.quad('#607e86',inset(c),inset(e),inset(d),inset(a),glass);
+  for(const [p,q]of [[c,e],[a,d]])glowBeam(p,q,.24,10);
+  for(let j=1;j<10;j++)b.beam(mix(inset(c),inset(e),j/10),mix(inset(a),inset(d),j/10),.1,'#adbfbd');
+  const i=A.length-1;b.quad('#bdc8c8',lowerA[i],A[i],B[i],lowerB[i],15);
+  plate(lowerA,lowerB,12,false);
+  // Roof seams, transverse ribs and diagonal grid. The broad southern roof has
+  // a fan of diagonals rather than the previous uniform ladder texture.
+  for(let i=0;i<=32;i++){const t=i/32;b.beam(edge(A,t).map((v,k)=>v+(k===1?.08:0)),edge(B,t).map((v,k)=>v+(k===1?.08:0)),i%4===0?.22:.09,'#e0e5e1');}
+  for(let j=0;j<=8;j++)for(let i=0;i<32;i++){const p=surface(A,B,i/32,j/8),q=surface(A,B,(i+1)/32,j/8);p[1]+=.1;q[1]+=.1;if(j===0||j===8)glowBeam(p,q,.11,10);else b.beam(p,q,.11,'#dce2df');}
+  if(north){for(const t of [.08,.16,.24])for(const u of [.3,.65]){const Q=[[t-.025,u-.08],[t+.025,u-.08],[t+.025,u+.08],[t-.025,u+.08]].map(([t,u])=>{const p=surface(A,B,t,u);p[1]+=.035;return p;});b.quad('#899c9d',Q[0],Q[3],Q[2],Q[1],5);}
+   for(let i=0;i<16;i++)b.beam(edge(A,i/16).map((v,k)=>v+(k===1?.15:0)),edge(B,Math.min(1,i/16+.25)).map((v,k)=>v+(k===1?.15:0)),.2,'#edf0eb');}
+  else{for(let u=0;u<=1;u+=.1){const bend=surface(A,B,.43,.22);bend[1]+=.25;const q=surface(A,B,1,u);q[1]+=.25;b.beam(bend,q,.25,'#e2e8e3');}for(let u=0;u<=1;u+=.1){const p=surface(A,B,0,u),q=surface(A,B,.43,.22);p[1]+=.2;q[1]+=.2;b.beam(p,q,.24,'#e0e6e2');}}
+  if(!north){const p=surface(A,B,.43,.22),q=surface(A,B,1,.78);p[1]+=.38;q[1]+=.38;b.beam(p,q,1.1,'#dfe7e3');
+   const slit=[];for(let i=0;i<=16;i++){const t=.37+i/16*.33,u=.72+.08*Math.sin(i/16*Math.PI);const p=surface(A,B,t,u);slit.push([p[0],p[1]+.16,p[2]]);}for(let i=0;i<slit.length-1;i++)b.beam(slit[i],slit[i+1],.65,'#647f83');}
+  for(let i=0;i<=110;i++){const p=edge(A,i/110),q=edge(B,i/110);p[1]+=.06;q[1]+=.06;b.beam(p,q,.045,north?'#cbd0c9':'#bac8c9');}
+  // Reveal: a deep inset dark walk around the building, with independent upper
+  // and lower edges. Horizontal depth is 3–6 m, not a line painted on the wall.
+  const ribbonTopA=lowerA.map((p,i)=>north&&i===4?[65,37.5,-14]:[A[i][0]*1.025-10*(1-i/4),p[1]-2.5,A[i][2]*1.025]);
+  const ribbonTopB=lowerB.map((p,i)=>north&&i===4?[39,37.5,18]:[B[i][0]*1.025-10*(1-i/4),p[1]-2.5,B[i][2]*1.025]);
+  const ribbonBottomA=ribbonTopA.map((p,i)=>[p[0]*.90,north?24+i*.3:[29,30,32,33,30][i],p[2]*.80]);
+  const ribbonBottomB=ribbonTopB.map((p,i)=>[p[0]*.90,north?[29,30,32,33,30][i]:25-i*.15,p[2]*.80]);
+  outline(ribbonTopA);outline(ribbonTopB);outline(ribbonBottomA);outline(ribbonBottomB);
+  plate(ribbonTopA,ribbonTopB,0);face(ribbonTopA,ribbonBottomA,19,true);face(ribbonTopB,ribbonBottomB,23);
+  for(const i of [0,4])b.quad('#b2c0c0',ribbonBottomA[i],ribbonBottomB[i],ribbonTopB[i],ribbonTopA[i],metal);
+  plate(ribbonBottomA,ribbonBottomB,12,false);
+  for(const E of [ribbonTopA,ribbonTopB])for(let i=0;i<E.length-1;i++){glowBeam(E[i],E[i+1],.25,10);glowBeam(E[i].map((v,k)=>v+(k===1?.2:0)),E[i+1].map((v,k)=>v+(k===1?.2:0)),.35);const p=E[i].map((v,k)=>v+(k===1?-.2:0)),q=E[i+1].map((v,k)=>v+(k===1?-.2:0));b.quad('#f5ddaf',p,q,q.map((v,k)=>v+(k===1?-.1:0)),p.map((v,k)=>v+(k===1?-.1:0)),light);}
+  // Dark recessed curtain wall inside the slot and sparse supporting posts.
+  for(const E of [lowerA,lowerB])for(let i=0;i<E.length-1;i++){const p=E[i],q=E[i+1],a=[p[0]*.92,p[1]-2.8,p[2]*.92],d=[q[0]*.92,q[1]-2.8,q[2]*.92];b.quad('#293c40',a,d,[d[0],d[1]+3,d[2]],[a[0],a[1]+3,a[2]],glass);}
+ }
+ shell(Nouter,Ninner,true);shell(Sinner,Souter,false);
+ // Eastern nose: the high roof stops at the reveal; a separate lower apron
+ // cantilevers forward. This step is visible in both top and east photographs.
+ {const a=[48,55,-20],d=[32,55,12],e=[63,53.5,-13.7],f=[38,53.5,17.5],c=[58,40,-11],h=[35,40,14];
+ outline([a,e,f,d,a]);outline([c,h]);outline([e,c]);outline([f,h]);
+ b.quad('#c6d0ce',a,e,f,d,metal);b.quad('#bdc8c8',e,c,h,f,15);
+ b.quad('#b4c2c2',a,[45,40,-16],c,e,15);b.quad('#b7c5c5',d,f,h,[30,40,10],15);
+ b.quad('#53696d',[45,40,-16],[30,40,10],h,c);
+ for(let i=0;i<=18;i++){const t=i/18;b.beam(mix(a,d,t),mix(e,f,t),.09,'#e6eae5');}
+ for(let i=0;i<=9;i++){const t=i/9;b.beam(mix(a,e,t),mix(d,f,t),.1,'#dce4df');}
+ for(let i=0;i<=16;i++){const t=i/16;b.beam(mix(e,f,t),mix(c,h,t),.05,'#a1b1b1');}}
+
+ // Distinct auditorium mass behind the open foyer. Its eastern edge is recessed
+ // 20–30 m behind the shell eaves, leaving the 33 m grand atrium open.
+ const theatre=[[-55,-12],[-33,-15],[-12,-7],[8,7],[4,29],[-27,29],[-54,14]];
+ for(let y=30;y<58;y+=6.8)for(let i=0;i<theatre.length;i++){const a=theatre[i],q=theatre[(i+1)%theatre.length];lampBeam([a[0]*1.004,y,a[1]*1.004],[q[0]*1.004,y,q[1]*1.004],.13);}
+ b.prism(theatre,24,58,'#687b7d',11);b.cap(theatre,24,'#596f74',12);b.facade([[8,7],[4,29]],24,50,4.3,2.7,'#516b74','#96adae',.12);
+ // Deep rear wall of the naturally ventilated foyer: the court stays open in
+ // front of this curved glazing. This is not a floor-to-roof fill at the eave.
+ b.facade([[-25,-12],[-15,-6],[-8,6],[-8,18],[-18,26]],-1.4,32.8,4.1,2.7,'#314b54','#849da0',.1);
+ // Set-back shopping galleries: B1/L1/L2, with a mezzanine/foyer above. Neither
+ // base wing crosses the eastern atrium void. Terrace levels follow the slope.
+ const north=[[-64,-40],[-28,-42],[6,-33],[39,-19],[54,-7],[50,3],[33,0],[12,-11],[-17,-17],[-60,-18]];
+ const south=[[-61,12],[-38,19],[-10,29],[18,44],[30,52],[23,57],[-5,43],[-39,32],[-66,23]];
+ for(const [Q,start]of [[north,1],[south,2]])for(let f=0;f<3;f++){
+  const R=scale(Q,1-f*.026),lo=start+f*4.5,hi=lo+3.8;b.prism(R,lo,hi,'#758d91',glass);b.facade(R,lo,hi,3.8,2.5,'#79969b','#b1c1c0',.14);b.prism(scale(R,1.06),hi,hi+.65,'#cad2cd');b.rim(scale(R,1.05),hi+1.2,'#b8c7c2',.1);
+  const corridor=scale(R,1.04);for(let i=0;i<corridor.length;i++)lampBeam([corridor[i][0],hi-.10,corridor[i][1]],[corridor[(i+1)%corridor.length][0],hi-.10,corridor[(i+1)%corridor.length][1]],.14,21);
+ }
+ for(const Q of [north,south]){const R=scale(Q,.87);b.facade(R,15.2,23.4,4.1,2.3,'#7e989c','#afbfbc',.14);b.prism(scale(R,1.12),23.4,24.1,'#bbc9c4');}
+ // Continuous low glazed entrance hood on the north promenade, tucked below
+ // the large theatre overhang and segmented along the changing perimeter.
+ const hoodOuter=[[-70,-40],[-60,-52],[-25,-53],[5,-42],[37,-28],[59,-12]],hoodInner=[[-64,-35],[-56,-44],[-24,-45],[4,-35],[32,-22],[52,-7]];
+ for(let i=0;i<hoodOuter.length-1;i++)for(let j=0;j<8;j++){const t=j/8,u=(j+1)/8,p=hoodOuter[i].map((v,k)=>lerp(v,hoodOuter[i+1][k],t)),q=hoodOuter[i].map((v,k)=>lerp(v,hoodOuter[i+1][k],u)),r=hoodInner[i].map((v,k)=>lerp(v,hoodInner[i+1][k],u)),s=hoodInner[i].map((v,k)=>lerp(v,hoodInner[i+1][k],t));b.quad('#92adb0',[p[0],5.4,p[1]],[s[0],6.8,s[1]],[r[0],6.8,r[1]],[q[0],5.4,q[1]],glass);b.beam([p[0],5.45,p[1]],[s[0],6.85,s[1]],.12,'#c6d4cc');if(j%4===0)b.beam([p[0],0,p[1]],[p[0],5.4,p[1]],.2,'#b6c7c0');}
+ // Northeast entrance connector follows the projecting OSM wing toward MRT.
+ const link=[[28,-44],[50,-39],[79,-47],[82,-40],[78,-20],[80,-8],[74,-1],[66,-9],[64,-20],[51,-27],[38,-32]],linkY=(x,z)=>6.3+.04*(x-40);
+ b.cap(link,linkY,'#9db7b8',glass);for(let i=0;i<link.length;i++){const p=link[i],q=link[(i+1)%link.length];b.beam([p[0],linkY(...p),p[1]],[q[0],linkY(...q),q[1]],.17,'#c4d1ca');if(i%2===0)b.beam([p[0],0,p[1]],[p[0],linkY(...p),p[1]],.22,'#b6c8bf');}
+ for(let x=35;x<82;x+=3)for(let z=-45;z<-7;z+=3)if(SGBV.inside(link,x,z)&&SGBV.inside(link,x+3,z))b.beam([x,linkY(x,z)+.04,z],[x+3,linkY(x+3,z)+.04,z],.08,'#c7d3cc');
+ // Curving recessed glazed amphitheatre rim, with a true central opening.
+ const arc=(r,zr,angle)=>[32+r*Math.cos(angle),8+zr*Math.sin(angle)];
+ for(let k=0;k<11;k++)for(let j=0;j<32;j++){const t=-1.35+j/32*2.7,u=-1.35+(j+1)/32*2.7,r=12+k*1.95,zr=13+k*1.45,y=-1.8+k*.58,p=arc(r,zr,t),q=arc(r,zr,u),s=arc(r-1.95,zr-1.45,t),v=arc(r-1.95,zr-1.45,u);b.quad('#a6b7af',[...p.slice(0,1),y,p[1]],[q[0],y,q[1]],[v[0],y,v[1]],[s[0],y,s[1]]);b.quad('#84998e',[p[0],y-.58,p[1]],[q[0],y-.58,q[1]],[q[0],y,q[1]],[p[0],y,p[1]],13);lampBeam([p[0]+.04,y-.055,p[1]],[q[0]+.04,y-.055,q[1]],.085,21);}
+ for(let j=0;j<48;j++){const t=-1.4+j/48*2.8,u=-1.4+(j+1)/48*2.8,p=arc(37,30,t),q=arc(37,30,u),s=arc(32,25,t),v=arc(32,25,u);b.quad('#97b1b5',[p[0],5,p[1]],[q[0],5,q[1]],[v[0],6.8,v[1]],[s[0],6.8,s[1]],glass);b.beam([p[0],5,p[1]],[s[0],6.8,s[1]],.1,'#c7d3ce');}
+ // A two-level curved retail rim beneath the amphitheatre canopy. The court
+ // remains open: only the annular galleries are built, with a planted outer edge.
+ const rimOuter=[],rimInner=[];for(let j=0;j<=48;j++){const t=-1.4+j/48*2.8;rimOuter.push(arc(37,30,t));rimInner.push(arc(31.5,24.5,t));}
+ const rimPlan=[...rimOuter,...rimInner.slice().reverse()];b.prism(rimPlan,-.5,1.7,'#879f9e',glass);b.cap(rimPlan,3.3,'#bcc8be');
+ b.facade(rimOuter,1.7,5.1,3.4,2.5,'#718e94','#b7c7c1',.1,false);b.rim(rimOuter,5.05,'#d4ded4',.18,false);for(let i=0;i<rimOuter.length-1;i++)glowBeam([rimOuter[i][0],5.2,rimOuter[i][1]],[rimOuter[i+1][0],5.2,rimOuter[i+1][1]],.18);
+ const plantOuter=rimOuter.map(p=>[p[0]-.8,p[1]]),plantInner=rimOuter.map(p=>[p[0]-2,p[1]]);b.cap([...plantOuter,...plantInner.reverse()],2.7,'#55764a');
+ // Foyer supports: pale sloping columns and shaded soffits, not a filled podium.
+ for(const [x,z,dx,dz]of [[-54,-18,3,2],[-31,-10,3,1],[-5,1,3,-1],[18,13,1,-2],[27,30,-2,-2],[-45,25,3,-2],[-20,30,3,-2]])b.beam([x,0,z],[x+dx,35,z+dz],1.05,'#d3d9d2');
+ for(const [x,z]of [[-28,-7],[-4,5],[18,18]]){glowBeam([x,23.8,z],[x+10,23.8,z+3],.3);b.quad('#f0ddbb',[x-2,1.3,z-2],[x+2,1.3,z-2],[x+2,1.3,z+2],[x-2,1.3,z+2],light);}
+ // Glazed west fissure and an open escalator/ramp behind it.
+ b.facade([[-60,-14],[-57,12]],3,34,5,2.3,'#6c8990','#afc0bd',.1);
+ for(const [a,q]of [[[34,1,5],[10,17,-3]],[[9,17,-3],[-14,28,-10]]]){b.beam(a,q,2.6,'#8d9f9d');for(const dz of [-1.4,1.4])glowBeam([a[0],a[1]+1,a[2]+dz],[q[0],q[1]+1,q[2]+dz],.14,10);}
+ // Landscaped roof walk in the sinuous gap; roof equipment stays below the rim.
+ const garden=[[-57,-15],[-34,-16],[-4,-8],[20,6],[34,23],[30,27],[16,10],[-6,-4],[-36,-12],[-57,-11]];
+ b.garden(garden,55,false);for(let i=0;i<3;i++)b.box(-49+i*7,62,-32,4,1.4,3,'#a3b0af');
+ // Fountain lamps and crossed ribbons occupy the original recessed pool;
+ // no paving, canopy, steps or architectural surface is displaced.
+ for(let row=-2;row<=2;row++)for(let col=-2;col<=2;col++){
+  const x=32+col*3.1,z=8+row*3.1;if(col*col+row*row>6)continue;
+  const y=-1.48,h=1.5+((col*7+row*3+20)%5)*.43;
+  lamps.box(x,y,z,.30,.06,.30,'#b59ec8',0,22);
+  for(const [dx,dz]of [[.065,0],[0,.065]])lamps.quad('#b7a5df',[x-dx,y,z-dz],[x+dx,y,z+dz],[x+dx*.25,y+h,z+dz*.25],[x-dx*.25,y+h,z-dz*.25],22);
+ }
+ // Soft, spatially local reflected light on the existing paving below the hall.
+ // Street context is a separate mesh, explicitly excluded from silhouette masks.
+ const c=new SGBV.Batch(G.base),ctx=new THREE.Group();ctx.userData.svContext=true;
+ c.prism(scale(D.parts[0].p,1.01),-.7,-.15,'#bbc3b9');
+ for(const [x,z]of [[-77,-32],[-72,32],[-40,44],[-12,54],[43,57],[72,20],[70,-20],[-20,-50]]){c.box(x,0,z,5,.5,3,'#a9b3a4');c.tree(x,.5,z,1.05);}
+ for(let i=0;i<7;i++)c.box(57+i*.8,-.2+i*.23,28,1.1,.25,14,'#c3cbc0',-.6);
+ for(const Q of [[[-72,-18],[-63,-18],[-63,1],[-72,1]],[[42,-15],[59,-9],[58,-4],[41,-10]]]){c.prism(Q,5.3,5.6,'#c3d0cc');for(const p of Q)c.beam([p[0],0,p[1]],[p[0],5.3,p[1]],.2,'#b7c7c0');}
+ c.flush(ctx);ctx.traverse(o=>{if(o.isMesh)o.material=courtCut(o.material,[32,G.base,8],false);});g.add(ctx);
+});
+}
+
+/* ★ The Metropolis, ways 1563020894 / 1563020891 / 1563020893.
+ * 113.4 m measured maximum. Two staggered office slabs and recessed sky terraces.
+ */
+{
+const {register,scale,center,rect,out}=SGBV;
+register('metropolis','The Metropolis','The Metropolis',109,(b,D)=>{
+ const podium=D.parts.flatMap(p=>p.p);const P0=[[-63,-8],[-22.5,-81.4],[7.4,-52.1],[-22.8,3.1]],P1=[[0,5.9],[29.5,-13.4],[66.6,55.4],[35,70],[17.9,39.7]];
+ for(const [i,P]of [P0,P1].entries()){
+  const H=i?104:113.4,C=center(P),L=scale(P,.91);b.prism(P,-1,6,'#7a8b87');
+  b.facade(L,6,48,4.1,2.8,'#5b7680','#aababc',.65);
+  const sky=scale(P,.80);b.prism(sky,48,58,'#263e43',2);b.garden(scale(P,.98),48.15,false);// Broad skewed floor groups, with shallow, unequal balcony offsets.
+  // Values are photo estimates; the measured 113.4/104 m roof levels stay fixed.
+  const offsets=i?[0,.20,-.18,.36,.06,-.10]:[.06,-.16,.28,.10,.42,-.04];
+  for(let floor=0,y=57.5;y<H-1;floor++,y+=4.1){
+   const hi=Math.min(H-1,y+4.1),group=Math.min(offsets.length-1,Math.floor(floor/2)),d=offsets[group];
+   const Q=SGBV.move(scale(P,1.013+(floor%3)*.004),d*(i?-1:1),d*.55);
+   b.prism(Q,y,hi,floor%4===0?'#506772':'#455f69',2);
+   b.facade(scale(Q,1.003),y+.16,hi-.10,4.1,3.1,'#6a858e','#adbcc0',0);
+   b.band(scale(Q,1.006),hi-.16,.16,'#a5b8bb');
+  }
+  // Tall, clearly open columns on the recessed garden floor.
+  P.forEach((p,j)=>{const q=P[(j+1)%P.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/12);for(let k=0;k<n;k++){const x=p[0]+(q[0]-p[0])*k/n,z=p[1]+(q[1]-p[1])*k/n;b.box(x,48,z,.6,9.8,.6,'#c2cbc5');if(k%2===0)b.tree(x*.9+C[0]*.1,48.2,z*.9+C[1]*.1,.6);}});
+  b.roof(scale(P,1.026),H-.9,i);
+  // Recessed rooftop service court and continuous perforated perimeter screen.
+  const court=scale(P,.73);b.cap(court,H-.72,'#7b8989');b.rim(court,H-.5,'#c4ccc4',.32);
+b.band(scale(P,1.025),H-2,1,'#a5b5b0');
+  // Light grey opaque service gable, visible from the south/west.
+  const O=out(P,1.3),a=O[0],q=O[O.length-1];b.quad('#939fa0',[a[0],7,a[1]],[q[0],7,q[1]],[q[0],H-4,q[1]],[a[0],H-4,a[1]]);
+ }
+ // Deep entrance glazing, projecting vestibule canopies and low planted beds.
+ for(const P of [P0,P1]){const Q=out(P,.22),p=Q[0],q=Q[Q.length-1],x=(p[0]+q[0])/2,z=(p[1]+q[1])/2,a=Math.atan2(-(q[1]-p[1]),q[0]-p[0]);
+  b.box(x,.1,z,7,2.5,.28,'#2b4650',a,2);b.box(x,2.75,z,9,.20,3.0,'#b9c7c4',a);
+  for(const v of [-1,1]){const bx=x+v*5.2*Math.cos(a),bz=z-v*5.2*Math.sin(a);b.box(bx,.1,bz,2.2,.6,1.4,'#a4afa8',a);b.cap(SGBV.rect(bx,bz,2,1.2,a),.72,'#5f7a54');}
+ }
+
+ // The sheltered plaza between the slabs and the oval entrance canopy.
+ const oval=SGBV.ellipse(-13,37,13,9,32,-.5);b.prism(oval,8,8.5,'#c7cdc1');b.rim(oval,8.9,'#dce1d5',.3);
+ for(const [x,z]of [[-22,37],[-5,34]])b.box(x,0,z,.4,8,.4,'#cbd2c7');
+ b.prism(D.parts[2].p,0,5,'#a9b7b0');b.cap(D.parts[2].p,5.1,'#8aa4a2');
+ for(const P of [rect(-18,22,58,24,-.65),rect(15,50,40,17,-.65)]){b.prism(P,0,4,'#aab7b1');b.facade(P,0,4,4,3,'#668286','#c4ceca');}
+ // Low retail podium from the app's legacy OSM polygons. Its old generic
+ // 75 m estimate caused the false tower occluding the southwest street view.
+ for(const [i,part]of D.context_parts.entries()){const Q=part.p,H=i?9:12;b.prism(Q,-1,H,'#6d7e78');b.facade(SGBV.out(Q,.08),2,H-.5,3.5,2.8,'#55787c','#b6c4bb',.25);b.cap(Q,H+.1,'#646c67');b.rim(Q,H+.4,'#c5cec1',.4);}
+ const canopy=SGBV.ellipse(-64,70,16,10,32,-.55);b.prism(canopy,13.5,14,'#c2c7b8');b.rim(canopy,14.3,'#e3e5d8',.25);
+ for(let x=-122;x<-18;x+=7)for(let z=22;z<102;z+=7){if(SGBV.inside(D.context_parts[0].p,x,z)&&SGBV.inside(D.context_parts[0].p,x+6,z))b.beam([x,12.25,z],[x+6,12.25,z],.2,'#c5cfc2');}
+ for(const [x,z]of [[-66,9],[-58,32],[-20,62],[27,79],[76,51],[39,-20],[-13,-84]])b.tree(x,0,z,1.3);
+});
+}
+
+/* Buona Vista EW21 / CC22. Ways 152592566, 823046125,
+ * 1131873757, 1187773826. Only the above-ground station is massed;
+ * the large underground Circle Line footprint is not a 19 m building.
+ * The app supplies the real EW rail alignment, viaduct, moving trains and piers.
+ */
+{
+const {register,rect,scale}=SGBV;
+register('buona_vista_mrt','波那维斯达地铁站','Buona Vista MRT',143,(b,D)=>{
+ const P=[[-115.5,-68.1],[40,-52.6],[38.1,-34.6],[-117.5,-45.7]];
+ b.prism(scale(P,.97),0,4.6,'#a1b5ae');b.facade(scale(P,.98),1,6,5,4,'#4b8c82','#d6dfd1',.4);
+ b.prism(P,6,7,'#c6cfc1');
+ // Platforms remain visually open below the shallow mint-green roof.
+ b.prism(P,10.4,11,'#aab9ac');b.prism(scale(P,1.025),17.2,17.7,'#8ab7a1');b.rim(scale(P,1.025),18.25,'#d3dfc9',.4);
+ for(let x=-110;x<38;x+=12){let z=-56.6+(x+110)*.095;for(const sd of [-1,1]){b.box(x,7,z+sd*8,.5,10.1,.5,'#d3ddcc');b.box(x,11,z+sd*6.9,9,2.3,.15,'#5b8d84',-.095,2);b.box(x,13.3,z+sd*7,9,.3,.3,'#c6d5ca',-.095);}}
+// Open transverse roof trusses under the eaves, not a solid facade.
+ for(let x=-105;x<36;x+=12){const z=-56.6+(x+110)*.095;b.beam([x,14,z-9],[x,17.1,z],.25,'#dce4d5');b.beam([x,17.1,z],[x,14,z+9],.25,'#dce4d5');b.beam([x,14,z-9],[x,14,z+9],.22,'#bdccbf');}
+ // Five raised rectangular roof lanterns, parallel to the track.
+ for(let x=-95;x<35;x+=28){const z=-55+(x+95)*.095;b.box(x,18,z,13,1.2,6.8,'#d6ddcb',-.095);b.box(x,19.21,z,10,.12,4.5,'#73aab0',-.095,2);b.box(x,19.3,z,.18,.08,4.7,'#eef0dd',-.095);}
+ const entry=[[-12.7,-35.5],[.9,-27.7],[-10.1,-7.8],[16,6.7],[38.1,-34.6]];
+ b.prism(entry,0,4.5,'#b1beb2');b.cap(scale(entry,1.03),4.7,'#c5cdc1');b.rim(entry,5,'#dce3d4',.35);
+ for(const j of [2,3]){const Q=D.parts[j].p;b.prism(Q,-.3,2.9,'#859b8e');b.cap(scale(Q,1.07),3.1,'#c4d0c2');b.facade(scale(Q,1.01),.5,2.8,3,3,'#5a8987','#c7d3c5');}
+ // Platform-edge doors, handrails and continuous horizontal clerestory.
+ for(let x=-111;x<38;x+=3){const z=-56.6+(x+110)*.095;b.box(x,7,z-8.2,.15,2.8,.25,'#cedacb');b.box(x,7,z+8.2,.15,2.8,.25,'#cedacb');}
+ // Canopied walk to the Circle Line concourse; stairs beneath the entrance.
+ b.beam([7,4,0],[32,4,48],3.5,'#c4d0c6');for(let k=0;k<12;k++)b.box(6+k*.6,.25+k*.27,-7+k,8,.25,1.3,'#bac3b6',-.48);
+ for(const [x,z]of [[-116,-31],[-86,-30],[-46,-24],[35,18],[70,13]])b.tree(x,0,z,1.3);
+});
+}
+/* Sleepers, four running rails and expansion joints follow the app's actual
+ * EW route/profile. This decorates, rather than duplicates, its viaduct. */
+{
+let trackMaterial=null;
+if(typeof HOOKS!=='undefined')HOOKS.net.push(()=>{
+ if(!SGR.on||!net.mrt)return;
+ if(trackMaterial)trackMaterial.dispose();
+ trackMaterial=new THREE.MeshLambertMaterial({color:0xffffff,vertexColors:true,side:THREE.DoubleSide});
+ const D=SGBV.data.buona_vista_mrt,A=sgXY(D.lat,D.lon),B=new SGBV.Batch(0),g=new THREE.Group();
+ for(const R of net.mrt){if(R.line.code!=='EW')continue;for(let i=0;i<R.P.length-1;i++){
+  const p=R.P[i],q=R.P[i+1],mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;if(Math.hypot(mx-A[0],my-A[1])>650||R.cls[i]===2)continue;
+  const a=[p[0]-A[0],A[1]-p[1]],c=[q[0]-A[0],A[1]-q[1]],dx=c[0]-a[0],dz=c[1]-a[1],L=Math.hypot(dx,dz);if(L<.01)continue;
+  const nx=-dz/L,nz=dx/L,ang=Math.atan2(-dz,dx),y=R.yR[i],y1=R.yR[i+1];
+  for(const side of [-1,1]){for(const gauge of [-.72,.72]){const o=side*1.9+gauge;B.beam([a[0]+nx*o,y+.37,a[1]+nz*o],[c[0]+nx*o,y1+.37,c[1]+nz*o],.12,'#9aacab');}
+   const n=Math.ceil(L/1.2);for(let k=0;k<n;k++){const t=k/n,x=a[0]+dx*t+nx*side*1.9,z=a[1]+dz*t+nz*side*1.9;B.box(x,y+(y1-y)*t+.21,z,.25,.15,2.8,'#777364',ang);}
+  }
+  if(i%2===0)B.beam([a[0]-nx*4.65,y+.1,a[1]-nz*4.65],[a[0]+nx*4.65,y+.1,a[1]+nz*4.65],.12,'#69736e');
+ }}
+ B.flush(g,()=>trackMaterial);g.position.set(A[0],0,-A[1]);g.name='Buona Vista EW track detail';regionGroup.add(g);
+ if(SGBV.stats.buona_vista_mrt)SGBV.stats.buona_vista_mrt.railTriangles=g.userData.bvTriangles;
+});
+}
+
+/* Biopolis phase one: Chromos, Matrix, Genome, Proteos, Helios,
+ * Centros and Nanos, OSM ways 168243403/404/405/407/409/410/411.
+ * Measured cluster maximum 77.7 m; individual roof levels are photo estimates.
+ */
+{
+const {register,scale,center,out,inside}=SGBV;
+register('biopolis','启奥城','Biopolis',190,(b,D,G)=>{
+ const heights=[53,66,55,61,75.7,57,65];
+ // Chromos / Matrix / Genome / Proteos / Helios / Centros / Nanos.
+ const cols=['#a89b88','#aab9bb','#aaa69d','#85999d','#b3a58f','#8c9191','#9b8e8b'];
+ const glazing=['#69858b','#648791','#748d93','#54747e','#71888e','#5d7d82','#73858d'];
+ const bays=[3.6,3.0,4.0,2.9,3.4,3.2,3.7];
+ D.parts.forEach((part,i)=>{const P=part.p,H=heights[i];b.prism(P,-1,5,'#7d8b87');b.prism(P,5,H-2,cols[i]);b.facade(scale(P,1.004),5,H-3,4.1,bays[i],glazing[i],cols[i],i===2||i===5?.38:.18);
+  // Different horizontal sunshade rhythms, kept close to the measured skins.
+  const Oshade=out(P,.18);
+  for(let y=8+(i%3)*.6;y<H-4;y+=i===2?4.1:i===5?2.05:8.2){
+   Oshade.forEach((p,k)=>{const q=Oshade[(k+1)%Oshade.length];if((i+k)%3===0)return;b.beam([p[0]*.97+q[0]*.03,y,p[1]*.97+q[1]*.03],[q[0]*.97+p[0]*.03,y,q[1]*.97+p[1]*.03],i===5?.14:.22,i===3?'#a7b8bc':'#c0bfb2');});
+  }
+  if(i===3||i===5){const C=center(P);P.forEach((p,k)=>{const q=P[(k+1)%P.length];if(k%2)return;for(let t=.18;t<1;t+=.22){const x=p[0]+(q[0]-p[0])*t,z=p[1]+(q[1]-p[1])*t;b.beam([x,6,z],[x,H-4,z],.16,i===3?'#c0cbcc':'#b9b3aa');}});}
+  // Ground-level recesses and shaded access: no signs or institutional logos.
+  const doorEdge=out(P,.22),a=doorEdge[0],d=doorEdge[1],ex=(a[0]+d[0])/2,ez=(a[1]+d[1])/2,angle=Math.atan2(-(d[1]-a[1]),d[0]-a[0]);
+  b.box(ex,.1,ez,6,2.5,.28,'#3f5d64',angle,2);b.box(ex,2.75,ez,7,.20,2.7,'#c1c9c4',angle);
+  const bx=ex+4.3*Math.cos(angle),bz=ez-4.3*Math.sin(angle);b.box(bx,.1,bz,1.8,.6,1.6,'#9fa99d',angle);b.cap(SGBV.rect(bx,bz,1.6,1.4,angle),.73,'#607b53');
+
+  b.roof(P,H-.4,i);const Q=scale(P,.77);b.rim(Q,H,'#b3b9ad',.35);if(i===4)b.cap(Q,H+.05,'#52677a');
+  if(i===0||i===4||i===6){const O=out(P,.3),C=center(P);O.forEach((p,k)=>{const q=O[(k+1)%O.length];if((p[1]+q[1])/2>C[1]+4)return;const dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.floor(L/4.5));b.quad(i===6?'#a18f8b':i===4?'#b6aa95':'#ad9f8b',[p[0],5,p[1]],[q[0],5,q[1]],[q[0],H-1,q[1]],[p[0],H-1,p[1]]);for(let f=1;f<(H-6)/4.4;f++)for(let j=0;j<n;j++){if((f+j*3)%4===0)continue;let a=(j+.2)/n,c=(j+.78)/n,ox=(p[0]-C[0])*.003,oz=(p[1]-C[1])*.003,y=5+f*4.4;b.quad('#5a797d',[p[0]+dx*a+ox,y,p[1]+dz*a+oz],[p[0]+dx*c+ox,y,p[1]+dz*c+oz],[p[0]+dx*c+ox,y+.85,p[1]+dz*c+oz],[p[0]+dx*a+ox,y+.85,p[1]+dz*a+oz],2);}});}
+  // Tall white external frame on Helios and Matrix laboratory glazing.
+  if(i===4||i===1)P.forEach((p,k)=>{if(k%2===0)b.box(p[0],5,p[1],.65,H-5,.65,'#c3cbc5');});
+  if(i===4){const Q=scale(P,.72),C=center(Q);Q.forEach(p=>b.beam([C[0],H+.3,C[1]],[p[0],H+.3,p[1]],.22,'#aab8b9'));}
+ });
+ // Dense laboratory rooftop services, screened wells and taller curtain-wall frames.
+ D.parts.forEach((part,i)=>{const P=part.p,H=heights[i],C=center(P),Q=scale(P,.7);if(i!==4){b.walls(Q,H-.2,H+1.1,'#b6c0b7');for(let k=0;k<Q.length;k++){const p=Q[k],q=Q[(k+1)%Q.length];b.beam([p[0],H+.2,p[1]],[q[0],H+.2,q[1]],.28,'#d8dfd4');}}if(i===1||i===3)P.forEach(p=>b.beam([p[0],5,p[1]],[p[0],H,p[1]],.9,'#ccd5cb'));});
+ // Landscape along the real park edge west of the laboratory blocks.
+ for(let x=-196;x<-60;x+=12)for(let z=-155;z<171;z+=13){const px=x+Math.sin(z*.19+x)*5.4,pz=z+Math.cos(x*.13-z)*5.2;if(D.parts.some(p=>inside(scale(p.p,1.13),px,pz)))continue;b.tree(px,G.at(px,pz)-b.base,pz,1.2+.65*(.5+.5*Math.sin(x+z)));}
+ // Enclosed high-level links with glazed sides and pale flat roofs.
+ for(const [link,[ia,ib,y]]of [[0,4,24],[0,5,20],[5,1,24],[1,6,25],[1,2,23],[2,3,23],[4,6,28]].entries()){
+  const A=center(D.parts[ia].p),C=center(D.parts[ib].p),dx=C[0]-A[0],dz=C[1]-A[1],L=Math.hypot(dx,dz),bend=(link%2?1:-1)*4.0;
+  const at=t=>[A[0]+dx*t-dz/L*bend*4*t*(1-t),A[1]+dz*t+dx/L*bend*4*t*(1-t)];
+  for(let k=0;k<10;k++){const p=at(k/10),q=at((k+1)/10),vx=q[0]-p[0],vz=q[1]-p[1],len=Math.hypot(vx,vz),nx=-vz/len*2.25,nz=vx/len*2.25;
+   b.beam([p[0],y,p[1]],[q[0],y,q[1]],.38,'#aebfbc');
+   b.quad('#b2c0bf',[p[0]+nx,y,p[1]+nz],[q[0]+nx,y,q[1]+nz],[q[0]-nx,y,q[1]-nz],[p[0]-nx,y,p[1]-nz]);
+   b.quad('#c5d0cb',[p[0]+nx*1.133,y+3.5,p[1]+nz*1.133],[q[0]+nx*1.133,y+3.5,q[1]+nz*1.133],[q[0]-nx*1.133,y+3.5,q[1]-nz*1.133],[p[0]-nx*1.133,y+3.5,p[1]-nz*1.133]);
+   for(const sign of [-1,1]){b.quad('#66858e',[p[0]+nx*sign,y,p[1]+nz*sign],[q[0]+nx*sign,y,q[1]+nz*sign],[q[0]+nx*sign,y+3.5,q[1]+nz*sign],[p[0]+nx*sign,y+3.5,p[1]+nz*sign],2);b.beam([p[0]+nx*sign,y,p[1]+nz*sign],[p[0]+nx*sign,y+3.5,p[1]+nz*sign],.14,'#c5d0cb');}
+  }
+ }
+ for(const [x,z]of [[-71,-4],[-18,11],[58,1],[57,67],[-17,85],[-150,-76],[-118,-39],[-55,45],[52,163],[146,90]])b.tree(x,0,z,1.8);
+});
+}
+
+/* ★ Fusionopolis One: ways 175841411, 173033567, 173033568,
+ * 173033570. Symbiosis / Connexis North / South, measured 135.9 m.
+ * Three curved floor plates, white sky gardens, roof oculi and connecting bridges.
+ */
+{
+const {register,scale,center,smooth,ellipse}=SGBV;
+register('fusionopolis_one','启汇城一期','Fusionopolis One',90,(b,D)=>{
+ b.prism(D.parts[0].p,-1,8,'#a5bcb1');b.facade(D.parts[0].p,1,8,6,4,'#638f88','#d2ddd1',.6);
+ const heights=[135.9,134.1,123];
+ D.parts.slice(1).forEach((part,i)=>{const P=smooth(part.p,1),H=heights[i],body=P,recess=scale(P,.83);
+  // Real air slots between three footprint-based towers, rather than a single
+  // continuous glass curtain. Outer crowns and garden frames retain their line.
+  for(const [Q,lo,hi]of [[body,8,H-49],[recess,H-49,H-25],[body,H-25,H-12]]){
+   b.prism(Q,lo,hi,i===2?'#517d83':'#4d7b7e',2);b.facade(scale(Q,1.003),lo,hi,4.25,i===2?3.0:3.4,i===1?'#73989c':'#6e9297','#cfdbd5',.38);
+  }
+  for(const y of [15,48,91]){b.band(scale(P,1.025),y,1.4,'#d4e1d6');b.band(scale(P,1.02),y+1.4,2,'#b7cdc0');P.forEach((p,k)=>{if(k%4===0){const q=P[(k+3)%P.length];b.beam([p[0],y+1,p[1]],[q[0],y+3.1,q[1]],.25,'#dce6db');}});}
+  // White triangulated sky-garden balustrades, prominent at district scale.
+  const O=SGBV.out(P,.9);for(const y of [13,48,H-49])O.forEach((p,k)=>{const q=O[(k+1)%O.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),n=Math.max(1,Math.ceil(L/5));for(let j=0;j<n;j++){const t=j/n,u=(j+1)/n,a=[p[0]+(q[0]-p[0])*t,p[1]+(q[1]-p[1])*t],c=[p[0]+(q[0]-p[0])*u,p[1]+(q[1]-p[1])*u];b.beam([a[0],y,a[1]],[c[0],y+3,c[1]],.3,'#e5ede3');b.beam([a[0],y+3,a[1]],[c[0],y,c[1]],.3,'#dbe7dc');}});
+  // Broad upper garden occupies four floors, articulated with white uprights.
+  b.band(scale(P,1.018),96,1.5,'#d8e4d8');P.forEach((p,k)=>{if(k%2===0)b.box(p[0],98,p[1],.45,14,.45,'#dce7de');});
+  b.walls(scale(P,.99),H-18,H-12,'#97bdb7',2);b.facade(scale(P,1.002),H-18,H-12,3.4,4.5,'#78a29e','#c6dbcf',.4);
+
+  // Swept crown: the high rim drops across the curved floor plate.
+  const C=center(P),Q=scale(P,1.02),Y=(x,z)=>{const u=Math.max(0,Math.min(1,((x-C[0])*.22+(z-C[1])*.08+4)/10));return H-1-(i===0?10:i===1?14:7)*u*u*(3-2*u);};
+  b.walls(Q,H-12,Y,'#d9e6dd');if(i===2)b.cap(Q,Y,'#e3ece3');
+  if(i!==2){const O=ellipse(C[0],C[1],i===0?17:10,i===0?21:23,40,i===0?-.45:-.1);const h=H-13;b.capHole(Q,[O],Y,'#e3ece3');b.walls(O,h,Y,'#bdcec1');b.cap(O,h+.05,i===0?'#abaea0':'#6c8c50');for(let k=0;k<O.length;k++){let a=O[k],q=O[(k+1)%O.length];b.beam([a[0],Y(...a)+.2,a[1]],[q[0],Y(...q)+.2,q[1]],.45,'#e7eee2');}if(i===1)for(let j=-6;j<=6;j++)b.beam([C[0]-5,h+.12,C[1]+j*2.2],[C[0]+5,h+.12,C[1]+j*2.2],.14,'#b6cfa3');}
+
+  // Four-storey white sky-garden cage with open-looking planted recesses.
+  const low=H-49,high=H-25;
+  for(let y=low;y<=high;y+=4)b.band(scale(P,1.035),y,.65,'#e5ece1');
+  P.forEach((p,k)=>{const q=P[(k+1)%P.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(k%2===0||L>8)b.beam([p[0]*1.006,low,p[1]*1.006],[p[0]*1.006,high,p[1]*1.006],.55,'#e8eee5');});
+  b.band(scale(P,1.025),low-1,1,'#dbe6d7');
+
+ });
+ // Recessed street entrances and sheltered retail, inside the existing podium.
+ const retail=D.parts[0].p,Oret=SGBV.out(retail,.22);
+ const doors=retail.map((p,k)=>({k,len:Math.hypot(retail[(k+1)%retail.length][0]-p[0],retail[(k+1)%retail.length][1]-p[1])})).sort((a,b)=>b.len-a.len).slice(0,3);
+ for(const {k,len}of doors){const p=Oret[k],q=Oret[(k+1)%Oret.length],x=(p[0]+q[0])/2,z=(p[1]+q[1])/2,a=Math.atan2(-(q[1]-p[1]),q[0]-p[0]);
+  b.box(x,.1,z,Math.min(8,len-1),2.5,.28,'#294a52',a,2);b.box(x,2.75,z,Math.min(9,len),.20,3.0,'#cbd7d1',a);
+  for(const v of [-1,1]){const bx=x+v*5*Math.cos(a),bz=z-v*5*Math.sin(a);b.box(bx,.1,bz,2,.55,1.3,'#a1aaa1',a);b.cap(SGBV.rect(bx,bz,1.8,1.1,a),.67,'#607a52');}
+ }
+
+ // Suspended bridges, slender white lattice sides and roof.
+ for(const [a,c,y]of [[[-4,-24],[13,9],104],[[-24,11],[-4,-25],73],[[-9,-16],[13,12],117]]){
+  b.beam([a[0],y,a[1]],[c[0],y,c[1]],3,'#93b5ae');b.beam([a[0],y+3,a[1]],[c[0],y+3,c[1]],.6,'#dde6dd');for(let t=0;t<1;t+=.125){let x=a[0]+(c[0]-a[0])*t,z=a[1]+(c[1]-a[1])*t;b.beam([x,y,z-1.6],[x,y+3,z+1.6],.3,'#e0e8df');}
+ }
+ for(const [x,z]of [[-43,39],[-58,5],[39,-62],[56,44],[-29,-57]])b.tree(x,0,z,1.2);
+});
+}
+
+/* ★ Solaris, ways 123988232, 777420337 and 777420338.
+ * 80.1 m measured roof frame maximum. Asymmetric terraced volumes,
+ * continuous rising perimeter garden, dense horizontal sunshades, atrium.
+ */
+{
+const {register,scale,smooth,center,ellipse,lerp,out}=SGBV;
+register('solaris','索拉里斯','Solaris',90,(b,D)=>{
+ const P=smooth(D.parts[0].p),South=smooth(D.parts[1].p),North=smooth(D.parts[2].p);
+ b.prism(P,-1,5,'#b1bfb1');
+ // Lower shared floors, two unequal wings above, with a recessed glazed cut.
+ b.facade(scale(P,.97),5,34,4.4,3.2,'#3f6563','#e0e5d8',.18);
+ const volumes=[[South,34,75],[North,34,48]];
+ for(const [Q,lo,hi]of volumes){b.prism(scale(Q,.97),lo,hi,'#52756e',2);b.facade(scale(Q,.975),lo,hi,4.4,3.8,'#6a8e83','#d9e3d5',.15);b.garden(scale(Q,.96),hi+.2);b.rim(Q,hi+.8,'#e4e8dc',.7);}
+ // Multiple narrow louvres between each floor, projected beyond the glass.
+ for(let y=6;y<75;y+=1.05){if((y-6)%15>9.0)continue;const Q=y<34?P:y<48?null:South;if(Q)b.prism(out(Q,1.05),y,y+.42,'#eef0e4');else for(const R of [South,North])b.prism(out(R,1.05),y,y+.42,'#eef0e4');}
+ for(const [Q,H]of [[South,75],[North,48]])for(let y=19;y<H;y+=15){b.band(out(Q,.8),y,1.1,'#6c875b');b.rim(out(Q,1.15),y+.8,'#c9d8bb',.35);}
+ // The planted ramp spirals continuously around the facade, four circuits.
+ // A single continuous helical surface migrates from the full lower perimeter
+ // onto the taller south wing. No disconnected high-level strips on the low wing.
+ const resample=(R,n)=>{const L=[0];R.forEach((p,i)=>{const q=R[(i+1)%R.length];L.push(L[i]+Math.hypot(q[0]-p[0],q[1]-p[1]));});return Array.from({length:n},(_,k)=>{const d=L[R.length]*k/n;let j=0;while(L[j+1]<d)j++;const t=(d-L[j])/(L[j+1]-L[j]||1),p=R[j],q=R[(j+1)%R.length];return [lerp(p[0],q[0],t),lerp(p[1],q[1],t)];});};
+ const area=R=>R.reduce((a,p,i)=>{const q=R[(i+1)%R.length];return a+p[0]*q[1]-q[0]*p[1];},0);
+ let S=South.slice();if(area(P)*area(S)<0)S.reverse();let si=0;S.forEach((p,i)=>{if(Math.hypot(p[0]-P[0][0],p[1]-P[0][1])<Math.hypot(S[si][0]-P[0][0],S[si][1]-P[0][1]))si=i;});S=S.slice(si).concat(S.slice(0,si));
+ const N=128,lowerPerim=resample(out(P,2.4),N),upperPerim=resample(out(S,2.4),N),CA=center(P),CC=center(S),path=[];
+ for(let k=0;k<=N*4;k++){const y=5+k/(N*4)*68,u=Math.max(0,Math.min(1,(y-28)/20)),f=u*u*(3-2*u),i=k%N,p=[lerp(lowerPerim[i][0],upperPerim[i][0],f),y,lerp(lowerPerim[i][1],upperPerim[i][1],f)],cx=lerp(CA[0],CC[0],f),cz=lerp(CA[1],CC[1],f);path.push({p,q:[lerp(p[0],cx,.065),y,lerp(p[2],cz,.065)]});}
+ for(let k=0;k<path.length-1;k++){const a=path[k],c=path[k+1],lower=p=>[p[0],p[1]-.6,p[2]],hedge=p=>[p[0],p[1]+1.2,p[2]];b.quad('#688857',a.p,c.p,c.q,a.q);b.quad('#cad9be',lower(a.p),lower(c.p),c.p,a.p);b.quad('#6f905e',a.p,c.p,hedge(c.p),hedge(a.p));if(k%18===0)b.tree(a.q[0],a.q[1]+.1,a.q[2],.6);}
+ // Sloping glazed atrium between both wings, with repeated white roof ribs.
+ const A=[[-27,-10],[-8,3],[31,21],[39,8],[-7,-18]];b.cap(A,(x,z)=>47-(x+z)*.035,'#93b1a5',2);for(let t=0;t<=1;t+=.065){let x=-25+57*t,z=-10+30*t;b.beam([x,47-(x+z)*.035,z],[x+8,47-(x+z+1)*.035,z-15],.3,'#d6e0d2');}
+ // Angular, asymmetric frame follows the west end of the high garden.
+ const R=[[-62,17],[-56,7],[-39,-3],[-23,1],[-30,19],[-10,34],[11,44],[3,50],[-41,36],[-56,30]];
+ b.rim(R,79.5,'#f0f2e5',.8);
+ for(const [i,j]of [[0,5],[1,5],[1,6],[2,6],[2,7],[3,8],[4,8]]){let a=R[i],q=R[j];b.beam([a[0],79.4,a[1]],[q[0],77.8,q[1]],.75,'#edf0e3');}
+ for(const i of [0,2,4,6,8]){let p=R[i];b.beam([p[0],75,p[1]],[p[0],79.5,p[1]],.6,'#e6ecdc');}
+ // Garden paths and deeper planting beds break up both flat roof lawns.
+ for(const [Q,y]of [[North,48.3],[South,75.3]]){const C=center(Q);b.rim(scale(Q,.72),y+.12,'#b9bba4',.7);for(let i=0;i<Q.length;i+=3){let p=Q[i];if(i%2===0)b.tree(p[0]*.8+C[0]*.2,y+.2,p[1]*.8+C[1]*.2,.7);}for(let x=C[0]-10;x<C[0]+11;x+=10)for(let z=C[1]-6;z<C[1]+7;z+=9){const R=SGBV.rect(x,z,7,4);if(R.every(p=>SGBV.inside(Q,...p)))b.prism(R,y+.05,y+.4,'#6c8554');}}
+ for(const [path,y]of [[[[-8,-45],[10,-36],[23,-24],[32,-12],[19,-7]],48.5],[[[-44,14],[-34,23],[-10,32],[11,37]],75.5]])for(let i=0;i<path.length-1;i++){const p=path[i],q=path[i+1];b.beam([p[0],y,p[1]],[q[0],y,q[1]],.9,'#bac0a8');}
+ b.box(34,48.4,-20,8,2.2,6,'#cdd5c6',.4);b.box(33,50.6,-20,6,.3,4,'#9fae9e',.4);
+ for(const [x,z]of [[-62,3],[-48,41],[19,52],[53,-27],[8,-66]])b.tree(x,0,z,1.3);
+});
+}
+
+/* Galaxis, OSM 175841412, measured 93.7 m. L-shaped office plate
+ * on slender pilotis; alternating metal/glass north facade and horizontal
+ * south facade. The low southern annex is part of the same footprint.
+ */
+{
+const {register,scale,rect,center,out}=SGBV;
+register('galaxis','星桥大厦','Galaxis',100,(b,D)=>{
+ const P=D.parts[0].p;
+ // Principal office block excludes the low, curving southern annex.
+ const T=[[-32,-42],[-18.5,-66.4],[10,-57.9],[30.6,-52.3],[52.1,-49.6],[1,58],[-24,43],[-16.6,17.5],[4.8,-20.6]];
+ b.prism(P,-1,4,'#99aaa1');b.prism(scale(P,.96),4,11,'#4f7273',2);
+ b.prism(T,22,92.3,'#9eafa9');b.facade(scale(T,1.004),22,92.3,4.35,3.1,'#729198','#dbe2dc',.2);b.cap(T,92.5,'#bac4be');b.rim(T,93.4,'#dce2d7',.55);const R=scale(T,.88);R.forEach((p,i)=>{const q=R[(i+1)%R.length];for(let t=0;t<1;t+=.04)b.beam([p[0]+(q[0]-p[0])*t,92.6,p[1]+(q[1]-p[1])*t],[p[0]+(q[0]-p[0])*t,93.5,p[1]+(q[1]-p[1])*t],.12,'#b4beb7');});
+ // Projecting white slab edges dominate the long south/east elevation.
+ for(let y=24;y<91;y+=4.35){const O=out(T,.7);for(const i of [4,5,6,7,8]){const p=O[i],q=O[(i+1)%O.length];b.beam([p[0],y,p[1]],[q[0],y,q[1]],.75,'#dbe3db');b.beam([p[0],y+1.15,p[1]],[q[0],y+1.15,q[1]],.18,'#bccfc5');}}
+ // Tall, airy columns carrying the raised office volume.
+ T.forEach((p,i)=>{const q=T[(i+1)%T.length],n=Math.ceil(Math.hypot(q[0]-p[0],q[1]-p[1])/12);for(let k=0;k<n;k++){const x=p[0]+(q[0]-p[0])*k/n,z=p[1]+(q[1]-p[1])*k/n;b.box(x,4,z,.9,18,.9,'#c9d5ce');}});
+ // Staggered opaque cassette pattern on the north/west faces.
+ for(const i of [0,1,2,3]){const O=out(T,.45);let p=O[i],q=O[(i+1)%T.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.ceil(L/3.5);for(let f=0;f<16;f++)for(let j=0;j<n;j++){if((j+f*2)%5>2)continue;let t=(j+.08)/n,u=(j+.94)/n,y=22+f*4.35;const off=0;b.quad((j+f)%3?'#e0e5df':'#94aaa9',[p[0]+dx*t-off,y,p[1]+dz*t-off],[p[0]+dx*u-off,y,p[1]+dz*u-off],[p[0]+dx*u-off,y+3.4,p[1]+dz*u-off],[p[0]+dx*t-off,y+3.4,p[1]+dz*t-off]);}}
+ const A=[[-30,26],[-16,18],[12,34],[6,48],[8,58],[-34,77],[-44,68]];
+ b.prism(A,4,20,'#a8b7ab');b.facade(scale(A,1.005),5,19,4,3,'#5e8080','#d2dcd0',.7);b.garden(scale(A,.9),20.2);
+ for(let y=7;y<20;y+=1.4)b.band(scale(A,1.02),y,.3,'#cbd8c9');
+ for(const [x,z]of [[-33,-49],[-42,8],[-39,46],[17,42],[46,-25]])b.tree(x,0,z,1.3);
+});
+}
+
+/* Mediacorp campus, way 352920078: measured 76 m maximum.
+ * Long tapered upper broadcast bar floats above glazed studios; curved
+ * northern theatre and planted roof terrace. No corporate text or marks.
+ */
+{
+const {register,scale,smooth,ellipse,rect,move,out}=SGBV;
+register('mediacorp','新传媒园区','Mediacorp Campus',144,(b,D)=>{
+ const P=D.parts[0].p;
+ const Upper=smooth([[-17,-45],[-9,-63],[7,-68],[33,-61],[52,-56],[24,40],[-24,140],[-28,70],[-26,5]],1);
+ const Theatre=smooth([[-19,-86],[31,-64],[27,-57],[-4,-16],[-30,-32],[-41,-50],[-37,-75]],2);
+ const Studio=move(scale(smooth([[-28,68],[-25,10],[-11,-43],[35,-34],[20,40],[-21,117]],1),.9),-5,0);
+ b.prism(P,-1,3,'#a2aca0');b.prism(Studio,3,32,'#7b8b82');b.facade(scale(Studio,1.005),3,31,4.5,3.6,'#597d80','#a2b3a9',.38);
+ b.prism(Theatre,3,27,'#8c9987');b.garden(scale(Theatre,.88),27.3,false);b.rim(Theatre,27.6,'#b5c1ac',.5);
+ // Upper lens is held high; the large through-space remains open below it.
+ b.prism(Upper,42,72,'#a2aa96');b.cap(Upper,72.2,'#a6b1a0');b.rim(Upper,73,'#c2c9b7',.65);
+ b.facade(scale(Upper,1.004),43,71,4.6,6,'#98a18c','#aeb7a1',.32);
+ for(let y=44;y<71;y+=4.5)b.band(scale(Upper,1.008),y,.8,'#99a58d');
+ // A narrow dark slot cuts the long facade, and two structural legs below.
+ for(const x of [-21,22])b.box(x,3,-7,5,40,8,'#8b9b8c');
+ const Slot=[[-27,52],[-27,64],[-24,82],[1,72],[8,58]];b.walls(scale(Slot,1.01),48,52,'#4b6861',2);
+ // Dense plant, service aisles, four round roof fans and screens.
+ b.roof(scale(Upper,.88),73,2);
+ // Opaque studio panels, garden slot, elevated cantilever supports.
+ for(const [x,z,w,d]of [[-8,-19,24,30],[-19,39,18,48]]){b.box(x,3,z,w,26,d,'#8c998c');b.box(x+w/2+.15,8,z,.3,15,d*.8,'#759297');}
+ b.box(20,7,-18,9,5,15,'#ccd3c5');b.box(19,17,4,8,4,13,'#c2cbbb');
+ for(let z=-32;z<72;z+=8)b.tree(-17,34,z,.55);
+ // Opaque lower studio envelope with a thin dark garden slot above it.
+ const S=out(Studio,.8);b.walls(S,5,35,'#a4ad9c');b.prism(ellipse(7,-43,12,10,28),27,43,'#a1b09b');b.band(out(Studio,.85),28.5,1,'#536e68');
+ b.facade(move(scale(Studio,.99),2,0),3,10,5,2.4,'#537f82','#aebfaf',.18);
+ // Elevated terrace and the glazed northern theatre lobby.
+ b.facade(out(Theatre,.12),3,12,4,2.8,'#739a94','#c3cfc0',.2);
+
+
+ for(const [x,z,r]of [[2,-25,10],[-2,6,9],[-7,35,8],[-14,76,7]]){b.prism(ellipse(x,z,r,r*.8,24),73.2,75.2,'#bcc8b8');b.cap(ellipse(x,z,r*.82,r*.65,24),75.3,'#6d8e87');for(let a=0;a<8;a++){const t=a/8*Math.PI*2;b.beam([x,75.4,z],[x+Math.cos(t)*r*.8,75.4,z+Math.sin(t)*r*.65],.22,'#d8ded0');}}
+ for(const [x,z]of [[-38,-91],[43,-54],[40,3],[9,85],[-40,61],[-40,-9]])b.tree(x,0,z,1.7);
+});
+}
+
+/* ★ The Rochester complex. Cranked single residential tower way 167472309,
+ * hotel 167472303, mall 167472305. Overall measured height 138 m.
+ * Hotel 102 m and mall 36 m use the OSM tags, checked against all six photos.
+ */
+{
+const {register,scale,center,out}=SGBV;
+register('rochester','罗切斯特综合体','The Rochester',113,(b,D)=>{
+ const P=D.parts[0].p,H=138;
+ b.prism(P,-1,10,'#ac9b8b');b.facade(scale(P,1.004),1,9,4,3,'#536e6b','#b6c0b4',.3);
+ // One connected, angled floor plate, never separate towers.
+ b.prism(P,10,H-7,'#a1b4a8');b.facade(scale(P,1.006),10,H-7,3.35,2.7,'#71978e','#cbd7cb',.28);
+ for(let y=12;y<H-7;y+=3.35){b.band(scale(P,1.035),y,.34,'#c1cabe');b.rim(scale(P,1.03),y+1.15,'#8fa69a',.16);}
+// Projecting balcony stacks on the long cranked elevation, one connected tower.
+ {const a=P[2],c=P[3],dx=c[0]-a[0],dz=c[1]-a[1],angle=Math.atan2(-dz,dx);for(const t of [.28,.5,.73]){const x=a[0]+dx*t,z=a[1]+dz*t;for(let y=14;y<126;y+=3.35){b.box(x,y,z,4,.25,2.1,'#cdd8cb',angle);b.box(x,y+1.2,z,4,.12,2.15,'#a7bfb1',angle);}}}
+ // Rose-beige service spine, projecting balcony stacks and full-height fins.
+ for(const i of [0,2,4,6]){const O=out(P,.45),p=O[i],end=O[(i+1)%P.length],L=Math.hypot(end[0]-p[0],end[1]-p[1]),t=Math.min(1,8/L),q=[p[0]+(end[0]-p[0])*t,p[1]+(end[1]-p[1])*t];b.quad('#c1afa6',[p[0],10,p[1]],[q[0],10,q[1]],[q[0],H-7,q[1]],[p[0],H-7,p[1]]);for(let y=17;y<118;y+=3.35){const C=center(P),ox=(p[0]-C[0])*.004,oz=(p[1]-C[1])*.004;b.quad('#64817b',[p[0]+(q[0]-p[0])*.22+ox,y,p[1]+(q[1]-p[1])*.22+oz],[p[0]+(q[0]-p[0])*.8+ox,y,p[1]+(q[1]-p[1])*.8+oz],[p[0]+(q[0]-p[0])*.8+ox,y+1.5,p[1]+(q[1]-p[1])*.8+oz],[p[0]+(q[0]-p[0])*.22+ox,y+1.5,p[1]+(q[1]-p[1])*.22+oz],2);}}
+ for(const i of [1,3,7]){const p=P[i];b.box(p[0],9,p[1],1.1,H-12,1.1,'#cfcec0');}
+ b.band(out(P,.48),H-18,11,'#c1afa6');
+ {const O=out(P,.75);O.forEach((p,i)=>{const q=O[(i+1)%O.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),n=Math.max(1,Math.floor(L/3));for(let j=0;j<n;j++)for(let y=H-17;y<H-7;y+=3.35){const t=(j+.1)/n,u=(j+.82)/n;b.quad('#617d79',[p[0]+(q[0]-p[0])*t,y,p[1]+(q[1]-p[1])*t],[p[0]+(q[0]-p[0])*u,y,p[1]+(q[1]-p[1])*u],[p[0]+(q[0]-p[0])*u,y+1.65,p[1]+(q[1]-p[1])*u],[p[0]+(q[0]-p[0])*t,y+1.65,p[1]+(q[1]-p[1])*t],2);}});}
+b.prism(scale(P,.98),H-7,H-2,'#b6b4a3');b.facade(P,H-7,H-2,3.5,3,'#73958b','#cbd3c4',.4);b.roof(P,H-2);b.prism(scale(P,.68),H-1,H,'#c2cec0');
+ // Low hotel wing and stepped glazed mall, correctly on the two other ways.
+ const Hotel=D.parts[1].p,Mall=D.parts[2].p;
+ b.prism(Hotel,0,102,'#899f96');b.facade(scale(Hotel,1.005),1,100,3.6,3,'#5b7b77','#c8d1c3',.4);b.roof(Hotel,102);Hotel.forEach(p=>b.box(p[0],0,p[1],.5,102,.5,'#c9d4c6'));
+ b.prism(Mall,-1,13,'#9aa99b');b.facade(scale(Mall,1.005),1,13,4,3,'#688880','#cbd4c6',.5);b.prism(scale(Mall,.95),13,36,'#72908a',2);b.facade(scale(Mall,.955),13,36,3.5,3.4,'#65827e','#cbd6c8',.3);b.roof(scale(Mall,.96),36.1);
+ // Repeated pitched conservatory bays across the mall's long roof.
+ const A=Mall[0],Z=Mall[3];for(let t=.08;t<.92;t+=.075){let x=A[0]+(Z[0]-A[0])*t,z=A[1]+(Z[1]-A[1])*t;b.beam([x-6,36.4,z+2],[x,39,z-6],.55,'#e2e7d9');b.beam([x,39,z-6],[x+7,36.4,z-4],.55,'#d5dfd0');}
+
+ Mall.forEach((p,i)=>{if(i%2===0)b.box(p[0],13,p[1],1,15,1,'#c4d0bf');});
+ for(const [x,z]of [[-33,23],[-29,48],[19,46],[46,19],[37,-18],[-66,-55],[-39,-22],[78,43]])b.tree(x,0,z,1.4);
+});
+}
+
+/* One Holland Village: OSM 1226724186 and verified northern residential ways.
+ * Official 3 retail / up to 7 commercial floors; 34/28/3 residential floors.
+ * Metre elevations are explicit estimates (112/98/12m), not stale tile heights.
+ * Interlude is suspended under the ETFE court canopy, NOT Holland Piazza's fascia. */
+{
+const {register,scale,center,rect,lerp}=SGBV;
+register('one_holland_village','One Holland Village','One Holland Village',215,(b,D,G,g)=>{
+ const P=D.parts[0].p,I=scale(P,.67),W=scale(P,.94),L=4.4;
+ // Porous retail ring: no filled slab across the public shopping street.
+ b.prism(P,-.55,.1,'#c6c7bb');
+ for(let f=0;f<3;f++){
+  const y=f*L;
+  b.capHole(P,[I],y+.2,'#b5b5a6');b.capHole(P,[I],y+L-.3,'#dedfd5');
+  b.walls(W,y+.3,y+L-.4,'#344d4f',2);b.walls(scale(I,1.08),y+.3,y+L-.4,'#345251',2);
+  for(const [ring,outer]of [[P,true],[I,false]])ring.forEach((p,i)=>{const q=ring[(i+1)%ring.length],dx=q[0]-p[0],dz=q[1]-p[1],len=Math.hypot(dx,dz),n=Math.max(1,Math.ceil(len/7));
+   b.beam([p[0],y+L-.22,p[1]],[q[0],y+L-.22,q[1]],.36,'#edeee6');
+   for(let j=0;j<n;j++){
+    const t=j/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.box(x,y+.1,z,.30,L-.3,.30,'#dedfd6');
+    if(f>0){b.beam([x,y+.75,z],[lerp(p[0],q[0],(j+1)/n),y+.75,lerp(p[1],q[1],(j+1)/n)],.10,'#827566');}
+    if(f===0&&outer&&len>10){const a=Math.atan2(-dz,dx),mx=lerp(p[0],q[0],(j+.5)/n),mz=lerp(p[1],q[1],(j+.5)/n);b.box(mx,y+3.0,mz,Math.min(5.8,len/n-.3),.16,2.1,j%3?'#b9b6a6':'#a58c76',a);}
+   }
+  });
+ }
+ // Photo-interpreted inner retail bar separates the two pedestrian streets.
+ // Its internal position is approximate; the external footprint remains OSM.
+ const streetBar=rect(-6,-4,15,65,.45);
+ b.prism(streetBar,.1,12.8,'#c9cec4');b.facade(scale(streetBar,1.001),.4,12.7,4.4,4.5,'#52716b','#dfe4da',.28);
+ b.cap(streetBar,13.0,'#bdc7b8');b.rim(streetBar,13.3,'#e0e6da',.22);
+ for(let i=0;i<4;i++){const x=-13+i*4.5,z=-17+i*9;b.box(x,13.0,z,3,.45,2,'#a9b8a1');b.cap(rect(x,z,2.8,1.8),13.48,'#6f895c');}
+ // Seven-storey office podium confined to the residential/northwest end.
+ const office=[P[0],P[1],P[2],P[3],I[3],I[2],I[1],I[0]];
+ b.prism(office,13.2,28.0,'#c5c9c4');b.facade(scale(office,1.001),13.4,27.8,3.6,3.6,'#66817e','#dfdfd6',.24);
+ b.cap(office,28.1,'#a4aea4');b.rim(office,28.5,'#dde0d4',.20);
+ // Sky gardens, warm corridors, modest furniture, planters and public steps.
+ for(let i=0;i<P.length;i++){const p=P[i],q=P[(i+1)%P.length];if(i%2===0){const x=(p[0]+q[0])/2,z=(p[1]+q[1])/2,plan=rect(x*.88,z*.88,5,1.8,Math.atan2(-(q[1]-p[1]),q[0]-p[0]));b.prism(plan,13.1,13.65,'#b8bbae');b.cap(scale(plan,.88),13.7,'#5d7a4b');}}
+ for(let i=0;i<I.length;i+=3){const p=I[i];b.tree(p[0]*.65,0,p[1]*.65,.85);b.box(p[0]*.68,.15,p[1]*.68,4,.45,1.1,'#969b8d',-.5);}
+ for(let j=0;j<7;j++)b.box(26+j*.7,-.1+j*.18,64-j*.6,22,.19,1.0,'#a3a79b',-.6);
+ for(const z of [-28,-5,22]){b.box(-5,.1,z,2,.7,3,'#a1aa99');b.cap(rect(-5,z,1.8,2.8),.82,'#688754');}
+ const bridge=rect(-4,-20,44,4,-.4);b.prism(bridge,8.6,8.95,'#d5dacf');b.rim(bridge,9.9,'#8b8f80',.12);
+ // 30x18m = 540m² plan ETFE canopy. Frame + pitched lightweight cushions.
+ const cx=9,cz=22,ang=-.55,xf=(x,z,y)=>[cx+x*Math.cos(ang)+z*Math.sin(ang),y,cz-x*Math.sin(ang)+z*Math.cos(ang)];
+ const canopy=new SGBV.Batch(G.base),art=new SGBV.Batch(G.base);
+ for(const x of [-15,15])for(const z of [-9,9]){const a=xf(x,z,0),q=xf(x,z,15.8);b.beam(a,q,.38,'#e2e5dc');}
+ for(let j=0;j<=6;j++){const z=-9+j*3;for(let k=0;k<6;k++){const x=-15+k*5,y=v=>15.9+1.3*(1-v*v/225);const A=xf(x,z,y(x)),B=xf(x+5,z,y(x+5));b.beam(A,B,.16,'#e5e8df');if(j<6){const C=xf(x+5,z+3,y(x+5)),E=xf(x,z+3,y(x));canopy.quad('#dce6df',A,B,C,E);}}}
+ for(let k=0;k<=6;k++){const x=-15+k*5;b.beam(xf(x,-9,15.9+1.3*(1-x*x/225)),xf(x,9,15.9+1.3*(1-x*x/225)),.14,'#e7e9df');}
+ // Original low-cost interpretation of the suspended colour-field, no lettering.
+ const palette=['#e7a244','#d87863','#be6676','#9a79a0','#6d7da8','#4e91a6','#78aca5'];
+ for(let j=0;j<5;j++)for(let k=0;k<41;k++){
+  const x=-14.5+k*.72,z=-8+j*3.6,h=1.7+1.3*Math.sin(k*.16+j*.8),y=15.5;
+  art.quad(palette[(Math.floor(k/6)+j)%palette.length],xf(x,z,y),xf(x+.20,z+2.8,y),xf(x+.20,z+2.8,y-h),xf(x,z,y-h));
+ }
+ canopy.flush(g,()=>{const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#ffe6bf',gk:.20}),m=source.clone();m.onBeforeCompile=source.onBeforeCompile;m.customProgramCacheKey=()=>source.customProgramCacheKey()+':ohv-etfe';if(typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set('ohv-etfe',m);m.transparent=true;m.opacity=.43;m.depthWrite=false;return m;});
+ art.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#ffe0ae',gk:.30}));
+ // Warm linear corridor lights visible in the landscape contractor's night photo.
+ const lights=new SGBV.Batch(G.base);
+ for(const ring of [P,I,streetBar])for(const y of [4.05,8.45,12.85])ring.forEach((p,i)=>{const q=ring[(i+1)%ring.length];lights.beam([p[0],y,p[1]],[q[0],y,q[1]],.10,'#ffe5bc');});
+ lights.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#ffdb9e',gk:.65}));
+ // Verified OSM residential footprints. Remove only sub-metre zigzag detail.
+ function simplify(P){return P.filter((p,i)=>{const a=P[(i+P.length-1)%P.length],c=P[(i+1)%P.length];return Math.abs((c[0]-a[0])*(p[1]-a[1])-(c[1]-a[1])*(p[0]-a[0]))/(Math.hypot(c[0]-a[0],c[1]-a[1])||1)>.28;});}
+ for(const [i,part]of D.parts.slice(1).entries()){
+  const Q=simplify(part.p),H=[112,98,12][i],floors=[34,28,3][i],F=(H-2)/floors;
+  b.prism(Q,-.4,H-1.4,i===1?'#a9b8b5':'#d3d8cd');
+  // Shared glass material and coloured spandrels; physical balcony groups.
+  b.facade(scale(Q,1.002),1.0,H-2,F,i===2?4.2:4.5,i===1?'#627f7c':'#73938e','#dce0d5',0);
+  for(let f=1;f<floors;f+=i===2?1:3){b.band(scale(Q,1.012),f*F,.20,'#dfe3da');}
+  const C=center(Q);Q.forEach((p,k)=>{if(k%3===0)b.beam([p[0],.3,p[1]],[p[0],H-1,p[1]],.24,i===1?'#9daea8':'#dfe5da');});
+  b.cap(Q,H-1.3,'#b8c2b5');b.rim(Q,H-.1,'#d6dfd1',.18);
+  const plant=scale(Q,.45);b.prism(plant,H-1.3,H,'#a6b3a8');
+  if(i===2){b.garden(scale(Q,.90),H-.1,false);for(let k=0;k<Q.length;k+=4)b.tree(Q[k][0],H,Q[k][1],.35);}
+ }
+});
+}
+
+/* Holland Road Shopping Centre: OSM way 152638469.
+ * Current 2024 cream/red elevation. Measured envelope 19.7m incl. roof plant.
+ * Original procedural geometry; no photo textures or modeled lettering. */
+{
+const {register,scale,center,out,lerp}=SGBV;
+register('holland_road_sc','Holland Road Shopping Centre','Holland Road Shopping Centre',55,(b,D,G,g)=>{
+ const P=D.parts[0].p,C=center(P),I=scale(P,.91),O=out(P,.12);
+ b.prism(I,3.3,14.5,'#d5cdb5');b.prism(scale(P,.82),-.6,3.3,'#8f968a');b.cap(P,14.65,'#90958a');
+ // Open covered arcade: setback shop glazing and a continuous projecting soffit.
+ b.facade(scale(P,.86),.25,3.3,3.05,3.2,'#344a48','#aaa99a',0);
+ b.prism(P,3.25,3.65,'#ded9c7');
+ P.forEach((p,i)=>{const q=P[(i+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],L=Math.hypot(dx,dz),n=Math.max(1,Math.round(L/5.1)),a=Math.atan2(-dz,dx);
+  for(let j=0;j<n;j++){
+   const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t),w=L/n-.26;
+   // Cream piers and projecting red/pink boxed bays across four levels.
+   b.box(lerp(p[0],q[0],j/n),-.1,lerp(p[1],q[1],j/n),.35,3.5,.35,'#d0cbbd');
+   for(let f=0;f<3;f++){
+    const y=3.65+f*3.45,glass=[p[0]+dx*j/n,y+1.05,p[1]+dz*j/n];
+    b.quad('#dcd5bf',[p[0]+dx*j/n,y,p[1]+dz*j/n],[p[0]+dx*(j+1)/n,y,p[1]+dz*(j+1)/n],[p[0]+dx*(j+1)/n,y+3.45,p[1]+dz*(j+1)/n],[p[0]+dx*j/n,y+3.45,p[1]+dz*j/n]);
+    // Dark ribbon behind the projecting frame, thin cream transom above.
+    const ux=dx/L,uz=dz/L,ox=(O[i][0]+O[(i+1)%O.length][0]-p[0]-q[0])/2,oz=(O[i][1]+O[(i+1)%O.length][1]-p[1]-q[1])/2;
+    b.quad('#465552',[x+ox-ux*w/2,y+1.05,z+oz-uz*w/2],[x+ox+ux*w/2,y+1.05,z+oz+uz*w/2],[x+ox+ux*w/2,y+2.65,z+oz+uz*w/2],[x+ox-ux*w/2,y+2.65,z+oz-uz*w/2],2);
+    const red=(j+f+i)%4===0?'#c98b7c':'#b86b70';
+    if(i<=7){b.box(x,y-.02,z,w,1.08,.32,red,a);for(const v of [-1,1])b.box(x+v*ux*(w/2-.14),y,z+v*uz*(w/2-.14),.28,3.45,.5,red,a);}
+   }
+   if(i<=7)b.box(x,2.8,z,Math.min(w,3.4),.38,.20,'#e8d8b2',a,2);
+  }
+ });
+ // Rounded corner follows the multi-segment OSM road edge rather than a box.
+ b.rim(P,14.95,'#b66b73',.38);b.rim(scale(P,.97),15.25,'#ded2bd',.25);
+ // Roof carpark: faded surface, dashed bays, exposed service ducts and red parapet.
+ b.rim(scale(P,.98),15.0,'#bf7d78',.55);
+ // Stepped green upper deck and the characteristic curved red roof canopy.
+ const R=scale(P,.92);function clipZ(Q,z){const out=[];Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],a=p[1]<z,c=q[1]<z;if(a)out.push(p);if(a!==c){const t=(z-p[1])/(q[1]-p[1]);out.push([lerp(p[0],q[0],t),z]);}});return out;}
+ const green=clipZ(R,6);b.prism(green,14.65,15.2,'#a8aaa0');b.cap(green,15.22,'#809789');
+ const curb=scale(P,.80);b.capHole(P,[curb],15.45,'#b66870');
+ const court=SGBV.rect(-4,11,8,12,-.5);b.cap(court,14.73,'#5d9c87');b.rim(court,14.85,'#e2dccb',.14);
+ for(let i=0;i<4;i++)b.box(-5+i*1.3,14.8,10+i*.5,.7,.7,.7,['#d8b35c','#b88171','#7b9aa8','#c7ad70'][i]);
+ const roof=scale(P,.76);for(let i=0;i<roof.length;i++){const p=roof[i],q=roof[(i+1)%roof.length];if(Math.hypot(q[0]-p[0],q[1]-p[1])>8)for(let t=.1;t<.9;t+=.17){const x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);b.box(x,14.68,z,2.1,.025,.09,'#d4cbb2',-.55);}}
+ const N=P[10],S=P[6];b.box(S[0]+5,14.7,S[1]-9,10,2.6,7,'#c5a493',-.55);b.box(S[0]+5,17.3,S[1]-9,10.5,.25,7.5,'#b66f73',-.55);
+ b.box(N[0]+4,14.7,N[1]+9,6,1.5,6,'#b8b7a6',-.35);
+ b.box(C[0]-2,14.7,C[1],3.4,5,3.4,'#7d8783');
+ for(const z of [-5,1,7]){b.box(C[0]+3,14.7,C[1]+z,2.4,1.1,2.8,'#9ca69d');b.box(C[0]+3,15.82,C[1]+z,1.8,.07,2.2,'#637672');}
+ for(const i of [1,3,5,8,10]){const p=P[i];b.box(p[0]*.92,14.7,p[1]*.92,.08,1.8,.08,'#aeb2a6');b.box(p[0]*.92,16.45,p[1]*.92,1.5,.12,.45,'#e4d9bc',0,2);}
+ // Continuous arcade soffit and blank illuminated panels, informed by LTA's
+ // historical night photograph; current-colour photometry is not documented.
+ const lights=new SGBV.Batch(G.base);
+ P.forEach((p,i)=>{const q=P[(i+1)%P.length];if(i>7)return;lights.beam([p[0],3.17,p[1]],[q[0],3.17,q[1]],.12,'#ffe4b8');const dx=q[0]-p[0],dz=q[1]-p[1],len=Math.hypot(dx,dz),n=Math.max(1,Math.round(len/5.1));for(let j=0;j<n;j++){const t=(j+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t);lights.box(x,2.82,z,Math.min(3.4,len/n-.4),.30,.25,'#ffe3aa',Math.atan2(-dz,dx));}});
+ lights.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#ffdeb0',gk:.70}));
+
+});
+}
+
+/* Holland Piazza, OSM 152752624. Measured 12.1m envelope.
+ * Completed facade from LN9267's 2024 photo (61); tiles show construction.
+ * Original procedural coloured panels, no photograph textures or lettering. */
+{
+const {register,scale,center,lerp}=SGBV;
+register('holland_piazza','Holland Piazza','Holland Piazza',37,(b,D,G,g)=>{
+ const P=D.parts[0].p,I=scale(P,.91),C=center(P);
+ // Recessed shopfronts and open canopy edge; keep the ground arcade porous.
+ b.prism(scale(P,.79),-.4,4.0,'#788e88');b.facade(scale(P,.85),.25,3.8,3.55,3.2,'#345357','#9faeaa',0);
+ b.prism(P,3.75,4.12,'#a8ada5');
+ b.prism(I,4.1,9.15,'#a3b2a5');
+ b.facade(scale(P,.975),4.15,7.8,3.65,2.5,'#344a51','#76898c',0);
+ const lamps=new SGBV.Batch(G.base),fascia=new SGBV.Batch(G.base);
+ const palette=['#aaa447','#b3ae50','#b1ae64','#b5a171','#b28b7b','#9f8184','#8b8693'];
+ // Physical segmented fascia with a gently undulating top and lower glazing edge.
+ let distance=0;P.forEach((p,i)=>{const q=P[(i+1)%P.length],dx=q[0]-p[0],dz=q[1]-p[1],len=Math.hypot(dx,dz),n=Math.max(1,Math.ceil(len/.8));
+  for(let k=0;k<n;k++){
+   const t=k/n,u=(k+1)/n,a=[lerp(p[0],q[0],t),lerp(p[1],q[1],t)],c=[lerp(p[0],q[0],u),lerp(p[1],q[1],u)],s=distance+len*t;
+   const top=9.55+.42*Math.sin(s*.16)+.18*Math.cos(s*.34),bottom=7.5+.34*Math.sin(s*.16+.3);
+   for(let j=0;j<3;j++){const lo=lerp(bottom,top,j/3),hi=lerp(bottom,top,(j+1)/3);fascia.quad(palette[(Math.floor(s*.6)+j*2+i)%palette.length],[a[0],lo,a[1]],[c[0],lo,c[1]],[c[0],hi,c[1]],[a[0],hi,a[1]]);}
+   if(k%3===0)b.beam([a[0],bottom,a[1]],[a[0],top,a[1]],.035,'#9a9f8d');
+  }
+  if(len>5){const n=Math.ceil(len/5);for(let k=0;k<n;k++){const t=(k+.5)/n,x=lerp(p[0],q[0],t),z=lerp(p[1],q[1],t),a=Math.atan2(-dz,dx);b.box(x,.05,z,.26,3.8,.26,'#b7bdb0');b.box(x,3.42,z,Math.min(4.4,len/n),.15,1.8,'#a7afa3',a);}}
+  lamps.beam([p[0],3.68,p[1]],[q[0],3.68,q[1]],.09,'#ffe4b7');distance+=len;
+ });
+ // Setback roof-level accommodation / plant rather than a full third slab.
+ const roof=[[-7,-9],[11,-10],[13,3],[-5,3]];b.cap(P,9.20,'#99a594');b.prism(roof,9.2,11.45,'#a6aaa0');b.cap(roof,11.55,'#a6b1a1');
+ b.facade(scale(roof,1.001),9.45,11.25,1.8,3.4,'#587472','#c4cbbd',0);b.rim(roof,11.8,'#a8b7a2',.20);
+ b.box(C[0]-3,11.55,C[1]-2,3.8,.55,4.0,'#9aa798');
+ for(const [x,z]of [[-7,9],[-3,14],[5,9]]){b.box(x,9.25,z,2.3,.45,1.7,'#9da88f');b.cap(SGBV.rect(x,z,2.1,1.5),9.73,'#5d7d4e');b.tree(x,9.7,z,.40);}
+ // A sheltered corner entry, external stair and blank warm retail panel band.
+ for(let i=0;i<10;i++)b.box(7+i*.25,.10+i*.24,20-i*.55,2.8,.25,.65,'#a3ada1',-.3);
+ b.beam([8,2.8,20],[10.3,5.0,15],.10,'#9eada9');
+ fascia.flush(g,()=>lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#d8b77c',gk:.085}));
+ lamps.flush(g,()=>{const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#ffe0aa',gk:.60});m.userData.bvThinLight=true;return m;});
+});
+}
+
+/* Elementum, OSM 981964001. SOM: 12 storeys, 63m.
+ * CTBUH's conflicting 92.6m is documented, not reconciled with invented stacks.
+ * Original U-shaped lab plates and open podium, no logos or extracted meshes. */
+{
+const {register,scale,center,lerp}=SGBV;
+let elEnv=null;function environment(){if(elEnv||typeof document==='undefined')return elEnv;const faces=[];for(let i=0;i<6;i++){const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,32);g.addColorStop(0,'#bfd3df');g.addColorStop(.55,'#8ba4ad');g.addColorStop(1,'#657772');x.fillStyle=g;x.fillRect(0,0,32,32);faces.push(c);}elEnv=new THREE.CubeTexture(faces);elEnv.needsUpdate=true;return elEnv;}
+
+if(typeof HOOKS!=='undefined'&&HOOKS.frame)HOOKS.frame.push(()=>{for(const L of landmarks){if(!['sgbv_elementum','sgbv_holland_piazza'].includes(L.type))continue;const g=lmMeshes.get(L.id);if(g)g.traverse(o=>{if(o.isMesh&&o.material.userData.bvThinLight)o.castShadow=false;});}});
+register('elementum','Elementum','Elementum',88,(b,D,G,g)=>{
+ const P=D.parts[0].p,lights=new SGBV.Batch(G.base),skylight=new SGBV.Batch(G.base);
+ const hole=SGBV.rect(-13,14,10,14,-.25),H=63;
+ // A genuinely open ground forum: only the service cores, retail edge and columns.
+ const north=[P[19],P[18],P[17],P[16],[8,-19],[-48,-19]];
+ b.prism(north,-.3,7.5,'#7e928d');b.facade(scale(north,1.002),.3,6.8,5.8,3.6,'#39595d','#a8b3a8',0);
+ for(const [x,z]of [[-42,-12],[-29,12],[-15,40],[16,18],[22,-5],[0,-18]]){
+  b.prism(SGBV.ellipse(x,z,.78,.78,10),0,8.0,'#b1b4a8');b.prism(SGBV.ellipse(x,z,1.3,1.3,10),7.4,8.0,'#bdc0b2');
+ }
+ for(const y of [8.0,13.0,18.0]){b.capHole(P,[hole],y,'#bac5bd');b.walls(P,y-.5,y,'#c2cac3');b.walls(hole,y-.5,y,'#c2cac3');}
+ b.walls(scale(P,.975),8.2,17.5,'#58777b',2);b.walls(scale(hole,1.05),8.2,17.5,'#526c70',2);
+ for(const y of [8.0,13.0,18.0])b.rim(P,y,'#bdc9c4',.28);
+ // Open sky light above the forum, supported by a lightweight diagonal grid.
+ skylight.cap(hole,18.12,'#b7d5db',2);
+ for(let k=-4;k<=4;k+=2)b.beam([-13+k,18.2,7],[-13+k,18.2,21],.12,'#8b9f9d');
+ for(let k=0;k<4;k++)b.beam([-18,18.2,7+k*4.5],[-8,18.2,7+k*4.5],.12,'#8b9f9d');
+ // Main lab floors: the inner west arm recedes floor by floor into planted terraces.
+ function plate(i){const W=[lerp(P[0][0],P[1][0],.96-i*.075),lerp(P[0][1],P[1][1],.96-i*.075)],E=[lerp(P[4][0],P[2][0],.70-i*.05),lerp(P[4][1],P[2][1],.70-i*.05)];
+  return[W,P[0],...P.slice(4,20).reverse(),E,[E[0]-13,E[1]-8],[9+i*.55,6],[5+i*.4,-8-i*.5],[-24-i*.4,-9-i*.5],[-34-i*.8,5],[W[0]+13-i*.35,W[1]-6]];
+ }
+ for(let f=0;f<9;f++){
+  const Q=plate(f),lo=18+f*5,hi=lo+5,lower=scale(Q,.992),glass=scale(Q,.989);
+  b.prism(glass,lo+.55,hi-1.25,'#557c87',2);b.cap(Q,hi,'#b8c8c9');
+  // Sloping aluminium eaves: inward lower edge, sharply defined outward top lip.
+  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],a=lower[i],c=lower[(i+1)%Q.length];
+   b.quad('#b5c5c8',[a[0],hi-1.25,a[1]],[c[0],hi-1.25,c[1]],[q[0],hi,q[1]],[p[0],hi,p[1]]);
+   b.quad('#b4c4c5',[p[0],lo,p[1]],[q[0],lo,q[1]],[q[0],lo+.55,q[1]],[p[0],lo+.55,p[1]]);
+  });
+  b.walls(Q,lo+2.05,lo+2.55,'#bdcdd0');
+  b.facade(scale(glass,1.0005),lo+.6,hi-1.3,3.1,3.2,'#6c929c','#98afb0',0);
+  if(f<8){const w=Q[0],bed=SGBV.rect(w[0]+6,w[1]-3,9,3,-.5);b.prism(bed,hi+.02,hi+.35,'#a8b8aa');b.cap(scale(bed,.90),hi+.38,'#5a7a50');if(f%2===0)b.tree(w[0]+6,hi+.38,w[1]-3,.45);}
+ }
+ // A 900m² garden follows the open U, avoiding planting beneath lab floors.
+ const basePlate=plate(0),W=basePlate[0],E=[lerp(P[4][0],P[2][0],.70),lerp(P[4][1],P[2][1],.70)];
+ const open=[[W[0]+13,W[1]-6],[-34,5],[-24,-9],[5,-8],[9,6],[E[0]-13,E[1]-8]];
+ const area=Math.abs(open.reduce((a,p,i)=>{const q=open[(i+1)%open.length];return a+p[0]*q[1]-q[0]*p[1];},0))/2;
+ const garden=scale(open,Math.sqrt((900+140)/area));b.capHole(garden,[hole],18.04,'#6a8954');
+ for(const [x,z]of [[-23,4],[-25,13],[-20,25],[-2,2],[-2,11],[-8,27],[-13,35],[-13,43]]){
+  if(!SGBV.inside(garden,x,z)||SGBV.inside(hole,x,z))continue;
+  const bed=SGBV.rect(x,z,4.0,2.6);b.prism(bed,18.1,18.7,'#bdc7b6');b.cap(scale(bed,.9),18.75,'#54774d');b.tree(x,18.75,z,.85);
+ }
+ for(const z of [26,32,38])b.box(-13,18.06,z,5,.08,1.0,'#bec9b6',-.2);
+ // Warm forum soffit / wall graze; cool lab windows use a separate shared material.
+ P.forEach((p,i)=>{const q=P[(i+1)%P.length];lights.beam([p[0],7.7,p[1]],[q[0],7.7,q[1]],.12,'#ffe2b3');});
+ for(const x of [-42,-29,-15,0,16])lights.box(x,7.65,0,5,.10,1.5,'#ffe1b3');
+ for(const [x,z]of [[-45,-17],[-25,-22],[4,-22]])lights.box(x,.2,z,.25,6.8,.12,'#f5d09b');
+ lights.flush(g,()=>{const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#ffdfa6',gk:.50});m.userData.bvThinLight=true;return m;});
+ skylight.flush(g,()=>{const old=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lc:'#d8e9f1',lk:.1}),m=old.clone();m.onBeforeCompile=old.onBeforeCompile;m.customProgramCacheKey=()=>old.customProgramCacheKey()+':elementum-skylight';m.transparent=true;m.opacity=.35;m.depthWrite=false;if(typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set('elementum-skylight',m);return m;});
+ // Shared physical material per mode, preserving the app's night-window shader.
+ const flush=b.flush.bind(b);b.flush=(group)=>flush(group,mode=>{
+  const key='elementum-pbr-'+mode;if(typeof LMCTX!=='undefined'&&LMCTX?.mats.has(key))return LMCTX.mats.get(key);
+  const source=lmMat({c:'#ffffff',vc:true,ds:true,m:mode===2?1:0,lc:mode===2?'#d8eafa':'#ffe0ad',lk:mode===2?.24:.06,fh:5,cw:2.8});
+  const m=new THREE.MeshStandardMaterial({color:source.color,side:source.side,vertexColors:true,roughness:mode===2?.28:.65,metalness:mode===2?.16:.08,envMap:environment(),envMapIntensity:mode===2?.35:.45});const previous=source.onBeforeCompile;m.onBeforeCompile=function(sh,r){previous.call(this,sh,r);if(mode!==2){sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 elP;').replace('#include <begin_vertex>','#include <begin_vertex>\nelP=position-vec3(0.0,'+G.base.toFixed(6)+',0.0);');sh.fragmentShader=sh.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 elP;').replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\ntotalEmissiveRadiance+=vec3(.14,.088,.041)*uNight*(1.0-smoothstep(6.5,10.0,elP.y));');}};m.customProgramCacheKey=()=>source.customProgramCacheKey()+':'+key;if(typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set(key,m);return m;
+ });
+ // Rail-corridor edge: an original path, terraced planters and entry bridge.
+ for(let i=0;i<7;i++)b.box(40+i*.9,-.15+i*.15,8,1.0,.18,20,'#b6c2b2');
+ for(const [x,z]of [[-55,15],[-41,37],[-26,60],[43,5],[32,-30]]){b.box(x,.1,z,4,.55,2.5,'#a5b29d');b.tree(x,.65,z,.95);}
+ b.prism(SGBV.rect(33,20,21,5,-.4),1.2,1.65,'#aebdab');b.rim(SGBV.rect(33,20,21,5,-.4),2.7,'#94a89e',.10);
+});
+}
+
+/* Original OSM-part model. The supplied AGWMS image is a design render;
+ * current tile images govern the built envelope and dark/light panel distribution. */
+{
+const {register,scale,center,lerp}=SGBV;
+register('nucleos','Nucleos','Nucleos',86,(b,D,G,g)=>{
+ const lights=new SGBV.Batch(G.base);
+ for(const part of D.parts){const P=part.p,t=part.tags,id=part.id;
+  if(id===1562916648){b.prism(P,15.8,18,'#a7b4a2');b.garden(scale(P,.92),18.05,false);continue;}
+  const bridge=id===1562916649,low=id===1562916646;
+  const H=bridge?39.5:low?19:id===1562916645?47.5:49.5,lo=bridge?28:0;
+  b.prism(scale(P,.995),lo,H,'#6b757d');
+  // Original irregular vertical glazing cells, dark spandrels and pale folded panels.
+  const Q=SGBV.out(P,.07);
+  Q.forEach((p,i)=>{const q=Q[(i+1)%Q.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]),n=Math.max(1,Math.round(L/2.6));
+   for(let j=0;j<n;j++)for(let f=0;f<Math.round((H-lo)/6.8);f++){
+    const y=lo+f*6.8,hi=Math.min(H,y+6.8),u=j/n,v=(j+1)/n,A=[lerp(p[0],q[0],u),lerp(p[1],q[1],u)],B=[lerp(p[0],q[0],v),lerp(p[1],q[1],v)],seed=(j*7+i*11+f*3)%13,glass=seed<4;
+    const back=id===1562916647&&p[1]<-40&&q[1]<-40;const c=back&&!glass?'#727f8c':glass?(seed%2?'#425961':'#637780'):(seed%3===0?'#c1c9cb':seed%3===1?'#8e9da4':'#abb6bb');
+    b.quad(c,[A[0],y+.12,A[1]],[B[0],y+.12,B[1]],[B[0],hi-.12,B[1]],[A[0],hi-.12,A[1]],glass?2:0);
+    if(glass)b.quad('#697c81',[A[0],y+3.25,A[1]],[B[0],y+3.25,B[1]],[B[0],y+3.35,B[1]],[A[0],y+3.35,A[1]]);
+   }
+  });
+  if(!bridge){b.facade(scale(P,1.003),.4,5.6,5.2,5.5,'#526b6d','#b2bdbc',.14);b.roof(P,H);}
+  else{b.band(P,28,.7,'#c8ceca',1.006);b.band(P,39,0.5,'#c2cbc3');}
+  if(!low&&!bridge){
+   // Roof service screens sit above the seven deep lab floors, not extra office levels.
+   const R=scale(P,.91);b.walls(R,H+.5,H+4.8,'#909b9d');b.rim(R,H+4.8,'#b1babb',.22);
+   const C=center(P);for(let k=-1;k<=1;k++){const x=C[0]+k*12,z=C[1];if(SGBV.inside(R,x,z))b.box(x,H+.2,z,8,3.5,6,'#a9b2ae');}
+   // Transverse plant partitions seen on the north aerial.
+   const z0=Math.min(...R.map(p=>p[1])),z1=Math.max(...R.map(p=>p[1]));
+   for(let z=z0+10;z<z1-4;z+=13){let xs=[];for(let x=-42;x<45;x+=1)if(SGBV.inside(R,x,z))xs.push(x);if(xs.length>3)b.beam([xs[0],H+3.8,z],[xs.at(-1),H+3.8,z],.38,'#b1b8b4');}
+  }
+ }
+ // Private cool-white lab-window shader; no warm randomized office defaults.
+ const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>{const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:.08,lc:'#dcebf5'}),m=source.clone();m.onBeforeCompile=function(sh,r){source.onBeforeCompile.call(this,sh,r);if(mode===2)sh.fragmentShader=sh.fragmentShader.replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+float h4=abs(vWN.x)>abs(vWN.z)?vWP.z:vWP.x;
+float r4=fract(sin(floor((vWP.y-uBase)/6.8)*12.9898+floor(h4/2.6)*78.233)*43758.5453);
+float o4=step(r4,.38)*step(.18,fract(h4/2.6))*step(.30,fract((vWP.y-uBase)/6.8))*(1.0-step(.5,abs(vWN.y)));
+totalEmissiveRadiance+=vec3(.64,.79,.87)*o4*uNight*.46;
+`);};m.customProgramCacheKey=()=>source.customProgramCacheKey()+':nucleos-cool-'+mode;if(typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set('nucleos-surface-'+mode,m);return m;});
+ b.box(-24,5.5,-61,23,.32,3.2,'#b33532',-.30);
+ // Planted bridge and hanging garden walls: kept within mapped low-wing envelopes.
+ for(const [x,z,w]of [[-39,-43,1.6],[-40,-25,1.4],[27,9,12]]){
+  b.box(x,12,z,w,6.0,1.0,'#466c48');for(let k=0;k<5;k++)b.box(x+(k-2)*w/5,10.2+(k%3)*.6,z-.6,.35,7-(k%3),.20,k%2?'#617b4c':'#3e6544');
+ }
+ const link=D.parts.find(p=>p.id===1562916649).p;lights.rim(link,28.15,'#e6f2ef',.14);lights.rim(link,39.55,'#e6f2ef',.12);b.garden(scale(link,.88),39.6,false);
+ for(const p of [link[0],link[3]])b.tree(p[0],39.65,p[1],.45);
+ const north=D.parts.find(p=>p.id===1562916647).p,C=center(north);
+ b.box(C[0],54.0,C[1],4,.7,3,'#aeb8b6');
+ for(const p of [[-28,-5],[0,7],[28,12]]){lights.box(p[0],17.8,p[1],4,.12,.6,'#e6f1ed');b.box(p[0],-.15,p[1],6,.6,2,'#b3bbaa');b.tree(p[0],.5,p[1],.65);}
+ lights.flush(g,()=>{const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#e4f1f3',gk:.42});m.userData.bv4Light=true;return m;});
+});
+}
+
+/* Fusionopolis Two: independent OSM footprints, folded Innovis crown,
+ * Kinesis curtain wall and the cleanroom block's expressed K-bracing. */
+{
+const {register,scale,lerp,center}=SGBV;
+if(typeof HOOKS!=='undefined'&&HOOKS.frame)HOOKS.frame.push(()=>{for(const L of landmarks){if(!['sgbv_nucleos','sgbv_fusionopolis_two'].includes(L.type))continue;const g=lmMeshes.get(L.id);if(g)g.traverse(o=>{if(o.isMesh&&o.material.userData.bv4Light)o.castShadow=false;});}});
+register('fusionopolis_two','Fusionopolis Two','Fusionopolis Two',115,(b,D,G,g)=>{
+ const lights=new SGBV.Batch(G.base);
+ for(const part of D.parts){const P=part.p,id=part.id,inn=id===448605477,syn=id===448605478,H=inn?97: syn?48:64,fh=inn?5.1:syn?8:5.4;
+  // Slightly recessed glazing, aluminium bands, and varied occupied labs.
+  b.prism(scale(P,.996),0,H,'#548da9',2);
+  b.facade(SGBV.out(P,.04),7,H,fh,5.2,'#71a6bd','#9cabb0',0);
+  for(let y=7;y<H;y+=fh)b.band(P,y,.36,'#87a9b9',1.003);
+  b.facade(SGBV.out(P,.10),.3,6.7,6.4,5.5,'#547c84','#bec9c6',.2);
+  for(let y=17;y<H;y+=20.4)b.band(P,y,1.1,'#315d71',1.004);
+  const C=center(P),LP=SGBV.out(P,.30);
+  if(inn){
+   // Angular folded roof rises to the measured 105.2m maximum.
+   const roof=(x,z)=>Math.min(105.2,97.3+7.9*Math.max(0,Math.min(1,(z-C[1]+32)/62)));
+   b.walls(P,H,roof,'#618496',2);b.cap(P,roof,'#839498');
+   for(let x=-58;x<5;x+=2.6){const zs=[];for(let z=-4;z<72;z+=1)if(SGBV.inside(scale(P,.96),x,z))zs.push(z);if(zs.length>2)b.beam([x,roof(x,zs[0])+.15,zs[0]],[x,roof(x,zs.at(-1))+.15,zs.at(-1)],.16,'#b0bdc1');}
+   const R=scale(P,.89);b.walls(R,H+1,(x,z)=>roof(x,z)+.0,'#7a8e95');
+   P.forEach((p,i)=>{const q=P[(i+1)%P.length];b.beam([p[0],roof(...p),p[1]],[q[0],roof(...q),q[1]],.35,'#bbc9ca');lights.beam([LP[i][0],roof(...p),LP[i][1]],[LP[(i+1)%P.length][0],roof(...q),LP[(i+1)%P.length][1]],.28,'#e6f4ff');});
+   // Dusk-photo V motif: fine cool-white accent lines, no signage.
+   for(const i of [0,1,2]){const p=LP[i];lights.beam([p[0],65,p[1]],[p[0],roof(...P[i]),p[1]],.24,'#e6f1ff');}
+   const p=LP[1],q=LP[2],mid=[lerp(p[0],q[0],.5),lerp(p[1],q[1],.5)];
+   for(const a of [p,q])lights.beam([mid[0],78,mid[1]],[a[0],roof(...a),a[1]],.20,'#e6f1ff');
+   // A recessed sky garden (opaque rear wall avoids inventing a through tunnel).
+   const A=P[0],B=P[1],u=.25,v=.75,pp=[lerp(A[0],B[0],u),lerp(A[1],B[1],u)],qq=[lerp(A[0],B[0],v),lerp(A[1],B[1],v)];
+   b.quad('#233d49',[pp[0]-.15,62,pp[1]],[qq[0]-.15,62,qq[1]],[qq[0]-.15,71,qq[1]],[pp[0]-.15,71,pp[1]]);
+  }else{b.roof(P,H);}
+  // Inverted-V lobby supports and expressed cleanroom braces.
+  P.forEach((p,i)=>{const q=P[(i+1)%P.length],L=Math.hypot(q[0]-p[0],q[1]-p[1]);if(L<15)return;
+   const n=Math.max(1,Math.round(L/(syn?19:14)));
+   for(let j=0;j<n;j++){const A=[lerp(p[0],q[0],j/n),lerp(p[1],q[1],j/n)],B=[lerp(p[0],q[0],(j+1)/n),lerp(p[1],q[1],(j+1)/n)],M=[(A[0]+B[0])/2,(A[1]+B[1])/2];
+    b.beam([A[0],6.8,A[1]],[M[0],.2,M[1]],.7,'#bbc6c7');b.beam([M[0],.2,M[1]],[B[0],6.8,B[1]],.7,'#bbc6c7');
+    if(syn)for(let y=8;y<42;y+=16){b.beam([A[0],y,A[1]],[M[0],y+8,M[1]],.7,'#9eafb6');b.beam([M[0],y+8,M[1]],[A[0],y+16,A[1]],.7,'#9eafb6');b.beam([M[0],y+8,M[1]],[B[0],y+8,B[1]],.7,'#9eafb6');}
+   }
+   lights.beam([LP[i][0],6.6,LP[i][1]],[LP[(i+1)%P.length][0],6.6,LP[(i+1)%P.length][1]],.20,'#ffe1b8');
+  });
+  for(const [dx,dz]of [[0,0],[8,0]])lights.box(C[0]+dx,6.0,C[1]+dz,5,.15,2,'#ffe4bc');
+ }
+ // Dedicated glazing shader: blue-white occupied labs, restrained facade sheen.
+ const flush=b.flush.bind(b);b.flush=group=>flush(group,mode=>{
+  const source=lmMat({c:'#ffffff',vc:true,ds:true,m:0,lk:mode===2?.04:.08,lc:mode===2?'#c9e6ff':'#ffe1b5'}),m=source.clone();
+  m.onBeforeCompile=function(sh,r){source.onBeforeCompile.call(this,sh,r);if(mode===2)sh.fragmentShader=sh.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb=mix(diffuseColor.rgb,vec3(.18,.39,.52),.28);\nfloat gridH4=abs(vWN.x)>abs(vWN.z)?vWP.z:vWP.x;\nfloat gridX4=fract(gridH4/1.55),gridY4=fract((vWP.y-uBase)/1.30);\nfloat mull4=clamp(step(.974,gridX4)+step(.95,gridY4),0.0,1.0);\nfloat pane4=.9+.1*fract(sin(floor(gridH4/1.55)*2.71+floor((vWP.y-uBase)/1.30)*3.13)*437.1);\ndiffuseColor.rgb=mix(diffuseColor.rgb*pane4,vec3(.36,.48,.54),mull4*.68);').replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+float f4=floor((vWP.y-uBase)/5.1);float h4=abs(vWN.x)>abs(vWN.z)?vWP.z:vWP.x;
+float c4=floor(h4/3.2);float r4=fract(sin(f4*12.9898+c4*78.233)*43758.5453);
+float o4=step(r4,.24)*step(.20,fract(h4/3.2))*step(.30,fract((vWP.y-uBase)/5.1))*(1.0-step(.5,abs(vWN.y)));
+totalEmissiveRadiance+=uNight*(vec3(.45,.65,.83)*o4*.65*(1.0-mull4)+vec3(.025,.05,.09));
+`);};m.customProgramCacheKey=()=>source.customProgramCacheKey()+':f2-blue-white-'+mode;
+  if(typeof LMCTX!=='undefined'&&LMCTX)LMCTX.mats.set('f2-glass-'+mode,m);return m;
+ });
+ // Covered link and modest planted forecourts between the laboratory blocks.
+ b.box(-8,5,-15,8,.5,25,'#9aafb2');b.facade(SGBV.rect(-8,-15,8,25),5.5,9.5,4,6,'#607d87','#a7b7b8',.14);
+ for(const [x,z]of [[-35,2],[15,-25],[38,5],[-28,52]]){b.box(x,.1,z,6,.6,2.5,'#a8b5a9');b.tree(x,.7,z,.7);}
+ lights.flush(g,()=>{const m=lmMat({c:'#ffffff',vc:true,ds:true,m:0,glow:'#daeaff',gk:1.35});m.userData.bv4Light=true;return m;});
+});
+}
+
+/* Public, read-only modelling statistics (the camera harness uses mktest.__t). */
+window.BuonaVista = {get stats(){return SGBV.stats;}};
+
 /* ================= v17: Singapore 1:1 — the real island (OSM roads, real building footprints, coastline, reservoirs) ================= */
 // Data (sgdata/): sg_base.txt (terrain, rasters, places, rail, planning areas), sg_roads.txt, sg_bld.txt, sg_water.txt (gzip as base64), ground.webp.
 // The map square is 56 × 56 km (HALF 28 km, 25 m zoning cells, 70 m terrain grid); everything outside Singapore is muted context.
@@ -85892,6 +86944,7 @@ function sgrLandmarkHulls(){
 }
 function sgrSkipB(B){
   if (B.foreign) return false;
+  if (SGBV.skip(B)) return true;
   const k = cx2i(B.cy)*N + cx2i(B.cx);
   if (SGR.off[k] || resv[k] === 7) return true;
   for (const H of SGR.hulls.values()){ const b = H.bb; if (B.cx < b[0] || B.cx > b[2] || B.cy < b[1] || B.cy > b[3]) continue;
@@ -86426,7 +87479,7 @@ function sgLabels(){
 /* ---------- entering and leaving Singapore ---------- */
 const SG_SUB = 'City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors', ISL_SUB = 'City Brush · Map 24 × 24 km';
 window.CB_LOOK = (lat, lon, dx, dy, dz) => { const t = sgXY(lat, lon); controls.target.set(t[0], 8, -t[1]); camera.position.set(t[0] + dx, dy, -t[1] + dz); };
-function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2300, y + 2600, -t[1] + 4300); }
+function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2300, y + 2600, -t[1] + 4300); }
 function sgFly(){ const t = sgXY(1.2868, 103.8560); flyTo(new THREE.Vector3(t[0] + 1500, 1050, -t[1] + 1900), new THREE.Vector3(t[0], 4, -t[1])); }
 function sgBuild(){
   SG.on = true; SGR.on = true; styleKey = 'singapore'; islandSeed = 1965; FLAVOR.singapore.park = 'sgpark';

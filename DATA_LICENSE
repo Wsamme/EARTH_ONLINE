@@ -1,0 +1,63 @@
+# Data licence 数据许可
+
+The MIT licence in `LICENSE` covers the code: the pages, the programs in `src/`, and the original landmark models.
+`LICENSE` 里的 MIT 许可证只覆盖代码：网页、`src/` 里的程序，以及原创的地标模型。
+
+It does not cover the map. The files `site/<city>data/*.txt` (Singapore, the San Francisco Bay Area, New York, Hong Kong, Tokyo) are gzip stored as base64. They are a database derived from OpenStreetMap, and so is anything else in this repository that was extracted from OpenStreetMap.
+它不覆盖地图。`site/<city>data/*.txt`（新加坡、旧金山湾区、纽约、香港、东京）是存成 base64 的 gzip。这些文件是从 OpenStreetMap 派生的数据库；本仓库里其他从 OpenStreetMap 提取出来的内容也一样。
+
+## OpenStreetMap — ODbL 1.0
+
+Map data © OpenStreetMap contributors, licensed under the Open Database License (ODbL) 1.0.
+地图数据 © OpenStreetMap 贡献者，使用开放数据库许可（ODbL）1.0。
+
+- Full licence 全文: https://opendatacommons.org/licenses/odbl/1-0/
+- Short summary 简要说明: https://opendatacommons.org/licenses/odbl/summary/
+- How OpenStreetMap asks you to credit it 署名要求: https://www.openstreetmap.org/copyright
+
+What that means in practice 实际意味着：
+
+1. Credit the map where people can see it, as “© OpenStreetMap contributors”, with a link to https://www.openstreetmap.org/copyright when you can.
+   在别人能看见地图的地方署名 “© OpenStreetMap contributors”。能加链接时，链到 https://www.openstreetmap.org/copyright 。
+2. If you publicly use a database derived from these files (including these `.txt` files themselves), offer that database under the ODbL too. This is the share-alike rule.
+   如果公开使用从这些文件派生的数据库（包括这些 `.txt` 文件本身），那个数据库也必须用 ODbL 提供。这就是相同方式共享。
+3. A picture or video of the 3D city is a Produced Work. You may choose a licence for the picture, but the credit in (1) still has to be there.
+   这座三维城市的截图或视频属于“产生的作品”（Produced Work）。图片本身可以用别的许可，但第 (1) 条署名仍然要在。
+4. These files are provided as-is, with no warranty, the same way the code is.
+   这些文件按原样提供，没有担保，和代码一样。
+
+The pages show this credit in the corner of the map, and again in the line under the city name. Leave both in place.
+网页在地图角落、以及城市名下面的那一行，都会显示这句署名。请保留它们。
+
+## Singapore buildings — Overture and HDB 新加坡建筑
+
+The Singapore page’s data line also says “Overture” and “HDB3D”.
+新加坡页面的数据一行还写着 “Overture” 和 “HDB3D”。
+
+- Some building footprints are described in the code as OSM / Overture. Overture’s buildings theme is released under the ODbL, and Overture’s own example credit is “© OpenStreetMap contributors, Overture Maps Foundation”. That theme is a mix: it can also include Esri Community Maps, Google Open Buildings (CC BY 4.0), and Microsoft’s ML footprints (ODbL). This repository does not record which of those layers were baked in. If you republish the Singapore buildings, check the Overture release you built from: https://docs.overturemaps.org/attribution/
+  代码里有些建筑轮廓写成 OSM / Overture。Overture 的建筑主题按 ODbL 发布，他们自己的示例署名是 “© OpenStreetMap contributors, Overture Maps Foundation”。这个主题是混合的，还可能包含 Esri Community Maps、Google Open Buildings（CC BY 4.0）和微软的机器学习轮廓（ODbL）。本仓库没有记下当时用了其中哪几层。如果再发布新加坡的建筑，请对照你生成时用的那一版 Overture：https://docs.overturemaps.org/attribution/
+- HDB block attributes (height, year completed, shops) were read from `hdb3d-data-tree/hdb.json` while the data was built. That file is not in this repository, so its upstream licence text is not copied here. The Singapore stats card already names HDB3D. If you pass those attributes on, check the dataset you took them from; Singapore government open data is usually the Singapore Open Data Licence.
+  组屋的层高、竣工年份、底层店铺，是在生成数据时从 `hdb3d-data-tree/hdb.json` 读的。那个文件不在本仓库里，所以上游许可全文没有放在这里。新加坡的统计卡已经写了 HDB3D。如果继续分发这些属性，请核对你当时用的数据集；新加坡政府开放数据通常使用 Singapore Open Data Licence。
+
+## Terrain 地形
+
+Terrain heights come from AWS Terrain Tiles (Mapzen / Tilezen terrarium tiles, zoom 12):
+https://registry.opendata.aws/terrain-tiles/
+
+The registry points at the Tilezen attribution list:
+https://github.com/tilezen/joerd/blob/master/docs/attribution.md
+
+These five cities do not use the whole global mix. The sources that apply here are:
+
+- San Francisco Bay Area and New York: USGS 3DEP, plus SRTM and GMTED2010, courtesy of the U.S. Geological Survey. Public domain in the United States. The USGS asks for credit when you publish or redistribute.
+- Singapore, Hong Kong and Tokyo, and the coarser fill everywhere: SRTM and GMTED2010, courtesy of the U.S. Geological Survey. SRTM is distributed by the USGS; a copyright notice is asserted for products distributed outside the United States, and no copyright is claimed under the US Copyright Act. Credit is requested.
+- Sea floor and water fill: ETOPO1, U.S. National Oceanic and Atmospheric Administration (NOAA). Public domain in the United States. Not for navigation. A work made mostly of this material should say that the U.S. Government material in it is not copyrighted in the United States.
+
+Suggested credit 建议署名：
+
+> 3DEP, SRTM and GMTED2010 terrain data courtesy of the U.S. Geological Survey. ETOPO1 terrain data courtesy of the U.S. National Oceanic and Atmospheric Administration.
+
+这五座城市没有用到全球图块里的其他国家高程（ArcticDEM、澳大利亚、奥地利、加拿大、EU-DEM、墨西哥、新西兰、挪威、英国环境署等）。如果以后把地图扩到那些地区，再按上面的 Tilezen 清单补署名。
+
+The corner of the map also carries a short “Terrain · USGS / NOAA” line so the credit sits next to the map, not only in this file.
+地图角落还有一行短的 “Terrain · USGS / NOAA”，让地形署名和地图放在一起，而不只写在这个文件里。

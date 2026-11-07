@@ -9,7 +9,7 @@ function sgrRoadKm(){
   }
   for (const k in km) km[k] /= 1000; SGR.roadKm = km; return km;
 }
-function sgrRenderStats(){
+function sgrRenderStats(){ if (!document.getElementById('statList')) return;
   const t = totals(), S = SGR.stats, km = sgrRoadKm();
   const pop = S.pop + t.floor[1]/40, jobs = S.jobs + jobsOf(t.floor);
   let zoned = 0; for (let k = 0; k < N*N; k++) if (zones[k]) zoned++;

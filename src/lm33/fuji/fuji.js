@@ -33,9 +33,16 @@ function fjPath(){ if (window.SGFAR_SRC) return window.SGFAR_SRC; try { return S
 
 /* ---------- loading ---------- */
 async function fjFetch(url){
-  const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status);
+  const binUrl = url.replace(/\.txt$/, '.bin');
+  let r = await fetch(binUrl);
+  if (r.ok){
+    const buf = await r.arrayBuffer(), u = new Uint8Array(buf);
+    if (u[0] === 0x1f && u[1] === 0x8b) return await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+    return buf;
+  }
+  r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status);
   const b64 = (await r.text()).trim();
-  let u; try { u = new Uint8Array(await (await fetch('data:application/octet-stream;base64,' + b64)).arrayBuffer()); }   // native base64 decoding
+  let u; try { u = new Uint8Array(await (await fetch('data:application/octet-stream;base64,' + b64)).arrayBuffer()); }
   catch (e){ const bin = atob(b64); u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); }
   if (u[0] === 0x1f && u[1] === 0x8b) return await new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
   return u.buffer;

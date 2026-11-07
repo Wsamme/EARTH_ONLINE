@@ -5,7 +5,7 @@ Object.assign(SGR, {base:null, H:null, lines:null, bldData:null, water:null, img
   tiles:new Map(), queue:[], off:null, group:new THREE.Group(), waterGroup:new THREE.Group(), keeps:[], hulls:new Map(), discs:[],
   baseCv:null, ovCv:null, ovImg:null, stats:null, od:[], graphSegs:[], roadLabels:[], planes:null, mono:[], built:0, total:0, t0:0, dirty:new Set()});
 scene.add(SGR.group); scene.add(SGR.waterGroup);
-const SGR_PATH = 'nycdata/', SGR_TEX = 4096;
+const SGR_PATH = 'nycdata/', SGR_TEX = window.CB_MOBILE ? 2048 : 4096;
 const SGR_US = true; const SGR_NYC = true;
 const SGR_LRT = {has:c => c[0] === 'H' || c[0] === 'W'};
 // trains per system: speed m/s, car spacing, car size [length, height, width], track offset, height, cars per train, line metres per train
@@ -20,34 +20,127 @@ const SGR_TRAIN = c => /^S[1-7]$/.test(c) ? {sp:13, gap:15.9, sc:[15.6, 3.6, 2.7
   {sp:24, gap:26.2, sc:[25.9, 4.4, 3.2], side:1.9, y:2.4, cars:10, per:9000};
 
 /* ---------- loading ---------- */
-async function sgrFetch(name){
-  // the data files are gzip, stored as base64 text (artifact hosting serves text, not raw binary)
-  const r = await fetch(SGR_PATH + name); if (!r.ok) throw new Error(name + ' ' + r.status);
-  const b64 = (await r.text()).trim(), bin = atob(b64), bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  let buf = bytes.buffer; const u = bytes;
-  if (u[0] === 0x1f && u[1] === 0x8b){
-    if (typeof DecompressionStream === 'undefined') throw new Error('this browser cannot unpack the map data (DecompressionStream)');
-    buf = await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+async function sgrFetch(name, label){
+  // Raw gzip (.bin) first, then the old base64 .txt.
+  // A phone downloads one file at a time. Three large files together, unpacked in a
+  // Worker, is what left iPhone Safari on "Terrain is up" with no streets.
+  const stem = String(name).replace(/\.txt$/, '');
+  let buf = null;
+  if (window.CB_MOBILE){
+    let err = null;
+    for (let a = 0; a < 3 && !buf; a++){
+      try { buf = await sgrReadBody(SGR_PATH + stem + '.bin', label); }
+      catch (e){
+        err = e;
+        if (/\s40[14]/.test(String(e && e.message || e))) break;
+        await new Promise(r => setTimeout(r, 700 * (a + 1)));
+      }
+    }
+    if (!buf && err && !/\s40[14]/.test(String(err && err.message || err))) throw err;
+  } else {
+    const bin = await fetch(SGR_PATH + stem + '.bin');
+    if (bin.ok) buf = await bin.arrayBuffer();
   }
-  return buf;
+  if (!buf){
+    const txt = await fetch(SGR_PATH + stem + '.txt');
+    if (!txt.ok) throw new Error(name + ' ' + txt.status);
+    const b64 = (await txt.text()).trim(), raw = atob(b64), bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    buf = bytes.buffer;
+  }
+  return sgrUnpack(buf);
+}
+async function sgrReadBody(url, label){
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 45000) : 0;
+  let res;
+  try { res = await fetch(url, ctrl ? {signal: ctrl.signal} : {}); }
+  catch (e){ throw new Error(url + ' ' + (e && e.name === 'AbortError' ? 'timed out' : e)); }
+  finally { if (timer) clearTimeout(timer); }
+  if (!res.ok) throw new Error(url + ' ' + res.status);
+  const len = +res.headers.get('content-length') || 0;
+  if (!res.body || !res.body.getReader) return res.arrayBuffer();
+  const reader = res.body.getReader(), chunks = [];
+  let got = 0, last = 0;
+  while (true){
+    const step = await reader.read();
+    if (step.done) break;
+    chunks.push(step.value); got += step.value.length;
+    if (label && got - last > 160000){
+      last = got;
+      const pct = len ? Math.min(99, Math.round(got / len * 100)) : 0;
+      showBusy(pct ? (label + ' ' + pct + '%') : label);
+    }
+  }
+  const out = new Uint8Array(got); let o = 0;
+  for (const c of chunks){ out.set(c, o); o += c.length; }
+  if (label) showBusy(label);
+  return out.buffer;
+}
+function sgrUnpack(buf){
+  const u = new Uint8Array(buf);
+  if (u.length < 2 || u[0] !== 0x1f || u[1] !== 0x8b) return Promise.resolve(buf);
+  // iOS Safari can drop a Worker gzip job on the bigger files: the promise never
+  // settles, and the map stays on the terrain. Phones unpack on the main thread.
+  if (window.CB_MOBILE || typeof Worker === 'undefined' || typeof DecompressionStream === 'undefined') return sgrUnpackHere(buf);
+  if (!sgrUnpack.pool){
+    const src = "self.onmessage=async e=>{try{const out=await new Response(new Blob([e.data.buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();self.postMessage({id:e.data.id,buf:out},[out]);}catch(err){self.postMessage({id:e.data.id,err:String(err)});}};";
+    const url = URL.createObjectURL(new Blob([src], {type:'text/javascript'}));
+    sgrUnpack.pool = [0, 1].map(() => new Worker(url));
+    sgrUnpack.n = 0;
+  }
+  const id = ++sgrUnpack.n, w = sgrUnpack.pool[id % sgrUnpack.pool.length];
+  return new Promise((res, rej) => {
+    const on = ev => { if (!ev.data || ev.data.id !== id) return; w.removeEventListener('message', on); if (ev.data.err) rej(new Error(ev.data.err)); else res(ev.data.buf); };
+    w.addEventListener('message', on);
+    try { w.postMessage({id, buf}, [buf]); }
+    catch (e){ w.removeEventListener('message', on); sgrUnpackHere(buf).then(res, rej); }
+  });
+}
+function sgrUnpackHere(buf){
+  return new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+}
+function sgrApplyBase(buf, img){
+  const base = JSON.parse(new TextDecoder().decode(buf));
+  const hb = atob(base.H), n = hb.length >> 1, h16 = new Int16Array(n);
+  for (let i = 0; i < n; i++) h16[i] = (hb.charCodeAt(i*2) | (hb.charCodeAt(i*2 + 1) << 8)) << 16 >> 16;
+  const Hm = new Float32Array(n); for (let i = 0; i < n; i++) Hm[i] = h16[i] / 10;
+  SGR.H = Hm; base.H = null; SGR.base = base; SGR.img = img;
+  SG.lon0 = base.lon0; SG.lat0 = base.lat0; SG.MX = base.MX; SG.MY = base.MY;
+  SGD = {pas:base.PAS, regs:base.REGS, mrt:base.mrt, stations:base.stations, f1:base.f1};
+}
+function sgrPreview(){
+  // 地形和地面图一到就先画，街道和房子随后按镜头远近补上。
+  // Show the terrain as soon as it arrives. Streets and buildings stream in by camera distance.
+  if (SGR.previewed) return; SGR.previewed = true;
+  SG.on = true; SGR.on = true;
+  allocWorld(SGR.base.HALF, SGR.base.CELL, SGR.base.TS);
+  genSingapore(); buildTerrainMesh(); sgSkirt(); sgrGroundInit();
+  sgView(); drawTex(); applyTime();
+  showBusy('Terrain is up. Loading streets and buildings');
 }
 function sgrLoad(){
   if (SGR.loading) return SGR.loading;
   SGR.loading = (async () => {
     const img = new Image(); img.decoding = 'async'; img.src = SGR_PATH + 'ground.webp';
-    let done = 0; const step = p => p.then(v => { done++; showBusy(`正在载入真实纽约地图 ${done}/5 · Loading the real map of New York City`); return v; });
-    const [b, r, wb, bl] = await Promise.all([step(sgrFetch('nyc_base.txt')), step(sgrFetch('nyc_roads.txt')), step(sgrFetch('nyc_water.txt')), step(sgrFetch('nyc_bld0.txt')), step(img.decode())]);
-    const base = JSON.parse(new TextDecoder().decode(b));
-    const hb = atob(base.H), h16 = new Int16Array(hb.length >> 1);
-    for (let i = 0; i < h16.length; i++) h16[i] = (hb.charCodeAt(2*i) | (hb.charCodeAt(2*i + 1) << 8)) << 16 >> 16;
-    SGR.H = new Float32Array(h16.length); for (let i = 0; i < h16.length; i++) SGR.H[i] = h16[i]/10;
-    base.H = null; SGR.base = base; SGR.img = img;
-    SG.lon0 = base.lon0; SG.lat0 = base.lat0; SG.MX = base.MX; SG.MY = base.MY;
-    SGD = {pas:base.PAS, regs:base.REGS, mrt:base.mrt, stations:base.stations, f1:base.f1};
-    SGR.lines = SGRoads.decode(r, base.names, base.refs);
+    showBusy('Loading the terrain');
+    const b = await sgrFetch('nyc_base.txt');
+    await img.decode();
+    sgrApplyBase(b, img);
+    sgrPreview();
+    let r, wb, bl;
+    if (window.CB_MOBILE){
+      await new Promise(res => setTimeout(res, 40));
+      r = await sgrFetch('nyc_roads.txt', 'Loading streets');
+      wb = await sgrFetch('nyc_water.txt', 'Loading water');
+      bl = await sgrFetch('nyc_bld0.txt', 'Loading buildings');
+      showBusy('Reading streets and buildings');
+    } else {
+      [r, wb, bl] = await Promise.all([sgrFetch('nyc_roads.txt'), sgrFetch('nyc_water.txt'), sgrFetch('nyc_bld0.txt')]);
+    }
+    SGR.lines = SGRoads.decode(r, SGR.base.names, SGR.base.refs);
     SGR.bldData = SGBld.decode(bl);
-    sgrLoadParts(base.bldParts || 0);
+    sgrLoadParts(SGR.base.bldParts || 0);
     SGR.water = sgrReadWater(wb);
   })();
   return SGR.loading;
@@ -90,7 +183,7 @@ function allocWorld(half, cell, ts){
   satB = new Int32Array((N+1)*(N+1)); satG = new Int32Array((N+1)*(N+1)); satZ = new Int32Array((N+1)*(N+1)); sbOf = new Int32Array(N*N).fill(-1);
   TRN = Math.ceil(2*HALF/TR); trev = new Uint16Array(TRN*TRN); touched = new Uint8Array(N*N); RN = Math.ceil(2*HALF/RG);
   const S = tex || N; texCv.width = texCv.height = S; imgData = texCtx.createImageData(N, N);
-  terrTex.dispose(); terrTex.generateMipmaps = !!tex; terrTex.minFilter = tex ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; terrTex.anisotropy = tex ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 1;
+  terrTex.dispose(); terrTex.generateMipmaps = !!tex; terrTex.minFilter = tex ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; terrTex.anisotropy = tex ? Math.min(window.CB_MOBILE ? 2 : 8, renderer.capabilities.getMaxAnisotropy()) : 1;
   skeleton = []; sbDist = new Int32Array(0); undoStack.length = 0;
   scene.fog.near = SGR.on ? 36000 : 22000; scene.fog.far = SGR.on ? 115000 : 68000; controls.maxDistance = SGR.on ? 72000 : 50000;
   sea.position.y = SGR.on ? -1.6 : 0;
@@ -114,7 +207,7 @@ function sgZoning(){
   zones.fill(0); dens.fill(0); arch.fill(0); resv.fill(0); roads = [];
   for (let k = 0; k < N*N; k++) if (nat[k] === 5) resv[k] = 8;     // foreign land is context only
   SG.regMap = {}; cityDefs = [];
-  SGD.regs.forEach((r, i) => { SG.regMap[i + 1] = cityDefs.length; cityDefs.push({x:r.x, y:r.y, r:r.r, cap:r.en === 'Manhattan', name:r.zh, en:r.en, style:0, custom:false}); });
+  SGD.regs.forEach((r, i) => { SG.regMap[i + 1] = cityDefs.length; cityDefs.push({x:r.x, y:r.y, r:r.r, cap:r.en === 'Manhattan', name:r.en || r.zh, en:r.en, style:0, custom:false}); });
 }
 const sgrTexPx = (x, y) => [(x + HALF)/(2*HALF)*SGR_TEX, (HALF - y)/(2*HALF)*SGR_TEX];
 function sgrGroundInit(){
@@ -225,23 +318,90 @@ function sgrRelease(obj){ obj.traverse(o => { const g = o.geometry; if (!g || o.
 const sgrTileC = ti => { const T = SGR.base.TILE, TX = Math.round(2*HALF/T), tx = ti % TX, ty = (ti - tx)/TX; return [-HALF + (tx + 0.5)*T, -HALF + (ty + 0.5)*T]; };
 function sgrTilesClear(){
   for (const T of SGR.tiles.values()) sgrTileDispose(T, true);
-  SGR.tiles.clear(); SGR.queue = []; SGR.built = 0; SGR.total = 0;
+  SGR.tiles.clear(); SGR.queue = []; SGR.farQ = []; SGR.built = 0; SGR.total = 0;
 }
 function sgrTileDispose(T, all){
-  const kill = o => { if (!o) return; SGR.group.remove(o); o.traverse(q => { if (q.geometry && q.geometry !== treeGeo) q.geometry.dispose(); }); };
+  const kill = o => { if (!o) return; SGR.group.remove(o); o.traverse(q => { if (q.geometry && q.geometry !== treeGeo && !(q.geometry.userData && q.geometry.userData.keep)) q.geometry.dispose(); }); };
   kill(T.bld && T.bld.group); T.bld = null;
   if (T.extra){ for (const o of T.extra){ kill(o); if (o.userData.dispose) o.userData.dispose(); } T.extra = null; }
   if (all){ for (const k of ['major', 'minor', 'paths']) kill(T.road && T.road[k]); T.road = null; kill(T.trees); T.trees = null; T.treesDone = false; }
+}
+function sgrCamDist(T){ return Math.hypot(T.cx - controls.target.x, T.cy + controls.target.z); }
+function sgrWantLod(T){
+  // 手机：近处完整，其余整座城市用粗盒子。桌面一律完整。
+  // Phones draw the whole city as coarse boxes, and full detail only nearby. Desktop stays full.
+  if (!window.CB_MOBILE) return 'full';
+  return sgrCamDist(T) < (SGR.phoneNear || 16000) ? 'full' : 'far';
+}
+function sgrBoxGeo(){
+  if (sgrBoxGeo.g) return sgrBoxGeo.g;
+  const g = new THREE.BoxGeometry(1, 1, 1); g.translate(0, 0.5, 0); g.userData.keep = true; sgrBoxGeo.g = g; return g;
+}
+function sgrFarList(ti){
+  let list = null;
+  if (SGR.bldData && SGR.bldData.big) list = SGR.bldData.big(ti);
+  else if (SGR.bldData && SGR.bldData.tiles) list = SGR.bldData.tiles.get(ti);
+  if (!list || !list.length) return [];
+  const out = [];
+  for (const B of list){ if (!B || B.foreign || (B.h || 0) < 12) continue; out.push(B); }
+  if (out.length > 80){ out.sort((a, b) => b.h - a.h); out.length = 80; }
+  return out;
+}
+function sgrBuildFar(T){
+  if (T.lod === 'far' && T.done && !SGR.dirty.has(T.ti)) return;
+  sgrTileDispose(T, true); T.treesDone = true; T.road = null;
+  const list = sgrFarList(T.ti);
+  if (list.length){
+    if (!sgrBuildFar.mat) sgrBuildFar.mat = new THREE.MeshLambertMaterial({color:0xffffff});
+    const im = new THREE.InstancedMesh(sgrBoxGeo(), sgrBuildFar.mat, list.length);
+    im.castShadow = false; im.receiveShadow = false; im.frustumCulled = false;
+    const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3(), c = new THREE.Color();
+    list.forEach((B, i) => {
+      const R = B.rings && B.rings[0];
+      let x0 = B.cx, y0 = B.cy, x1 = B.cx, y1 = B.cy;
+      if (R && R.length >= 4){ x0 = 1e9; y0 = 1e9; x1 = -1e9; y1 = -1e9; for (let k = 0; k < R.length; k += 2){ const x = R[k], y = R[k+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; } }
+      const w = Math.max(8, x1 - x0), d = Math.max(8, y1 - y0), h = Math.max(8, B.h || 12), cx = (x0 + x1)/2, cy = (y0 + y1)/2;
+      let gy = 0; try { gy = hC(cx, cy); } catch (e){ gy = 0; }
+      p.set(cx, gy, -cy); sc.set(w, h, d); m.compose(p, q, sc); im.setMatrixAt(i, m);
+      const k = Math.min(1, h/90); c.setRGB(0.74 - k*0.1, 0.72 - k*0.08, 0.68 - k*0.05); im.setColorAt(i, c);
+    });
+    im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true;
+    T.bld = {group:im}; SGR.group.add(im);
+  }
+  T.lod = 'far'; T.done = true;
+}
+function sgrAdapt(){
+  const now = performance.now(), dt = now - (sgrAdapt.last || now); sgrAdapt.last = now;
+  if (dt <= 0 || dt > 250) return;
+  const avg = sgrAdapt.avg = (sgrAdapt.avg || dt)*0.86 + dt*0.14;
+  const mem = navigator.deviceMemory || 0;
+  const cap = mem >= 8 ? 24000 : mem >= 4 ? 18000 : mem ? 12000 : 20000;
+  let near = SGR.phoneNear || 16000;
+  if (avg > 46) near = Math.max(4000, near - 1500);
+  else if (avg < 26 && SGR.built > 40) near = Math.min(cap, near + 2000);
+  if (near === SGR.phoneNear) return;
+  SGR.phoneNear = near;
+  const full = [], far = [];
+  const put = T => { const want = sgrWantLod(T); if (T.done && T.lod && T.lod !== want) SGR.dirty.add(T.ti); (want === 'far' ? far : full).push(T); };
+  for (const T of SGR.queue || []) put(T);
+  for (const T of SGR.farQ || []) put(T);
+  SGR.queue = full; SGR.farQ = far;
+  for (const T of SGR.tiles.values()) if (SGR.dirty.has(T.ti)){ const q = sgrWantLod(T) === 'far' ? SGR.farQ : SGR.queue; if (!q.includes(T)) q.push(T); }
 }
 function sgrTilesInit(){
   sgrTilesClear();
   const T = SGR.base.TILE, TX = Math.round(2*HALF/T);
   for (let ti = 0; ti < TX*TX; ti++){ const c = sgrTileC(ti); SGR.tiles.set(ti, {ti, cx:c[0], cy:c[1], road:null, bld:null, trees:null, treesDone:false, done:false}); }
-  SGR.queue = [...SGR.tiles.values()]; SGR.total = SGR.queue.length; SGR.t0 = performance.now(); sgrSortQueue();
+  SGR.phoneNear = window.CB_MOBILE ? 6000 : 1e9;
+  SGR.farQ = []; SGR.queue = [];
+  for (const T of SGR.tiles.values()) (sgrWantLod(T) === 'far' ? SGR.farQ : SGR.queue).push(T);
+  SGR.total = SGR.tiles.size; SGR.t0 = performance.now(); sgrSortQueue();
   for (const T of SGR.tiles.values()) T.want = sgrTileDist(T) < SGR_NEAR_IN ? 1 : 0;
 }
-function sgrSortQueue(){ const tx = controls.target.x, ty = -controls.target.z; SGR.queue.sort((a, b) => Math.hypot(a.cx - tx, a.cy - ty) - Math.hypot(b.cx - tx, b.cy - ty)); }
+function sgrSortQueue(){ const tx = controls.target.x, ty = -controls.target.z, d = T => Math.hypot(T.cx - tx, T.cy - ty); SGR.queue.sort((a, b) => d(a) - d(b)); if (SGR.farQ) SGR.farQ.sort((a, b) => d(a) - d(b)); }
 function sgrBuildTile(T){
+  if (sgrWantLod(T) === 'far'){ sgrBuildFar(T); return; }
+  if (T.lod === 'far'){ sgrTileDispose(T, true); T.done = false; T.road = null; T.lod = ''; }
   const rl = T.want ? 1 : 0;
   if (T.road && T.roadLvl !== rl){ for (const k of ['major', 'minor', 'paths']) if (T.road[k]){ SGR.group.remove(T.road[k]); T.road[k].traverse(q => { if (q.geometry) q.geometry.dispose(); }); } T.road = null; }
   if (!T.road){
@@ -258,17 +418,30 @@ function sgrBuildTile(T){
   if (list && list.length){ const b = SGBld.buildTile(T.ti, list, {skip:sgrSkipB, release:true}); if (b.group.children.length){ T.bld = b; SGR.group.add(b.group); } }
   // add-on modules (signs, ads, lights ...) decorate the tile's real buildings: HOOKS.tile(T, list, skip) returns an Object3D or null
   if (list && list.length) for (const f of HOOKS.tile){ let o = null; try { o = f(T, list, sgrSkipB); } catch (e){ console.error('tile hook', e); } if (o){ SGR.group.add(o); (T.extra || (T.extra = [])).push(o); } }
-  T.done = true; sgrLodTile(T);
+  T.lod = 'full'; T.done = true; sgrLodTile(T);
 }
 function sgrStep(){
   if (!SGR.on) return;
   if (SGR.lodQ){ SGR.lodQ = false; sgrSortQueue(); }
-  if (SGR.queue.length){
-    if ((sgrStep.n = (sgrStep.n || 0) + 1) % 40 === 0) sgrSortQueue();
-    const t = performance.now();
-    while (SGR.queue.length && performance.now() - t < 16){ const T = SGR.queue.shift(); if (T.done && !SGR.dirty.has(T.ti)) continue; SGR.dirty.delete(T.ti); sgrBuildTile(T); SGR.built++; }
-    if (SGR.total && SGR.built <= SGR.total && !sgrAfterBuild.done) showBusy(`真实城市 ${Math.min(SGR.built, SGR.total)}/${SGR.total} · Building the real city`);
-    if (!SGR.queue.length){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
+  if (window.CB_MOBILE && (sgrStep.c = (sgrStep.c || 0) + 1) % 30 === 0) sgrAdapt();
+  const drain = (q, budget) => {
+    if (!q || !q.length) return;
+    const t0 = performance.now();
+    while (q.length && performance.now() - t0 < budget){
+      const T = q.shift();
+      if (T.done && !SGR.dirty.has(T.ti) && T.lod === sgrWantLod(T)) continue;
+      SGR.dirty.delete(T.ti); sgrBuildTile(T); SGR.built++;
+    }
+  };
+  if ((sgrStep.n = (sgrStep.n || 0) + 1) % 40 === 0) sgrSortQueue();
+  drain(SGR.queue, window.CB_MOBILE ? 12 : 16);
+  if (window.CB_MOBILE) drain(SGR.farQ, 8);
+  const left = (SGR.queue ? SGR.queue.length : 0) + (SGR.farQ ? SGR.farQ.length : 0);
+  if (SGR.total && left && SGR.built <= SGR.total) showBusy(window.CB_MOBILE ? `Placing buildings ${Math.min(SGR.built, SGR.total)}/${SGR.total}` : `Building the real city ${Math.min(SGR.built, SGR.total)}/${SGR.total}`);
+  if (SGR.total && !left){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
+  if ((sgrStep.pub = (sgrStep.pub || 0) + 1) % 20 === 0){
+    let full = 0, far = 0; for (const T of SGR.tiles.values()){ if (T.lod === 'full') full++; else if (T.lod === 'far') far++; }
+    window.CB_VIEW = {built:SGR.built, total:SGR.tiles.size, full, far, near:SGR.phoneNear || 0};
   }
 }
 function sgrQueueTiles(set){ for (const ti of set){ const T = SGR.tiles.get(ti); if (!T) continue; SGR.dirty.add(ti); if (!SGR.queue.includes(T)) SGR.queue.push(T); } sgrSortQueue(); }
@@ -622,9 +795,9 @@ const SGR_POI_ICON = {theme_park:'🎢', zoo:'🦒', aquarium:'🐠', attraction
 function sgLabels(){
   const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'}[ch]));
   const mk2 = (cls, html, it) => { const el = document.createElement('div'); el.className = cls; el.innerHTML = html; labelsEl.appendChild(el); labelItems.push(Object.assign({el}, it)); };
-  const nm = (zh, en) => `${esc(zh || en)}${zh && en && zh !== en ? `<small>${esc(en)}</small>` : ''}`;
-  for (const s of sgSites) mk2('lbl n lm', `${s.key === 'gardens' ? '🌿' : s.key === 'uss' ? '🎢' : s.key.startsWith('changi') ? '✈' : '🎓'} ${esc(s.zh)}<small>${esc(s.en)}</small>`, {x:s.x, y:s.y, abs:s.top + 20, maxD:16000});
-  for (const s of sgSites) if (s.labels) for (const L of s.labels) mk2('lbl n poi', `${L.ic || '🏛'} ${esc(L.zh || L.en)}${L.zh && L.en && L.zh !== L.en ? `<small>${esc(L.en)}</small>` : ''}`, {x:L.x, y:L.y, abs:L.abs + 6, near:L.near || 1500});
+  const nm = (zh, en) => esc(en || zh || '');
+  for (const s of sgSites) mk2('lbl n lm', `${s.key === 'gardens' ? '🌿' : s.key === 'uss' ? '🎢' : s.key.startsWith('changi') ? '✈' : '🎓'} ${esc(s.en || s.zh)}`, {x:s.x, y:s.y, abs:s.top + 20, maxD:16000});
+  for (const s of sgSites) if (s.labels) for (const L of s.labels) mk2('lbl n poi', `${L.ic || '🏛'} ${esc(L.en || L.zh)}${L.zh && L.en && L.zh !== L.en ? `<small>${esc(L.en)}</small>` : ''}`, {x:L.x, y:L.y, abs:L.abs + 6, near:L.near || 1500});
   const B = SGR.base; if (!B) return;
   if (showNatLabels){
     const seen = new Set(SGD.pas.map(p => p.en.toLowerCase()));
@@ -638,13 +811,14 @@ function sgLabels(){
   const subLab = (x, y) => { for (const S of sgSites) if (S.labels && Math.hypot(S.x - x, S.y - y) < 3000) for (const L of S.labels) if (Math.hypot(L.x - x, L.y - y) < 60) return true; return false; };
   if (showPoi) for (const p of B.pois){ if (onLm(p.x, p.y) || siteDup(p) || subLab(p.x, p.y)) continue; const ic = SGR_POI_ICON[p.k] || '•', near = p.pr <= 1 ? 9000 : p.pr === 2 ? 1900 : 900; mk2('lbl n poi' + (p.pr <= 1 ? ' big' : ''), `${ic} ${nm(p.zh, p.en)}`, {x:p.x, y:p.y, lift:18, near}); }
   if (showNet){
-    for (const r of SGR.roadLabels){ const hw = r.cls <= 1; mk2('lbl n road' + (hw ? ' hw' : ''), `${esc(r.zh || r.en)}${r.ref ? ` <b class="ref">${esc(r.ref)}</b>` : ''}${r.zh && r.en ? `<small>${esc(r.en)}</small>` : ''}`, {x:r.x, y:r.y, abs:r.z + (hw ? 9 : 5), near:hw ? 3000 : r.cls <= 4 ? 1500 : 750}); }
-    for (const S of net.stations) if (S.mrt) mk2('lbl n tr', `🚇 ${esc(S.name[0])}<small>${esc(S.name[1])}</small>`, {x:S.p[0], y:S.p[1], lift:S.elev ? 26 : 10, near:3200});
+    for (const r of SGR.roadLabels){ const hw = r.cls <= 1; mk2('lbl n road' + (hw ? ' hw' : ''), `${esc(r.en || r.zh)}${r.ref ? ` <b class="ref">${esc(r.ref)}</b>` : ''}${r.zh && r.en ? `<small>${esc(r.en)}</small>` : ''}`, {x:r.x, y:r.y, abs:r.z + (hw ? 9 : 5), near:hw ? 3000 : r.cls <= 4 ? 1500 : 750}); }
+    for (const S of net.stations) if (S.mrt) mk2('lbl n tr', `🚇 ${esc(S.name[1] || S.name[0])}`, {x:S.p[0], y:S.p[1], lift:S.elev ? 26 : 10, near:3200});
   }
 }
 
 /* ---------- entering and leaving Singapore ---------- */
-const SG_SUB = 'City Brush · 纽约 New York City 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';
+const SG_SUB = 'City Brush · New York City 1:1 · Real map · © OpenStreetMap contributors', ISL_SUB = 'City Brush · Map 24 × 24 km';
+window.CB_LOOK = (lat, lon, dx, dy, dz) => { const t = sgXY(lat, lon); controls.target.set(t[0], 8, -t[1]); camera.position.set(t[0] + dx, dy, -t[1] + dz); };
 function sgView(){ const t = sgXY(40.7330, -73.9930), y = 10; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 1900, y + 2500, -t[1] + 4700); }
 function sgFly(){ const t = sgXY(40.7540, -73.9840); flyTo(new THREE.Vector3(t[0] + 1500, 1250, -t[1] + 2300), new THREE.Vector3(t[0], 20, -t[1])); }
 function sgBuild(){
@@ -685,7 +859,7 @@ function sgReset(){
   forceDivide = true; buildSkeleton(); drawTex(); renderStats(); requestRegen(); sgFly(); hideBusy();
 }
 function sgEnter(){
-  showBusy('正在载入纽约… Loading New York City');
+  showBusy('Loading New York City');
   sgrLoad().then(() => setTimeout(() => {
     sgBuild(); renderStyle();
     tRes = null; buildFlow(); buildCars(); trafficRan = true; renderTrafficStats();
@@ -694,10 +868,11 @@ function sgEnter(){
 }
 function sgrBoot(){
   showFlow = false; { const f = $('#showFlow'); if (f) f.checked = false; } flowGroup.visible = false;   // the real roads read better without the flow overlay; it is one click away
-  showBusy('正在载入真实纽约地图… Loading the real map of New York City');
+  showBusy('Loading the real map of New York City');
   sgrLoad().then(() => {
     sgView(); sgBuild();
-    setTool('R'); renderStyle(); renderIslandStats(); syncLabels();
+    setTool(document.documentElement.classList.contains('cb-phone') ? 'view' : 'R'); renderStyle(); renderIslandStats(); syncLabels();
+    if (document.documentElement.classList.contains('cb-phone')){ const tr = document.getElementById('tray'); if (tr) tr.classList.add('closed'); const lab = (cat, text) => { const b = document.querySelector('.dtab[data-cat="'+cat+'"]'); if (!b) return; const s = b.querySelector('span'); if (s) s.textContent = text; }; lab('view','View'); lab('f1','Drive'); }
     buildSkeleton(); drawTex(); renderStats();
     sgView(); applyTime(); syncLabels();
     trafficRan = true; requestRegen();

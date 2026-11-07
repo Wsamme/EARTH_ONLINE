@@ -1,8 +1,10 @@
 # v17: Singapore becomes the real island at 1:1 (real roads, buildings, coastline). Applies on top of the v16 build.
 # usage: python3 patch17.py <in.html> <out.html>
-import sys, re
-from pathlib import Path
-SC = str(Path(__file__).resolve().parents[1]) + '/' 
+import sys, re, os
+# 从这份仓库的 src/ 生成页面，不写死某台机器上的绝对路径。
+# Build from this checkout's src/, not from a machine-specific absolute path.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+SC = os.path.dirname(_HERE) + os.sep
 src = open(sys.argv[1]).read()
 def R(a, b, count=1):
     global src
@@ -47,7 +49,7 @@ R("const sg20 = (x, y) => Math.min(1199, Math.max(0, Math.floor((y + HALF)/20)))
 # ---------- Singapore functions replaced by the v17 module ----------
 for f in ['genSingapore', 'sgZoning', 'placeSites', 'sgMRT', 'buildNetworkSG', 'sgMakeCuts', 'computeDistrictsSG', 'sgLabels', 'sgView', 'sgFly', 'sgBuild', 'sgExit', 'sgReset', 'sgEnter', 'lodTick']:
     drop_func(f)
-R("const SG_SUB = 'City Brush · 新加坡 Singapore 1:1 · 24 × 24 km', ISL_SUB = 'City Brush · 地图 24 × 24 km';", "")
+R("const SG_SUB = 'City Brush · Singapore 1:1 · 24 × 24 km', ISL_SUB = 'City Brush · Map 24 × 24 km';", "")
 # the port: Tuas too; anchored ships are placed by sgrShips
 R("const boxes = [[[1.262, 103.745], [1.293, 103.795]], [[1.253, 103.822], [1.276, 103.850]], [[1.293, 103.700], [1.312, 103.727]]];",
   "const boxes = [[[1.262, 103.745], [1.293, 103.795]], [[1.253, 103.822], [1.276, 103.850]], [[1.293, 103.700], [1.312, 103.727]], [[1.205, 103.595], [1.285, 103.665]]];")
@@ -181,7 +183,7 @@ import os
 MODS = ['sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm16/sg2/changi.js', 'lm18/f1/f1.js', 'lm18/f2/f2.js', 'lm18/a/a.js', 'lm18/b/b.js', 'lm18/c/c.js', 'lm18/d/d.js', 'sgtest_uss/uss.js']
 # v24: lm22 = the wave-3 landmark upgrades (they load before lm20/core so its light-show table still merges into them)
 # v20 add-ons (included when present; EXTRA_MODS env adds more, SKIP_MODS removes some, for module tests)
-MODS += ['lm20/nus/nus.js', 'lm29/nuseng/nuseng.js', 'lm29/nuscentral/nuscentral.js', 'lm29/nussci/nussci.js', 'lm29/nusutown/nusutown.js', 'lm29/nushalls/nushalls.js', 'lm29/nussci/nusduke.js', 'lm29/nushalls/nusbt.js', 'lm20/ntu/ntu.js', 'lm20/changi/changi.js', 'lm20/w1/w1.js', 'lm20/w2/w2.js', 'lm20/w3/w3.js', 'lm20/w4/w4.js', 'lm20/w5/w5.js', 'lm22/marina/marina.js', 'lm27/flyer/flyer.js', 'lm22/rafflesplace/rafflesplace.js', 'lm22/tanjongpagar/tanjongpagar.js', 'lm22/civic/civic.js', 'lm22/heritage/heritage.js', 'lm22/orchardsport/orchardsport.js', 'lm22/gardens/gardens.js', 'lm26/sgcivic/sgcivic.js', 'lm26/sgriver/sgriver.js', 'lm26/sgcbd/sgcbd.js', 'lm26/sgbugis/sgbugis.js', 'lm26/sgouter/sgouter.js', 'lm20/air/air.js', 'lm20/signs/signs.js', 'lm20/hdb/hdb.js', 'lm20/port/port.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/f1track/f1track.js', 'lm20/traffic/traffic.js', 'lm20/crown/crown.js', 'lm20/audio/audio.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_sg/info_sg.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
+MODS += ['lm20/nus/nus.js', 'lm29/nuseng/nuseng.js', 'lm29/nuscentral/nuscentral.js', 'lm29/nussci/nussci.js', 'lm29/nusutown/nusutown.js', 'lm29/nushalls/nushalls.js', 'lm29/nussci/nusduke.js', 'lm29/nushalls/nusbt.js', 'lm20/ntu/ntu.js', 'lm20/changi/changi.js', 'lm20/w1/w1.js', 'lm20/w2/w2.js', 'lm20/w3/w3.js', 'lm20/w4/w4.js', 'lm20/w5/w5.js', 'lm22/marina/marina.js', 'lm27/flyer/flyer.js', 'lm22/rafflesplace/rafflesplace.js', 'lm22/tanjongpagar/tanjongpagar.js', 'lm22/civic/civic.js', 'lm22/heritage/heritage.js', 'lm22/orchardsport/orchardsport.js', 'lm22/gardens/gardens.js', 'lm26/sgcivic/sgcivic.js', 'lm26/sgriver/sgriver.js', 'lm26/sgcbd/sgcbd.js', 'lm26/sgbugis/sgbugis.js', 'lm26/sgouter/sgouter.js', 'lm40/sg40a/sg40a.js', 'lm40/sg40b/sg40b.js', 'lm40/sg40c/sg40c.js', 'lm40/sg40d/sg40d.js', 'lm40/sg40e/sg40e.js', 'lm40/sg40f/sg40f.js', 'lm40/sg40g/sg40g.js', 'lm40/sg40h/sg40h.js', 'lm20/air/air.js', 'lm20/signs/signs.js', 'lm20/hdb/hdb.js', 'lm20/port/port.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/f1track/f1track.js', 'lm20/traffic/traffic.js', 'lm20/crown/crown.js', 'lm20/audio/audio.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_sg/info_sg.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 if os.environ.get('LM20') is not None:      # LM20=a,b : only these lm20 modules (by folder name), LM20= : none
     keep20 = set(x for x in os.environ['LM20'].split(',') if x); MODS = [m for m in MODS if not m.startswith('lm20/') or m.split('/')[1] in keep20]
 # Singapore landmark modules: same LANDMARKS / SG_PLACES format as the city groups.
@@ -234,10 +236,10 @@ if CITY == 'sg':
     R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4;", "function sgView(){ if (new URLSearchParams(location.search).get('view') === 'bv'){ const q = sgXY(1.3013, 103.7900); controls.target.set(q[0], 42, -q[1]); camera.position.set(q[0] + 1100, 930, -q[1] + 1400); return; } const t = sgXY(1.2868, 103.8560), y = 4;")
     R("  for (const S of SGD.stations){\n    const mine = [];", "  for (const S of SGD.stations){\n    if (S.en === 'Buona Vista'){ net.stations.push({p:[S.x,S.y],mrt:true,elev:true,col:[.4,.7,.55],name:[S.zh,S.en + ' · EW21 / CC22']}); continue; }\n    const mine = [];")
 # titles
-R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
+R('<span class="sub">City Brush · Singapore 1:1 · 24 × 24 km</span>', '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>')
 # v23: the map switch under the title (both builds)
-R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>',
-  '<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>\n      <div class="seg cityseg" role="group" aria-label="地图 Map"><button type="button" data-city="sg">新加坡<small>Singapore</small></button><button type="button" data-city="bay">旧金山湾区<small>SF Bay Area</small></button><button type="button" data-city="nyc">纽约<small>New York</small></button></div>')
+R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>',
+  '<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>\n      <div class="seg cityseg" role="group" aria-label="Map"><button type="button" data-city="sg">Singapore</button><button type="button" data-city="bay">SF Bay Area</button><button type="button" data-city="nyc">New York</button></div>')
 R('.brand .sub{', '.cityseg{margin-top:9px;max-width:250px}.cityseg button{line-height:1.25;padding:6px 6px}.cityseg button small{display:block;font:400 9.5px var(--font-mono);color:var(--muted)}.cityseg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}.cityseg button[aria-pressed="true"] small{color:var(--panel);opacity:.75}\n.brand .sub{')
 if CITY == 'bay': src = patch_bay.apply(src)
 elif CITY == 'nyc': src = patch_nyc.apply(src)
@@ -247,9 +249,19 @@ else:   # v29: Singapore too: landmarks split into several keys keep one label (
       "for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm';")
 # v33: post patches — python files defining apply(src, city) -> src, applied to every city's page in order (production list POSTS,
 # plus EXTRA_POSTS=a.py,b.py for tests). Each must assert its replacements match exactly once.
-POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_detail.py', 'lm32/clock/post_clock.py', 'lm33/post_railskip.py', 'lm33/post_parkpoi.py', 'lm33/fuji/post_far.py', 'lm33/post_viewdefault.py']
+POSTS = ['lm30/sky/post_ground.py', 'lm30/post_mapskip.py', 'lm32/detail/post_detail.py', 'lm32/clock/post_clock.py', 'lm33/post_railskip.py', 'lm33/post_parkpoi.py', 'lm33/fuji/post_far.py', 'lm33/post_viewdefault.py', 'lm40/post_cablecar.py']
 for _p in POSTS + [x for x in os.environ.get('EXTRA_POSTS', '').split(',') if x]:
     _ns = {'__file__': SC + _p}; exec(compile(open(SC + _p).read(), SC + _p, 'exec'), _ns); src = _ns['apply'](src, CITY); print('post', _p)
 src = src.replace('<title>', '<meta name="citybrush-map" content="%s">\n<title>' % CITY, 1)   # v26: which city this page is (the map switch reads it)
+# 把整段脚本挪到单独的 js 文件。HTML 只剩壳子，浏览器可以先画出标题，脚本也能单独缓存。
+# Move the program into its own file so the HTML shell paints first and the script can be cached.
+_js = {'sg':'app.js', 'bay':'bay-app.js', 'nyc':'nyc-app.js', 'hk':'hk-app.js', 'tyo':'tyo-app.js'}[CITY]
+_i = src.rfind('<script>')
+_j = src.rfind('</script>')
+if _i < 0 or _j < _i: raise SystemExit('no inline script to extract')
+_code = src[_i + len('<script>'):_j]
+if 'sgrBoot' not in _code: raise SystemExit('extracted script is not the app')
+open(os.path.join(os.path.dirname(os.path.abspath(sys.argv[2])), _js), 'w').write(_code.lstrip('\n'))
+src = src[:_i] + '<script src="%s" defer></script>\n' % _js + src[_j + len('</script>'):]
 open(sys.argv[2], 'w').write(src)
-print('ok', len(src))
+print('ok', len(src), 'js', len(_code))

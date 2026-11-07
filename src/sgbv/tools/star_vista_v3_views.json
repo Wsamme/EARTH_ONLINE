@@ -1,0 +1,8 @@
+[
+  {"name":"star_vista_hero_day","lat":1.30687671,"lon":103.78846253,"dx":185,"dy":122,"dz":185,"targetY":32,"tod":13},
+  {"name":"star_vista_hero_night","lat":1.30687671,"lon":103.78846253,"dx":185,"dy":122,"dz":185,"targetY":32,"tod":20.5},
+  {"name":"star_vista_west","lat":1.30687671,"lon":103.78846253,"dx":-210,"dy":105,"dz":-30,"targetY":35,"tod":13},
+  {"name":"star_vista_north","lat":1.30687671,"lon":103.78846253,"dx":30,"dy":85,"dz":-225,"targetY":32,"tod":13},
+  {"name":"star_vista_street","lat":1.30687671,"lon":103.78846253,"dx":135,"dy":3,"dz":20,"targetY":28,"fov":65,"tod":13},
+  {"name":"district","lat":1.3013,"lon":103.7900,"dx":1050,"dy":830,"dz":1320,"targetY":30,"tod":13}
+]

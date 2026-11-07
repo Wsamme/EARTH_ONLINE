@@ -5,7 +5,7 @@ Object.assign(SGR, {base:null, H:null, lines:null, bldData:null, water:null, img
   tiles:new Map(), queue:[], off:null, group:new THREE.Group(), waterGroup:new THREE.Group(), keeps:[], hulls:new Map(), discs:[],
   baseCv:null, ovCv:null, ovImg:null, stats:null, od:[], graphSegs:[], roadLabels:[], planes:null, mono:[], built:0, total:0, t0:0, dirty:new Set()});
 scene.add(SGR.group); scene.add(SGR.waterGroup);
-const SGR_PATH = 'nycdata/', SGR_TEX = 4096;
+const SGR_PATH = 'nycdata/', SGR_TEX = window.CB_MOBILE ? 2048 : 4096;
 const SGR_US = true; const SGR_NYC = true;
 const SGR_LRT = {has:c => c[0] === 'H' || c[0] === 'W'};
 // trains per system: speed m/s, car spacing, car size [length, height, width], track offset, height, cars per train, line metres per train
@@ -20,16 +20,28 @@ const SGR_TRAIN = c => /^S[1-7]$/.test(c) ? {sp:13, gap:15.9, sc:[15.6, 3.6, 2.7
   {sp:24, gap:26.2, sc:[25.9, 4.4, 3.2], side:1.9, y:2.4, cars:10, per:9000};
 
 /* ---------- loading ---------- */
-async function sgrFetch(name){
-  // 先要去掉 base64 的 gzip 文件（.bin），没有再退回旧的 .txt。
-  // 解压放在 Worker 里，主线程可以继续把已经到的地形画出来。
-  // Ask for the raw gzip (.bin) first, then the old base64 .txt.
-  // Unpacking runs in a Worker so the main thread can keep drawing.
+async function sgrFetch(name, label){
+  // Raw gzip (.bin) first, then the old base64 .txt.
+  // A phone downloads one file at a time. Three large files together, unpacked in a
+  // Worker, is what left iPhone Safari on "Terrain is up" with no streets.
   const stem = String(name).replace(/\.txt$/, '');
   let buf = null;
-  const bin = await fetch(SGR_PATH + stem + '.bin');
-  if (bin.ok) buf = await bin.arrayBuffer();
-  else {
+  if (window.CB_MOBILE){
+    let err = null;
+    for (let a = 0; a < 3 && !buf; a++){
+      try { buf = await sgrReadBody(SGR_PATH + stem + '.bin', label); }
+      catch (e){
+        err = e;
+        if (/\s40[14]/.test(String(e && e.message || e))) break;
+        await new Promise(r => setTimeout(r, 700 * (a + 1)));
+      }
+    }
+    if (!buf && err && !/\s40[14]/.test(String(err && err.message || err))) throw err;
+  } else {
+    const bin = await fetch(SGR_PATH + stem + '.bin');
+    if (bin.ok) buf = await bin.arrayBuffer();
+  }
+  if (!buf){
     const txt = await fetch(SGR_PATH + stem + '.txt');
     if (!txt.ok) throw new Error(name + ' ' + txt.status);
     const b64 = (await txt.text()).trim(), raw = atob(b64), bytes = new Uint8Array(raw.length);
@@ -38,10 +50,39 @@ async function sgrFetch(name){
   }
   return sgrUnpack(buf);
 }
+async function sgrReadBody(url, label){
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 45000) : 0;
+  let res;
+  try { res = await fetch(url, ctrl ? {signal: ctrl.signal} : {}); }
+  catch (e){ throw new Error(url + ' ' + (e && e.name === 'AbortError' ? 'timed out' : e)); }
+  finally { if (timer) clearTimeout(timer); }
+  if (!res.ok) throw new Error(url + ' ' + res.status);
+  const len = +res.headers.get('content-length') || 0;
+  if (!res.body || !res.body.getReader) return res.arrayBuffer();
+  const reader = res.body.getReader(), chunks = [];
+  let got = 0, last = 0;
+  while (true){
+    const step = await reader.read();
+    if (step.done) break;
+    chunks.push(step.value); got += step.value.length;
+    if (label && got - last > 160000){
+      last = got;
+      const pct = len ? Math.min(99, Math.round(got / len * 100)) : 0;
+      showBusy(pct ? (label + ' ' + pct + '%') : label);
+    }
+  }
+  const out = new Uint8Array(got); let o = 0;
+  for (const c of chunks){ out.set(c, o); o += c.length; }
+  if (label) showBusy(label);
+  return out.buffer;
+}
 function sgrUnpack(buf){
   const u = new Uint8Array(buf);
   if (u.length < 2 || u[0] !== 0x1f || u[1] !== 0x8b) return Promise.resolve(buf);
-  if (typeof Worker === 'undefined' || typeof DecompressionStream === 'undefined') return sgrUnpackHere(buf);
+  // iOS Safari can drop a Worker gzip job on the bigger files: the promise never
+  // settles, and the map stays on the terrain. Phones unpack on the main thread.
+  if (window.CB_MOBILE || typeof Worker === 'undefined' || typeof DecompressionStream === 'undefined') return sgrUnpackHere(buf);
   if (!sgrUnpack.pool){
     const src = "self.onmessage=async e=>{try{const out=await new Response(new Blob([e.data.buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();self.postMessage({id:e.data.id,buf:out},[out]);}catch(err){self.postMessage({id:e.data.id,err:String(err)});}};";
     const url = URL.createObjectURL(new Blob([src], {type:'text/javascript'}));
@@ -87,7 +128,16 @@ function sgrLoad(){
     await img.decode();
     sgrApplyBase(b, img);
     sgrPreview();
-    const [r, wb, bl] = await Promise.all([sgrFetch('nyc_roads.txt'), sgrFetch('nyc_water.txt'), sgrFetch('nyc_bld0.txt')]);
+    let r, wb, bl;
+    if (window.CB_MOBILE){
+      await new Promise(res => setTimeout(res, 40));
+      r = await sgrFetch('nyc_roads.txt', 'Loading streets');
+      wb = await sgrFetch('nyc_water.txt', 'Loading water');
+      bl = await sgrFetch('nyc_bld0.txt', 'Loading buildings');
+      showBusy('Reading streets and buildings');
+    } else {
+      [r, wb, bl] = await Promise.all([sgrFetch('nyc_roads.txt'), sgrFetch('nyc_water.txt'), sgrFetch('nyc_bld0.txt')]);
+    }
     SGR.lines = SGRoads.decode(r, SGR.base.names, SGR.base.refs);
     SGR.bldData = SGBld.decode(bl);
     sgrLoadParts(SGR.base.bldParts || 0);
@@ -327,7 +377,7 @@ function sgrAdapt(){
   const mem = navigator.deviceMemory || 0;
   const cap = mem >= 8 ? 24000 : mem >= 4 ? 18000 : mem ? 12000 : 20000;
   let near = SGR.phoneNear || 16000;
-  if (avg > 46) near = Math.max(8000, near - 2000);
+  if (avg > 46) near = Math.max(4000, near - 1500);
   else if (avg < 26 && SGR.built > 40) near = Math.min(cap, near + 2000);
   if (near === SGR.phoneNear) return;
   SGR.phoneNear = near;
@@ -342,7 +392,7 @@ function sgrTilesInit(){
   sgrTilesClear();
   const T = SGR.base.TILE, TX = Math.round(2*HALF/T);
   for (let ti = 0; ti < TX*TX; ti++){ const c = sgrTileC(ti); SGR.tiles.set(ti, {ti, cx:c[0], cy:c[1], road:null, bld:null, trees:null, treesDone:false, done:false}); }
-  SGR.phoneNear = window.CB_MOBILE ? (navigator.deviceMemory >= 8 ? 20000 : navigator.deviceMemory >= 4 ? 14000 : navigator.deviceMemory ? 11000 : 16000) : 1e9;
+  SGR.phoneNear = window.CB_MOBILE ? 6000 : 1e9;
   SGR.farQ = []; SGR.queue = [];
   for (const T of SGR.tiles.values()) (sgrWantLod(T) === 'far' ? SGR.farQ : SGR.queue).push(T);
   SGR.total = SGR.tiles.size; SGR.t0 = performance.now(); sgrSortQueue();
@@ -387,7 +437,7 @@ function sgrStep(){
   drain(SGR.queue, window.CB_MOBILE ? 12 : 16);
   if (window.CB_MOBILE) drain(SGR.farQ, 8);
   const left = (SGR.queue ? SGR.queue.length : 0) + (SGR.farQ ? SGR.farQ.length : 0);
-  if (SGR.total && left && SGR.built <= SGR.total) showBusy(`Building the real city ${Math.min(SGR.built, SGR.total)}/${SGR.total}`);
+  if (SGR.total && left && SGR.built <= SGR.total) showBusy(window.CB_MOBILE ? `Placing buildings ${Math.min(SGR.built, SGR.total)}/${SGR.total}` : `Building the real city ${Math.min(SGR.built, SGR.total)}/${SGR.total}`);
   if (SGR.total && !left){ SGR.total = 0; hideBusy(); sgrAfterBuild(); }
   if ((sgrStep.pub = (sgrStep.pub || 0) + 1) % 20 === 0){
     let full = 0, far = 0; for (const T of SGR.tiles.values()){ if (T.lod === 'full') full++; else if (T.lod === 'far') far++; }
@@ -821,7 +871,8 @@ function sgrBoot(){
   showBusy('Loading the real map of New York City');
   sgrLoad().then(() => {
     sgView(); sgBuild();
-    setTool('R'); renderStyle(); renderIslandStats(); syncLabels();
+    setTool(document.documentElement.classList.contains('cb-phone') ? 'view' : 'R'); renderStyle(); renderIslandStats(); syncLabels();
+    if (document.documentElement.classList.contains('cb-phone')){ const tr = document.getElementById('tray'); if (tr) tr.classList.add('closed'); const lab = (cat, text) => { const b = document.querySelector('.dtab[data-cat="'+cat+'"]'); if (!b) return; const s = b.querySelector('span'); if (s) s.textContent = text; }; lab('view','View'); lab('f1','Drive'); }
     buildSkeleton(); drawTex(); renderStats();
     sgView(); applyTime(); syncLabels();
     trafficRan = true; requestRegen();

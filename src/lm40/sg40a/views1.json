@@ -1,0 +1,8 @@
+[["sgcapitaltower_plan","overlay","sgcapitaltower"],["sgintlplaza_plan","overlay","sgintlplaza"],["sgfraserstower_plan","overlay","sgfraserstower"],["sgura_plan","overlay","sgura"],
+ ["sgsixbattery_plan","overlay","sgsixbattery"],["sgsltower_plan","overlay","sgsltower"],["sgorq_plan","overlay","sgorq"],["sgmillenia_plan","overlay","sgmillenia"],
+ ["sgesplbr_plan","overlay","sgesplbr"],["sgjubilee_plan","overlay","sgjubilee"],["sgmbcc_plan","overlay","sgmbcc"],["sgmsouthpier_plan","overlay","sgmsouthpier"],
+ ["tp_wide",1.2780,103.8466,1000,12,140,0],["tp_wide_n",1.2780,103.8466,1000,12,140,1],
+ ["cap_a",1.27760,103.84761,420,22,210,0],["ip_a",1.27589,103.84596,420,22,160,0],["fr_a",1.27879,103.84745,380,25,60,0],["ura_a",1.27958,103.84534,260,30,230,0],
+ ["rp_wide",1.2840,103.8520,800,14,120,0],["rp_n",1.2840,103.8520,800,14,120,1],["six_a",1.28548,103.85181,300,28,20,0],["orq_a",1.28119,103.85190,450,22,120,0],
+ ["br_a",1.28795,103.85425,380,18,100,0],["br_b",1.28795,103.85425,220,10,250,0],["br_n",1.28795,103.85425,380,18,100,1],
+ ["mil_a",1.29263,103.86030,600,10,220,0],["mbcc_a",1.26620,103.86057,450,25,140,0],["msp_a",1.27083,103.86319,250,25,150,0],["mar_n",1.2680,103.8618,700,20,140,1]]

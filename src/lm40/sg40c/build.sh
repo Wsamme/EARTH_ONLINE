@@ -1,0 +1,1 @@
+cd /tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/lm40/sg40c && (cat _head.js _helpers.js _mine.js m_sota.js m_tyn.js m_ihc.js m_malabar.js m_race.js m_misc.js m_mus.js $( [ -f m_smu.js ] && echo m_smu.js ); echo "}") > _tmp.js && node --check _tmp.js && mv _tmp.js sg40c.js

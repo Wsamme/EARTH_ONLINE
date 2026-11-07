@@ -6424,7 +6424,7 @@ body.f1on .kjhud{top:60px}body.f1on .kjtoast{top:auto;bottom:150px}
   const VEHN = {drive:['驾车', 'Drive'], fly:['飞行', 'Fly'], watch:['观看', 'Watch']};
   function summary(){ const L = spLabel(TR.sp), n = CPN[TR.diff]; return `${L[2]} · ${VEHN[TR.veh][0]} · ${DIFFN[TR.diff][0]} · ${TR.goal === 'extract' ? '过 ' + n + ' 个检查点再撤离' : '坚持 ' + fmt(SURV[TR.diff])}  ·  ${L[3]} · ${VEHN[TR.veh][1]} · ${DIFFN[TR.diff][1]} · ${TR.goal === 'extract' ? n + ' checkpoints, then the exit' : 'survive ' + fmt(SURV[TR.diff])}`; }
   function openTab(){ const b = document.getElementById('kjTab'); if (b && typeof showCat === 'function'){ showCat('kj', true); const br = document.getElementById('brushRow'); if (br) br.hidden = true; } }
-  function fixCols(){ const tabs = document.querySelector('.dock-tabs'); if (!tabs) return; const n = tabs.querySelectorAll('.dtab').length; if (n > 6) tabs.style.setProperty('grid-template-columns', `repeat(${n},minmax(0,1fr))`, 'important'); }
+  function fixCols(){ const tabs = document.querySelector('.dock-tabs'); if (!tabs) return; if (document.documentElement.classList.contains('cb-phone')){ tabs.style.setProperty('grid-template-columns', '1fr 1fr', 'important'); return; } const n = tabs.querySelectorAll('.dtab').length; if (n > 6) tabs.style.setProperty('grid-template-columns', `repeat(${n},minmax(0,1fr))`, 'important'); }
   function kjTab(){
     const tabs = document.querySelector('.dock-tabs'), tray = document.getElementById('tray'), foot = document.getElementById('brushRow');
     if (!tabs || !tray){ if ((kjTab.n = (kjTab.n || 0) + 1) < 40) setTimeout(kjTab, 500); return; }

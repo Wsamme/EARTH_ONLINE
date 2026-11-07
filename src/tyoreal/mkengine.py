@@ -148,8 +148,8 @@ R("  sgrLandmarkHulls();\n  if (!SGR.roadLabels.length)", "  sgrLandmarkHulls();
 # ---------- labels ----------
 R("const big = /Reservoir|Lake|Strait|Selat|Harbour/.test(w.en);", "const big = !!w.b || /Reservoir|Bay|River/.test(w.en);")
 # ---------- entering ----------
-R("const SG_SUB = 'City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';",
-  "const SG_SUB = 'City Brush · 东京 Tokyo 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';")
+R("const SG_SUB = 'City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap contributors', ISL_SUB = 'City Brush · 地图 24 × 24 km';",
+  "const SG_SUB = 'City Brush · 东京 Tokyo 1:1 · 真实地图 Real map · © OpenStreetMap contributors', ISL_SUB = 'City Brush · 地图 24 × 24 km';")
 R("function sgView(){ const t = sgXY(1.2868, 103.8560), y = 4; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2300, y + 2600, -t[1] + 4300); }",
   "function sgView(){ const t = sgXY(35.6800, 139.7640), y = 10; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 2100, y + 2500, -t[1] + 4500); }")
 R("function sgFly(){ const t = sgXY(1.2868, 103.8560); flyTo(new THREE.Vector3(t[0] + 1500, 1050, -t[1] + 1900), new THREE.Vector3(t[0], 4, -t[1])); }",

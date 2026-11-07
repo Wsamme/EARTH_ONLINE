@@ -7,13 +7,12 @@ def apply(src):
         nonlocal src
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)
     # ---------- names, titles ----------
-    R("function sgNames(on){ const [zh, en] = on ? ['新加坡', 'Singapore'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['旧金山湾区', 'San Francisco Bay Area'] : ['澄湾岛', 'Chengwan Island'];")
-    R("$('#sample').innerHTML = on ? '还原<small>Reset Singapore</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '滨海湾<small>Marina Bay</small>' : '去首府<small>Capital</small>';",
-      "$('#sample').innerHTML = on ? '还原<small>Reset Bay Area</small>' : '示例城市<small>Sample</small>'; $('#toCap').innerHTML = on ? '旧金山市中心<small>Downtown SF</small>' : '去首府<small>Capital</small>';")
-    R('aria-label="新加坡城市三维视图 Singapore 3D view"', 'aria-label="旧金山湾区三维视图 San Francisco Bay Area 3D view"')
-    R('<span class="sub">City Brush · 新加坡 Singapore 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 旧金山湾区 San Francisco Bay Area 1:1 · 真实地图 Real map · © OpenStreetMap</span>')
-    R('回到新加坡 · Back to Singapore', '回到湾区 · Back to the Bay Area')
-    R("showBusy('正在还原新加坡… Restoring Singapore')", "showBusy('正在还原湾区… Restoring the Bay Area')")
+    R("function sgNames(on){ const [zh, en] = on ? ['Singapore', 'Singapore'] : ['Chengwan', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['San Francisco Bay Area', 'San Francisco Bay Area'] : ['Chengwan', 'Chengwan Island'];")
+    R("$('#sample').textContent = on ? 'Reset Singapore' : 'Sample'; $('#toCap').textContent = on ? 'Marina Bay' : 'Capital';", "$('#sample').textContent = on ? 'Reset Bay Area' : 'Sample'; $('#toCap').textContent = on ? 'Downtown SF' : 'Capital';")
+    R('aria-label="City Brush 3D view"', 'aria-label="San Francisco Bay Area 3D view"')
+    R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · San Francisco Bay Area 1:1 · Real map · © OpenStreetMap contributors</span>')
+    R('Back to Singapore', 'Back to the Bay Area')
+    R("showBusy('Restoring Singapore')", "showBusy('Restoring the Bay Area')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · San Francisco Bay Area</title>', src, count=1)
     # ---------- the overview camera: the whole bay ----------
     R("else if (SGR.on){ const c = sgXY(1.345, 103.83); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 4000, 30000, -c[1] + 33000); }",

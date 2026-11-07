@@ -1,62 +1,248 @@
-# EARTH ONLINE · City Brush 城市笔刷
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/banner-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/media/banner-light.png">
+    <img alt="EARTH ONLINE. Explore and paint real cities in 3D, right in your browser. Marina Bay at night sits under the wordmark." src="docs/media/banner-light.png" width="100%">
+  </picture>
+</p>
 
-Five real cities at 1:1 in the browser, built with three.js r128 and OpenStreetMap:
-浏览器里 1:1 的五座真实城市，用 three.js r128 和 OpenStreetMap 做成：
+<p align="center">
+  <a href="LICENSE"><img alt="Code license: MIT" src="https://img.shields.io/badge/code-MIT-111111?style=flat-square"></a>
+  <a href="DATA_LICENSE"><img alt="Map data license: ODbL 1.0" src="https://img.shields.io/badge/map_data-ODbL_1.0-2f6f9f?style=flat-square"></a>
+  <a href="https://earth-online-wsammes-projects.vercel.app"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-2f6f4f?style=flat-square"></a>
+  <a href="https://github.com/Wsamme/EARTH_ONLINE/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Wsamme/EARTH_ONLINE?style=flat-square&label=stars"></a>
+  <a href="https://github.com/Wsamme/EARTH_ONLINE/commits/main"><img alt="Last commit on main" src="https://img.shields.io/github/last-commit/Wsamme/EARTH_ONLINE?style=flat-square"></a>
+  <img alt="The map is built to be used on a phone" src="https://img.shields.io/badge/mobile-friendly-2f6f9f?style=flat-square">
+</p>
 
-| page 页面 | city 城市 | landmarks 地标 |
-|---|---|---|
-| `site/index.html` | Singapore 新加坡 | Marina Bay, NUS, Changi, Gardens by the Bay … |
-| `site/bay.html` | San Francisco Bay Area 旧金山湾区 | Golden Gate, Bay Bridge, company HQs … |
-| `site/nyc.html` | New York City 纽约 | ~420 landmarks |
-| `site/hk.html` | Hong Kong 香港 | 189 landmarks and parks; Victoria Harbour rebuilt from photos, neon streets, Symphony of Lights, Shenzhen skyline |
-| `site/tyo.html` | Tokyo 东京 | 111 landmarks and parks, Mount Fuji on the horizon |
+<p align="center">
+  <a href="https://earth-online-wsammes-projects.vercel.app"><b>Live demo</b></a>
+  &nbsp;·&nbsp;
+  <a href="docs/media/earth-online-promo.mp4"><b>Video</b></a>
+  &nbsp;·&nbsp;
+  <a href="#how-it-works"><b>Docs</b></a>
+  &nbsp;·&nbsp;
+  <a href="CONTRIBUTING.md"><b>Contributing</b></a>
+</p>
 
-Real roads, rail, buildings, terrain and water; landmark models; intro cards; 中 / EN / 双 language switch; driving,
-flying, races, multiplayer, Cthulhu mode; weather; speed or local time. Every city opens in View mode.
-真实的道路、铁路、建筑、地形和水面；地标模型；介绍卡；中 / EN / 双 语言切换；驾驶、飞行、比赛、多人、克苏鲁模式；天气；倍速或当地时间。每个城市打开时默认是视角模式。
+<p align="center">
+  <i>在浏览器里，探索并涂绘真实的三维城市。</i>
+</p>
 
-## Run it 运行
+Five real cities, at 1:1, in the browser. Roads, rail, buildings, terrain and water come from OpenStreetMap and public terrain. You orbit them, paint over them, drive them, and fly them. The page is a static site: three.js r128, no install, no account.
 
-`site/` is a plain static site — no build step. Serve the folder with any static server:
-`site/` 是纯静态网站，不需要编译。用任意静态服务器打开这个文件夹即可：
+## Demo
+
+GitHub does not play an `.mp4` inside a README. The clip below is an animated WebP made from the promo, so it plays on github.com and on a phone. Click it for the full video (about 30 seconds, 1920×1080).
+
+<p align="center">
+  <a href="docs/media/earth-online-promo.mp4">
+    <img src="docs/media/preview.webp" width="800" alt="Twenty-second preview: a night pass over Singapore, the San Francisco Bay, New York and Hong Kong. Click to open the full 30-second video, which also includes Tokyo and a brush stroke.">
+  </a>
+</p>
+
+<p align="center">
+  <a href="docs/media/earth-online-promo.mp4"><b>Full video</b></a>
+  &nbsp;·&nbsp;
+  <a href="docs/media/earth-online-promo-square.mp4">Square cut</a>
+</p>
+
+If animation is turned off in your GitHub accessibility settings, the preview sits on a still frame. The sentence above is the same tour: Singapore, the Bay, New York, Hong Kong, then Tokyo and a brush stroke in the full file.
+
+### Five cities at night
+
+Each still links to that city’s live page.
+
+<table>
+  <tr>
+    <td align="center" colspan="2" width="33%">
+      <a href="https://earth-online-wsammes-projects.vercel.app/"><img src="docs/media/night-singapore.jpg" alt="Singapore at night, looking across Marina Bay toward Marina Bay Sands and Gardens by the Bay" width="100%"></a><br>
+      <a href="https://earth-online-wsammes-projects.vercel.app/"><b>Singapore</b></a><br>
+      <sub>217 landmarks and parks, including Marina Bay</sub>
+    </td>
+    <td align="center" colspan="2" width="33%">
+      <a href="https://earth-online-wsammes-projects.vercel.app/bay.html"><img src="docs/media/night-bay.jpg" alt="San Francisco at night, downtown between the Golden Gate and the Bay Bridge" width="100%"></a><br>
+      <a href="https://earth-online-wsammes-projects.vercel.app/bay.html"><b>San Francisco Bay</b></a><br>
+      <sub>Downtown, the Golden Gate, the Bay Bridge</sub>
+    </td>
+    <td align="center" colspan="2" width="33%">
+      <a href="https://earth-online-wsammes-projects.vercel.app/nyc.html"><img src="docs/media/night-nyc.jpg" alt="Midtown Manhattan at night" width="100%"></a><br>
+      <a href="https://earth-online-wsammes-projects.vercel.app/nyc.html"><b>New York</b></a><br>
+      <sub>Midtown and the five boroughs</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" colspan="3" width="50%">
+      <a href="https://earth-online-wsammes-projects.vercel.app/hk.html"><img src="docs/media/night-hk.jpg" alt="Hong Kong at night, Victoria Harbour between the island and Kowloon" width="100%"></a><br>
+      <a href="https://earth-online-wsammes-projects.vercel.app/hk.html"><b>Hong Kong</b></a><br>
+      <sub>Victoria Harbour, the island and Kowloon</sub>
+    </td>
+    <td align="center" colspan="3" width="50%">
+      <a href="https://earth-online-wsammes-projects.vercel.app/tyo.html"><img src="docs/media/night-tokyo.jpg" alt="Tokyo at night, Tokyo Tower among the wards" width="100%"></a><br>
+      <a href="https://earth-online-wsammes-projects.vercel.app/tyo.html"><b>Tokyo</b></a><br>
+      <sub>Tokyo Tower, the wards, Fuji on the horizon</sub>
+    </td>
+  </tr>
+</table>
+
+## Features
+
+- **Five real cities.** Singapore, the San Francisco Bay Area, New York, Hong Kong and Tokyo, each on its own page, each built from real roads and building footprints. Singapore has 217 labelled landmarks and parks: 198 landmarks and 19 sites, across Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, and the cable car.
+- **Paint.** Zones, roads, architectural styles, landmarks and terrain. The brush is a real change on the map, with undo.
+- **Look around.** Orbit, pan, zoom, a tour, labels, and a tilt-shift that leaves one band sharp.
+- **Time of day.** Dawn, noon, dusk, night, or play the day. Windows and street lamps follow the clock.
+- **Weather.** Clear, cloud, haze, rain and storm on the time bar. The Bay Area adds its fog. New York adds fog and snow.
+- **Drive and race.** Free drive on the real streets, or a race with a grid of AI cars. Flying (runways and helipads) and a short fireworks show live in the same tray.
+- **Cthulhu.** A single-player mode: a creature comes out of the water and hunts the car. An army on the roads tries to slow it down. It does not need a server.
+- **Phone.** One finger orbits, two fingers pan and pinch. Far from the camera the city is drawn as coarse boxes, and the nearby blocks stay in full detail. The page itself does not scroll or zoom.
+- **Credit stays up.** “© OpenStreetMap contributors” and “Terrain · USGS / NOAA” stay in the corner when the rest of the interface is hidden.
+
+The generator (plan, districts, traffic, terrain tools, seeds, presets) is still there, behind **Advanced**, collapsed until you open it.
+
+## Cities
+
+| City | Live | Page in `site/` | What the source builds |
+|---|---|---|---|
+| Singapore | [Open](https://earth-online-wsammes-projects.vercel.app/) | `index.html` | The island, a 56 km square. 217 labelled landmarks and parks (198 landmarks + 19 sites), including Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, and the cable car. |
+| San Francisco Bay | [Open](https://earth-online-wsammes-projects.vercel.app/bay.html) | `bay.html` | The bay, about 1.3 million building footprints, the bridges and the downtown HQs. |
+| New York | [Open](https://earth-online-wsammes-projects.vercel.app/nyc.html) | `nyc.html` | The five boroughs, plus Jersey City and Newark. About 1.65 million footprints. |
+| Hong Kong | [Open](https://earth-online-wsammes-projects.vercel.app/hk.html) | `hk.html` | Hong Kong Island, Kowloon, the New Territories, Lantau and the islands. Shenzhen is context, not the subject. |
+| Tokyo | [Open](https://earth-online-wsammes-projects.vercel.app/tyo.html) | `tyo.html` | The 23 wards out through Kawasaki, Yokohama and Saitama, Tokyo Bay, and Mount Fuji on the horizon. About 3.5 million footprints. |
+
+Every city opens in View. The buttons in the corner switch among the five pages in the same folder.
+
+## Quick start
+
+`site/` is a static site. There is no build step to run it.
 
 ```bash
-cd site && python3 -m http.server 8000     # then open http://localhost:8000
+cd site
+python3 -m http.server 8000
 ```
 
-Deploy to Vercel: import this repo and set the **Root Directory** to `site` (framework: Other, no build command).
-部署到 Vercel：导入这个仓库，把 **Root Directory** 设成 `site`（Framework 选 Other，不填 build 命令）。
+Open <http://localhost:8000>. Serve the folder; opening the HTML file directly will not load the map tiles.
 
-The city switch opens the other cities in place when their pages sit in the same folder (they do here).
-城市切换按钮会在同一个文件夹里找其他城市的页面，所以这里可以直接互相切换。
+To put it on Vercel: import the repo, set **Root Directory** to `site`, framework **Other**, and leave the build command empty. `site/vercel.json` only sets cache headers for the `.bin` tiles, `ground.webp`, and the app scripts.
 
-The map data is gzip stored as base64 text (`<city>data/*.txt`), up to ~14 MB per file, ~280 MB in all.
-地图数据是 base64 文本格式的 gzip（`<city>data/*.txt`），单个文件最大约 14 MB，总共约 280 MB。
+The map files are raw gzip, `site/<city>data/*.bin`, up to about 10 MB each and about 188 MB together. The page asks for `.bin` first.
 
-## Source 源码
+### Rebuild a page
 
-`src/` holds what builds the pages:
-`src/` 里是生成这些网页的程序：
+From `src/`:
 
-- `src/city-brush-v16.html`: the base app.
-- `src/city-brush-v16.html`：基础程序。
-- `src/sgreal/patch17.py`: assembles a city page: `CITY=sg|bay|nyc|hk|tyo python3 sgreal/patch17.py city-brush-v16.html out.html`.
-- `src/sgreal/patch17.py`：拼出一个城市的网页：`CITY=sg|bay|nyc|hk|tyo python3 sgreal/patch17.py city-brush-v16.html out.html`。
-- `src/lm*/`, `src/bay/`, `src/nyc/`, `src/hk/`, `src/tyo/`: the feature modules and the landmark models.
-- `src/lm*/`、`src/bay/`、`src/nyc/`、`src/hk/`、`src/tyo/`：功能模块和地标模型。
-- `src/<city>real/`: the data pipelines that turn OpenStreetMap + AWS terrain tiles into the map data. Each has a README with its stages.
-- `src/<city>real/`：把 OpenStreetMap 和 AWS 地形图块转换成地图数据的流程，每个文件夹都有 README 说明各个步骤。
+```bash
+CITY=sg python3 sgreal/patch17.py city-brush-v16.html ../site/index.html
+```
 
-Note: the build scripts still use the absolute workspace path they were written in (`SC = …/scratchpad/`). Change `SC` / `ROOT` to your checkout to rebuild.
-注意：这些脚本里还写着当时工作目录的绝对路径（`SC = …/scratchpad/`），重新生成前要把 `SC` / `ROOT` 改成你自己的目录。
+`CITY` is `sg`, `bay`, `nyc`, `hk` or `tyo`. That writes the matching HTML page and its `app.js` (or `*-app.js`). The script finds `src/` from its own path. Rebuilding a page does not regenerate the map tiles.
 
-## Data and credits 数据与致谢
+## How it works
 
-- Map data © OpenStreetMap contributors, available under the Open Database License (ODbL): https://www.openstreetmap.org/copyright
-- 地图数据 © OpenStreetMap 贡献者，按开放数据库许可（ODbL）提供：https://www.openstreetmap.org/copyright
-- Terrain: AWS Terrain Tiles (Mapzen terrarium) — https://registry.opendata.aws/terrain-tiles/
-- 地形：AWS Terrain Tiles（Mapzen terrarium）—— https://registry.opendata.aws/terrain-tiles/
-- Landmark models are original, simplified works. No company logos or characters are used.
-- 地标模型都是自己做的简化模型，没有使用公司标志或卡通角色。
-- Hong Kong's signs follow the position, size, colour and style of real signs, but every name on them is invented; no real brands, look-alike names or logo shapes.
-- 香港的招牌按真实招牌的位置、大小、颜色和风格来做，但上面的名字都是编的，没有真实品牌、谐音名或标志图形。
+```mermaid
+flowchart LR
+  OSM["OpenStreetMap"] --> Pipe["Python pipelines in src"]
+  TER["AWS terrain tiles, USGS and NOAA"] --> Pipe
+  Pipe --> BIN["gzip tiles, site/citydata"]
+  SRC["App modules and landmark models"] --> PAGE["patch17.py writes the page"]
+  BIN --> VIEW["three.js in the browser"]
+  PAGE --> VIEW
+```
+
+- `src/city-brush-v16.html` is the base app: the brush, the camera, the time of day, the dock.
+- `src/sgreal/patch17.py` concatenates the city engine, the landmark modules and the extras (drive, fly, weather, Cthulhu, the multiplayer client), then lifts the big script out into a sibling `.js` file.
+- `src/sgreal/`, `src/bayreal/`, `src/nycreal/`, `src/hkreal/` and `src/tyoreal/` turn OpenStreetMap and AWS terrain tiles into the `.bin` files. Hong Kong, New York, Tokyo and the Bay each have a pipeline note in that folder.
+- `src/lm*/`, `src/bay/`, `src/nyc/`, `src/hk/` and `src/tyo/` are the feature modules and the landmark models. The models are original and simplified. Hong Kong’s signs follow the size and colour of real signs, and every name on them is invented.
+- `src/lm40/` is Singapore v40: `sg40a` through `sg40h` add the landmarks and parks that bring the labelled set to 217 (198 landmarks + 19 sites). `src/lm40/INTEGRATE.md` lists checks that are still open.
+- On a phone the viewer keeps full buildings near the camera and coarse boxes farther out, and it widens or narrows that radius from the frame time. On a desktop every tile is full detail.
+- The corner credit is in the HTML shell, so a rebuild keeps it. Hiding the panel, or pressing `H`, does not hide it.
+
+## Controls
+
+The copy on the page is English.
+
+### Mouse and touch
+
+| | |
+|---|---|
+| Left drag | Paint, in a paint tool |
+| Right drag, scroll wheel | Pan, zoom |
+| Space, held | Orbit, even while a paint tool is selected |
+| One finger | Orbit in View. Paint when a brush is selected |
+| Two fingers | Pan and pinch-zoom |
+
+While driving, the phone puts steering on the left and the pedals on the right.
+
+### Keyboard
+
+| Key | Action |
+|---|---|
+| `W` `A` `S` `D`, arrows | Move |
+| `Q` `E` | Turn |
+| `Z` `X`, `+` `−` | Zoom |
+| `T` `G` | Tilt |
+| `Shift` | Faster |
+| `H` | Hide the interface. Press again, or `Esc`, to bring it back. The map credit stays. |
+| `L` | Labels |
+| `O` | Tour |
+| `M` | Tilt-shift |
+| `1`–`9` | Tools |
+| `[` `]` | Brush size |
+| `R` | Rotate the landmark you are placing |
+| `Ctrl` or `Cmd` + `Z` | Undo |
+| `Esc` | Leave the tour, or show the interface |
+
+In the car: `W` / `S` throttle and brake, `A` / `D` steer, `Space` handbrake, `C` camera, `R` reset, `Esc` exit, `N` navigation.
+
+### The chrome
+
+- **‹** hides the whole top-left panel. **☰** brings it back. A portrait phone starts collapsed. The choice is stored in `localStorage` (`cb-panel-away`).
+- **Advanced** opens the generator. It starts collapsed.
+- The time bar is Dawn, Noon, Dusk, Night, plus play and the weather button.
+- The dock is Zones, Roads, Styles, Landmarks, Terrain, View, then F1 Drive, Cthulhu and Multiplayer.
+
+## Roadmap
+
+These are gaps in the repo today, not a promise of what ships next.
+
+- The multiplayer tab is a client. It wants a WebSocket game server (rooms, up to 12 people, race / city race / escape / cruise). That server is not in this repository, and the static demo does not host rooms.
+- The water is a flat surface. It does not reflect the skyline.
+- Phone behaviour is tuned in a desktop browser’s mobile viewport. A pass on a real iPhone is still the check that matters.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Short version: serve `site/`, keep the OpenStreetMap credit on the map, and don’t commit generated caches or a machine-specific path.
+
+## License and attribution
+
+Two licences, on purpose.
+
+**Code** is MIT, copyright (c) 2026 Aster Wang. That covers the pages, the programs in `src/`, and the original landmark models. See [LICENSE](LICENSE).
+
+**The map is not MIT.** `site/<city>data/` is a database derived from OpenStreetMap, under the Open Database License (ODbL) 1.0. Credit it as “© OpenStreetMap contributors”, and link <https://www.openstreetmap.org/copyright> when you can. If you share a derived database, offer it under the ODbL too. A picture of the 3D city can have its own licence; the credit still has to be there. Details, including the Singapore Overture / HDB3D note, are in [DATA_LICENSE](DATA_LICENSE). The files on disk are raw gzip `.bin`. `DATA_LICENSE` still mentions the earlier base64 `.txt` name; it is the same database.
+
+**Terrain** is AWS Terrain Tiles (Mapzen / Tilezen terrarium): USGS 3DEP for San Francisco and New York, SRTM and GMTED2010, and NOAA ETOPO1 for the sea floor.
+
+> 3DEP, SRTM and GMTED2010 terrain data courtesy of the U.S. Geological Survey. ETOPO1 terrain data courtesy of the U.S. National Oceanic and Atmospheric Administration.
+
+The running map repeats both credits in the corner, including while the rest of the interface is hidden. Leave them there.
+
+three.js r128 is loaded from a CDN and stays under its own MIT licence. Noto Sans SC and JetBrains Mono come from Google Fonts and are not in this repository.
+
+## Acknowledgements
+
+- [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors
+- U.S. Geological Survey, for 3DEP, SRTM and GMTED2010
+- U.S. National Oceanic and Atmospheric Administration, for ETOPO1
+- [AWS Open Data](https://registry.opendata.aws/terrain-tiles/) and [Tilezen](https://github.com/tilezen/joerd/blob/master/docs/attribution.md), for the terrain tiles
+- Overture Maps and the HDB3D attributes used while the Singapore buildings were built. See `DATA_LICENSE` before you pass those on
+- [three.js](https://github.com/mrdoob/three.js/)
+
+## Star history
+
+<a href="https://star-history.com/#Wsamme/EARTH_ONLINE&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Wsamme/EARTH_ONLINE&type=Date&theme=dark">
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Wsamme/EARTH_ONLINE&type=Date">
+    <img alt="Star history chart for Wsamme/EARTH_ONLINE" src="https://api.star-history.com/svg?repos=Wsamme/EARTH_ONLINE&type=Date" width="100%">
+  </picture>
+</a>

@@ -1,0 +1,5 @@
+#!/bin/bash
+cd /tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad
+PROBE='(()=>{const T=__t,q=T.sgXY(22.513104,113.94378),R=new THREE.Raycaster();const out=[];for(const [lx,lz] of [[275,-20],[262,40],[35,270],[0,0],[-250,0]]){const x=q[0]+lx,y=q[1]-lz;R.set(new THREE.Vector3(x,200,-y),new THREE.Vector3(0,-1,0));const h=R.intersectObjects(T.scene.children,true).slice(0,6).map(i=>[+i.point.y.toFixed(2),i.object.type]);out.push([lx,lz,+T.hC(x,y).toFixed(2),h]);}return out;})()'
+V='[["tp_a",22.513104,113.94378,1600,35,200,13],["tp_b",22.5131,113.9465,450,22,240,16],["tp_probe",null,0,0,0,0,0,"'"$PROBE"'"],["tp_n",22.513104,113.94378,1500,30,200,20.5],["su_a",22.53634,113.931418,1800,40,200,13],["su_b",22.5355,113.9318,600,28,140,16],["su_n",22.53634,113.931418,1600,35,200,20.5],["hh_a",22.522,113.945,3200,16,170,17],["hh_n",22.522,113.945,3200,16,170,20.5]]'
+W=1100 H=680 PAGE=t_szhouhai.html NEAR=22.522,113.943,4000 bash lm33/kit/browser.sh node lm20/kit/appshot.js gba/szhouhai/shots/app1 "$V"

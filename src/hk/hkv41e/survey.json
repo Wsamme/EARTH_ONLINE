@@ -1,0 +1,1403 @@
+{
+ "about": "v41 east Hong Kong Island survey: buildings >= 80 m (or >= 6000 m2 footprint) in lon 114.168-114.262, lat 22.195-22.29 (Kowloon shore excluded) from the app building data (site/hkdata/hk_bld0.bin, decoded by dec.js; part records of one building grouped), with no existing landmark (SG_PLACES of every SC/hk/*/*.js, radius r+20 m). Heights are the data heights (OSM-derived). Names only from POIs inside / within 40 m of the footprint; the modelled ones are named after the well-known official building names at that site.",
+ "counts": {
+  "tall_or_large_in_area": 1032,
+  "uncovered": 890
+ },
+ "existing_nearby_covered_examples": [
+  {
+   "h": 310,
+   "keys": [
+    "hkcentralplaza",
+    "hkcentralplaza_b"
+   ]
+  },
+  {
+   "h": 298.4,
+   "keys": [
+    "hkoneislandeast"
+   ]
+  },
+  {
+   "h": 229,
+   "keys": [
+    "hkvtaikoo1"
+   ]
+  },
+  {
+   "h": 216,
+   "keys": [
+    "hkhopewell"
+   ]
+  },
+  {
+   "h": 215,
+   "keys": [
+    "hkvshkc"
+   ]
+  },
+  {
+   "h": 211,
+   "keys": [
+    "hkvleegarden"
+   ]
+  },
+  {
+   "h": 197,
+   "keys": [
+    "hkvhysan"
+   ]
+  },
+  {
+   "h": 195,
+   "keys": [
+    "hkvtaikoo2",
+    "hkvdorset"
+   ]
+  },
+  {
+   "h": 194,
+   "keys": [
+    "hktimessq"
+   ]
+  },
+  {
+   "h": 181,
+   "keys": [
+    "hkvconvplaza"
+   ]
+  },
+  {
+   "h": 180.3,
+   "keys": [
+    "hkvaianp"
+   ]
+  },
+  {
+   "h": 180,
+   "keys": [
+    "hkvwcgov"
+   ]
+  },
+  {
+   "h": 180,
+   "keys": [
+    "hkvwcgov",
+    "hkcentralplaza_b"
+   ]
+  },
+  {
+   "h": 178,
+   "keys": [
+    "hkvcrb"
+   ]
+  },
+  {
+   "h": 169,
+   "keys": [
+    "hktimessq"
+   ]
+  },
+  {
+   "h": 165,
+   "keys": [
+    "hkvoxford"
+   ]
+  },
+  {
+   "h": 164,
+   "keys": [
+    "hkvconvplaza",
+    "hkvwcgov"
+   ]
+  },
+  {
+   "h": 163,
+   "keys": [
+    "hkvtaikoo2",
+    "hkvdorset",
+    "hkvpccw"
+   ]
+  },
+  {
+   "h": 160,
+   "keys": [
+    "hkvoilst",
+    "hkvtaiping"
+   ]
+  },
+  {
+   "h": 157,
+   "keys": [
+    "hkvicpark"
+   ]
+  },
+  {
+   "h": 152,
+   "keys": [
+    "hkvwtc"
+   ]
+  },
+  {
+   "h": 151,
+   "keys": [
+    "hkvdorset",
+    "hkvpccw"
+   ]
+  },
+  {
+   "h": 150,
+   "keys": [
+    "hkvconvplaza",
+    "hkcec"
+   ]
+  },
+  {
+   "h": 149.9,
+   "keys": [
+    "hkvoilst2"
+   ]
+  },
+  {
+   "h": 140,
+   "keys": [
+    "hkvicpark"
+   ]
+  }
+ ],
+ "candidates": [
+  {
+   "h": 241,
+   "footprint_m2": 642,
+   "lat": 22.265089,
+   "lon": 114.184167,
+   "bbox_m": [
+    31,
+    42
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41ehighcliff"
+  },
+  {
+   "h": 220,
+   "footprint_m2": 368,
+   "lat": 22.265621,
+   "lon": 114.183667,
+   "bbox_m": [
+    34,
+    19
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41esummit"
+  },
+  {
+   "h": 210,
+   "footprint_m2": 536,
+   "lat": 22.285263,
+   "lon": 114.224372,
+   "bbox_m": [
+    29,
+    32
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41egrandprom"
+  },
+  {
+   "h": 210,
+   "footprint_m2": 494,
+   "lat": 22.285481,
+   "lon": 114.224595,
+   "bbox_m": [
+    34,
+    24
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41egrandprom_b"
+  },
+  {
+   "h": 210,
+   "footprint_m2": 560,
+   "lat": 22.28526,
+   "lon": 114.224821,
+   "bbox_m": [
+    32,
+    33
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41egrandprom_c"
+  },
+  {
+   "h": 204,
+   "footprint_m2": 531,
+   "lat": 22.28503,
+   "lon": 114.224129,
+   "bbox_m": [
+    29,
+    31
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41egrandprom_d"
+  },
+  {
+   "h": 204,
+   "footprint_m2": 580,
+   "lat": 22.284987,
+   "lon": 114.225113,
+   "bbox_m": [
+    32,
+    30
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41egrandprom_e"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 731,
+   "lat": 22.266348,
+   "lon": 114.25132,
+   "bbox_m": [
+    34,
+    33
+   ],
+   "type": 2,
+   "poi_names": [
+    "小西湾海滨花园/Siu Sai Wan Promenade(park,40)"
+   ],
+   "modelled_as": "hk41eislandresort"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 651,
+   "lat": 22.266119,
+   "lon": 114.251593,
+   "bbox_m": [
+    29,
+    32
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_b"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 679,
+   "lat": 22.266661,
+   "lon": 114.250245,
+   "bbox_m": [
+    35,
+    35
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_c"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 685,
+   "lat": 22.265561,
+   "lon": 114.251245,
+   "bbox_m": [
+    35,
+    31
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_d"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 720,
+   "lat": 22.26691,
+   "lon": 114.250709,
+   "bbox_m": [
+    35,
+    31
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_e"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 687,
+   "lat": 22.266662,
+   "lon": 114.250971,
+   "bbox_m": [
+    35,
+    34
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_f"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 660,
+   "lat": 22.266427,
+   "lon": 114.250015,
+   "bbox_m": [
+    30,
+    35
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_g"
+  },
+  {
+   "h": 197,
+   "footprint_m2": 675,
+   "lat": 22.265774,
+   "lon": 114.25149,
+   "bbox_m": [
+    34,
+    34
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": "hk41eislandresort_h"
+  },
+  {
+   "h": 182,
+   "footprint_m2": 2070,
+   "lat": 22.276958,
+   "lon": 114.168026,
+   "bbox_m": [
+    60,
+    62
+   ],
+   "type": 5,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 160,
+   "footprint_m2": 436,
+   "lat": 22.283922,
+   "lon": 114.224638,
+   "bbox_m": [
+    31,
+    31
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 159.1,
+   "footprint_m2": 251,
+   "lat": 22.276445,
+   "lon": 114.176779,
+   "bbox_m": [
+    30,
+    15
+   ],
+   "type": 5,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 158.7,
+   "footprint_m2": 646,
+   "lat": 22.279254,
+   "lon": 114.178377,
+   "bbox_m": [
+    37,
+    35
+   ],
+   "type": 4,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 158,
+   "footprint_m2": 713,
+   "lat": 22.286447,
+   "lon": 114.191722,
+   "bbox_m": [
+    21,
+    37
+   ],
+   "type": 4,
+   "poi_names": [
+    "电气道休憩处/Electric Road Sitting-out Area(park,34)"
+   ],
+   "modelled_as": null
+  },
+  {
+   "h": 156,
+   "footprint_m2": 339,
+   "lat": 22.275071,
+   "lon": 114.19521,
+   "bbox_m": [
+    30,
+    23
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 156,
+   "footprint_m2": 284,
+   "lat": 22.275186,
+   "lon": 114.195544,
+   "bbox_m": [
+    27,
+    21
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 155.6,
+   "footprint_m2": 9799,
+   "lat": 22.274859,
+   "lon": 114.170487,
+   "bbox_m": [
+    187,
+    110
+   ],
+   "type": 4,
+   "poi_names": [
+    "合和商场/Hopewell Mall(mall,6,in)"
+   ],
+   "modelled_as": null
+  },
+  {
+   "h": 152.3,
+   "footprint_m2": 769,
+   "lat": 22.275391,
+   "lon": 114.172073,
+   "bbox_m": [
+    35,
+    45
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 152.3,
+   "footprint_m2": 653,
+   "lat": 22.275873,
+   "lon": 114.172696,
+   "bbox_m": [
+    24,
+    38
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 152.3,
+   "footprint_m2": 576,
+   "lat": 22.276218,
+   "lon": 114.172374,
+   "bbox_m": [
+    22,
+    37
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 150,
+   "footprint_m2": 961,
+   "lat": 22.27475,
+   "lon": 114.173535,
+   "bbox_m": [
+    26,
+    48
+   ],
+   "type": 5,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 149.8,
+   "footprint_m2": 393,
+   "lat": 22.274818,
+   "lon": 114.194996,
+   "bbox_m": [
+    30,
+    25
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 149.8,
+   "footprint_m2": 422,
+   "lat": 22.274708,
+   "lon": 114.194807,
+   "bbox_m": [
+    31,
+    28
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 149.8,
+   "footprint_m2": 438,
+   "lat": 22.283738,
+   "lon": 114.224764,
+   "bbox_m": [
+    33,
+    30
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 146.7,
+   "footprint_m2": 1065,
+   "lat": 22.267477,
+   "lon": 114.232509,
+   "bbox_m": [
+    49,
+    47
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 146.7,
+   "footprint_m2": 984,
+   "lat": 22.266459,
+   "lon": 114.232574,
+   "bbox_m": [
+    48,
+    47
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 146.7,
+   "footprint_m2": 984,
+   "lat": 22.26559,
+   "lon": 114.232568,
+   "bbox_m": [
+    47,
+    46
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 146.7,
+   "footprint_m2": 271,
+   "lat": 22.285968,
+   "lon": 114.196417,
+   "bbox_m": [
+    16,
+    31
+   ],
+   "type": 5,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 146.7,
+   "footprint_m2": 270,
+   "lat": 22.286305,
+   "lon": 114.196504,
+   "bbox_m": [
+    16,
+    30
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 145.7,
+   "footprint_m2": 829,
+   "lat": 22.291758,
+   "lon": 114.208164,
+   "bbox_m": [
+    37,
+    38
+   ],
+   "type": 5,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 145.6,
+   "footprint_m2": 397,
+   "lat": 22.283535,
+   "lon": 114.212408,
+   "bbox_m": [
+    33,
+    24
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 145.6,
+   "footprint_m2": 429,
+   "lat": 22.283387,
+   "lon": 114.212777,
+   "bbox_m": [
+    33,
+    25
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 143.6,
+   "footprint_m2": 440,
+   "lat": 22.283497,
+   "lon": 114.224798,
+   "bbox_m": [
+    32,
+    29
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 142,
+   "footprint_m2": 1181,
+   "lat": 22.278969,
+   "lon": 114.173818,
+   "bbox_m": [
+    56,
+    39
+   ],
+   "type": 5,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 141.8,
+   "footprint_m2": 631,
+   "lat": 22.266179,
+   "lon": 114.245164,
+   "bbox_m": [
+    31,
+    35
+   ],
+   "type": 0,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 140.5,
+   "footprint_m2": 370,
+   "lat": 22.27542,
+   "lon": 114.173675,
+   "bbox_m": [
+    29,
+    25
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 140.5,
+   "footprint_m2": 399,
+   "lat": 22.274703,
+   "lon": 114.17387,
+   "bbox_m": [
+    22,
+    35
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 140.5,
+   "footprint_m2": 308,
+   "lat": 22.272115,
+   "lon": 114.186292,
+   "bbox_m": [
+    21,
+    29
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 140.5,
+   "footprint_m2": 465,
+   "lat": 22.292358,
+   "lon": 114.201654,
+   "bbox_m": [
+    30,
+    35
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 140.1,
+   "footprint_m2": 573,
+   "lat": 22.277505,
+   "lon": 114.192954,
+   "bbox_m": [
+    72,
+    49
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 137.4,
+   "footprint_m2": 437,
+   "lat": 22.283268,
+   "lon": 114.224712,
+   "bbox_m": [
+    30,
+    29
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 137,
+   "footprint_m2": 1087,
+   "lat": 22.278532,
+   "lon": 114.16998,
+   "bbox_m": [
+    41,
+    39
+   ],
+   "type": 4,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 135.6,
+   "footprint_m2": 600,
+   "lat": 22.266105,
+   "lon": 114.244765,
+   "bbox_m": [
+    32,
+    34
+   ],
+   "type": 0,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 134.3,
+   "footprint_m2": 484,
+   "lat": 22.270099,
+   "lon": 114.1873,
+   "bbox_m": [
+    35,
+    26
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 134.3,
+   "footprint_m2": 590,
+   "lat": 22.28339,
+   "lon": 114.21393,
+   "bbox_m": [
+    30,
+    30
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 134.3,
+   "footprint_m2": 614,
+   "lat": 22.282993,
+   "lon": 114.214309,
+   "bbox_m": [
+    32,
+    29
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 133.9,
+   "footprint_m2": 2761,
+   "lat": 22.266143,
+   "lon": 114.244022,
+   "bbox_m": [
+    81,
+    65
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 133.6,
+   "footprint_m2": 787,
+   "lat": 22.285989,
+   "lon": 114.216237,
+   "bbox_m": [
+    53,
+    20
+   ],
+   "type": 12,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 131.2,
+   "footprint_m2": 1170,
+   "lat": 22.261363,
+   "lon": 114.250149,
+   "bbox_m": [
+    49,
+    52
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 131.2,
+   "footprint_m2": 1172,
+   "lat": 22.261965,
+   "lon": 114.250178,
+   "bbox_m": [
+    49,
+    53
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 131.2,
+   "footprint_m2": 641,
+   "lat": 22.287929,
+   "lon": 114.191176,
+   "bbox_m": [
+    34,
+    35
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 131.2,
+   "footprint_m2": 663,
+   "lat": 22.288192,
+   "lon": 114.190823,
+   "bbox_m": [
+    35,
+    38
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 129,
+   "footprint_m2": 752,
+   "lat": 22.277238,
+   "lon": 114.173082,
+   "bbox_m": [
+    29,
+    42
+   ],
+   "type": 5,
+   "poi_names": [
+    "湾仔电脑城/Wanchai Computer Center(mall,9)"
+   ],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 367,
+   "lat": 22.229527,
+   "lon": 114.21844,
+   "bbox_m": [
+    26,
+    25
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 620,
+   "lat": 22.262812,
+   "lon": 114.250714,
+   "bbox_m": [
+    34,
+    34
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 722,
+   "lat": 22.262765,
+   "lon": 114.250264,
+   "bbox_m": [
+    37,
+    37
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 725,
+   "lat": 22.263276,
+   "lon": 114.25032,
+   "bbox_m": [
+    37,
+    37
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 722,
+   "lat": 22.262825,
+   "lon": 114.249866,
+   "bbox_m": [
+    37,
+    37
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 1171,
+   "lat": 22.261919,
+   "lon": 114.250911,
+   "bbox_m": [
+    49,
+    53
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 1170,
+   "lat": 22.261426,
+   "lon": 114.251294,
+   "bbox_m": [
+    49,
+    52
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 815,
+   "lat": 22.26411,
+   "lon": 114.242079,
+   "bbox_m": [
+    66,
+    53
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 814,
+   "lat": 22.264586,
+   "lon": 114.242734,
+   "bbox_m": [
+    64,
+    55
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 461,
+   "lat": 22.26573,
+   "lon": 114.252326,
+   "bbox_m": [
+    33,
+    33
+   ],
+   "type": 6,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 666,
+   "lat": 22.281825,
+   "lon": 114.225706,
+   "bbox_m": [
+    35,
+    43
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 669,
+   "lat": 22.282378,
+   "lon": 114.225968,
+   "bbox_m": [
+    36,
+    44
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 480,
+   "lat": 22.281661,
+   "lon": 114.224934,
+   "bbox_m": [
+    37,
+    36
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 475,
+   "lat": 22.281432,
+   "lon": 114.225458,
+   "bbox_m": [
+    37,
+    36
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 742,
+   "lat": 22.282067,
+   "lon": 114.226446,
+   "bbox_m": [
+    39,
+    39
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 737,
+   "lat": 22.282508,
+   "lon": 114.227353,
+   "bbox_m": [
+    39,
+    39
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 738,
+   "lat": 22.282508,
+   "lon": 114.226446,
+   "bbox_m": [
+    39,
+    39
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 738,
+   "lat": 22.282508,
+   "lon": 114.227775,
+   "bbox_m": [
+    39,
+    39
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 739,
+   "lat": 22.282508,
+   "lon": 114.226868,
+   "bbox_m": [
+    39,
+    39
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 732,
+   "lat": 22.280105,
+   "lon": 114.227783,
+   "bbox_m": [
+    36,
+    36
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 128.1,
+   "footprint_m2": 1138,
+   "lat": 22.281952,
+   "lon": 114.227707,
+   "bbox_m": [
+    53,
+    49
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null
+  },
+  {
+   "h": 59.5,
+   "footprint_m2": 10345,
+   "lat": 22.28404,
+   "lon": 114.216401,
+   "bbox_m": [
+    168,
+    94
+   ],
+   "type": 4,
+   "poi_names": [
+    "康怡广场/Kornhill Plaza(mall,19,in)",
+    "康山/Kornhill(quarter,40,in)"
+   ],
+   "modelled_as": null,
+   "large_footprint": true
+  },
+  {
+   "h": 34,
+   "footprint_m2": 11757,
+   "lat": 22.285018,
+   "lon": 114.224636,
+   "bbox_m": [
+    150,
+    154
+   ],
+   "type": 2,
+   "poi_names": [],
+   "modelled_as": null,
+   "large_footprint": true
+  },
+  {
+   "h": 30,
+   "footprint_m2": 10018,
+   "lat": 22.27666,
+   "lon": 114.239949,
+   "bbox_m": [
+    226,
+    288
+   ],
+   "type": 4,
+   "poi_names": [],
+   "modelled_as": null,
+   "large_footprint": true
+  },
+  {
+   "h": 25,
+   "footprint_m2": 7501,
+   "lat": 22.269397,
+   "lon": 114.236359,
+   "bbox_m": [
+    156,
+    107
+   ],
+   "type": 9,
+   "poi_names": [],
+   "modelled_as": null,
+   "large_footprint": true
+  },
+  {
+   "h": 22.7,
+   "footprint_m2": 12071,
+   "lat": 22.24758,
+   "lon": 114.175803,
+   "bbox_m": [
+    138,
+    139
+   ],
+   "type": 12,
+   "poi_names": [
+    "香港海洋公园万豪酒店/Hong Kong Ocean Park Marriott Hotel(hotel,2,in)"
+   ],
+   "modelled_as": null,
+   "large_footprint": true
+  },
+  {
+   "h": 22.7,
+   "footprint_m2": 13288,
+   "lat": 22.280205,
+   "lon": 114.169513,
+   "bbox_m": [
+    192,
+    109
+   ],
+   "type": 7,
+   "poi_names": [
+    "香港演艺学院/Hong Kong Academy for Performing Arts(university,10,in)",
+    "演奏厅/Recital Hall(theatre,40,in)",
+    "歌剧院/Lyric Theatre(theatre,41,in)"
+   ],
+   "modelled_as": "hk41ehkapa",
+   "large_footprint": true
+  },
+  {
+   "h": 22.7,
+   "footprint_m2": 10977,
+   "lat": 22.270726,
+   "lon": 114.241386,
+   "bbox_m": [
+    137,
+    153
+   ],
+   "type": 11,
+   "poi_names": [],
+   "modelled_as": null,
+   "large_footprint": true
+  }
+ ],
+ "heritage_and_civic_picks": [
+  {
+   "key": "hk41ehkapa",
+   "lat": 22.280205,
+   "lon": 114.169513,
+   "data_h": 22.7,
+   "footprint_vertices": 65,
+   "named_by": "map POI inside / within 8 m of the footprint"
+  },
+  {
+   "key": "hk41etunglin",
+   "lat": 22.266885,
+   "lon": 114.185627,
+   "data_h": 15,
+   "footprint_vertices": 32,
+   "named_by": "map POI inside / within 8 m of the footprint"
+  },
+  {
+   "key": "hk41epaktai",
+   "lat": 22.272881,
+   "lon": 114.173827,
+   "data_h": 15,
+   "footprint_vertices": 8,
+   "named_by": "map POI inside / within 8 m of the footprint"
+  },
+  {
+   "key": "hk41etinhau",
+   "lat": 22.282205,
+   "lon": 114.192729,
+   "data_h": 3.7,
+   "footprint_vertices": 4,
+   "named_by": "map POI inside / within 8 m of the footprint"
+  },
+  {
+   "key": "hk41elawuk",
+   "lat": 22.264218,
+   "lon": 114.23552,
+   "data_h": 6.8,
+   "footprint_vertices": 8,
+   "named_by": "map POI inside / within 8 m of the footprint"
+  }
+ ],
+ "skipped": [
+  {
+   "what": "Sunbeam Theatre podium (22.29142,114.19998)",
+   "why": "its hide-hull would also hide the 72 m residential tower on it"
+  },
+  {
+   "what": "182 m office at 22.276961,114.168025",
+   "why": "on the west boundary; listed by the hkv41w survey, left to that author"
+  },
+  {
+   "what": "unnamed tall residential towers (Wong Chuk Hang, Siu Sai Wan, Chai Wan, Repulse Bay Road)",
+   "why": "no name in the map data and no source for one offline"
+  }
+ ],
+ "modelled_keys": [
+  "hk41ehighcliff",
+  "hk41esummit",
+  "hk41eislandresort",
+  "hk41eislandresort_b",
+  "hk41eislandresort_c",
+  "hk41eislandresort_d",
+  "hk41eislandresort_e",
+  "hk41eislandresort_f",
+  "hk41eislandresort_g",
+  "hk41eislandresort_h",
+  "hk41egrandprom",
+  "hk41egrandprom_b",
+  "hk41egrandprom_c",
+  "hk41egrandprom_d",
+  "hk41egrandprom_e",
+  "hk41ehkapa",
+  "hk41etunglin",
+  "hk41epaktai",
+  "hk41etinhau",
+  "hk41elawuk"
+ ]
+}

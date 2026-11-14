@@ -20047,8 +20047,10 @@ const SGSigns = (() => {
   const G_WCH = GMIX({bar:6, ktv:2, rest:2, cafe:2, hotel:2, pawn:1, mj:1, bbq:1});
   const G_TMP = GMIX({rest:2, cafe:3, bbq:3, dry:3, mj:2, hotel:2, pawn:1, ktv:1, pharm:1});
   const G_OLD = GMIX({cafe:3, bbq:3, dry:3, pharm:2, pawn:2, gold:1, rest:2, mj:1, elec:1});
+  // [v41] density: Nathan Rd (Mong Kok), Hennessy Rd / Yee Wo St (Causeway Bay), Hennessy Rd and the Lockhart Rd bar strip (Wan Chai)
+  // place their over-street stacks a little closer (still only along the shop fronts of these profiled streets)
   const SP = [null,
-    {k:'nathan_mk', col:6.0, stack:[2, 6], out:[3.5, 11], hH:[1.6, 3.4], vert:0.3, y0:[5.6, 7.6], yMax:36, band:0.95, blade:0.3, wbox:0.25, led:0.1, neon:0.62, anim:0.2, G:G_KLN, glow:[1, 0.92, 0.8], late:[2, 4.5]},
+    {k:'nathan_mk', col:5.2, stack:[2, 6], out:[3.5, 11], hH:[1.6, 3.4], vert:0.3, y0:[5.6, 7.6], yMax:36, band:0.95, blade:0.3, wbox:0.25, led:0.1, neon:0.62, anim:0.2, G:G_KLN, glow:[1, 0.92, 0.8], late:[2, 4.5]},
     {k:'nathan_ymt', col:6.5, stack:[2, 5], out:[3.5, 10], hH:[1.6, 3.2], vert:0.32, y0:[5.6, 7.6], yMax:34, band:0.95, blade:0.3, wbox:0.2, led:0.06, neon:0.65, anim:0.2, G:G_KLN, glow:[1, 0.9, 0.76], late:[1.5, 4]},
     {k:'nathan_tst', bill:0.15, col:8.0, stack:[1, 4], out:[3, 8], hH:[1.6, 3.0], vert:0.25, y0:[6, 8], yMax:32, band:0.9, blade:0.25, wbox:0.35, led:0.18, neon:0.45, anim:0.15, G:G_TST, glow:[1, 0.94, 0.86], late:[2, 4.5]},
     {k:'sycs', col:5.0, stack:[2, 5], out:[2, 5.5], hH:[1.4, 2.8], vert:0.35, vH:[3, 7], y0:[4.6, 6.2], yMax:20, band:0.95, blade:0.35, wbox:0.45, led:0.22, neon:0.35, anim:0.15, G:G_KLN, glow:[1, 0.95, 0.88], late:[2, 4.5]},
@@ -20061,10 +20063,10 @@ const SGSigns = (() => {
     {k:'shanghai', vH:[2.6, 5.5], col:9.0, stack:[1, 3], out:[2, 4.5], hH:[1.3, 2.4], vert:0.45, y0:[4.4, 5.8], yMax:22, band:0.85, blade:0.4, wbox:0.1, led:0, neon:0.45, anim:0.06, G:G_OLD, glow:[1, 0.82, 0.58], late:[0.3, 2.5]},
     {k:'tst_main', col:7.0, stack:[2, 5], out:[2.5, 6.5], hH:[1.4, 2.8], vert:0.3, y0:[5.4, 7], yMax:30, band:0.9, blade:0.35, wbox:0.35, led:0.15, neon:0.5, anim:0.15, G:G_TST, glow:[1, 0.94, 0.86], late:[2, 4.5]},
     {k:'tst_side', col:9.5, stack:[1, 3], out:[2, 4.5], hH:[1.3, 2.4], vert:0.3, y0:[5, 6.6], yMax:24, band:0.85, blade:0.35, wbox:0.25, led:0.06, neon:0.45, anim:0.12, G:G_TST, glow:[1, 0.92, 0.82], late:[2, 4.5]},
-    {k:'cwb_main', ang:0.2, bill:0.6, billY:[4.4, 6.5], col:15.0, stack:[1, 2], out:[2, 5], hH:[1.4, 2.6], vert:0.45, vH:[3, 7], y0:[5.2, 6.8], yMax:20, band:0.95, blade:0.25, wbox:0.55, led:0.55, neon:0.15, anim:0.06, G:G_CWB, glow:[1, 0.96, 0.9], late:[2, 4.5]},
+    {k:'cwb_main', ang:0.2, bill:0.6, billY:[4.4, 6.5], col:11.0, stack:[1, 3], out:[2, 5], hH:[1.4, 2.6], vert:0.45, vH:[3, 7], y0:[5.2, 6.8], yMax:20, band:0.95, blade:0.25, wbox:0.55, led:0.55, neon:0.15, anim:0.06, G:G_CWB, glow:[1, 0.96, 0.9], late:[2, 4.5]},
     {k:'cwb_side', ang:0.35, col:7.5, stack:[1, 3], out:[1.3, 3.8], hH:[1.1, 2.2], vert:0.4, vH:[2.4, 5], y0:[4.4, 5.6], yMax:15, band:0.95, blade:0.4, wbox:0.35, wboxMax:15, led:0.06, neon:0.25, anim:0.08, G:G_CWB, glow:[1, 0.95, 0.88], late:[2, 4.5]},
-    {k:'wch_main', bill:0.2, col:9.5, stack:[1, 3], out:[2.5, 6], hH:[1.4, 2.8], vert:0.3, y0:[5.6, 7.4], yMax:28, band:0.9, blade:0.3, wbox:0.4, led:0.15, neon:0.4, anim:0.15, G:G_KLN, glow:[1, 0.92, 0.82], late:[2, 4.5]},
-    {k:'wch_bar', vH:[2.4, 5], col:7.0, stack:[1, 3], out:[2, 4.5], hH:[1.2, 2.4], vert:0.35, y0:[4.2, 5.6], yMax:20, band:0.9, blade:0.45, wbox:0.25, led:0.06, neon:0.85, anim:0.25, G:G_WCH, glow:[1, 0.78, 0.62], late:[3.5, 6]},
+    {k:'wch_main', bill:0.2, col:8.0, stack:[1, 4], out:[2.5, 6], hH:[1.4, 2.8], vert:0.3, y0:[5.6, 7.4], yMax:28, band:0.9, blade:0.3, wbox:0.4, led:0.15, neon:0.4, anim:0.15, G:G_KLN, glow:[1, 0.92, 0.82], late:[2, 4.5]},
+    {k:'wch_bar', vH:[2.4, 5], col:6.0, stack:[1, 3], out:[2, 4.5], hH:[1.2, 2.4], vert:0.35, y0:[4.2, 5.6], yMax:20, band:0.9, blade:0.45, wbox:0.25, led:0.06, neon:0.85, anim:0.25, G:G_WCH, glow:[1, 0.78, 0.62], late:[3.5, 6]},
     {k:'kln_side', vH:[2.6, 6], col:10.0, stack:[1, 3], out:[1.8, 4], hH:[1.2, 2.4], vert:0.4, y0:[4.4, 5.8], yMax:22, band:0.85, blade:0.35, wbox:0.15, led:0.03, neon:0.45, anim:0.08, G:G_OLD, glow:[1, 0.86, 0.66], late:[0.5, 3]},
     {k:'isl_side', vH:[2.4, 5], col:12.0, stack:[1, 2], out:[1.8, 3.6], hH:[1.2, 2.2], vert:0.4, y0:[4.4, 5.8], yMax:20, band:0.8, blade:0.3, wbox:0.15, led:0.04, neon:0.35, anim:0.06, G:G_OLD, glow:[1, 0.88, 0.7], late:[0.3, 2.5]}
   ];
@@ -20739,6 +20741,13 @@ const SGSigns = (() => {
     penB(col, off, P_RGLOW, 8, Math.round(hw/Hx*255), Math.round(hh/Hy*255));
     bQuad(W, x - rx*Hx, y - ry*Hx, x + rx*Hx, y + ry*Hx, yc - Hy, yc + Hy, -1, 1, -1, 1); cnt('rglow');
   }
+  // [v41] the near glow of a neon board: a soft rim in the board's plane that follows its outline (bloom-like, the face itself
+  // gets none, so the letters are not washed out); replaces the round halo sprite for neon (same one quad in mesh B)
+  function rectHalo(W, x, y, nx, ny, hw, y0, y1, col, off){
+    const hh = (y1 - y0)/2, m = Math.min(2.6, Math.max(0.5, (hw + hh)*0.38)), Hx = hw + m, Hy = hh + m, rx = -ny, ry = nx, yc = (y0 + y1)/2;
+    penB(col, off, P_RGLOW, 9, Math.round(hw/Hx*255), Math.round(hh/Hy*255));
+    bQuad(W, x - rx*Hx, y - ry*Hx, x + rx*Hx, y + ry*Hx, yc - Hy, yc + Hy, -1, 1, -1, 1); cnt('rhalo');
+  }
   // a text sign. o: {W, V (writers A / B, V null = no halo), x, y (plan centre: of the front face when one-sided, of the board when
   // two-sided), nx, ny (face normal), hw, y0, y1, depth, sides, cell, col, lit, anim, ph, off, frame, vert, bulbs, noBack, plain,
   // halo (radius factor, 0 = none), haloW (writer for the halo), minPx}
@@ -20756,6 +20765,8 @@ const SGSigns = (() => {
     if (two) aFaceC(W, o.x - o.nx*f1, o.y - o.ny*f1, -o.nx, -o.ny, o.hw, o.y0, o.y1, 0, 1);
     const V = o.haloW || o.V;
     if (o.rglow && o.lit){ rectGlow(o.rglow, o.x + o.nx*(f1 + 0.3), o.y + o.ny*(f1 + 0.3), o.nx, o.ny, o.hw, o.y0, o.y1, glowCol(o.lit, o.col, o.noBack), o.off); return; }
+    if (V && o.lit === 1 && o.halo !== 0 && !o.noBack){ const q = two ? 0 : 0.05;
+      rectHalo(V, o.x + o.nx*(f1 + q), o.y + o.ny*(f1 + q), o.nx, o.ny, o.hw, o.y0, o.y1, haloCol(1, o.col).map(v => Math.min(1, v*1.25*(o.haloK || 1))), o.off); return; }
     if (V && o.lit && o.halo !== 0){
       const r = Math.min(26, Math.max(o.hw, hh)*(o.halo || 1)*1.15), q = two ? 0 : Math.min(1.5, r*0.3);
       halo(V, o.x + o.nx*q, o.y + o.ny*q, (o.y0 + o.y1)/2, r, haloCol(o.lit, o.col).map(v => Math.min(1, v*(o.haloK || 1))), o.off, 0, o.minPx || 0);
@@ -20767,7 +20778,11 @@ const SGSigns = (() => {
     const ca = Math.cos(ang || 0), sa = Math.sin(ang || 0), ox = e.nx*ca + e.ux*sa, oy = e.ny*ca + e.uy*sa;
     const bx = e.ax + e.ux*s, by = e.ay + e.uy*s, a2 = ang ? a + Math.abs(sa)*0.35 : a;
     textSign({W, V, x:bx + ox*(a2 + w/2), y:by + oy*(a2 + w/2), nx:-oy, ny:ox, hw:w/2, y0, y1, depth:w > 1.6 ? 0.3 : 0.2, sides:2, cell, col, lit, anim, ph, off, frame, vert, bulbs, plain:[0.17, 0.17, 0.18], halo:lit === 1 ? 0.75 : ph < 0.33 ? 0.6 : 0, haloW:WBs[1], minPx:1.5, mask:4 | 16 | 32});     // halos: neon all, lightboxes one in three (fill rate)
-    if (a2 > 0.12 && w > 2.2){ penPlain([0.22, 0.22, 0.23], NEVER, null, 0, 0); aBox(W, bx + ox*a2/2, by + oy*a2/2, ox, oy, a2/2 + 0.04, 0.05, y1 - 0.2, y1 - 0.1, 1 | 2 | 32); }
+    // [v41] mounting: every board that stands off the wall hangs on two steel stays (top and bottom) with a wall plate, so
+    // nothing floats; the long ones keep the lattice outrigger below
+    if (a2 > 0.1){ penPlain([0.22, 0.22, 0.23], NEVER, null, 0, 0); const sh = Math.min(0.12, (y1 - y0)*0.06), hv = w > 2.2 ? 0.05 : 0.035;
+      for (const yy of (y1 - y0 > 0.9 ? [y1 - 0.12 - sh, y0 + 0.12] : [(y0 + y1)/2 - sh/2])) aBox(W, bx + ox*a2/2, by + oy*a2/2, ox, oy, a2/2 + 0.05, hv, yy, yy + sh, 1 | 2 | 32);
+      aBox(W, bx + ox*0.03, by + oy*0.03, -oy, ox, Math.min(0.2, w*0.08) + 0.06, 0.03, y0 + 0.05, y1 - 0.05, 1 | 4 | 8); cnt('stay'); }
     if (w > 6){ // steel lattice outrigger: a top chord from the wall to the outer end and a diagonal stay
       penPlain([0.24, 0.24, 0.25], NEVER, null, 0, 0); const L = a2 + w, cx = bx + ox*L/2, cy = by + oy*L/2;
       aBox(W, cx, cy, ox, oy, L/2, 0.06, y1 + 0.35, y1 + 0.5, 1 | 2 | 16 | 32);
@@ -21159,7 +21174,7 @@ const SGSigns = (() => {
     HKTEX = new THREE.CanvasTexture(HKA.cv); HKTEX.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); HKTEX.minFilter = THREE.LinearMipmapLinearFilter;
     MA = new THREE.MeshLambertMaterial({map:adTex, polygonOffset:true, polygonOffsetFactor:-1, polygonOffsetUnits:-4});
     MA.onBeforeCompile = sh => {
-      Object.assign(sh.uniforms, ADU, {uSgTex:{value:sgTex}, uHkTex:{value:HKTEX}, uSN:U.uSN, uLH:U.uLH}, SGKD ? SGKD.u : {});
+      Object.assign(sh.uniforms, ADU, {uSgTex:{value:sgTex}, uHkTex:{value:HKTEX}, uHkSz:{value:new THREE.Vector2(HKA.W, HKA.H)}, uSN:U.uSN, uLH:U.uLH}, SGKD ? SGKD.u : {});
       const f = v => v.toFixed(6), reg = (R, W) => `{ R = vec4(${f(R.x/W)}, ${f(1 - R.y/W)}, ${f(R.w/W)}, ${f(R.h/W)}); C = ${R.c}.0; NN = ${R.n}.0; }`, G = ADATLAS.REG, W1 = ADATLAS.W, S = SGA.REG, W2 = SGA.W;
       sh.vertexShader = sh.vertexShader
         .replace('#include <common>', `#include <common>
@@ -21205,6 +21220,7 @@ uniform float uAdT;
 uniform float uAdGlow;
 uniform float uAdDiff;
 uniform sampler2D uHkTex;
+uniform vec2 uHkSz;
 uniform float uSN;
 varying vec4 vCell;
 varying vec4 vAdF;
@@ -21240,7 +21256,7 @@ vec3 hkScreen(vec2 p, float hw, float hh, float T, float ph){
     vec2 cu = vX.xy;
     if (an > 3.5 && an < 4.5) cu.x = fract(cu.x - T*0.1 + ph);
     float ins = hasTx*step(0.0, cu.x)*step(cu.x, 1.0)*step(0.0, cu.y)*step(cu.y, 1.0);
-    vec3 mk = texture2D(uHkTex, vCell.xy + clamp(cu, 0.004, 0.996)*vCell.zw).rgb*ins;
+    vec3 mk = texture2D(uHkTex, vCell.xy + clamp(cu, 0.004, 0.996)*vCell.zw, -0.6).rgb*ins;     // [v41] mip bias: sharper at mid range
     vec3 bg = vDay, fg = vEm.rgb, ed = vAdF.rgb;
     vec3 lc = (hasSub > 0.5 && cu.y < vAdF.a) ? ed : fg;
     if (an > 4.5 && an < 5.5) lc = hkHue(fract(T*0.07 + ph + cu.x*0.3))*max(max(lc.r, lc.g), max(lc.b, 0.6));
@@ -21253,16 +21269,35 @@ vec3 hkScreen(vec2 p, float hw, float hh, float T, float ph){
     float bul = (1.0 - smoothstep(0.16, 0.3, bq))*(1.0 - smoothstep(tw*0.9, tw*0.9 + fwE*1.5, abs(dE - tw*1.5)));
     float chase = (an > 1.5 && an < 2.5) ? 0.12 + 0.88*step(0.5, fract(sP/(bsp*3.0) - T*1.8)) : 1.0;
     float fr = bulbs > 0.5 ? bul*chase : frm*ring;
-    float a = clamp(mk.r*1.2, 0.0, 1.0);
-    vec3 dc = mix(bg, lc, a);
+    // [v41] crisp letters: near by (atlas texels larger than a pixel) the bilinear masks are re-thresholded at about one pixel
+    // width, far away (texels smaller than a pixel) the filtered masks are used as they are
+    vec2 tcx = cu*vCell.zw*uHkSz; float fpx = max(length(dFdx(tcx)), length(dFdy(tcx)));
+    float shp = 1.0 - smoothstep(0.6, 1.3, fpx), sw = clamp(fpx*0.5, 0.03, 0.5);
+    float mr = mix(mk.r, smoothstep(0.5 - sw, 0.5 + sw, mk.r), shp), mg = mix(mk.g, smoothstep(0.4 - sw, 0.4 + sw, mk.g), shp);
+    float a = clamp(mr*1.15, 0.0, 1.0);
+    // [v41] day look: the backing of neon / unlit boards is a painted panel (not a black slab), neon tubes are pale tinted glass
+    float dayK = 1.0 - uSN, isNeon = step(0.5, lit)*step(lit, 1.5);
+    vec3 bgD = mix(bg, max(bg, vec3(0.2, 0.2, 0.215)), dayK*step(lit, 1.5));
+    vec3 lcD = mix(lc, mix(lc, vec3(0.8, 0.82, 0.84), 0.4), dayK*isNeon);
+    vec3 dc = mix(bgD, lcD, a);
     dc = mix(dc, ed*0.9 + 0.1, clamp(fr, 0.0, 1.0)*(bulbs > 0.5 ? 0.6 : 0.85));
-    if (noBack > 0.5){ if (max(mk.r, mk.g) < 0.35) discard; dc = lc; }
+    if (noBack > 0.5){ if (max(mk.r, mk.g) < 0.35) discard; dc = lcD; }
     float k = 1.0;
     if (an > 0.5 && an < 1.5) k = 0.08 + 0.92*step(0.3, fract(T/1.8 + ph));
     float qa = vrt > 0.5 ? 1.0 - cu.y : cu.x, sq = fract(T/5.5 + ph), sk = 1.0;
     if (an > 2.5 && an < 3.5) sk = sq < 0.6 ? step(qa, sq*1.8) : (sq < 0.85 ? 1.0 : step(0.5, fract(sq*26.0)));
+    // [v41] a few steady neon signs (about 1 in 12) have a tired tube: short irregular bursts of flicker, on half of them only
+    // part of the text
+    float flick = 1.0, hs = fract(ph*91.7 + 0.37);
+    if (isNeon > 0.5 && an < 0.5 && hs < 0.085){
+      float burst = step(0.74, fract(sin(floor(T*0.9) + ph*57.0)*43758.55)), nz = step(0.45, fract(sin(floor(T*17.0) + ph*311.0)*43758.55));
+      float part = hs < 0.042 ? step(0.25 + fract(ph*7.7)*0.5, qa) : 1.0;
+      flick = 1.0 - burst*(1.0 - nz)*part*0.92;
+    }
     vec3 E = vec3(0.0);
-    if (lit > 0.5 && lit < 1.5){ E = ((lc*(mk.r*0.6 + mk.g*1.5) + lc*mk.b*(1.0 - a)*0.5)*sk + ed*fr*1.6 + bg*0.05)*k; }
+    // [v41] neon: a hot, whitened core along the tube (the glyph outline), a dimmer coloured letter body and a soft inner glow
+    if (lit > 0.5 && lit < 1.5){ vec3 core = mix(lc, vec3(1.0), 0.38);
+      E = ((core*mg*1.55 + lc*mr*0.42 + lc*mk.b*(1.0 - a)*0.62)*sk*flick + mix(ed, vec3(1.0), 0.25)*fr*1.55 + bg*0.04)*k; }
     else if (lit > 1.5 && lit < 2.5){ E = (dc*0.85 + lc*mk.b*(1.0 - a)*0.12)*k*mix(1.0, sk, 0.85) + ed*fr*(bulbs > 0.5 ? 1.4 : 0.35); }
     else if (lit > 2.5 && lit < 3.5){ vec3 sc = an > 4.5 && an < 5.5 ? hkHue(fract(pm.y/(2.0*hh)*0.8 + pm.x*0.02 - T*0.07 + ph))*0.9 : hkScreen(pm, hw, hh, an > 0.5 ? T : ph*97.0 + 3.0, ph); E = mix(sc, lc*1.25, a*0.9); dc = vec3(0.05); }
     else if (lit > 3.5){ E = dc*0.42; }
@@ -21359,7 +21394,7 @@ void main(){
     if (vM.y > 5.5) col = mix(sgHue(fract(id*0.618 + vM.z*0.01)), vec3(1.0, 0.8, 0.55), far*0.6)*(0.75 + 0.25*sin(uT*2.0 + id*1.7));
   } else if (pat < 8.5){
     float r = dot(vUV, vUV);
-    I = max(0.0, 1.0 - r); I = I*I*(0.35 + 0.65*I);
+    I = max(0.0, 1.0 - r); I = 0.68*I*I*I*I + 0.32*I*sqrt(I);      // [v41] bloom-like: compact core, longer faint tail
   } else if (pat < 9.5){
     // LED media facade: a 0.5 m pixel grid playing slow colour waves (vM.w: 0 waves, 1 rising bars, 2 rings)
     float px = vUV.x*2.0, py = vUV.y*2.0, fp = max(fwidth(px), fwidth(py));
@@ -21371,7 +21406,8 @@ void main(){
   } else if (pat > 12.5){
     // glow round a board in its plane (uv -1..1; the board inside |u| < rx, |v| < ry)
     vec2 rr = vec2(vM.z, vM.w)/255.0, q = max(abs(vUV) - rr, 0.0)/max(vec2(1.0) - rr, vec2(0.05));
-    float d = min(length(q), 1.0); I = pow(1.0 - d, 1.6)*(d > 0.0 ? 0.85 : 0.35);
+    float d = min(length(q), 1.0); I = d > 0.0 ? pow(1.0 - d, 1.6)*0.85 : (vM.y > 8.5 ? 0.0 : 0.35);
+    if (vM.y > 8.5) I = d > 0.0 ? 0.55*pow(1.0 - d, 3.0) + 0.45*pow(1.0 - d, 1.3) : 0.0;     // [v41] near neon rim: bright at the edge, long soft tail
   } else if (pat > 11.5){
     // coloured light of the signs on the street (uv -1..1 over a square)
     float r = dot(vUV, vUV); I = max(0.0, 1.0 - r); I = I*I*0.42;
@@ -21456,7 +21492,7 @@ void main(){
     const t = tod < 12 ? tod + 24 : tod; U.uLH.value = Math.max(0, t - 22);
     if (MB) MB.visible = U.uSN.value > 0.002;
   }
-  const API = {tileHook, time, frameHook, arrays, pack, flush:() => pump(Infinity), prewarm:() => { const t = now(); mats(); STATS.matsMs = +(now() - t).toFixed(1); }, get pending(){ return JOBS.length + (cur ? 1 : 0); }, WAs, WBs, ATTR_A, ATTR_B, STATS, U, TIER_D, FLV, DIST, HUB, get atlas(){ return SGA && SGA.cv; }, dbg:null, eager:false, version:'hksigns-1', SP, DES, get textAtlas(){ return HKA && HKA.cv; }, get specs(){ return SPECS; }, nearSpec};
+  const API = {tileHook, time, frameHook, arrays, pack, flush:() => pump(Infinity), prewarm:() => { const t = now(); mats(); STATS.matsMs = +(now() - t).toFixed(1); }, get pending(){ return JOBS.length + (cur ? 1 : 0); }, WAs, WBs, ATTR_A, ATTR_B, STATS, U, TIER_D, FLV, DIST, HUB, get atlas(){ return SGA && SGA.cv; }, dbg:null, eager:false, version:'hksigns-41', SP, DES, get textAtlas(){ return HKA && HKA.cv; }, get specs(){ return SPECS; }, nearSpec};
   return API;
 })();
 if (typeof HOOKS !== 'undefined'){
@@ -47419,6 +47455,25 @@ Object.assign(window.LM_INFO = window.LM_INFO || {}, {
   "site:hkpolyu:Jockey Club Innovation Tower": {"k":{"zh":"大学建筑","en":"University building"},"a":{"zh":"扎哈·哈迪德","en":"Zaha Hadid"},"d":{"zh":"赛马会创新楼是理大设计学院所在的大楼，由扎哈·哈迪德设计。大楼由一层层流线形的铝板和玻璃带构成，没有传统的楼层分隔感，与周围方正的红砖校舍形成强烈对比，是校园最醒目的建筑。","en":"The Jockey Club Innovation Tower, designed by Zaha Hadid, houses PolyU’s School of Design. It is shaped by flowing bands of aluminium and glass that blur the usual floor lines. It contrasts strongly with the square red-brick buildings around it and is the most striking building on the campus."}},
   "site:hkust:Academic Building": {"k":{"zh":"大学建筑","en":"University building"},"y":"1991","d":{"zh":"学术楼是科大的主楼，各学院的课室、实验室和办公室都连在这座大楼里。正门的大堂“中庭”是校园的交汇点，门前广场上立着红色的日晷雕塑。从大楼面海的一侧可以俯瞰牛尾海。","en":"The Academic Building is the main building of HKUST, joining classrooms, laboratories and offices of the schools under one roof. Its entrance hall, the Atrium, is the meeting point of the campus, and the red sundial sculpture stands on the piazza in front. Its sea side looks over Port Shelter."}},
 });
+/* v41 cards */
+Object.assign(window.LM_INFO = window.LM_INFO || {}, {
+  hk41ehighcliff: {"k":{"zh":"住宅大楼","en":"Residential tower"},"d":{"zh":"晓庐是司徒拔道山坡上的一座住宅大楼，俯瞰跑马地马场和铜锣湾。楼身十分纤细，平面由两个互相咬合的椭圆组成，外墙是蓝灰色玻璃和白色横线。它和旁边的御峰一起，在跑马地上方的山脊上格外显眼。","en":"Highcliff is a residential tower on the hillside of Stubbs Road, looking down over Happy Valley Racecourse and Causeway Bay. The tower is very slender: its plan is two interlocking ellipses, clad in blue-grey glass with fine white floor lines. Together with The Summit next door it stands out on the ridge above Happy Valley."}},
+  hk41esummit: {"k":{"zh":"住宅大楼","en":"Residential tower"},"d":{"zh":"御峰位于司徒拔道，紧挨着晓庐，是跑马地上方山坡的另一座高耸住宅大楼。大楼平面呈弯曲的翼形，青蓝色的玻璃外墙配灰色横线，楼顶逐级收窄。两座大楼并肩而立，从铜锣湾和维港对岸都能清楚看到。","en":"The Summit stands on Stubbs Road right beside Highcliff, the other tall residential tower on the slope above Happy Valley. Its plan is a curved, winged shape, with green-blue glass, grey floor lines and a top that steps in as it rises. The two towers stand side by side and are easy to pick out from Causeway Bay and from across the harbour."}},
+  hk41eislandresort: {"k":{"zh":"私人屋苑","en":"Private housing estate"},"d":{"zh":"蓝湾半岛是小西湾海旁的私人屋苑，在港岛东端面向大海。屋苑的八座住宅大楼建在一个共同的平台上，每座平面都呈十字形，四角有凹位，外墙是米白色和浅蓝色。小西湾海滨花园和小西湾运动场就在附近。","en":"Island Resort is a private housing estate on the Siu Sai Wan waterfront, facing the sea at the eastern end of Hong Kong Island. Its eight residential towers rise from a shared podium; each has a cross-shaped plan with notched corners and cream and pale blue walls. The Siu Sai Wan Promenade and the Siu Sai Wan Sports Ground are close by."}},
+  hk41egrandprom: {"k":{"zh":"私人屋苑","en":"Private housing estate"},"d":{"zh":"嘉亨湾是西湾河海旁的私人屋苑，五座住宅大楼建在同一个平台上，面向维多利亚港东部。大楼平面凹凸曲折，外墙是蓝色玻璃配白色横线，楼顶有弧形的冠顶。它是港岛东区海旁天际线上最高的一组住宅之一。","en":"Grand Promenade is a private housing estate on the Sai Wan Ho waterfront: five residential towers on one podium, facing the eastern part of Victoria Harbour. The towers have deeply indented plans, blue glass with white floor lines and curved crowns. It is one of the tallest groups of homes on the Eastern District shoreline."}},
+  hk41ehkapa: {"k":{"zh":"专上院校","en":"Tertiary institution"},"d":{"zh":"香港演艺学院位于湾仔海旁，是培训音乐、舞蹈、戏剧和电影等表演艺术人才的专上院校。校园大楼里有歌剧院、演奏厅等多个表演场地，经常举办公开演出。大楼以清水混凝土框架和深色玻璃为主，邻近湾仔北的文化和会展建筑群。","en":"The Hong Kong Academy for Performing Arts stands on the Wan Chai waterfront and trains students in music, dance, drama, film and other performing arts. Its building holds several venues, among them the Lyric Theatre and a Recital Hall, which host public performances. The building is mostly an exposed concrete frame with dark glass, near the cultural and convention buildings of Wan Chai North."}},
+  hk41epaktai: {"k":{"zh":"道教庙宇","en":"Taoist temple"},"d":{"zh":"湾仔北帝庙供奉北帝，即道教的北方真武大帝，坐落在湾仔的山坡上，四周都是住宅大楼。庙宇由前殿和较高的正殿沿山势排列，灰砖墙身配绿色琉璃瓦屋顶，屋脊两端微微翘起。庙前的小广场是区内居民常去的地方。","en":"The Pak Tai Temple in Wan Chai is dedicated to Pak Tai, the Taoist Emperor of the North, and sits on the hillside among apartment towers. A front hall and a taller main hall step up the slope, with grey brick walls, green glazed tile roofs and ridges that turn up at the ends. The small square in front of it is a gathering place for the neighbourhood."}},
+  hk41etinhau: {"k":{"zh":"道教庙宇","en":"Taoist temple"},"d":{"zh":"铜锣湾天后古庙供奉海上守护神天后，是渔民和航海人敬拜的神祇。这座小庙原本靠近铜锣湾的旧海岸，如今四周已是密集的街道和高楼，附近的天后站和天后庙道都与它同名。庙宇低矮的灰墙和绿瓦屋顶在高楼之间格外显眼。","en":"The Tin Hau Temple in Causeway Bay is dedicated to Tin Hau, the goddess of the sea worshipped by fishermen and seafarers. The small temple once stood near the old Causeway Bay shore and is now surrounded by dense streets and towers; Tin Hau station and Tin Hau Temple Road nearby share its name. Its low grey walls and green tiled roofs stand out among the high-rises."}},
+  hk41elawuk: {"k":{"zh":"民俗博物馆","en":"Folk museum"},"d":{"zh":"罗屋民俗馆是柴湾一座保存下来的客家村屋，如今作为民俗博物馆开放。房子由一排正屋和两侧厢房组成，围着前院，灰砖墙配灰瓦双坡屋顶，是柴湾昔日乡村面貌的见证。馆内陈设旧式家具和农具，介绍客家人的传统生活。","en":"Law Uk Folk Museum is a surviving Hakka village house in Chai Wan, now open as a folk museum. The house is a main row with two side wings around a front yard, in grey brick under grey tiled pitched roofs, a reminder of Chai Wan before the town grew up around it. Inside, old furniture and farm tools show how Hakka families lived."}},
+  hk41etunglin: {"k":{"zh":"佛教寺院","en":"Buddhist temple"},"d":{"zh":"东莲觉苑是跑马地的一座佛教寺院，建在一块狭长的三角形地段上。建筑采用中国复兴式风格，墙身是土黄色，配红色窗框，屋顶铺上绿色琉璃瓦，在四周的住宅大楼之间十分醒目。寺院至今仍是信众礼佛和学习佛法的地方。","en":"Tung Lin Kok Yuen is a Buddhist temple in Happy Valley, built on a narrow wedge-shaped lot. The building is in a Chinese revival style, with ochre walls, red window frames and roofs of green glazed tiles, and it stands out among the apartment towers around it. It is still a place of worship and Buddhist study today."}},
+  hk41w_stanchart: {"k":{"zh":"办公大楼","en":"Office tower"},"d":{"zh":"渣打银行大厦位于中环德辅道中，紧挨着汇丰总行大厦的西侧，是渣打银行在香港的总部。大楼由下而上分成几段逐级后退，像一级级的台阶，外墙是带竖向窗条的石材，顶部有一座小塔楼和桅杆，在皇后像广场一带的高楼中很容易认出。","en":"The Standard Chartered Bank Building stands on Des Voeux Road Central, right next to the west side of the HSBC Main Building, and is the bank's Hong Kong headquarters. The tower steps back in several tiers as it rises, like a flight of stairs, with stone walls and vertical strips of windows, and ends in a small lantern and mast."}},
+  hk41w_landmark: {"k":{"zh":"商业综合体","en":"Mixed-use complex"},"d":{"zh":"置地广场位于中环毕打街、德辅道中和皇后大道中之间，是一个高级购物商场和写字楼综合体。商场之上立着告罗士打大厦和公爵大厦两座方形塔楼，置地文华东方酒店也在这里。四周有天桥连接附近的大厦，是中环步行网络的中心之一。","en":"The Landmark sits between Pedder Street, Des Voeux Road Central and Queen's Road Central in Central: a luxury shopping mall with offices above. Two square towers, Gloucester Tower and Edinburgh Tower, rise from the mall podium, and the Landmark Mandarin Oriental hotel is part of the complex. Footbridges tie it to the neighbouring buildings of Central."}},
+  hk41w_belchers: {"k":{"zh":"住宅屋苑","en":"Residential estate"},"d":{"zh":"宝翠园位于西环薄扶林道与卑路乍街一带，是一个大型私人住宅屋苑。六座高耸的住宅大楼建在依山而建的平台上，平台顶上铺设园林。屋苑居高临下，可以远望维多利亚港西面的海景，是坚尼地城和西营盘之间最显眼的高楼群。","en":"The Belcher's is a large private housing estate on Pok Fu Lam Road and Belcher's Street in Sai Wan, on the western edge of Hong Kong Island. Six tall residential towers stand on a podium built into the hillside, with gardens laid out on its roof. The towers look out over the western harbour and are the most prominent group of high-rises between Kennedy Town and Sai Ying Pun."}},
+  hk41w_fourseasons: {"k":{"zh":"酒店及服务式住宅","en":"Hotel and serviced apartments"},"d":{"zh":"四季酒店和四季汇位于中环填海区的金融街，就在国际金融中心一期和国际金融中心商场旁边，离香港站和中环码头都只有几步路。较高的一座是服务式住宅，较低的一座是酒店，两座大楼外墙是浅色石材框架配蓝灰色玻璃，从维港望去与国金中心连成一片。","en":"The Four Seasons Hotel and Four Seasons Place stand on Finance Street on the Central reclamation, next to One IFC and the IFC Mall and a few steps from Hong Kong Station and the Central Piers. The taller block holds serviced apartments and the lower one the hotel; both have pale stone frames with blue-grey glass and read as part of the IFC group from the harbour."}},
+  hk41w_centralmkt: {"k":{"zh":"历史建筑","en":"Historic building"},"d":{"zh":"中环街市位于皇后大道中与德辅道中之间，是一座长方形的街市大楼，外墙有长长的横向窗带，带有现代主义风格。它过去是中环的街市，后来经过活化，变成开放给市民的购物和休闲空间。旁边就是通往半山的中环至半山自动扶梯。","en":"Central Market is a long, rectangular market hall between Queen's Road Central and Des Voeux Road Central, with long horizontal bands of windows in a modernist style. It was for many years the wet market of Central and has since been revitalised as a public space for shops and leisure. The Central to Mid-Levels escalator starts beside it."}},
+  hk41w_swmsb: {"k":{"zh":"政府大楼","en":"Government building"},"d":{"zh":"上环市政大厦位于上环皇后大道中西端，是一座宽大的市政大楼，里面设有上环文娱中心等公共设施，为附近居民提供服务。大楼外墙是灰白色的混凝土和横向窗带，地面一层临街开放，离西港城和港澳码头都不远。","en":"The Sheung Wan Municipal Services Building is a broad civic block at the western end of Queen's Road Central in Sheung Wan. It houses public facilities for the neighbourhood, among them the Sheung Wan Civic Centre. The block has grey-white concrete walls with horizontal bands of windows and an open street level, a short walk from Western Market and the Macau Ferry Terminal."}},
+  hk41w_threepp: {"k":{"zh":"办公大楼","en":"Office tower"},"d":{"zh":"太古广场三座位于金钟东端的皇后大道东，与太古广场的商场和酒店同属一个名字的建筑群，就在它们东面不远处。大楼是一座以蓝灰色玻璃幕墙包裹的写字楼，楼顶内收并在夜间亮起一圈灯光，从金钟道和湾仔一带都能望见。","en":"Three Pacific Place stands on Queen's Road East at the eastern edge of Admiralty. It shares its name with the Pacific Place mall and hotels and stands a short distance east of them. The office tower is wrapped in a blue-grey glass curtain wall, with a recessed top that carries a ring of light at night, visible from Queensway and from Wan Chai."}}
+});
 
 /* ================= v36 lm32/detail: sharp ground near the camera and in the big map (window.SGDetail) =================
    The real-map ground is one 4096 px texture for the whole map square (Singapore 13.7 m, New York 13.7 m, Bay Area 17.6 m per pixel),
@@ -49421,6 +49476,506 @@ Object.assign(SITES, {hkcentralfront:{zh:'中环海滨长廊', en:'Central Harbo
       const yE = y0 + 8, a = [f.p(s.u0 - 0.5, yE, -s.hw - 0.5), f.p(s.u1 + 0.5, yE, -s.hw - 0.5), f.p(s.u1 + 0.5, yE, s.hw + 0.5), f.p(s.u0 - 0.5, yE, s.hw + 0.5)], r0 = f.p(s.u0 + s.hw*0.7, yE + 3, 0), r1 = f.p(s.u1 - s.hw*0.7, yE + 3, 0), R = B.p(PRR);
       quadP(R, a[0], a[1], r1, r0); quadP(R, a[2], a[3], r0, r1); triP(R, a[1], a[2], r1); triP(R, a[3], a[0], r0); }
     B.flush(g); return g; }}});
+}
+
+// ===== hk/hkv41e (City Brush v41): east Hong Kong Island towers and the Academy for Performing Arts on their real footprints.
+// Footprints and heights: the app's own building data (hk_bld0, OSM-derived), decoded by hk/hkv41e/dec.js + prep.js; every plan
+// below is that footprint ring (local metres round its bbox centre, +x east, +z south, rot 0). Heights = the data heights, set so
+// the model's roof meets ground + data height at the footprint centre (dy = app 'top' minus ground there). Facade rhythm, crown
+// shapes and colours are approximations from general knowledge of the buildings, not measured. No text, signs or logos.
+{
+const D = {"hk41ehighcliff":{"ll":[22.265089,114.184167],"h":241,"r":27,"dy":7.3,"deep":19.1,"ring":[[-13.85,-11.45],[-9.15,-4.75],[-10.35,-2.75],[-10.15,0.05],[-5.85,8.05],[1.15,15.05],[6.65,19.05],[11.65,20.75],[14.35,19.75],[15.65,17.55],[15.65,15.55],[13.35,10.25],[9.65,5.05],[10.65,4.05],[10.85,2.55],[10.35,-1.25],[8.65,-4.75],[4.35,-10.25],[-0.85,-15.25],[-6.65,-19.25],[-9.65,-20.75],[-11.65,-20.75],[-13.65,-19.95],[-15.15,-18.25],[-15.65,-16.25]],"holes":0,"t":2,"d":0},"hk41esummit":{"ll":[22.265621,114.183667],"h":220,"r":21,"dy":6.5,"deep":17.3,"ring":[[-16.65,-2.6],[-15.15,-1.4],[-10.15,-0.6],[-9.65,0.4],[-7.85,0.6],[-6.85,1.6],[-4.85,4.1],[-3.35,9.1],[2.85,9.4],[3.85,5.6],[6.35,1.9],[7.85,0.9],[9.15,1.1],[10.15,-0.4],[13.35,-0.4],[15.15,-0.9],[16.35,-2.1],[17.15,-5.1],[16.85,-7.4],[15.15,-8.4],[11.65,-8.4],[7.85,-7.6],[-0.15,-9.4],[-7.15,-7.9],[-11.35,-8.9],[-15.65,-8.9],[-16.65,-8.6],[-17.15,-5.9]],"holes":0,"t":2,"d":0.1},"hk41eislandresort":{"ll":[22.266348,114.25132],"h":197,"r":22,"dy":0.6,"deep":5.6,"ring":[[-11.3,0.7],[-16.5,6],[-12.8,9.7],[-11.3,7.7],[-7.8,11.2],[-9.5,13],[-5.8,16.5],[0,11],[6,16.5],[10,12.5],[6.7,9.2],[8.2,7.5],[13.2,12.5],[16.5,9.5],[15.2,8.2],[15.7,-7],[17,-8.3],[14.2,-11.3],[8.5,-5],[6.2,-7.5],[12.2,-13.5],[9,-16.5],[6.5,-14.3],[-12.8,-14.3],[-13,-9.3],[-5.8,-9],[-5.5,-5],[-7,-3.3],[-10.8,-7.3],[-11.8,-6],[-13.8,-7.8],[-17,-4.8]],"holes":0,"t":2,"d":0.1},"hk41eislandresort_b":{"ll":[22.266119,114.251593],"h":197,"r":22,"dy":0.8,"deep":5.8,"ring":[[-10.9,-8.45],[-6.4,-8.45],[-4.4,-6.75],[-9.1,-0.95],[-9.4,-4.95],[-14.4,-4.95],[-13.6,11.55],[-10.9,11.55],[-10.6,13.75],[-7.6,13.75],[-8.1,8.55],[-0.4,15.75],[2.4,12.75],[4.1,14.55],[7.4,10.75],[4.4,8.25],[9.4,8.05],[9.4,13.25],[14.6,13.55],[14.6,-7.95],[9.4,-8.25],[9.4,0.05],[3.4,-6.45],[9.6,-12.25],[6.1,-15.75],[4.1,-13.95],[-9.6,-13.95],[-11.6,-15.75],[-14.6,-12.75]],"holes":0,"t":2,"d":0.1},"hk41eislandresort_c":{"ll":[22.266661,114.250245],"h":197,"r":22,"dy":2,"deep":8.3,"ring":[[-13.55,12.15],[-8.55,7.15],[-6.05,9.85],[-9.05,12.85],[-4.75,17.35],[1.25,11.35],[6.25,16.85],[9.95,13.15],[8.25,11.35],[11.75,7.85],[13.45,9.85],[17.25,6.15],[10.95,-0.35],[14.45,-3.85],[10.75,-7.65],[8.45,-4.85],[5.45,-7.65],[5.25,-10.65],[11.75,-10.65],[11.45,-15.85],[-5.55,-15.65],[-7.05,-17.35],[-10.05,-14.35],[-2.25,-6.85],[-5.05,-4.65],[-8.25,-6.15],[-8.25,-9.65],[-12.55,-9.35],[-12.55,3.15],[-17.25,7.85]],"holes":0,"t":2,"d":0.1},"hk41eislandresort_d":{"ll":[22.265561,114.251245],"h":197,"r":23,"dy":2.3,"deep":8.7,"ring":[[-11.65,2.75],[-14.85,5.95],[-10.65,9.95],[-7.15,6.25],[-5.15,7.95],[-7.65,8.75],[-7.35,11.45],[-10.35,11.75],[-10.65,15.25],[9.85,14.75],[9.65,11.95],[7.15,9.45],[8.65,7.75],[14.15,12.75],[17.65,9.45],[15.35,7.75],[14.35,-3.25],[17.65,-6.25],[13.65,-10.25],[8.35,-5.05],[5.65,-7.55],[9.15,-11.05],[4.65,-15.25],[-1.85,-9.05],[-7.15,-13.75],[-10.65,-10.05],[-8.85,-8.25],[-12.15,-4.75],[-13.85,-6.55],[-17.65,-2.55]],"holes":0,"t":2,"d":0.1},"hk41eislandresort_e":{"ll":[22.26691,114.250709],"h":197,"r":23,"dy":0.6,"deep":5.6,"ring":[[-11.4,3.65],[-17.4,9.65],[-13.4,13.85],[-6.9,7.85],[-5.9,8.65],[-7.9,12.35],[-9.9,12.35],[-10.1,15.65],[7.1,15.35],[7.1,10.35],[2.4,10.35],[1.6,9.65],[8.4,3.35],[10.4,5.35],[10.1,10.65],[13.6,14.35],[17.4,10.85],[15.6,8.85],[15.9,-4.85],[17.4,-6.85],[14.9,-9.15],[9.4,-3.35],[1.9,-9.65],[10.1,-9.65],[10.1,-15.65],[-11.6,-15.65],[-11.6,-9.85],[-6.1,-9.65],[-5.4,-3.85],[-7.9,-1.35],[-13.4,-6.85],[-17.4,-2.35]],"holes":0,"t":2,"d":0},"hk41eislandresort_f":{"ll":[22.266662,114.250971],"h":197,"r":22,"dy":1.1,"deep":6.1,"ring":[[-8.9,5.75],[-10.6,7.45],[-8.6,9.45],[-11.1,11.95],[-7.6,15.45],[-3.1,10.75],[3.4,16.75],[6.9,12.45],[2.6,8.45],[5.6,5.25],[10.4,5.75],[10.4,10.95],[16.6,10.95],[16.4,-7.25],[17.4,-8.55],[14.6,-11.55],[9.1,-5.55],[6.9,-8.05],[12.4,-13.55],[9.1,-16.75],[7.4,-15.55],[-7.6,-15.25],[-9.4,-16.55],[-13.1,-12.75],[-10.1,-10.05],[-6.9,-10.05],[-6.9,-8.55],[-2.4,-9.05],[-1.6,-8.05],[-8.1,-2.25],[-12.4,-6.75],[-17.4,-2.55]],"holes":0,"t":2,"d":0},"hk41eislandresort_g":{"ll":[22.266427,114.250015],"h":197,"r":22,"dy":1.3,"deep":7.3,"ring":[[-11.9,11.25],[-11.6,4.95],[-9.6,4.45],[-6.6,7.25],[-9.6,10.75],[-5.6,14.95],[-2.4,11.45],[3.4,17.25],[7.1,13.45],[5.1,11.75],[8.6,8.45],[10.4,10.25],[14.1,6.45],[9.1,1.45],[14.9,-4.55],[10.4,-9.05],[7.4,-6.05],[4.6,-8.55],[9.6,-13.55],[5.6,-17.25],[2.9,-14.55],[-8.1,-15.25],[-10.1,-17.25],[-12.6,-14.75],[-7.9,-9.05],[-9.9,-6.55],[-11.9,-9.05],[-14.9,-9.05],[-14.9,10.95]],"holes":0,"t":2,"d":0},"hk41eislandresort_h":{"ll":[22.265774,114.25149],"h":197,"r":24,"dy":1.7,"deep":7.5,"ring":[[-11.5,-0.9],[-16.8,4.4],[-12.3,8.6],[-9,5.6],[-4.8,8.9],[-5.5,10.1],[-7.3,9.6],[-11.3,13.4],[-7.3,17.1],[-3,12.6],[9.7,12.1],[9.7,7.9],[6.5,7.9],[4.7,4.9],[7,2.1],[15.2,10.1],[17,7.6],[15.5,6.4],[15.5,-14.9],[10.2,-14.9],[10.7,-9.9],[8.2,-7.4],[6,-7.4],[4.5,-8.9],[5,-9.6],[1.7,-14.1],[-0.5,-11.6],[-6.5,-17.1],[-10.3,-13.4],[-8.3,-11.6],[-11.8,-8.1],[-13.5,-9.9],[-17,-6.1]],"holes":0,"t":2,"d":0},"hk41egrandprom":{"ll":[22.285263,114.224372],"h":210,"r":20,"dy":0.9,"deep":6.2,"ring":[[-12.5,7.2],[-13.8,8.2],[-11.8,10.2],[-9.8,8.5],[-9,9],[-7.8,7.7],[-8.5,7.2],[-5.3,4],[-3,6.2],[-8.5,11.7],[-6.3,14],[-5,12.7],[-3.5,14.5],[-2,12.7],[-1.5,13.5],[0,12],[0,10.7],[1.7,10.7],[2.7,11.7],[1.2,13.2],[4,16],[7.2,12.5],[6.7,12],[8,10.7],[6.7,9.5],[8,8.2],[9.2,9.5],[10.7,8],[11.2,8.5],[14.5,5.2],[12,2.5],[10.5,4],[9.5,3],[9.5,1.2],[10.7,1.2],[12,0],[11.5,-0.5],[13,-2.3],[11.5,-3.8],[12.7,-4.8],[10.2,-7],[4.5,-1.3],[2.2,-3.5],[3.2,-4.5],[1,-6.8],[4.5,-6.8],[4.5,-8],[6,-8],[10.2,-12.3],[6.2,-16],[3.7,-13.8],[2.5,-13.8],[0.7,-14.8],[-2,-14.8],[-3.8,-13.8],[-8.8,-13.8],[-8.8,-13.3],[-10,-13.3],[-11,-12.3],[-10.8,-9.5],[-8.8,-9.5],[-8.8,-8.5],[-8,-8],[-3.8,-8],[-3.8,-7],[-6.8,-4],[-10,-7.3],[-13.8,-3.8],[-12.3,-2.3],[-14,-0.8],[-11.3,2],[-14.5,5.2]],"holes":0,"t":2,"d":0},"hk41egrandprom_b":{"ll":[22.285481,114.224595],"h":210,"r":21,"dy":0.8,"deep":5.8,"ring":[[-12.75,11.85],[-8.25,7.65],[-7.25,8.65],[-5.95,7.35],[-4.95,8.35],[-4.95,10.85],[-3.95,10.85],[-3.95,11.65],[-1.25,11.65],[-1.25,9.65],[0.05,9.65],[0.05,8.65],[1.25,8.65],[1.25,11.65],[3.75,11.65],[3.75,10.85],[4.75,10.85],[4.75,8.35],[6.05,7.35],[7.25,8.65],[8.25,7.65],[12.75,11.85],[16.75,8.15],[11.75,3.15],[12.25,1.85],[8.75,-1.35],[8.05,-0.65],[7.25,-1.35],[7.25,-3.35],[11.05,-3.35],[11.05,-6.15],[11.75,-6.15],[12.55,-8.35],[11.75,-9.85],[10.75,-10.15],[10.55,-10.85],[4.55,-10.85],[4.55,-10.15],[3.25,-10.15],[3.25,-10.85],[1.05,-11.85],[1.05,-10.15],[-0.95,-10.35],[-0.95,-11.85],[-3.25,-10.85],[-3.25,-10.35],[-4.45,-10.35],[-4.45,-10.85],[-10.45,-10.85],[-10.75,-10.15],[-11.75,-9.85],[-12.45,-8.35],[-11.75,-6.35],[-10.95,-6.35],[-10.95,-3.65],[-7.25,-3.65],[-7.25,-1.35],[-7.95,-0.65],[-8.75,-1.35],[-12.25,1.85],[-11.75,3.15],[-16.75,8.15]],"holes":0,"t":2,"d":0},"hk41egrandprom_c":{"ll":[22.28526,114.224821],"h":210,"r":20,"dy":0.6,"deep":5.6,"ring":[[-12.25,8.85],[-11.75,8.35],[-10.55,9.85],[-9.25,8.65],[-8.05,9.85],[-9.25,11.15],[-7.75,12.35],[-8.25,12.85],[-5.05,16.35],[-2.25,13.65],[-3.75,12.15],[-2.75,11.15],[-1.05,11.15],[-1.05,12.35],[0.25,13.85],[0.95,13.15],[2.45,14.85],[3.95,13.35],[5.25,14.35],[7.45,12.15],[1.75,6.65],[6.45,2.15],[7.95,3.65],[7.95,6.35],[8.45,6.35],[8.45,11.35],[13.75,11.35],[13.75,9.15],[14.25,9.15],[14.25,4.15],[15.75,1.85],[15.75,-0.35],[14.25,-2.15],[14.25,-6.85],[13.75,-6.85],[13.95,-9.35],[10.95,-9.35],[8.45,-6.85],[8.45,-2.15],[7.95,-2.15],[2.95,-7.15],[2.95,-7.65],[7.75,-7.85],[10.25,-10.15],[10.25,-12.85],[7.75,-12.85],[7.75,-13.35],[2.95,-13.35],[0.75,-15.15],[-1.05,-15.15],[-2.75,-14.15],[-4.25,-14.15],[-6.55,-16.35],[-10.55,-12.65],[-6.25,-8.35],[-4.75,-8.15],[-4.75,-7.15],[-2.75,-7.15],[-1.25,-5.65],[-5.75,-1.15],[-8.55,-3.85],[-10.75,-1.65],[-10.05,-0.65],[-12.05,1.15],[-10.55,2.15],[-10.55,3.35],[-11.55,4.35],[-13.05,2.85],[-15.75,5.65]],"holes":0,"t":2,"d":0},"hk41egrandprom_d":{"ll":[22.28503,114.224129],"h":204,"r":20,"dy":1.1,"deep":6.6,"ring":[[-12.8,6.45],[-14,7.75],[-12,9.75],[-10,7.75],[-9.3,8.45],[-8,7.25],[-8.8,6.45],[-5.5,3.25],[-3.3,5.45],[-8.8,11.25],[-6.5,13.45],[-5.3,12.25],[-3.8,13.75],[-2.3,12.25],[-1.5,12.75],[-0.3,11.45],[-0.3,10.25],[1.5,10.25],[2.5,11.25],[1,12.75],[3.7,15.25],[7,11.95],[6.5,11.45],[7.7,9.95],[6.5,8.75],[8,7.45],[9.2,8.75],[10.5,7.45],[11,7.95],[14.5,4.75],[11.7,1.95],[10.2,3.45],[9.2,2.45],[9.2,0.75],[10.5,0.75],[11.7,-0.75],[11.2,-1.25],[12.7,-2.75],[11.2,-4.25],[12.5,-5.55],[10.2,-7.75],[4.2,-1.75],[2,-4.05],[3,-5.25],[0.7,-7.55],[4.2,-7.55],[4.2,-8.55],[8.5,-8.55],[9,-9.25],[9,-10.25],[9.5,-10.25],[9.5,-13.75],[7.5,-13.75],[7.5,-14.25],[2.2,-14.25],[0.5,-15.25],[-2.3,-15.25],[-4,-14.25],[-9,-14.25],[-9,-13.75],[-10.3,-13.75],[-11,-13.05],[-11,-10.25],[-8.8,-10.25],[-8.8,-9.05],[-8.3,-8.55],[-4,-8.55],[-4,-7.75],[-7,-4.75],[-10.3,-8.05],[-13.8,-4.25],[-12.5,-3.05],[-14,-1.25],[-11.3,1.45],[-14.5,4.75]],"holes":0,"t":2,"d":0.1},"hk41egrandprom_e":{"ll":[22.284987,114.225113],"h":204,"r":20,"dy":0.6,"deep":5.6,"ring":[[-12.35,8.9],[-11.85,8.4],[-10.65,9.6],[-9.35,8.4],[-7.85,9.6],[-9.15,10.9],[-7.85,12.4],[-8.35,12.9],[-6.15,15.1],[-3.15,12.4],[-2.65,12.9],[-0.85,11.1],[1.15,13.1],[2.65,11.4],[3.35,12.1],[6.35,9.1],[4.85,7.6],[5.85,6.9],[5.15,6.1],[6.65,4.4],[8.15,4.4],[8.15,8.9],[9.65,8.9],[9.65,10.4],[10.35,11.1],[13.65,11.1],[13.65,8.9],[14.15,8.9],[14.15,4.1],[15.85,1.9],[15.65,-0.6],[14.35,-2.1],[14.35,-7.1],[13.85,-7.1],[13.85,-9.4],[10.85,-9.4],[8.65,-7.1],[8.65,-2.1],[7.85,-2.1],[2.85,-7.4],[2.85,-7.9],[7.85,-7.9],[10.15,-10.1],[10.15,-13.1],[7.85,-13.1],[7.85,-13.6],[2.85,-13.6],[0.65,-15.1],[-1.65,-14.9],[-3.35,-13.6],[-8.15,-13.6],[-8.15,-13.1],[-10.65,-13.1],[-10.65,-7.9],[-5.65,-7.9],[-5.65,-7.4],[-2.85,-7.4],[-1.35,-5.9],[-5.85,-1.1],[-11.35,-6.9],[-13.85,-4.6],[-12.65,-3.4],[-14.15,-1.9],[-12.65,-0.4],[-13.15,0.4],[-11.85,1.6],[-10.65,1.6],[-10.65,3.4],[-11.65,4.4],[-13.15,2.9],[-15.85,5.6]],"holes":0,"t":2,"d":0},"hk41ehkapa":{"ll":[22.280205,114.169513],"h":22.7,"r":104,"dy":7.3,"deep":16.1,"ring":[[-87.05,-12.9],[-87.75,12.6],[-62.55,13.4],[-40.75,39.1],[-31.55,32.9],[-21.55,31.9],[-21.55,46.6],[26.95,48.9],[51.25,48.4],[43.75,40.6],[50.25,33.6],[59.75,43.6],[65.45,43.4],[78.75,54.6],[80.45,43.1],[85.45,37.9],[89.45,16.1],[90.75,13.9],[92.25,-10.1],[88.95,-23.4],[90.45,-24.9],[95.25,-24.4],[95.75,-32.4],[78.45,-50.1],[66.95,-51.4],[64.45,-53.9],[50.45,-54.6],[47.75,-52.4],[34.95,-52.9],[34.95,-50.6],[27.45,-44.1],[20.45,-51.9],[5.95,-39.4],[-13.05,-39.9],[4.75,-19.6],[-3.05,-12.1],[-18.75,-28.6],[-25.25,-29.6],[-33.25,-25.9],[-38.55,-24.4],[-42.05,-21.9],[-43.55,-43.1],[-45.75,-41.6],[-45.55,-31.9],[-50.75,-26.9],[-55.25,-26.1],[-58.75,-24.1],[-60.05,-18.4],[-63.55,-17.6],[-65.25,-15.6],[-65.55,-13.4],[-68.55,-9.9],[-70.05,-12.6],[-70.55,-15.9],[-72.75,-18.9],[-76.25,-19.6],[-78.05,-21.4],[-78.55,-24.4],[-80.55,-26.9],[-82.55,-27.9],[-84.25,-25.9],[-86.75,-24.6],[-90.55,-24.4],[-93.75,-25.1],[-95.75,-24.1]],"holes":0,"t":7,"d":0},"hk41etunglin":{"ll":[22.266885,114.185627],"h":15,"r":36,"dy":4.1,"deep":12.3,"ring":[[-15.75,-14.4],[-13.75,-14.9],[-11.05,-6.9],[-10.25,-7.1],[-9.25,-4.1],[-4.05,3.9],[-2.05,2.6],[2.75,13.6],[3.95,13.1],[4.45,15.1],[5.75,15.9],[4.45,16.9],[12.75,29.6],[18.25,27.9],[14.95,11.9],[13.75,11.9],[13.25,10.4],[14.45,9.9],[10.25,-1.6],[12.25,-2.6],[10.95,-8.9],[11.75,-9.4],[10.25,-13.6],[10.75,-14.4],[8.75,-20.1],[10.25,-20.9],[7.45,-29.6],[-1.05,-26.4],[-0.25,-24.4],[-10.75,-19.9],[-11.55,-22.1],[-18.25,-19.1]],"holes":0,"t":2,"d":0},"hk41epaktai":{"ll":[22.272881,114.173827],"h":15,"r":24,"dy":4.4,"deep":15.1,"ring":[[-6.6,1.9],[-7.6,12.6],[7.6,14.1],[9.1,-1.1],[15.4,-3.6],[18.4,-11.6],[-13.6,-14.1],[-18.4,-2.4]],"holes":0,"t":8,"d":7.6},"hk41etinhau":{"ll":[22.282205,114.192729],"h":3.7,"r":15,"dy":2.1,"deep":8.5,"ring":[[6.65,9.9],[10.65,-5.6],[-6.85,-9.9],[-10.65,5.9]],"holes":0,"t":8,"d":3.4},"hk41elawuk":{"ll":[22.264218,114.23552],"h":6.8,"r":12,"dy":1.3,"deep":7.2,"ring":[[-4.25,8.75],[-0.25,6.25],[-2.25,3.25],[3.55,-0.25],[5.75,3.05],[9.75,0.55],[3.75,-8.75],[-9.75,0.05]],"holes":0,"t":2,"d":8.1}};
+const NAMES = {
+  hk41ehighcliff:['晓庐', 'Highcliff'], hk41esummit:['御峰', 'The Summit'], hk41eislandresort:['蓝湾半岛', 'Island Resort'],
+  hk41egrandprom:['嘉亨湾', 'Grand Promenade'], hk41etunglin:['东莲觉苑', 'Tung Lin Kok Yuen'], hk41epaktai:['湾仔北帝庙', 'Pak Tai Temple, Wan Chai'],
+  hk41etinhau:['铜锣湾天后古庙', 'Causeway Bay Tin Hau Temple'], hk41elawuk:['罗屋民俗馆', 'Law Uk Folk Museum'], hk41ehkapa:['香港演艺学院', 'Hong Kong Academy for Performing Arts']
+};
+const SC = (R, s) => R.map(p => [p[0]*s, p[1]*s]);
+const rAvg = R => R.reduce((a, p) => a + Math.hypot(p[0], p[1]), 0)/R.length;
+const OUT = (R, d) => SC(R, 1 + d/Math.max(4, rAvg(R)));            // approximate offset (rings are compact)
+// a residential / office tower on ring R: body of glass (lit windows), a floor band every fh, pilasters, then a crown
+function tower(g, R, Ht, deep, S){
+  const fh = S.fh || 3.1, cH = S.cH || 12, bodyH = Ht - cH;
+  const glass = {c:S.glass, fh, cw:S.cw || 2.2}, band = {c:S.band, m:0, lk:0.12}, dark = '#4a4c4e';
+  LPoly(g, R, -deep, deep + 0.2, dark);
+  LPoly(g, OUT(R, 0.3), 0, S.lobby || 6, {c:S.base || S.band, m:0, lk:0.5});          // lobby / base course
+  LPoly(g, R, 0, bodyH, glass);
+  const RB = OUT(R, S.bandOut || 0.35);
+  for (let y = (S.lobby || 6) + fh; y < bodyH - 0.5; y += fh) LPoly(g, RB, y - (S.bandH || 0.7), S.bandH || 0.7, band);
+  if (S.pil){ const n = R.length, st = Math.max(1, Math.round(n/S.pil)); const RP = OUT(R, 0.5);
+    for (let i = 0; i < n; i += st){ const p = RP[i]; LBox(g, 1.1, bodyH - 6, 1.1, p[0], 6, p[1], band); } }
+  // crown
+  let y = bodyH;
+  const steps = S.steps || [0.94, 0.86];
+  const sh = cH*0.55/steps.length;
+  for (const s of steps){ LPoly(g, SC(R, s), y, sh, glass); LPoly(g, SC(OUT(R, 0.3), s), y + sh - 0.8, 0.8, band); y += sh; }
+  const top = Ht - y, Rt = SC(R, S.capS || 0.8);
+  if (S.crown === 'fin'){            // open fins round a curved crown, lit from inside at night
+    LPoly(g, SC(R, (S.capS || 0.8)*0.8), y, top*0.6, '#6a7076');
+    const n = Rt.length, st = Math.max(1, Math.round(n/18));
+    for (let i = 0; i < n; i += st) LBox(g, 0.7, top, 0.7, Rt[i][0], y, Rt[i][1], {c:S.band, glow:S.glow, gk:0.5});
+    LRingPoly(g, Rt, Ht - 1.2, 1.2, {c:S.band, glow:S.glow, gk:0.9});
+  } else if (S.crown === 'frame'){   // roof plant box inside a cornice frame on posts
+    LPoly(g, SC(R, (S.capS || 0.8)*0.75), y, top*0.7, S.band);
+    const n = Rt.length, st = Math.max(1, Math.round(n/8));
+    for (let i = 0; i < n; i += st) LBox(g, 1.4, top, 1.4, Rt[i][0], y, Rt[i][1], S.band);
+    LRingPoly(g, Rt, Ht - 2, 2, {c:S.band, glow:S.glow, gk:0.6});
+  } else {                           // stepped glass cap with a lit rim
+    LPoly(g, Rt, y, top - 1, glass); LPoly(g, SC(R, (S.capS || 0.8)*0.7), Ht - 1, 1, {c:S.band, glow:S.glow, gk:0.8});
+  }
+}
+// a thin band following ring R (outer ring only, as wall quads 0.6 m thick)
+function LRingPoly(g, R, y0, h, col){
+  const pos = [], n = R.length, Ri = SC(R, 0.94);
+  const q = (A, B, C, E) => pos.push(...A, ...B, ...C, ...A, ...C, ...E);
+  for (let i = 0; i < n; i++){ const j = (i + 1) % n, a = R[i], b = R[j], c = Ri[i], d = Ri[j];
+    q([a[0], y0, a[1]], [b[0], y0, b[1]], [b[0], y0 + h, b[1]], [a[0], y0 + h, a[1]]);
+    q([d[0], y0, d[1]], [c[0], y0, c[1]], [c[0], y0 + h, c[1]], [d[0], y0 + h, d[1]]);
+    q([a[0], y0 + h, a[1]], [b[0], y0 + h, b[1]], [d[0], y0 + h, d[1]], [c[0], y0 + h, c[1]]); }
+  return LTris(g, pos, col);
+}
+const STY = {
+  // Highcliff: slim blue-grey glass shaft, fine white floor lines, a lit curved crown of fins (approximation)
+  hk41ehighcliff:{glass:'#5d7d94', band:'#e4e8ea', fh:3.1, cH:16, steps:[0.95, 0.9], crown:'fin', capS:0.86, glow:'#dfe9ff', pil:6},
+  // The Summit: green-blue glass with grey floor lines, a stepped tapering top (approximation)
+  hk41esummit:{glass:'#4d7779', band:'#c8ced1', fh:3.1, cH:20, steps:[0.92, 0.82, 0.72], capS:0.6, glow:'#c8fff4', pil:5},
+  // Island Resort: cream-and-blue residential towers with corner pilasters and a framed roof (approximation)
+  hk41eislandresort:{glass:'#8ea6ba', band:'#ece6d8', base:'#cfc5b2', fh:2.95, bandH:1.3, cH:14, steps:[0.93], crown:'frame', capS:0.82, glow:'#ffe2b0', pil:8},
+  // Grand Promenade: blue glass with white floor lines and a lit curved crown (approximation)
+  hk41egrandprom:{glass:'#3f6680', band:'#dfe3e6', fh:3.0, cH:16, steps:[0.94, 0.86], crown:'fin', capS:0.8, glow:'#cfe6ff', pil:6}
+};
+const sty = k => STY[k] || STY[k.replace(/_[a-z]$/, '')];
+const mainOf = k => k.replace(/_[a-z]$/, '');
+for (const k of Object.keys(D)){
+  if (!STY[k] && !STY[mainOf(k)]) continue;
+  const d = D[k], Ht = Math.max(20, d.h - d.dy), main = mainOf(k), nm = NAMES[main];
+  LANDMARKS[k] = Object.assign({zh:nm[0], en:nm[1], cat:'new', r:d.r, h:Ht, lt:{m:1, c:sty(k).glow, k:0.55}}, k === main ? {} : {label:false}, {
+    build(){ const g = new THREE.Group(); tower(g, d.ring, Ht, d.deep, sty(k)); return g; }});
+  SG_PLACES.push({type:k, lat:d.ll[0], lon:d.ll[1], rot:0});
+}
+// Hong Kong Academy for Performing Arts: the data footprint at the data height; exposed concrete frame, dark glazed bands,
+// a recessed glazed ground storey and a parapet (approximation of the concrete-and-glass look).
+{
+  const d = D.hk41ehkapa, Ht = Math.max(8, d.h - d.dy), nm = NAMES.hk41ehkapa;
+  LANDMARKS.hk41ehkapa = {zh:nm[0], en:nm[1], cat:'new', r:d.r, h:Ht, lt:{m:0, c:'#ffe1b8', k:0.55, e:0.4},
+    build(){
+      const g = new THREE.Group(), R = d.ring, conc = '#bdb7ab', glass = {c:'#36424c', glow:'#ffd9a8', gk:0.25};
+      LPoly(g, R, -d.deep, d.deep + 0.2, '#6d6a64');
+      LPoly(g, SC(R, 0.985), 0, 4.5, glass);
+      LPoly(g, R, 4.5, Ht - 4.5, conc);
+      for (const y of [7.5, 7.5 + (Ht - 9)/2]) if (y + 2.2 < Ht - 1.5) LPoly(g, OUT(R, 0.15), y, 2.2, glass);
+      LRingPoly(g, OUT(R, 0.2), Ht, 1.1, conc);
+      // exposed concrete columns round the perimeter, about every 6 m
+      const RP = OUT(R, 0.45);
+      for (let i = 0; i < RP.length; i++){ const a = RP[i], b = RP[(i + 1) % RP.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.floor(L/6);
+        for (let j = 0; j <= n; j++){ const t = n ? j/n : 0; LBox(g, 0.8, Ht - 4.5, 0.8, a[0] + (b[0] - a[0])*t, 4.5, a[1] + (b[1] - a[1])*t, conc); } }
+      return g; }};
+  SG_PLACES.push({type:'hk41ehkapa', lat:d.ll[0], lon:d.ll[1], rot:0});
+}
+// Tung Lin Kok Yuen: a Buddhist temple on its wedge-shaped lot (data footprint, data height). Ochre plastered walls with red
+// window bays, green glazed tile eaves and stepped hip roofs, and a double-eaved roof over the wide (north) end. Colours and
+// roof form are approximations of the temple's Chinese-revival look, not measured.
+{
+  const d = D.hk41etunglin, Ht = Math.max(8, d.h - d.dy), nm = NAMES.hk41etunglin;
+  LANDMARKS.hk41etunglin = {zh:nm[0], en:nm[1], cat:'old', r:d.r, h:Ht + 4, lt:{m:0, c:'#ffd9a0', k:0.7, anim:'breathe'},
+    build(){
+      const g = new THREE.Group(), R = d.ring, wall = '#d9c08a', red = '#9a2f22', tile = '#3f7a4e', ridge = '#2f5f3c', eH = Ht - 2.4;
+      LPoly(g, R, -d.deep, d.deep + 0.2, '#8a8174');
+      LPoly(g, OUT(R, 0.4), 0, 1.2, '#b9b0a0');                       // granite plinth
+      LPoly(g, R, 1.2, eH - 1.2, wall);
+      for (const y of [2.2, 2.2 + (eH - 3)/2]) LPoly(g, OUT(R, 0.12), y, (eH - 3)/2 - 1.2, {c:red, glow:'#ffcf8a', gk:0.15});
+      LPoly(g, OUT(R, 0.12), eH - 1.6, 0.5, wall);                    // frieze
+      LPoly(g, OUT(R, 1.3), eH, 0.45, tile);                         // projecting eave
+      LPoly(g, SC(R, 0.9), eH + 0.45, 0.9, tile);
+      LPoly(g, SC(R, 0.78), eH + 1.35, 0.8, tile);
+      LPoly(g, SC(R, 0.62), eH + 2.15, 0.6, ridge);
+      // double-eaved roof over the wide north end of the lot
+      let cx = 0, cz = 0, n = 0; for (const p of R) if (p[1] < -12){ cx += p[0]; cz += p[1]; n++; }
+      if (n){ cx /= n; cz /= n;
+        LBox(g, 13, 3.0, 9, cx, eH + 0.4, cz, wall);
+        LFrust(g, 16, 12, 11, 7, 1.6, cx, eH + 3.4, cz, tile);
+        LBox(g, 10, 1.6, 6, cx, eH + 5.0, cz, red);
+        LFrust(g, 13, 9, 3, 1.2, 2.6, cx, eH + 6.6, cz, tile);
+        LBox(g, 4.5, 0.5, 0.6, cx, eH + 9.2, cz, ridge); }
+      return g; }};
+  SG_PLACES.push({type:'hk41etunglin', lat:d.ll[0], lon:d.ll[1], rot:0});
+}
+// ---- three heritage buildings with pitched Chinese roofs: walls on the data footprint, halls aligned to the footprint's axis
+// (ry from its long edge). Data heights: Pak Tai 15 m (taken as the main ridge), Tin Hau 3.7 m (an OSM one-storey default: taken
+// as the eave height, the roof rises above it), Law Uk 6.8 m (ridge). Hall layout, roof pitch and colours are approximations.
+function hallRoof(g, ry, u, v, L, W, yE, rh, tile, rc, alongV, plain){
+  const P = rotP(0, 0, ry)(u, 0, v), r = alongV ? ry - Math.PI/2 : ry;
+  LBox(g, L - 0.6, 0.35, W - 0.6, P[0], yE - 0.35, P[2], '#5a4a40', r);                     // eave board / soffit
+  gable(g, P[0], P[2], L, W, yE, rh, tile, r);
+  LBox(g, L + 0.2, 0.5, 0.45, P[0], yE + rh - 0.1, P[2], rc, r);                             // main ridge
+  const R2 = rotP(P[0], P[2], r);
+  if (!plain) for (const e of [-1, 1]){ const q = R2(e*(L/2 + 0.1), 0, 0); LBox(g, 0.6, 0.7, 0.5, q[0], yE + rh + 0.2, q[2], rc, r); }  // upturned ridge ends
+}
+function temple(g, R, deep, yW, wall, plinth){
+  LPoly(g, R, -deep, deep + 0.2, '#7d766c');
+  LPoly(g, OUT(R, 0.35), 0, 0.6, plinth);
+  LPoly(g, R, 0.6, yW - 0.6, wall);
+  LPoly(g, OUT(R, 0.06), yW - 0.9, 0.55, {c:'#e8e2d2', m:0, lk:0.4});                     // painted frieze under the eaves
+}
+const HER = {
+  hk41epaktai(g, d){
+    const ry = -0.078, top = Math.max(8, d.h - d.dy), tile = '#4f7d55', rc = '#c9b48a';
+    temple(g, d.ring, d.deep, top - 5.0, '#8f8a82', '#b8b2a6');
+    hallRoof(g, ry, 0.5, -8.2, 17, 11.5, top - 4.6, 2.8, tile, rc);  // walls top at top - 5.0, all eaves at or above it                        // front hall over the wide north part
+    hallRoof(g, ry, -12, -8.2, 10, 11, top - 5.0, 2.2, tile, rc); hallRoof(g, ry, 13, -7.6, 10, 9.5, top - 5.0, 2.2, tile, rc);
+    hallRoof(g, ry, 1.0, 6.5, 16.5, 14.5, top - 3.8, 3.4, tile, rc);                       // main hall, uphill to the south
+    const P = rotP(0, 0, ry)(0.5, 0, -14.4); LBox(g, 4.2, 3.4, 0.4, P[0], 0.6, P[2], {c:'#3b2a22', glow:'#ffcc88', gk:0.3}, ry);  // doorway
+  },
+  hk41etinhau(g, d){
+    const ry = -0.241, yW = Math.max(3.7, d.h), tile = '#5b7f5c', rc = '#cdb88c';
+    temple(g, d.ring, d.deep, yW, '#9a958c', '#b9b3a7');
+    hallRoof(g, ry, 0, -4.4, 18.6, 7.6, yW, 2.0, tile, rc);
+    hallRoof(g, ry, 0, 3.6, 18.6, 9.4, yW + 0.6, 2.4, tile, rc);
+    const P = rotP(0, 0, ry)(0, 0, -8.2); LBox(g, 3.2, 2.8, 0.4, P[0], 0.6, P[2], {c:'#3b2a22', glow:'#ffcc88', gk:0.3}, ry);
+  },
+  hk41elawuk(g, d){
+    const ry = 0.577, top = Math.max(5, d.h - d.dy), tile = '#55534f', rc = '#6b6863';
+    temple(g, d.ring, d.deep, top - 1.9, '#b4aa98', '#9e978a');
+    hallRoof(g, ry, -0.15, -1.85, 16.8, 7.6, top - 1.9, 1.9, tile, rc, false, true);                    // main row, ridge along the long side
+    hallRoof(g, ry, -5.95, 3.9, 4.8, 5.4, top - 1.9, 1.5, tile, rc, true, true);                 // side wings round the front yard
+    hallRoof(g, ry, 5.55, 3.9, 4.8, 5.4, top - 1.9, 1.5, tile, rc, true, true);
+  }
+};
+for (const k of Object.keys(HER)){
+  const d = D[k], nm = NAMES[k], top = k === 'hk41etinhau' ? Math.max(3.7, d.h) + 3.4 : Math.max(5, d.h - d.dy);
+  LANDMARKS[k] = {zh:nm[0], en:nm[1], cat:'old', r:d.r, h:top, lt:{m:0, c:'#ffd6a0', k:0.75}, build(){ const g = new THREE.Group(); HER[k](g, d); return g; }};
+  SG_PLACES.push({type:k, lat:d.ll[0], lon:d.ll[1], rot:0});
+}
+}
+
+// ===== City Brush v41 - Hong Kong Island west (hkv41w): Standard Chartered Bank Building, The Landmark (Gloucester and Edinburgh
+// Towers), The Belcher's, Four Seasons Place / Hotel, Central Market. Footprints and heights from the map's building data
+// (OSM-derived, decoded from hkdata/hk_bld0); generated by w41/assemble.py. Helpers copied from hk/central/central.js.
+// No logos, names, signage or text on the models.
+{
+const FD = {"stanchart":{"lat":22.2803722,"lon":114.1590262,"r":36.8,"base":36.31,"gnd":30.26,"G":{"x0":-46.8,"z0":-46.8,"s":8,"nx":13,"nz":13,"v":[-3.2,-3.7,-4.2,-5.7,-7.1,-8.6,-10.1,-11.6,-13.1,-14.6,-16.1,-17.4,-17.9,-2.8,-3.3,-3.8,-5.2,-6.7,-8.3,-9.8,-11.3,-12.9,-14.4,-15.9,-17.3,-17.8,-2.4,-2.8,-3.3,-4.8,-6.3,-7.9,-9.5,-11.1,-12.7,-14.2,-15.8,-17.2,-17.7,-1.9,-2.3,-2.8,-4.3,-5.9,-7.6,-9.2,-10.8,-12.4,-14.0,-15.7,-17.1,-17.5,-1.2,-1.6,-1.9,-3.4,-5.0,-6.6,-8.2,-9.7,-11.3,-12.9,-14.5,-15.8,-16.4,-0.5,-0.8,-1.1,-2.6,-4.1,-5.6,-7.1,-8.7,-10.2,-11.7,-13.3,-14.6,-15.2,0.1,-0.1,-0.3,-1.7,-3.2,-4.6,-6.1,-7.6,-9.1,-10.6,-12.0,-13.4,-14.0,0.8,0.7,0.6,-0.8,-2.2,-3.7,-5.1,-6.5,-8.0,-9.4,-10.8,-12.1,-12.9,1.5,1.5,1.4,0.1,-1.3,-2.7,-4.1,-5.5,-6.9,-8.2,-9.6,-10.9,-11.7,2.2,2.2,2.2,1.0,-0.4,-1.7,-3.1,-4.4,-5.7,-7.1,-8.4,-9.7,-10.5,2.9,3.0,3.0,1.8,0.5,-0.7,-2.0,-3.3,-4.6,-5.9,-7.2,-8.4,-9.4,3.6,3.7,3.9,2.7,1.5,0.2,-1.0,-2.3,-3.5,-4.8,-6.0,-7.2,-8.2,4.1,4.2,4.4,3.3,2.1,0.9,-0.3,-1.5,-2.7,-3.9,-5.1,-6.3,-7.3]},"parts":[[0.0,185.0,[[-9.5,-6.88],[7.0,-2.38],[9.5,-3.62],[8.0,-6.12],[-8.5,-10.62],[-11.0,-9.38]],[222,214,200]],[0.0,163.0,[[-9.0,-1.88],[4.0,1.62],[8.75,-0.88],[9.25,-2.62],[8.75,-3.38],[9.5,-3.62],[9.0,-4.38],[9.75,-4.62],[10.25,-6.62],[7.5,-11.12],[-5.5,-14.88],[-10.25,-12.12],[-10.75,-10.38],[-10.5,-8.62],[-11.25,-8.38],[-11.75,-6.62]],[222,214,200]],[0.0,141.0,[[-10.5,3.62],[2.5,7.12],[7.25,4.38],[7.75,2.62],[6.25,0.38],[8.75,-0.88],[10.25,-6.62],[9.0,-8.88],[11.25,-10.12],[11.75,-11.88],[9.0,-16.62],[-4.0,-20.12],[-8.75,-17.62],[-13.25,-1.12]],[222,214,200]],[0.0,119.0,[[-12.0,8.88],[1.0,12.62],[5.75,9.88],[6.25,8.12],[4.75,5.88],[7.25,4.38],[7.75,2.62],[6.25,0.38],[8.75,-0.88],[10.25,-6.62],[9.0,-8.88],[11.25,-10.12],[11.75,-11.88],[10.5,-14.38],[12.75,-15.62],[13.25,-17.38],[10.75,-22.12],[-2.5,-25.62],[-7.0,-22.88],[-14.75,4.38]],[222,214,200]],[0.0,97.0,[[-13.25,14.38],[-6.0,16.38],[-1.25,13.88],[-0.75,12.12],[1.0,12.62],[5.75,9.88],[6.25,8.12],[4.75,5.88],[7.25,4.38],[7.75,2.62],[6.25,0.38],[8.75,-0.88],[10.25,-6.62],[9.0,-8.88],[11.25,-10.12],[11.75,-11.88],[10.5,-14.38],[12.75,-15.62],[13.25,-17.38],[10.75,-22.12],[8.75,-22.62],[9.25,-24.38],[6.75,-28.88],[-0.5,-30.88],[-5.75,-28.12],[-16.25,9.38]],[222,214,200]],[0.0,75.0,[[-14.75,19.88],[-13.0,20.38],[-8.25,17.62],[-7.75,15.88],[-6.0,16.38],[-1.25,13.88],[-0.75,12.12],[1.0,12.62],[5.75,9.88],[6.25,8.12],[4.75,5.88],[7.25,4.38],[7.75,2.62],[6.25,0.38],[8.75,-0.88],[10.25,-6.62],[9.0,-8.88],[11.25,-10.12],[11.75,-11.88],[10.5,-14.38],[12.75,-15.62],[13.25,-17.38],[10.75,-22.12],[8.75,-22.62],[9.25,-24.38],[6.75,-28.88],[5.0,-29.38],[5.5,-31.12],[2.75,-35.88],[1.0,-36.38],[-4.25,-33.38],[-4.75,-31.62],[-3.25,-29.38],[-5.75,-28.12],[-16.25,9.38],[-14.75,11.62],[-17.25,12.88],[-17.75,14.62]],[222,214,200]],[0.0,10.3,[[5.5,36.38],[21.5,-20.88],[9.25,-24.38],[6.75,-28.88],[5.0,-29.38],[5.5,-31.12],[2.75,-35.88],[1.0,-36.38],[-4.25,-33.38],[-4.75,-31.62],[-3.25,-29.38],[-5.75,-28.12],[-16.25,9.38],[-14.75,11.62],[-17.25,12.88],[-21.5,28.88]],[222,214,200]]]},"landmark":{"lat":22.281229,"lon":114.1577242,"r":58.8,"base":40.58,"gnd":37.31,"G":{"x0":-68.8,"z0":-68.8,"s":8,"nx":19,"nz":19,"v":[-3.2,-3.3,-3.3,-3.4,-3.5,-4.0,-4.5,-5.0,-5.5,-6.0,-6.6,-7.1,-7.6,-8.2,-9.0,-9.9,-10.8,-11.6,-12.5,-2.6,-2.8,-2.9,-3.1,-3.2,-3.7,-4.2,-4.7,-5.2,-5.7,-6.3,-6.8,-7.3,-7.8,-8.7,-9.5,-10.4,-11.2,-12.0,-2.0,-2.3,-2.5,-2.7,-2.9,-3.4,-3.9,-4.4,-4.9,-5.4,-5.9,-6.5,-7.0,-7.5,-8.3,-9.2,-10.0,-10.8,-11.6,-1.4,-1.7,-2.0,-2.3,-2.6,-3.1,-3.6,-4.1,-4.6,-5.1,-5.6,-6.2,-6.7,-7.2,-8.0,-8.8,-9.6,-10.4,-11.2,-0.9,-1.2,-1.6,-2.0,-2.3,-2.8,-3.3,-3.8,-4.3,-4.8,-5.3,-5.9,-6.4,-6.9,-7.7,-8.5,-9.3,-10.0,-10.8,-0.3,-0.7,-1.2,-1.6,-2.0,-2.5,-3.0,-3.5,-4.0,-4.5,-5.0,-5.5,-6.0,-6.6,-7.4,-8.1,-8.9,-9.7,-10.4,0.3,-0.2,-0.7,-1.2,-1.7,-2.3,-2.7,-3.2,-3.7,-4.2,-4.7,-5.2,-5.7,-6.3,-7.0,-7.8,-8.5,-9.3,-10.0,0.9,0.3,-0.3,-0.9,-1.5,-2.0,-2.5,-3.0,-3.5,-3.9,-4.4,-4.9,-5.4,-6.0,-6.7,-7.4,-8.2,-8.9,-9.6,1.5,0.8,0.2,-0.5,-1.2,-1.7,-2.2,-2.7,-3.2,-3.6,-4.1,-4.6,-5.1,-5.7,-6.4,-7.1,-7.8,-8.5,-9.2,2.0,1.3,0.6,-0.2,-0.9,-1.4,-1.9,-2.4,-2.9,-3.4,-3.9,-4.3,-4.8,-5.4,-6.1,-6.7,-7.4,-8.1,-8.8,2.2,1.5,0.7,-0.0,-0.8,-1.3,-1.7,-2.2,-2.7,-3.2,-3.7,-4.1,-4.6,-5.1,-5.8,-6.5,-7.1,-7.8,-8.4,2.4,1.6,0.9,0.1,-0.6,-1.1,-1.6,-2.1,-2.5,-3.0,-3.5,-3.9,-4.4,-4.9,-5.5,-6.2,-6.8,-7.4,-8.1,2.5,1.8,1.0,0.3,-0.5,-1.0,-1.4,-1.9,-2.4,-2.8,-3.3,-3.7,-4.2,-4.7,-5.3,-5.9,-6.5,-7.1,-7.7,2.7,1.9,1.2,0.4,-0.3,-0.8,-1.3,-1.7,-2.2,-2.6,-3.1,-3.5,-4.0,-4.5,-5.0,-5.6,-6.2,-6.7,-7.3,2.9,2.1,1.3,0.6,-0.2,-0.7,-1.1,-1.6,-2.0,-2.5,-2.9,-3.3,-3.8,-4.2,-4.8,-5.3,-5.9,-6.4,-6.9,3.0,2.2,1.5,0.7,-0.1,-0.5,-1.0,-1.4,-1.8,-2.3,-2.7,-3.1,-3.6,-4.0,-4.5,-5.0,-5.5,-6.0,-6.5,3.2,2.4,1.6,0.8,0.1,-0.4,-0.8,-1.2,-1.7,-2.1,-2.5,-2.9,-3.4,-3.8,-4.3,-4.8,-5.2,-5.7,-6.2,3.3,2.6,1.8,1.0,0.2,-0.2,-0.7,-1.1,-1.5,-1.9,-2.3,-2.7,-3.2,-3.6,-4.0,-4.5,-4.9,-5.3,-5.8,3.4,2.6,1.8,1.0,0.2,-0.2,-0.6,-1.0,-1.4,-1.8,-2.2,-2.6,-3.0,-3.4,-3.7,-4.1,-4.5,-4.9,-5.3]},"parts":[[12.4,159.0,[[-8.38,58.25],[23.88,34.5],[-0.12,2.5],[-32.12,26.25]],[190,186,180]],[12.4,159.0,[[-0.12,-3.75],[1.38,-3.5],[31.88,-26.0],[32.12,-27.5],[9.38,-58.0],[8.12,-58.25],[-22.38,-35.75],[-22.62,-34.25]],[118,136,150]],[0.0,12.4,[[-8.38,58.25],[23.62,34.5],[-0.12,2.5],[-32.12,26.5]],[190,186,180]]]},"belchers":{"lat":22.2851471,"lon":114.1333319,"r":127.5,"base":53.73,"gnd":36.99,"G":{"x0":-137.5,"z0":-137.5,"s":8,"nx":36,"nz":36,"v":[-48.8,-47.9,-46.9,-46.0,-44.4,-42.7,-41.1,-39.4,-37.8,-36.1,-34.5,-32.8,-31.5,-31.1,-30.7,-30.3,-29.9,-29.5,-29.0,-28.6,-28.2,-28.0,-27.9,-27.9,-27.8,-27.8,-27.7,-27.7,-27.6,-27.5,-27.5,-27.5,-27.4,-27.4,-27.4,-27.3,-48.0,-47.0,-45.9,-44.9,-43.3,-41.7,-40.1,-38.5,-36.8,-35.2,-33.6,-32.0,-30.7,-30.3,-29.9,-29.4,-29.0,-28.6,-28.2,-27.8,-27.4,-27.2,-27.1,-27.1,-27.0,-27.0,-26.9,-26.9,-26.8,-26.8,-26.7,-26.7,-26.7,-26.6,-26.6,-26.6,-47.2,-46.0,-44.9,-43.8,-42.2,-40.7,-39.1,-37.5,-36.0,-34.4,-32.8,-31.2,-29.9,-29.5,-29.1,-28.7,-28.3,-27.9,-27.5,-27.1,-26.7,-26.4,-26.4,-26.4,-26.3,-26.3,-26.2,-26.2,-26.1,-26.1,-26.1,-26.0,-26.0,-26.0,-26.0,-25.9,-46.0,-44.9,-43.9,-42.8,-41.3,-39.8,-38.3,-36.7,-35.2,-33.7,-32.2,-30.6,-29.4,-29.0,-28.6,-28.2,-27.8,-27.4,-27.0,-26.6,-26.2,-26.0,-25.9,-25.9,-25.8,-25.8,-25.7,-25.7,-25.6,-25.6,-25.6,-25.6,-25.5,-25.5,-25.5,-25.5,-44.8,-43.8,-42.8,-41.8,-40.4,-38.9,-37.4,-35.9,-34.5,-33.0,-31.5,-30.0,-28.8,-28.4,-28.0,-27.6,-27.2,-26.9,-26.5,-26.1,-25.7,-25.5,-25.4,-25.4,-25.3,-25.3,-25.2,-25.2,-25.2,-25.1,-25.1,-25.1,-25.1,-25.0,-25.0,-25.0,-43.7,-42.7,-41.8,-40.8,-39.4,-38.0,-36.6,-35.1,-33.7,-32.3,-30.8,-29.4,-28.2,-27.9,-27.5,-27.1,-26.7,-26.3,-26.0,-25.6,-25.2,-25.0,-24.9,-24.9,-24.8,-24.8,-24.8,-24.7,-24.7,-24.6,-24.6,-24.6,-24.6,-24.6,-24.5,-24.5,-42.5,-41.6,-40.7,-39.8,-38.5,-37.1,-35.7,-34.3,-32.9,-31.6,-30.2,-28.8,-27.7,-27.3,-26.9,-26.6,-26.2,-25.8,-25.4,-25.1,-24.7,-24.5,-24.4,-24.4,-24.4,-24.3,-24.3,-24.2,-24.2,-24.2,-24.1,-24.1,-24.1,-24.1,-24.1,-24.1,-41.3,-40.5,-39.7,-38.8,-37.5,-36.2,-34.9,-33.5,-32.2,-30.9,-29.5,-28.2,-27.1,-26.7,-26.4,-26.0,-25.6,-25.3,-24.9,-24.6,-24.2,-24.0,-24.0,-23.9,-23.9,-23.8,-23.8,-23.8,-23.7,-23.7,-23.7,-23.6,-23.6,-23.6,-23.6,-23.6,-40.2,-39.4,-38.6,-37.8,-36.6,-35.3,-34.0,-32.7,-31.4,-30.2,-28.9,-27.6,-26.5,-26.2,-25.8,-25.5,-25.1,-24.8,-24.4,-24.1,-23.7,-23.5,-23.5,-23.4,-23.4,-23.4,-23.3,-23.3,-23.2,-23.2,-23.2,-23.2,-23.2,-23.1,-23.1,-23.1,-39.0,-38.3,-37.6,-36.9,-35.6,-34.4,-33.2,-31.9,-30.7,-29.5,-28.2,-27.0,-26.0,-25.6,-25.3,-24.9,-24.6,-24.2,-23.9,-23.5,-23.2,-23.0,-23.0,-22.9,-22.9,-22.9,-22.8,-22.8,-22.8,-22.7,-22.7,-22.7,-22.7,-22.7,-22.6,-22.6,-37.8,-37.2,-36.5,-35.9,-34.7,-33.5,-32.3,-31.1,-29.9,-28.7,-27.6,-26.4,-25.4,-25.1,-24.7,-24.4,-24.0,-23.7,-23.4,-23.0,-22.7,-22.5,-22.5,-22.4,-22.4,-22.4,-22.3,-22.3,-22.3,-22.2,-22.2,-22.2,-22.2,-22.2,-22.2,-22.2,-36.7,-36.1,-35.4,-34.8,-33.6,-32.5,-31.3,-30.2,-29.0,-27.9,-26.7,-25.5,-24.6,-24.2,-23.9,-23.6,-23.3,-22.9,-22.6,-22.3,-21.9,-21.7,-21.7,-21.7,-21.6,-21.6,-21.6,-21.5,-21.5,-21.5,-21.4,-21.4,-21.4,-21.4,-21.4,-21.4,-35.7,-35.0,-34.3,-33.7,-32.5,-31.4,-30.3,-29.1,-28.0,-26.8,-25.7,-24.5,-23.6,-23.3,-22.9,-22.6,-22.3,-21.9,-21.6,-21.3,-20.9,-20.7,-20.7,-20.7,-20.6,-20.6,-20.6,-20.5,-20.5,-20.5,-20.4,-20.4,-20.4,-20.4,-20.4,-20.4,-34.6,-33.9,-33.2,-32.5,-31.4,-30.3,-29.2,-28.1,-26.9,-25.8,-24.7,-23.6,-22.6,-22.3,-21.9,-21.6,-21.3,-20.9,-20.6,-20.3,-19.9,-19.7,-19.7,-19.7,-19.6,-19.6,-19.6,-19.5,-19.5,-19.5,-19.5,-19.4,-19.4,-19.4,-19.4,-19.4,-33.6,-32.9,-32.1,-31.4,-30.3,-29.2,-28.1,-27.0,-25.9,-24.8,-23.7,-22.6,-21.6,-21.3,-21.0,-20.6,-20.3,-20.0,-19.6,-19.3,-18.9,-18.8,-18.7,-18.7,-18.6,-18.6,-18.6,-18.5,-18.5,-18.5,-18.5,-18.4,-18.4,-18.4,-18.4,-18.4,-32.5,-31.8,-31.1,-30.3,-29.2,-28.1,-27.0,-25.9,-24.8,-23.8,-22.7,-21.6,-20.6,-20.3,-20.0,-19.6,-19.3,-19.0,-18.6,-18.3,-17.9,-17.8,-17.7,-17.7,-17.7,-17.6,-17.6,-17.6,-17.5,-17.5,-17.5,-17.5,-17.4,-17.4,-17.4,-17.4,-31.5,-30.7,-30.0,-29.2,-28.1,-27.0,-26.0,-24.9,-23.8,-22.7,-21.6,-20.6,-19.7,-19.3,-19.0,-18.6,-18.3,-18.0,-17.6,-17.3,-17.0,-16.8,-16.7,-16.7,-16.7,-16.6,-16.6,-16.6,-16.5,-16.5,-16.5,-16.5,-16.4,-16.4,-16.4,-16.4,-30.4,-29.6,-28.9,-28.1,-27.0,-25.9,-24.9,-23.8,-22.8,-21.7,-20.6,-19.6,-18.7,-18.3,-18.0,-17.7,-17.3,-17.0,-16.6,-16.3,-16.0,-15.8,-15.7,-15.7,-15.7,-15.6,-15.6,-15.6,-15.5,-15.5,-15.5,-15.5,-15.5,-15.4,-15.4,-15.4,-29.4,-28.6,-27.8,-27.0,-25.9,-24.9,-23.8,-22.8,-21.7,-20.7,-19.6,-18.6,-17.7,-17.4,-17.0,-16.7,-16.3,-16.0,-15.7,-15.3,-15.0,-14.8,-14.7,-14.7,-14.7,-14.6,-14.6,-14.6,-14.5,-14.5,-14.5,-14.5,-14.5,-14.4,-14.4,-14.4,-28.3,-27.5,-26.7,-25.8,-24.8,-23.8,-22.7,-21.7,-20.7,-19.6,-18.6,-17.6,-16.7,-16.4,-16.0,-15.7,-15.3,-15.0,-14.7,-14.3,-14.0,-13.8,-13.7,-13.7,-13.7,-13.6,-13.6,-13.6,-13.5,-13.5,-13.5,-13.5,-13.5,-13.5,-13.4,-13.4,-26.9,-25.9,-25.0,-24.1,-23.1,-22.1,-21.1,-20.1,-19.1,-18.1,-17.1,-16.0,-15.2,-14.9,-14.5,-14.2,-13.9,-13.5,-13.2,-12.9,-12.6,-12.4,-12.3,-12.3,-12.3,-12.2,-12.2,-12.1,-12.1,-12.1,-12.1,-12.0,-12.0,-12.0,-12.0,-12.0,-25.3,-24.3,-23.2,-22.2,-21.2,-20.2,-19.3,-18.3,-17.3,-16.3,-15.4,-14.4,-13.6,-13.3,-13.0,-12.6,-12.3,-12.0,-11.7,-11.4,-11.1,-10.9,-10.8,-10.8,-10.8,-10.7,-10.7,-10.6,-10.6,-10.6,-10.5,-10.5,-10.5,-10.5,-10.5,-10.5,-23.8,-22.6,-21.5,-20.3,-19.4,-18.4,-17.5,-16.5,-15.6,-14.6,-13.7,-12.8,-12.0,-11.7,-11.4,-11.1,-10.8,-10.5,-10.2,-9.8,-9.5,-9.4,-9.3,-9.3,-9.2,-9.2,-9.2,-9.1,-9.1,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-22.3,-21.0,-19.7,-18.4,-17.5,-16.6,-15.7,-14.8,-13.9,-12.9,-12.0,-11.1,-10.3,-10.1,-9.8,-9.5,-9.2,-8.9,-8.6,-8.3,-8.0,-7.9,-7.8,-7.8,-7.7,-7.7,-7.7,-7.6,-7.6,-7.5,-7.5,-7.5,-7.5,-7.5,-7.5,-7.5,-20.7,-19.3,-17.9,-16.5,-15.6,-14.8,-13.9,-13.0,-12.1,-11.2,-10.3,-9.5,-8.7,-8.5,-8.2,-7.9,-7.6,-7.4,-7.1,-6.8,-6.5,-6.4,-6.3,-6.3,-6.2,-6.2,-6.1,-6.1,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-6.0,-19.2,-17.7,-16.2,-14.7,-13.8,-12.9,-12.1,-11.2,-10.4,-9.5,-8.7,-7.8,-7.1,-6.8,-6.6,-6.3,-6.1,-5.8,-5.6,-5.3,-5.0,-4.9,-4.8,-4.8,-4.7,-4.7,-4.6,-4.6,-4.5,-4.5,-4.5,-4.5,-4.5,-4.5,-4.4,-4.4,-17.7,-16.0,-14.4,-12.8,-11.9,-11.1,-10.3,-9.5,-8.6,-7.8,-7.0,-6.2,-5.5,-5.2,-5.0,-4.8,-4.5,-4.3,-4.0,-3.8,-3.5,-3.4,-3.3,-3.3,-3.2,-3.2,-3.1,-3.1,-3.0,-3.0,-2.9,-2.9,-2.9,-2.9,-2.9,-2.9,-16.2,-14.4,-12.6,-10.9,-10.1,-9.3,-8.5,-7.7,-6.9,-6.1,-5.3,-4.5,-3.9,-3.6,-3.4,-3.2,-2.9,-2.7,-2.5,-2.3,-2.0,-1.9,-1.8,-1.8,-1.7,-1.7,-1.6,-1.6,-1.5,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-1.4,-14.7,-12.8,-10.9,-9.1,-8.3,-7.5,-6.7,-6.0,-5.2,-4.4,-3.7,-2.9,-2.3,-2.1,-1.8,-1.6,-1.4,-1.2,-0.9,-0.7,-0.5,-0.4,-0.3,-0.2,-0.2,-0.1,-0.1,-0.0,0.0,0.1,0.1,0.1,0.1,0.1,0.1,0.1,-13.9,-11.9,-9.9,-7.9,-7.1,-6.3,-5.6,-4.8,-4.0,-3.2,-2.4,-1.6,-1.0,-0.7,-0.4,-0.2,0.1,0.4,0.6,0.9,1.2,1.4,1.4,1.5,1.6,1.7,1.7,1.8,1.9,2.0,2.0,2.0,2.0,2.0,2.0,2.0,-13.1,-11.0,-8.9,-6.8,-6.0,-5.2,-4.4,-3.6,-2.8,-2.0,-1.2,-0.4,0.3,0.6,0.9,1.3,1.6,1.9,2.2,2.6,2.9,3.1,3.2,3.3,3.4,3.5,3.5,3.6,3.7,3.8,3.9,3.9,3.9,3.9,3.9,3.9,-12.3,-10.1,-7.9,-5.7,-4.8,-4.0,-3.2,-2.4,-1.6,-0.7,0.1,0.9,1.6,2.0,2.3,2.7,3.1,3.5,3.8,4.2,4.6,4.8,4.9,5.0,5.1,5.2,5.4,5.5,5.6,5.7,5.7,5.7,5.7,5.8,5.8,5.8,-11.5,-9.2,-6.9,-4.5,-3.7,-2.9,-2.0,-1.2,-0.3,0.5,1.3,2.2,2.9,3.3,3.7,4.2,4.6,5.0,5.4,5.8,6.2,6.5,6.7,6.8,6.9,7.0,7.2,7.3,7.4,7.5,7.6,7.6,7.6,7.6,7.6,7.7,-10.8,-8.3,-5.9,-3.4,-2.5,-1.7,-0.8,0.0,0.9,1.7,2.6,3.4,4.2,4.7,5.1,5.6,6.1,6.5,7.0,7.5,7.9,8.2,8.4,8.5,8.7,8.8,9.0,9.1,9.3,9.4,9.4,9.5,9.5,9.5,9.5,9.5,-10.0,-7.4,-4.8,-2.3,-1.4,-0.5,0.3,1.2,2.1,3.0,3.8,4.7,5.5,6.0,6.5,7.0,7.6,8.1,8.6,9.1,9.6,10.0,10.1,10.3,10.5,10.6,10.8,10.9,11.1,11.3,11.3,11.3,11.4,11.4,11.4,11.4,-9.2,-6.5,-3.8,-1.2,-0.2,0.6,1.5,2.4,3.3,4.2,5.1,6.0,6.8,7.3,7.9,8.5,9.0,9.6,10.2,10.7,11.3,11.7,11.9,12.0,12.2,12.4,12.6,12.8,12.9,13.1,13.2,13.2,13.2,13.3,13.3,13.3]},"parts":[[31.0,196.3,[[-34.62,61.38],[-31.38,66.38],[-32.12,69.38],[-29.12,69.88],[-29.62,72.12],[-26.88,72.88],[-24.88,64.38],[-21.38,65.12],[-22.38,69.12],[-23.62,68.88],[-24.88,73.88],[-20.62,74.88],[-20.12,72.38],[-17.62,72.88],[-15.88,65.88],[-10.88,66.88],[-11.12,68.12],[-7.38,69.12],[-6.88,66.88],[-5.12,67.38],[-3.88,62.12],[-11.62,60.38],[-12.12,62.38],[-14.88,61.62],[-13.38,55.38],[-10.88,56.12],[-11.12,57.62],[-3.88,59.38],[-2.88,55.88],[-4.88,55.38],[-4.12,51.88],[-8.88,50.88],[-9.12,51.88],[-12.38,51.12],[-10.88,43.88],[-12.88,43.38],[-11.88,39.38],[-16.38,38.38],[-18.38,47.62],[-19.88,47.12],[-18.12,39.38],[-18.88,39.12],[-17.88,34.88],[-21.12,34.12],[-21.38,35.38],[-24.12,34.62],[-25.38,40.38],[-33.12,44.88],[-40.38,43.12],[-41.38,47.12],[-39.12,47.62],[-39.62,49.38],[-33.38,50.62],[-34.38,54.62],[-39.62,53.38],[-39.88,54.88],[-41.38,54.38],[-42.62,59.62]],[238,226,206]],[31.0,190.1,[[19.88,19.12],[23.88,16.88],[23.12,15.88],[27.12,13.62],[29.12,17.12],[25.12,19.38],[24.38,18.12],[20.62,20.38],[23.38,24.88],[25.38,23.62],[26.88,26.12],[32.62,22.88],[41.62,25.62],[46.12,32.88],[49.62,30.62],[47.88,27.88],[49.62,26.88],[47.12,22.62],[45.12,23.88],[43.38,20.88],[49.88,16.88],[51.62,19.88],[49.62,21.12],[52.88,26.38],[54.62,25.62],[56.12,28.38],[60.12,25.88],[54.88,17.12],[57.38,7.88],[62.12,4.88],[60.62,2.62],[63.62,0.88],[61.12,-3.12],[56.88,-0.62],[57.38,0.12],[53.62,2.38],[51.88,-0.88],[55.38,-2.88],[55.88,-1.88],[60.12,-4.38],[57.88,-7.88],[55.88,-6.62],[54.12,-9.38],[47.62,-5.62],[40.62,-7.38],[36.12,-14.62],[32.38,-12.38],[33.88,-9.88],[32.62,-9.38],[35.88,-3.88],[37.88,-5.12],[39.62,-2.12],[32.38,1.88],[30.62,-0.88],[32.62,-2.12],[29.62,-7.12],[28.38,-6.38],[26.62,-9.38],[22.62,-7.12],[27.12,0.62],[25.62,7.38],[18.12,11.62],[19.38,13.88],[17.38,15.12]],[222,228,214]],[31.0,190.1,[[-5.38,-26.12],[5.88,-32.88],[8.12,-29.12],[4.88,-27.12],[3.88,-28.62],[-2.88,-24.38],[-0.88,-20.88],[1.12,-22.12],[2.38,-19.62],[7.12,-22.62],[16.12,-19.88],[19.62,-14.12],[23.38,-16.38],[21.88,-19.12],[23.38,-20.12],[20.88,-24.12],[19.12,-23.12],[16.88,-26.62],[23.38,-30.62],[25.62,-27.12],[23.62,-25.88],[26.12,-21.88],[27.62,-22.62],[29.12,-19.88],[33.38,-22.38],[29.62,-28.38],[31.62,-37.88],[35.62,-40.12],[34.12,-42.38],[36.62,-43.62],[34.38,-47.38],[27.88,-43.38],[28.88,-41.62],[25.12,-39.38],[22.88,-43.12],[34.38,-50.12],[32.38,-53.38],[30.38,-52.12],[28.62,-54.88],[22.12,-51.12],[15.38,-52.88],[10.88,-60.12],[6.88,-57.88],[8.38,-55.38],[6.88,-54.62],[10.12,-49.12],[12.38,-50.62],[14.12,-47.62],[7.12,-43.62],[5.38,-46.38],[7.12,-47.38],[4.12,-52.62],[2.88,-51.88],[1.12,-54.88],[-2.88,-52.62],[1.62,-44.88],[0.12,-38.12],[-7.38,-33.88],[-6.12,-31.62],[-7.88,-30.38]],[238,226,206]],[31.0,177.7,[[-76.88,51.12],[-73.38,57.62],[-74.62,62.38],[-75.88,62.12],[-76.88,66.62],[-71.38,67.88],[-70.62,65.12],[-68.62,65.62],[-65.88,54.88],[-60.88,56.12],[-61.88,60.12],[-64.12,59.62],[-64.88,62.62],[-65.88,62.38],[-67.12,68.38],[-62.88,69.38],[-62.38,67.38],[-59.88,68.12],[-58.12,60.62],[-52.88,56.88],[-45.62,58.62],[-44.38,53.38],[-47.12,52.62],[-46.88,51.38],[-52.38,50.12],[-52.88,52.12],[-57.88,50.88],[-56.38,43.88],[-51.38,44.88],[-51.62,46.62],[-45.88,47.88],[-46.12,48.88],[-43.38,49.62],[-41.62,42.12],[-48.62,40.38],[-51.38,34.88],[-49.62,27.38],[-51.88,26.88],[-51.12,24.12],[-55.12,23.12],[-56.88,30.12],[-55.88,30.38],[-56.38,32.88],[-54.88,33.12],[-55.88,36.88],[-60.88,35.88],[-58.12,24.62],[-59.62,24.38],[-58.88,21.38],[-65.12,19.88],[-66.12,23.88],[-64.88,24.12],[-66.12,30.12],[-73.12,33.38],[-79.62,31.62],[-81.38,38.88],[-78.12,39.88],[-77.88,38.88],[-74.12,39.62],[-75.62,45.12],[-79.38,44.12],[-79.12,43.38],[-82.38,42.38],[-84.12,49.38]],[214,222,230]],[31.0,171.5,[[45.62,57.88],[49.38,55.62],[48.88,54.62],[53.38,51.88],[55.62,55.62],[53.88,56.62],[53.12,55.62],[49.88,57.38],[52.62,61.88],[55.12,60.38],[56.38,62.38],[61.62,59.38],[65.62,66.62],[67.62,65.62],[68.62,67.38],[71.88,65.62],[67.88,58.62],[65.88,59.88],[63.62,56.12],[70.62,51.88],[72.88,55.62],[70.62,56.88],[74.62,63.62],[78.12,61.62],[77.12,59.62],[79.12,58.38],[75.12,51.12],[80.88,47.62],[79.38,45.62],[82.88,43.38],[80.62,39.38],[74.38,43.12],[74.88,43.88],[72.62,45.12],[70.62,42.12],[72.88,40.88],[73.38,41.88],[78.62,38.62],[76.38,35.12],[75.38,35.88],[74.12,33.62],[71.38,35.12],[64.38,32.62],[60.38,26.38],[56.62,28.62],[58.12,31.12],[56.88,31.88],[58.88,35.38],[55.62,37.12],[53.38,32.88],[51.62,33.88],[50.12,31.12],[46.38,33.38],[50.62,40.62],[48.88,47.62],[43.38,50.62],[44.62,52.88],[43.12,53.62]],[232,214,196]],[31.0,171.5,[[-23.38,-69.12],[-21.62,-66.12],[-15.38,-69.88],[-13.62,-66.62],[-16.88,-64.62],[-17.38,-65.38],[-24.62,-61.12],[-22.62,-57.38],[-20.38,-58.62],[-19.38,-56.62],[-13.38,-60.12],[-6.88,-58.88],[-3.12,-53.12],[0.88,-55.38],[-0.88,-57.88],[0.62,-58.62],[-2.38,-63.38],[-4.38,-62.12],[-7.12,-66.38],[-0.88,-70.62],[1.88,-66.12],[0.62,-65.38],[3.62,-60.62],[4.62,-61.38],[6.38,-58.88],[10.38,-61.38],[7.12,-66.38],[8.62,-72.88],[14.38,-76.38],[12.88,-78.62],[14.88,-79.88],[12.62,-83.12],[5.62,-79.12],[6.88,-77.38],[4.12,-75.88],[2.12,-76.12],[0.38,-79.12],[6.12,-82.62],[4.38,-85.62],[6.38,-94.12],[0.62,-95.38],[-0.38,-90.88],[-1.62,-91.12],[-3.38,-84.12],[-6.12,-84.88],[-4.62,-91.62],[-5.88,-91.88],[-5.12,-95.38],[-6.88,-95.88],[-6.62,-97.12],[-10.12,-97.88],[-12.38,-88.38],[-11.62,-87.12],[-18.62,-82.88],[-19.38,-84.12],[-30.38,-86.62],[-31.12,-82.62],[-29.88,-82.38],[-30.12,-80.38],[-26.12,-79.62],[-26.38,-78.38],[-20.12,-77.12],[-20.62,-75.12],[-26.62,-76.12],[-26.88,-75.12],[-32.12,-76.12],[-33.12,-70.88]],[214,222,230]],[0.0,32.0,[[-87.88,90.88],[-84.88,95.12],[-78.38,97.88],[-71.12,97.38],[-70.12,98.88],[-43.38,95.88],[-38.88,91.38],[-36.38,85.12],[-17.38,86.88],[-4.38,82.12],[0.12,78.38],[2.88,78.62],[13.88,88.62],[30.88,75.12],[38.88,74.88],[48.62,65.12],[55.38,64.88],[63.12,65.62],[83.38,54.62],[88.88,32.12],[71.88,1.12],[84.62,-6.62],[65.12,-41.38],[59.88,-38.38],[56.62,-44.12],[52.88,-41.88],[50.62,-45.88],[45.62,-43.12],[31.62,-67.88],[36.12,-73.38],[36.62,-80.38],[34.12,-86.62],[28.88,-91.38],[22.12,-90.62],[14.88,-86.38],[8.88,-88.12],[6.12,-94.88],[-10.12,-98.88],[-11.38,-94.12],[-28.88,-97.62],[-53.62,11.12],[-78.62,26.12],[-88.88,66.38],[-83.12,76.38],[-86.38,77.88],[-88.62,83.38],[-88.88,87.88]],[206,214,222]]]},"fourseasons":{"lat":22.2863821,"lon":114.1568226,"r":61.3,"base":5.91,"gnd":3.21,"G":{"x0":-71.3,"z0":-71.3,"s":8,"nx":19,"nz":19,"v":[-3.6,-3.7,-3.8,-3.9,-4.0,-4.1,-4.2,-4.3,-4.5,-4.7,-4.9,-5.1,-5.3,-5.5,-5.5,-5.5,-5.5,-5.5,-5.5,-3.2,-3.3,-3.4,-3.5,-3.6,-3.8,-3.9,-4.0,-4.2,-4.5,-4.7,-5.0,-5.2,-5.5,-5.5,-5.5,-5.5,-5.5,-5.5,-2.8,-2.9,-3.0,-3.2,-3.3,-3.5,-3.6,-3.7,-4.0,-4.2,-4.5,-4.8,-5.1,-5.3,-5.5,-5.5,-5.5,-5.5,-5.5,-2.3,-2.5,-2.6,-2.8,-3.0,-3.1,-3.3,-3.5,-3.7,-4.0,-4.3,-4.6,-4.9,-5.1,-5.4,-5.5,-5.5,-5.5,-5.5,-1.8,-2.0,-2.2,-2.4,-2.6,-2.8,-3.0,-3.2,-3.5,-3.8,-4.1,-4.4,-4.7,-5.0,-5.2,-5.5,-5.5,-5.5,-5.5,-1.3,-1.6,-1.8,-2.0,-2.3,-2.5,-2.8,-3.0,-3.3,-3.6,-3.9,-4.2,-4.5,-4.8,-5.1,-5.4,-5.5,-5.5,-5.5,-0.8,-1.1,-1.4,-1.7,-1.9,-2.2,-2.5,-2.8,-3.1,-3.4,-3.7,-4.0,-4.3,-4.6,-4.9,-5.2,-5.5,-5.5,-5.5,-0.4,-0.7,-1.0,-1.3,-1.6,-1.9,-2.2,-2.5,-2.8,-3.1,-3.5,-3.8,-4.1,-4.4,-4.7,-5.0,-5.3,-5.4,-5.4,0.1,-0.2,-0.6,-0.9,-1.3,-1.6,-1.9,-2.3,-2.6,-2.9,-3.2,-3.6,-3.9,-4.2,-4.5,-4.8,-5.1,-5.2,-5.3,0.6,0.2,-0.1,-0.5,-0.9,-1.3,-1.7,-2.1,-2.4,-2.7,-3.0,-3.4,-3.7,-4.0,-4.3,-4.6,-5.0,-5.0,-5.1,1.1,0.7,0.3,-0.2,-0.6,-1.0,-1.4,-1.8,-2.2,-2.5,-2.8,-3.2,-3.5,-3.8,-4.1,-4.5,-4.8,-4.9,-5.0,1.4,1.0,0.5,0.1,-0.3,-0.8,-1.2,-1.6,-2.0,-2.3,-2.7,-3.0,-3.4,-3.7,-4.0,-4.4,-4.7,-4.8,-4.9,1.6,1.1,0.7,0.3,-0.2,-0.6,-1.1,-1.5,-1.9,-2.2,-2.6,-2.9,-3.3,-3.6,-4.0,-4.3,-4.7,-4.8,-4.9,1.7,1.3,0.8,0.4,-0.1,-0.5,-1.0,-1.4,-1.8,-2.1,-2.5,-2.9,-3.2,-3.6,-3.9,-4.3,-4.7,-4.7,-4.8,1.9,1.4,1.0,0.5,0.1,-0.4,-0.8,-1.3,-1.7,-2.1,-2.4,-2.8,-3.2,-3.5,-3.9,-4.3,-4.6,-4.7,-4.8,2.1,1.6,1.1,0.7,0.2,-0.2,-0.7,-1.2,-1.6,-2.0,-2.3,-2.7,-3.1,-3.5,-3.8,-4.2,-4.6,-4.7,-4.8,2.2,1.8,1.3,0.8,0.3,-0.1,-0.6,-1.1,-1.5,-1.9,-2.2,-2.6,-3.0,-3.4,-3.8,-4.2,-4.6,-4.7,-4.8,2.4,1.9,1.4,1.0,0.5,0.0,-0.5,-0.9,-1.4,-1.8,-2.2,-2.6,-3.0,-3.4,-3.8,-4.2,-4.6,-4.6,-4.7,2.6,2.1,1.6,1.1,0.6,0.1,-0.3,-0.8,-1.3,-1.7,-2.1,-2.5,-2.9,-3.3,-3.7,-4.1,-4.5,-4.6,-4.7]},"parts":[[0.0,214.0,[[10.0,-11.38],[14.75,-5.12],[16.5,-1.62],[17.75,2.12],[18.5,9.88],[26.75,9.38],[26.5,6.38],[28.75,6.12],[29.0,9.12],[37.25,8.38],[36.5,-6.12],[34.25,-5.38],[32.75,-9.12],[24.25,-4.62],[19.0,-13.62],[12.0,-20.38],[6.75,-13.88]],[214,222,230]],[0.0,205.0,[[10.0,-11.38],[14.75,-5.12],[16.5,-1.62],[17.75,2.12],[18.5,9.88],[29.0,9.12],[28.75,13.88],[26.75,22.88],[22.5,31.12],[19.5,34.88],[29.0,41.12],[30.5,39.12],[35.25,42.38],[38.5,37.88],[43.25,27.88],[45.75,17.12],[48.0,17.38],[48.5,5.88],[47.5,6.12],[45.75,-3.88],[42.25,-13.62],[34.75,-10.88],[36.5,-6.12],[34.25,-5.38],[28.75,-16.62],[23.25,-22.88],[17.0,-28.38],[11.0,-20.88],[12.0,-20.38],[6.75,-13.88]],[214,222,230]],[0.0,165.0,[[-48.5,-33.38],[-38.75,-25.88],[-39.25,-24.88],[-32.25,-21.38],[-32.25,-20.38],[-11.5,-13.88],[-0.75,-11.38],[0.75,-17.12],[4.75,-16.12],[9.25,-32.62],[1.5,-35.62],[-14.5,-40.12],[-22.75,-41.62],[-40.5,-42.38],[-41.25,-40.12],[-47.25,-39.12]],[214,222,230]]]},"centralmkt":{"lat":22.2840274,"lon":114.1554199,"r":53.1,"base":21.09,"gnd":16.0,"G":{"x0":-63.1,"z0":-63.1,"s":8,"nx":17,"nz":17,"v":[-9.3,-9.3,-9.4,-9.4,-9.4,-9.4,-9.4,-9.4,-9.5,-9.6,-9.7,-9.8,-9.9,-10.0,-10.1,-10.2,-10.6,-9.2,-9.2,-9.2,-9.2,-9.2,-9.2,-9.3,-9.3,-9.4,-9.5,-9.6,-9.7,-9.7,-9.8,-9.9,-10.0,-10.4,-9.1,-9.1,-9.1,-9.1,-9.1,-9.1,-9.1,-9.2,-9.2,-9.3,-9.4,-9.5,-9.6,-9.7,-9.8,-9.9,-10.2,-8.9,-8.9,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.1,-9.2,-9.3,-9.3,-9.4,-9.5,-9.6,-9.7,-10.0,-8.2,-8.2,-8.2,-8.2,-8.2,-8.2,-8.2,-8.3,-8.4,-8.4,-8.5,-8.6,-8.7,-8.7,-8.8,-8.9,-9.2,-7.4,-7.4,-7.4,-7.4,-7.4,-7.4,-7.4,-7.4,-7.5,-7.6,-7.7,-7.7,-7.8,-7.9,-8.0,-8.0,-8.4,-6.5,-6.5,-6.6,-6.6,-6.6,-6.6,-6.6,-6.6,-6.7,-6.7,-6.8,-6.9,-7.0,-7.0,-7.1,-7.2,-7.5,-5.7,-5.7,-5.7,-5.7,-5.7,-5.7,-5.7,-5.8,-5.8,-5.9,-6.0,-6.0,-6.1,-6.2,-6.3,-6.3,-6.6,-4.9,-4.9,-4.9,-4.9,-4.9,-4.9,-4.9,-4.9,-5.0,-5.1,-5.1,-5.2,-5.3,-5.3,-5.4,-5.5,-5.7,-4.1,-4.1,-4.1,-4.1,-4.1,-4.1,-4.1,-4.1,-4.2,-4.2,-4.3,-4.4,-4.4,-4.5,-4.6,-4.6,-4.8,-3.2,-3.2,-3.2,-3.2,-3.2,-3.2,-3.2,-3.3,-3.3,-3.4,-3.5,-3.5,-3.6,-3.6,-3.7,-3.8,-3.9,-2.4,-2.4,-2.4,-2.4,-2.4,-2.4,-2.4,-2.4,-2.5,-2.5,-2.6,-2.7,-2.7,-2.8,-2.8,-2.9,-3.0,-1.4,-1.5,-1.5,-1.5,-1.5,-1.5,-1.5,-1.5,-1.5,-1.6,-1.6,-1.7,-1.8,-1.8,-1.9,-1.9,-2.0,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.2,0.1,0.1,-0.0,-0.1,-0.2,-0.3,-0.3,-0.5,2.2,2.2,2.2,2.2,2.2,2.1,2.1,2.1,2.0,1.9,1.8,1.7,1.6,1.5,1.4,1.3,1.1,4.1,4.0,4.0,4.0,4.0,3.9,3.9,3.9,3.7,3.6,3.5,3.4,3.2,3.1,3.0,2.9,2.7,5.9,5.9,5.8,5.8,5.8,5.7,5.7,5.6,5.5,5.3,5.2,5.0,4.9,4.8,4.6,4.5,4.3]},"parts":[[0.0,10.3,[[-26.75,45.62],[51.0,-14.38],[26.75,-45.62],[-51.0,14.62]],[222,214,200]]]},"swmsb":{"lat":22.2861732,"lon":114.1497568,"r":38.2,"base":28.46,"gnd":23.6,"G":{"x0":-48.2,"z0":-48.2,"s":8,"nx":14,"nz":14,"v":[-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-11.8,-10.6,-10.6,-10.6,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.7,-10.8,-9.5,-9.5,-9.5,-9.5,-9.5,-9.6,-9.6,-9.6,-9.6,-9.6,-9.6,-9.6,-9.6,-9.7,-8.4,-8.4,-8.4,-8.4,-8.4,-8.4,-8.5,-8.5,-8.5,-8.5,-8.5,-8.5,-8.5,-8.6,-7.3,-7.3,-7.3,-7.3,-7.3,-7.3,-7.3,-7.4,-7.4,-7.4,-7.4,-7.4,-7.4,-7.5,-6.1,-6.1,-6.1,-6.1,-6.2,-6.2,-6.2,-6.2,-6.2,-6.2,-6.3,-6.3,-6.3,-6.3,-4.8,-4.8,-4.8,-4.9,-4.9,-4.9,-4.9,-4.9,-4.9,-5.0,-5.0,-5.0,-5.1,-5.1,-3.5,-3.5,-3.5,-3.6,-3.6,-3.6,-3.6,-3.7,-3.7,-3.7,-3.7,-3.8,-3.8,-3.8,-2.2,-2.2,-2.3,-2.3,-2.3,-2.3,-2.4,-2.4,-2.4,-2.4,-2.5,-2.5,-2.6,-2.6,-0.9,-0.9,-1.0,-1.0,-1.0,-1.1,-1.1,-1.1,-1.1,-1.2,-1.2,-1.3,-1.3,-1.4,0.4,0.4,0.3,0.3,0.3,0.2,0.2,0.2,0.1,0.1,0.0,-0.0,-0.1,-0.1,1.7,1.7,1.6,1.6,1.5,1.5,1.5,1.4,1.4,1.3,1.3,1.2,1.2,1.1,3.0,2.9,2.9,2.9,2.8,2.8,2.7,2.7,2.7,2.6,2.5,2.5,2.4,2.4,4.3,4.2,4.2,4.2,4.1,4.1,4.0,4.0,3.9,3.9,3.8,3.7,3.7,3.6]},"parts":[[0.0,38.2,[[-35.62,12.25],[-27.38,17.5],[-25.88,17.5],[-24.12,15.5],[-22.88,16.25],[-23.88,18.5],[-23.62,19.75],[-9.12,29.0],[-7.62,28.75],[-6.38,26.5],[-4.88,27.75],[-6.12,29.5],[-5.12,31.5],[3.38,37.0],[5.38,37.25],[12.38,27.25],[12.38,26.0],[11.12,25.0],[11.88,24.0],[14.62,23.75],[28.38,3.0],[28.12,1.5],[26.62,-0.0],[27.12,-0.75],[28.88,0.25],[30.62,-0.25],[36.62,-9.5],[36.62,-11.0],[36.12,-12.0],[27.12,-17.75],[25.62,-17.5],[24.88,-16.25],[23.88,-17.0],[24.62,-18.0],[24.38,-19.5],[8.38,-29.75],[6.38,-28.75],[5.88,-31.25],[-3.38,-37.25],[-4.62,-37.25],[-5.88,-36.75],[-12.62,-27.0],[-12.38,-25.75],[-11.38,-25.0],[-11.88,-24.0],[-14.38,-24.75],[-15.38,-24.0],[-28.88,-3.5],[-29.12,-2.25],[-27.62,-0.75],[-28.38,0.5],[-29.62,0.25],[-31.62,1.5],[-36.62,8.25]],[212,204,186]]]},"threepp":{"lat":22.2769587,"lon":114.1680261,"r":34.2,"base":37.68,"gnd":33.81,"G":{"x0":-44.2,"z0":-44.2,"s":8,"nx":13,"nz":13,"v":[-9.5,-9.5,-9.5,-9.5,-9.5,-9.5,-9.5,-9.5,-9.5,-9.5,-9.6,-9.6,-9.6,-8.4,-8.4,-8.5,-8.5,-8.5,-8.5,-8.5,-8.5,-8.5,-8.5,-8.6,-8.6,-8.6,-7.4,-7.4,-7.4,-7.4,-7.5,-7.5,-7.5,-7.5,-7.5,-7.5,-7.6,-7.6,-7.6,-6.3,-6.3,-6.4,-6.4,-6.4,-6.4,-6.5,-6.5,-6.5,-6.5,-6.6,-6.6,-6.6,-5.3,-5.3,-5.3,-5.4,-5.4,-5.4,-5.4,-5.5,-5.5,-5.5,-5.6,-5.6,-5.6,-4.2,-4.2,-4.3,-4.3,-4.3,-4.4,-4.4,-4.5,-4.5,-4.5,-4.6,-4.6,-4.7,-3.1,-3.2,-3.2,-3.3,-3.3,-3.4,-3.4,-3.4,-3.5,-3.5,-3.6,-3.6,-3.7,-2.1,-2.1,-2.2,-2.2,-2.3,-2.3,-2.4,-2.4,-2.5,-2.5,-2.6,-2.6,-2.7,-1.0,-1.0,-1.1,-1.2,-1.2,-1.3,-1.3,-1.4,-1.4,-1.5,-1.6,-1.6,-1.7,0.4,0.3,0.3,0.2,0.1,0.1,0.0,-0.0,-0.1,-0.2,-0.2,-0.3,-0.4,1.8,1.7,1.6,1.6,1.5,1.4,1.4,1.3,1.3,1.2,1.1,1.0,1.0,3.1,3.1,3.0,2.9,2.9,2.8,2.7,2.7,2.6,2.5,2.4,2.4,2.3,4.5,4.4,4.4,4.3,4.2,4.2,4.1,4.0,3.9,3.9,3.8,3.7,3.6]},"parts":[[0.0,182.0,[[-25.88,14.62],[-28.62,18.62],[-11.12,31.12],[-9.12,28.12],[-6.12,30.12],[-3.88,26.88],[-1.12,28.62],[1.38,25.12],[2.62,26.12],[30.12,-12.62],[25.88,-15.62],[28.38,-19.12],[11.38,-31.12],[9.88,-28.62],[6.88,-30.62],[4.88,-27.88],[2.62,-29.62],[0.38,-26.38],[-1.88,-27.88],[-30.12,11.62]],[168,178,180]]]}};
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+// ---- shared helpers (after bay/sfdt): every material double-sided so batches of one colour share one material
+const dsS = c => typeof c === 'string' ? {c, ds:true} : Object.assign({ds:true}, c);
+const LBoxD = (g, w, h, d, x, y, z, col, ry) => LBox(g, w, h, d, x, y, z, dsS(col), ry);
+const LCylD = (g, rt, rb, h, x, y, z, col, seg, ry) => LCyl(g, rt, rb, h, x, y, z, dsS(col), seg, ry);
+const LSphD = (g, r, x, y, z, col, sy, seg) => LSph(g, r, x, y, z, dsS(col), sy, seg);
+const lerp = (a, b, t) => a + (b - a)*t, cl01 = t => t < 0 ? 0 : t > 1 ? 1 : t;
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+function segP(o, a, b, r, n){
+  n = n || 4; const dx = b[0]-a[0], dy = b[1]-a[1], dz = b[2]-a[2], L = Math.hypot(dx, dy, dz); if (L < 1e-4) return;
+  const d = [dx/L, dy/L, dz/L], up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let ux = d[1]*up[2]-d[2]*up[1], uy = d[2]*up[0]-d[0]*up[2], uz = d[0]*up[1]-d[1]*up[0]; const ul = Math.hypot(ux, uy, uz); ux /= ul; uy /= ul; uz /= ul;
+  const vx = d[1]*uz-d[2]*uy, vy = d[2]*ux-d[0]*uz, vz = d[0]*uy-d[1]*ux;
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+ux*c+vx*s, p[1]+uy*c+vy*s, p[2]+uz*c+vz*s]); } return R; };
+  const A = ring(a), Bq = ring(b);
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], Bq[j], Bq[i]); }
+}
+const rotQ = (cx, cz, ry) => { const c = Math.cos(ry || 0), s = Math.sin(ry || 0); return (x, y, z) => [cx + x*c + z*s, y, cz - x*s + z*c]; };
+function boxP(o, w, h, d, x, y, z, ry){
+  const R = rotQ(x, z, ry), hw = w/2, hd = d/2;
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, c, e] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[c], P[e]);
+}
+const abox = (o, x0, x1, y0, y1, z0, z1) => boxP(o, x1 - x0, y1 - y0, z1 - z0, (x0 + x1)/2, y0, (z0 + z1)/2, 0);
+function loftP(o, secs, cap){
+  const n = secs[0].length;
+  for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, secs[s][i], secs[s][j], secs[s+1][j], secs[s+1][i]); }
+  if (cap){ const t = secs[secs.length - 1], c = [0, 0, 0]; for (const p of t){ c[0] += p[0]/n; c[1] += p[1]/n; c[2] += p[2]/n; } for (let i = 0; i < n; i++) o.push(...c, ...t[i], ...t[(i+1) % n]); }
+}
+// ---- plan polygons ([x, z])
+const area2 = P => { let s = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; s += a[0]*b[1] - b[0]*a[1]; } return s/2; };
+const cenP = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+const bbP = P => { let a = [1e9, 1e9, -1e9, -1e9]; for (const p of P){ a[0] = Math.min(a[0], p[0]); a[1] = Math.min(a[1], p[1]); a[2] = Math.max(a[2], p[0]); a[3] = Math.max(a[3], p[1]); } return a; };
+const clean = P => { const o = []; for (const p of P){ const q = o[o.length - 1]; if (!q || Math.hypot(p[0]-q[0], p[1]-q[1]) > 0.05) o.push(p); } if (o.length > 2 && Math.hypot(o[0][0]-o[o.length-1][0], o[0][1]-o[o.length-1][1]) < 0.05) o.pop(); return o; };
+function offP(P, d){
+  const n = P.length, s = area2(P) > 0 ? 1 : -1, L = [];
+  for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; L.push([a[0] - ez/l*s*d, a[1] + ex/l*s*d, ex, ez]); }
+  const out = [];
+  for (let i = 0; i < n; i++){ const p = L[(i + n - 1) % n], q = L[i], den = p[2]*q[3] - p[3]*q[2];
+    if (Math.abs(den) < 1e-6){ out.push([q[0], q[1]]); continue; }
+    const t = ((q[0]-p[0])*q[3] - (q[1]-p[1])*q[2])/den; let x = p[0] + p[2]*t, z = p[1] + p[3]*t;
+    const ox = P[i][0], oz = P[i][1], dd = Math.hypot(x - ox, z - oz), mx = Math.abs(d)*2.5;
+    if (dd > mx){ x = ox + (x - ox)/dd*mx; z = oz + (z - oz)/dd*mx; }
+    out.push([x, z]); }
+  return out;
+}
+const outN = (P, i) => { const s = area2(P) > 0 ? 1 : -1, a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; return [ez/l*s, -ex/l*s]; };
+const inPoly = (P, x, z) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; };
+const triang = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+// walls of a plan polygon from y0 (number or f(x, z)) up to ytop (number or f(x, z)) and its top
+function prismP(o, P, y0, ytop, noTop, noBot){
+  const f = typeof ytop === 'function' ? ytop : () => ytop, f0 = typeof y0 === 'function' ? y0 : () => y0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; quadP(o, [a[0], f0(a[0], a[1]), a[1]], [b[0], f0(b[0], b[1]), b[1]], [b[0], f(b[0], b[1]), b[1]], [a[0], f(a[0], a[1]), a[1]]); }
+  if (!noTop) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f(p[0], p[1]), p[1]); }
+  if (!noBot && typeof y0 === 'number' && y0 > 0.5) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], y0, p[1]); }
+}
+const flatP = (o, P, y) => { for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], y, p[1]); } };
+// polygon edges as lines (an outline of thin boxes) at height y (lit outlines, parapets)
+function edgeP(o, P, y, w, h, off, skip){
+  for (let i = 0; i < P.length; i++){ if (skip && skip(i)) continue; const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 0.2) continue;
+    const [nx, nz] = outN(P, i), o2 = off || 0;
+    const A = [a[0] + nx*o2, a[1] + nz*o2], Bq = [b[0] + nx*o2, b[1] + nz*o2], A2 = [A[0] - nx*w, A[1] - nz*w], B2 = [Bq[0] - nx*w, Bq[1] - nz*w];
+    quadP(o, [A[0], y, A[1]], [Bq[0], y, Bq[1]], [Bq[0], y + h, Bq[1]], [A[0], y + h, A[1]]);
+    quadP(o, [A[0], y + h, A[1]], [Bq[0], y + h, Bq[1]], [B2[0], y + h, B2[1]], [A2[0], y + h, A2[1]]);
+    quadP(o, [A2[0], y, A2[1]], [B2[0], y, B2[1]], [B2[0], y + h, B2[1]], [A2[0], y + h, A2[1]]); }
+}
+// horizontal bands round a plan polygon every `step` m between y0 and y1 (vertical quads just proud of the wall)
+function bandsP(o, P, y0, y1, step, bh, off, edges){
+  off = off || 0.12;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.3) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0; y < y1 - 0.05; y += step) quadP(o, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, Math.min(y1, y+bh), b[1]+nz*off], [a[0]+nx*off, Math.min(y1, y+bh), a[1]+nz*off]);
+  }
+}
+// vertical strips (mullions / piers) standing `off` proud of the walls, about `sp` apart, `w` wide, `dp` deep (fins if dp > 0)
+function mullP(o, P, y0, y1, sp, w, off, dp, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp*0.6) continue;
+    const [nx, nz] = outN(P, i), n = Math.max(1, Math.round(L/sp)), ux = ex/L, uz = ez/L;
+    for (let k = 0; k <= n; k++){
+      const t = k/n, x = a[0] + ex*t + nx*off, z = a[1] + ez*t + nz*off, p = [x - ux*w/2, z - uz*w/2], q = [x + ux*w/2, z + uz*w/2];
+      quadP(o, [p[0], y0, p[1]], [q[0], y0, q[1]], [q[0], y1, q[1]], [p[0], y1, p[1]]);
+      if (dp) { const p2 = [p[0] + nx*dp, p[1] + nz*dp], q2 = [q[0] + nx*dp, q[1] + nz*dp]; quadP(o, [p2[0], y0, p2[1]], [q2[0], y0, q2[1]], [q2[0], y1, q2[1]], [p2[0], y1, p2[1]]);
+        quadP(o, [p[0], y0, p[1]], [p2[0], y0, p2[1]], [p2[0], y1, p2[1]], [p[0], y1, p[1]]); quadP(o, [q[0], y0, q[1]], [q2[0], y0, q2[1]], [q2[0], y1, q2[1]], [q[0], y1, q[1]]); }
+    }
+  }
+}
+// window slots centred in bays along every edge, rows every `fh`
+function winsP(o, P, y0, y1, fh, sp, ww, wh, off, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp) continue;
+    const [nx, nz] = outN(P, i), n = Math.floor(L/sp), ux = ex/L, uz = ez/L, s0 = (L - n*sp)/2 + sp/2;
+    for (let y = y0; y + wh <= y1 + 0.01; y += fh) for (let k = 0; k < n; k++){
+      const s = s0 + k*sp, x = a[0] + ux*s + nx*off, z = a[1] + uz*s + nz*off;
+      quadP(o, [x - ux*ww/2, y, z - uz*ww/2], [x + ux*ww/2, y, z + uz*ww/2], [x + ux*ww/2, y + wh, z + uz*ww/2], [x - ux*ww/2, y + wh, z - uz*ww/2]); }
+  }
+}
+// a small 2-D ground lookup from FD[key].G: ground minus base at local (x, z), bilinear
+const gL = k => { const G = FD[k].G; return (x, z) => { const fx = Math.min(G.nx - 1.001, Math.max(0, (x - G.x0)/G.s)), fz = Math.min(G.nz - 1.001, Math.max(0, (z - G.z0)/G.s)), i = Math.floor(fx), j = Math.floor(fz), u = fx - i, v = fz - j, V = G.v, n = G.nx;
+  return (V[j*n + i]*(1 - u) + V[j*n + i + 1]*u)*(1 - v) + (V[(j + 1)*n + i]*(1 - u) + V[(j + 1)*n + i + 1]*u)*v; }; };
+// lowest ground under a polygon (sampled at its vertices and centre)
+const gMin = (gf, P) => { let m = 1e9; for (const p of P) m = Math.min(m, gf(p[0], p[1])); const c = cenP(P); return Math.min(m, gf(c[0], c[1])); };
+// a plinth / podium wall down to the real ground (2 m into it) under polygon P, top at y
+const plinthP = (o, P, gf, y) => prismP(o, P, (x, z) => Math.min(y - 0.2, gf(x, z) - 2), y, false, true);
+const place = k => SG_PLACES.push({type:k, lat:PL[k].lat, lon:PL[k].lon, rot:PL[k].rot});
+// an n-gon disc (porthole etc.) in the plane of a wall: centre c, outward normal (nx, nz), radius r
+function discP(o, c, nx, nz, r, n){ const ux = -nz, uz = nx; let prev = null; const P = []; for (let i = 0; i < n; i++){ const t = i/n*TAU; P.push([c[0] + ux*Math.cos(t)*r, c[1] + Math.sin(t)*r, c[2] + uz*Math.cos(t)*r]); }
+  for (let i = 1; i < n - 1; i++) triP(o, P[0], P[i], P[i + 1]); }
+// sample points along a polygon edge i every `sp` m (centres of bays): returns [[x, z, ux, uz, nx, nz], ...]
+function bays(P, i, sp){ const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez), n = Math.floor(L/sp), ux = ex/L, uz = ez/L, [nx, nz] = outN(P, i), s0 = (L - n*sp)/2 + sp/2, out = [];
+  for (let k = 0; k < n; k++){ const s = s0 + k*sp; out.push([a[0] + ux*s, a[1] + uz*s, ux, uz, nx, nz]); } return out; }
+// ---- frames and plan tools for the Hong Kong towers
+// a rotated frame: w(u, v) -> local [x, z]; l(x, z) -> [u, v]   (u along angle a measured from east towards south)
+const frm = (cx, cz, a) => { const c = Math.cos(a), s = Math.sin(a); return {c, s, w:(u, v) => [cx + u*c - v*s, cz + u*s + v*c], l:(x, z) => [(x-cx)*c + (z-cz)*s, -(x-cx)*s + (z-cz)*c], p:(u, y, v) => [cx + u*c - v*s, y, cz + u*s + v*c]}; };
+function clipHalf(P, fn){ const out = []; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], fa = fn(a[0], a[1]), fb = fn(b[0], b[1]); if (fa >= 0) out.push(a); if ((fa >= 0) !== (fb >= 0)){ const t = fa/(fa - fb); out.push([a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t]); } } return out; }
+// cut the four corners of P (in frame f) by the lines |u| + |v| = C
+function chamfer(P, f, C){ let Q = P.map(p => f.l(p[0], p[1])); for (const [su, sv] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) Q = clipHalf(Q, (u, v) => C - (su*u + sv*v)); return clean(Q.map(q => f.w(q[0], q[1]))); }
+// scale a polygon about a centre
+const scaleP = (P, c, k) => P.map(p => [c[0] + (p[0] - c[0])*k, c[1] + (p[1] - c[1])*k]);
+// a glass curtain-wall body: walls, roof, thin mullions every sp m (and heavier ones every sp*k), optional spandrel bands
+function skinP(B, P, y0, y1, o){
+  prismP(B.p(o.glass), P, y0, y1, !!o.noTop);
+  if (o.mull) mullP(B.p(o.mull), P, y0, y1, o.sp || 1.5, o.mw || 0.18, 0.06, o.md || 0, o.edges);
+  if (o.pier) mullP(B.p(o.pier), P, y0, y1, o.psp || 4.5, o.pw || 0.45, 0.06, o.pd || 0.35, o.edges);
+  if (o.band) bandsP(B.p(o.band), P, y0 + (o.b0 || o.fh), y1, o.fh, o.bh || 0.5, 0.08, o.edges);
+}
+// v39 (hkv_island): Symphony of Lights searchlight roots - small bright lamps on the roofs
+const sLamps = (g, pts, col) => { for (const p of pts) LCylD(g, 0.6, 0.7, 0.8, p[0], p[1], p[2], {c:'#dfe3e6', glow:col || '#eef3ff', gk:1.8}, 8); };
+// red aviation lights
+const avLights = (g, pts, r) => { for (const p of pts) LSphD(g, r || 0.5, p[0], p[1], p[2], {c:'#c22', glow:'#ff2a1a', gk:2.4}, 1, 6); };
+// low-poly trees into a batch
+function treeP(B, x, y, z, s, crown){
+  const th = 2.6*s; segP(B.p('#5d4a3a'), [x, y, z], [x, y + th, z], 0.2*s, 3);
+  const c = B.p(crown || '#5c8a3e'), R = 2.2*s, cy = y + th + R*0.5, top = [x, cy + R*0.9, z], bot = [x, cy - R*0.6, z], ring = [];
+  for (let i = 0; i < 6; i++){ const a = i/6*TAU + s; ring.push([x + Math.cos(a)*R, cy, z + Math.sin(a)*R]); }
+  for (let i = 0; i < 6; i++){ const j = (i+1) % 6; triP(c, top, ring[j], ring[i]); triP(c, bot, ring[i], ring[j]); }
+}
+function palmP(B, x, y, z, h){
+  segP(B.p('#8a7560'), [x, y, z], [x, y + h, z], 0.22, 4); const c = B.p('#5f8f45');
+  for (let i = 0; i < 7; i++){ const a = i/7*TAU; triP(c, [x, y + h + 0.3, z], [x + Math.cos(a)*3.2, y + h - 1.4, z + Math.sin(a)*3.2], [x + Math.cos(a + 0.35)*2.6, y + h - 0.6, z + Math.sin(a + 0.35)*2.6]); }
+}
+
+const shedOf = P => { // frame and extents of a long pier footprint: u along the long axis (towards the sea = north), v across
+  const c = cenP(P); let best = null;
+  for (let a10 = -900; a10 < 900; a10 += 5){ const a = a10/10*PI/180, f = frm(c[0], c[1], a); let A = [1e9, -1e9, 1e9, -1e9]; for (const p of P){ const q = f.l(p[0], p[1]); A = [Math.min(A[0], q[0]), Math.max(A[1], q[0]), Math.min(A[2], q[1]), Math.max(A[3], q[1])]; }
+    const ar = (A[1] - A[0])*(A[3] - A[2]); if (!best || ar < best.ar - 1e-6) best = {ar, a, A}; }
+  let f = frm(c[0], c[1], best.a), A = best.A; if (A[1] - A[0] < A[3] - A[2]){ f = frm(c[0], c[1], best.a + HP); A = [A[2], A[3], -A[1], -A[0]]; }
+  // point +u out to sea (north = -z)
+  if (f.w(10, 0)[1] > c[1]){ f = frm(c[0], c[1], Math.atan2(f.s, f.c) + PI); A = [-A[1], -A[0], -A[3], -A[2]]; }
+  return {f, u0:A[0], u1:A[1], hw:(A[3] - A[2])/2, vc:(A[3] + A[2])/2};
+};
+// a hipped roof over a rectangle (frame f, u0..u1 x -hw..hw), eaves at y, ridge h higher, overhang ov
+function hipRect(o, f, u0, u1, hw, y, h, ov){ ov = ov || 0; const a = [f.p(u0 - ov, y, -hw - ov), f.p(u1 + ov, y, -hw - ov), f.p(u1 + ov, y, hw + ov), f.p(u0 - ov, y, hw + ov)];
+  const r = Math.min(hw, (u1 - u0)/2)*0.95, r0 = f.p(u0 + r, y + h, 0), r1 = f.p(u1 - r, y + h, 0);
+  quadP(o, a[0], a[1], r1, r0); quadP(o, a[2], a[3], r0, r1); triP(o, a[1], a[2], r1); triP(o, a[3], a[0], r0); }
+// the frame of a rectangle-like polygon, centred: returns {f, u0, u1, hw}
+const rectOf = P => { const s = shedOf(P), f = frm(...s.f.w(0, s.vc), Math.atan2(s.f.s, s.f.c)); return {f, u0:s.u0, u1:s.u1, hw:s.hw}; };
+
+// ---- hkv41w models. Data: FD[key] = {lat, lon, r, base, G (ground minus base, local grid), parts:[[base_m, height_m, ring, wall]]}
+// heights and footprints are the map's OSM-derived building data; massing / colour / facade details are approximations from
+// general knowledge of each building (style only, no measured facts).
+const PL = {}; for (const k in FD) PL['hk41w_' + k] = {lat:FD[k].lat, lon:FD[k].lon, rot:0};
+const gK = k => gL(k);
+const partsOf = k => FD[k].parts.map(p => ({b:p[0], h:p[1], P:clean(p[2]), wall:p[3]}));
+const gAt = (gf, P) => { const c = cenP(P); return gf(c[0], c[1]); };
+const hexOf = w => '#' + w.map(v => Math.max(0, Math.min(255, v | 0)).toString(16).padStart(2, '0')).join('');
+const WIN = {c:'#33404a', glow:'#ffdcae', gk:0.55};
+const avl = (g, P, y) => { const c = cenP(P); avLights(g, [[c[0], y + 0.6, c[1]]], 0.45); };
+// a generic stepped / plain shaft: body prism from y0 to y1, spandrel bands every fh, optional vertical piers, a parapet
+function shaft(B, P, y0, y1, o){
+  prismP(B.p(o.body), P, y0, y1, false, true);
+  if (o.band) bandsP(B.p(o.band), P, y0 + (o.fh || 3.6), y1 - 1.5, o.fh || 3.6, o.bh || 0.7, 0.1);
+  if (o.pier) mullP(B.p(o.pier), P, y0, y1 - 0.5, o.psp || 3, o.pw || 0.5, 0.06, o.pd || 0.3);
+  if (o.par) edgeP(B.p(o.par), P, y1, 0.5, o.parh || 1.2, 0);
+}
+
+// ===== Standard Chartered Bank Building (Des Voeux Road Central, west of the HSBC Main Building). The OSM building parts give a
+// tower stepping back in tiers (75, 97, 119, 141, 163 m) with a small top part to 185 m. Polished grey-pink granite with vertical
+// strip windows of dark glass; each setback finished by a lit parapet (approximate styling).
+LANDMARKS.hk41w_stanchart = {zh:'渣打银行大厦', en:'Standard Chartered Bank Building', cat:'new', r:40, h:185,
+  lt:{m:1, c:'#ffe6c2', k:0.5, fh:3.8, cw:1.5}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('stanchart'), Ps = partsOf('stanchart');
+  const out = Ps.find(p => p.h < 20), g0 = gAt(gf, out.P);
+  const GR = {c:'#a99a92', m:1, fh:3.8, cw:2.2}, GRL = {c:'#c9bdb4', m:0, lk:0.3}, PAR = {c:'#ddd3c9', glow:'#fff1d8', gk:0.7};
+  // podium: the whole plot, stone with a glazed ground floor
+  prismP(B.p({c:'#9c8f87', m:0, lk:0.3}), out.P, (x, z) => gf(x, z) - 2, g0 + out.h, false, true);
+  winsP(B.p(WIN), out.P, g0 + 0.8, g0 + 5.8, 6, 3.2, 2.6, 4.6, 0.08);
+  const tiers = Ps.filter(p => p.h >= 20).sort((a, b) => a.h - b.h);
+  let prev = g0 + out.h;
+  for (const t of tiers){
+    const P = t.P, top = g0 + t.h, lo = prev; prev = top;
+    if (t.h >= 180){ // the top part: a slim lantern and mast
+      prismP(B.p(GRL), P, lo - 1, top - 3, false, true); prismP(B.p({c:'#e8e0d6', glow:'#fff4dc', gk:0.9}), clean(offP(P, -0.4)), top - 3, top);
+      const c = cenP(P); LCylD(g, 0.25, 0.4, 8, c[0], top, c[1], '#bfc4c8', 6); avl(g, P, top + 8); continue; }
+    shaft(B, P, g0 + out.h - 0.5, top, {body:GR, pier:GRL, psp:2.6, pw:0.55, pd:0.35, par:PAR, parh:1.4});
+  }
+  B.flush(g); return g; }};
+
+// ===== The Landmark: Gloucester Tower (Des Voeux Road / Pedder Street corner) and Edinburgh Tower (Queen's Road Central, with
+// the hotel) on the stone podium of the Landmark mall. Both towers 159 m in the map data, standing on a 12.4 m podium. Gloucester
+// Tower in pale blue-grey glass with a fine grid, Edinburgh Tower in darker bronze glass with light horizontal spandrels
+// (approximate styling).
+LANDMARKS.hk41w_landmark = {zh:'置地广场（告罗士打大厦、公爵大厦）', en:'The Landmark (Gloucester Tower, Edinburgh Tower)', cat:'new', r:60, h:159,
+  lt:{m:1, c:'#fff0d8', k:0.55, fh:3.8, cw:1.6}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('landmark'), Ps = partsOf('landmark');
+  const pod = Ps.find(p => p.h < 20), towers = Ps.filter(p => p.h > 100);
+  const POD = {c:'#c8c0b4', m:0, lk:0.35}, PODR = {c:'#b1aa9f', m:0, lk:0.2};
+  for (const t of towers){
+    const P = t.P, g0 = gAt(gf, P), yP = g0 + t.b, top = g0 + t.h;
+    const isG = t.P.length > 6;   // the 8-point outline is Gloucester Tower (north), the 4-point one Edinburgh Tower (south)
+    // the podium under this tower
+    prismP(B.p(POD), P, (x, z) => gf(x, z) - 2, yP, false, true);
+    winsP(B.p(WIN), P, g0 + 0.8, g0 + 5.6, 6, 4.2, 3.4, 4.4, 0.08);
+    bandsP(B.p(PODR), P, yP - 1.2, yP, 9, 1.2, 0.12);
+    const Q = clean(offP(P, -1.2));
+    if (isG){
+      skinP(B, Q, yP, top - 6, {glass:{c:'#8fa6b6', m:1, fh:3.8, cw:1.5}, mull:'#d7dfe4', sp:1.6, mw:0.14, band:'#c3ccd2', fh:3.8, bh:0.35});
+      prismP(B.p({c:'#c9d3da', m:0, lk:0.3, glow:'#eaf2ff', gk:0.6}), clean(offP(Q, -1.5)), top - 6, top, false, true);
+      edgeP(B.p({c:'#e6edf2', glow:'#f2f7ff', gk:0.9}), Q, top - 6.4, 0.4, 0.8, 0.05);
+    } else {
+      skinP(B, Q, yP, top - 4, {glass:{c:'#5e5348', m:1, fh:3.8, cw:1.8}, band:'#bfae98', fh:3.8, bh:1.1, pier:'#4a4038', psp:4.5, pw:0.4, pd:0.25});
+      prismP(B.p({c:'#a8987f', m:0, lk:0.25}), Q, top - 4, top, false, true);
+      edgeP(B.p({c:'#e2d4bf', glow:'#fff0d4', gk:0.8}), Q, top, 0.4, 1.0, 0);
+    }
+    avl(g, Q, top);
+  }
+  if (pod){ const g0 = gAt(gf, pod.P); prismP(B.p(POD), pod.P, (x, z) => gf(x, z) - 2, g0 + pod.h, false, true); edgeP(B.p(PODR), pod.P, g0 + pod.h, 0.5, 1.0, 0); }
+  B.flush(g); return g; }};
+
+// ===== The Belcher's (Pok Fu Lam Road / Belcher's Street, Sai Wan): six residential towers (171.5-196.3 m in the map data) on a
+// 32 m podium stepping down the hillside. Pale cream and beige walls with rows of windows and bay windows, the tops finished with
+// lighter crowns and lit rims (approximate styling).
+LANDMARKS.hk41w_belchers = {zh:'宝翠园', en:'The Belcher\'s', cat:'new', r:128, h:196,
+  lt:{m:1, c:'#ffd9a4', k:0.55, fh:3, cw:1.4}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('belchers'), Ps = partsOf('belchers');
+  const pod = Ps.reduce((a, p) => (area2(p.P) ** 2 > area2(a.P) ** 2 ? p : a)), towers = Ps.filter(p => p.h > 100);
+  const gP = gMin(gf, pod.P), yP = gP + pod.h;
+  prismP(B.p({c:'#b9b1a4', m:0, lk:0.3}), pod.P, (x, z) => gf(x, z) - 2, yP, false, true);
+  bandsP(B.p('#8f877c'), pod.P, gP + 4, yP - 1, 4.5, 0.8, 0.1);
+  winsP(B.p(WIN), pod.P, gP + 1, yP - 2, 4.5, 6, 4, 1.6, 0.12);
+  edgeP(B.p({c:'#ddd6ca', m:0, lk:0.3}), pod.P, yP, 0.5, 1.1, 0);
+  // podium roof garden: green patches
+  flatP(B.p({c:'#7d9a5c', m:0, lk:0.1}), clean(offP(pod.P, -4)), yP + 0.15);
+  for (const t of towers){
+    const P = t.P, top = gAt(gf, P) + t.h, y0 = yP - 0.5, col = towers.indexOf(t) % 2 ? '#d6ccbb' : '#cdc2b0';
+    prismP(B.p({c:col, m:1, fh:3, cw:1.4}), P, y0, top - 7, false, true);
+    bandsP(B.p('#9a9488'), P, y0 + 6, top - 8, 6, 0.45, 0.08);
+    const Q = clean(offP(P, -1.2));
+    prismP(B.p({c:'#efe9dd', m:0, lk:0.35}), Q, top - 7, top - 1.2, false, true);
+    edgeP(B.p({c:'#f6f1e6', glow:'#fff1d6', gk:0.8}), P, top - 7.4, 0.5, 0.9, 0.05);
+    prismP(B.p({c:'#d9d2c4', m:0, lk:0.2}), clean(offP(Q, -3)), top - 1.2, top, false, true);
+    avl(g, Q, top);
+  }
+  B.flush(g); return g; }};
+
+// ===== Four Seasons Place and the Four Seasons Hotel (Finance Street, Central reclamation, west of One IFC): the taller block
+// (205 m, a 214 m top part in the map data) and the lower hotel block (165 m). Light grey-beige stone frames with blue-grey glass,
+// stepped crowns (approximate styling).
+LANDMARKS.hk41w_fourseasons = {zh:'四季汇及四季酒店', en:'Four Seasons Place and Four Seasons Hotel', cat:'new', r:62, h:214,
+  lt:{m:1, c:'#ffe4bc', k:0.55, fh:3.4, cw:1.5}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('fourseasons'), Ps = partsOf('fourseasons');
+  const ST = {c:'#cfc8bb', m:1, fh:3.4, cw:1.6}, FR = {c:'#e3ddd1', m:0, lk:0.35}, CR = {c:'#ece6da', glow:'#fff2da', gk:0.8};
+  for (const t of Ps){
+    const P = t.P, g0 = gAt(gf, P), top = g0 + t.h, small = Math.abs(area2(P)) < 600;
+    if (small){ // the top part over the taller block: a stepped crown
+      prismP(B.p(FR), P, top - 16, top - 4, false, true); prismP(B.p(CR), clean(offP(P, -1)), top - 4, top, false, true); avl(g, P, top); continue; }
+    prismP(B.p(FR), P, (x, z) => gf(x, z) - 2, g0 + 14, false, true);
+    winsP(B.p(WIN), P, g0 + 1, g0 + 12, 6.5, 4, 3.2, 5, 0.08);
+    shaft(B, clean(offP(P, -0.6)), g0 + 14, top - 5, {body:ST, pier:FR, psp:3.4, pw:0.6, pd:0.3, band:'#b9b3a8', fh:3.4, bh:0.4});
+    const Q = clean(offP(P, -2));
+    prismP(B.p(FR), Q, top - 5, top, false, true); edgeP(B.p(CR), clean(offP(P, -0.6)), top - 5.4, 0.5, 1, 0.05);
+    avl(g, Q, top);
+  }
+  B.flush(g); return g; }};
+
+// ===== Central Market (Queen's Road Central / Des Voeux Road Central): the long market hall, here at its map-data height of
+// 10.3 m; pale cream walls with long horizontal window bands and a flat roof with a parapet (approximate styling of the
+// streamlined facade).
+LANDMARKS.hk41w_centralmkt = {zh:'中环街市', en:'Central Market', cat:'heritage', r:54, h:10,
+  lt:{m:0, c:'#fff0d6', k:0.45, e:0.6}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('centralmkt'), P = partsOf('centralmkt')[0].P, g0 = gMin(gf, P), top = g0 + 10.3;
+  prismP(B.p({c:'#e8e1cf', m:0, lk:0.4}), P, (x, z) => gf(x, z) - 2, top, false, true);
+  bandsP(B.p({c:'#4a5a5c', glow:'#ffe6bf', gk:0.5}), P, g0 + 1.2, top - 1.2, 4.4, 2.2, 0.08);
+  bandsP(B.p('#cfc6b0'), P, g0 + 3.6, top - 1, 4.4, 0.35, 0.16);
+  edgeP(B.p({c:'#f2ecdc', m:0, lk:0.4}), P, top, 0.5, 0.9, 0);
+  const Q = clean(offP(P, -6)); prismP(B.p({c:'#c9c2b0', m:0, lk:0.25}), Q, top, top + 0.6, false, true);
+  B.flush(g); return g; }};
+
+// ===== Sheung Wan Municipal Services Building (Queen Street / Morrison Street, Sheung Wan; it houses the Sheung Wan Civic Centre
+// named on the map): a broad block at its map-data height of 38.2 m. Grey-white concrete with long horizontal window bands, a
+// glazed ground floor and rooftop plant (approximate styling).
+LANDMARKS.hk41w_swmsb = {zh:'上环市政大厦', en:'Sheung Wan Municipal Services Building', cat:'new', r:40, h:38,
+  lt:{m:1, c:'#fff0d8', k:0.45, fh:4.2, cw:2}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('swmsb'), t = partsOf('swmsb')[0], P = t.P, g0 = gMin(gf, P), top = g0 + t.h;
+  prismP(B.p({c:'#c9c7bf', m:1, fh:4.2, cw:2.2}), P, (x, z) => gf(x, z) - 2, top - 3, false, true);
+  winsP(B.p(WIN), P, g0 + 0.8, g0 + 5, 5, 4, 3.4, 4, 0.08);
+  bandsP(B.p('#e4e2da'), P, g0 + 6, top - 4, 4.2, 1.4, 0.14);
+  edgeP(B.p({c:'#e8e6de', m:0, lk:0.35}), P, top - 3, 0.5, 1.0, 0);
+  const c = cenP(P), RP = B.p({c:'#a9a79f', m:0, lk:0.2}); boxP(RP, 14, 3, 9, c[0] - 6, top - 3, c[1], 0); boxP(RP, 8, 4.5, 8, c[0] + 8, top - 3, c[1] + 2, 0);
+  B.flush(g); return g; }};
+
+// ===== Three Pacific Place (Queen's Road East, at the eastern edge of Admiralty, linked to Pacific Place): an office tower of
+// 182 m in the map data on its 20-point footprint. Blue-grey glass curtain wall with fine vertical mullions and heavier piers,
+// a recessed glazed top with a lit rim; a stone-clad lobby base (approximate styling).
+LANDMARKS.hk41w_threepp = {zh:'太古广场三座', en:'Three Pacific Place', cat:'new', r:34, h:182,
+  lt:{m:1, c:'#e4ecff', k:0.55, fh:4, cw:1.5}, build(){
+  const g = new THREE.Group(), B = mkB(), gf = gK('threepp'), t = partsOf('threepp')[0], P = t.P, g0 = gAt(gf, P), top = g0 + t.h;
+  prismP(B.p({c:'#bdb8ae', m:0, lk:0.3}), P, (x, z) => gf(x, z) - 2, g0 + 12, false, true);
+  winsP(B.p(WIN), P, g0 + 0.8, g0 + 9, 9, 4.5, 3.8, 7.5, 0.08);
+  skinP(B, P, g0 + 12, top - 8, {glass:{c:'#7d93a6', m:1, fh:4, cw:1.5}, mull:'#c9d3db', sp:1.5, mw:0.12, pier:'#9fb0bd', psp:6, pw:0.5, pd:0.3});
+  const Q = clean(offP(P, -1.5));
+  prismP(B.p({c:'#8ea3b4', m:0, lk:0.2, glow:'#eaf1ff', gk:0.5}), Q, top - 8, top, false, true);
+  edgeP(B.p({c:'#e8eef3', glow:'#f3f8ff', gk:0.9}), P, top - 8.4, 0.5, 0.9, 0.05);
+  avl(g, Q, top);
+  B.flush(g); return g; }};
+
+for (const k in PL) SG_PLACES.push({type:k, lat:PL[k].lat, lon:PL[k].lon, rot:PL[k].rot});
+
 }
 
 // ===== hk/hkv_island (City Brush v39, Hong Kong 1:1): the Hong Kong Island harbour front rebuilt from photos - Sheung Wan to

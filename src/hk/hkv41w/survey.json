@@ -1,0 +1,551 @@
+{
+ "method": "decoded site/hkdata/hk_bld0.bin (big buildings: h>=20 m or >=900 m2) in x -300..5000, y -9800..-5600 (Kennedy Town..Admiralty, Pok Fu Lam); kept h>=80 m or area>=4000 m2 & h>=25; excluded footprints within 0.8 r of an existing landmark/site placement (all SC/hk/*/*.js evaluated). Heights = map data (above ground).",
+ "built": [
+  {
+   "key": "hk41w_stanchart",
+   "zh": "渣打银行大厦",
+   "en": "Standard Chartered Bank Building",
+   "lat": 22.2803722,
+   "lon": 114.1590262,
+   "parts": [
+    [
+     0.0,
+     185.0
+    ],
+    [
+     0.0,
+     163.0
+    ],
+    [
+     0.0,
+     141.0
+    ],
+    [
+     0.0,
+     119.0
+    ],
+    [
+     0.0,
+     97.0
+    ],
+    [
+     0.0,
+     75.0
+    ],
+    [
+     0.0,
+     10.3
+    ]
+   ]
+  },
+  {
+   "key": "hk41w_landmark",
+   "zh": "置地广场",
+   "en": "The Landmark (Gloucester Tower, Edinburgh Tower)",
+   "lat": 22.281229,
+   "lon": 114.1577242,
+   "parts": [
+    [
+     12.4,
+     159.0
+    ],
+    [
+     12.4,
+     159.0
+    ],
+    [
+     0.0,
+     12.4
+    ]
+   ]
+  },
+  {
+   "key": "hk41w_belchers",
+   "zh": "宝翠园",
+   "en": "The Belcher's",
+   "lat": 22.2851471,
+   "lon": 114.1333319,
+   "parts": [
+    [
+     31.0,
+     196.3
+    ],
+    [
+     31.0,
+     190.1
+    ],
+    [
+     31.0,
+     190.1
+    ],
+    [
+     31.0,
+     177.7
+    ],
+    [
+     31.0,
+     171.5
+    ],
+    [
+     31.0,
+     171.5
+    ],
+    [
+     0.0,
+     72.3
+    ],
+    [
+     0.0,
+     47.5
+    ],
+    [
+     0.0,
+     32.0
+    ]
+   ]
+  },
+  {
+   "key": "hk41w_fourseasons",
+   "zh": "四季汇及四季酒店",
+   "en": "Four Seasons Place and Four Seasons Hotel",
+   "lat": 22.2863821,
+   "lon": 114.1568226,
+   "parts": [
+    [
+     0.0,
+     214.0
+    ],
+    [
+     0.0,
+     205.0
+    ],
+    [
+     0.0,
+     165.0
+    ]
+   ]
+  },
+  {
+   "key": "hk41w_centralmkt",
+   "zh": "中环街市",
+   "en": "Central Market",
+   "lat": 22.2840274,
+   "lon": 114.1554199,
+   "parts": [
+    [
+     0.0,
+     10.3
+    ]
+   ]
+  },
+  {
+   "key": "hk41w_swmsb",
+   "zh": "上环市政大厦",
+   "en": "Sheung Wan Municipal Services Building",
+   "lat": 22.2861732,
+   "lon": 114.1497568,
+   "parts": [
+    [
+     0.0,
+     38.2
+    ]
+   ]
+  },
+  {
+   "key": "hk41w_threepp",
+   "zh": "太古广场三座",
+   "en": "Three Pacific Place",
+   "lat": 22.2769587,
+   "lon": 114.1680261,
+   "parts": [
+    [
+     0.0,
+     182.0
+    ]
+   ]
+  }
+ ],
+ "candidates_unbuilt_top": [
+  {
+   "lat": 22.274546,
+   "lon": 114.152657,
+   "h_max": 205.2,
+   "n_parts": 4,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.281482,
+   "lon": 114.156478,
+   "h_max": 186.5,
+   "n_parts": 9,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.283438,
+   "lon": 114.12615,
+   "h_max": 185.8,
+   "n_parts": 2,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.283621,
+   "lon": 114.127174,
+   "h_max": 185.0,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.273134,
+   "lon": 114.15294,
+   "h_max": 175.0,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282373,
+   "lon": 114.150531,
+   "h_max": 169.0,
+   "n_parts": 1,
+   "nearby_pois": [
+    [
+     58,
+     "Dr Sun Yat-sen Museum",
+     "孙中山纪念馆",
+     "museum"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.256024,
+   "lon": 114.132191,
+   "h_max": 162.2,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.280402,
+   "lon": 114.158356,
+   "h_max": 162.0,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282826,
+   "lon": 114.126587,
+   "h_max": 161.0,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.285266,
+   "lon": 114.153511,
+   "h_max": 160.0,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.286369,
+   "lon": 114.142673,
+   "h_max": 160.0,
+   "n_parts": 2,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.286354,
+   "lon": 114.143156,
+   "h_max": 160.0,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.256579,
+   "lon": 114.13218,
+   "h_max": 159.1,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282048,
+   "lon": 114.149734,
+   "h_max": 156.0,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.257138,
+   "lon": 114.131993,
+   "h_max": 152.9,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282001,
+   "lon": 114.126477,
+   "h_max": 152.9,
+   "n_parts": 2,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.281599,
+   "lon": 114.146883,
+   "h_max": 152.0,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.280554,
+   "lon": 114.157031,
+   "h_max": 151.0,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.280422,
+   "lon": 114.155129,
+   "h_max": 150.0,
+   "n_parts": 5,
+   "nearby_pois": [
+    [
+     53,
+     "Lan Kwai Fong",
+     "兰桂坊",
+     "attraction"
+    ],
+    [
+     56,
+     "Ovolo Central",
+     null,
+     "hotel"
+    ],
+    [
+     57,
+     "Fringe Club",
+     "艺穗会",
+     "arts_centre"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282538,
+   "lon": 114.129851,
+   "h_max": 149.8,
+   "n_parts": 3,
+   "nearby_pois": [
+    [
+     55,
+     "Rock Hill Street Sitting-out Area",
+     "石山街休憩处",
+     "park"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282331,
+   "lon": 114.150049,
+   "h_max": 149.8,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282402,
+   "lon": 114.14909,
+   "h_max": 149.8,
+   "n_parts": 2,
+   "nearby_pois": [
+    [
+     74,
+     "Caine Road Sitting-out Area",
+     "坚道休憩处",
+     "park"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.282592,
+   "lon": 114.148691,
+   "h_max": 149.8,
+   "n_parts": 1,
+   "nearby_pois": [
+    [
+     35,
+     "Caine Road Sitting-out Area",
+     "坚道休憩处",
+     "park"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.287176,
+   "lon": 114.147096,
+   "h_max": 149.8,
+   "n_parts": 2,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.273025,
+   "lon": 114.155108,
+   "h_max": 146.7,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.275023,
+   "lon": 114.15291,
+   "h_max": 146.3,
+   "n_parts": 4,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.279946,
+   "lon": 114.150296,
+   "h_max": 146.3,
+   "n_parts": 2,
+   "nearby_pois": [
+    [
+     71,
+     "Robinson Road/Seymour Road Sitting-out Area",
+     "罗便臣道／西摩道休憩处",
+     "park"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.275654,
+   "lon": 114.154196,
+   "h_max": 143.6,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.276211,
+   "lon": 114.154519,
+   "h_max": 143.6,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.283968,
+   "lon": 114.14556,
+   "h_max": 143.6,
+   "n_parts": 5,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.276234,
+   "lon": 114.152359,
+   "h_max": 143.2,
+   "n_parts": 4,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.273592,
+   "lon": 114.153018,
+   "h_max": 143.2,
+   "n_parts": 2,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.283135,
+   "lon": 114.146893,
+   "h_max": 143.2,
+   "n_parts": 4,
+   "nearby_pois": [
+    [
+     47,
+     "CCC Hop Yat Church",
+     "中华基督教会合一堂",
+     "place_of_worship"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.275225,
+   "lon": 114.156058,
+   "h_max": 140.5,
+   "n_parts": 2,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.275141,
+   "lon": 114.156598,
+   "h_max": 140.5,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.275471,
+   "lon": 114.155402,
+   "h_max": 140.5,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.279342,
+   "lon": 114.152813,
+   "h_max": 140.5,
+   "n_parts": 3,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.2805,
+   "lon": 114.149334,
+   "h_max": 140.5,
+   "n_parts": 1,
+   "nearby_pois": [],
+   "note": "no confident name from map labels/POIs; not built"
+  },
+  {
+   "lat": 22.280179,
+   "lon": 114.154291,
+   "h_max": 140.0,
+   "n_parts": 2,
+   "nearby_pois": [
+    [
+     34,
+     "Ovolo Central",
+     null,
+     "hotel"
+    ]
+   ],
+   "note": "no confident name from map labels/POIs; not built"
+  }
+ ],
+ "notes": "Built keys use the map data heights. Unbuilt candidates: tall towers whose names cannot be confirmed from the map labels/POIs offline (Kennedy Town praya towers ~185 m, Mid-Levels towers ~200 m near 22.2745/114.1526, Queen's Road Central towers near 22.2815/114.1565 and 22.2804/114.1584, Sai Ying Pun twin towers ~160 m, Pok Fu Lam shoreline towers ~150-162 m). Central Market and the Sheung Wan Municipal Services Building are civic/heritage footprints (POI-named)."
+}

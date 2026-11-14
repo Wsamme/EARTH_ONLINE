@@ -87,7 +87,7 @@ Each still links to that city’s live page.
 
 ## Features
 
-- **Five real cities.** Singapore, the San Francisco Bay Area, New York, Hong Kong and Tokyo, each on its own page, each built from real roads and building footprints. Singapore has 217 labelled landmarks and parks: 198 landmarks and 19 sites, across Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, and the cable car.
+- **Six real maps.** Singapore, the San Francisco Bay Area, New York, Hong Kong, Tokyo and the Greater Bay (Shenzhen, Dongguan and Hong Kong in one map), each on its own page, each built from real roads and building footprints. Singapore has 217 labelled landmarks and parks: 198 landmarks and 19 sites, across Marina Bay, Chinatown, Little India, Orchard, Sentosa, Mandai, Jurong, and the cable car.
 - **Paint.** Zones, roads, architectural styles, landmarks and terrain. The brush is a real change on the map, with undo.
 - **Look around.** Orbit, pan, zoom, a tour, labels, and a tilt-shift that leaves one band sharp.
 - **Time of day.** Dawn, noon, dusk, night, or play the day. Windows and street lamps follow the clock.
@@ -108,8 +108,9 @@ The generator (plan, districts, traffic, terrain tools, seeds, presets) is still
 | New York | [Open](https://earth-online-wsammes-projects.vercel.app/nyc.html) | `nyc.html` | The five boroughs, plus Jersey City and Newark. About 1.65 million footprints. |
 | Hong Kong | [Open](https://earth-online-wsammes-projects.vercel.app/hk.html) | `hk.html` | Hong Kong Island, Kowloon, the New Territories, Lantau and the islands. Shenzhen is context, not the subject. |
 | Tokyo | [Open](https://earth-online-wsammes-projects.vercel.app/tyo.html) | `tyo.html` | The 23 wards out through Kawasaki, Yokohama and Saitama, Tokyo Bay, and Mount Fuji on the horizon. About 3.5 million footprints. |
+| Greater Bay | [Open](https://earth-online-wsammes-projects.vercel.app/gba.html) | `gba.html` | Dongguan, Shenzhen and Hong Kong in one 126 km square: about 228,000 footprints, Shenzhen's landmarks next to Hong Kong's. Work in progress: built with the October engine (no phone streaming yet), data as `.txt` in `gbadata/`. Source: `src/gba/`, `src/gbareal/`. |
 
-Every city opens in View. The buttons in the corner switch among the five pages in the same folder.
+Every city opens in View. The buttons in the corner switch among the six pages in the same folder.
 
 ## Quick start
 

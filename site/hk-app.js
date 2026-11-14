@@ -61599,7 +61599,7 @@ function sgrRenderIslandStats(){
   $('#islandStats').innerHTML = rows.map(r => `<dt>${r[0]}<small>${r[1]}</small></dt><dd>${r[2]}</dd>`).join('');
 }
 
-/* ================= v23 / v26 / v37: switch between the real maps (Singapore · SF Bay Area · New York · Hong Kong · Tokyo) =================
+/* ================= v23 / v26 / v37 / v41: switch between the real maps (Singapore · SF Bay Area · New York · Hong Kong · Tokyo · Greater Bay) =================
    v37: five cities in a 3 + 2 grid. Cities published next to this page (probed once at start) open in place; the others open
    their own artifact (CB_LINKS below, filled in at publish time) in a new tab — each artifact holds only so much data.
    Publishing layout: every artifact has its own city as index.html and the other two cities next to it as sg.html / bay.html /
@@ -61615,23 +61615,26 @@ HOOKS.boot.push(() => {
     {id:'bay', zh:'SF Bay Area', en:'SF Bay Area', busy:'Switching to the San Francisco Bay Area'},
     {id:'nyc', zh:'New York', en:'New York',    busy:'Switching to New York City'},
     {id:'hk',  zh:'Hong Kong', en:'Hong Kong',   busy:'Switching to Hong Kong'},
-    {id:'tyo', zh:'Tokyo', en:'Tokyo',       busy:'Switching to Tokyo'}];
+    {id:'tyo', zh:'Tokyo', en:'Tokyo',       busy:'Switching to Tokyo'},
+    {id:'gba', zh:'Greater Bay', en:'Greater Bay', busy:'Switching to the Greater Bay (Shenzhen · Hong Kong)'}];
   // each city's own artifact (opened in a new tab when that city is not published next to this page)
   const CB_LINKS = {sg:'https://claude.ai/artifact/JWrenra2o84JDA2TNcp3kR', bay:'https://claude.ai/artifact/KAqSgP5xdvToctTQQr28kE',
-    nyc:'https://claude.ai/artifact/VqyeDs374SMPZAMikpYTos', hk:'https://claude.ai/artifact/46pYczMQtS1PANp9iE91nR', tyo:'https://claude.ai/artifact/PoNpCj8MxrjFFFUxddfzMn'};
+    nyc:'https://claude.ai/artifact/VqyeDs374SMPZAMikpYTos', hk:'https://claude.ai/artifact/46pYczMQtS1PANp9iE91nR', tyo:'https://claude.ai/artifact/PoNpCj8MxrjFFFUxddfzMn', gba:'https://claude.ai/artifact/2u3c2QDM1QfzUZtNLAyMiD'};
   let cur = 'sg';
   try { if (typeof SGR_NYC !== 'undefined' && SGR_NYC) cur = 'nyc'; else if (typeof SGR_BAY !== 'undefined' && SGR_BAY) cur = 'bay';
-    else if (typeof SGR_PATH === 'string' && /^(hk|tyo)data\//.test(SGR_PATH)) cur = SGR_PATH.split('data/')[0]; } catch (e){ cur = 'sg'; }
+    else if (typeof SGR_PATH === 'string' && /^(hk|tyo|gba)data\//.test(SGR_PATH)) cur = SGR_PATH.split('data/')[0]; } catch (e){ cur = 'sg'; }
   const seg = document.querySelector('.cityseg'); if (!seg) return;
   seg.innerHTML = CITIES.map(c => `<button type="button" data-city="${c.id}" aria-pressed="${c.id === cur}" title="${c.en}">${c.en}</button>`).join('');
-  seg.style.display = ''; seg.hidden = false; seg.classList.add('city3', 'city5');
+  seg.style.display = ''; seg.hidden = false; seg.classList.add('city3', 'city6');
   // three buttons in the brand column (~230 px next to the collapse button, on phones too): tighter padding, the English line may clip
   const st = document.createElement('style');
   st.textContent = '.cityseg.city3{max-width:280px}.cityseg.city3 button{padding:6px 3px;min-width:0;white-space:nowrap}' +
     '.cityseg.city3 button small{font-size:9px;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis}' +
     '.cityseg.city5{grid-auto-flow:row !important;grid-template-columns:repeat(6,1fr) !important}.cityseg.city5 button{grid-column:span 2}' +
     '.cityseg.city5 button:nth-child(n+4){grid-column:span 3;border-top:1px solid var(--rule)}' +
-    '.cityseg.city5 button:not(:nth-child(1)):not(:nth-child(4)){border-left:1px solid var(--rule)}.cityseg.city5 button.ext small::after{content:" ↗"}';
+    '.cityseg.city5 button:not(:nth-child(1)):not(:nth-child(4)){border-left:1px solid var(--rule)}.cityseg.city5 button.ext small::after{content:" ↗"}' +
+    '.cityseg.city6{grid-auto-flow:row !important;grid-template-columns:repeat(2,1fr) !important}.cityseg.city6 button{font-size:12px}' +
+    '.cityseg.city6 button:nth-child(n+3){border-top:1px solid var(--rule)}.cityseg.city6 button:nth-child(2n){border-left:1px solid var(--rule)}';
   document.head.appendChild(st);
   // which city a page is: the marker meta, else the title (pages published before the marker)
   const cityOfHead = s => {

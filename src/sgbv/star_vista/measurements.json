@@ -1,0 +1,72 @@
+{
+  "units": "metres above the supplied ground datum; +x east, +z south",
+  "anchor_osm_way": 104352121,
+  "ground_ellipsoidal_m": 19.4,
+  "constraints": [
+    {
+      "feature": "Overall maximum",
+      "value": 74.5,
+      "uncertainty": 0.5,
+      "source": "Supplied meta.json measured roof-minus-ground; public architect project height 75 m"
+    },
+    {
+      "feature": "Grand foyer clear volume",
+      "value": 33,
+      "source": "Architect account; not inferred from flat app terrain"
+    },
+    {
+      "feature": "Upper reveal",
+      "height_interval": [
+        37.5,
+        42
+      ],
+      "inset_interval": [
+        3,
+        6
+      ],
+      "uncertainty": 2,
+      "source": "Manual cross-view projection of original n/e/w plus close150_h180 and h225; varies along facade"
+    },
+    {
+      "feature": "West end glazed slot",
+      "height_interval": [
+        55.5,
+        59
+      ],
+      "depth": 2.7,
+      "uncertainty": 1.5,
+      "source": "Original w and close150_h090/h135"
+    },
+    {
+      "feature": "East lower apron",
+      "roof_height_interval": [
+        53.5,
+        55
+      ],
+      "projection_beyond_main_roof": 15,
+      "uncertainty": 2,
+      "source": "Original top/e and close150_h270; separate lower roof, not one continuous tall end face"
+    },
+    {
+      "feature": "Retail base setbacks",
+      "interval": [
+        4,
+        16
+      ],
+      "uncertainty": 3,
+      "source": "OSM plan and original n/e/top; varies by level and perimeter"
+    },
+    {
+      "feature": "Retail storey rhythm",
+      "interval": [
+        4.1,
+        4.5
+      ],
+      "uncertainty": 1,
+      "source": "Photo estimate for exterior galleries; official retail levels B1/L1/L2"
+    }
+  ],
+  "roof_control_method": "Small manually chosen roof corners checked with perspective camera rays in original top and elevations; analytic faceted surfaces between sections, not dense photogrammetry or extracted mesh. Control section heights are estimates (typically \u00b12\u20133 m).",
+  "limitations": "Approximate facade planes and fixed ground datum introduce uncertainty. These values are modelling estimates except where explicitly verified by the supplied measurement or cited architect/operator.",
+  "sparse_ray_check": "Run python3 tools/sv3_measure.py for original_n reveal and upper-glazing plane intersections (2 m plane/pixel uncertainty)."
+}

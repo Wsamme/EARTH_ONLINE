@@ -123,7 +123,7 @@ R("u:{base:{value:top}, top:{value:top + def.h}, col:{value:new THREE.Color(lt.c
 R("function placeLandmarkMesh(L){", "const LM_C2 = ['#7fb2ff', '#ff8fcf', '#8fffd0', '#ffd27f', '#b89cff', '#7fe6ff'];\nfunction lmAnimOf(lt){ const A = {breathe:1, cycle:2, sweep:3, show:4}; if (lt.anim !== undefined) return A[lt.anim] || 0; return lt.m === 1 ? 2 : lt.m === 0 ? 1 : 0; }\nfunction placeLandmarkMesh(L){")
 
 # ---------- v20: landmark labels: small landmarks only when near (dozens of new ones would clutter the overview) ----------
-R("labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:9000}); }", "labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:SGR.on ? (def.h >= 150 || def.r >= 160 ? 9000 : def.h >= 70 || def.r >= 100 ? 5500 : 3200) : 9000}); }")
+R("labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:9000}); }", "labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:SGR.on ? (def.h >= 150 || def.r >= 160 ? 9000 : def.h >= 70 || def.r >= 100 ? 5500 : 3200) : 9000, near:def.near}); }")
 
 # ---------- v21: the port module (HOOKS.net) can take over the quays ----------
 R("function sgPort(B){\n", "function sgPort(B){\n  if (SGR.portMod) return;      // v21: the port module builds the terminals\n")

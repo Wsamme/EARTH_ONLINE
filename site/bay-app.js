@@ -4712,7 +4712,7 @@ function autoPlaceLandmarks(types){
 }
 function landmarkLabels(){
   if (!showNatLabels) return;
-  for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm'; el.innerHTML = `${def.zh}<small>${def.en}</small>`; labelsEl.appendChild(el); labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:SGR.on ? (def.h >= 150 || def.r >= 160 ? 9000 : def.h >= 70 || def.r >= 100 ? 5500 : 3200) : 9000}); }
+  for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm'; el.innerHTML = `${def.zh}<small>${def.en}</small>`; labelsEl.appendChild(el); labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:SGR.on ? (def.h >= 150 || def.r >= 160 ? 9000 : def.h >= 70 || def.r >= 100 ? 5500 : 3200) : 9000, near:def.near}); }
 }
 
 /* ================= time of day ================= */

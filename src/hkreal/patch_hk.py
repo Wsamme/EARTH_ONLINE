@@ -14,6 +14,8 @@ def apply(src):
     R('aria-label="City Brush 3D view"', 'aria-label="Hong Kong 3D view"')
     R('<span class="sub">City Brush · Singapore 1:1 · Real map · © OpenStreetMap contributors</span>', '<span class="sub">City Brush · Hong Kong 1:1 · Real map · © OpenStreetMap contributors</span>')
     R('Back to Singapore', 'Back to Hong Kong')
+    # v42: the official 3D buildings (hk/zz_hk3d) are Lands Department data, used on condition that the source is credited on the map
+    R('<span>Terrain · USGS / NOAA</span></div>', '<span>Terrain · USGS / NOAA</span><span>Buildings · HKSAR Government, Lands Department</span></div>')
     R("showBusy('Restoring Singapore')", "showBusy('Restoring Hong Kong')")
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Hong Kong</title>', src, count=1)
     # ---------- the administrative stars (lm24/admin) have no Hong Kong data yet: no Singapore CDC stars here ----------

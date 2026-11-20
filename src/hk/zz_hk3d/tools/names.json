@@ -1,0 +1,7091 @@
+{
+ "B345521825901063C0": {
+  "en": "International Commerce Centre",
+  "zh": "環球貿易廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3455218259T20050429",
+  "idmatch": true
+ },
+ "B344541627001063C0": {
+  "en": "Two International Finance Centre",
+  "zh": "國際金融中心二期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3445416270T20050430",
+  "idmatch": true
+ },
+ "B359321570101063C0": {
+  "en": "Central Plaza",
+  "zh": "中環廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3593215701T20050430",
+  "idmatch": true
+ },
+ "B346831557701063C0": {
+  "en": "Bank of China Tower",
+  "zh": "中銀大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3468315577T20050430",
+  "idmatch": true
+ },
+ "B339821618801063C0": {
+  "en": "The Center",
+  "zh": "中環中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3398216188T20050430",
+  "idmatch": true
+ },
+ "B345831563001063C0": {
+  "en": "Cheung Kong Center",
+  "zh": "長江集團中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3458315630T20050430",
+  "idmatch": true
+ },
+ "B346291850501063C0": {
+  "en": "The Cullinan I",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3462918505T20071116",
+  "idmatch": true
+ },
+ "B346021841701063C0": {
+  "en": "The Cullinan II",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3460218417T20071116",
+  "idmatch": true
+ },
+ "B359541762701063C0": {
+  "en": "The Masterpiece",
+  "zh": "名鑄",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3595417627T20080331",
+  "idmatch": true
+ },
+ "B361521733001063C0": {
+  "en": "K11 Atelier",
+  "zh": "Ｋ１１辦公大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3615217330T20180806",
+  "idmatch": true
+ },
+ "B354031998101063C0": {
+  "en": "Langham Place",
+  "zh": "朗豪坊",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540319981T20050430",
+  "idmatch": true
+ },
+ "B346811864401063C0": {
+  "en": "Sorrento Tower 1",
+  "zh": "擎天半島第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 2.0,
+  "csuid": "3468118644T20050430",
+  "idmatch": true
+ },
+ "B347441822901063C0": {
+  "en": "The Harbourside Tower 1",
+  "zh": "君臨天下第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3474418229T20050430",
+  "idmatch": true
+ },
+ "B346591824001063C0": {
+  "en": "The Harbourside Tower 3",
+  "zh": "君臨天下第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3465918240T20050430",
+  "idmatch": true
+ },
+ "B347021823101063C0": {
+  "en": "The Harbourside Tower 2",
+  "zh": "君臨天下第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3470218231T20050430",
+  "idmatch": true
+ },
+ "B349581546901063C0": {
+  "en": "Queensway Government Offices",
+  "zh": "金鐘道政府合署",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3495815469T20050430",
+  "idmatch": true
+ },
+ "B349751534801063C0": {
+  "en": "Island Shangri-La Hotel",
+  "zh": "港島香格里拉大酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3497515348T20050430",
+  "idmatch": true
+ },
+ "B370641550901063C0": {
+  "en": "Lee Garden One",
+  "zh": "利園一期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3706415509T20050430",
+  "idmatch": true
+ },
+ "B347281862501063C0": {
+  "en": "Sorrento Tower 2",
+  "zh": "擎天半島第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3472818625T20050430",
+  "idmatch": true
+ },
+ "B348681827101063C0": {
+  "en": "Moontower",
+  "zh": "映月閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3486818271T20050809",
+  "idmatch": true
+ },
+ "B348351824101063C0": {
+  "en": "Suntower",
+  "zh": "朝日閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3483518241T20050809",
+  "idmatch": true
+ },
+ "B345781551101063C0": {
+  "en": "Champion Tower",
+  "zh": "冠君大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3457815511T20050430",
+  "idmatch": true
+ },
+ "B364251559601063C0": {
+  "en": "United Asia Finance Centre",
+  "zh": "亞洲聯合財務中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3642515596T20050430",
+  "idmatch": true
+ },
+ "B338001630801063C0": {
+  "en": "Cosco Tower",
+  "zh": "中遠大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3380016308T20050430",
+  "idmatch": true
+ },
+ "B348041823801063C0": {
+  "en": "Skytower",
+  "zh": "摩天閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3480418238T20050809",
+  "idmatch": true
+ },
+ "B337711507501063C0": {
+  "en": "Tregunter Tower 3",
+  "zh": "地利根德閣３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3377115075T20050430",
+  "idmatch": true
+ },
+ "B350761986101063C0": {
+  "en": "The Hermitage Tower 1",
+  "zh": "帝峯．皇殿第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3507619861T20101116",
+  "idmatch": true
+ },
+ "B348671830601063C0": {
+  "en": "Startower",
+  "zh": "觀星閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3486718306T20050809",
+  "idmatch": true
+ },
+ "B357141507201063C0": {
+  "en": "Hopewell Centre",
+  "zh": "合和中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3571415072T20050430",
+  "idmatch": true
+ },
+ "B347981859501063C0": {
+  "en": "Sorrento Tower 3",
+  "zh": "擎天半島第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3479818595T20050430",
+  "idmatch": true
+ },
+ "B353601554801063C0": {
+  "en": "Hong Kong Police Headquarters",
+  "zh": "香港警察總部",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3536015548T20050430",
+  "idmatch": true
+ },
+ "B362721572601063C0": {
+  "en": "Sun Hung Kai Centre",
+  "zh": "新鴻基中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3627215726T20050430",
+  "idmatch": true
+ },
+ "B358691563901063C0": {
+  "en": "Immigration Tower",
+  "zh": "入境事務大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3586915639T20050430",
+  "idmatch": true
+ },
+ "B350501985501063C0": {
+  "en": "The Hermitage Tower 2",
+  "zh": "帝峯．皇殿第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3505019855T20101116",
+  "idmatch": true
+ },
+ "B348381857901063C0": {
+  "en": "Sorrento Tower 5",
+  "zh": "擎天半島第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3483818579T20050430",
+  "idmatch": true
+ },
+ "B347772070301063C0": {
+  "en": "Shining Heights",
+  "zh": "亮賢居",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3477720703T20081008",
+  "idmatch": true
+ },
+ "B378741660901063C0": {
+  "en": "AIA Tower",
+  "zh": "友邦廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3787416609T20050430",
+  "idmatch": true
+ },
+ "B353521534201063C0": {
+  "en": "Three Pacific Place",
+  "zh": "太古廣場三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3535215342T20050430",
+  "idmatch": true
+ },
+ "B347161582601063C0": {
+  "en": "AIA Central",
+  "zh": "友邦金融中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3471615826T20050511",
+  "idmatch": true
+ },
+ "B344751569101063C0": {
+  "en": "HSBC Main Building",
+  "zh": "滙豐總行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3447515691T20050430",
+  "idmatch": true
+ },
+ "B350261985201063C0": {
+  "en": "The Hermitage Tower 3",
+  "zh": "帝峯．皇殿第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3502619852T20101116",
+  "idmatch": true
+ },
+ "B348771856301063C0": {
+  "en": "Sorrento Tower 6",
+  "zh": "擎天半島第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3487718563T20050430",
+  "idmatch": true
+ },
+ "B338291524701063C0": {
+  "en": "Queen's Garden Block B",
+  "zh": "裕景花園Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3382915247T20050430",
+  "idmatch": true
+ },
+ "B338041524801063C0": {
+  "en": "Queen's Garden Block C",
+  "zh": "裕景花園Ｃ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3380415248T20050430",
+  "idmatch": true
+ },
+ "B343491606401063C0": {
+  "en": "One Exchange Square",
+  "zh": "交易廣場第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3434916064T20050430",
+  "idmatch": true
+ },
+ "B342131624601063C0": {
+  "en": "One International Finance Centre",
+  "zh": "國際金融中心一期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3421316246T20050430",
+  "idmatch": true
+ },
+ "B343511571001063C0": {
+  "en": "The Galleria",
+  "zh": "嘉軒廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3435115710T20050430",
+  "idmatch": true
+ },
+ "B344451602401063C1": {
+  "en": "Jardine House",
+  "zh": "怡和大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3444516024T20050430",
+  "idmatch": true
+ },
+ "B343391610801063C0": {
+  "en": "Two Exchange Square",
+  "zh": "交易廣場第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3433916108T20050430",
+  "idmatch": true
+ },
+ "B341641584701063C0": {
+  "en": "Entertainment Building",
+  "zh": "娛樂行",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3416415847T20050430",
+  "idmatch": true
+ },
+ "B349711985301063C0": {
+  "en": "The Hermitage Tower 6",
+  "zh": "帝峯．皇殿第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3497119853T20101116",
+  "idmatch": true
+ },
+ "B342351638501063C0": {
+  "en": "Four Seasons Place",
+  "zh": "四季匯",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3423516385T20050430",
+  "idmatch": true
+ },
+ "B344201571001063C0": {
+  "en": "Standard Chartered Bank Building",
+  "zh": "渣打銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3442015710T20050430",
+  "idmatch": true
+ },
+ "B350731533301063C0": {
+  "en": "Conrad Hong Kong",
+  "zh": "港麗酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3507315333T20050430",
+  "idmatch": true
+ },
+ "B339771574301063C0": {
+  "en": "The Centrium",
+  "zh": "中央廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3397715743T20050430",
+  "idmatch": true
+ },
+ "B361161569901063C0": {
+  "en": "China Resources Building",
+  "zh": "華潤大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3611615699T20050430",
+  "idmatch": true
+ },
+ "B349471985401063C0": {
+  "en": "The Hermitage Tower 7",
+  "zh": "帝峯．皇殿第七座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3494719854T20101116",
+  "idmatch": true
+ },
+ "B368411584001063C0": {
+  "en": "Sino Plaza",
+  "zh": "信和廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3684115840T20050430",
+  "idmatch": true
+ },
+ "B364631562001063C0": {
+  "en": "Sunshine Plaza",
+  "zh": "三湘大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3646315620T20050430",
+  "idmatch": true
+ },
+ "B349431568801063C0": {
+  "en": "Far East Finance Centre",
+  "zh": "遠東金融中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3494315688T20050430",
+  "idmatch": true
+ },
+ "B353851812301063C0": {
+  "en": "The Victoria Towers Tower 1",
+  "zh": "港景峯第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538518123T20050430",
+  "idmatch": true
+ },
+ "B354371818201063C0": {
+  "en": "The Victoria Towers Tower 3",
+  "zh": "港景峯第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543718182T20050430",
+  "idmatch": true
+ },
+ "B354021816101063C0": {
+  "en": "The Victoria Towers Tower 2",
+  "zh": "港景峯第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540218161T20050430",
+  "idmatch": true
+ },
+ "B331561640801063C0": {
+  "en": "One Pacific Heights",
+  "zh": "盈峰一號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3315616408T20090715",
+  "idmatch": true
+ },
+ "B369841565801063C0": {
+  "en": "Hysan Place",
+  "zh": "希慎廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3698415658T20120223",
+  "idmatch": true
+ },
+ "B349111558201063C0": {
+  "en": "Lippo Centre Tower 1",
+  "zh": "力寶中心第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3491115582T20050430",
+  "idmatch": true
+ },
+ "B359231510401063C0": {
+  "en": "Dah Sing Financial Centre",
+  "zh": "大新金融中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3592315104T20050430",
+  "idmatch": true
+ },
+ "B381221658301063C0": {
+  "en": "Le Sommet Block 1",
+  "zh": "豪廷峯第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3812216583T20050430",
+  "idmatch": true
+ },
+ "B349231985501063C0": {
+  "en": "The Hermitage Tower 8",
+  "zh": "帝峯．皇殿第八座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3492319855T20101116",
+  "idmatch": true
+ },
+ "B346361551001063C0": {
+  "en": "ICBC Tower",
+  "zh": "中國工商銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3463615510T20050430",
+  "idmatch": true
+ },
+ "B369901591101063C0": {
+  "en": "WWWTC",
+  "zh": "世貿中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3699015911T20050430",
+  "idmatch": true
+ },
+ "B378171667501063C0": {
+  "en": "Harbour Grand Hong Kong",
+  "zh": "港島海逸君綽酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3781716675T20090106",
+  "idmatch": true
+ },
+ "B338471523901063C0": {
+  "en": "Queen's Garden Block A",
+  "zh": "裕景花園Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3384715239T20050430",
+  "idmatch": true
+ },
+ "B365991570301063C0": {
+  "en": "Times Tower",
+  "zh": "新時代中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3659915703T20050430",
+  "idmatch": true
+ },
+ "B350712022101063C0": {
+  "en": "Lime Stardom",
+  "zh": "形品．星寓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3507120221T20110831",
+  "idmatch": true
+ },
+ "B337391525701063C0": {
+  "en": "Dynasty Court Tower 2",
+  "zh": "帝景園第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3373915257T20050430",
+  "idmatch": true
+ },
+ "B381681533101063C0": {
+  "en": "Serenade Tower 1",
+  "zh": "上林第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3816815331T20091027",
+  "idmatch": true
+ },
+ "B381861530201063C0": {
+  "en": "Serenade Tower 2",
+  "zh": "上林第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3818615302T20091027",
+  "idmatch": true
+ },
+ "B335021593901063C0": {
+  "en": "Arezzo",
+  "zh": "瀚然",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3350215939T20150331",
+  "idmatch": true
+ },
+ "B381441655801063C0": {
+  "en": "Le Sommet Block 2",
+  "zh": "豪廷峯第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3814416558T20050430",
+  "idmatch": true
+ },
+ "B373331458801063C0": {
+  "en": "Broadview Villa",
+  "zh": "樂景園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3733314588T20050430",
+  "idmatch": true
+ },
+ "B347121993801063C0": {
+  "en": "Florient Rise Tower 2",
+  "zh": "海桃灣第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3471219938T20090204",
+  "idmatch": true
+ },
+ "B335881578201063C0": {
+  "en": "Seymour",
+  "zh": "懿峯",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3358815782T20120213",
+  "idmatch": true
+ },
+ "B334411584801063C0": {
+  "en": "Robinson Place Tower 2",
+  "zh": "雍景臺第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3344115848T20050430",
+  "idmatch": true
+ },
+ "B342981584401063C0": {
+  "en": "Gloucester Tower",
+  "zh": "告羅士打大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3429815844T20050430",
+  "idmatch": true
+ },
+ "B334171589801063C0": {
+  "en": "Robinson Place Tower 1",
+  "zh": "雍景臺第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3341715898T20050430",
+  "idmatch": true
+ },
+ "B339171638801063C0": {
+  "en": "Li Po Chun Chambers",
+  "zh": "李寶椿大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3391716388T20050430",
+  "idmatch": true
+ },
+ "B342481576101063C0": {
+  "en": "New World Tower",
+  "zh": "新世界大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3424815761T20050430",
+  "idmatch": true
+ },
+ "B350821544001063C0": {
+  "en": "One Pacific Place",
+  "zh": "太古廣場一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3508215440T20050430",
+  "idmatch": true
+ },
+ "B355371745201063C0": {
+  "en": "One Peking",
+  "zh": "北京道一號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553717452T20050430",
+  "idmatch": true
+ },
+ "B341081607201063C0": {
+  "en": "Man Yee Building",
+  "zh": "萬宜大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3410816072T20050430",
+  "idmatch": true
+ },
+ "B348641561601063C0": {
+  "en": "Lippo Centre Tower 2",
+  "zh": "力寶中心第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3486415616T20050430",
+  "idmatch": true
+ },
+ "B351791541301063C0": {
+  "en": "JW Marriott Hotel",
+  "zh": "萬豪酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3517915413T20050430",
+  "idmatch": true
+ },
+ "B341901592302063C0": {
+  "en": "LHT TOWER",
+  "zh": "陸海通大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3419015923P20110429",
+  "idmatch": true,
+  "h_landsd": 16.1
+ },
+ "B337941513001063C0": {
+  "en": "Dynasty Court Tower 5",
+  "zh": "帝景園第５座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3379415130T20050430",
+  "idmatch": true
+ },
+ "B335511594401063C0": {
+  "en": "Alassio",
+  "zh": "殷然",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3355115944T20161121",
+  "idmatch": true
+ },
+ "B334701591201063C0": {
+  "en": "Azura",
+  "zh": "蔚然",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3347015912T20121231",
+  "idmatch": true
+ },
+ "B368551548301063C0": {
+  "en": "Times Square Tower One",
+  "zh": "時代廣場一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3685515483T20050430",
+  "idmatch": true
+ },
+ "B362581528501063C0": {
+  "en": "The Oakhill",
+  "zh": "萃峯",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3625815285T20110720",
+  "idmatch": true
+ },
+ "B379071541201063C0": {
+  "en": "Illumination Terrace Block 1",
+  "zh": "光明臺第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3790715412T20050430",
+  "idmatch": true
+ },
+ "B369161448701063C0": {
+  "en": "Li Shu Pui Block",
+  "zh": "李樹培院",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3691614487T20050430",
+  "idmatch": true
+ },
+ "B379451539801063C0": {
+  "en": "Illumination Terrace Block 2",
+  "zh": "光明臺第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3794515398T20050430",
+  "idmatch": true
+ },
+ "B342901578301063C0": {
+  "en": "Edinburgh Tower",
+  "zh": "公爵大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3429015783T20050430",
+  "idmatch": true
+ },
+ "B372351480801063C0": {
+  "en": "Broadwood Twelve",
+  "zh": "樂天峯",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3723514808T20100708",
+  "idmatch": true
+ },
+ "B357691517201063C0": {
+  "en": "The Avenue Tower 2",
+  "zh": "囍滙第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3576915172T20151002",
+  "idmatch": true
+ },
+ "B364681972301063C0": {
+  "en": "Ellery Terrace",
+  "zh": "雅利德樺臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3646819723T20050430",
+  "idmatch": true
+ },
+ "B354451546901063C0": {
+  "en": "One Hennessy",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544515469T20190110",
+  "idmatch": true
+ },
+ "B352921550001063C0": {
+  "en": "Arsenal House (West Wing)",
+  "zh": "警政大樓西翼",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3529215500T20050430",
+  "idmatch": true
+ },
+ "B358371520601063C0": {
+  "en": "The Avenue Tower 3",
+  "zh": "囍滙第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3583715206T20151002",
+  "idmatch": true
+ },
+ "B331791585801063C0": {
+  "en": "39 Conduit Road",
+  "zh": "天匯",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3317915858T20090514",
+  "idmatch": true
+ },
+ "B368461543601063C0": {
+  "en": "The Hedon",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3684615436T20240402",
+  "idmatch": true
+ },
+ "B335261567601063C0": {
+  "en": "Flourish Court",
+  "zh": "殷榮閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3352615676T20050430",
+  "idmatch": true
+ },
+ "B365361570201063C0": {
+  "en": "The Gloucester",
+  "zh": "尚匯",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3653615702T20130523",
+  "idmatch": true
+ },
+ "B348811967901063C0": {
+  "en": "Park Avenue Tower 8",
+  "zh": "柏景灣第八座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3488119679T20050430",
+  "idmatch": true
+ },
+ "B337671525301063C0": {
+  "en": "Dynasty Court Tower 1",
+  "zh": "帝景園第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3376715253T20050430",
+  "idmatch": true
+ },
+ "B348731971401063C0": {
+  "en": "Park Avenue Tower 7",
+  "zh": "柏景灣第七座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3487319714T20050430",
+  "idmatch": true
+ },
+ "B337601651901063C0": {
+  "en": "China Merchants Tower",
+  "zh": "招商局大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3376016519T20050430",
+  "idmatch": true
+ },
+ "B348661975001063C0": {
+  "en": "Park Avenue Tower 6",
+  "zh": "柏景灣第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3486619750T20050430",
+  "idmatch": true
+ },
+ "B361881542501063C0": {
+  "en": "The Hennessy",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3618815425T20081223",
+  "idmatch": true
+ },
+ "B345932058801063C0": {
+  "en": "Metro Harbour View Block 7",
+  "zh": "港灣豪庭第七座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3459320588T20050430",
+  "idmatch": true
+ },
+ "B346612058901063C0": {
+  "en": "Metro Harbour View Block 9",
+  "zh": "港灣豪庭第九座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3466120589T20050430",
+  "idmatch": true
+ },
+ "B346272058801063C0": {
+  "en": "Metro Harbour View Block 8",
+  "zh": "港灣豪庭第八座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3462720588T20050430",
+  "idmatch": true
+ },
+ "B345292063501063C0": {
+  "en": "Metro Harbour View Block 3",
+  "zh": "港灣豪庭第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3452920635T20050430",
+  "idmatch": true
+ },
+ "B345582058701063C0": {
+  "en": "Metro Harbour View Block 6",
+  "zh": "港灣豪庭第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 0.3,
+  "csuid": "3455820587T20050430",
+  "idmatch": true
+ },
+ "B345652063501063C0": {
+  "en": "Metro Harbour View Block 4",
+  "zh": "港灣豪庭第四座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3456520635T20050430",
+  "idmatch": true
+ },
+ "B346022063501063C0": {
+  "en": "Metro Harbour View Block 5",
+  "zh": "港灣豪庭第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3460220635T20050430",
+  "idmatch": true
+ },
+ "B346952059001063C0": {
+  "en": "Metro Harbour View Block 10",
+  "zh": "港灣豪庭第十座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3469520590T20050430",
+  "idmatch": true
+ },
+ "B331961648001063C0": {
+  "en": "Queen's Terrace Tower 1",
+  "zh": "帝后華庭第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3319616480T20050430",
+  "idmatch": true
+ },
+ "B365891544901063C0": {
+  "en": "Morrison Plaza",
+  "zh": "天樂廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3658915449T20050430",
+  "idmatch": true
+ },
+ "B336071657401063C0": {
+  "en": "Shun Tak Centre West Tower",
+  "zh": "信德中心西座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3360716574T20050430",
+  "idmatch": true
+ },
+ "B368361545201063C0": {
+  "en": "THE SHARP",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3683615452T20160406",
+  "idmatch": true
+ },
+ "B338211504401063C0": {
+  "en": "Clovelly Court Block 1-2",
+  "zh": "嘉富麗苑１－２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3382115044T20050430",
+  "idmatch": true
+ },
+ "B364941546201063C0": {
+  "en": "One Continental",
+  "zh": "恒匯中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3649415462T20220708",
+  "idmatch": true
+ },
+ "B360511764201063C0": {
+  "en": "Mondrian Hotel",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3605117642T20050430",
+  "idmatch": true
+ },
+ "B358061571801063C0": {
+  "en": "Wanchai Tower",
+  "zh": "灣仔政府大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3580615718T20050430",
+  "idmatch": true
+ },
+ "B360041508701063C0": {
+  "en": "One Wanchai",
+  "zh": "壹環",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3600415087T20121115",
+  "idmatch": true
+ },
+ "B355931533101063C0": {
+  "en": "York Place",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3559315331T20090324",
+  "idmatch": true
+ },
+ "B367601558501063C0": {
+  "en": "VPOINT",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3676015585T20151130",
+  "idmatch": true
+ },
+ "B358421506301063C0": {
+  "en": "Wu Chung House",
+  "zh": "胡忠大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3584215063T20050430",
+  "idmatch": true
+ },
+ "B334991584901063C0": {
+  "en": "Goldwin Heights",
+  "zh": "高雲臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3349915849T20050430",
+  "idmatch": true
+ },
+ "B346731991901063C0": {
+  "en": "Florient Rise Tower 1",
+  "zh": "海桃灣第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3467319919T20090204",
+  "idmatch": true
+ },
+ "B350072031901063C0": {
+  "en": "i-home",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3500720319T20090210",
+  "idmatch": true
+ },
+ "B337991515401063C0": {
+  "en": "Dynasty Court Tower 4",
+  "zh": "帝景園第４座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3379915154T20050430",
+  "idmatch": true
+ },
+ "B341001624901063C0": {
+  "en": "Agricultural Bank of China Building",
+  "zh": "中國農業銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3410016249T20110303",
+  "idmatch": true
+ },
+ "B347211975601063C0": {
+  "en": "Central Park Tower 1",
+  "zh": "帝柏海灣第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3472119756T20050430",
+  "idmatch": true
+ },
+ "B350711550101063C0": {
+  "en": "United Centre",
+  "zh": "統一中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3507115501T20050430",
+  "idmatch": true
+ },
+ "B362451965901063C0": {
+  "en": "15 Homantin Hill",
+  "zh": "灝畋峰",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3624519659T20060704",
+  "idmatch": true
+ },
+ "B372981569301063C0": {
+  "en": "Sugar+",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3729815693T20220715",
+  "idmatch": true
+ },
+ "B368331556601063C0": {
+  "en": "Soundwill Plaza",
+  "zh": "金朝陽中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3683315566T20050430",
+  "idmatch": true
+ },
+ "B352042009901063C0": {
+  "en": "Flourish Mansion",
+  "zh": "長旺雅苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3520420099T20050430",
+  "idmatch": true
+ },
+ "B359491558101063C0": {
+  "en": "Everbright Centre",
+  "zh": "光大中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3594915581T20050430",
+  "idmatch": true
+ },
+ "B372301554701063C1": {
+  "en": "HDH Centre",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3723015547T20220420",
+  "idmatch": true
+ },
+ "B380861515401063C0": {
+  "en": "The Signature",
+  "zh": "春暉８號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3808615154T20111018",
+  "idmatch": true
+ },
+ "B342491618101063C0": {
+  "en": "Three Exchange Square",
+  "zh": "交易廣場第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3424916181T20050430",
+  "idmatch": true
+ },
+ "B334041599901063C0": {
+  "en": "Argenta",
+  "zh": "珒然",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3340415999T20131121",
+  "idmatch": true
+ },
+ "B347661977401063C0": {
+  "en": "Central Park Tower 2",
+  "zh": "帝柏海灣第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3476619774T20050430",
+  "idmatch": true
+ },
+ "B348101979201063C0": {
+  "en": "Central Park Tower 3",
+  "zh": "帝柏海灣第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3481019792T20050430",
+  "idmatch": true
+ },
+ "B348541981101063C0": {
+  "en": "Central Park Tower 5",
+  "zh": "帝柏海灣第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3485419811T20050430",
+  "idmatch": true
+ },
+ "B346811583601063C0": {
+  "en": "CCB Tower",
+  "zh": "中國建設銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3468115836T20130111",
+  "idmatch": true,
+  "h_landsd": 93.0
+ },
+ "B330861651401063C0": {
+  "en": "Princeton Tower",
+  "zh": "普頓臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3308616514T20050430",
+  "idmatch": true
+ },
+ "B377971649801063C0": {
+  "en": "Lee & Man Commercial Center",
+  "zh": "理文商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3779716498T20050430",
+  "idmatch": true
+ },
+ "B359481578101063C0": {
+  "en": "Convention Plaza Office Tower",
+  "zh": "會展廣場辦公大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3594815781T20050430",
+  "idmatch": true
+ },
+ "B340461518101063C0": {
+  "en": "Estoril Court Block 1",
+  "zh": "愛都大廈第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3404615181T20050430",
+  "idmatch": true
+ },
+ "B359821515101063C0": {
+  "en": "The Zenith Block 1",
+  "zh": "尚翹峰第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3598215151T20050606",
+  "idmatch": true
+ },
+ "B366371574201063C0": {
+  "en": "Bank of Communications Tower",
+  "zh": "交通銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3663715742T20050430",
+  "idmatch": true
+ },
+ "B350001519601063C0": {
+  "en": "Regent On The Park",
+  "zh": "御花園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 2.6,
+  "csuid": "3500015196T20050430",
+  "idmatch": true
+ },
+ "B346492015801063C0": {
+  "en": "Upper West",
+  "zh": "奧城．西岸",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3464920158T20160331",
+  "idmatch": true
+ },
+ "B364601546101063C0": {
+  "en": "Plaza 228",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3646015461T20220525",
+  "idmatch": true
+ },
+ "B343941571201063C0": {
+  "en": "Henley Building",
+  "zh": "衡怡大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3439415712T20050430",
+  "idmatch": true
+ },
+ "B359381517401063C0": {
+  "en": "The Zenith Block 3",
+  "zh": "尚翹峰第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3593815174T20051230",
+  "idmatch": true
+ },
+ "B341141515101063C0": {
+  "en": "Estoril Court Block 2",
+  "zh": "愛都大廈第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3411415151T20050430",
+  "idmatch": true
+ },
+ "B357261571601063C0": {
+  "en": "Shui On Centre",
+  "zh": "瑞安中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3572615716T20050430",
+  "idmatch": true
+ },
+ "B381581513401063C0": {
+  "en": "The Legend Tower II",
+  "zh": "名門揚名殿",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3815815134T20070316",
+  "idmatch": true
+ },
+ "B346751999001063C0": {
+  "en": "Florient Rise Tower 3",
+  "zh": "海桃灣第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3467519990T20090204",
+  "idmatch": true
+ },
+ "B359581509301063C0": {
+  "en": "The Zenith Block 2",
+  "zh": "尚翹峰第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3595815093T20051230",
+  "idmatch": true
+ },
+ "B372341548001063C0": {
+  "en": "Congregation House",
+  "zh": "公理堂大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3723415480T20120524",
+  "idmatch": true
+ },
+ "B356801557001063C0": {
+  "en": "Bank of East Asia Harbour View Centre",
+  "zh": "東亞銀行港灣中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3568015570T20050430",
+  "idmatch": true
+ },
+ "B370441588401063C0": {
+  "en": "One Causeway Bay",
+  "zh": "港島壹號中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3704415884T20260122",
+  "idmatch": true
+ },
+ "B330391612101063C0": {
+  "en": "2 Park Road",
+  "zh": "柏道二號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3303916121T20050430",
+  "idmatch": true
+ },
+ "B336061640101063C0": {
+  "en": "88WL",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3360616401T20230208",
+  "idmatch": true
+ },
+ "B341411596801063C0": {
+  "en": "Prosperity Tower ",
+  "zh": "豐盛創建大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3414115968T20110928",
+  "idmatch": true
+ },
+ "B369141550401063C0": {
+  "en": "Lee Theatre",
+  "zh": "利舞臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3691415504T20050430",
+  "idmatch": true,
+  "h_landsd": 84.7
+ },
+ "B379861635801063C0": {
+  "en": "Cumine Court",
+  "zh": "康明苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3798616358T20050430",
+  "idmatch": true
+ },
+ "B381931514601063C0": {
+  "en": "The Legend Tower I",
+  "zh": "名門顯名殿",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3819315146T20070316",
+  "idmatch": true
+ },
+ "B346271515201063C0": {
+  "en": "Birchwood Place",
+  "zh": "寶樺臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3462715152T20050430",
+  "idmatch": true
+ },
+ "B341981580501063C0": {
+  "en": "Central Tower",
+  "zh": "中滙大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3419815805T20050430",
+  "idmatch": true
+ },
+ "B366971991101063C0": {
+  "en": "King Man House",
+  "zh": "景文樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3669719911T20050430",
+  "idmatch": true
+ },
+ "B357091549801063C0": {
+  "en": "81 Lockhart Road",
+  "zh": "８１駱克道",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3570915498T20210308",
+  "idmatch": true
+ },
+ "B350351966901063C0": {
+  "en": "Hoi Yan House",
+  "zh": "海欣閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3503519669T20050430",
+  "idmatch": true
+ },
+ "B350821573201063C0": {
+  "en": "Central Government Offices",
+  "zh": "政府總部",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 1.6,
+  "csuid": "3508215732T20110704",
+  "idmatch": true
+ },
+ "B341841641401063C0": {
+  "en": "Four Seasons Hotel",
+  "zh": "四季酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3418416414T20050430",
+  "idmatch": true
+ },
+ "B371471564502063C0": {
+  "en": "HANG SENG CAUSEWAY BAY BUILDING",
+  "zh": "恆生銅鑼灣大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3714715645P20060312",
+  "idmatch": true,
+  "h_landsd": 15.5
+ },
+ "B359881753301063C0": {
+  "en": "Harbour Pinnacle",
+  "zh": "凱譽",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3598817533T20050430",
+  "idmatch": true
+ },
+ "B338101517501063C0": {
+  "en": "Dynasty Court Tower 3",
+  "zh": "帝景園第３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3381015175T20050430",
+  "idmatch": true
+ },
+ "B377971639701063C0": {
+  "en": "148 Electric Road",
+  "zh": "１４８　電氣道",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3779716397T20050430",
+  "idmatch": true
+ },
+ "B341821579102063C0": {
+  "en": "ASIA PACIFIC CENTRE",
+  "zh": "亞洲太平洋中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3418215791P20140130",
+  "idmatch": true,
+  "h_landsd": 11.2
+ },
+ "B371311544001063C0": {
+  "en": "Lee Garden Three",
+  "zh": "利園三期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3713115440T20181026",
+  "idmatch": true
+ },
+ "B342111606801063C0": {
+  "en": "Hip Shing Hong Centre",
+  "zh": "協成行中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3421116068T20050430",
+  "idmatch": true
+ },
+ "B331801602201063C0": {
+  "en": "80 Robinson Road Block 2",
+  "zh": "羅便臣道８０號２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3318016022T20050430",
+  "idmatch": true
+ },
+ "B332501652301063C0": {
+  "en": "Ibis Hong Kong Central & Sheung Wan Hotel",
+  "zh": "宜必思香港中上環酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3325016523T20120801",
+  "idmatch": true
+ },
+ "B341791579301063C0": {
+  "en": "ASIA PACIFIC CENTRE",
+  "zh": "亞洲太平洋中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3417915793T20050430",
+  "idmatch": true
+ },
+ "B367751556301063C0": {
+  "en": "Midtown Soundwill Plaza II",
+  "zh": "金朝陽中心二期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3677515563T20140529",
+  "idmatch": true
+ },
+ "B377471655901063C0": {
+  "en": "Sung Fung Court",
+  "zh": "崇峯閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3774716559T20050430",
+  "idmatch": true
+ },
+ "B365481565501063C0": {
+  "en": "Mira Moon",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3654815655T20120821",
+  "idmatch": true
+ },
+ "B354041522101063C0": {
+  "en": "No.1 Star Street",
+  "zh": "滙星壹號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540415221T20050430",
+  "idmatch": true
+ },
+ "B342181597801063C0": {
+  "en": "Two Chinachem Central",
+  "zh": "華懋中心ＩＩ期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3421815978T20170516",
+  "idmatch": true
+ },
+ "B339611526301063C0": {
+  "en": "Garden Terrace Block 1",
+  "zh": "花園台第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3396115263T20050430",
+  "idmatch": true
+ },
+ "B381161509501063C0": {
+  "en": "The Legend Tower V",
+  "zh": "名門耀名殿",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3811615095T20070316",
+  "idmatch": true
+ },
+ "B381361510601063C0": {
+  "en": "The Legend Tower III",
+  "zh": "名門盛名殿",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3813615106T20070316",
+  "idmatch": true
+ },
+ "B342661572901063C0": {
+  "en": "Shanghai Commercial Bank Tower",
+  "zh": "上海商業銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3426615729T20160414",
+  "idmatch": true
+ },
+ "B357631499601063C0": {
+  "en": "Wing Way Court",
+  "zh": "永威閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3576314996T20050430",
+  "idmatch": true
+ },
+ "B370151525001063C0": {
+  "en": "The Leighton Hill Tower 6",
+  "zh": "禮頓山第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3701515250T20050430",
+  "idmatch": true
+ },
+ "B370401522101063C0": {
+  "en": "The Leighton Hill Tower 5",
+  "zh": "禮頓山第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3704015221T20050430",
+  "idmatch": true
+ },
+ "B338841641001063C0": {
+  "en": "Infinitus Plaza",
+  "zh": "無限極廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3388416410T20050430",
+  "idmatch": true
+ },
+ "B377401548101063C0": {
+  "en": "Jones Hive",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3774015481T20160919",
+  "idmatch": true
+ },
+ "B356711526301063C0": {
+  "en": "J Residence",
+  "zh": "嘉薈軒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3567115263T20070622",
+  "idmatch": true
+ },
+ "B358341539101063C0": {
+  "en": "Southorn Centre",
+  "zh": "修頓中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3583415391T20050430",
+  "idmatch": true
+ },
+ "B367591537801063C0": {
+  "en": "zing!",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3675915378T20110323",
+  "idmatch": true
+ },
+ "B354871539801063C0": {
+  "en": "Five Pacific Place",
+  "zh": "太古廣場五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3548715398T20120829",
+  "idmatch": true
+ },
+ "B341301618301063C0": {
+  "en": "Hang Seng Bank Headquarters",
+  "zh": "恒生銀行總行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3413016183T20050430",
+  "idmatch": true
+ },
+ "B353731756801063C0": {
+  "en": "The Gateway Tower 6",
+  "zh": "港威大廈第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3537317568T20050430",
+  "idmatch": true
+ },
+ "B377751594801063C0": {
+  "en": "Park Towers Tower I",
+  "zh": "栢景臺第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3777515948T20050430",
+  "idmatch": true
+ },
+ "B340411601901063C0": {
+  "en": "H Queen's",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3404116019T20170525",
+  "idmatch": true
+ },
+ "B360631577901063C0": {
+  "en": "Great Eagle Centre",
+  "zh": "鷹君中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3606315779T20050430",
+  "idmatch": true
+ },
+ "B331911644301063C0": {
+  "en": "Queen's Terrace Tower 2",
+  "zh": "帝后華庭第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3319116443T20050430",
+  "idmatch": true
+ },
+ "B366621536601063C0": {
+  "en": "Best Western Hotel",
+  "zh": "華麗精品酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3666215366T20101229",
+  "idmatch": true
+ },
+ "B348401575701063C0": {
+  "en": "Bank of America Tower",
+  "zh": "美國銀行中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3484015757T20050430",
+  "idmatch": true
+ },
+ "B337851560201063C0": {
+  "en": "The Grand Panorama Block 2",
+  "zh": "嘉兆臺第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3378515602T20050430",
+  "idmatch": true
+ },
+ "B380731675901063C0": {
+  "en": "Olympia Plaza",
+  "zh": "國都廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3807316759T20050430",
+  "idmatch": true
+ },
+ "B361351578501063C0": {
+  "en": "Harbour Centre",
+  "zh": "海港中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3613515785T20050430",
+  "idmatch": true
+ },
+ "B341431588601063C0": {
+  "en": "Hing Wai Building",
+  "zh": "興瑋大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3414315886T20050430",
+  "idmatch": true
+ },
+ "B361571979301063C0": {
+  "en": "No.1 Ho Man Tin Hill",
+  "zh": "何文田山一號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3615719793T20050430",
+  "idmatch": true
+ },
+ "B348901964301063C0": {
+  "en": "Park Avenue Tower 9",
+  "zh": "柏景灣第九座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3489019643T20050430",
+  "idmatch": true
+ },
+ "B345072051101063C0": {
+  "en": "West Kowloon Disciplined Services Quarters Block 2",
+  "zh": "西九龍紀律部隊宿舍第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3450720511T20050430",
+  "idmatch": true
+ },
+ "B371601498801063C0": {
+  "en": "Beverly Hill Block D",
+  "zh": "比華利山Ｄ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3716014988T20050430",
+  "idmatch": true
+ },
+ "B341701513901063C0": {
+  "en": "Estoril Court Block 3",
+  "zh": "愛都大廈第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3417015139T20050430",
+  "idmatch": true
+ },
+ "B343791591901063C0": {
+  "en": "Chater House",
+  "zh": "遮打大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3437915919T20050430",
+  "idmatch": true
+ },
+ "B377861547801063C0": {
+  "en": "Warrenwoods",
+  "zh": "尚巒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3778615478T20120911",
+  "idmatch": true
+ },
+ "B377941655801063C0": {
+  "en": "Nam Fung Court",
+  "zh": "南峯閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3779416558T20050430",
+  "idmatch": true
+ },
+ "B334251572801063C0": {
+  "en": "Winsome Park",
+  "zh": "滙豪閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3342515728T20050430",
+  "idmatch": true
+ },
+ "B352921830401063C0": {
+  "en": "Grand Austin Tower 2",
+  "zh": "Ｇｒａｎｄ　Ａｕｓｔｉｎ第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3529218304T20150731",
+  "idmatch": true
+ },
+ "B368231544501063C0": {
+  "en": "OLIV",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3682315445T20131112",
+  "idmatch": true
+ },
+ "B352851833801063C0": {
+  "en": "Grand Austin Tower 3",
+  "zh": "Ｇｒａｎｄ　Ａｕｓｔｉｎ第３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3528518338T20150731",
+  "idmatch": true
+ },
+ "B345821504101063C0": {
+  "en": "Fairlane Tower",
+  "zh": "寶雲山莊",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3458215041T20050430",
+  "idmatch": true
+ },
+ "B372931559101063C0": {
+  "en": "Regal Hong Kong Hotel",
+  "zh": "富豪香港酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3729315591T20050430",
+  "idmatch": true
+ },
+ "B350971898001063C0": {
+  "en": "The Coronation Tower 1",
+  "zh": "御金．國峯第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3509718980T20121024",
+  "idmatch": true
+ },
+ "B337601561201063C0": {
+  "en": "The Grand Panorama Block 3",
+  "zh": "嘉兆臺第３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3376015612T20050430",
+  "idmatch": true
+ },
+ "B351001896001063C0": {
+  "en": "The Coronation Tower 2",
+  "zh": "御金．國峯第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3510018960T20121024",
+  "idmatch": true
+ },
+ "B348411849501063C0": {
+  "en": "The Waterfront Tower VII",
+  "zh": "漾日居第七座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3484118495T20050430",
+  "idmatch": true
+ },
+ "B350991891801063C0": {
+  "en": "The Coronation Tower 3",
+  "zh": "御金．國峯第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3509918918T20121024",
+  "idmatch": true
+ },
+ "B348001839501063C0": {
+  "en": "The Waterfront Tower I",
+  "zh": "漾日居第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3480018395T20050430",
+  "idmatch": true
+ },
+ "B342361595201063C0": {
+  "en": "One Chinachem Central",
+  "zh": "華懋中心Ｉ期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3423615952T20161115",
+  "idmatch": true
+ },
+ "B372721497201063C0": {
+  "en": "Beverly Hill Block J",
+  "zh": "比華利山Ｊ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3727214972T20050430",
+  "idmatch": true
+ },
+ "B372621571101063C0": {
+  "en": "Windsor House",
+  "zh": "皇室大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3726215711T20050430",
+  "idmatch": true
+ },
+ "B361861530201063C0": {
+  "en": "Times Media Centre",
+  "zh": "卓凌中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3618615302T20050430",
+  "idmatch": true
+ },
+ "B377621664601063C0": {
+  "en": "China Taiping Finance Centre",
+  "zh": "中國太平金融中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3776216646T20170825",
+  "idmatch": true
+ },
+ "B343601584801063C0": {
+  "en": "Alexandra House",
+  "zh": "歷山大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3436015848T20050430",
+  "idmatch": true
+ },
+ "B348331838301063C0": {
+  "en": "The Waterfront Tower II",
+  "zh": "漾日居第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3483318383T20050430",
+  "idmatch": true
+ },
+ "B348701836701063C0": {
+  "en": "The Waterfront Tower III",
+  "zh": "漾日居第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3487018367T20050430",
+  "idmatch": true
+ },
+ "B348761848101063C0": {
+  "en": "The Waterfront Tower VI",
+  "zh": "漾日居第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3487618481T20050430",
+  "idmatch": true
+ },
+ "B345812082601063C0": {
+  "en": "Parkone",
+  "zh": "南昌一號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3458120826T20190107",
+  "idmatch": true
+ },
+ "B332571646301063C0": {
+  "en": "Queen's Terrace Tower 3",
+  "zh": "帝后華庭第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3325716463T20050430",
+  "idmatch": true
+ },
+ "B372581495201063C0": {
+  "en": "Beverly Hill Block H",
+  "zh": "比華利山Ｈ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3725814952T20050430",
+  "idmatch": true
+ },
+ "B371901498001063C0": {
+  "en": "Beverly Hill Block C",
+  "zh": "比華利山Ｃ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3719014980T20050430",
+  "idmatch": true
+ },
+ "B372241498601063C0": {
+  "en": "Beverly Hill Block B",
+  "zh": "比華利山Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3722414986T20050430",
+  "idmatch": true
+ },
+ "B372431501401063C0": {
+  "en": "Beverly Hill Block A",
+  "zh": "比華利山Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3724315014T20050430",
+  "idmatch": true
+ },
+ "B372601498601063C0": {
+  "en": "Beverly Hill Block K",
+  "zh": "比華利山Ｋ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3726014986T20050430",
+  "idmatch": true
+ },
+ "B335961573801063C0": {
+  "en": "Palatial Crest",
+  "zh": "輝煌豪園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3359615738T20050430",
+  "idmatch": true
+ },
+ "B337381513201063C0": {
+  "en": "Hillsborough Court Tower 1",
+  "zh": "曉峰閣第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3373815132T20050430",
+  "idmatch": true
+ },
+ "B369631528301063C0": {
+  "en": "The Leighton Hill Tower 8",
+  "zh": "禮頓山第八座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3696315283T20050430",
+  "idmatch": true
+ },
+ "B369841527001063C0": {
+  "en": "The Leighton Hill Tower 7",
+  "zh": "禮頓山第七座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3698415270T20050430",
+  "idmatch": true
+ },
+ "B370551519101063C0": {
+  "en": "The Leighton Hill Tower 3",
+  "zh": "禮頓山第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3705515191T20050430",
+  "idmatch": true
+ },
+ "B370661516801063C0": {
+  "en": "The Leighton Hill Tower 2",
+  "zh": "禮頓山第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3706615168T20050430",
+  "idmatch": true
+ },
+ "B340921503301063C0": {
+  "en": "Po Garden",
+  "zh": "寶園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3409215033T20050430",
+  "idmatch": true
+ },
+ "B337261520801063C0": {
+  "en": "The Royal Tower",
+  "zh": "雋巒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3372615208T20050430",
+  "idmatch": true
+ },
+ "B339351519701063C0": {
+  "en": "2 & 3 Garden Terrace Block 3",
+  "zh": "花園台第３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3393515197T20050430",
+  "idmatch": true
+ },
+ "B339491523001063C0": {
+  "en": "2 & 3 Garden Terrace Block 2",
+  "zh": "花園台第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 0.8,
+  "csuid": "3394915230T20050430",
+  "idmatch": true
+ },
+ "B353111826901063C0": {
+  "en": "Grand Austin Tower 1",
+  "zh": "Ｇｒａｎｄ　Ａｕｓｔｉｎ第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531118269T20150731",
+  "idmatch": true
+ },
+ "B357941556301063C0": {
+  "en": "Luk Kwok Centre",
+  "zh": "六國中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3579415563T20050430",
+  "idmatch": true
+ },
+ "B336061609701063C0": {
+  "en": "CentreStage Tower 1",
+  "zh": "聚賢居一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3360616097T20060711",
+  "idmatch": true
+ },
+ "B335741610101063C0": {
+  "en": "CentreStage Tower 2",
+  "zh": "聚賢居二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3357416101T20060711",
+  "idmatch": true
+ },
+ "B333791576901063C0": {
+  "en": "Valiant Park",
+  "zh": "駿豪閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3337915769T20050430",
+  "idmatch": true
+ },
+ "B376591636901063C0": {
+  "en": "Citicorp Centre",
+  "zh": "萬國寶通中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3765916369T20050430",
+  "idmatch": true
+ },
+ "B362121568801063C0": {
+  "en": "Causeway Centre Block C",
+  "zh": "灣景中心大廈Ｃ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3621215688T20050430",
+  "idmatch": true
+ },
+ "B356391543701063C0": {
+  "en": "Burlington Hotel",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3563915437T20160524",
+  "idmatch": true
+ },
+ "B330571659601063C0": {
+  "en": "Guangdong Finance Building",
+  "zh": "粵財大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3305716596T20050430",
+  "idmatch": true
+ },
+ "B362071574101063C0": {
+  "en": "Causeway Centre Block A",
+  "zh": "灣景中心大廈Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3620715741T20050430",
+  "idmatch": true
+ },
+ "B377151658701063C0": {
+  "en": "Ko Fung Court",
+  "zh": "高峯閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3771516587T20050430",
+  "idmatch": true
+ },
+ "B353541766301063C0": {
+  "en": "The Gateway Tower 5",
+  "zh": "港威大廈第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3535417663T20050430",
+  "idmatch": true
+ },
+ "B336621647801063C0": {
+  "en": "Chu Kong Shipping Tower",
+  "zh": "珠江船務大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3366216478T20050430",
+  "idmatch": true
+ },
+ "B371601458701063C0": {
+  "en": "The Ellipsis",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3716014587T20050430",
+  "idmatch": true
+ },
+ "B337131501101063C0": {
+  "en": "Tregunter Tower 1",
+  "zh": "地利根德閣（第１座）",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3371315011T20050430",
+  "idmatch": true
+ },
+ "B360971539501063C0": {
+  "en": "Tai Yip Building",
+  "zh": "大業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3609715395T20050430",
+  "idmatch": true
+ },
+ "B353361775001063C0": {
+  "en": "Prudential Tower",
+  "zh": "英國保誠保險大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533617750T20050430",
+  "idmatch": true
+ },
+ "B356271566701063C0": {
+  "en": "Telecom House",
+  "zh": "電訊大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3562715667T20050430",
+  "idmatch": true
+ },
+ "B368771585601063C0": {
+  "en": "COFCO Tower",
+  "zh": "中糧大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3687715856T20050430",
+  "idmatch": true
+ },
+ "B358171483701063C0": {
+  "en": "Bamboo Grove",
+  "zh": "竹林苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3581714837T20050430",
+  "idmatch": true
+ },
+ "B337151574001063C0": {
+  "en": "Scenic Rise",
+  "zh": "御景臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3371515740T20050430",
+  "idmatch": true
+ },
+ "B358871537401063C0": {
+  "en": "Southorn Garden",
+  "zh": "修頓花園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 0.4,
+  "csuid": "3588715374T20050430",
+  "idmatch": true
+ },
+ "B357761576601063C0": {
+  "en": "Convention Plaza",
+  "zh": "會景閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 3.8,
+  "csuid": "3577615766T20050430",
+  "idmatch": true
+ },
+ "B338181615701063C0": {
+  "en": "Lan Kwai Fong Hotel",
+  "zh": "蘭桂坊酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3381816157T20051208",
+  "idmatch": true
+ },
+ "B348991960801063C0": {
+  "en": "Park Avenue Tower 10",
+  "zh": "柏景灣第十座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3489919608T20050430",
+  "idmatch": true
+ },
+ "B340101605201063C0": {
+  "en": "100QRC",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3401016052T20060711",
+  "idmatch": true
+ },
+ "B361941571401063C0": {
+  "en": "Causeway Centre Block B",
+  "zh": "灣景中心大廈Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3619415714T20050430",
+  "idmatch": true
+ },
+ "B378421582301063C0": {
+  "en": "Office for Safeguarding National Security of The Central People’s Government of The PRC in The HKSAR",
+  "zh": "中華人民共和國中央人民政府駐香港特別行政區維護國家安全公署",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3784215823T20050430",
+  "idmatch": true
+ },
+ "B358751788902063C0": {
+  "en": "The One",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3587517889P20100422",
+  "idmatch": true
+ },
+ "B380921646601063C0": {
+  "en": "Fullview Court",
+  "zh": "富慧閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3809216466T20050430",
+  "idmatch": true
+ },
+ "B349751969801063C0": {
+  "en": "Hoi Ning House",
+  "zh": "海寧閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3497519698T20050430",
+  "idmatch": true
+ },
+ "B369381529901063C0": {
+  "en": "The Leighton Hill Tower 9",
+  "zh": "禮頓山第九座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3693815299T20050430",
+  "idmatch": true
+ },
+ "B350181975901063C0": {
+  "en": "Hoi Wen House",
+  "zh": "海韻閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3501819759T20050430",
+  "idmatch": true
+ },
+ "B349681975201063C0": {
+  "en": "Hoi Lam House",
+  "zh": "海嵐閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3496819752T20050430",
+  "idmatch": true
+ },
+ "B331521606501063C0": {
+  "en": "80 Robinson Road Block 1",
+  "zh": "羅便臣道８０號１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3315216065T20050430",
+  "idmatch": true
+ },
+ "B353691784501063C0": {
+  "en": "The Gateway Tower 1",
+  "zh": "港威大廈第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3536917845T20050430",
+  "idmatch": true
+ },
+ "B356681536901063C0": {
+  "en": "Yam Tze Commercial Building",
+  "zh": "壬子商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3566815369T20050430",
+  "idmatch": true
+ },
+ "B343611530101063C0": {
+  "en": "The Royal Court",
+  "zh": "帝景閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3436115301T20050430",
+  "idmatch": true
+ },
+ "B358041525801063C0": {
+  "en": "The Avenue Tower 1",
+  "zh": "囍滙第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3580415258T20151002",
+  "idmatch": true
+ },
+ "B335921627201063C0": {
+  "en": "Holiday Inn Express Hong Kong Soho",
+  "zh": "香港蘇豪智選假日酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3359216272T20120118",
+  "idmatch": true
+ },
+ "B369771542401063C0": {
+  "en": "East Exchange Tower",
+  "zh": "東區電訊大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3697715424T20050430",
+  "idmatch": true
+ },
+ "B380461661101063C0": {
+  "en": "Fortress Metro Tower Block D",
+  "zh": "康澤花園Ｄ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3804616611T20050430",
+  "idmatch": true
+ },
+ "B379671462701063C0": {
+  "en": "Cavendish Heights Block 6",
+  "zh": "嘉雲臺第６座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3796714627T20050430",
+  "idmatch": true
+ },
+ "B336141584601063C0": {
+  "en": "Bella Vista",
+  "zh": "蔚晴軒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3361415846T20050430",
+  "idmatch": true
+ },
+ "B379881465001063C0": {
+  "en": "Cavendish Heights Block 7",
+  "zh": "嘉雲臺第７座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3798814650T20050430",
+  "idmatch": true
+ },
+ "B353291783901063C0": {
+  "en": "The Gateway Tower 2",
+  "zh": "港威大廈第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532917839T20050430",
+  "idmatch": true
+ },
+ "B358201744201063C0": {
+  "en": "26 Nathan Road",
+  "zh": "彌敦道２６號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3582017442T20050430",
+  "idmatch": true
+ },
+ "B344001518501063C0": {
+  "en": "Wealthy Heights",
+  "zh": "威豪閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3440015185T20050430",
+  "idmatch": true
+ },
+ "B332331658301063C0": {
+  "en": "No.9 Des Voeux Road West",
+  "zh": "德輔道西九號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3323316583T20050430",
+  "idmatch": true
+ },
+ "B380321656901063C0": {
+  "en": "Fortress Metro Tower Block B",
+  "zh": "康澤花園Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3803216569T20050430",
+  "idmatch": true
+ },
+ "B337421515501063C0": {
+  "en": "Hillsborough Court Tower 2",
+  "zh": "曉峰閣第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3374215155T20050430",
+  "idmatch": true
+ },
+ "B331501655501063C0": {
+  "en": "Soho House Hong Kong",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3315016555T20180129",
+  "idmatch": true
+ },
+ "B380171657501063C0": {
+  "en": "Fortress Metro Tower Block A",
+  "zh": "康澤花園Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3801716575T20050430",
+  "idmatch": true
+ },
+ "B348641843101063C0": {
+  "en": "The Waterfront Tower V",
+  "zh": "漾日居第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3486418431T20050430",
+  "idmatch": true
+ },
+ "B348152051001063C0": {
+  "en": "The Bedford",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3481520510T20131018",
+  "idmatch": true
+ },
+ "B338091644001063C0": {
+  "en": "Wing On Centre",
+  "zh": "永安中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3380916440T20050430",
+  "idmatch": true
+ },
+ "B380521659601063C0": {
+  "en": "Fortress Metro Tower Block C",
+  "zh": "康澤花園Ｃ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3805216596T20050430",
+  "idmatch": true
+ },
+ "B353651990701063C0": {
+  "en": "Cordis Hong Kong",
+  "zh": "香港康得思酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3536519907T20050430",
+  "idmatch": true
+ },
+ "B361621541601063C0": {
+  "en": "250 Hennessy",
+  "zh": "軒尼詩道２５０號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3616215416T20050430",
+  "idmatch": true
+ },
+ "B364901567401063C0": {
+  "en": "The Sun's Group Centre",
+  "zh": "新銀集團中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3649015674T20050430",
+  "idmatch": true
+ },
+ "B355331927501063C0": {
+  "en": "8 Waterloo Tower 1",
+  "zh": "窩打老道８號第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553319275T20050430",
+  "idmatch": true
+ },
+ "B337091506301063C0": {
+  "en": "Tregunter Tower 2",
+  "zh": "地利根德閣（第２座）",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3370915063T20050430",
+  "idmatch": true
+ },
+ "B371521564701063C0": {
+  "en": "Hang Seng Causeway Bay Building",
+  "zh": "恒生銅鑼灣大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3715215647T20050430",
+  "idmatch": true
+ },
+ "B335011572601063C0": {
+  "en": "Elegant Terrace Tower 1",
+  "zh": "慧明苑第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3350115726T20050430",
+  "idmatch": true
+ },
+ "B340101543701063C0": {
+  "en": "The Albany",
+  "zh": "雅賓利",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3401015437T20050430",
+  "idmatch": true
+ },
+ "B333431572601063C0": {
+  "en": "Scenecliff Tower II",
+  "zh": "承德山莊第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3334315726T20050430",
+  "idmatch": true
+ },
+ "B333491572501063C0": {
+  "en": "Scenecliff Tower I",
+  "zh": "承德山莊第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3334915725T20050430",
+  "idmatch": true
+ },
+ "B336371613301063C0": {
+  "en": "Hollywood Terrace Tower A",
+  "zh": "荷李活華庭Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3363716133T20050430",
+  "idmatch": true
+ },
+ "B352032049201063C0": {
+  "en": "Grand Metro",
+  "zh": "都滙",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3520320492T20120117",
+  "idmatch": true
+ },
+ "B343011596601063C0": {
+  "en": "World-wide House",
+  "zh": "環球大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3430115966T20050430",
+  "idmatch": true
+ },
+ "B352631575201063C0": {
+  "en": "CITIC Tower",
+  "zh": "中信大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3526315752T20050430",
+  "idmatch": true
+ },
+ "B336221648701063C0": {
+  "en": "Guangdong Investment Tower",
+  "zh": "粵海投資大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3362216487T20050430",
+  "idmatch": true
+ },
+ "B358271555501063C0": {
+  "en": "Fortis Tower",
+  "zh": "富通大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3582715555T20050430",
+  "idmatch": true
+ },
+ "B370831514401063C0": {
+  "en": "The Leighton Hill Tower 1",
+  "zh": "禮頓山第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3708315144T20050430",
+  "idmatch": true
+ },
+ "B335781581601063C0": {
+  "en": "The Fortune Gardens Block A",
+  "zh": "福澤花園Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3357815816T20050430",
+  "idmatch": true
+ },
+ "B378591467901063C0": {
+  "en": "Cavendish Heights Block 1",
+  "zh": "嘉雲臺第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3785914679T20050430",
+  "idmatch": true
+ },
+ "B378441465501063C0": {
+  "en": "Cavendish Heights Block 2",
+  "zh": "嘉雲臺第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3784414655T20050430",
+  "idmatch": true
+ },
+ "B350521562801063C0": {
+  "en": "Office Tower I",
+  "zh": "寫字樓第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3505215628T20050430",
+  "idmatch": true
+ },
+ "B360301539101063C0": {
+  "en": "Tai Tung Building",
+  "zh": "大同大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3603015391T20050430",
+  "idmatch": true
+ },
+ "B340551630401063C0": {
+  "en": "Two Chinachem Plaza",
+  "zh": "華懋廣場ＩＩ期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3405516304T20050430",
+  "idmatch": true
+ },
+ "B358211486001063C0": {
+  "en": "Bamboo Grove",
+  "zh": "竹林苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3582114860T20050430",
+  "idmatch": true
+ },
+ "B338551558801063C0": {
+  "en": "Robinson Heights Block 2",
+  "zh": "樂信臺第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3385515588T20050430",
+  "idmatch": true
+ },
+ "B342531567201063C0": {
+  "en": "Club Lusitano",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3425315672T20050430",
+  "idmatch": true
+ },
+ "B340151641301063C0": {
+  "en": "Harbour Building",
+  "zh": "海港政府大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3401516413T20050430",
+  "idmatch": true
+ },
+ "B352851529001063C0": {
+  "en": "Starcrest Tower 1",
+  "zh": "星域軒第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3528515290T20050430",
+  "idmatch": true
+ },
+ "B337391518101063C0": {
+  "en": "Hillsborough Court Tower 3",
+  "zh": "曉峰閣第３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3373915181T20050430",
+  "idmatch": true
+ },
+ "B355611926801063C0": {
+  "en": "8 Waterloo Tower 2",
+  "zh": "窩打老道８號第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3556119268T20050430",
+  "idmatch": true
+ },
+ "B337291555201063C0": {
+  "en": "WELLESLEY",
+  "zh": "帝滙豪庭",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3372915552T20180917",
+  "idmatch": true
+ },
+ "B339991587501063C0": {
+  "en": "Winsome House",
+  "zh": "雲山大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3399915875T20050430",
+  "idmatch": true
+ },
+ "B379431662401063C0": {
+  "en": "HK Li-Ning Building",
+  "zh": "香港李寧大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3794316624T20191106",
+  "idmatch": true
+ },
+ "B335361600801063C0": {
+  "en": "Kam Kin Mansion",
+  "zh": "金堅大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3353616008T20050430",
+  "idmatch": true
+ },
+ "B335901580701063C0": {
+  "en": "The Fortune Gardens Block B",
+  "zh": "福澤花園Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3359015807T20050430",
+  "idmatch": true
+ },
+ "B351621892201063C0": {
+  "en": "The Coronation Tower 7",
+  "zh": "御金．國峯第七座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3516218922T20121024",
+  "idmatch": true
+ },
+ "B371691577801063C0": {
+  "en": "Pearl City Mansion",
+  "zh": "珠城大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3716915778T20050430",
+  "idmatch": true
+ },
+ "B364191554801063C0": {
+  "en": "The Hari Hotel",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3641915548T20191104",
+  "idmatch": true
+ },
+ "B337601565501063C0": {
+  "en": "The Grand Panorama Block 4",
+  "zh": "嘉兆臺第４座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3376015655T20050430",
+  "idmatch": true
+ },
+ "B351381892001063C0": {
+  "en": "The Coronation Tower 6",
+  "zh": "御金．國峯第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3513818920T20121024",
+  "idmatch": true
+ },
+ "B337431567701063C0": {
+  "en": "The Grand Panorama Block 5",
+  "zh": "嘉兆臺第５座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3374315677T20050430",
+  "idmatch": true
+ },
+ "B351121891901063C0": {
+  "en": "The Coronation Tower 5",
+  "zh": "御金．國峯第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3511218919T20121024",
+  "idmatch": true
+ },
+ "B371491554401063C0": {
+  "en": "Lee Garden Two",
+  "zh": "利園二期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3714915544T20050430",
+  "idmatch": true
+ },
+ "B338071621101063C0": {
+  "en": "The Wellington",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3380716211T20150122",
+  "idmatch": true
+ },
+ "B335951613501063C0": {
+  "en": "Hollywood Terrace Tower B",
+  "zh": "荷李活華庭Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3359516135T20050430",
+  "idmatch": true
+ },
+ "B335071572201063C0": {
+  "en": "Elegant Terrace Tower 2",
+  "zh": "慧明苑２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3350715722T20050430",
+  "idmatch": true
+ },
+ "B341891574801063C0": {
+  "en": "18 On Lan Street",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3418915748T20131202",
+  "idmatch": true
+ },
+ "B336291568201063C0": {
+  "en": "Soho 38",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3362915682T20080811",
+  "idmatch": true
+ },
+ "B379711590201063C0": {
+  "en": "The Pavilia Hill Tower 2",
+  "zh": "柏傲山第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3797115902T20151014",
+  "idmatch": true
+ },
+ "B378321643501063C0": {
+  "en": "Seabright Plaza",
+  "zh": "秀明中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3783216435T20050430",
+  "idmatch": true
+ },
+ "B342541514701063C0": {
+  "en": "Eva Court",
+  "zh": "惠苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3425415147T20050430",
+  "idmatch": true
+ },
+ "B382271509901063C0": {
+  "en": "Ronsdale Garden Block 2",
+  "zh": "龍華花園第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3822715099T20050430",
+  "idmatch": true
+ },
+ "B339531563601063C0": {
+  "en": "Bel Mount Garden",
+  "zh": "百麗花園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3395315636T20050430",
+  "idmatch": true
+ },
+ "B334241646501063C0": {
+  "en": "Nam Wo Hong Building",
+  "zh": "南和行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3342416465T20050430",
+  "idmatch": true
+ },
+ "B378821564301063C0": {
+  "en": "Little Tai Hang",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3788215643T20150813",
+  "idmatch": true
+ },
+ "B367451548401063C0": {
+  "en": "Times Square Tower Two",
+  "zh": "時代廣場二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3674515484T20050430",
+  "idmatch": true
+ },
+ "B363651565201063C0": {
+  "en": "O. T. B. Building",
+  "zh": "海外信託銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3636515652T20050430",
+  "idmatch": true
+ },
+ "B339351592801063C0": {
+  "en": "H Code High Block",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3393515928T20190123",
+  "idmatch": true
+ },
+ "B337371619801063C0": {
+  "en": "The Putman",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3373716198T20070515",
+  "idmatch": true
+ },
+ "B375321558001063C0": {
+  "en": "Elysion Place Hotel",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3753215580T20151118",
+  "idmatch": true
+ },
+ "B334231638501063C0": {
+  "en": "iclub Sheung Wan Hotel",
+  "zh": "富薈上環酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3342316385T20140313",
+  "idmatch": true
+ },
+ "B337571621001063C0": {
+  "en": "One96",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3375716210T20131119",
+  "idmatch": true
+ },
+ "B341541600001063C0": {
+  "en": "Li Dong Building",
+  "zh": "利東大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3415416000T20050430",
+  "idmatch": true
+ },
+ "B354321780601063C0": {
+  "en": "The Toy House",
+  "zh": "彩星集團大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543217806T20050430",
+  "idmatch": true
+ },
+ "B380931509001063C0": {
+  "en": "Gardenview Heights",
+  "zh": "嘉景臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3809315090T20050430",
+  "idmatch": true
+ },
+ "B353731528701063C0": {
+  "en": "Eight Star Street",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3537315287T20220829",
+  "idmatch": true
+ },
+ "B358341488001063C0": {
+  "en": "Bamboo Grove",
+  "zh": "竹林苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3583414880T20050430",
+  "idmatch": true
+ },
+ "B363742050601063C0": {
+  "en": "St. George Apartments",
+  "zh": "聖佐治大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3637420506T20050430",
+  "idmatch": true
+ },
+ "B379961598301063C0": {
+  "en": "The Pavilia Hill Tower 6",
+  "zh": "柏傲山第六座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3799615983T20151014",
+  "idmatch": true
+ },
+ "B352262038701063C0": {
+  "en": "MOD595",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3522620387T20070626",
+  "idmatch": true
+ },
+ "B374301448601063C0": {
+  "en": "Broadwood Park",
+  "zh": "栢樂苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3743014486T20050430",
+  "idmatch": true
+ },
+ "B348861552501063C0": {
+  "en": "The High Court",
+  "zh": "高等法院",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 3.9,
+  "csuid": "3488615525T20050430",
+  "idmatch": true
+ },
+ "B348682014901063C0": {
+  "en": "Park Summit Tower 1",
+  "zh": "奧柏．御峯１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3486820149T20120815",
+  "idmatch": true
+ },
+ "B381851510001063C0": {
+  "en": "Ronsdale Garden Block 1",
+  "zh": "龍華花園第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3818515100T20050430",
+  "idmatch": true
+ },
+ "B336481630701063C0": {
+  "en": "Bonham Majoris",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3364816307T20050430",
+  "idmatch": true
+ },
+ "B379661637101063C0": {
+  "en": "Cornwall Court",
+  "zh": "康和苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3796616371T20050430",
+  "idmatch": true
+ },
+ "B359481504501063C0": {
+  "en": "Queen's Cube",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3594815045T20100118",
+  "idmatch": true
+ },
+ "B361631540401063C0": {
+  "en": "iClub Wan Chai Hotel",
+  "zh": "富薈灣仔酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3616315404T20050430",
+  "idmatch": true
+ },
+ "B358951510901063C0": {
+  "en": "Hotel Indigo",
+  "zh": "港島英迪格酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3589515109T20121010",
+  "idmatch": true
+ },
+ "B337361564001063C0": {
+  "en": "Central 8",
+  "zh": "半山捌號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3373615640T20201116",
+  "idmatch": true
+ },
+ "B348211567301063C0": {
+  "en": "Fairmont House",
+  "zh": "東昌大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3482115673T20050430",
+  "idmatch": true
+ },
+ "B378261661001063C0": {
+  "en": "Victor Court",
+  "zh": "威德閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3782616610T20050430",
+  "idmatch": true
+ },
+ "B333651610001063C0": {
+  "en": "Cherry Crest",
+  "zh": "翠麗軒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3336516100T20050430",
+  "idmatch": true
+ },
+ "B379801595501063C0": {
+  "en": "The Pavilia Hill Tower 5",
+  "zh": "柏傲山第五座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3798015955T20151014",
+  "idmatch": true
+ },
+ "B355561551901063C0": {
+  "en": "YF Life Tower",
+  "zh": "萬通保險大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3555615519T20161202",
+  "idmatch": true,
+  "h_landsd": 73.8
+ },
+ "B379761593001063C0": {
+  "en": "The Pavilia Hill Tower 3",
+  "zh": "柏傲山第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3797615930T20151014",
+  "idmatch": true
+ },
+ "B355621558101063C0": {
+  "en": "Harcourt House",
+  "zh": "夏慤大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3556215581T20050430",
+  "idmatch": true
+ },
+ "B361511560501063C0": {
+  "en": "Neich Tower",
+  "zh": "祥豐大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3615115605T20050430",
+  "idmatch": true
+ },
+ "B379411594701063C0": {
+  "en": "The Pavilia Hill Tower 1",
+  "zh": "柏傲山第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3794115947T20151014",
+  "idmatch": true
+ },
+ "B348782021601063C0": {
+  "en": "Park Summit Tower 2",
+  "zh": "奧柏．御峯２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3487820216T20120815",
+  "idmatch": true
+ },
+ "B363571546601063C0": {
+  "en": "C.C. Wu Building",
+  "zh": "集成中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3635715466T20050430",
+  "idmatch": true
+ },
+ "B336011635901063C0": {
+  "en": "99 Bonham",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3360116359T20120116",
+  "idmatch": true
+ },
+ "B377641535501063C0": {
+  "en": "Trafalgar Court",
+  "zh": "大寶閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3776415355T20050430",
+  "idmatch": true
+ },
+ "B353842085601063C0": {
+  "en": "High Park",
+  "zh": "曉珀",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538420856T20150113",
+  "idmatch": true
+ },
+ "B379151604301063C0": {
+  "en": "Nina Hotel Causeway Bay",
+  "zh": "銅鑼灣如心酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3791516043T20050601",
+  "idmatch": true
+ },
+ "B333071657101063C0": {
+  "en": "Connaught Marina",
+  "zh": "干諾中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3330716571T20200716",
+  "idmatch": true
+ },
+ "B355642081901063C0": {
+  "en": "High Park Grand",
+  "zh": "曉珀御",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3556420819T20150115",
+  "idmatch": true
+ },
+ "B342481526801063C0": {
+  "en": "Kennedy Heights",
+  "zh": "堅麗閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3424815268T20050430",
+  "idmatch": true
+ },
+ "B360631784801063C0": {
+  "en": "The Cameron",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3606317848T20091230",
+  "idmatch": true
+ },
+ "B340271572701063C0": {
+  "en": "LKF Tower",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3402715727T20050430",
+  "idmatch": true
+ },
+ "B337591575801063C0": {
+  "en": "Gramercy",
+  "zh": "瑧環",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3375915758T20121018",
+  "idmatch": true
+ },
+ "B364471548801063C0": {
+  "en": "CNT Tower",
+  "zh": "北海中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3644715488T20050430",
+  "idmatch": true
+ },
+ "B358461490301063C0": {
+  "en": "Bamboo Grove",
+  "zh": "竹林苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3584614903T20050430",
+  "idmatch": true
+ },
+ "B374511559301063C0": {
+  "en": "Rosedale Hotel Hong Kong",
+  "zh": "香港珀麗酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3745115593T20050430",
+  "idmatch": true
+ },
+ "B376991635001063C0": {
+  "en": "Twenty One Whitfield",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3769916350T20110825",
+  "idmatch": true
+ },
+ "B363261549901063C0": {
+  "en": "CKK Commercial Centre",
+  "zh": "朱鈞記商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3632615499T20050430",
+  "idmatch": true
+ },
+ "B334871609201063C0": {
+  "en": "Tung Shing Terrace",
+  "zh": "東盛臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3348716092T20050430",
+  "idmatch": true
+ },
+ "B360621569901063C0": {
+  "en": "St. Regis Hong Kong",
+  "zh": "香港瑞吉酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 1.1,
+  "csuid": "3606215699T20190115",
+  "idmatch": true
+ },
+ "B335811568801063C0": {
+  "en": "Fairview Height",
+  "zh": "輝煌臺",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3358115688T20050430",
+  "idmatch": true
+ },
+ "B338731616801063C0": {
+  "en": "On Building",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3387316168T20190624",
+  "idmatch": true
+ },
+ "B358431970701063C0": {
+  "en": "Paradise Square",
+  "zh": "百利達廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3584319707T20050430",
+  "idmatch": true
+ },
+ "B365571571301063C0": {
+  "en": "i.SKY",
+  "zh": "漣天",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3655715713T20090915",
+  "idmatch": true
+ },
+ "B335021579601063C0": {
+  "en": "The Richmond",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3350215796T20210707",
+  "idmatch": true
+ },
+ "B338591626501063C0": {
+  "en": "Grand Millennium Plaza",
+  "zh": "新紀元廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3385916265T20050430",
+  "idmatch": true,
+  "h_landsd": 70.3
+ },
+ "B330571608501063C0": {
+  "en": "Ying Piu Mansion",
+  "zh": "應彪大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3305716085T20050430",
+  "idmatch": true
+ },
+ "B353322040401063C0": {
+  "en": "Cite33",
+  "zh": "百匯軒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533220404T20090224",
+  "idmatch": true
+ },
+ "B369911583201063C0": {
+  "en": "Tower 535",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3699115832T20160118",
+  "idmatch": true
+ },
+ "B338881566501063C0": {
+  "en": "Townplace Soho",
+  "zh": "本舍",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3388815665T20200929",
+  "idmatch": true
+ },
+ "B368941570201063C0": {
+  "en": "Causeway Bay Plaza 1",
+  "zh": "銅鑼灣廣場一期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3689415702T20050430",
+  "idmatch": true
+ },
+ "B344471506601063C0": {
+  "en": "Regence Royale Tower 1",
+  "zh": "富匯豪庭第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3444715066T20050430",
+  "idmatch": true
+ },
+ "B368661535001063C0": {
+  "en": "Crowne Plaza Hong Kong Causeway Bay",
+  "zh": "香港銅鑼灣皇冠假日酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3686615350T20090417",
+  "idmatch": true
+ },
+ "B352551837601063C0": {
+  "en": "Grand Austin Tower 5",
+  "zh": "Ｇｒａｎｄ　Ａｕｓｔｉｎ第５座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3525518376T20150731",
+  "idmatch": true
+ },
+ "B380221497501063C0": {
+  "en": "Elm Tree Towers Block A",
+  "zh": "愉富大廈Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3802214975T20050430",
+  "idmatch": true
+ },
+ "B334721648101063C0": {
+  "en": "Hongway Garden",
+  "zh": "康威花園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3347216481T20050430",
+  "idmatch": true
+ },
+ "B366211994401063C0": {
+  "en": "Grand Homm Tower 3",
+  "zh": "傲玟第三座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3662119944T20210326",
+  "idmatch": true
+ },
+ "B372231489001063C0": {
+  "en": "Villa Rocha Block A",
+  "zh": "樂翠台Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3722314890T20050430",
+  "idmatch": true
+ },
+ "B365811996601063C0": {
+  "en": "Grand Homm Tower 1",
+  "zh": "傲玟第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3658119966T20210326",
+  "idmatch": true
+ },
+ "B372331484001063C0": {
+  "en": "Villa Rocha Block B",
+  "zh": "樂翠台Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3723314840T20050430",
+  "idmatch": true
+ },
+ "B340651629801063C0": {
+  "en": "CMA Building",
+  "zh": "廠商會大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3406516298T20050430",
+  "idmatch": true
+ },
+ "B366021995601063C0": {
+  "en": "Grand Homm Tower 2",
+  "zh": "傲玟第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3660219956T20210326",
+  "idmatch": true
+ },
+ "B371741471601063C0": {
+  "en": "Ventris Place Block B",
+  "zh": "雲地利台Ｂ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3717414716T20050430",
+  "idmatch": true
+ },
+ "B335891598602063C0": {
+  "en": "CASA BELLA",
+  "zh": "寶華軒",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3358915986P20060312",
+  "idmatch": true,
+  "h_landsd": 31.5
+ },
+ "B364341567201063C0": {
+  "en": "Chinachem Century Tower",
+  "zh": "華懋世紀廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3643415672T20050430",
+  "idmatch": true
+ },
+ "B374151553001063C0": {
+  "en": "St Paul's Hospital Block A",
+  "zh": "聖保祿醫院Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3741515530T20201008",
+  "idmatch": true
+ },
+ "B343581516501063C0": {
+  "en": "Visalia Garden",
+  "zh": "蔚山花園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3435815165T20050430",
+  "idmatch": true
+ },
+ "B344841504101063C0": {
+  "en": "Regence Royale Tower 2",
+  "zh": "富匯豪庭第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3448415041T20050430",
+  "idmatch": true
+ },
+ "B335681642801063C0": {
+  "en": "308 Central Des Voeux",
+  "zh": "德輔道中３０８號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3356816428T20050430",
+  "idmatch": true
+ },
+ "B351691852501063C0": {
+  "en": "The Austin Tower 5",
+  "zh": "Ｔｈｅ　Ａｕｓｔｉｎ第５座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3516918525T20150226",
+  "idmatch": true
+ },
+ "B335711628701063C0": {
+  "en": "The Jervois",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3357116287T20110317",
+  "idmatch": true
+ },
+ "B330621619301063C0": {
+  "en": "Beaudry Tower",
+  "zh": "麗怡大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3306216193T20050430",
+  "idmatch": true
+ },
+ "B341321604601063C0": {
+  "en": "CHE SAN BUILDING",
+  "zh": "致生大厦",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3413216046T20050430",
+  "idmatch": true
+ },
+ "B330521637001063C0": {
+  "en": "Marco Garden",
+  "zh": "家樂花園",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3305216370T20050430",
+  "idmatch": true
+ },
+ "B337031563301063C0": {
+  "en": "Floral Tower",
+  "zh": "福熙苑",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3370315633T20050430",
+  "idmatch": true
+ },
+ "B377681550701063C0": {
+  "en": "The Warren",
+  "zh": "瑆華",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3776815507T20131115",
+  "idmatch": true
+ },
+ "B368121542501063C0": {
+  "en": "Bartlock Centre",
+  "zh": "百樂中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3681215425T20050430",
+  "idmatch": true
+ },
+ "B330931622001063C0": {
+  "en": "Centre Place",
+  "zh": "匯賢居",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3309316220T20060404",
+  "idmatch": true
+ },
+ "B371631539801063C0": {
+  "en": "Lippo Leighton Tower",
+  "zh": "力寶禮頓大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3716315398T20050430",
+  "idmatch": true
+ },
+ "B353271527201063C0": {
+  "en": "Starcrest Tower 2",
+  "zh": "星域軒第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532715272T20050430",
+  "idmatch": true
+ },
+ "B340951592701063C0": {
+  "en": "STANLEY 11",
+  "zh": "STANLEY 11",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3409515927T20090504",
+  "idmatch": true
+ },
+ "B371841466501063C0": {
+  "en": "Ventris Place Block C",
+  "zh": "雲地利台Ｃ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3718414665T20050430",
+  "idmatch": true
+ },
+ "B340171569901063C0": {
+  "en": "Wyndham Place",
+  "zh": "雲咸商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3401715699T20050430",
+  "idmatch": true
+ },
+ "B331691659101063C0": {
+  "en": "BOC Credit Card Centre",
+  "zh": "中銀信用卡中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3316916591T20050430",
+  "idmatch": true
+ },
+ "B378501649401063C0": {
+  "en": "iclub by Regal Fortress Hill Hotel",
+  "zh": "富薈炮台山酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3785016494T20140604",
+  "idmatch": true
+ },
+ "B331091608301063C0": {
+  "en": "Yoo 18 Bonham",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3310916083T20120514",
+  "idmatch": true
+ },
+ "B371721473301063C0": {
+  "en": "Ventris Place Block A",
+  "zh": "雲地利台Ａ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3717214733T20050430",
+  "idmatch": true
+ },
+ "B359351585301063C0": {
+  "en": "Renaissance Harbour View Hotel Hong Kong",
+  "zh": "萬麗海景酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 4.3,
+  "csuid": "3593515853T20050430",
+  "idmatch": true
+ },
+ "B370371579901063C0": {
+  "en": "Yee On Building",
+  "zh": "怡安大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3703715799T20050430",
+  "idmatch": true
+ },
+ "B338211564301063C0": {
+  "en": "The Grand Panorama Block 1",
+  "zh": "嘉兆臺第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3382115643T20050430",
+  "idmatch": true
+ },
+ "B342121604701063C0": {
+  "en": "CMB Wing Lung Bank Building",
+  "zh": "招商永隆銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3421216047T20050430",
+  "idmatch": true
+ },
+ "B368911573301063C0": {
+  "en": "Shun Hei Causeway Bay Centre",
+  "zh": "順禧銅鑼灣中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3689115733T20050430",
+  "idmatch": true
+ },
+ "B342781603201063C0": {
+  "en": "Fung House",
+  "zh": "馮氏大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3427816032T20050430",
+  "idmatch": true
+ },
+ "B367781542701063C0": {
+  "en": "Holiday Inn Express",
+  "zh": "智選假日酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3677815427T20050430",
+  "idmatch": true
+ },
+ "B350991560401063C0": {
+  "en": "Office Tower II",
+  "zh": "寫字樓第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3509915604T20050430",
+  "idmatch": true
+ },
+ "B367781554001063C0": {
+  "en": "Emperor Watch and Jewellery Centre",
+  "zh": "英皇鐘錶珠寶中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3677815540T20050430",
+  "idmatch": true
+ },
+ "B370271567801063C0": {
+  "en": "The Goldmark",
+  "zh": "黃金廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3702715678T20050430",
+  "idmatch": true
+ },
+ "B367421552501063C0": {
+  "en": "Plaza 2000",
+  "zh": "２０００年廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3674215525T20050430",
+  "idmatch": true
+ },
+ "B351661581701063C2": {
+  "en": "Legislative Council Complex",
+  "zh": "立法會綜合大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3516615817T20110704",
+  "idmatch": true
+ },
+ "B354471552701063C0": {
+  "en": "Chung Nam Building",
+  "zh": "中南大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544715527T20050430",
+  "idmatch": true
+ },
+ "B345471572201063C0": {
+  "en": "Bank of China Building",
+  "zh": "中國銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3454715722T20050430",
+  "idmatch": true
+ },
+ "B369061570701063C0": {
+  "en": "Circle Plaza",
+  "zh": "永光商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3690615707T20050430",
+  "idmatch": true
+ },
+ "B368551546401063C0": {
+  "en": "Matheson Centre",
+  "zh": "宏通中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3685515464T20050430",
+  "idmatch": true
+ },
+ "B354251987901063C0": {
+  "en": "Langham Place",
+  "zh": "朗豪坊",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3542519879T20050430",
+  "idmatch": true
+ },
+ "B342201611001063C0": {
+  "en": "Chinachem Tower",
+  "zh": "華懋大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3422016110T20050430",
+  "idmatch": true
+ },
+ "B342341609101063C0": {
+  "en": "Chuang's Tower",
+  "zh": "莊士大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3423416091T20050430",
+  "idmatch": true
+ },
+ "B337521629401063C0": {
+  "en": "Mandarin Building",
+  "zh": "文華大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3375216294T20050430",
+  "idmatch": true
+ },
+ "B340441616101063C0": {
+  "en": "Man On Commercial Building",
+  "zh": "萬安商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3404416161T20050430",
+  "idmatch": true
+ },
+ "B354392006601063C0": {
+  "en": "280 Portland Street Commercial Building",
+  "zh": "砵蘭街２８０號商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543920066T20050430",
+  "idmatch": true
+ },
+ "B378561663301063C0": {
+  "en": "Wang Fai Mansion",
+  "zh": "宏暉大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3785616633T20050430",
+  "idmatch": true
+ },
+ "B370771546001063C0": {
+  "en": "Eton Tower",
+  "zh": "裕景商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3707715460T20050430",
+  "idmatch": true
+ },
+ "B368521580301063C0": {
+  "en": "Shining Building",
+  "zh": "肇明大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3685215803T20050430",
+  "idmatch": true
+ },
+ "B342311581801063C0": {
+  "en": "Central Building",
+  "zh": "中建大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3423115818T20050430",
+  "idmatch": true
+ },
+ "B340021612801063C0": {
+  "en": "Haleson Building",
+  "zh": "喜訊大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3400216128T20050430",
+  "idmatch": true
+ },
+ "B353182009101063C0": {
+  "en": "Man Shing Building",
+  "zh": "萬成大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531820091T20050430",
+  "idmatch": true
+ },
+ "B353071997901063C0": {
+  "en": "Kai Yue Commercial Building",
+  "zh": "啓如商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3530719979T20050430",
+  "idmatch": true
+ },
+ "B353232005801063C0": {
+  "en": "Island Centre",
+  "zh": "海島中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532320058T20050430",
+  "idmatch": true
+ },
+ "B354622005701063C0": {
+  "en": "Hang Seng Mong Kok Building",
+  "zh": "恒生旺角大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3546220057T20050430",
+  "idmatch": true
+ },
+ "B353701982201063C0": {
+  "en": "Wing Cheong Building",
+  "zh": "永昌大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3537019822T20050430",
+  "idmatch": true
+ },
+ "B360081763501063C0": {
+  "en": "Podium Plaza",
+  "zh": "普基商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3600817635T20050430",
+  "idmatch": true
+ },
+ "B379111659801063C0": {
+  "en": "Swanhill Mansion",
+  "zh": "宣協大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3791116598T20050430",
+  "idmatch": true
+ },
+ "B354492012001063C0": {
+  "en": "Punfet Building",
+  "zh": "番發大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544920120T20050430",
+  "idmatch": true
+ },
+ "B355082009101063C0": {
+  "en": "Hua Chiao Commercial Centre",
+  "zh": "華僑商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3550820091T20050430",
+  "idmatch": true
+ },
+ "B367931541501063C0": {
+  "en": "Workingview Commercial Building",
+  "zh": "華耀商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3679315415T20050430",
+  "idmatch": true
+ },
+ "B353832013701063C0": {
+  "en": "Cheong Fu Mansion",
+  "zh": "昌富大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538320137T20050430",
+  "idmatch": true
+ },
+ "B354761987901063C0": {
+  "en": "One Grand Tower",
+  "zh": "雅蘭中心一期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 7.5,
+  "csuid": "3547619879T20050430",
+  "idmatch": true
+ },
+ "B355581995001063C0": {
+  "en": "Yau Shing Commercial Centre",
+  "zh": "友誠商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3555819950T20050430",
+  "idmatch": true
+ },
+ "B354492000201063C0": {
+  "en": "Mongkok Commercial Centre",
+  "zh": "旺角商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544920002T20050430",
+  "idmatch": true
+ },
+ "B353551988702063C0": {
+  "en": "MONG KOK COMPLEX",
+  "zh": "旺角綜合大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3535519887P20060825",
+  "idmatch": true
+ },
+ "B354521996001063C0": {
+  "en": "Far East Consortium Mongkok Building",
+  "zh": "遠東發展旺角大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545219960T20050430",
+  "idmatch": true
+ },
+ "B342871602001063C0": {
+  "en": "Grand Building",
+  "zh": "大昌大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3428716020T20050430",
+  "idmatch": true
+ },
+ "B359501755001063C0": {
+  "en": "Harbour Bay Hotel",
+  "zh": "維港灣酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3595017550T20050430",
+  "idmatch": true
+ },
+ "B340011624401063C0": {
+  "en": "Public Bank Centre",
+  "zh": "大眾銀行中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3400116244T20050430",
+  "idmatch": true
+ },
+ "B357051514001063C0": {
+  "en": "Weswick Commercial Building",
+  "zh": "威利商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3570515140T20050430",
+  "idmatch": true
+ },
+ "B355312001801063C0": {
+  "en": "Wai Fung Plaza",
+  "zh": "惠豐中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553120018T20050430",
+  "idmatch": true
+ },
+ "B369611588701063C0": {
+  "en": "Hoi Deen Court",
+  "zh": "海殿大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3696115887T20050430",
+  "idmatch": true
+ },
+ "B354532010101063C0": {
+  "en": "Winner Mansion",
+  "zh": "永如大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545320101T20050430",
+  "idmatch": true
+ },
+ "B354552010801063C0": {
+  "en": "Winner Mansion",
+  "zh": "永如大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545520108T20050430",
+  "idmatch": true
+ },
+ "B354861994501063C0": {
+  "en": "Wu Sang House",
+  "zh": "胡社生行",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3548619945T20050430",
+  "idmatch": true
+ },
+ "B354592007501063C0": {
+  "en": "May May Building",
+  "zh": "美美大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545920075T20050430",
+  "idmatch": true
+ },
+ "B356831507602063C0": {
+  "en": "HOPEWELL CENTRE",
+  "zh": "合和中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3568315076P20050726",
+  "idmatch": true
+ },
+ "B342711604201063C0": {
+  "en": "Chinese Club Building",
+  "zh": "華商會所大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3427116042T20050430",
+  "idmatch": true
+ },
+ "B340251623801063C0": {
+  "en": "Shun On Commercial Building",
+  "zh": "順安商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3402516238T20050430",
+  "idmatch": true
+ },
+ "B359861756901063C0": {
+  "en": "CFC Tower",
+  "zh": "中福商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3598617569T20050430",
+  "idmatch": true
+ },
+ "B355122006801063C0": {
+  "en": "Shanghai Commercial Bank Building",
+  "zh": "上海商業銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3551220068T20050430",
+  "idmatch": true
+ },
+ "B352731813501063C0": {
+  "en": "Xiqu Centre",
+  "zh": "戲曲中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3527318135T20180208",
+  "idmatch": true
+ },
+ "B355321996901063C0": {
+  "en": "Rex Building",
+  "zh": "皇上皇大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553219969T20050430",
+  "idmatch": true
+ },
+ "B355152012101063C0": {
+  "en": "Argyle Centre",
+  "zh": "旺角中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 5.3,
+  "csuid": "3551520121T20050430",
+  "idmatch": true
+ },
+ "B355321996001063C0": {
+  "en": "Toa Tak Building",
+  "zh": "陶德大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553219960T20050430",
+  "idmatch": true
+ },
+ "B351951579501063C0": {
+  "en": "Legislative Council Complex",
+  "zh": "立法會綜合大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3516615817T20110704",
+  "idmatch": false
+ },
+ "B355331995501063C0": {
+  "en": "Toa Tak Building",
+  "zh": "陶德大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553319955T20050430",
+  "idmatch": true
+ },
+ "B355331995001063C0": {
+  "en": "Toa Tak Building",
+  "zh": "陶德大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553319950T20050430",
+  "idmatch": true
+ },
+ "B354421775301063C0": {
+  "en": "Canton Plaza",
+  "zh": "流尚坊",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544217753T20050430",
+  "idmatch": true
+ },
+ "B353951554801063C0": {
+  "en": "Wanchai District Headquarters and Wanchai Division",
+  "zh": "灣仔警區總部及灣仔分區",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3539515548T20050430",
+  "idmatch": true
+ },
+ "B346181553502063C0": {
+  "en": "CHAMPION TOWER",
+  "zh": "冠君大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3461815535P20050819",
+  "idmatch": true
+ },
+ "B353452003101063C0": {
+  "en": "33 Argyle",
+  "zh": "美聯金融大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3534520031T20050430",
+  "idmatch": true
+ },
+ "B370051550901063C1": {
+  "en": "Phoenix Apartments",
+  "zh": "鳳鳴大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3700515509T20050430",
+  "idmatch": true
+ },
+ "B360181757401063C0": {
+  "en": "Mody House",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3601817574T20101207",
+  "idmatch": true
+ },
+ "B353541998501063C0": {
+  "en": "On May Mansion",
+  "zh": "安美大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3535419985T20050430",
+  "idmatch": true
+ },
+ "B359881755701063C0": {
+  "en": "Xi Hotel",
+  "zh": "憙酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3598817557T20050430",
+  "idmatch": true
+ },
+ "B354522009501063C0": {
+  "en": "Winner Mansion",
+  "zh": "永如大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545220095T20050430",
+  "idmatch": true
+ },
+ "B339871626101063C0": {
+  "en": "Tai Sang Bank Building",
+  "zh": "大生銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3398716261T20050430",
+  "idmatch": true
+ },
+ "B354552008601063C0": {
+  "en": "Cornwall Court",
+  "zh": "嘉禾大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545520086T20050430",
+  "idmatch": true
+ },
+ "B354572011401063C0": {
+  "en": "Winner Mansion",
+  "zh": "永如大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545720114T20050430",
+  "idmatch": true
+ },
+ "B353141993701063C0": {
+  "en": "Sunny Day Hotel",
+  "zh": "新天地酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531419937T20050430",
+  "idmatch": true
+ },
+ "B359691755501063C0": {
+  "en": "Isa Tower",
+  "zh": "義莎中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3596917555T20050430",
+  "idmatch": true
+ },
+ "B342301609701063C0": {
+  "en": "A I E Building",
+  "zh": "亞洲大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3423016097T20050430",
+  "idmatch": true
+ },
+ "B360221761701063C0": {
+  "en": "Chelsea Hotel",
+  "zh": "怡景酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3602217617T20050430",
+  "idmatch": true
+ },
+ "B353121995901063C0": {
+  "en": "H1 Hotel",
+  "zh": "逸豪酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531219959T20110426",
+  "idmatch": true
+ },
+ "B354511769901063C0": {
+  "en": "Imperial Building",
+  "zh": "帝國大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545117699T20050430",
+  "idmatch": true
+ },
+ "B352452001101063C0": {
+  "en": "Kai Wan Mansion",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3524520011T20050430",
+  "idmatch": true
+ },
+ "B354251784701063C0": {
+  "en": "China HK Centre",
+  "zh": "中港中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3542517847T20050430",
+  "idmatch": true
+ },
+ "B354081764901063C0": {
+  "en": "Gateway Hotel",
+  "zh": "港威酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540817649T20050430",
+  "idmatch": true
+ },
+ "B353391998101063C0": {
+  "en": "New Asia Building",
+  "zh": "新亞大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533919981T20050430",
+  "idmatch": true
+ },
+ "B353741532001063C0": {
+  "en": "Wing Fung Building",
+  "zh": "永豐大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3537415320T20050430",
+  "idmatch": true
+ },
+ "B354401777301063C0": {
+  "en": "Manley House",
+  "zh": "文利大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544017773T20050430",
+  "idmatch": true
+ },
+ "B353032002301063C0": {
+  "en": "Chun Hing Building",
+  "zh": "俊興樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3530320023T20050430",
+  "idmatch": true
+ },
+ "B353352008001063C0": {
+  "en": "Kwok Cheung Building",
+  "zh": "國祥大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533520080T20050430",
+  "idmatch": true
+ },
+ "B354001550501063C0": {
+  "en": "Arsenal House (East Wing)",
+  "zh": "警政大樓東翼",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540015505T20050430",
+  "idmatch": true
+ },
+ "B355281998301063C0": {
+  "en": "Lee Wai Building",
+  "zh": "利威大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3552819983T20050430",
+  "idmatch": true
+ },
+ "B353861774401063C0": {
+  "en": "World Finance Tower North Tower",
+  "zh": "環球金融中心北座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538617744T20050430",
+  "idmatch": true
+ },
+ "B354102004101063C0": {
+  "en": "Golden Hill Commercial Building",
+  "zh": "金山商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3541020041T20050430",
+  "idmatch": true
+ },
+ "B353241804501063C0": {
+  "en": "Fire Services Department Kowloon South Divisional HQ and Tsim Sha Tsui Fire Station",
+  "zh": "消防處九龍南區總部暨尖沙咀消防局",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 9.8,
+  "csuid": "3532418045T20050430",
+  "idmatch": true
+ },
+ "B359921767401063C0": {
+  "en": "Hart Avenue Plaza",
+  "zh": "德裕中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3599217674T20050430",
+  "idmatch": true
+ },
+ "B342851634802063C0": {
+  "en": "TWO INTERNATIONAL FINANCE CENTRE",
+  "zh": "國際金融中心二期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3428516348P20050905",
+  "idmatch": true
+ },
+ "B369791565202063C0": {
+  "en": "HYSAN PLACE",
+  "zh": "希慎廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3697915652P20120223",
+  "idmatch": true
+ },
+ "B354342004901063C0": {
+  "en": "Argyle House",
+  "zh": "雅佳樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543420049T20050430",
+  "idmatch": true
+ },
+ "B359451769901063C0": {
+  "en": "B C C Building",
+  "zh": "國際商業信貸銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3594517699T20050430",
+  "idmatch": true
+ },
+ "B354271783201063C0": {
+  "en": "VIP Commercial Centre",
+  "zh": "海威商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3542717832T20050430",
+  "idmatch": true
+ },
+ "B353991769601063C0": {
+  "en": "World Finance Tower South Tower",
+  "zh": "環球金融中心南座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3539917696T20050430",
+  "idmatch": true
+ },
+ "B354271755301063C0": {
+  "en": "Wharf T&T Centre",
+  "zh": "九倉電訊中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3542717553T20050430",
+  "idmatch": true
+ },
+ "B354181760101063C0": {
+  "en": "World Commerce Centre",
+  "zh": "世界商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3541817601T20050430",
+  "idmatch": true
+ },
+ "B359761766101063C0": {
+  "en": "Century House",
+  "zh": "世紀商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3597617661T20050430",
+  "idmatch": true
+ },
+ "B342541606501063C0": {
+  "en": "Chinese General Chamber of Commerce Building",
+  "zh": "中華總商會大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3425416065T20050430",
+  "idmatch": true
+ },
+ "B340371623001063C0": {
+  "en": "Hung Tak Building",
+  "zh": "鴻德大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3403716230T20050430",
+  "idmatch": true
+ },
+ "B353791779101063C0": {
+  "en": "The Prince Hotel",
+  "zh": "太子酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3537917791T20050430",
+  "idmatch": true
+ },
+ "B354961759901063C0": {
+  "en": "Silvercord Tower 1",
+  "zh": "新港中心第一座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3549617599T20050810",
+  "idmatch": true
+ },
+ "B354761998701063C0": {
+  "en": "HSBC Building Mongkok",
+  "zh": "旺角滙豐大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3547619987T20050430",
+  "idmatch": true
+ },
+ "B354841764701063C0": {
+  "en": "Silvercord Tower 2",
+  "zh": "新港中心第二座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3548417647T20050810",
+  "idmatch": true
+ },
+ "B355361994301063C0": {
+  "en": "Bank of East Asia Mongkok Building",
+  "zh": "東亞銀行旺角大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553619943T20050430",
+  "idmatch": true
+ },
+ "B354052007101063C0": {
+  "en": "Skyway Mansion",
+  "zh": "天成大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540520071T20050430",
+  "idmatch": true
+ },
+ "B346811583602063C0": {
+  "en": "CCB Tower",
+  "zh": "中國建設銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3468115836T20130111",
+  "idmatch": true,
+  "h_landsd": 93.0
+ },
+ "B354481773301063C0": {
+  "en": "Hanley House",
+  "zh": "恒利大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544817733T20050430",
+  "idmatch": true
+ },
+ "B353282012301063C0": {
+  "en": "Mandarin Court",
+  "zh": "文華閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532820123T20050430",
+  "idmatch": true
+ },
+ "B359721769101063C0": {
+  "en": "Lee Wai Commercial Building",
+  "zh": "利威商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3597217691T20050430",
+  "idmatch": true
+ },
+ "B353001791601063C0": {
+  "en": "China Hong Kong City Tower 1",
+  "zh": "中港城第１座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3530017916T20050430",
+  "idmatch": true
+ },
+ "B352891798101063C0": {
+  "en": "China Hong Kong City Tower 3",
+  "zh": "中港城第３座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3528917981T20050430",
+  "idmatch": true
+ },
+ "B353361798701063C0": {
+  "en": "China Hong Kong City Tower 5",
+  "zh": "中港城第５座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533617987T20050430",
+  "idmatch": true
+ },
+ "B353471794301063C0": {
+  "en": "China Hong Kong City Tower 6",
+  "zh": "中港城第６座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3534717943T20050430",
+  "idmatch": true
+ },
+ "B354081820402063C0": {
+  "en": "VICTORIA MALL",
+  "zh": "港景匯商場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540818204P20050523",
+  "idmatch": true
+ },
+ "B353631789601063C0": {
+  "en": "The Royal Pacific Hotel and Towers Hotel Wing",
+  "zh": "皇家太平洋酒店園景翼",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3536317896T20050430",
+  "idmatch": true
+ },
+ "B352941794301063C0": {
+  "en": "China Hong Kong City Tower 2",
+  "zh": "中港城第２座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3529417943T20050430",
+  "idmatch": true
+ },
+ "B360081769301063C0": {
+  "en": "Kam Lung Commercial Centre",
+  "zh": "金麟商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3600817693T20050430",
+  "idmatch": true,
+  "h_landsd": 4.7
+ },
+ "B359501756601063C0": {
+  "en": "Fontaine Building",
+  "zh": "建泉大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3595017566T20130318",
+  "idmatch": true
+ },
+ "B353021788401063C0": {
+  "en": "The Royal Pacific Hotel and Towers Tower Wing",
+  "zh": "皇家太平洋酒店海景翼",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3530217884T20050430",
+  "idmatch": true
+ },
+ "B358781758601063C0": {
+  "en": "Yes & Right House",
+  "zh": "德拓大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3587817586T20050430",
+  "idmatch": true
+ },
+ "B368751581001063C0": {
+  "en": "City Mansion",
+  "zh": "新城大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3687515810T20050430",
+  "idmatch": true
+ },
+ "B360181756001063C0": {
+  "en": "Rich Towers",
+  "zh": "富峰行",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3601817560T20050430",
+  "idmatch": true
+ },
+ "B350401553902063C0": {
+  "en": "UNITED CENTRE",
+  "zh": "統一中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3504015539P20050819",
+  "idmatch": true
+ },
+ "B370291565601063C0": {
+  "en": "Lin Fook House",
+  "zh": "蓮福商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3702915656T20121123",
+  "idmatch": true
+ },
+ "B359151754901063C0": {
+  "en": "Peninsula Apartments",
+  "zh": "半島大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3591517549T20050430",
+  "idmatch": true
+ },
+ "B352782002301063C0": {
+  "en": "Kwong Ah Building",
+  "zh": "廣亞大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3527820023T20050430",
+  "idmatch": true
+ },
+ "B337941630002063C0": {
+  "en": "COSCO TOWER (HIGH BLK)",
+  "zh": "中遠大廈(高座)",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3379416300P20060312",
+  "idmatch": true
+ },
+ "B359061766501063C0": {
+  "en": "Lip Seng Mansion",
+  "zh": "立誠大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3590617665T20050430",
+  "idmatch": true
+ },
+ "B371051552402063C0": {
+  "en": "LEE GARDEN ONE",
+  "zh": "利園一期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3710515524P20050712",
+  "idmatch": true
+ },
+ "B340351615401063C0": {
+  "en": "Fu Hing Building",
+  "zh": "富興大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3403516154T20050430",
+  "idmatch": true
+ },
+ "B353771561001063C0": {
+  "en": "Caine House",
+  "zh": "堅偉樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 7.6,
+  "csuid": "3537715610T20050430",
+  "idmatch": true
+ },
+ "B353362007401063C0": {
+  "en": null,
+  "zh": "鑽石樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533620074T20050430",
+  "idmatch": true
+ },
+ "B353372006901063C0": {
+  "en": "DIAMOND BUILDING",
+  "zh": "鑽石樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533720069T20050430",
+  "idmatch": true
+ },
+ "B354501983301063C0": {
+  "en": "Tak Cheong Commercial Building",
+  "zh": "德昌商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545019833T20050430",
+  "idmatch": true
+ },
+ "B353382006501063C0": {
+  "en": "DIAMOND BUILDING",
+  "zh": "鑽石樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533820065T20050430",
+  "idmatch": true
+ },
+ "B362731572402063C0": {
+  "en": "SUN HUNG KAI CENTRE",
+  "zh": "新鴻基中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3627315724P20060312",
+  "idmatch": true
+ },
+ "B378501657702063C0": {
+  "en": "AIA TOWER",
+  "zh": "友邦廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3785016577P20060312",
+  "idmatch": true
+ },
+ "B353392006001063C0": {
+  "en": "DIAMOND BUILDING",
+  "zh": "鑽石樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533920060T20050430",
+  "idmatch": true
+ },
+ "B342601604001063C0": {
+  "en": "Heung Lam Building",
+  "zh": "香林大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3426016040T20050430",
+  "idmatch": true
+ },
+ "B359121770801063C0": {
+  "en": "Carnarvon Mansion",
+  "zh": "嘉芬大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3591217708T20060824",
+  "idmatch": true
+ },
+ "B343251620701063C0": {
+  "en": "IFC Mall (Hong Kong Station)",
+  "zh": "國際金融中心商場（香港站）",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 8.9,
+  "csuid": "3432516207T20050430",
+  "idmatch": true
+ },
+ "B354172014101063C0": {
+  "en": "Tak Cheung Building",
+  "zh": "德祥大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3541720141T20050430",
+  "idmatch": true
+ },
+ "B353851806201063C0": {
+  "en": "LAI CHACK MIDDLE SCHOOL",
+  "zh": "麗澤中學",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538518062T20050430",
+  "idmatch": true
+ },
+ "B353041989501063C0": {
+  "en": null,
+  "zh": "桂和樂樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3530419895T20050430",
+  "idmatch": true
+ },
+ "B342931615201063C0": {
+  "en": "The Forum",
+  "zh": "富臨閣",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3429316152T20140814",
+  "idmatch": true
+ },
+ "B354851994402063C0": {
+  "en": "WU SANG HOUSE",
+  "zh": "胡社生行",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3548519944P20060311",
+  "idmatch": true
+ },
+ "B370121549202063C0": {
+  "en": "PHOENIX APARTMENTS",
+  "zh": "鳳鳴大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3701215492P20050824",
+  "idmatch": true,
+  "h_landsd": 5.6
+ },
+ "B353312009901063C0": {
+  "en": "Kar Wong Building",
+  "zh": "家旺樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533120099T20050430",
+  "idmatch": true
+ },
+ "B357041503601063C0": {
+  "en": "Fujiya Mansion",
+  "zh": "富士屋",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3570415036T20050430",
+  "idmatch": true
+ },
+ "B354761998802063C0": {
+  "en": "HSBC BUILDING MONGKOK",
+  "zh": "旺角滙豐大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3547619988P20060311",
+  "idmatch": true
+ },
+ "B353331984201063C0": {
+  "en": null,
+  "zh": "紹祺大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533319842T20050430",
+  "idmatch": true
+ },
+ "B353171984601063C0": {
+  "en": "Kam Hing House",
+  "zh": "金慶樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531719846T20050430",
+  "idmatch": true
+ },
+ "B351721767201063C0": {
+  "en": "Pacific Club",
+  "zh": "太平洋會",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3517217672T20050430",
+  "idmatch": true
+ },
+ "B353171985001063C0": {
+  "en": "Kam Hing House",
+  "zh": "金慶樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531719850T20050430",
+  "idmatch": true
+ },
+ "B350621777601063C0": {
+  "en": "CHINA FERRY TERMINAL",
+  "zh": "中國客運碼頭",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3506217776T20050430",
+  "idmatch": true
+ },
+ "B359841771001063C0": {
+  "en": "Rose Mansion",
+  "zh": "玫瑰大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3598417710T20050430",
+  "idmatch": true
+ },
+ "B377801667302063C0": {
+  "en": "HARBOUR GRAND HONG KONG",
+  "zh": "港島海逸君綽酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3778016673P20081218",
+  "idmatch": true
+ },
+ "B344841563401063C0": {
+  "en": "Former French Mission Building",
+  "zh": "前法國外方傳道會大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3448415634T20050430",
+  "idmatch": true
+ },
+ "B343031580702063C0": {
+  "en": "YORK HOUSE",
+  "zh": "約克大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3430315807P20060312",
+  "idmatch": true
+ },
+ "B359341762502063C0": {
+  "en": "K11",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3593417625P20080331",
+  "idmatch": true
+ },
+ "B339361615401063C0": {
+  "en": null,
+  "zh": "顯光樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3393616154T20050430",
+  "idmatch": true
+ },
+ "B340281621201063C0": {
+  "en": "WANTHORPE HOUSE",
+  "zh": "第一宏豐中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3402816212T20050430",
+  "idmatch": true
+ },
+ "B339511622001063C0": {
+  "en": "THE CENTER",
+  "zh": "中環中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 21.3,
+  "csuid": "3395116220T20050430",
+  "idmatch": true
+ },
+ "B352991992401063C0": {
+  "en": null,
+  "zh": "高好樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3529919924T20050430",
+  "idmatch": true
+ },
+ "B368551544501063C1": {
+  "en": "Hing Kui Building",
+  "zh": "慶渠樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3685515445T20050430",
+  "idmatch": true
+ },
+ "B354082005301063C0": {
+  "en": null,
+  "zh": "永康樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540820053T20050430",
+  "idmatch": true
+ },
+ "B339601624602063C0": {
+  "en": "BOC GROUP LIFE ASSURANCE TOWER",
+  "zh": "中銀集團人壽保險大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3396016246P20060807",
+  "idmatch": true
+ },
+ "B353461782502063C0": {
+  "en": "Gateway Arcade",
+  "zh": "港威商場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3534617825P20050810",
+  "idmatch": true
+ },
+ "B354002009401063C0": {
+  "en": "Chi Fu Building",
+  "zh": "置富樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3540020094T20050430",
+  "idmatch": true
+ },
+ "B359921765302063C0": {
+  "en": "PODIUM PLAZA",
+  "zh": "普基商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3599217653P20050809",
+  "idmatch": true
+ },
+ "B353301985801063C0": {
+  "en": "Lon Kie Building",
+  "zh": "隆基樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3533019858T20050430",
+  "idmatch": true
+ },
+ "B340421618801063C0": {
+  "en": null,
+  "zh": "鴻安大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3404216188T20050430",
+  "idmatch": true
+ },
+ "B370441588302063C0": {
+  "en": "Podium",
+  "zh": "平台",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3704415883P20260123",
+  "idmatch": true
+ },
+ "B337761626501063C0": {
+  "en": "Jervois House",
+  "zh": "蘇杭樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3377616265T20050430",
+  "idmatch": true
+ },
+ "B355121744602063C0": {
+  "en": "ONE PEKING",
+  "zh": "北京道一號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3551217446P20050810",
+  "idmatch": true
+ },
+ "B360101765701063C0": {
+  "en": "Lee Chau Commercial Building",
+  "zh": "利就商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3601017657T20050430",
+  "idmatch": true
+ },
+ "B344281572002063C0": {
+  "en": "STANDARD CHARTERED BANK BUILDING",
+  "zh": "渣打銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3442815720P20060312",
+  "idmatch": true
+ },
+ "B368531583702063C0": {
+  "en": "SINO PLAZA",
+  "zh": "信和廣場",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3685315837P20060312",
+  "idmatch": true
+ },
+ "B349531567602063C0": {
+  "en": "FAR EAST FINANCE CENTRE",
+  "zh": "遠東金融中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3495315676P20060312",
+  "idmatch": true
+ },
+ "B342491632901063C0": {
+  "en": "MTR HONG KONG STATION",
+  "zh": "港鐵香港站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3424916329T20050430",
+  "idmatch": true
+ },
+ "B339991624002063C0": {
+  "en": "PUBLIC BANK CENTRE",
+  "zh": "大眾銀行中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3399916240P20060312",
+  "idmatch": true
+ },
+ "B367841554802063C0": {
+  "en": "EMPEROR WATCH AND JEWELLERY CENTRE",
+  "zh": "英皇鐘錶珠寶中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3678415548P20050712",
+  "idmatch": true
+ },
+ "B370741555601063C0": {
+  "en": "Residence de Causeway",
+  "zh": null,
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3707415556T20050430",
+  "idmatch": true
+ },
+ "B354391779302063C0": {
+  "en": "THE TOY HOUSE",
+  "zh": "彩星集團大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543917793P20050810",
+  "idmatch": true
+ },
+ "B354102004302063C0": {
+  "en": "GOLDEN HILL COMMERCIAL BUILDING",
+  "zh": "金山商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3541020043P20060311",
+  "idmatch": true
+ },
+ "B354492012202063C0": {
+  "en": "PUNFET BUILDING",
+  "zh": "番發大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544920122P20060311",
+  "idmatch": true
+ },
+ "B352651574402063C0": {
+  "en": "CITIC TOWER",
+  "zh": "中信大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3526515744P20060312",
+  "idmatch": true
+ },
+ "B368031543702063C0": {
+  "en": "HOLIDAY INN EXPRESS CAUSEWAY BAY HO",
+  "zh": "香港銅鑼灣智選假日酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3680315437P20050712",
+  "idmatch": true
+ },
+ "B351741780101063C0": {
+  "en": "CHINA FERRY TERMINAL",
+  "zh": "中國客運碼頭",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3517417801T20050430",
+  "idmatch": true
+ },
+ "B358821758002063C0": {
+  "en": "YES & RIGHT HOUSE",
+  "zh": "德拓大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3588217580P20050809",
+  "idmatch": true
+ },
+ "B351211778901063C0": {
+  "en": "CHINA FERRY TERMINAL",
+  "zh": "中國客運碼頭",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3512117789T20050430",
+  "idmatch": true
+ },
+ "B352351781201063C0": {
+  "en": "CHINA FERRY TERMINAL",
+  "zh": "中國客運碼頭",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3523517812T20050430",
+  "idmatch": true
+ },
+ "B358831761101063C0": {
+  "en": "THE MASTERPIECE",
+  "zh": "名鑄",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3588317611T20080331",
+  "idmatch": true
+ },
+ "B354421774402063C0": {
+  "en": "CANTONYAMA",
+  "zh": "廣東八十",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544217744P20050812",
+  "idmatch": true
+ },
+ "B354622005702063C0": {
+  "en": "Hang Seng Mong Kok Building",
+  "zh": "恒生旺角大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3546220057T20050430",
+  "idmatch": true,
+  "h_landsd": 66.2
+ },
+ "B355312001702063C0": {
+  "en": "WAI FUNG PLAZA",
+  "zh": "惠豐中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553120017P20060311",
+  "idmatch": true
+ },
+ "B370871546702063C0": {
+  "en": "ETON TOWER",
+  "zh": "裕景商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3708715467P20050712",
+  "idmatch": true
+ },
+ "B339291620102063C0": {
+  "en": "THE L.PLACE",
+  "zh": "THE L.PLACE",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3392916201P20060312",
+  "idmatch": true
+ },
+ "B357011513402063C0": {
+  "en": "WESWICK COMMERCIAL BUILDING",
+  "zh": "威利商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3570115134P20050726",
+  "idmatch": true
+ },
+ "B355212010702063C0": {
+  "en": "Mong Kok New Town Mall",
+  "zh": "旺角新之城",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 2.7,
+  "csuid": "3552120107P20060311",
+  "idmatch": true
+ },
+ "B354921984302063C0": {
+  "en": "TWO GRAND TOWER",
+  "zh": "雅蘭中心 2 期",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3549219843P20060311",
+  "idmatch": true
+ },
+ "B359621770802063C0": {
+  "en": "BCC BUILDING",
+  "zh": "國際商業信貸銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3596217708P20050809",
+  "idmatch": true
+ },
+ "B353802003201063C0": {
+  "en": "Memoir Center",
+  "zh": "民華中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538020032T20201125",
+  "idmatch": true
+ },
+ "B354571995702063C0": {
+  "en": "MPM",
+  "zh": "旺角文華",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545719957P20060311",
+  "idmatch": true
+ },
+ "B353452003202063C0": {
+  "en": "33 ARGYLE",
+  "zh": "33 亞皆老街",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3534520032P20060311",
+  "idmatch": true
+ },
+ "B367831556702063C0": {
+  "en": "SOUNDWILL PLAZA II - MIDTOWN",
+  "zh": "金朝陽中心二期 - MIDTOWN",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3678315567P20140529",
+  "idmatch": true
+ },
+ "B359761769602063C0": {
+  "en": "LEE WAI COMMERCIAL BUILDING",
+  "zh": "利威商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3597617696P20050809",
+  "idmatch": true
+ },
+ "B355111781801063C0": {
+  "en": "Hong Kong Heritage Discovery Centre",
+  "zh": "香港文物探知館",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3551117818T20050430",
+  "idmatch": true
+ },
+ "B360251760802063C0": {
+  "en": "CONTINENTAL ORIENT COMMERCIAL CENTRE",
+  "zh": "東銘商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3602517608P20050809",
+  "idmatch": true
+ },
+ "B360131768102063C0": {
+  "en": "SUPREME HOUSE",
+  "zh": "首邦行",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3601317681P20050809",
+  "idmatch": true
+ },
+ "B359701756902063C0": {
+  "en": "CFC TOWER",
+  "zh": "中福商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3597017569P20050809",
+  "idmatch": true
+ },
+ "B358941764601063C0": {
+  "en": "THE MASTERPIECE",
+  "zh": "名鑄",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3589417646T20080331",
+  "idmatch": true
+ },
+ "B368201555702063C0": {
+  "en": "SOUNDWILL PLAZA",
+  "zh": "金朝陽中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3682015557P20050712",
+  "idmatch": true
+ },
+ "B354341784202063C0": {
+  "en": "CHINA HONG KONG CENTRE",
+  "zh": "中港中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543417842P20060225",
+  "idmatch": true
+ },
+ "B345371559501063C0": {
+  "en": "CHEUNG KONG CENTER",
+  "zh": "長江集團中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3453715595T20050430",
+  "idmatch": true
+ },
+ "B354521775402063C0": {
+  "en": "CANTON PLAZA",
+  "zh": "流尚店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3545217754P20060225",
+  "idmatch": true
+ },
+ "B360061769002063C0": {
+  "en": "KAM LUNG COMMERCIAL CENTRE",
+  "zh": "金麟商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3600617690P20050809",
+  "idmatch": true
+ },
+ "B348401575802063C0": {
+  "en": "BANK OF AMERICA TOWER",
+  "zh": "美國銀行中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3484015758P20060312",
+  "idmatch": true
+ },
+ "B340351622302063C0": {
+  "en": "HUNG TAK BUILDING",
+  "zh": "鴻德大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3403516223P20060312",
+  "idmatch": true
+ },
+ "B343801584702063C0": {
+  "en": "ALEXANDRA HSE",
+  "zh": "歷山大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3438015847P20060312",
+  "idmatch": true
+ },
+ "B354361783202063C0": {
+  "en": "V.I.P. COMMERCIAL CENTRE",
+  "zh": "海威商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543617832P20050812",
+  "idmatch": true
+ },
+ "B355072009402063C0": {
+  "en": "HUA CHIAO COMMERCIAL CENTRE",
+  "zh": "華僑商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3550720094P20060311",
+  "idmatch": true
+ },
+ "B359761765602063C0": {
+  "en": "CENTURY HOUSE",
+  "zh": "世紀商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3597617656P20050809",
+  "idmatch": true
+ },
+ "B357421504401063C0": {
+  "en": "The Church of Christ in China Wanchai Church",
+  "zh": "中華基督教會灣仔堂",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3574215044T20050430",
+  "idmatch": true
+ },
+ "B353242005602063C0": {
+  "en": "ISLAND CENTRE",
+  "zh": "海島中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532420056P20060311",
+  "idmatch": true
+ },
+ "B341341618702063C0": {
+  "en": "HANG SENG BANK HEADQUARTERS' BUILDING",
+  "zh": "恒生銀行總行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3413416187P20060312",
+  "idmatch": true
+ },
+ "B359541756602063C0": {
+  "en": "FONTAINE BUILDING",
+  "zh": "建泉大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3595417566P20130318",
+  "idmatch": true
+ },
+ "B355551995702063C0": {
+  "en": "YAU SHING COMMERCIAL CENTRE",
+  "zh": "友誠商業中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3555519957P20060311",
+  "idmatch": true
+ },
+ "B354482000102063C0": {
+  "en": "MONGKOK COMMERCIAL CENTRE",
+  "zh": "旺角商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544820001P20060311",
+  "idmatch": true
+ },
+ "B354471983202063C0": {
+  "en": "TAK CHEONG COMMERCIAL BUILDING",
+  "zh": "德昌商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544719832P20060311",
+  "idmatch": true
+ },
+ "B355122006802063C0": {
+  "en": "Shanghai Commercial Bank Building",
+  "zh": "上海商業銀行大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3551220068T20050430",
+  "idmatch": true,
+  "h_landsd": 55.0
+ },
+ "B354841988302063C0": {
+  "en": "Grand Plaza",
+  "zh": "雅蘭中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3548419883P20060311",
+  "idmatch": true
+ },
+ "B370301565402063C0": {
+  "en": "LIN FOOK HOUSE",
+  "zh": "蓮福商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3703015654P20120920",
+  "idmatch": true
+ },
+ "B352691995401063C0": {
+  "en": "Yau Tsim Mong District Health Centre",
+  "zh": "油尖旺地區康健中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3526919954T20050430",
+  "idmatch": true
+ },
+ "B368221544602063C0": {
+  "en": "OLIV",
+  "zh": "OLIV",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3682215446P20131112",
+  "idmatch": true
+ },
+ "B353802003202063C0": {
+  "en": "Memoir Center",
+  "zh": "民華中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538020032T20201125",
+  "idmatch": true
+ },
+ "B349431561201063C0": {
+  "en": "MTR ADMIRALTY STATION",
+  "zh": "港鐵金鐘站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3494315612T20050430",
+  "idmatch": true
+ },
+ "B360391765502063C0": {
+  "en": "HODY COMMERCIAL BUILDING",
+  "zh": "好德商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3603917655P20060311",
+  "idmatch": true
+ },
+ "B341791635402063C0": {
+  "en": "FOUR SEASONS HOTEL HONG KONG",
+  "zh": "香港四季酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 6.5,
+  "csuid": "3417916354P20050905",
+  "idmatch": true
+ },
+ "B359921768202063C0": {
+  "en": "HART AVENUE PLAZA",
+  "zh": "德裕中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3599217682P20050809",
+  "idmatch": true
+ },
+ "B354362006702063C0": {
+  "en": "PORTLAND STREET COMMERCIAL BUILDING",
+  "zh": "砵蘭街商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3543620067P20060311",
+  "idmatch": true
+ },
+ "B367991541602063C0": {
+  "en": "WORKINGVIEW COMMERCIAL BUILDING",
+  "zh": "華耀商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3679915416P20050712",
+  "idmatch": true
+ },
+ "B353862010401063C0": {
+  "en": "Fife Street Substation",
+  "zh": "快富街變電站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538620104T20050430",
+  "idmatch": true
+ },
+ "B353121995702063C0": {
+  "en": "H1 HOTEL",
+  "zh": "逸豪酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531219957P20110426",
+  "idmatch": true
+ },
+ "B357281504202063C0": {
+  "en": "FUJIYA MANSION",
+  "zh": "富士屋",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3572815042P20050729",
+  "idmatch": true
+ },
+ "B353892008801063C0": {
+  "en": null,
+  "zh": "華康樓ＡＢ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538920088T20050430",
+  "idmatch": true
+ },
+ "B353912007401063C0": {
+  "en": null,
+  "zh": "華康樓ＣＤ座",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3539120074T20050430",
+  "idmatch": true
+ },
+ "B360141766402063C0": {
+  "en": "LEE CHAU COMMERCIAL BUILDING",
+  "zh": "利就商業大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3601417664P20050809",
+  "idmatch": true
+ },
+ "B359801755602063C0": {
+  "en": "XI HOTEL",
+  "zh": "憙",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3598017556P20050809",
+  "idmatch": true
+ },
+ "B353291987601063C0": {
+  "en": "Nelson Street Substation",
+  "zh": "奶路臣街變電站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532919876T20050430",
+  "idmatch": true
+ },
+ "B353282010002063C0": {
+  "en": "KAR WONG BUILDING",
+  "zh": "家旺樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3532820100P20060825",
+  "idmatch": true
+ },
+ "B343951571502063C0": {
+  "en": "HENLEY BUILDING",
+  "zh": "衡怡大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3439515715P20060312",
+  "idmatch": true
+ },
+ "B339511618701063C0": {
+  "en": "THE CENTER",
+  "zh": "中環中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3395116187T20050430",
+  "idmatch": true
+ },
+ "B353111761501063C0": {
+  "en": "SUN LIFE TOWER",
+  "zh": "永明金融大樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531117615T20050430",
+  "idmatch": true
+ },
+ "B355491783901063C0": {
+  "en": "Hong Kong Heritage Discovery Centre",
+  "zh": "香港文物探知館",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3554917839T20050430",
+  "idmatch": true
+ },
+ "B354441776102063C0": {
+  "en": "MANLEY HOUSE",
+  "zh": "文利大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544417761P20050810",
+  "idmatch": true
+ },
+ "B355521780501063C0": {
+  "en": "Hong Kong Heritage Discovery Centre",
+  "zh": "香港文物探知館",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3555217805T20050430",
+  "idmatch": true
+ },
+ "B353921546901063C0": {
+  "en": "ARSENAL HSE",
+  "zh": "警政大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3539215469T20080428",
+  "idmatch": true
+ },
+ "B361641568602063C0": {
+  "en": "CHINA RESOURCES BUILDING",
+  "zh": "華潤大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3616415686P20060312",
+  "idmatch": true
+ },
+ "B353902007902063C0": {
+  "en": "WAH HONG BUILDING",
+  "zh": "華康樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3539020079P20060311",
+  "idmatch": true
+ },
+ "B354402004902063C0": {
+  "en": "ARGYLE HOUSE",
+  "zh": "雅佳樓",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3544020049P20060311",
+  "idmatch": true
+ },
+ "B353691982302063C0": {
+  "en": "WING CHEONG BUILDING",
+  "zh": "永昌大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3536919823P20060311",
+  "idmatch": true
+ },
+ "B355541766501063C0": {
+  "en": "Haiphong Road Temporary Refuse Collection Point",
+  "zh": "海防道臨時垃圾站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3555417665T20050430",
+  "idmatch": true
+ },
+ "B341821633001063C0": {
+  "en": "MTR HONG KONG STATION",
+  "zh": "港鐵香港站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3418216330T20050430",
+  "idmatch": true
+ },
+ "B355211780401063C0": {
+  "en": "Hong Kong Heritage Discovery Centre",
+  "zh": "香港文物探知館",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 9.2,
+  "csuid": "3552117804T20060421",
+  "idmatch": true
+ },
+ "B353832013702063C0": {
+  "en": "Cheong Fu Mansion",
+  "zh": "昌富大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3538320137T20050430",
+  "idmatch": true,
+  "h_landsd": 65.2
+ },
+ "B355701765801063C0": {
+  "en": "HAIPHONG ROAD TEMPORARY MARKET",
+  "zh": "海防道臨時街巿",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3557017658T20050430",
+  "idmatch": true
+ },
+ "B378511663602063C0": {
+  "en": "WANG FAI MANSION",
+  "zh": "宏暉大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3785116636P20060312",
+  "idmatch": true
+ },
+ "B354611991401063C0": {
+  "en": "MTR MONG KOK STATION",
+  "zh": "港鐵旺角站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3546119914T20050430",
+  "idmatch": true
+ },
+ "B353771983501063C0": {
+  "en": "LANGHAM PLACE HOTEL",
+  "zh": "朗豪酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 9.1,
+  "csuid": "3537719835T20050903",
+  "idmatch": true
+ },
+ "B353182009102063C0": {
+  "en": "Man Shing Building",
+  "zh": "萬成大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3531820091T20050430",
+  "idmatch": true,
+  "h_landsd": 64.8
+ },
+ "B345541552201063C0": {
+  "en": "THREE GARDEN ROAD",
+  "zh": "花園道三號",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3455415522T20050430",
+  "idmatch": true
+ },
+ "B379091659302063C0": {
+  "en": "SWANHILL MANSION",
+  "zh": "宣協大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3790916593P20060312",
+  "idmatch": true
+ },
+ "B353641984501063C0": {
+  "en": "LANGHAM PLACE HOTEL",
+  "zh": "朗豪酒店",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3536419845T20050903",
+  "idmatch": true
+ },
+ "B344501639401063C0": {
+  "en": "Central Reclamation East End W Substation",
+  "zh": "中環填海區東端西變壓站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3445016394T20050430",
+  "idmatch": true
+ },
+ "B345501562602063C0": {
+  "en": "CHEUNG KONG CENTER",
+  "zh": "長江集團中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 12.2,
+  "csuid": "3455015626P20060312",
+  "idmatch": true
+ },
+ "B353781532802063C0": {
+  "en": "STAR STUDIOS I",
+  "zh": "STAR STUDIOS I",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3537815328P20050725",
+  "idmatch": true
+ },
+ "B345201564601063C0": {
+  "en": "QUEEN'S ROAD CENTRAL PUBLIC TOILET",
+  "zh": "皇后大道中公廁",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3452015646T20050430",
+  "idmatch": true
+ },
+ "B379081657701063C0": {
+  "en": "UNITED BUILDING",
+  "zh": "民眾大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3790816577T20050430",
+  "idmatch": true
+ },
+ "B358891770102063C0": {
+  "en": "CARNARVON MANSION",
+  "zh": "嘉芬大廈",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3588917701P20050809",
+  "idmatch": true
+ },
+ "B355351993401063C0": {
+  "en": "MTR MONG KOK STATION",
+  "zh": "港鐵旺角站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3553519934T20050430",
+  "idmatch": true
+ },
+ "B339331616901063C0": {
+  "en": "THE CENTER",
+  "zh": "中環中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3393316169T20050430",
+  "idmatch": true
+ },
+ "B339441616201063C0": {
+  "en": "THE CENTER",
+  "zh": "中環中心",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3394416162T20050430",
+  "idmatch": true
+ },
+ "B359921759701063C0": {
+  "en": "THE MASTERPIECE",
+  "zh": "名鑄",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3599217597T20080331",
+  "idmatch": true
+ },
+ "B358721763001063C0": {
+  "en": "K11",
+  "zh": "K11",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3587217630T20090114",
+  "idmatch": true
+ },
+ "B355222004801063C0": {
+  "en": "MTR MONG KOK STATION",
+  "zh": "港鐵旺角站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3552220048T20051024",
+  "idmatch": true
+ },
+ "B355412005201063C0": {
+  "en": "MTR MONG KOK STATION",
+  "zh": "港鐵旺角站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "near",
+  "d": 2.2,
+  "csuid": "3554120052T20050430",
+  "idmatch": true
+ },
+ "B343841588701063C0": {
+  "en": "MTR CENTRAL STATION",
+  "zh": "港鐵中環站",
+  "src": "landsd_rcd_1637211194312_35158",
+  "match": "pip",
+  "d": 0.0,
+  "csuid": "3438415887T20050430",
+  "idmatch": true
+ }
+}

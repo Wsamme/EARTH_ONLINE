@@ -4652,7 +4652,14 @@ function placeLandmarkMesh(L){
   const top = hi + 0.6;
   const lt = def.lt || (def.cat === 'new' ? {m:1, c:'#d6e4ff', k:0.6} : {m:0, c:'#ffc98a', k:0.9});
   LMCTX = {mats:new Map(), fx:[], rng:mulberry32(L.id*7919 + 13), u:{base:{value:top}, top:{value:top + def.h}, col:{value:new THREE.Color(lt.c)}, k:{value:lt.k}, mode:{value:lt.m}, even:{value:lt.e || 0}, anim:{value:lmAnimOf(lt)}, col2:{value:new THREE.Color(lt.c2 || LM_C2[L.id % LM_C2.length])}, ph:{value:(L.id*0.618) % 1}}};
-  const g = def.build(); lmMerge(g);
+  const g = def.build();
+  // [v42] live parts (g.userData.live: e.g. a wheel's rotor and gondolas) stay separate objects: each is merged on its own at the
+  // origin, the rest of the landmark is merged as before, and g.userData.spin.step(t) poses them every frame (stepLmFx)
+  const live = (g.userData && g.userData.live) || [];
+  for (const o of live){ g.remove(o); o.position.set(0, 0, 0); o.quaternion.identity(); o.scale.set(1, 1, 1); o.updateMatrix(); lmMerge(o); }
+  lmMerge(g);
+  for (const o of live) g.add(o);
+  if (live.length && g.userData.spin && g.userData.spin.step){ LMCTX.fx.push({kind:'spin', step:g.userData.spin.step}); g.userData.spin.step(0); }
   if (!L.sg){ const plinth = lmAdd(g, new THREE.CylinderGeometry(def.r*0.98, def.r*1.02, Math.max(1, top - lo + 2), 40), '#ddd6c8', 0, -Math.max(1, top - lo + 2)/2, 0); plinth.castShadow = false; }
   L.mats = LMCTX.mats; L.fx = LMCTX.fx; LMCTX = null;
   g.position.set(L.x, top, -L.y); g.rotation.y = L.rot;
@@ -4667,6 +4674,7 @@ function rebuildLandmarks(){
   if (SGR.on) sgrLandmarksChanged();
 }
 function stepLmFx(t){
+  for (const L of landmarks) for (const fx of L.fx || []) if (fx.kind === 'spin') fx.step(t);   // [v42] moving parts, day and night
   if (nightF < 0.02 && !stepLmFx.on) return; stepLmFx.on = nightF >= 0.02;
   for (const L of landmarks) for (const fx of L.fx || []){
     if (fx.kind !== 'sparkle') continue;
@@ -61999,8 +62007,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     if (dl.ctrl && M && u > dl.len - dl.stopD - 40) V.v *= 0.4;
     laneInsert(V, dl, ln);
     VEH.push(V);
+    if (SPLOG.on){ dlPos(dl, u, 0, _pT); const dx = _pT.x - ZONE.camX, dy = _pT.y - ZONE.camY, dz = ZONE.camZ - _pT.z; let inV = false; if (FRU && _vS){ _vS.set(_pT.x, _pT.z + 1.2, -_pT.y); inV = FRU.containsPoint(_vS); }
+      SPLOG.a.push({d:Math.round(Math.sqrt(dx*dx + dy*dy + dz*dz)), inView:inV, drv:drivingNow()}); if (SPLOG.a.length > 4000) SPLOG.a.shift(); }
     return V;
   }
+  // [v42] test log of where vehicles appear (SGTraffic.spawnLog(true) starts it; spawnLog() reads it)
+  const SPLOG = {on:false, a:[]};
   // the zone's total target (all its links), refreshed every second or so
   // per road group (expressways, arterials, local streets): targets and current counts, so that one group cannot use up the
   // budget of another (vehicles leave the fast expressways quickly and gather in the street grid)
@@ -62014,8 +62026,20 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       dl.tgt = dlTarget(dl, k); TGTACC += dl.tgt; TGA[roadGroup(dl.c)] += dl.tgt;
     }
   }
+  // [v42] while the player drives, no car appears where it could be seen popping in: never within 260 m of the camera, and not
+  // within 900 m inside the view (the frustum of the last drawn frame). This holds for the zone fill and for entry links too;
+  // the roads ahead fill by cars driving in from out of view. Viewing (not driving) keeps the old rule.
+  const _vS = typeof THREE !== 'undefined' ? new THREE.Vector3() : null;
+  const drivingNow = () => { try { return !!((window.SGF1 && SGF1.F1 && SGF1.F1.on) || (typeof F1 !== 'undefined' && F1 && F1.on)); } catch (e){ return false; } };
+  function seenSpawn(x, y, z){
+    const dx = x - ZONE.camX, dy = y - ZONE.camY, dz = ZONE.camZ - z, d2 = dx*dx + dy*dy + dz*dz;
+    if (d2 < 260*260) return true;
+    if (d2 < 900*900 && FRU && _vS){ _vS.set(x, z + 1.2, -y); if (FRU.containsPoint(_vS)) return true; }
+    return false;
+  }
   function spawnPass(budgetN){
     const k = todK(curTod())*DENSK, list = ZONE.dls; if (!list.length) return;
+    const drv = drivingNow();
     const cap = Math.min(VMAXN*Math.min(1.4, DENSK), Math.max(TGT, 50) + BUS.nBus), camX = ZONE.camX, camY = ZONE.camY;
     let n = 0;
     while (n < budgetN && VEH.length < cap){
@@ -62033,7 +62057,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
         if (dl.src && !ZONE.fill) u = 1 + rnd()*3;
         else u = 4 + rnd()*Math.max(0, dl.len - 8);
         if (u > dl.len - Math.max(8, (dl.ctrl ? dl.stopD : 0) + 6)) continue;
-        if (!ZONE.fill){ dlPos(dl, u, 0, _p2); const dx = _p2.x - camX, dy = _p2.y - camY, dz = ZONE.camZ - _p2.z; if (dx*dx + dy*dy + dz*dz < 320*320 && !dl.src) continue; }
+        if (drv){ dlPos(dl, u, 0, _p2); if (seenSpawn(_p2.x, _p2.y, _p2.z)) continue; }
+        else if (!ZONE.fill){ dlPos(dl, u, 0, _p2); const dx = _p2.x - camX, dy = _p2.y - camY, dz = ZONE.camZ - _p2.z; if (dx*dx + dy*dy + dz*dz < 320*320 && !dl.src) continue; }
         if (spawnOn(dl, u)) NG[gi]++;
       }
     }
@@ -63117,6 +63142,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     mix:(x, y, r) => { const o = {}; let n = 0; for (const V of VEH){ if (!V.alive) continue; pathAt(V, V.u - V.len*0.5, _q); if ((_q.x - x)*(_q.x - x) + (_q.y - y)*(_q.y - y) > r*r) continue; n++; o[V.T.k] = (o[V.T.k] || 0) + 1; }
       const cars = n - (o.bus || 0) - (o.usbus || 0) - (o.usartic || 0) - (o.dd || 0) - (o.artic || 0); return {n, taxiShareOfCars:cars ? +((o.taxi || 0)/cars).toFixed(3) : 0, types:o}; },
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
+    spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),

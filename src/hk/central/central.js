@@ -477,26 +477,45 @@ LANDMARKS.hkwheel = {zh:'香港摩天轮', en:'Hong Kong Observation Wheel', cat
   const g = new THREE.Group(), B = mkB(), F = FD.hkwheel, S = clean(F.site), q = shedOf(S), c = q.f.w(0, q.vc), a = Math.atan2(q.f.s, q.f.c), f = frm(c[0], c[1], a);
   const RIM = {c:'#f0f0ee', m:0, lk:0.25, glow:'#ff3a36', gk:0.75}, ST = {c:'#e8e8e6', m:0, lk:0.3}, SP = {c:'#c9cbcc', m:0, lk:0, glow:'#ffd9d6', gk:0.25};
   const HUB = 32.5, RR = 27.3, N = 42, P = (u, y, v) => f.p(u, y, v);
-  // rim: two tubes (u = along the wheel plane, y up; v = the axle)
-  const ring = (rad, v) => { const pts = []; for (let i = 0; i <= 84; i++){ const t = i/84*TAU; pts.push(P(Math.cos(t)*rad, HUB + Math.sin(t)*rad, v)); } return pts; };
-  for (const v of [-1.1, 1.1]){ const r = ring(RR, v); for (let i = 0; i < 84; i++) segP(B.p(RIM), r[i], r[i + 1], 0.32, 5); }
-  { const r1 = ring(RR, -1.1), r2 = ring(RR, 1.1); for (let i = 0; i < 84; i += 2) segP(B.p(ST), r1[i], r2[i], 0.12, 3); }
+  // [v42] the wheel turns: rim, stays and spokes are one rotor (a live part the engine keeps out of the static merge and turns
+  // about the axle every frame); the 42 gondolas are live parts too and stay hanging upright. One turn every 5 minutes is an
+  // estimate (a ride is about three turns in 15-20 minutes). Live parts are built at the origin and posed by step(t).
+  const H = P(0, HUB, 0), U0 = P(1, HUB, 0), Uv = new THREE.Vector3(U0[0] - H[0], U0[1] - H[1], U0[2] - H[2]).normalize(), UP = new THREE.Vector3(0, 1, 0);
+  const AX = new THREE.Vector3().crossVectors(Uv, UP).normalize(), Hv = new THREE.Vector3(H[0], H[1], H[2]);
+  const Pr = (u, y, v) => { const p = P(u, HUB + y, v); return [p[0] - H[0], p[1] - H[1], p[2] - H[2]]; };
+  const rotor = new THREE.Group(), BR = mkB();
+  const ring = (rad, v) => { const pts = []; for (let i = 0; i <= 84; i++){ const t = i/84*TAU; pts.push(Pr(Math.cos(t)*rad, Math.sin(t)*rad, v)); } return pts; };
+  for (const v of [-1.1, 1.1]){ const r = ring(RR, v); for (let i = 0; i < 84; i++) segP(BR.p(RIM), r[i], r[i + 1], 0.32, 5); }
+  { const r1 = ring(RR, -1.1), r2 = ring(RR, 1.1); for (let i = 0; i < 84; i += 2) segP(BR.p(ST), r1[i], r2[i], 0.12, 3); }
   // tension spokes from both hub flanges to the rim
-  for (let i = 0; i < 42; i++){ const t = i/42*TAU; for (const [vh, vr] of [[-2.6, -1.1], [2.6, 1.1]]) segP(B.p(SP), P(Math.cos(t)*1.4, HUB + Math.sin(t)*1.4, vh), P(Math.cos(t + 0.06)*RR, HUB + Math.sin(t + 0.06)*RR, vr), 0.05, 3); }
-  // hub and axle
+  for (let i = 0; i < 42; i++){ const t = i/42*TAU; for (const [vh, vr] of [[-2.6, -1.1], [2.6, 1.1]]) segP(BR.p(SP), Pr(Math.cos(t)*1.4, Math.sin(t)*1.4, vh), Pr(Math.cos(t + 0.06)*RR, Math.sin(t + 0.06)*RR, vr), 0.05, 3); }
+  BR.flush(rotor);
+  // hub and axle (round about the axle, so they stay with the static frame)
   { const h0 = P(0, HUB, -3.2), h1 = P(0, HUB, 3.2); segP(B.p(ST), h0, h1, 1.5, 12); segP(B.p(ST), P(0, HUB, -5.2), P(0, HUB, 5.2), 0.55, 8); }
   // legs: an A-frame each side of the wheel (raked in the wheel plane) and a back stay
   for (const v of [-5.0, 5.0]){ for (const su of [-1, 1]) segP(B.p(ST), P(0, HUB, v), P(su*15.5, 1.2, v*2.2), 0.75, 8); segP(B.p(ST), P(-10, 12, v*1.8), P(10, 12, v*1.8), 0.3, 6); }
-  // gondolas: hanging capsules round the rim (bottom of the rim ~5 m above the boarding deck)
-  const GD = {c:'#e9eef2', m:0, lk:0.3}, GW = {c:'#6f8796', glow:'#ffe7c2', gk:0.45};
-  for (let i = 0; i < N; i++){ const t = i/N*TAU, x = Math.cos(t)*(RR + 0.6), y = HUB + Math.sin(t)*(RR + 0.6) - 2.4;
-    const p = P(x, y, 0); LCylD(g, 1.25, 1.25, 2.5, p[0], y - 1.25, p[2], GW, 10); LCylD(g, 1.3, 1.1, 0.3, p[0], y + 1.25, p[2], GD, 10); LCylD(g, 1.1, 1.3, 0.3, p[0], y - 1.55, p[2], GD, 10); segP(B.p(ST), [p[0], y + 1.5, p[2]], [p[0], y + 2.6, p[2]], 0.08, 3); }
+  // gondolas: capsules hanging from a pivot 0.2 m above the rim line (bottom of the rim ~5 m above the boarding deck)
+  const GD = {c:'#e9eef2', m:0, lk:0.3}, GW = {c:'#6f8796', glow:'#ffe7c2', gk:0.45}, gond = [], y0 = -2.6;
+  for (let i = 0; i < N; i++){ const G = new THREE.Group();
+    LCylD(G, 1.25, 1.25, 2.5, 0, y0 - 1.25, 0, GW, 10); LCylD(G, 1.3, 1.1, 0.3, 0, y0 + 1.25, 0, GD, 10); LCylD(G, 1.1, 1.3, 0.3, 0, y0 - 1.55, 0, GD, 10); LCylD(G, 0.08, 0.08, 1.1, 0, y0 + 1.5, 0, GD, 3);
+    gond.push(G); }
   // boarding hall: a low white pavilion with glass walls, and the deck
   { const S2 = clean(offP(S, 1.0)); prismP(B.p({c:'#dcd6ca', m:0, lk:0.2}), S2, -1.5, 0.4); const hall = [[-11, -9], [11, -9], [11, 9], [-11, 9]].map(([u, v]) => f.w(u, v));
     prismP(B.p({c:'#7f94a0', glow:'#ffe6c0', gk:0.5}), hall, 0.4, 4.2); prismP(B.p({c:'#efefec', m:0, lk:0.3}), clean(offP(hall, -1.2)), 4.2, 4.8);
     for (const su of [-1, 1]){ const st = [[su*13, -2.5], [su*17, -2.5], [su*17, 2.5], [su*13, 2.5]].map(([u, v]) => f.w(u, v)); prismP(B.p({c:'#bdb6a8', m:0, lk:0.2}), st, 0.4, 1.3); } }
   avLights(g, [P(0, HUB + RR + 1.0, 0)], 0.4);
-  B.flush(g); return g; }};
+  B.flush(g);
+  const W = TAU/300, RG = RR + 0.6, tmp = new THREE.Vector3();
+  function step(t){
+    const ang = (t*W) % TAU;
+    rotor.position.copy(Hv); rotor.setRotationFromAxisAngle(AX, ang);
+    for (let i = 0; i < N; i++){ const th = i/N*TAU + ang; tmp.copy(Uv).multiplyScalar(Math.cos(th)*RG).addScaledVector(UP, Math.sin(th)*RG).add(Hv); gond[i].position.set(tmp.x, tmp.y + 0.2, tmp.z); }
+  }
+  // posed once here, so an engine without live-part support merges a complete (still) wheel; the v42 engine re-merges each live
+  // part at the origin, keeps it out of the landmark's static merge and calls step(t) every frame
+  for (const o of [rotor, ...gond]) g.add(o);
+  step(0); g.userData.live = [rotor, ...gond]; g.userData.spin = {step};
+  return g; }};
 place('hkwheel');
 
 // ===== Central Harbourfront: the Central Pier Waterfront promenade along the landward ends of Piers 2 - 8 (OSM park, ~690 m

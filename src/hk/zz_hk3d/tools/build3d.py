@@ -69,7 +69,9 @@ for n, b in enumerate(sel):
         if hull.buffer(4).contains(Point(px, py)):
             (rep if p.get('label') else hide).append(p['k'])
     # a labelled placement replaced once only (the building that contains its anchor)
-    rep = [k for k in rep if k not in taken][:1] + []; extra = [k for k in rep[1:]]
+    # Any further labelled placement in this hull is left for the second pass below: it may be the anchor of a neighbouring
+    # tower (Exchange Square sits on the podium that replaces Hong Kong Station), and otherwise it is emptied there.
+    rep = [k for k in rep if k not in taken][:1]
     for k in rep: taken[k] = b['id']
     rr = float(np.hypot(V2[:, 0], V2[:, 1]).max())
     qp = np.round(V2 / 0.02).astype(np.int16); idx = F2.astype(np.uint16)

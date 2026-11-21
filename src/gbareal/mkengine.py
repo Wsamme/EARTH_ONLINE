@@ -205,7 +205,7 @@ function sgtRefreshChunks(bb){
 
 /* ---------- campuses and gardens: models on top of the real map; their ground is painted onto the texture ---------- */""")
 R("const SG_SUB = 'City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';",
-  "const SG_SUB = 'City Brush · 大湾区 Greater Bay 1:1 · 东莞 深圳 香港 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';")
+  "const SG_SUB = 'City Brush · 大湾区 Greater Bay 1:1 · 东莞 深圳 香港 · 真实地图 Real map · © OpenStreetMap · Overture · 3D-GloBFP', ISL_SUB = 'City Brush · 地图 24 × 24 km';")
 R("showBusy('正在载入真实香港地图… Loading the real map of Hong Kong');\n  sgrLoad().then(() => {", "showBusy('正在载入大湾区地图… Loading the Greater Bay map (Dongguan · Shenzhen · Hong Kong)');\n  sgrLoad().then(() => {")
 R("showToast('无法载入香港地图数据，已改为生成岛屿 · Could not load the Hong Kong data; showing a generated island');", "showToast('无法载入大湾区地图数据，已改为生成岛屿 · Could not load the Greater Bay data; showing a generated island');")
 # sky blocks are rebuilt in the frame step

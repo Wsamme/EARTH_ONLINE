@@ -54,6 +54,21 @@ Suggested credit 建议署名：
 The Hong Kong page shows “Buildings · HKSAR Government, Lands Department” in the map corner. Leave it there.
 香港页面在地图角落显示 “Buildings · HKSAR Government, Lands Department”。请保留。
 
+## Shenzhen and Dongguan buildings — Overture, 3D-GloBFP, CTBUH 深圳、东莞建筑
+
+On the Greater Bay page, the Shenzhen and Dongguan buildings (`site/gbadata/gba_bld*.txt`, made by `src/gbareal/szdg/`) come from three sources:
+大湾区页面上深圳、东莞的楼（`site/gbadata/gba_bld*.txt`，由 `src/gbareal/szdg/` 生成）来自三个来源：
+
+- **Footprints 轮廓**: Overture Maps buildings, release 2026-11-18.0. In Shenzhen and Dongguan these are OpenStreetMap buildings (ODbL) and the *East Asian buildings* machine-learning footprints by Shi et al. (Zenodo doi:10.5281/zenodo.8174931, CC BY 4.0). Credit: “© OpenStreetMap contributors, Overture Maps Foundation” and Shi et al. https://docs.overturemaps.org/attribution/
+  Overture Maps 2026-11-18.0 版的建筑：在深圳、东莞是 OpenStreetMap 的楼（ODbL）和 Shi 等人的“东亚建筑”机器学习轮廓（CC BY 4.0）。
+- **Heights of ordinary buildings 普通楼的高度**: where OpenStreetMap has no height or floor count, the height is from 3D-GloBFP (Che et al. 2024, *Earth System Science Data* 16:5357; Zenodo 15487006; CC BY 4.0). These are machine-learning estimates for the year 2020, about ±13 m, and far too low for towers. Buildings with no 3D-GloBFP match get an estimate by footprint size.
+  OpenStreetMap 没有高度或层数的楼，用 3D-GloBFP 的高度（机器学习估算，2020 年，误差约 ±13 米，高楼严重偏低）。连 3D-GloBFP 也没有的，按占地面积估算。
+- **Heights of tall buildings 高楼的高度**: the CTBUH Skyscraper Center (https://www.skyscrapercenter.com/), cross-checked with Wikipedia (CC BY-SA), Wikidata (CC0) and OpenStreetMap; lists in `src/gbareal/szdg/data/`. CTBUH information is available for public use when CTBUH is cited. Unfinished towers (under construction, stalled, on hold) do not get their planned height.
+  高楼高度来自 CTBUH（国际高层建筑与都市人居学会），并用维基百科、维基数据和 OpenStreetMap 核对；清单在 `src/gbareal/szdg/data/`。引用 CTBUH 即可公开使用。未建成的楼（在建、停工、搁置）不用规划高度。
+
+Building types and facade colours are our approximations, not data.
+建筑类型和外墙颜色是我们的近似，不是数据。
+
 ## Terrain 地形
 
 Terrain heights come from AWS Terrain Tiles (Mapzen / Tilezen terrarium tiles, zoom 12):

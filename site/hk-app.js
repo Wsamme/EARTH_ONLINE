@@ -57962,8 +57962,8 @@ SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type
 // Every building of 100 m or more in Central, Sheung Wan, Admiralty, Wan Chai, Causeway Bay, Tsim Sha Tsui, Mong Kok and West
 // Kowloon (49 map sheets), plus the podiums and parts of the hand-made complexes they replace, from the Lands Department's
 // "3D Visualisation Map (Non-textured models)" (glTF, HK1980 Grid; 3d.map.gov.hk / CSDI portal). Geometry is simplified
-// (about 9 triangles per metre of height; v44: landmarks and towers of 150 m or more keep up to 20,000 triangles, sharp edges split
-// so facets stay crisp) and packed into hkdata/hk3d.bin by hk/zz_hk3d/tools/build3d.py.
+// (about 9 triangles per metre of height; v44: landmarks and towers of 150 m or more keep up to 20,000
+// triangles, 50 per metre) and packed into hkdata/hk3d.bin by hk/zz_hk3d/tools/build3d.py.
 // Source: HKSAR Government, Lands Department (3D Visualisation Map; Building dataset for names, via DATA.GOV.HK); free use with attribution. The models carry no colour: the facade tones below are
 // approximations (glass tones for towers of 150 m or more, concrete tones below), not data. v44: a hand-made landmark that is
 // replaced lends its facade colour to the official model (the main colour of its walls, by area). Every model gets a window grid
@@ -57985,17 +57985,18 @@ SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type
   float hz2 = abs(Nw2.x) > abs(Nw2.z) ? vWP.z : vWP.x;
   float wy = step(uSill, fract(vWP.y / uFH)), wx = step(uMul, fract(hz2 / uCW));
   float above = step(uBase + 5.0, vWP.y);
-  float far = smoothstep(350.0, 1800.0, distance(vWP, cameraPosition));
+  float far = smoothstep(350.0, 1800.0, distance(vWP, uCam));   // own uniform: three does not set cameraPosition for Lambert
   float cov = (1.0 - uSill) * (1.0 - uMul);
   float win = mix(wy * wx, cov, far) * vert * above;
   diffuseColor.rgb = mix(diffuseColor.rgb, uGlass, win * uWK);
 }`;
+  const camPos = () => { try { return camera.position; } catch (e){ return new THREE.Vector3(0, 1e5, 0); } };
   function facade(mat, st){
     if (mat.userData.hk3dDay) return mat;
     mat.userData.hk3dDay = true;
-    const prev = mat.onBeforeCompile, U = {uGlass:{value:new THREE.Color(st.glass)}, uSill:{value:st.sill}, uMul:{value:st.mul}, uWK:{value:st.wk}};
-    mat.onBeforeCompile = sh => { prev(sh); Object.assign(sh.uniforms, U);
-      sh.fragmentShader = sh.fragmentShader.replace('uniform float uCW;', 'uniform float uCW; uniform vec3 uGlass; uniform float uSill; uniform float uMul; uniform float uWK;')
+    const prev = mat.onBeforeCompile, U = {uGlass:{value:new THREE.Color(st.glass)}, uSill:{value:st.sill}, uMul:{value:st.mul}, uWK:{value:st.wk}, uCam:{value:camPos()}};
+    mat.onBeforeCompile = sh => { prev(sh); Object.assign(sh.uniforms, U); S.day = (S.day || 0) + 1;
+      sh.fragmentShader = sh.fragmentShader.replace('uniform float uCW;', 'uniform float uCW; uniform vec3 uCam; uniform vec3 uGlass; uniform float uSill; uniform float uMul; uniform float uWK;')
         .replace('#include <color_fragment>', '#include <color_fragment>\n' + DAY_GLSL); };
     mat.needsUpdate = true; return mat;
   }
@@ -58025,7 +58026,8 @@ SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type
       if (dv.getUint32(0, true) !== 0x44334b48){ S.state = 'badfile'; return; }        // 'HK3D'
       const n = dv.getUint32(4, true), J = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 8, n))), off0 = (8 + n + 3) & ~3;
       const mob = typeof window !== 'undefined' && window.CB_MOBILE;
-      const list = J.b.filter(e => !mob || e.rep.length || e.h >= 180);
+      let list = J.b.filter(e => !mob || e.rep.length || e.h >= 180);
+      if (typeof location !== 'undefined' && /hk3dtest/.test(location.search)) list = list.filter(e => e.rep.length).slice(0, 16);   // test handle: a few landmarks only
       S.n = list.length; S.state = 'place';
       let i = 0;
       const step = () => { const tEnd = performance.now() + 24; while (i < list.length && performance.now() < tEnd) put(list[i++], buf, off0, J.q); if (i < list.length) setTimeout(step, 0); else done(t0); };
@@ -58050,9 +58052,9 @@ SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type
     const rk0 = e.rep[0]; let own = null;
     if (rk0 && LANDMARKS[rk0]) for (const L of landmarks) if (L.type === rk0){ own = wallColour(lmMeshes.get(L.id)); break; }
     const wall = own || pal[hs % pal.length];
-    // towers: light frame, darker glass on a 3.8 m floor / 1.6 m column grid; lower blocks: wall with windows on 3.1 m / 2.6 m
-    const st = hi ? {glass:shade(wall, -0.45), sill:0.22, mul:0.16, wk:0.85, fh:3.8, cw:1.6} : {glass:shade(wall, -0.5), sill:0.38, mul:0.34, wk:0.8, fh:3.1, cw:2.6};
-    const spec = {c:hi ? shade(wall, 0.18) : wall, lk:hi ? 0.5 : 0.4, fh:st.fh, cw:st.cw};
+    // towers: light frame, darker glass on a 3.8 m floor / 3 m column grid; lower blocks: wall with windows on 3.1 m / 2.6 m
+    const st = hi ? {glass:shade(wall, -0.4), sill:0.3, mul:0.2, wk:0.85, fh:3.8, cw:3.0} : {glass:shade(wall, -0.5), sill:0.38, mul:0.34, wk:0.8, fh:3.1, cw:2.6};
+    const spec = {c:hi ? shade(wall, 0.25) : wall, lk:hi ? 0.5 : 0.4, fh:st.fh, cw:st.cw};
     const build = () => {
       const g = new THREE.Group(), geo = geoOf(e, buf, off0, q), top = LMCTX.u.base.value, P = geo.attributes.position.array;
       // lowest ground under the footprint (vertices in the lowest 3 m), so the model stands on the street, not on the hillside

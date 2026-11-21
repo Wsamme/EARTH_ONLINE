@@ -48,15 +48,6 @@ def load(b):
 pl = [p for p in P if not p.get('site')]
 ents, blobs, off, tri_in, tri_out = [], [], 0, 0, 0
 taken = {}
-def crease(V, F, bins=2.5):
-    """Split vertices where faces meet at a sharp angle (normal bins of about 25 degrees), so the page's per-vertex normals give
-    crisp facets instead of smearing light across edges. Returns new V, F."""
-    a, b_, c = V[F[:, 0]], V[F[:, 1]], V[F[:, 2]]
-    fn = np.cross(b_ - a, c - a); ln = np.linalg.norm(fn, axis=1, keepdims=True); fn = fn / np.maximum(ln, 1e-12)
-    qn = np.round(fn * bins).astype(np.int64)
-    corner_v = F.reshape(-1); corner_q = np.repeat(qn, 3, axis=0)
-    key = np.column_stack([corner_v, corner_q]); uk, inv = np.unique(key, axis=0, return_inverse=True)
-    return V[uk[:, 0]].astype(np.float32), inv.reshape(-1, 3).astype(np.int64)
 HQ_MAXT = 20000
 for n, b in enumerate(sel):
     V, F = load(b); tri_in += len(F)
@@ -78,7 +69,7 @@ for n, b in enumerate(sel):
         try: V2, F2 = fast_simplification.simplify(V.astype(np.float32), F.astype(np.int32), target_reduction=1 - target / len(F))
         except Exception as e: V2, F2 = V.astype(np.float32), F.astype(np.int32)
     else: V2, F2 = V.astype(np.float32), F.astype(np.int32)
-    V2, F2 = crease(V2.astype(np.float64), F2.astype(np.int64))
+    # (no edge splitting needed: the page merges each landmark into non-indexed triangles with flat normals)
     if len(V2) > 65535: raise SystemExit('too many verts ' + b['id'])
     tri_out += len(F2)
     # a labelled placement replaced once only (the building that contains its anchor)

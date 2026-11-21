@@ -225,6 +225,8 @@ Two licences, on purpose.
 
 > 3DEP, SRTM and GMTED2010 terrain data courtesy of the U.S. Geological Survey. ETOPO1 terrain data courtesy of the U.S. National Oceanic and Atmospheric Administration.
 
+**Hong Kong buildings.** About a thousand buildings on the Hong Kong page (`site/hkdata/hk3d.bin`, made by `src/hk/zz_hk3d/tools/`) are simplified from the Lands Department's *3D Visualisation Map* (non-textured models, 3d.map.gov.hk / CSDI portal), and their names come from the Lands Department's *Building* dataset (CSDI `landsd_rcd_1637211194312_35158`, via DATA.GOV.HK). Free to use, commercial use included, on condition that the source is credited: “Source: HKSAR Government, Lands Department”. The Hong Kong page shows that credit in the corner. Details in [DATA_LICENSE](DATA_LICENSE).
+
 The running map repeats both credits in the corner, including while the rest of the interface is hidden. Leave them there.
 
 three.js r128 is loaded from a CDN and stays under its own MIT licence. Noto Sans SC and JetBrains Mono come from Google Fonts and are not in this repository.
@@ -236,6 +238,7 @@ three.js r128 is loaded from a CDN and stays under its own MIT licence. Noto San
 - U.S. National Oceanic and Atmospheric Administration, for ETOPO1
 - [AWS Open Data](https://registry.opendata.aws/terrain-tiles/) and [Tilezen](https://github.com/tilezen/joerd/blob/master/docs/attribution.md), for the terrain tiles
 - Overture Maps and the HDB3D attributes used while the Singapore buildings were built. See `DATA_LICENSE` before you pass those on
+- HKSAR Government, Lands Department, for the 3D Visualisation Map and the Building dataset (via [DATA.GOV.HK](https://data.gov.hk/))
 - [three.js](https://github.com/mrdoob/three.js/)
 
 ## Star history

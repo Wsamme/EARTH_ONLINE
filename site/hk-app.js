@@ -4652,7 +4652,14 @@ function placeLandmarkMesh(L){
   const top = hi + 0.6;
   const lt = def.lt || (def.cat === 'new' ? {m:1, c:'#d6e4ff', k:0.6} : {m:0, c:'#ffc98a', k:0.9});
   LMCTX = {mats:new Map(), fx:[], rng:mulberry32(L.id*7919 + 13), u:{base:{value:top}, top:{value:top + def.h}, col:{value:new THREE.Color(lt.c)}, k:{value:lt.k}, mode:{value:lt.m}, even:{value:lt.e || 0}, anim:{value:lmAnimOf(lt)}, col2:{value:new THREE.Color(lt.c2 || LM_C2[L.id % LM_C2.length])}, ph:{value:(L.id*0.618) % 1}}};
-  const g = def.build(); lmMerge(g);
+  const g = def.build();
+  // [v42] live parts (g.userData.live: e.g. a wheel's rotor and gondolas) stay separate objects: each is merged on its own at the
+  // origin, the rest of the landmark is merged as before, and g.userData.spin.step(t) poses them every frame (stepLmFx)
+  const live = (g.userData && g.userData.live) || [];
+  for (const o of live){ g.remove(o); o.position.set(0, 0, 0); o.quaternion.identity(); o.scale.set(1, 1, 1); o.updateMatrix(); lmMerge(o); }
+  lmMerge(g);
+  for (const o of live) g.add(o);
+  if (live.length && g.userData.spin && g.userData.spin.step){ LMCTX.fx.push({kind:'spin', step:g.userData.spin.step}); g.userData.spin.step(0); }
   if (!L.sg){ const plinth = lmAdd(g, new THREE.CylinderGeometry(def.r*0.98, def.r*1.02, Math.max(1, top - lo + 2), 40), '#ddd6c8', 0, -Math.max(1, top - lo + 2)/2, 0); plinth.castShadow = false; }
   L.mats = LMCTX.mats; L.fx = LMCTX.fx; LMCTX = null;
   g.position.set(L.x, top, -L.y); g.rotation.y = L.rot;
@@ -4667,6 +4674,7 @@ function rebuildLandmarks(){
   if (SGR.on) sgrLandmarksChanged();
 }
 function stepLmFx(t){
+  for (const L of landmarks) for (const fx of L.fx || []) if (fx.kind === 'spin') fx.step(t);   // [v42] moving parts, day and night
   if (nightF < 0.02 && !stepLmFx.on) return; stepLmFx.on = nightF >= 0.02;
   for (const L of landmarks) for (const fx of L.fx || []){
     if (fx.kind !== 'sparkle') continue;
@@ -4704,7 +4712,7 @@ function autoPlaceLandmarks(types){
 }
 function landmarkLabels(){
   if (!showNatLabels) return;
-  for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm'; el.innerHTML = `${def.zh}<small>${def.en}</small>`; labelsEl.appendChild(el); labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:SGR.on ? (def.h >= 150 || def.r >= 160 ? 9000 : def.h >= 70 || def.r >= 100 ? 5500 : 3200) : 9000}); }
+  for (const L of landmarks){ const def = LANDMARKS[L.type]; if (def.label === false) continue; const el = document.createElement('div'); el.className = 'lbl n lm'; el.innerHTML = `${def.zh}<small>${def.en}</small>`; labelsEl.appendChild(el); labelItems.push({el, x:L.x, y:L.y, abs:(L.top || 0) + def.h + 14, maxD:SGR.on ? (def.h >= 150 || def.r >= 160 ? 9000 : def.h >= 70 || def.r >= 100 ? 5500 : 3200) : 9000, near:def.near}); }
 }
 
 /* ================= time of day ================= */
@@ -28693,8 +28701,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     if (dl.ctrl && M && u > dl.len - dl.stopD - 40) V.v *= 0.4;
     laneInsert(V, dl, ln);
     VEH.push(V);
+    if (SPLOG.on){ dlPos(dl, u, 0, _pT); const dx = _pT.x - ZONE.camX, dy = _pT.y - ZONE.camY, dz = ZONE.camZ - _pT.z; let inV = false; if (FRU && _vS){ _vS.set(_pT.x, _pT.z + 1.2, -_pT.y); inV = FRU.containsPoint(_vS); }
+      SPLOG.a.push({d:Math.round(Math.sqrt(dx*dx + dy*dy + dz*dz)), inView:inV, drv:drivingNow()}); if (SPLOG.a.length > 4000) SPLOG.a.shift(); }
     return V;
   }
+  // [v42] test log of where vehicles appear (SGTraffic.spawnLog(true) starts it; spawnLog() reads it)
+  const SPLOG = {on:false, a:[]};
   // the zone's total target (all its links), refreshed every second or so
   // per road group (expressways, arterials, local streets): targets and current counts, so that one group cannot use up the
   // budget of another (vehicles leave the fast expressways quickly and gather in the street grid)
@@ -28708,8 +28720,20 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       dl.tgt = dlTarget(dl, k); TGTACC += dl.tgt; TGA[roadGroup(dl.c)] += dl.tgt;
     }
   }
+  // [v42] while the player drives, no car appears where it could be seen popping in: never within 260 m of the camera, and not
+  // within 900 m inside the view (the frustum of the last drawn frame). This holds for the zone fill and for entry links too;
+  // the roads ahead fill by cars driving in from out of view. Viewing (not driving) keeps the old rule.
+  const _vS = typeof THREE !== 'undefined' ? new THREE.Vector3() : null;
+  const drivingNow = () => { try { return !!((window.SGF1 && SGF1.F1 && SGF1.F1.on) || (typeof F1 !== 'undefined' && F1 && F1.on)); } catch (e){ return false; } };
+  function seenSpawn(x, y, z){
+    const dx = x - ZONE.camX, dy = y - ZONE.camY, dz = ZONE.camZ - z, d2 = dx*dx + dy*dy + dz*dz;
+    if (d2 < 260*260) return true;
+    if (d2 < 900*900 && FRU && _vS){ _vS.set(x, z + 1.2, -y); if (FRU.containsPoint(_vS)) return true; }
+    return false;
+  }
   function spawnPass(budgetN){
     const k = todK(curTod())*DENSK, list = ZONE.dls; if (!list.length) return;
+    const drv = drivingNow();
     const cap = Math.min(VMAXN*Math.min(1.4, DENSK), Math.max(TGT, 50) + BUS.nBus), camX = ZONE.camX, camY = ZONE.camY;
     let n = 0;
     while (n < budgetN && VEH.length < cap){
@@ -28727,7 +28751,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
         if (dl.src && !ZONE.fill) u = 1 + rnd()*3;
         else u = 4 + rnd()*Math.max(0, dl.len - 8);
         if (u > dl.len - Math.max(8, (dl.ctrl ? dl.stopD : 0) + 6)) continue;
-        if (!ZONE.fill){ dlPos(dl, u, 0, _p2); const dx = _p2.x - camX, dy = _p2.y - camY, dz = ZONE.camZ - _p2.z; if (dx*dx + dy*dy + dz*dz < 320*320 && !dl.src) continue; }
+        if (drv){ dlPos(dl, u, 0, _p2); if (seenSpawn(_p2.x, _p2.y, _p2.z)) continue; }
+        else if (!ZONE.fill){ dlPos(dl, u, 0, _p2); const dx = _p2.x - camX, dy = _p2.y - camY, dz = ZONE.camZ - _p2.z; if (dx*dx + dy*dy + dz*dz < 320*320 && !dl.src) continue; }
         if (spawnOn(dl, u)) NG[gi]++;
       }
     }
@@ -29811,6 +29836,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     mix:(x, y, r) => { const o = {}; let n = 0; for (const V of VEH){ if (!V.alive) continue; pathAt(V, V.u - V.len*0.5, _q); if ((_q.x - x)*(_q.x - x) + (_q.y - y)*(_q.y - y) > r*r) continue; n++; o[V.T.k] = (o[V.T.k] || 0) + 1; }
       const cars = n - (o.bus || 0) - (o.usbus || 0) - (o.usartic || 0) - (o.dd || 0) - (o.artic || 0); return {n, taxiShareOfCars:cars ? +((o.taxi || 0)/cars).toFixed(3) : 0, types:o}; },
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
+    spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),
@@ -49424,26 +49450,45 @@ LANDMARKS.hkwheel = {zh:'香港摩天轮', en:'Hong Kong Observation Wheel', cat
   const g = new THREE.Group(), B = mkB(), F = FD.hkwheel, S = clean(F.site), q = shedOf(S), c = q.f.w(0, q.vc), a = Math.atan2(q.f.s, q.f.c), f = frm(c[0], c[1], a);
   const RIM = {c:'#f0f0ee', m:0, lk:0.25, glow:'#ff3a36', gk:0.75}, ST = {c:'#e8e8e6', m:0, lk:0.3}, SP = {c:'#c9cbcc', m:0, lk:0, glow:'#ffd9d6', gk:0.25};
   const HUB = 32.5, RR = 27.3, N = 42, P = (u, y, v) => f.p(u, y, v);
-  // rim: two tubes (u = along the wheel plane, y up; v = the axle)
-  const ring = (rad, v) => { const pts = []; for (let i = 0; i <= 84; i++){ const t = i/84*TAU; pts.push(P(Math.cos(t)*rad, HUB + Math.sin(t)*rad, v)); } return pts; };
-  for (const v of [-1.1, 1.1]){ const r = ring(RR, v); for (let i = 0; i < 84; i++) segP(B.p(RIM), r[i], r[i + 1], 0.32, 5); }
-  { const r1 = ring(RR, -1.1), r2 = ring(RR, 1.1); for (let i = 0; i < 84; i += 2) segP(B.p(ST), r1[i], r2[i], 0.12, 3); }
+  // [v42] the wheel turns: rim, stays and spokes are one rotor (a live part the engine keeps out of the static merge and turns
+  // about the axle every frame); the 42 gondolas are live parts too and stay hanging upright. One turn every 5 minutes is an
+  // estimate (a ride is about three turns in 15-20 minutes). Live parts are built at the origin and posed by step(t).
+  const H = P(0, HUB, 0), U0 = P(1, HUB, 0), Uv = new THREE.Vector3(U0[0] - H[0], U0[1] - H[1], U0[2] - H[2]).normalize(), UP = new THREE.Vector3(0, 1, 0);
+  const AX = new THREE.Vector3().crossVectors(Uv, UP).normalize(), Hv = new THREE.Vector3(H[0], H[1], H[2]);
+  const Pr = (u, y, v) => { const p = P(u, HUB + y, v); return [p[0] - H[0], p[1] - H[1], p[2] - H[2]]; };
+  const rotor = new THREE.Group(), BR = mkB();
+  const ring = (rad, v) => { const pts = []; for (let i = 0; i <= 84; i++){ const t = i/84*TAU; pts.push(Pr(Math.cos(t)*rad, Math.sin(t)*rad, v)); } return pts; };
+  for (const v of [-1.1, 1.1]){ const r = ring(RR, v); for (let i = 0; i < 84; i++) segP(BR.p(RIM), r[i], r[i + 1], 0.32, 5); }
+  { const r1 = ring(RR, -1.1), r2 = ring(RR, 1.1); for (let i = 0; i < 84; i += 2) segP(BR.p(ST), r1[i], r2[i], 0.12, 3); }
   // tension spokes from both hub flanges to the rim
-  for (let i = 0; i < 42; i++){ const t = i/42*TAU; for (const [vh, vr] of [[-2.6, -1.1], [2.6, 1.1]]) segP(B.p(SP), P(Math.cos(t)*1.4, HUB + Math.sin(t)*1.4, vh), P(Math.cos(t + 0.06)*RR, HUB + Math.sin(t + 0.06)*RR, vr), 0.05, 3); }
-  // hub and axle
+  for (let i = 0; i < 42; i++){ const t = i/42*TAU; for (const [vh, vr] of [[-2.6, -1.1], [2.6, 1.1]]) segP(BR.p(SP), Pr(Math.cos(t)*1.4, Math.sin(t)*1.4, vh), Pr(Math.cos(t + 0.06)*RR, Math.sin(t + 0.06)*RR, vr), 0.05, 3); }
+  BR.flush(rotor);
+  // hub and axle (round about the axle, so they stay with the static frame)
   { const h0 = P(0, HUB, -3.2), h1 = P(0, HUB, 3.2); segP(B.p(ST), h0, h1, 1.5, 12); segP(B.p(ST), P(0, HUB, -5.2), P(0, HUB, 5.2), 0.55, 8); }
   // legs: an A-frame each side of the wheel (raked in the wheel plane) and a back stay
   for (const v of [-5.0, 5.0]){ for (const su of [-1, 1]) segP(B.p(ST), P(0, HUB, v), P(su*15.5, 1.2, v*2.2), 0.75, 8); segP(B.p(ST), P(-10, 12, v*1.8), P(10, 12, v*1.8), 0.3, 6); }
-  // gondolas: hanging capsules round the rim (bottom of the rim ~5 m above the boarding deck)
-  const GD = {c:'#e9eef2', m:0, lk:0.3}, GW = {c:'#6f8796', glow:'#ffe7c2', gk:0.45};
-  for (let i = 0; i < N; i++){ const t = i/N*TAU, x = Math.cos(t)*(RR + 0.6), y = HUB + Math.sin(t)*(RR + 0.6) - 2.4;
-    const p = P(x, y, 0); LCylD(g, 1.25, 1.25, 2.5, p[0], y - 1.25, p[2], GW, 10); LCylD(g, 1.3, 1.1, 0.3, p[0], y + 1.25, p[2], GD, 10); LCylD(g, 1.1, 1.3, 0.3, p[0], y - 1.55, p[2], GD, 10); segP(B.p(ST), [p[0], y + 1.5, p[2]], [p[0], y + 2.6, p[2]], 0.08, 3); }
+  // gondolas: capsules hanging from a pivot 0.2 m above the rim line (bottom of the rim ~5 m above the boarding deck)
+  const GD = {c:'#e9eef2', m:0, lk:0.3}, GW = {c:'#6f8796', glow:'#ffe7c2', gk:0.45}, gond = [], y0 = -2.6;
+  for (let i = 0; i < N; i++){ const G = new THREE.Group();
+    LCylD(G, 1.25, 1.25, 2.5, 0, y0 - 1.25, 0, GW, 10); LCylD(G, 1.3, 1.1, 0.3, 0, y0 + 1.25, 0, GD, 10); LCylD(G, 1.1, 1.3, 0.3, 0, y0 - 1.55, 0, GD, 10); LCylD(G, 0.08, 0.08, 1.1, 0, y0 + 1.5, 0, GD, 3);
+    gond.push(G); }
   // boarding hall: a low white pavilion with glass walls, and the deck
   { const S2 = clean(offP(S, 1.0)); prismP(B.p({c:'#dcd6ca', m:0, lk:0.2}), S2, -1.5, 0.4); const hall = [[-11, -9], [11, -9], [11, 9], [-11, 9]].map(([u, v]) => f.w(u, v));
     prismP(B.p({c:'#7f94a0', glow:'#ffe6c0', gk:0.5}), hall, 0.4, 4.2); prismP(B.p({c:'#efefec', m:0, lk:0.3}), clean(offP(hall, -1.2)), 4.2, 4.8);
     for (const su of [-1, 1]){ const st = [[su*13, -2.5], [su*17, -2.5], [su*17, 2.5], [su*13, 2.5]].map(([u, v]) => f.w(u, v)); prismP(B.p({c:'#bdb6a8', m:0, lk:0.2}), st, 0.4, 1.3); } }
   avLights(g, [P(0, HUB + RR + 1.0, 0)], 0.4);
-  B.flush(g); return g; }};
+  B.flush(g);
+  const W = TAU/300, RG = RR + 0.6, tmp = new THREE.Vector3();
+  function step(t){
+    const ang = (t*W) % TAU;
+    rotor.position.copy(Hv); rotor.setRotationFromAxisAngle(AX, ang);
+    for (let i = 0; i < N; i++){ const th = i/N*TAU + ang; tmp.copy(Uv).multiplyScalar(Math.cos(th)*RG).addScaledVector(UP, Math.sin(th)*RG).add(Hv); gond[i].position.set(tmp.x, tmp.y + 0.2, tmp.z); }
+  }
+  // posed once here, so an engine without live-part support merges a complete (still) wheel; the v42 engine re-merges each live
+  // part at the origin, keeps it out of the landmark's static merge and calls step(t) every frame
+  for (const o of [rotor, ...gond]) g.add(o);
+  step(0); g.userData.live = [rotor, ...gond]; g.userData.spin = {step};
+  return g; }};
 place('hkwheel');
 
 // ===== Central Harbourfront: the Central Pier Waterfront promenade along the landward ends of Piers 2 - 8 (OSM park, ~690 m
@@ -57912,6 +57957,83 @@ LANDMARKS.hkwkstation_b = {zh:'西九龙站', en:'Hong Kong West Kowloon Station
 SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type:'hkwkstation_b', lat:22.303998, lon:114.165396, rot:0});
 
 }
+
+// ===== v42 · hk/zz_hk3d — Hong Kong's buildings from the official 3D map =====
+// Every building of 100 m or more in Central, Sheung Wan, Admiralty, Wan Chai, Causeway Bay, Tsim Sha Tsui, Mong Kok and West
+// Kowloon (49 map sheets), plus the podiums and parts of the hand-made complexes they replace, from the Lands Department's
+// "3D Visualisation Map (Non-textured models)" (glTF, HK1980 Grid; 3d.map.gov.hk / CSDI portal). Geometry is simplified
+// (about 9 triangles per metre of height) and packed into hkdata/hk3d.bin by hk/zz_hk3d/tools/build3d.py.
+// Source: HKSAR Government, Lands Department (3D Visualisation Map; Building dataset for names, via DATA.GOV.HK); free use with attribution. The models carry no colour: the facade tones below are
+// approximations (glass tones for towers of 150 m or more, concrete tones below), not data.
+// Loading: after the city's landmarks are placed, the file is fetched; each building replaces the hand-made model whose anchor it
+// contains (the landmark keeps its name, card and night-light mode) or is added as a new landmark named from LandsD data; hand-made parts inside
+// it are emptied. The model's bottom is put on the lowest ground under its footprint. Phones load only named and very tall ones.
+// Loads last (zz_): it may override keys defined by the other modules. Test handle: window.HK3D.
+(() => {
+  const S = {state:'wait', n:0, rep:0, hidden:0, added:0, ms:0, err:null};
+  if (typeof window !== 'undefined') window.HK3D = S;
+  const PAL_HI = ['#8fa4b4', '#7e95a8', '#9aabb6', '#a7b4bc', '#6f8799', '#b3bec4'];
+  const PAL_LO = ['#d2cdc2', '#c7c9c6', '#d9d1bf', '#bdbfbd', '#cfc6b4', '#c4c0b6', '#dad7cf'];
+  const hash = s => { let h = 2166136261; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const ready = () => { try { return SGR.on && landmarks.length > 20 && lmMeshes.size > 20; } catch (e){ return false; } };
+  const base = () => { try { return SGR_PATH; } catch (e){ return 'hkdata/'; } };
+  function tick(){ if (!ready()){ setTimeout(tick, 600); return; } S.state = 'fetch'; load(); }
+  setTimeout(tick, 1500);
+  async function load(){
+    const t0 = performance.now();
+    try {
+      const r = await fetch(base() + 'hk3d.bin'); if (!r.ok){ S.state = 'nofile'; return; }
+      const buf = await r.arrayBuffer(), dv = new DataView(buf);
+      if (dv.getUint32(0, true) !== 0x44334b48){ S.state = 'badfile'; return; }        // 'HK3D'
+      const n = dv.getUint32(4, true), J = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 8, n))), off0 = (8 + n + 3) & ~3;
+      const mob = typeof window !== 'undefined' && window.CB_MOBILE;
+      const list = J.b.filter(e => !mob || e.rep.length || e.h >= 180);
+      S.n = list.length; S.state = 'place';
+      let i = 0;
+      const step = () => { const tEnd = performance.now() + 24; while (i < list.length && performance.now() < tEnd) put(list[i++], buf, off0, J.q); if (i < list.length) setTimeout(step, 0); else done(t0); };
+      step();
+    } catch (e){ S.state = 'error'; S.err = String(e); }
+  }
+  function done(t0){ try { if (SGR.on) sgrLandmarksChanged(); } catch (e){ }
+    try { syncLabels(); } catch (e){ }        // map labels for the newly named buildings
+    S.state = 'done'; S.ms = Math.round(performance.now() - t0); }
+  function swapOut(L){
+    const g = lmMeshes.get(L.id); if (g){ lmGroup.remove(g); g.traverse(o => { if (o.geometry) o.geometry.dispose(); }); lmMeshes.delete(L.id); }
+    if (L.mats){ for (const m of L.mats.values()) m.dispose(); L.mats = null; } L.fx = [];
+  }
+  function geoOf(e, buf, off0, q){
+    const pos = new Int16Array(buf, off0 + e.off, e.nv*3), idx = new Uint16Array(buf, off0 + e.off + e.nv*6, e.nt*3), f = new Float32Array(e.nv*3);
+    for (let i = 0; i < e.nv; i++){ f[i*3] = pos[i*3]*q; f[i*3+1] = pos[i*3+2]*q; f[i*3+2] = -pos[i*3+1]*q; }   // x east, y up, z = -north
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(f, 3)); g.setIndex(new THREE.BufferAttribute(new Uint16Array(idx), 1));
+    return g;
+  }
+  function put(e, buf, off0, q){
+    const [x, y] = sgXY(e.lat, e.lon), hi = e.h >= 150, hs = hash(e.id), pal = hi ? PAL_HI : PAL_LO;
+    const spec = {c:pal[hs % pal.length], lk:hi ? 0.5 : 0.4};
+    const build = () => {
+      const g = new THREE.Group(), geo = geoOf(e, buf, off0, q), top = LMCTX.u.base.value, P = geo.attributes.position.array;
+      // lowest ground under the footprint (vertices in the lowest 3 m), so the model stands on the street, not on the hillside
+      let gmin = Infinity; for (let i = 0; i < P.length; i += 3*Math.max(1, Math.floor(P.length/3/48))) if (P[i+1] < 3) gmin = Math.min(gmin, hC(x + P[i], y - P[i+2]));
+      const dy = isFinite(gmin) ? Math.min(0, gmin - top + 0.3) : 0;
+      lmAdd(g, geo, spec, 0, dy, 0); return g; };
+    const rk = e.rep[0];
+    if (rk && LANDMARKS[rk]){
+      const def = LANDMARKS[rk]; def.build = build; def.r = 8; def.h = e.h; def.hk3d = e.id;
+      for (const L of landmarks) if (L.type === rk){ swapOut(L); L.x = x; L.y = y; L.rot = 0; try { placeLandmarkMesh(L); } catch (err){ S.err = rk + ': ' + err; } }
+      S.rep++;
+    } else {
+      const k = 'hk3d_' + e.id;
+      // real name from the Lands Department building data (see tools/addnames.py); map label only for named towers of 100 m or more,
+      // shown when the camera is near (1.2 km, or 2.5 km for 250 m and taller) so the skyline does not fill with text
+      const lab = !!(e.lab && e.h >= 100);
+      LANDMARKS[k] = {zh:e.zh || e.en || '', en:e.zh ? (e.en || '') : '', cat:'hk3d', label:lab, near:e.h >= 250 ? 2500 : 1200, r:8, h:e.h, lt:{m:hi ? 1 : 0, c:hi ? '#d6e4ff' : '#ffc98a', k:hi ? 0.6 : 0.8}, hk3d:e.id, build};
+      const L = {id:lmSeq++, type:k, x, y, rot:0, sg:true}; landmarks.push(L);
+      try { placeLandmarkMesh(L); S.added++; } catch (err){ landmarks.pop(); S.err = k + ': ' + err; }
+    }
+    for (const hk of e.hide.concat(e.rep.slice(1))){ const def = LANDMARKS[hk]; if (!def) continue; def.build = () => new THREE.Group(); def.label = false;   // emptied: no geometry, no name tag
+      for (const L of landmarks) if (L.type === hk){ swapOut(L); try { placeLandmarkMesh(L); } catch (err){ } } S.hidden++; }
+  }
+})();
 
 /* ================= v22 add-on: sound — a procedural Web Audio sound system for both real maps (lm20/audio) =================
    Every sound is synthesised at run time (oscillators, custom periodic waves, filtered noise, small buffers generated once per

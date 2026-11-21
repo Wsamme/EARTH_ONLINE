@@ -48,26 +48,31 @@ def load(b):
 pl = [p for p in P if not p.get('site')]
 ents, blobs, off, tri_in, tri_out = [], [], 0, 0, 0
 taken = {}
+HQ_MAXT = 20000
 for n, b in enumerate(sel):
     V, F = load(b); tri_in += len(F)
-    target = int(min(4500, max(160 if b['h'] < MINH else 500, b['h'] * 9)))
-    if len(F) > target:
-        try: V2, F2 = fast_simplification.simplify(V.astype(np.float32), F.astype(np.int32), target_reduction=1 - target / len(F))
-        except Exception as e: V2, F2 = V.astype(np.float32), F.astype(np.int32)
-    else: V2, F2 = V.astype(np.float32), F.astype(np.int32)
-    zmin = float(V2[:, 2].min()); V2 = V2 - np.array([0, 0, zmin], np.float32)
-    if len(V2) > 65535: raise SystemExit('too many verts ' + b['id'])
-    tri_out += len(F2)
+    zmin = float(V[:, 2].min()); V = V - np.array([0, 0, zmin])
     lon, lat = T.transform(b['E'], b['N'])
-    # footprint: hull of the lower vertices, in metres on the page (x east, y north) around the origin
-    low = V2[V2[:, 2] < min(25, b['h'] * 0.3)][:, :2]
-    hull = MultiPoint([tuple(p) for p in (low if len(low) >= 3 else V2[:, :2])]).convex_hull
+    # footprint: hull of the lower vertices of the full model, in metres on the page (x east, y north) around the origin
+    low = V[V[:, 2] < min(25, b['h'] * 0.3)][:, :2]
+    hull = MultiPoint([tuple(p) for p in (low if len(low) >= 3 else V[:, :2])]).convex_hull
     ox, oy = (lon - LON0) * MX, (lat - LAT0) * MY
     rep, hide = [], []
     for p in pl:
         px, py = (p['lon'] - LON0) * MX - ox, (p['lat'] - LAT0) * MY - oy
         if hull.buffer(4).contains(Point(px, py)):
             (rep if p.get('label') else hide).append(p['k'])
+    # v44: landmarks and towers of 150 m or more keep far more of the official geometry (up to 20,000 triangles, 50 per metre)
+    hq = b['h'] >= 150 or bool(rep)
+    target = int(min(HQ_MAXT, max(2500, b['h'] * 50))) if hq else int(min(4500, max(160 if b['h'] < MINH else 500, b['h'] * 9)))
+    if len(F) > target:
+        try: V2, F2 = fast_simplification.simplify(V.astype(np.float32), F.astype(np.int32), target_reduction=1 - target / len(F))
+        except Exception as e: V2, F2 = V.astype(np.float32), F.astype(np.int32)
+    else: V2, F2 = V.astype(np.float32), F.astype(np.int32)
+    # (no edge splitting needed: the page merges each landmark into non-indexed triangles with flat normals)
+    V2 = V2 - np.array([0, 0, V2[:, 2].min()], np.float32)   # simplification moves vertices: put the base back on z = 0
+    if len(V2) > 65535: raise SystemExit('too many verts ' + b['id'])
+    tri_out += len(F2)
     # a labelled placement replaced once only (the building that contains its anchor)
     # Any further labelled placement in this hull is left for the second pass below: it may be the anchor of a neighbouring
     # tower (Exchange Square sits on the podium that replaces Hong Kong Station), and otherwise it is emptied there.
@@ -77,7 +82,7 @@ for n, b in enumerate(sel):
     qp = np.round(V2 / 0.02).astype(np.int16); idx = F2.astype(np.uint16)
     blob = qp.tobytes() + idx.tobytes(); blob += b'\0' * ((-len(blob)) % 4)
     ents.append({'id': b['id'], 'lat': round(lat, 7), 'lon': round(lon, 7), 'h': round(float(V2[:, 2].max()), 1), 'r': round(rr, 1),
-                 'nv': int(len(qp)), 'nt': int(len(idx)), 'off': off, 'rep': rep, 'hide': hide, 'sheet': b['sheet']})
+                 'nv': int(len(qp)), 'nt': int(len(idx)), 'off': off, 'rep': rep, 'hide': hide, 'sheet': b['sheet'], 'hq': int(hq)})
     blobs.append(blob); off += len(blob)
     if n % 50 == 0: print(n, b['id'], round(b['h']), len(F), '->', len(F2), rep, hide, flush=True)
 # second pass: a model anchored between towers (e.g. Exchange Square) or a part of one: inside an official building's radius
@@ -95,7 +100,7 @@ for p in pl:
         if not e['rep']: e['rep'].append(p['k']); print('pass2 rep', p['k'], '->', e['id'], e['h'])
         else: e['hide'].append(p['k']); print('pass2 hide (labelled, building already named)', p['k'], '->', e['id'], e['rep'])
     elif not p.get('label') and (p.get('h') or 0) >= 10: e['hide'].append(p['k']); print('pass2 hide', p['k'])
-idxj = json.dumps({'v': 1, 'q': 0.02, 'src': 'HKSAR Government, Lands Department: 3D Visualisation Map (Non-textured models), 3d.map.gov.hk',
+idxj = json.dumps({'v': 2, 'q': 0.02, 'src': 'HKSAR Government, Lands Department: 3D Visualisation Map (Non-textured models), 3d.map.gov.hk',
                    'n': len(ents), 'b': ents}, separators=(',', ':')).encode()
 hdr = b'HK3D' + struct.pack('<I', len(idxj)) + idxj; hdr += b'\0' * ((-len(hdr)) % 4)
 open(OUT, 'wb').write(hdr + b''.join(blobs))

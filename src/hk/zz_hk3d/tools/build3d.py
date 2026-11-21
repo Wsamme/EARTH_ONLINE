@@ -70,6 +70,7 @@ for n, b in enumerate(sel):
         except Exception as e: V2, F2 = V.astype(np.float32), F.astype(np.int32)
     else: V2, F2 = V.astype(np.float32), F.astype(np.int32)
     # (no edge splitting needed: the page merges each landmark into non-indexed triangles with flat normals)
+    V2 = V2 - np.array([0, 0, V2[:, 2].min()], np.float32)   # simplification moves vertices: put the base back on z = 0
     if len(V2) > 65535: raise SystemExit('too many verts ' + b['id'])
     tri_out += len(F2)
     # a labelled placement replaced once only (the building that contains its anchor)

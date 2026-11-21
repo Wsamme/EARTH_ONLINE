@@ -25,7 +25,7 @@ def apply(src):
     R("function sgNames(on){ const [zh, en] = on ? ['香港', 'Hong Kong'] : ['澄湾岛', 'Chengwan Island'];", "function sgNames(on){ const [zh, en] = on ? ['大湾区', 'Greater Bay'] : ['澄湾岛', 'Chengwan Island'];")
     R("$('#sample').innerHTML = on ? '还原<small>Reset Hong Kong</small>' : '示例城市<small>Sample</small>';", "$('#sample').innerHTML = on ? '还原<small>Reset map</small>' : '示例城市<small>Sample</small>';")
     R('aria-label="香港城市三维视图 Hong Kong 3D view"', 'aria-label="大湾区城市三维视图 Greater Bay 3D view"')
-    R('<span class="sub">City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 大湾区 Greater Bay 1:1 · 东莞 深圳 香港 · 真实地图 Real map · © OpenStreetMap</span>')
+    R('<span class="sub">City Brush · 香港 Hong Kong 1:1 · 真实地图 Real map · © OpenStreetMap</span>', '<span class="sub">City Brush · 大湾区 Greater Bay 1:1 · 东莞 深圳 香港 · 真实地图 Real map · © OpenStreetMap · Overture · 3D-GloBFP</span>')
     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Greater Bay</title>', src, count=1)
     # ---------- the overview camera: the whole 126 km square ----------
     R("else if (SGR.on){ const c = sgXY(22.340, 114.120); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 3500, 31000, -c[1] + 34000); }",

@@ -1,0 +1,7619 @@
+{
+"source": "CTBUH Skyscraper Center, Shenzhen city page (https://www.skyscrapercenter.com/city/shenzhen), read 2026-11-21; facts only (id, name, status, position, height, year). Cite CTBUH.",
+"rows": [
+{
+"id": 24825,
+"name_intl": "Shenzhen Tower",
+"status": "PRO",
+"latitude": "22.546841",
+"longitude": "114.100166",
+"height_architecture": "642.00",
+"completed": null
+},
+{
+"id": 54,
+"name_intl": "Ping An Finance Center",
+"status": "COM",
+"latitude": "22.536579",
+"longitude": "114.050377",
+"height_architecture": "599.05",
+"completed": 2017
+},
+{
+"id": 23621,
+"name_intl": "Nexus Tower",
+"status": "PRO",
+"latitude": "22.542740",
+"longitude": "114.100319",
+"height_architecture": "595.00",
+"completed": null
+},
+{
+"id": 36539,
+"name_intl": "Caiwuwei Center",
+"status": "PRO",
+"latitude": "22.542957",
+"longitude": "114.100670",
+"height_architecture": "500.00",
+"completed": null
+},
+{
+"id": 173,
+"name_intl": "KK100",
+"status": "COM",
+"latitude": "22.545731",
+"longitude": "114.101501",
+"height_architecture": "441.80",
+"completed": 2011
+},
+{
+"id": 27298,
+"name_intl": "Shenzhen Cloud of Innovation Center",
+"status": "UCT",
+"latitude": "22.540573",
+"longitude": "114.115410",
+"height_architecture": "407.00",
+"completed": 2026
+},
+{
+"id": 40115,
+"name_intl": "Shenzhen Bay Super Headquarters Base Tower C-1",
+"status": "STO",
+"latitude": "22.527445",
+"longitude": "113.967453",
+"height_architecture": "400.00",
+"completed": 2027
+},
+{
+"id": 47882,
+"name_intl": "Shenzhen Bay Financial Center Tower",
+"status": "UC",
+"latitude": "22.525438",
+"longitude": "113.970322",
+"height_architecture": "394.40",
+"completed": 2029
+},
+{
+"id": 42765,
+"name_intl": "China Merchants Bank Global Headquarters Main Tower",
+"status": "COM",
+"latitude": "22.525503",
+"longitude": "113.965218",
+"height_architecture": "393.00",
+"completed": 2025
+},
+{
+"id": 14589,
+"name_intl": "China Resources Tower",
+"status": "COM",
+"latitude": "22.517809",
+"longitude": "113.941490",
+"height_architecture": "392.50",
+"completed": 2018
+},
+{
+"id": 22997,
+"name_intl": "CITYMARK CENTRE",
+"status": "COM",
+"latitude": "22.560900",
+"longitude": "114.100212",
+"height_architecture": "388.30",
+"completed": 2022
+},
+{
+"id": 16001,
+"name_intl": "Shum Yip Upperhills Tower 1",
+"status": "COM",
+"latitude": "22.559509",
+"longitude": "114.066681",
+"height_architecture": "388.05",
+"completed": 2020
+},
+{
+"id": 258,
+"name_intl": "Shun Hing Square",
+"status": "COM",
+"latitude": "22.545389",
+"longitude": "114.105522",
+"height_architecture": "384.00",
+"completed": 1996
+},
+{
+"id": 14198,
+"name_intl": "Dabaihui Plaza",
+"status": "COM",
+"latitude": "22.539150",
+"longitude": "114.058632",
+"height_architecture": "375.55",
+"completed": 2021
+},
+{
+"id": 43871,
+"name_intl": "China Merchants Prince Bay Tower",
+"status": "STO",
+"latitude": "22.476912",
+"longitude": "113.906364",
+"height_architecture": "374.00",
+"completed": 2028
+},
+{
+"id": 29371,
+"name_intl": "Huiyun Center",
+"status": "COM",
+"latitude": "22.526966",
+"longitude": "113.965401",
+"height_architecture": "359.20",
+"completed": 2023
+},
+{
+"id": 15741,
+"name_intl": "Hanking Center",
+"status": "COM",
+"latitude": "22.543400",
+"longitude": "113.931488",
+"height_architecture": "358.90",
+"completed": 2018
+},
+{
+"id": 41842,
+"name_intl": "Bay Area Smart Plaza Tower A",
+"status": "STO",
+"latitude": "22.557568",
+"longitude": "114.078804",
+"height_architecture": "358.10",
+"completed": 2027
+},
+{
+"id": 27941,
+"name_intl": "Galaxy Yabao Twin Tower 1",
+"status": "COM",
+"latitude": "22.607651",
+"longitude": "114.056084",
+"height_architecture": "356.00",
+"completed": 2023
+},
+{
+"id": 27942,
+"name_intl": "Galaxy Yabao Twin Tower 2",
+"status": "COM",
+"latitude": "22.607639",
+"longitude": "114.057159",
+"height_architecture": "356.00",
+"completed": 2023
+},
+{
+"id": 31006,
+"name_intl": "Yuhe Shennan Tower",
+"status": "PRO",
+"latitude": "22.542799",
+"longitude": "113.920036",
+"height_architecture": "354.00",
+"completed": null
+},
+{
+"id": 13245,
+"name_intl": "One Shenzhen Bay Tower 7",
+"status": "COM",
+"latitude": "22.508909",
+"longitude": "113.937218",
+"height_architecture": "341.39",
+"completed": 2018
+},
+{
+"id": 40116,
+"name_intl": "Shenzhen Bay Super Headquarters Base Tower C-2",
+"status": "STO",
+"latitude": "22.527161",
+"longitude": "113.966545",
+"height_architecture": "336.00",
+"completed": 2027
+},
+{
+"id": 38632,
+"name_intl": "Shenzhen Urban Construction & Tower",
+"status": "COM",
+"latitude": "22.540545",
+"longitude": "114.100555",
+"height_architecture": "333.00",
+"completed": 2024
+},
+{
+"id": 403,
+"name_intl": "Hon Kwok City Center",
+"status": "COM",
+"latitude": "22.542150",
+"longitude": "114.075249",
+"height_architecture": "329.40",
+"completed": 2017
+},
+{
+"id": 15004,
+"name_intl": "COFCO Tower",
+"status": "PRO",
+"latitude": "22.573299",
+"longitude": "113.896957",
+"height_architecture": "328.00",
+"completed": null
+},
+{
+"id": 15294,
+"name_intl": "Baoneng Center",
+"status": "COM",
+"latitude": "22.566669",
+"longitude": "114.104630",
+"height_architecture": "327.30",
+"completed": 2018
+},
+{
+"id": 30882,
+"name_intl": "CITIC Financial Center Tower 1",
+"status": "STO",
+"latitude": "22.525537",
+"longitude": "113.963608",
+"height_architecture": "312.00",
+"completed": 2026
+},
+{
+"id": 17065,
+"name_intl": "Shenzhen Bay Innovation and Technology Centre Tower 1",
+"status": "COM",
+"latitude": "22.531651",
+"longitude": "113.941528",
+"height_architecture": "311.10",
+"completed": 2020
+},
+{
+"id": 37058,
+"name_intl": "Hengyu Jinrong Center Block A",
+"status": "UCT",
+"latitude": "22.516747",
+"longitude": "113.934875",
+"height_architecture": "310.00",
+"completed": 2026
+},
+{
+"id": 18825,
+"name_intl": "Nanshan Business & Cultural Centre",
+"status": "PRO",
+"latitude": null,
+"longitude": null,
+"height_architecture": "308.00",
+"completed": null
+},
+{
+"id": 45199,
+"name_intl": "Xiangmi Lake Financial Tower",
+"status": "PRO",
+"latitude": "22.542622",
+"longitude": "114.024048",
+"height_architecture": "308.00",
+"completed": null
+},
+{
+"id": 41021,
+"name_intl": "Nanshan Science and Technology Union Building",
+"status": "UCT",
+"latitude": "22.582762",
+"longitude": "113.939743",
+"height_architecture": "307.20",
+"completed": 2026
+},
+{
+"id": 466,
+"name_intl": "East Pacific Center Tower A",
+"status": "COM",
+"latitude": "22.539055",
+"longitude": "114.014282",
+"height_architecture": "306.00",
+"completed": 2013
+},
+{
+"id": 283,
+"name_intl": "Shenzhen CFC Changfu Centre",
+"status": "COM",
+"latitude": "22.508970",
+"longitude": "114.051208",
+"height_architecture": "304.30",
+"completed": 2015
+},
+{
+"id": 37395,
+"name_intl": "GDH City Tower 1",
+"status": "COM",
+"latitude": "22.578451",
+"longitude": "114.129944",
+"height_architecture": "303.10",
+"completed": 2023
+},
+{
+"id": 36392,
+"name_intl": "Shimao Pingshan Center",
+"status": "OH",
+"latitude": "22.684294",
+"longitude": "114.325951",
+"height_architecture": "302.00",
+"completed": null
+},
+{
+"id": 505,
+"name_intl": "Shenzhen Zhongzhou Holdings Financial Center",
+"status": "COM",
+"latitude": "22.520550",
+"longitude": "113.928520",
+"height_architecture": "300.80",
+"completed": 2015
+},
+{
+"id": 15437,
+"name_intl": "OCT Tower",
+"status": "COM",
+"latitude": "22.537550",
+"longitude": "113.977348",
+"height_architecture": "300.00",
+"completed": 2020
+},
+{
+"id": 45395,
+"name_intl": "Qianhai Prisma Residential Tower",
+"status": "PRO",
+"latitude": "22.535723",
+"longitude": "113.891205",
+"height_architecture": "300.00",
+"completed": null
+},
+{
+"id": 16002,
+"name_intl": "Shum Yip Upperhills Tower 2",
+"status": "COM",
+"latitude": "22.558880",
+"longitude": "114.065681",
+"height_architecture": "299.25",
+"completed": 2017
+},
+{
+"id": 16425,
+"name_intl": "China Resources Qianhai Center Tower 1",
+"status": "COM",
+"latitude": "22.534754",
+"longitude": "113.895325",
+"height_architecture": "298.50",
+"completed": 2021
+},
+{
+"id": 28164,
+"name_intl": "C Future City Block A",
+"status": "COM",
+"latitude": "22.530931",
+"longitude": "114.023285",
+"height_architecture": "295.95",
+"completed": 2022
+},
+{
+"id": 16978,
+"name_intl": "Shimao Qianhai Center",
+"status": "COM",
+"latitude": "22.504448",
+"longitude": "113.884590",
+"height_architecture": "294.30",
+"completed": 2020
+},
+{
+"id": 14617,
+"name_intl": "Riverfront Times Square",
+"status": "COM",
+"latitude": "22.531130",
+"longitude": "114.022293",
+"height_architecture": "293.00",
+"completed": 2016
+},
+{
+"id": 27076,
+"name_intl": "China Horoy Qianhai Guanze Office Tower 1",
+"status": "COM",
+"latitude": "22.532742",
+"longitude": "113.891953",
+"height_architecture": "293.00",
+"completed": 2022
+},
+{
+"id": 566,
+"name_intl": "SEG Plaza",
+"status": "COM",
+"latitude": "22.544069",
+"longitude": "114.082497",
+"height_architecture": "291.60",
+"completed": 2000
+},
+{
+"id": 28165,
+"name_intl": "C Future City Block B",
+"status": "COM",
+"latitude": "22.530710",
+"longitude": "114.024063",
+"height_architecture": "290.75",
+"completed": 2022
+},
+{
+"id": 43473,
+"name_intl": "Qianhai International Hub Tower 3",
+"status": "STO",
+"latitude": "22.540304",
+"longitude": "113.891869",
+"height_architecture": "290.50",
+"completed": 2026
+},
+{
+"id": 48490,
+"name_intl": "Qianhai International Hub Tower 4",
+"status": "UCT",
+"latitude": "22.539352",
+"longitude": "113.891922",
+"height_architecture": "290.50",
+"completed": 2026
+},
+{
+"id": 14935,
+"name_intl": "China Chuneng Tower",
+"status": "COM",
+"latitude": "22.540840",
+"longitude": "113.940079",
+"height_architecture": "288.60",
+"completed": 2016
+},
+{
+"id": 23603,
+"name_intl": "China Resources Land Headquarters",
+"status": "OH",
+"latitude": "22.545437",
+"longitude": "113.953438",
+"height_architecture": "288.00",
+"completed": 2026
+},
+{
+"id": 21641,
+"name_intl": "Huaxun Center",
+"status": "COM",
+"latitude": "22.552370",
+"longitude": "114.104073",
+"height_architecture": "286.00",
+"completed": 2018
+},
+{
+"id": 5207,
+"name_intl": "Ping An Finance Center South",
+"status": "COM",
+"latitude": "22.534700",
+"longitude": "114.050591",
+"height_architecture": "285.95",
+"completed": 2019
+},
+{
+"id": 16309,
+"name_intl": "One Excellence Tower 1",
+"status": "COM",
+"latitude": "22.532827",
+"longitude": "113.893349",
+"height_architecture": "283.78",
+"completed": 2019
+},
+{
+"id": 43638,
+"name_intl": "Shenzhen Longguang Jiulin Business Center Tower 1",
+"status": "PRO",
+"latitude": "22.582491",
+"longitude": "113.938293",
+"height_architecture": "282.90",
+"completed": null
+},
+{
+"id": 595,
+"name_intl": "Excellence Century Plaza Tower 1",
+"status": "COM",
+"latitude": "22.534901",
+"longitude": "114.058723",
+"height_architecture": "280.00",
+"completed": 2010
+},
+{
+"id": 23578,
+"name_intl": "Shenzhen Bay Ecocity B-Tech Tower 1",
+"status": "COM",
+"latitude": "22.534794",
+"longitude": "113.945419",
+"height_architecture": "273.00",
+"completed": 2018
+},
+{
+"id": 670,
+"name_intl": "NEO Tower A",
+"status": "COM",
+"latitude": "22.538589",
+"longitude": "114.024490",
+"height_architecture": "273.00",
+"completed": 2011
+},
+{
+"id": 41865,
+"name_intl": "Dajia Insurance Group Headquarters Tower 1",
+"status": "COM",
+"latitude": "22.520096",
+"longitude": "113.937645",
+"height_architecture": "273.00",
+"completed": 2026
+},
+{
+"id": 43520,
+"name_intl": "CMG Times Center Tower 1",
+"status": "STO",
+"latitude": "22.508265",
+"longitude": "113.881462",
+"height_architecture": "272.70",
+"completed": 2026
+},
+{
+"id": 48730,
+"name_intl": "CIMC Global Headquarters",
+"status": "UC",
+"latitude": "22.524059",
+"longitude": "113.890854",
+"height_architecture": "270.00",
+"completed": 2029
+},
+{
+"id": 39936,
+"name_intl": "Kaisa City Plaza Office Tower",
+"status": "OH",
+"latitude": "22.659643",
+"longitude": "114.068573",
+"height_architecture": "270.00",
+"completed": 2026
+},
+{
+"id": 21169,
+"name_intl": "Shenzhen Metro Che Kung Temple Hub",
+"status": "COM",
+"latitude": "22.538410",
+"longitude": "114.022659",
+"height_architecture": "268.80",
+"completed": 2019
+},
+{
+"id": 43126,
+"name_intl": "Harbourfront High-rise South China",
+"status": "PRO",
+"latitude": null,
+"longitude": null,
+"height_architecture": "268.00",
+"completed": null
+},
+{
+"id": 37208,
+"name_intl": "China Resources Shenrun Building",
+"status": "COM",
+"latitude": "22.548586",
+"longitude": "114.134605",
+"height_architecture": "262.00",
+"completed": 2023
+},
+{
+"id": 41670,
+"name_intl": "C Future Park Tower 1",
+"status": "OH",
+"latitude": "22.574537",
+"longitude": "114.107994",
+"height_architecture": "262.00",
+"completed": 2026
+},
+{
+"id": 45262,
+"name_intl": "Zhaoxin Huijin Center Tower A",
+"status": "COM",
+"latitude": "22.545204",
+"longitude": "114.111862",
+"height_architecture": "262.00",
+"completed": 2022
+},
+{
+"id": 46403,
+"name_intl": "Friendship City",
+"status": "STO",
+"latitude": "22.540447",
+"longitude": "114.115379",
+"height_architecture": "262.00",
+"completed": 2026
+},
+{
+"id": 43798,
+"name_intl": "Hetao Shenzhen-Hong Kong Science and Technology Innovation Cooperation Zone East Wing Office Tower",
+"status": "UC",
+"latitude": "22.521666",
+"longitude": "114.066238",
+"height_architecture": "261.50",
+"completed": 2026
+},
+{
+"id": 36631,
+"name_intl": "Shenzhen Capital Plaza",
+"status": "COM",
+"latitude": "22.521416",
+"longitude": "113.940239",
+"height_architecture": "261.30",
+"completed": 2022
+},
+{
+"id": 746,
+"name_intl": "East Pacific Center Tower B",
+"status": "COM",
+"latitude": "22.539310",
+"longitude": "114.014580",
+"height_architecture": "261.00",
+"completed": 2013
+},
+{
+"id": 40511,
+"name_intl": "Fisherman's Wharf Shekou T1",
+"status": "COM",
+"latitude": "22.483519",
+"longitude": "113.922386",
+"height_architecture": "261.00",
+"completed": 2023
+},
+{
+"id": 23580,
+"name_intl": "Bojin Business Plaza Tower 1",
+"status": "COM",
+"latitude": "22.533060",
+"longitude": "114.022362",
+"height_architecture": "260.90",
+"completed": 2019
+},
+{
+"id": 43437,
+"name_intl": "Qianhai International Hub Tower 2",
+"status": "STO",
+"latitude": "22.541197",
+"longitude": "113.891716",
+"height_architecture": "260.30",
+"completed": 2026
+},
+{
+"id": 726,
+"name_intl": "Shenzhen Special Zone Daily Tower",
+"status": "COM",
+"latitude": "22.543560",
+"longitude": "114.040428",
+"height_architecture": "260.00",
+"completed": 1998
+},
+{
+"id": 42810,
+"name_intl": "Nanshan Zhigu Tower",
+"status": "COM",
+"latitude": "22.574333",
+"longitude": "113.948944",
+"height_architecture": "259.40",
+"completed": 2025
+},
+{
+"id": 48165,
+"name_intl": "China Resources Hubei Center Plot A6",
+"status": "UC",
+"latitude": "22.549683",
+"longitude": "114.125267",
+"height_architecture": "259.16",
+"completed": null
+},
+{
+"id": 44539,
+"name_intl": "Gate of Hubei East Tower",
+"status": "PRO",
+"latitude": "22.548752",
+"longitude": "114.125145",
+"height_architecture": "259.12",
+"completed": null
+},
+{
+"id": 35657,
+"name_intl": "OCT One",
+"status": "COM",
+"latitude": "22.550583",
+"longitude": "113.980865",
+"height_architecture": "259.00",
+"completed": 2019
+},
+{
+"id": 27953,
+"name_intl": "Qianhai Financial Centre - T1",
+"status": "COM",
+"latitude": "22.537685",
+"longitude": "113.889145",
+"height_architecture": "258.78",
+"completed": 2021
+},
+{
+"id": 31924,
+"name_intl": "Huide Tower",
+"status": "COM",
+"latitude": "22.615200",
+"longitude": "114.025826",
+"height_architecture": "258.00",
+"completed": 2019
+},
+{
+"id": 39940,
+"name_intl": "CITIC International Building",
+"status": "COM",
+"latitude": "22.542604",
+"longitude": "114.089142",
+"height_architecture": "258.00",
+"completed": 2023
+},
+{
+"id": 37059,
+"name_intl": "Hengyu Jinrong Center Block B",
+"status": "COM",
+"latitude": "22.517370",
+"longitude": "113.935997",
+"height_architecture": "258.00",
+"completed": 2024
+},
+{
+"id": 37060,
+"name_intl": "Hengyu Jinrong Center Block C",
+"status": "COM",
+"latitude": "22.516567",
+"longitude": "113.935776",
+"height_architecture": "258.00",
+"completed": 2024
+},
+{
+"id": 43753,
+"name_intl": "Nanshan Innovation Technology Center Tower 3",
+"status": "UCT",
+"latitude": "22.573978",
+"longitude": "113.938667",
+"height_architecture": "258.00",
+"completed": 2026
+},
+{
+"id": 42326,
+"name_intl": "Hytera Headquarters",
+"status": "COM",
+"latitude": "22.510653",
+"longitude": "113.934090",
+"height_architecture": "257.50",
+"completed": 2025
+},
+{
+"id": 44212,
+"name_intl": "Logan Headquarters Center Tower 2",
+"status": "STO",
+"latitude": "22.537445",
+"longitude": "113.987167",
+"height_architecture": "255.55",
+"completed": 2026
+},
+{
+"id": 44596,
+"name_intl": "KIC Cloud City Block A",
+"status": "COM",
+"latitude": "22.582733",
+"longitude": "113.935951",
+"height_architecture": "255.00",
+"completed": 2025
+},
+{
+"id": 924,
+"name_intl": "Shenzhen AVIC Plaza",
+"status": "COM",
+"latitude": "22.544180",
+"longitude": "114.078300",
+"height_architecture": "254.00",
+"completed": 2012
+},
+{
+"id": 14303,
+"name_intl": "Wongtee Plaza",
+"status": "COM",
+"latitude": "22.538260",
+"longitude": "114.058739",
+"height_architecture": "253.55",
+"completed": 2016
+},
+{
+"id": 44540,
+"name_intl": "Gate of Hubei Middle Tower",
+"status": "UC",
+"latitude": "22.548506",
+"longitude": "114.124550",
+"height_architecture": "251.12",
+"completed": null
+},
+{
+"id": 44211,
+"name_intl": "Logan Headquarters Center Tower 1",
+"status": "STO",
+"latitude": "22.537119",
+"longitude": "113.988251",
+"height_architecture": "250.45",
+"completed": 2026
+},
+{
+"id": 48494,
+"name_intl": "Qianhai International Hub Tower 5",
+"status": "PRO",
+"latitude": "22.538507",
+"longitude": "113.891907",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 869,
+"name_intl": "Excellence Century Plaza Tower 2",
+"status": "COM",
+"latitude": "22.534031",
+"longitude": "114.058769",
+"height_architecture": "250.00",
+"completed": 2010
+},
+{
+"id": 45592,
+"name_intl": "Jiuyue Plaza Tower 1",
+"status": "PRO",
+"latitude": "22.781094",
+"longitude": "113.929031",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 41674,
+"name_intl": "Shum Yip Plaza",
+"status": "UC",
+"latitude": "22.568090",
+"longitude": "114.102173",
+"height_architecture": "250.00",
+"completed": 2026
+},
+{
+"id": 35202,
+"name_intl": "Hengli International Office Building",
+"status": "UC",
+"latitude": "22.525200",
+"longitude": "113.973267",
+"height_architecture": "250.00",
+"completed": 2026
+},
+{
+"id": 44525,
+"name_intl": "Bagualing Industrial Park Urban Renewal Design",
+"status": "PRO",
+"latitude": "22.560188",
+"longitude": "114.097435",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 44207,
+"name_intl": "Hengming ONE",
+"status": "PRO",
+"latitude": "22.735912",
+"longitude": "114.223236",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 48495,
+"name_intl": "Qianhai International Hub Tower 6",
+"status": "PRO",
+"latitude": "22.537373",
+"longitude": "113.891930",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 48492,
+"name_intl": "Qianhai International Hub Tower 8",
+"status": "PRO",
+"latitude": "22.535669",
+"longitude": "113.892090",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 45394,
+"name_intl": "Qianhai Prisma Office Tower",
+"status": "PRO",
+"latitude": "22.537386",
+"longitude": "113.890854",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 44593,
+"name_intl": "South China Village Redevelopment Office Tower",
+"status": "PRO",
+"latitude": "22.536102",
+"longitude": "114.083099",
+"height_architecture": "250.00",
+"completed": null
+},
+{
+"id": 44589,
+"name_intl": "Samsung Industrial Park Tower 1",
+"status": "PRO",
+"latitude": "22.563726",
+"longitude": "114.063446",
+"height_architecture": "249.85",
+"completed": null
+},
+{
+"id": 39355,
+"name_intl": "China Venture Capital Tower A",
+"status": "COM",
+"latitude": "22.543152",
+"longitude": "113.897095",
+"height_architecture": "249.75",
+"completed": 2024
+},
+{
+"id": 46119,
+"name_intl": "Longhua Digital Innovation Center Building A",
+"status": "COM",
+"latitude": "22.619434",
+"longitude": "114.025650",
+"height_architecture": "249.70",
+"completed": 2022
+},
+{
+"id": 39990,
+"name_intl": "Great Wall International Logistics Centre T1",
+"status": "OH",
+"latitude": "22.574558",
+"longitude": "114.108101",
+"height_architecture": "249.55",
+"completed": 2026
+},
+{
+"id": 1190,
+"name_intl": "China Merchants Bank Tower",
+"status": "COM",
+"latitude": "22.539869",
+"longitude": "114.017403",
+"height_architecture": "249.00",
+"completed": 2001
+},
+{
+"id": 23585,
+"name_intl": "Shenzhen University Subway Station Tower",
+"status": "COM",
+"latitude": "22.541990",
+"longitude": "113.940063",
+"height_architecture": "249.00",
+"completed": 2017
+},
+{
+"id": 16426,
+"name_intl": "China Resources Qianhai Center Tower 5",
+"status": "COM",
+"latitude": "22.533596",
+"longitude": "113.895737",
+"height_architecture": "248.90",
+"completed": 2021
+},
+{
+"id": 43586,
+"name_intl": "Zhengqi Future Science and Technology City Tower A",
+"status": "STO",
+"latitude": "22.701452",
+"longitude": "114.344643",
+"height_architecture": "248.90",
+"completed": 2026
+},
+{
+"id": 38708,
+"name_intl": "OCT Ring Ping City Tower 1",
+"status": "PRO",
+"latitude": "22.681824",
+"longitude": "114.328049",
+"height_architecture": "248.00",
+"completed": null
+},
+{
+"id": 46644,
+"name_intl": "Qingqing New Village Landmark Tower",
+"status": "STO",
+"latitude": "22.554934",
+"longitude": "114.104507",
+"height_architecture": "247.60",
+"completed": 2026
+},
+{
+"id": 46628,
+"name_intl": "China Horoy Yicheng Center Tower 1",
+"status": "COM",
+"latitude": "22.645668",
+"longitude": "114.027473",
+"height_architecture": "247.55",
+"completed": 2023
+},
+{
+"id": 43475,
+"name_intl": "Shum Yip Century Valley Phase 3A",
+"status": "COM",
+"latitude": "22.548199",
+"longitude": "113.961182",
+"height_architecture": "247.35",
+"completed": 2025
+},
+{
+"id": 43882,
+"name_intl": "Shum Yip Century Valley Phase 3B",
+"status": "COM",
+"latitude": "22.549091",
+"longitude": "113.961395",
+"height_architecture": "247.35",
+"completed": 2025
+},
+{
+"id": 17066,
+"name_intl": "Shenzhen Bay Innovation and Technology Centre Tower 2",
+"status": "COM",
+"latitude": "22.532082",
+"longitude": "113.942101",
+"height_architecture": "247.20",
+"completed": 2020
+},
+{
+"id": 41607,
+"name_intl": "Shimao International Exhibition Center Tower D",
+"status": "COM",
+"latitude": "22.565100",
+"longitude": "114.088997",
+"height_architecture": "247.13",
+"completed": 2025
+},
+{
+"id": 43658,
+"name_intl": "Huanggang Port Tower",
+"status": "UCT",
+"latitude": "22.525187",
+"longitude": "114.070038",
+"height_architecture": "246.95",
+"completed": 2026
+},
+{
+"id": 14590,
+"name_intl": "Andaz Shenzhen Bay",
+"status": "COM",
+"latitude": "22.518129",
+"longitude": "113.942444",
+"height_architecture": "246.00",
+"completed": 2021
+},
+{
+"id": 1144,
+"name_intl": "Shenzhen Stock Exchange",
+"status": "COM",
+"latitude": "22.544531",
+"longitude": "114.048714",
+"height_architecture": "245.80",
+"completed": 2013
+},
+{
+"id": 13860,
+"name_intl": "Tencent Seafront Tower 1",
+"status": "COM",
+"latitude": "22.525579",
+"longitude": "113.930458",
+"height_architecture": "245.78",
+"completed": 2017
+},
+{
+"id": 46121,
+"name_intl": "Longhua Digital Innovation Center Building C",
+"status": "COM",
+"latitude": "22.621094",
+"longitude": "114.025955",
+"height_architecture": "245.00",
+"completed": 2022
+},
+{
+"id": 23579,
+"name_intl": "Shenzhen Bay Ecocity B-Tech Tower 2",
+"status": "COM",
+"latitude": "22.535339",
+"longitude": "113.946739",
+"height_architecture": "245.00",
+"completed": 2018
+},
+{
+"id": 48896,
+"name_intl": "Yinxuan Center Tower A",
+"status": "UC",
+"latitude": "22.550962",
+"longitude": "113.880951",
+"height_architecture": "245.00",
+"completed": 2026
+},
+{
+"id": 48970,
+"name_intl": "Luen Thai International Center Tower 4",
+"status": "UC",
+"latitude": "22.528261",
+"longitude": "113.975685",
+"height_architecture": "244.60",
+"completed": 2026
+},
+{
+"id": 42471,
+"name_intl": "Shekou Prince Bay - Ruixi Residences",
+"status": "COM",
+"latitude": "22.478109",
+"longitude": "113.907616",
+"height_architecture": "244.00",
+"completed": 2023
+},
+{
+"id": 33391,
+"name_intl": "Vanke Yun City",
+"status": "COM",
+"latitude": "22.577494",
+"longitude": "113.940063",
+"height_architecture": "243.84",
+"completed": 2019
+},
+{
+"id": 41866,
+"name_intl": "Shimao International Exhibition Center Tower C",
+"status": "COM",
+"latitude": "22.565220",
+"longitude": "114.088417",
+"height_architecture": "242.77",
+"completed": 2025
+},
+{
+"id": 976,
+"name_intl": "Shenzhen Broadcasting Center I",
+"status": "COM",
+"latitude": "22.538219",
+"longitude": "114.050583",
+"height_architecture": "240.65",
+"completed": 2001
+},
+{
+"id": 992,
+"name_intl": "Panglin Plaza",
+"status": "COM",
+"latitude": "22.544081",
+"longitude": "114.117157",
+"height_architecture": "240.00",
+"completed": 2000
+},
+{
+"id": 46629,
+"name_intl": "China Horoy Yicheng Center Tower 2",
+"status": "COM",
+"latitude": "22.646341",
+"longitude": "114.025322",
+"height_architecture": "240.00",
+"completed": 2023
+},
+{
+"id": 39901,
+"name_intl": "Shenzhen Qianhai Tencent Headquarters Tower 1",
+"status": "COM",
+"latitude": "22.540123",
+"longitude": "113.894066",
+"height_architecture": "240.00",
+"completed": 2022
+},
+{
+"id": 36513,
+"name_intl": "Walton Mansion",
+"status": "COM",
+"latitude": "22.520020",
+"longitude": "114.061157",
+"height_architecture": "239.00",
+"completed": 2023
+},
+{
+"id": 1023,
+"name_intl": "New World Center",
+"status": "COM",
+"latitude": "22.548031",
+"longitude": "114.050270",
+"height_architecture": "238.00",
+"completed": 2006
+},
+{
+"id": 48897,
+"name_intl": "Yinxuan Center Tower B",
+"status": "UC",
+"latitude": "22.550581",
+"longitude": "113.881767",
+"height_architecture": "237.00",
+"completed": 2026
+},
+{
+"id": 48172,
+"name_intl": "China Resources Hubei Center Plot A1 Block C",
+"status": "UC",
+"latitude": "22.550882",
+"longitude": "114.121956",
+"height_architecture": "233.30",
+"completed": null
+},
+{
+"id": 44588,
+"name_intl": "Shenzhen Longguang Jiulin Business Center Tower 2",
+"status": "PRO",
+"latitude": "22.582441",
+"longitude": "113.937897",
+"height_architecture": "232.70",
+"completed": null
+},
+{
+"id": 32994,
+"name_intl": "Shenzhen Media Group Tower",
+"status": "COM",
+"latitude": "22.544842",
+"longitude": "114.045204",
+"height_architecture": "232.40",
+"completed": 2021
+},
+{
+"id": 41646,
+"name_intl": "Luen Thai International Center Tower 1",
+"status": "UC",
+"latitude": "22.527222",
+"longitude": "113.974358",
+"height_architecture": "232.30",
+"completed": 2026
+},
+{
+"id": 23596,
+"name_intl": "Shuibei Jewelry Headquarters Tower A",
+"status": "COM",
+"latitude": "22.577501",
+"longitude": "114.119385",
+"height_architecture": "232.30",
+"completed": 2018
+},
+{
+"id": 9993,
+"name_intl": "CASC International Center North Tower",
+"status": "COM",
+"latitude": "22.522860",
+"longitude": "113.937027",
+"height_architecture": "232.00",
+"completed": 2015
+},
+{
+"id": 41639,
+"name_intl": "Kingboard Qianhai Tower",
+"status": "UCT",
+"latitude": "22.538670",
+"longitude": "113.897232",
+"height_architecture": "232.00",
+"completed": 2026
+},
+{
+"id": 16424,
+"name_intl": "China Resources Qianhai Center Tower 2",
+"status": "COM",
+"latitude": "22.534679",
+"longitude": "113.893898",
+"height_architecture": "231.30",
+"completed": 2021
+},
+{
+"id": 23604,
+"name_intl": "China Resources Dachong Redevelopment Tower 1",
+"status": "COM",
+"latitude": "22.544294",
+"longitude": "113.950195",
+"height_architecture": "231.00",
+"completed": 2018
+},
+{
+"id": 14330,
+"name_intl": "Lihe Tower",
+"status": "COM",
+"latitude": "22.536051",
+"longitude": "114.057388",
+"height_architecture": "230.86",
+"completed": 2017
+},
+{
+"id": 16428,
+"name_intl": "UpperHills North Tower 1A",
+"status": "COM",
+"latitude": "22.561001",
+"longitude": "114.063301",
+"height_architecture": "230.40",
+"completed": 2015
+},
+{
+"id": 16429,
+"name_intl": "UpperHills North Tower 2A",
+"status": "COM",
+"latitude": "22.561541",
+"longitude": "114.065529",
+"height_architecture": "230.40",
+"completed": 2015
+},
+{
+"id": 18257,
+"name_intl": "Rongchao Headquarters Tower",
+"status": "COM",
+"latitude": "22.528259",
+"longitude": "113.938332",
+"height_architecture": "230.00",
+"completed": 2017
+},
+{
+"id": 42510,
+"name_intl": "OCT Baochen Tower",
+"status": "COM",
+"latitude": "22.556257",
+"longitude": "113.876091",
+"height_architecture": "230.00",
+"completed": 2024
+},
+{
+"id": 38343,
+"name_intl": "Satellite Communication Operations Building",
+"status": "COM",
+"latitude": "22.554317",
+"longitude": "113.876198",
+"height_architecture": "230.00",
+"completed": 2022
+},
+{
+"id": 23602,
+"name_intl": "China Construction Bank Building 2",
+"status": "COM",
+"latitude": "22.544750",
+"longitude": "114.047249",
+"height_architecture": "230.00",
+"completed": 2020
+},
+{
+"id": 1146,
+"name_intl": "Shanglong Building",
+"status": "COM",
+"latitude": "22.547779",
+"longitude": "114.121857",
+"height_architecture": "228.00",
+"completed": 2004
+},
+{
+"id": 10258,
+"name_intl": "Shenzhen Guosen Securities Tower",
+"status": "COM",
+"latitude": "22.537880",
+"longitude": "114.047256",
+"height_architecture": "228.00",
+"completed": 2019
+},
+{
+"id": 14404,
+"name_intl": "Taiping Finance Tower",
+"status": "COM",
+"latitude": "22.544790",
+"longitude": "114.050392",
+"height_architecture": "228.00",
+"completed": 2014
+},
+{
+"id": 37107,
+"name_intl": "Kuantan-Chi Future Center Block A",
+"status": "COM",
+"latitude": "22.540085",
+"longitude": "113.945763",
+"height_architecture": "226.70",
+"completed": 2021
+},
+{
+"id": 48969,
+"name_intl": "Luen Thai International Center Tower 3",
+"status": "UC",
+"latitude": "22.528336",
+"longitude": "113.974976",
+"height_architecture": "226.60",
+"completed": 2026
+},
+{
+"id": 40528,
+"name_intl": "Shenzhen Science and Technology City Tower A",
+"status": "COM",
+"latitude": "22.564840",
+"longitude": "114.063316",
+"height_architecture": "225.80",
+"completed": 2023
+},
+{
+"id": 15960,
+"name_intl": "Coastal Center",
+"status": "COM",
+"latitude": "22.535170",
+"longitude": "114.072479",
+"height_architecture": "225.00",
+"completed": 2016
+},
+{
+"id": 31288,
+"name_intl": "Jinlitong Financial Center Tower 1",
+"status": "COM",
+"latitude": "22.554802",
+"longitude": "113.874634",
+"height_architecture": "225.00",
+"completed": 2018
+},
+{
+"id": 31289,
+"name_intl": "Jinlitong Financial Center Tower 2",
+"status": "COM",
+"latitude": "22.555338",
+"longitude": "113.875237",
+"height_architecture": "225.00",
+"completed": 2018
+},
+{
+"id": 34477,
+"name_intl": "UNI-Center Tower A",
+"status": "COM",
+"latitude": "22.556484",
+"longitude": "113.881989",
+"height_architecture": "225.00",
+"completed": 2017
+},
+{
+"id": 38715,
+"name_intl": "OCT Ruiwan Mansion",
+"status": "COM",
+"latitude": "22.553926",
+"longitude": "113.875420",
+"height_architecture": "224.90",
+"completed": 2023
+},
+{
+"id": 48173,
+"name_intl": "China Resources Hubei Center Plot A1 Block B",
+"status": "UC",
+"latitude": "22.551220",
+"longitude": "114.121902",
+"height_architecture": "224.59",
+"completed": null
+},
+{
+"id": 49006,
+"name_intl": "Yitian Yulong Tiandi Building 7A",
+"status": "COM",
+"latitude": "22.556545",
+"longitude": "114.125580",
+"height_architecture": "224.00",
+"completed": 2024
+},
+{
+"id": 43675,
+"name_intl": "KK TIME Tower 1",
+"status": "COM",
+"latitude": "22.573431",
+"longitude": "114.118881",
+"height_architecture": "222.60",
+"completed": 2023
+},
+{
+"id": 1217,
+"name_intl": "World Finance Center Tower A",
+"status": "COM",
+"latitude": "22.544680",
+"longitude": "114.109428",
+"height_architecture": "222.38",
+"completed": 2003
+},
+{
+"id": 22709,
+"name_intl": "Nanyou Tower 1",
+"status": "COM",
+"latitude": "22.512871",
+"longitude": "113.922112",
+"height_architecture": "220.15",
+"completed": 2018
+},
+{
+"id": 22710,
+"name_intl": "Nanyou Tower 2",
+"status": "COM",
+"latitude": "22.512131",
+"longitude": "113.921913",
+"height_architecture": "220.15",
+"completed": 2018
+},
+{
+"id": 22708,
+"name_intl": "Pengguangda Tower",
+"status": "COM",
+"latitude": "22.586170",
+"longitude": "114.260674",
+"height_architecture": "220.00",
+"completed": 2021
+},
+{
+"id": 16669,
+"name_intl": "Vanke One City Office Tower",
+"status": "COM",
+"latitude": "22.554678",
+"longitude": "114.233406",
+"height_architecture": "220.00",
+"completed": 2019
+},
+{
+"id": 22639,
+"name_intl": "Shuiwan 1979 Tower",
+"status": "COM",
+"latitude": "22.492001",
+"longitude": "113.914146",
+"height_architecture": "220.00",
+"completed": 2016
+},
+{
+"id": 41532,
+"name_intl": "CIMC Shenzhen Qianhai East Tower",
+"status": "COM",
+"latitude": "22.523235",
+"longitude": "113.893509",
+"height_architecture": "220.00",
+"completed": 2021
+},
+{
+"id": 41102,
+"name_intl": "Qianhai Financial Holdings Headquarter Tower",
+"status": "UCT",
+"latitude": "22.523401",
+"longitude": "113.890228",
+"height_architecture": "220.00",
+"completed": 2026
+},
+{
+"id": 41647,
+"name_intl": "Luen Thai International Center Tower 2",
+"status": "UC",
+"latitude": "22.527901",
+"longitude": "113.974297",
+"height_architecture": "219.40",
+"completed": 2026
+},
+{
+"id": 43537,
+"name_intl": "Ping An Credit Card Building",
+"status": "COM",
+"latitude": "22.537184",
+"longitude": "113.895386",
+"height_architecture": "219.05",
+"completed": 2025
+},
+{
+"id": 48171,
+"name_intl": "China Resources Hubei Center Plot A1 Block A",
+"status": "UC",
+"latitude": "22.550913",
+"longitude": "114.120796",
+"height_architecture": "219.00",
+"completed": null
+},
+{
+"id": 14845,
+"name_intl": "Sino Life Insurance Building",
+"status": "COM",
+"latitude": "22.549101",
+"longitude": "114.058670",
+"height_architecture": "219.00",
+"completed": 2016
+},
+{
+"id": 48167,
+"name_intl": "China Resources Hubei Center Plot A4 Block E",
+"status": "COM",
+"latitude": "22.549713",
+"longitude": "114.124168",
+"height_architecture": "218.90",
+"completed": 2024
+},
+{
+"id": 1286,
+"name_intl": "Hung Cheung Plaza",
+"status": "COM",
+"latitude": "22.546869",
+"longitude": "114.125069",
+"height_architecture": "218.00",
+"completed": 2004
+},
+{
+"id": 1291,
+"name_intl": "Fortune Tower",
+"status": "COM",
+"latitude": "22.536070",
+"longitude": "114.058777",
+"height_architecture": "218.00",
+"completed": 2008
+},
+{
+"id": 1294,
+"name_intl": "Times Square Excellence",
+"status": "COM",
+"latitude": "22.537029",
+"longitude": "114.051788",
+"height_architecture": "218.00",
+"completed": 2006
+},
+{
+"id": 14295,
+"name_intl": "Shenzhen Energy Headquarters North Tower",
+"status": "COM",
+"latitude": "22.533220",
+"longitude": "114.058830",
+"height_architecture": "218.00",
+"completed": 2017
+},
+{
+"id": 23605,
+"name_intl": "China Resources Dachong Redevelopment Tower 2",
+"status": "COM",
+"latitude": "22.544836",
+"longitude": "113.952408",
+"height_architecture": "218.00",
+"completed": 2018
+},
+{
+"id": 18688,
+"name_intl": "AVIC Center Office Tower",
+"status": "COM",
+"latitude": "22.546221",
+"longitude": "114.076889",
+"height_architecture": "216.40",
+"completed": 2013
+},
+{
+"id": 1327,
+"name_intl": "International Chamber of Commerce Tower",
+"status": "COM",
+"latitude": "22.535950",
+"longitude": "114.051826",
+"height_architecture": "215.95",
+"completed": 2005
+},
+{
+"id": 44597,
+"name_intl": "KIC Cloud City Block B",
+"status": "COM",
+"latitude": "22.582167",
+"longitude": "113.936516",
+"height_architecture": "215.00",
+"completed": 2025
+},
+{
+"id": 43893,
+"name_intl": "Zhongjing Lingan Tower",
+"status": "COM",
+"latitude": "22.580381",
+"longitude": "114.107132",
+"height_architecture": "214.00",
+"completed": 2025
+},
+{
+"id": 40143,
+"name_intl": "CMG Times Center Tower 2",
+"status": "STO",
+"latitude": "22.509033",
+"longitude": "113.880737",
+"height_architecture": "213.47",
+"completed": 2026
+},
+{
+"id": 44778,
+"name_intl": "Qianhai Upper Bay Tower 1",
+"status": "COM",
+"latitude": "22.482655",
+"longitude": "113.893570",
+"height_architecture": "213.00",
+"completed": 2024
+},
+{
+"id": 33085,
+"name_intl": "DJI Sky City Tower 2",
+"status": "COM",
+"latitude": "22.580412",
+"longitude": "113.938484",
+"height_architecture": "213.00",
+"completed": 2022
+},
+{
+"id": 33090,
+"name_intl": "Sinotrans Logistic Centre",
+"status": "COM",
+"latitude": "22.565323",
+"longitude": "114.100220",
+"height_architecture": "212.80",
+"completed": 2020
+},
+{
+"id": 50331,
+"name_intl": "Hetao No. 1",
+"status": "COM",
+"latitude": "22.509909",
+"longitude": "114.049217",
+"height_architecture": "212.00",
+"completed": 2025
+},
+{
+"id": 35795,
+"name_intl": "UBTECH Headquarters",
+"status": "COM",
+"latitude": "22.582895",
+"longitude": "113.942680",
+"height_architecture": "212.00",
+"completed": 2024
+},
+{
+"id": 44734,
+"name_intl": "Jindi Industrial Zone Redevelopment Tower 7",
+"status": "UC",
+"latitude": "22.522703",
+"longitude": "114.035576",
+"height_architecture": "211.85",
+"completed": 2026
+},
+{
+"id": 44739,
+"name_intl": "Jindi Industrial Zone Redevelopment Tower 8",
+"status": "UC",
+"latitude": "22.522375",
+"longitude": "114.035019",
+"height_architecture": "211.85",
+"completed": 2026
+},
+{
+"id": 44742,
+"name_intl": "Jindi Industrial Zone Redevelopment Tower 10",
+"status": "UC",
+"latitude": "22.522650",
+"longitude": "114.034042",
+"height_architecture": "211.80",
+"completed": 2026
+},
+{
+"id": 44744,
+"name_intl": "Jindi Industrial Zone Redevelopment Tower 11",
+"status": "UC",
+"latitude": "22.522823",
+"longitude": "114.033669",
+"height_architecture": "211.80",
+"completed": 2026
+},
+{
+"id": 44741,
+"name_intl": "Jindi Industrial Zone Redevelopment Tower 9",
+"status": "UC",
+"latitude": "22.522383",
+"longitude": "114.034431",
+"height_architecture": "211.80",
+"completed": 2026
+},
+{
+"id": 42268,
+"name_intl": "OCT Creation and Innovation Building B",
+"status": "COM",
+"latitude": "22.619902",
+"longitude": "114.023911",
+"height_architecture": "211.50",
+"completed": 2021
+},
+{
+"id": 34476,
+"name_intl": "Shenzhen Gemdale Viseen South Tower",
+"status": "COM",
+"latitude": "22.530563",
+"longitude": "113.947105",
+"height_architecture": "211.50",
+"completed": 2021
+},
+{
+"id": 33469,
+"name_intl": "Chow Tai Fook Headquarters North Tower",
+"status": "COM",
+"latitude": "22.534599",
+"longitude": "113.892128",
+"height_architecture": "211.40",
+"completed": 2023
+},
+{
+"id": 36876,
+"name_intl": "Longgang Jiuzuan Block 5B",
+"status": "COM",
+"latitude": "22.624477",
+"longitude": "114.017578",
+"height_architecture": "211.30",
+"completed": 2021
+},
+{
+"id": 42783,
+"name_intl": "China Aerospace Science & Industry Corporation Headquarters",
+"status": "UC",
+"latitude": "22.572544",
+"longitude": "113.940811",
+"height_architecture": "211.20",
+"completed": null
+},
+{
+"id": 31146,
+"name_intl": "Vanke Times Square",
+"status": "COM",
+"latitude": "22.721106",
+"longitude": "114.246712",
+"height_architecture": "211.00",
+"completed": 2019
+},
+{
+"id": 12183,
+"name_intl": "China Merchants Tower",
+"status": "COM",
+"latitude": "22.484320",
+"longitude": "113.910767",
+"height_architecture": "211.00",
+"completed": 2013
+},
+{
+"id": 46120,
+"name_intl": "Longhua Digital Innovation Center Building B",
+"status": "COM",
+"latitude": "22.620707",
+"longitude": "114.025192",
+"height_architecture": "210.80",
+"completed": 2022
+},
+{
+"id": 49011,
+"name_intl": "Yitian Yulong Tiandi Building 1A",
+"status": "COM",
+"latitude": "22.557428",
+"longitude": "114.126587",
+"height_architecture": "210.55",
+"completed": 2024
+},
+{
+"id": 48770,
+"name_intl": "Qi Jie Fang Lianjian Building C",
+"status": "PRO",
+"latitude": "22.572153",
+"longitude": "113.942825",
+"height_architecture": "210.30",
+"completed": 2027
+},
+{
+"id": 34489,
+"name_intl": "Ziyuanyuan Tower",
+"status": "COM",
+"latitude": "22.531004",
+"longitude": "114.065750",
+"height_architecture": "210.00",
+"completed": 2020
+},
+{
+"id": 15837,
+"name_intl": "Excellence Houhai Financial Center",
+"status": "COM",
+"latitude": "22.521851",
+"longitude": "113.938248",
+"height_architecture": "210.00",
+"completed": 2015
+},
+{
+"id": 16729,
+"name_intl": "CNOOC New Tower 1",
+"status": "COM",
+"latitude": "22.515791",
+"longitude": "113.934387",
+"height_architecture": "210.00",
+"completed": 2016
+},
+{
+"id": 16730,
+"name_intl": "CNOOC New Tower 2",
+"status": "COM",
+"latitude": "22.514740",
+"longitude": "113.934181",
+"height_architecture": "210.00",
+"completed": 2016
+},
+{
+"id": 23258,
+"name_intl": "Kingdee Cloud Tower",
+"status": "COM",
+"latitude": "22.536449",
+"longitude": "113.949631",
+"height_architecture": "210.00",
+"completed": 2023
+},
+{
+"id": 47870,
+"name_intl": "Scenic City East Tower",
+"status": "UC",
+"latitude": "22.527508",
+"longitude": "113.972984",
+"height_architecture": "209.90",
+"completed": 2027
+},
+{
+"id": 23618,
+"name_intl": "Horizon Skyline Garden Office Tower",
+"status": "COM",
+"latitude": "22.556400",
+"longitude": "113.916153",
+"height_architecture": "209.20",
+"completed": 2017
+},
+{
+"id": 49017,
+"name_intl": "Yitian Yulong Tiandi Center Building",
+"status": "COM",
+"latitude": "22.556765",
+"longitude": "114.126495",
+"height_architecture": "209.00",
+"completed": 2024
+},
+{
+"id": 34490,
+"name_intl": "Hengmingzhu Financial Building",
+"status": "COM",
+"latitude": "22.559874",
+"longitude": "113.905121",
+"height_architecture": "208.80",
+"completed": 2020
+},
+{
+"id": 34348,
+"name_intl": "Ping An Property & Casualty Insurance Tower",
+"status": "COM",
+"latitude": "22.534004",
+"longitude": "114.050690",
+"height_architecture": "208.50",
+"completed": 2022
+},
+{
+"id": 23619,
+"name_intl": "Greater China World Financial Center Tower 1",
+"status": "COM",
+"latitude": "22.536289",
+"longitude": "114.114563",
+"height_architecture": "208.20",
+"completed": 2021
+},
+{
+"id": 44208,
+"name_intl": "Kaisa Shenwei Tower",
+"status": "UC",
+"latitude": "22.553537",
+"longitude": "113.976021",
+"height_architecture": "208.10",
+"completed": 2026
+},
+{
+"id": 1518,
+"name_intl": "First Tower",
+"status": "COM",
+"latitude": "22.548889",
+"longitude": "114.050461",
+"height_architecture": "208.00",
+"completed": 2001
+},
+{
+"id": 16081,
+"name_intl": "Wenbo Tower",
+"status": "COM",
+"latitude": "22.556101",
+"longitude": "114.042793",
+"height_architecture": "208.00",
+"completed": 2016
+},
+{
+"id": 11471,
+"name_intl": "Southern Bosera Building",
+"status": "COM",
+"latitude": "22.543840",
+"longitude": "114.050514",
+"height_architecture": "208.00",
+"completed": 2018
+},
+{
+"id": 35372,
+"name_intl": "iCarbonx Headquarters Office Tower",
+"status": "OH",
+"latitude": "22.527239",
+"longitude": "113.970390",
+"height_architecture": "207.74",
+"completed": 2026
+},
+{
+"id": 43599,
+"name_intl": "Huaqiang Science & Technology Plaza",
+"status": "COM",
+"latitude": "22.565048",
+"longitude": "114.042305",
+"height_architecture": "207.65",
+"completed": 2023
+},
+{
+"id": 43409,
+"name_intl": "Baiwai Education Group Building",
+"status": "COM",
+"latitude": "22.610909",
+"longitude": "114.122177",
+"height_architecture": "207.40",
+"completed": 2024
+},
+{
+"id": 40113,
+"name_intl": "Digital China Headquarters Tower 2",
+"status": "COM",
+"latitude": "22.528740",
+"longitude": "113.967415",
+"height_architecture": "206.35",
+"completed": 2023
+},
+{
+"id": 43518,
+"name_intl": "Nanshan Innovation Technology Center Tower 7",
+"status": "COM",
+"latitude": "22.572273",
+"longitude": "113.937523",
+"height_architecture": "206.35",
+"completed": 2024
+},
+{
+"id": 1562,
+"name_intl": "Landmark",
+"status": "COM",
+"latitude": "22.546890",
+"longitude": "114.058441",
+"height_architecture": "206.00",
+"completed": 2007
+},
+{
+"id": 1566,
+"name_intl": "East Pacific Center Tower C",
+"status": "COM",
+"latitude": "22.539511",
+"longitude": "114.016060",
+"height_architecture": "206.00",
+"completed": 2010
+},
+{
+"id": 16718,
+"name_intl": "Great Wall Technology Headquarters Tower",
+"status": "PRO",
+"latitude": "22.542124",
+"longitude": "113.944229",
+"height_architecture": "205.80",
+"completed": null
+},
+{
+"id": 49010,
+"name_intl": "Yitian Yulong Tiandi Building 1B",
+"status": "COM",
+"latitude": "22.557076",
+"longitude": "114.126915",
+"height_architecture": "205.74",
+"completed": 2024
+},
+{
+"id": 38613,
+"name_intl": "Sungang MixC Market Hall Residential Tower 3",
+"status": "COM",
+"latitude": "22.563402",
+"longitude": "114.105247",
+"height_architecture": "205.62",
+"completed": 2023
+},
+{
+"id": 31925,
+"name_intl": "HBC Huilong Center",
+"status": "COM",
+"latitude": "22.613398",
+"longitude": "114.027405",
+"height_architecture": "205.50",
+"completed": 2019
+},
+{
+"id": 40112,
+"name_intl": "Digital China Headquarters Tower 1",
+"status": "COM",
+"latitude": "22.529236",
+"longitude": "113.966339",
+"height_architecture": "205.15",
+"completed": 2023
+},
+{
+"id": 42241,
+"name_intl": "COFCO Yunjing Centre",
+"status": "COM",
+"latitude": "22.780174",
+"longitude": "113.884071",
+"height_architecture": "205.00",
+"completed": 2019
+},
+{
+"id": 47889,
+"name_intl": "Baoshan Times Building",
+"status": "COM",
+"latitude": "22.624546",
+"longitude": "114.028267",
+"height_architecture": "205.00",
+"completed": 2024
+},
+{
+"id": 17603,
+"name_intl": "Prince Plaza",
+"status": "COM",
+"latitude": "22.487440",
+"longitude": "113.909210",
+"height_architecture": "204.81",
+"completed": 2019
+},
+{
+"id": 36861,
+"name_intl": "Kexinkexueyuan Tower D1",
+"status": "COM",
+"latitude": "22.550343",
+"longitude": "113.938026",
+"height_architecture": "204.75",
+"completed": 2019
+},
+{
+"id": 49014,
+"name_intl": "Yitian Yulong Tiandi Southwest Building",
+"status": "COM",
+"latitude": "22.554722",
+"longitude": "114.125725",
+"height_architecture": "204.60",
+"completed": 2024
+},
+{
+"id": 38611,
+"name_intl": "Sungang MixC Market Hall Residential Tower 1",
+"status": "COM",
+"latitude": "22.564169",
+"longitude": "114.105240",
+"height_architecture": "204.58",
+"completed": 2023
+},
+{
+"id": 38612,
+"name_intl": "Sungang MixC Market Hall Residential Tower 2",
+"status": "COM",
+"latitude": "22.563923",
+"longitude": "114.105850",
+"height_architecture": "204.58",
+"completed": 2023
+},
+{
+"id": 36862,
+"name_intl": "Kexinkexueyuan Tower D2",
+"status": "COM",
+"latitude": "22.550116",
+"longitude": "113.937286",
+"height_architecture": "204.20",
+"completed": 2019
+},
+{
+"id": 36863,
+"name_intl": "Kexinkexueyuan Tower D3",
+"status": "COM",
+"latitude": "22.550898",
+"longitude": "113.937317",
+"height_architecture": "204.20",
+"completed": 2019
+},
+{
+"id": 1590,
+"name_intl": "Vanke Shennan Plaza West Tower",
+"status": "COM",
+"latitude": "22.546801",
+"longitude": "114.123619",
+"height_architecture": "204.00",
+"completed": 2019
+},
+{
+"id": 49009,
+"name_intl": "Yitian Yulong Tiandi Building 1C",
+"status": "COM",
+"latitude": "22.556738",
+"longitude": "114.127434",
+"height_architecture": "203.94",
+"completed": 2024
+},
+{
+"id": 29793,
+"name_intl": "Shenzhen Lenovo Tower 1A",
+"status": "COM",
+"latitude": "22.519012",
+"longitude": "113.935555",
+"height_architecture": "203.85",
+"completed": 2022
+},
+{
+"id": 48168,
+"name_intl": "China Resources Hubei Center Plot A4 Block C",
+"status": "COM",
+"latitude": "22.549526",
+"longitude": "114.123138",
+"height_architecture": "203.70",
+"completed": 2024
+},
+{
+"id": 43434,
+"name_intl": "Longhua Digital Innovation Center Building D",
+"status": "COM",
+"latitude": "22.620239",
+"longitude": "114.026711",
+"height_architecture": "203.40",
+"completed": 2022
+},
+{
+"id": 43790,
+"name_intl": "Mingsheng Technology Building",
+"status": "COM",
+"latitude": "22.745399",
+"longitude": "113.930382",
+"height_architecture": "203.30",
+"completed": 2023
+},
+{
+"id": 46645,
+"name_intl": "Qingqing New Village Block 2, Tower 1",
+"status": "UCT",
+"latitude": "22.555063",
+"longitude": "114.105209",
+"height_architecture": "203.25",
+"completed": 2026
+},
+{
+"id": 49013,
+"name_intl": "Yitian Yulong Tiandi Building 1E",
+"status": "COM",
+"latitude": "22.555641",
+"longitude": "114.126968",
+"height_architecture": "202.64",
+"completed": 2024
+},
+{
+"id": 15170,
+"name_intl": "Shenzhen Venture Capital – Private Enterprise Tower",
+"status": "COM",
+"latitude": "22.525400",
+"longitude": "113.933006",
+"height_architecture": "202.40",
+"completed": 2016
+},
+{
+"id": 49008,
+"name_intl": "Yitian Yulong Tiandi Building 6",
+"status": "COM",
+"latitude": "22.556099",
+"longitude": "114.126099",
+"height_architecture": "202.00",
+"completed": 2024
+},
+{
+"id": 49089,
+"name_intl": "Prince Bay Grand Sea Building",
+"status": "COM",
+"latitude": "22.478559",
+"longitude": "113.906792",
+"height_architecture": "202.00",
+"completed": 2024
+},
+{
+"id": 33565,
+"name_intl": "Regency Hotel",
+"status": "COM",
+"latitude": "22.559364",
+"longitude": "114.103477",
+"height_architecture": "202.00",
+"completed": 2021
+},
+{
+"id": 23581,
+"name_intl": "Bojin Business Plaza Tower 2",
+"status": "COM",
+"latitude": "22.532890",
+"longitude": "114.021622",
+"height_architecture": "201.70",
+"completed": 2019
+},
+{
+"id": 1653,
+"name_intl": "Guotong Building",
+"status": "COM",
+"latitude": "22.529860",
+"longitude": "114.037727",
+"height_architecture": "201.00",
+"completed": 1997
+},
+{
+"id": 1692,
+"name_intl": "Futian Technology Plaza Tower 1",
+"status": "COM",
+"latitude": "22.544241",
+"longitude": "114.066750",
+"height_architecture": "201.00",
+"completed": 2013
+},
+{
+"id": 23606,
+"name_intl": "China Resources Dachong Redevelopment Tower 3",
+"status": "COM",
+"latitude": "22.545286",
+"longitude": "113.949753",
+"height_architecture": "201.00",
+"completed": 2018
+},
+{
+"id": 46630,
+"name_intl": "Costco Galaxy Global Business Center Tower 1",
+"status": "COM",
+"latitude": "22.630653",
+"longitude": "114.009071",
+"height_architecture": "200.95",
+"completed": 2025
+},
+{
+"id": 44220,
+"name_intl": "Anju High Tech Garden North Tower 1",
+"status": "COM",
+"latitude": "22.537283",
+"longitude": "113.946419",
+"height_architecture": "200.65",
+"completed": 2023
+},
+{
+"id": 44222,
+"name_intl": "Anju High-Tech Garden North Tower 3",
+"status": "COM",
+"latitude": "22.538368",
+"longitude": "113.946716",
+"height_architecture": "200.65",
+"completed": 2023
+},
+{
+"id": 46624,
+"name_intl": "KWG Topchain Plaza",
+"status": "COM",
+"latitude": "22.569851",
+"longitude": "114.247528",
+"height_architecture": "200.50",
+"completed": 2023
+},
+{
+"id": 8776,
+"name_intl": "Jinzhonghuan International Business Building",
+"status": "COM",
+"latitude": "22.537121",
+"longitude": "114.057426",
+"height_architecture": "200.50",
+"completed": 2006
+},
+{
+"id": 16311,
+"name_intl": "One Excellence Tower 3",
+"status": "COM",
+"latitude": "22.532785",
+"longitude": "113.894264",
+"height_architecture": "200.44",
+"completed": 2019
+},
+{
+"id": 28373,
+"name_intl": "COFCO Qianhai Asia Pacific Building",
+"status": "COM",
+"latitude": "22.540173",
+"longitude": "113.895515",
+"height_architecture": "200.30",
+"completed": 2023
+},
+{
+"id": 46647,
+"name_intl": "Qingqing New Village Block 2, Tower 3",
+"status": "UCT",
+"latitude": "22.554142",
+"longitude": "114.105713",
+"height_architecture": "200.15",
+"completed": 2026
+},
+{
+"id": 16427,
+"name_intl": "China Resources Qianhai Center Tower 4",
+"status": "COM",
+"latitude": "22.533474",
+"longitude": "113.894341",
+"height_architecture": "200.15",
+"completed": 2021
+},
+{
+"id": 41668,
+"name_intl": "Longgang Tianan Cyberpark Phase 4",
+"status": "COM",
+"latitude": "22.728254",
+"longitude": "114.211746",
+"height_architecture": "200.00",
+"completed": 2025
+},
+{
+"id": 30558,
+"name_intl": "SF Express Headquarter Building",
+"status": "COM",
+"latitude": "22.503580",
+"longitude": "113.883919",
+"height_architecture": "200.00",
+"completed": 2019
+},
+{
+"id": 42730,
+"name_intl": "ZTE Headquarters",
+"status": "STO",
+"latitude": "22.524012",
+"longitude": "113.974373",
+"height_architecture": "200.00",
+"completed": 2026
+},
+{
+"id": 15025,
+"name_intl": "Centralcon Group Tower",
+"status": "COM",
+"latitude": "22.539890",
+"longitude": "114.058670",
+"height_architecture": "200.00",
+"completed": 2016
+},
+{
+"id": 46643,
+"name_intl": "Qianhai Future Times Tower 1",
+"status": "COM",
+"latitude": "22.533890",
+"longitude": "113.897682",
+"height_architecture": "200.00",
+"completed": 2025
+},
+{
+"id": 43515,
+"name_intl": "Qianhai Future Times Tower 2",
+"status": "COM",
+"latitude": "22.534439",
+"longitude": "113.898094",
+"height_architecture": "200.00",
+"completed": 2025
+},
+{
+"id": 10357,
+"name_intl": "Shenzhen Kerry Centre II",
+"status": "COM",
+"latitude": "22.538019",
+"longitude": "114.051773",
+"height_architecture": "200.00",
+"completed": 2012
+},
+{
+"id": 34239,
+"name_intl": "Das Intellitech Headquarters",
+"status": "COM",
+"latitude": "22.537914",
+"longitude": "113.937149",
+"height_architecture": "200.00",
+"completed": 2018
+},
+{
+"id": 30883,
+"name_intl": "CITIC Financial Center Tower 2",
+"status": "STO",
+"latitude": "22.524734",
+"longitude": "113.964180",
+"height_architecture": "200.00",
+"completed": 2026
+},
+{
+"id": 44583,
+"name_intl": "International Low-Carbon City Cultural Convention Center Tower 1",
+"status": "PRO",
+"latitude": "22.783241",
+"longitude": "114.286842",
+"height_architecture": "200.00",
+"completed": null
+},
+{
+"id": 43541,
+"name_intl": "Shiwan Station Center",
+"status": "UCT",
+"latitude": "22.481350",
+"longitude": "113.892395",
+"height_architecture": "200.00",
+"completed": null
+},
+{
+"id": 44592,
+"name_intl": "South China Village Redevelopment Apartment Tower",
+"status": "PRO",
+"latitude": "22.536261",
+"longitude": "114.084282",
+"height_architecture": "200.00",
+"completed": null
+},
+{
+"id": 44751,
+"name_intl": "Yingtai Zhihui City Tower 1",
+"status": "UC",
+"latitude": "22.675837",
+"longitude": "114.002182",
+"height_architecture": "200.00",
+"completed": null
+},
+{
+"id": 44590,
+"name_intl": "Shenzhen Longguang Jiulin Business Center Tower 3",
+"status": "PRO",
+"latitude": "22.582401",
+"longitude": "113.937531",
+"height_architecture": "199.80",
+"completed": null
+},
+{
+"id": 43616,
+"name_intl": "Futian Financial Technology Tower",
+"status": "UCT",
+"latitude": "22.536255",
+"longitude": "114.061867",
+"height_architecture": "199.75",
+"completed": 2026
+},
+{
+"id": 36867,
+"name_intl": "OPPO Headquarters",
+"status": "UCT",
+"latitude": "22.529482",
+"longitude": "113.963646",
+"height_architecture": "199.75",
+"completed": 2026
+},
+{
+"id": 47231,
+"name_intl": "Anju Phoenix Garden Tower 6",
+"status": "COM",
+"latitude": "22.726219",
+"longitude": "114.382538",
+"height_architecture": "199.70",
+"completed": 2024
+},
+{
+"id": 47232,
+"name_intl": "Anju Phoenix Garden Tower 7",
+"status": "COM",
+"latitude": "22.725719",
+"longitude": "114.382568",
+"height_architecture": "199.70",
+"completed": 2024
+},
+{
+"id": 35519,
+"name_intl": "CR Land Building Tower E",
+"status": "COM",
+"latitude": "22.544693",
+"longitude": "113.947685",
+"height_architecture": "199.60",
+"completed": 2016
+},
+{
+"id": 35577,
+"name_intl": "CLP Great Wall Building South Tower",
+"status": "COM",
+"latitude": "22.545067",
+"longitude": "113.941154",
+"height_architecture": "199.60",
+"completed": 2019
+},
+{
+"id": 9066,
+"name_intl": "Walton Heights",
+"status": "COM",
+"latitude": "22.514160",
+"longitude": "114.057152",
+"height_architecture": "199.00",
+"completed": 2005
+},
+{
+"id": 44598,
+"name_intl": "Wingtech 5G South China Headquarters",
+"status": "UC",
+"latitude": "22.574850",
+"longitude": "114.110153",
+"height_architecture": "199.00",
+"completed": 2025
+},
+{
+"id": 44285,
+"name_intl": "Hazens Technology Plaza",
+"status": "UC",
+"latitude": "22.711775",
+"longitude": "114.244270",
+"height_architecture": "198.60",
+"completed": null
+},
+{
+"id": 43806,
+"name_intl": "NIne Yao Mansion Tower 1",
+"status": "UC",
+"latitude": "22.533600",
+"longitude": "114.038696",
+"height_architecture": "198.55",
+"completed": null
+},
+{
+"id": 46646,
+"name_intl": "Qingqing New Village Block 2, Tower 2",
+"status": "UCT",
+"latitude": "22.554567",
+"longitude": "114.105423",
+"height_architecture": "198.35",
+"completed": 2026
+},
+{
+"id": 37064,
+"name_intl": "China Resources City Runxi Phase I Tower 1",
+"status": "UC",
+"latitude": "22.547684",
+"longitude": "113.953377",
+"height_architecture": "198.20",
+"completed": 2022
+},
+{
+"id": 41868,
+"name_intl": "Shimao International Exhibition Center Tower A",
+"status": "COM",
+"latitude": "22.565964",
+"longitude": "114.089096",
+"height_architecture": "198.00",
+"completed": 2024
+},
+{
+"id": 36808,
+"name_intl": "Sunhope e Metro",
+"status": "COM",
+"latitude": "22.567270",
+"longitude": "114.063210",
+"height_architecture": "198.00",
+"completed": 2016
+},
+{
+"id": 41166,
+"name_intl": "Shenzhen Yanlord Reverie Plaza",
+"status": "COM",
+"latitude": "22.549231",
+"longitude": "114.126694",
+"height_architecture": "198.00",
+"completed": 2023
+},
+{
+"id": 44680,
+"name_intl": "Park Hyatt Bay Business Centre Tower 1",
+"status": "UC",
+"latitude": "22.510162",
+"longitude": "113.914764",
+"height_architecture": "197.95",
+"completed": 2023
+},
+{
+"id": 44681,
+"name_intl": "Park Hyatt Bay Business Centre Tower 2",
+"status": "UC",
+"latitude": "22.510513",
+"longitude": "113.913345",
+"height_architecture": "197.95",
+"completed": 2023
+},
+{
+"id": 28247,
+"name_intl": "SHUIBEI International Center",
+"status": "COM",
+"latitude": "22.576097",
+"longitude": "114.119041",
+"height_architecture": "197.50",
+"completed": 2020
+},
+{
+"id": 48359,
+"name_intl": "CITIC Urban Development & Operation Shenzhen Dongjiaotou Main Building",
+"status": "UC",
+"latitude": "22.488846",
+"longitude": "113.937782",
+"height_architecture": "197.34",
+"completed": null
+},
+{
+"id": 46621,
+"name_intl": "Anju Phoenix Garden Tower 3",
+"status": "COM",
+"latitude": "22.726551",
+"longitude": "114.381134",
+"height_architecture": "197.20",
+"completed": 2024
+},
+{
+"id": 16310,
+"name_intl": "One Excellence Tower 2",
+"status": "COM",
+"latitude": "22.531986",
+"longitude": "113.893402",
+"height_architecture": "197.20",
+"completed": 2018
+},
+{
+"id": 43749,
+"name_intl": "Nine Yao Mansion Tower 2",
+"status": "UC",
+"latitude": "22.533184",
+"longitude": "114.038467",
+"height_architecture": "197.20",
+"completed": null
+},
+{
+"id": 46622,
+"name_intl": "Anju Phoenix Garden Tower 4",
+"status": "COM",
+"latitude": "22.726685",
+"longitude": "114.381660",
+"height_architecture": "197.00",
+"completed": 2024
+},
+{
+"id": 46623,
+"name_intl": "Anju Phoenix Garden Tower 5",
+"status": "COM",
+"latitude": "22.726709",
+"longitude": "114.382278",
+"height_architecture": "196.80",
+"completed": 2024
+},
+{
+"id": 22727,
+"name_intl": "CNPEC Headquarters Tower A",
+"status": "COM",
+"latitude": "22.698491",
+"longitude": "114.289798",
+"height_architecture": "196.80",
+"completed": 2024
+},
+{
+"id": 35507,
+"name_intl": "Tianxia International Center Block A",
+"status": "COM",
+"latitude": "22.536201",
+"longitude": "113.921234",
+"height_architecture": "196.80",
+"completed": 2011
+},
+{
+"id": 36788,
+"name_intl": "Tanglang City Tower A#",
+"status": "COM",
+"latitude": "22.591827",
+"longitude": "113.995811",
+"height_architecture": "196.70",
+"completed": 2019
+},
+{
+"id": 23407,
+"name_intl": "One Shenzhen Bay Tower 5",
+"status": "COM",
+"latitude": "22.510120",
+"longitude": "113.937286",
+"height_architecture": "196.00",
+"completed": 2015
+},
+{
+"id": 35518,
+"name_intl": "Dachong International Center",
+"status": "COM",
+"latitude": "22.545244",
+"longitude": "113.948608",
+"height_architecture": "196.00",
+"completed": 2016
+},
+{
+"id": 44221,
+"name_intl": "Anju High-Tech Garden North Tower 2",
+"status": "COM",
+"latitude": "22.537863",
+"longitude": "113.946487",
+"height_architecture": "195.50",
+"completed": 2023
+},
+{
+"id": 1835,
+"name_intl": "United Plaza A",
+"status": "COM",
+"latitude": "22.532681",
+"longitude": "114.063789",
+"height_architecture": "195.00",
+"completed": 1998
+},
+{
+"id": 33086,
+"name_intl": "DJI Sky City Tower 1",
+"status": "COM",
+"latitude": "22.580353",
+"longitude": "113.937378",
+"height_architecture": "195.00",
+"completed": 2022
+},
+{
+"id": 1847,
+"name_intl": "Great China International Exchange Square",
+"status": "COM",
+"latitude": "22.539221",
+"longitude": "114.056793",
+"height_architecture": "195.00",
+"completed": 2010
+},
+{
+"id": 43687,
+"name_intl": "Lai Meng International Building",
+"status": "UC",
+"latitude": "22.637871",
+"longitude": "114.006783",
+"height_architecture": "195.00",
+"completed": null
+},
+{
+"id": 13861,
+"name_intl": "Tencent Seafront Tower 2",
+"status": "COM",
+"latitude": "22.525881",
+"longitude": "113.930107",
+"height_architecture": "194.75",
+"completed": 2017
+},
+{
+"id": 12140,
+"name_intl": "Grand Hyatt Shenzhen",
+"status": "COM",
+"latitude": "22.539869",
+"longitude": "114.106232",
+"height_architecture": "194.70",
+"completed": 2009
+},
+{
+"id": 43622,
+"name_intl": "Dongguan Science & Technology Building",
+"status": "STO",
+"latitude": "22.570522",
+"longitude": "114.058067",
+"height_architecture": "194.40",
+"completed": 2024
+},
+{
+"id": 48788,
+"name_intl": "Qi Jie Fang Lianjian Building B",
+"status": "PRO",
+"latitude": "22.572954",
+"longitude": "113.942268",
+"height_architecture": "194.20",
+"completed": 2027
+},
+{
+"id": 15039,
+"name_intl": "Essence Financial Securities Headquarters",
+"status": "COM",
+"latitude": "22.539062",
+"longitude": "114.045036",
+"height_architecture": "193.50",
+"completed": 2021
+},
+{
+"id": 4024,
+"name_intl": "Tencent Tower",
+"status": "COM",
+"latitude": "22.543480",
+"longitude": "113.929588",
+"height_architecture": "193.20",
+"completed": 2009
+},
+{
+"id": 1877,
+"name_intl": "Noble Tower",
+"status": "COM",
+"latitude": "22.546021",
+"longitude": "114.058449",
+"height_architecture": "193.20",
+"completed": 2005
+},
+{
+"id": 1881,
+"name_intl": "Rongchao Tower, A",
+"status": "COM",
+"latitude": "22.545790",
+"longitude": "114.050423",
+"height_architecture": "193.00",
+"completed": 2008
+},
+{
+"id": 37014,
+"name_intl": "Hanshan Yuehai City Tower A",
+"status": "COM",
+"latitude": "22.503969",
+"longitude": "113.916710",
+"height_architecture": "192.85",
+"completed": 2021
+},
+{
+"id": 37065,
+"name_intl": "China Resources City Runxi Phase I Tower 2",
+"status": "UC",
+"latitude": "22.547956",
+"longitude": "113.954102",
+"height_architecture": "192.00",
+"completed": 2022
+},
+{
+"id": 35607,
+"name_intl": "Longgang Venture Capital Building",
+"status": "COM",
+"latitude": "22.723974",
+"longitude": "114.210426",
+"height_architecture": "192.00",
+"completed": 2018
+},
+{
+"id": 45128,
+"name_intl": "Changjiang Center",
+"status": "COM",
+"latitude": "22.652615",
+"longitude": "114.022125",
+"height_architecture": "192.00",
+"completed": 2019
+},
+{
+"id": 42181,
+"name_intl": "Rongde Times Square",
+"status": "COM",
+"latitude": "22.653479",
+"longitude": "114.205154",
+"height_architecture": "192.00",
+"completed": 2017
+},
+{
+"id": 37015,
+"name_intl": "Hanshan Yuehai City Tower B",
+"status": "COM",
+"latitude": "22.504000",
+"longitude": "113.916214",
+"height_architecture": "191.95",
+"completed": 2021
+},
+{
+"id": 44226,
+"name_intl": "Nichuang Technology Building",
+"status": "UCT",
+"latitude": "22.582863",
+"longitude": "113.940704",
+"height_architecture": "191.30",
+"completed": 2025
+},
+{
+"id": 41208,
+"name_intl": "Qianhai Xinhua Insurance Building",
+"status": "UC",
+"latitude": "22.538467",
+"longitude": "113.894791",
+"height_architecture": "191.00",
+"completed": null
+},
+{
+"id": 1953,
+"name_intl": "Shenzhen Futian Shangri La",
+"status": "COM",
+"latitude": "22.539129",
+"longitude": "114.051743",
+"height_architecture": "191.00",
+"completed": 2008
+},
+{
+"id": 37095,
+"name_intl": "Changyuan Jingji Yujingfeng Mansion Block 1",
+"status": "COM",
+"latitude": "22.601866",
+"longitude": "114.007332",
+"height_architecture": "190.80",
+"completed": 2020
+},
+{
+"id": 37110,
+"name_intl": "Antosan Headquarters Block A",
+"status": "UCT",
+"latitude": "22.554947",
+"longitude": "114.001984",
+"height_architecture": "190.70",
+"completed": 2022
+},
+{
+"id": 33978,
+"name_intl": "Shenzhen Bay Ecocity B-Tech Tower 3",
+"status": "COM",
+"latitude": "22.533207",
+"longitude": "113.945648",
+"height_architecture": "190.00",
+"completed": 2018
+},
+{
+"id": 44663,
+"name_intl": "Lianrun Office Tower",
+"status": "UC",
+"latitude": "22.667477",
+"longitude": "114.031166",
+"height_architecture": "190.00",
+"completed": null
+},
+{
+"id": 44581,
+"name_intl": "Qianhai Taiping Financial Centre",
+"status": "UC",
+"latitude": "22.541193",
+"longitude": "113.897530",
+"height_architecture": "190.00",
+"completed": null
+},
+{
+"id": 43682,
+"name_intl": "KK TIME Tower 6",
+"status": "COM",
+"latitude": "22.571182",
+"longitude": "114.118935",
+"height_architecture": "189.50",
+"completed": 2023
+},
+{
+"id": 23614,
+"name_intl": "Baidu Headquarters East Tower",
+"status": "COM",
+"latitude": "22.527769",
+"longitude": "113.938652",
+"height_architecture": "189.30",
+"completed": 2017
+},
+{
+"id": 41410,
+"name_intl": "CIMC Shenzhen Qianhai West Tower",
+"status": "COM",
+"latitude": "22.524702",
+"longitude": "113.891891",
+"height_architecture": "189.10",
+"completed": 2021
+},
+{
+"id": 41783,
+"name_intl": "Houhai Industrial and Commercial Bank Building",
+"status": "UCT",
+"latitude": "22.520502",
+"longitude": "113.939178",
+"height_architecture": "189.00",
+"completed": null
+},
+{
+"id": 40749,
+"name_intl": "The Peninsula Phase III Tower 3",
+"status": "COM",
+"latitude": "22.483601",
+"longitude": "113.930855",
+"height_architecture": "188.85",
+"completed": 2018
+},
+{
+"id": 2021,
+"name_intl": "New Era Plaza",
+"status": "COM",
+"latitude": "22.485250",
+"longitude": "113.907967",
+"height_architecture": "188.67",
+"completed": 1997
+},
+{
+"id": 41207,
+"name_intl": "Qianhai Zhaolian Building",
+"status": "UC",
+"latitude": "22.536467",
+"longitude": "113.897682",
+"height_architecture": "188.00",
+"completed": null
+},
+{
+"id": 35491,
+"name_intl": "Seaworld Shangxi Garden Block A",
+"status": "COM",
+"latitude": "22.482935",
+"longitude": "113.915436",
+"height_architecture": "187.90",
+"completed": 2014
+},
+{
+"id": 35492,
+"name_intl": "Seaworld Shangxi Garden Block B",
+"status": "COM",
+"latitude": "22.483034",
+"longitude": "113.916519",
+"height_architecture": "187.90",
+"completed": 2015
+},
+{
+"id": 44678,
+"name_intl": "COFCO Futian Joy City Office Tower 1",
+"status": "PRO",
+"latitude": "22.566620",
+"longitude": "114.043098",
+"height_architecture": "187.00",
+"completed": null
+},
+{
+"id": 27954,
+"name_intl": "Qianhai Financial Centre - T2",
+"status": "COM",
+"latitude": "22.536287",
+"longitude": "113.889458",
+"height_architecture": "186.53",
+"completed": 2021
+},
+{
+"id": 48166,
+"name_intl": "China Resources Hubei Center Plot A4 Block D",
+"status": "COM",
+"latitude": "22.549520",
+"longitude": "114.123665",
+"height_architecture": "186.00",
+"completed": 2024
+},
+{
+"id": 50416,
+"name_intl": "GDH City Tower 2",
+"status": "COM",
+"latitude": "22.580029",
+"longitude": "114.128960",
+"height_architecture": "185.65",
+"completed": 2022
+},
+{
+"id": 2118,
+"name_intl": "Excellence Century Plaza Tower 3",
+"status": "COM",
+"latitude": "22.534969",
+"longitude": "114.059776",
+"height_architecture": "185.00",
+"completed": 2010
+},
+{
+"id": 36823,
+"name_intl": "Zhongguan Times Square Tower A",
+"status": "COM",
+"latitude": "22.585629",
+"longitude": "113.958511",
+"height_architecture": "184.20",
+"completed": 2017
+},
+{
+"id": 35695,
+"name_intl": "Fangda Square T1",
+"status": "COM",
+"latitude": "22.558971",
+"longitude": "113.967125",
+"height_architecture": "184.00",
+"completed": 2019
+},
+{
+"id": 22728,
+"name_intl": "CNPEC Headquarters Tower B",
+"status": "COM",
+"latitude": "22.697813",
+"longitude": "114.290287",
+"height_architecture": "183.72",
+"completed": 2024
+},
+{
+"id": 2160,
+"name_intl": "Shenzhen Development Bank",
+"status": "COM",
+"latitude": "22.543200",
+"longitude": "114.102562",
+"height_architecture": "183.62",
+"completed": 1996
+},
+{
+"id": 49090,
+"name_intl": "Prince Bay Sea View Building",
+"status": "COM",
+"latitude": "22.479679",
+"longitude": "113.907982",
+"height_architecture": "183.30",
+"completed": 2024
+},
+{
+"id": 1706,
+"name_intl": "Taxation Bureau Building",
+"status": "COM",
+"latitude": "22.529301",
+"longitude": "114.034752",
+"height_architecture": "182.80",
+"completed": 2001
+},
+{
+"id": 37066,
+"name_intl": "China Resources City Runxi Phase I Tower 3",
+"status": "UC",
+"latitude": "22.547243",
+"longitude": "113.953949",
+"height_architecture": "182.70",
+"completed": 2022
+},
+{
+"id": 34484,
+"name_intl": "UNI-Center Tower 5",
+"status": "COM",
+"latitude": "22.553778",
+"longitude": "113.883598",
+"height_architecture": "182.30",
+"completed": 2017
+},
+{
+"id": 2247,
+"name_intl": "Shenzhen International Science and Technology Building",
+"status": "COM",
+"latitude": "22.542339",
+"longitude": "114.078323",
+"height_architecture": "182.00",
+"completed": 1997
+},
+{
+"id": 34485,
+"name_intl": "UNI-Center Tower 6",
+"status": "COM",
+"latitude": "22.554453",
+"longitude": "113.884331",
+"height_architecture": "181.80",
+"completed": 2017
+},
+{
+"id": 34480,
+"name_intl": "UNI-Center Tower 1",
+"status": "COM",
+"latitude": "22.555449",
+"longitude": "113.881119",
+"height_architecture": "181.20",
+"completed": 2017
+},
+{
+"id": 34482,
+"name_intl": "UNI-Center Tower 3",
+"status": "COM",
+"latitude": "22.554747",
+"longitude": "113.882576",
+"height_architecture": "181.20",
+"completed": 2017
+},
+{
+"id": 36761,
+"name_intl": "Shenye Central City Tower 6A",
+"status": "UCT",
+"latitude": "22.543520",
+"longitude": "114.018105",
+"height_architecture": "181.20",
+"completed": 2020
+},
+{
+"id": 36875,
+"name_intl": "Longgang Jiuzuan Block 5C",
+"status": "COM",
+"latitude": "22.623531",
+"longitude": "114.017319",
+"height_architecture": "181.10",
+"completed": 2020
+},
+{
+"id": 2265,
+"name_intl": "Electronics Science & Technology Building",
+"status": "COM",
+"latitude": "22.544479",
+"longitude": "114.083778",
+"height_architecture": "181.00",
+"completed": 2000
+},
+{
+"id": 28374,
+"name_intl": "COFCO Qianhai Innovation Center West Tower",
+"status": "COM",
+"latitude": "22.540119",
+"longitude": "113.894798",
+"height_architecture": "180.30",
+"completed": 2023
+},
+{
+"id": 44579,
+"name_intl": "Qianhai Telent Residential Tower 1",
+"status": "PRO",
+"latitude": "22.540333",
+"longitude": "113.897606",
+"height_architecture": "180.00",
+"completed": null
+},
+{
+"id": 44578,
+"name_intl": "Qianhai Telent Residential Tower 2",
+"status": "PRO",
+"latitude": "22.540125",
+"longitude": "113.898094",
+"height_architecture": "180.00",
+"completed": null
+},
+{
+"id": 44757,
+"name_intl": "C Future City Residential Tower 1",
+"status": "COM",
+"latitude": "22.530344",
+"longitude": "114.023415",
+"height_architecture": "180.00",
+"completed": 2021
+},
+{
+"id": 44758,
+"name_intl": "C Future City Residential Tower 2",
+"status": "COM",
+"latitude": "22.529243",
+"longitude": "114.023811",
+"height_architecture": "180.00",
+"completed": 2021
+},
+{
+"id": 44759,
+"name_intl": "C Future City Residential Tower 3",
+"status": "COM",
+"latitude": "22.529015",
+"longitude": "114.024506",
+"height_architecture": "180.00",
+"completed": 2021
+},
+{
+"id": 35516,
+"name_intl": "Xintian CBC Tower B",
+"status": "COM",
+"latitude": "22.523672",
+"longitude": "114.047798",
+"height_architecture": "180.00",
+"completed": 2015
+},
+{
+"id": 30969,
+"name_intl": "Green View Apartments R5",
+"status": "COM",
+"latitude": "22.563231",
+"longitude": "114.033302",
+"height_architecture": "180.00",
+"completed": 2016
+},
+{
+"id": 35561,
+"name_intl": "Greenview Hongshuwan Yihao Tower A",
+"status": "COM",
+"latitude": "22.523294",
+"longitude": "114.031204",
+"height_architecture": "180.00",
+"completed": 2018
+},
+{
+"id": 35515,
+"name_intl": "Xintian CBC Tower A",
+"status": "COM",
+"latitude": "22.524466",
+"longitude": "114.047867",
+"height_architecture": "180.00",
+"completed": 2015
+},
+{
+"id": 43758,
+"name_intl": "Nanshan Innovation Technology Center Tower 1",
+"status": "COM",
+"latitude": "22.574005",
+"longitude": "113.934616",
+"height_architecture": "180.00",
+"completed": 2024
+},
+{
+"id": 43755,
+"name_intl": "Nanshan Innovation Technology Center Tower 5",
+"status": "COM",
+"latitude": "22.572218",
+"longitude": "113.934830",
+"height_architecture": "180.00",
+"completed": 2024
+},
+{
+"id": 44417,
+"name_intl": "Minsheng E-Commerce Headquarters Tower 1",
+"status": "COM",
+"latitude": "22.529886",
+"longitude": "113.895950",
+"height_architecture": "180.00",
+"completed": null
+},
+{
+"id": 44585,
+"name_intl": "New Era Plaza Phase 2",
+"status": "STO",
+"latitude": "22.483086",
+"longitude": "113.908066",
+"height_architecture": "180.00",
+"completed": null
+},
+{
+"id": 1693,
+"name_intl": "Futian Technology Plaza Tower 2",
+"status": "COM",
+"latitude": "22.544750",
+"longitude": "114.065987",
+"height_architecture": "180.00",
+"completed": 2013
+},
+{
+"id": 37077,
+"name_intl": "Great China IFC Block A",
+"status": "COM",
+"latitude": "22.541910",
+"longitude": "114.066002",
+"height_architecture": "180.00",
+"completed": 2011
+},
+{
+"id": 37057,
+"name_intl": "Keenstar Building",
+"status": "COM",
+"latitude": "22.576935",
+"longitude": "113.905731",
+"height_architecture": "180.00",
+"completed": 2020
+},
+{
+"id": 2376,
+"name_intl": "Shenzhen Modern International Tower",
+"status": "COM",
+"latitude": "22.536930",
+"longitude": "114.058769",
+"height_architecture": "180.00",
+"completed": 2008
+},
+{
+"id": 43720,
+"name_intl": "Shenzhen Center 2",
+"status": "COM",
+"latitude": "22.539070",
+"longitude": "114.059235",
+"height_architecture": "180.00",
+"completed": 2018
+},
+{
+"id": 42165,
+"name_intl": "Qianhai Huaqiang Headquarters Building",
+"status": "UC",
+"latitude": "22.538448",
+"longitude": "113.895638",
+"height_architecture": "180.00",
+"completed": 2022
+},
+{
+"id": 43751,
+"name_intl": "Yuhong Building",
+"status": "UCT",
+"latitude": "22.577745",
+"longitude": "114.120834",
+"height_architecture": "180.00",
+"completed": null
+},
+{
+"id": 49889,
+"name_intl": "Hetao Shenzhen-Hong Kong Science and Technology Innovation Cooperation Zone East Wing Residential Tower 1",
+"status": "UC",
+"latitude": "22.521610",
+"longitude": "114.065643",
+"height_architecture": "179.90",
+"completed": 2026
+},
+{
+"id": 49890,
+"name_intl": "Hetao Shenzhen-Hong Kong Science and Technology Innovation Cooperation Zone East Wing Residential Tower 2",
+"status": "UC",
+"latitude": "22.522182",
+"longitude": "114.065483",
+"height_architecture": "179.90",
+"completed": 2026
+},
+{
+"id": 36893,
+"name_intl": "China Resources City Renfu Phase II Block F",
+"status": "COM",
+"latitude": "22.547541",
+"longitude": "113.949326",
+"height_architecture": "179.90",
+"completed": 2018
+},
+{
+"id": 43677,
+"name_intl": "KK TIME Tower 2",
+"status": "COM",
+"latitude": "22.572960",
+"longitude": "114.118629",
+"height_architecture": "179.50",
+"completed": 2023
+},
+{
+"id": 43678,
+"name_intl": "KK TIME Tower 3",
+"status": "COM",
+"latitude": "22.572578",
+"longitude": "114.118996",
+"height_architecture": "179.50",
+"completed": 2023
+},
+{
+"id": 17370,
+"name_intl": "UpperHills North Tower 1B",
+"status": "COM",
+"latitude": "22.560949",
+"longitude": "114.063828",
+"height_architecture": "178.85",
+"completed": 2015
+},
+{
+"id": 17371,
+"name_intl": "UpperHills North Tower 2B",
+"status": "COM",
+"latitude": "22.561581",
+"longitude": "114.064934",
+"height_architecture": "178.85",
+"completed": 2015
+},
+{
+"id": 29367,
+"name_intl": "China Merchants Bank",
+"status": "COM",
+"latitude": "22.543667",
+"longitude": "114.047356",
+"height_architecture": "178.85",
+"completed": 2018
+},
+{
+"id": 18882,
+"name_intl": "One Excellence Tower 7",
+"status": "COM",
+"latitude": "22.532864",
+"longitude": "113.895538",
+"height_architecture": "178.40",
+"completed": 2018
+},
+{
+"id": 18824,
+"name_intl": "One Excellence Tower 8",
+"status": "COM",
+"latitude": "22.531973",
+"longitude": "113.895607",
+"height_architecture": "178.40",
+"completed": 2018
+},
+{
+"id": 37042,
+"name_intl": "Changyuan Kingkey Royal King Mansion",
+"status": "COM",
+"latitude": "22.601383",
+"longitude": "114.008018",
+"height_architecture": "177.80",
+"completed": 2019
+},
+{
+"id": 35533,
+"name_intl": "Hongfa QCC Tower A",
+"status": "COM",
+"latitude": "22.574427",
+"longitude": "113.868530",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 35534,
+"name_intl": "Hongfa QCC Tower B",
+"status": "COM",
+"latitude": "22.573936",
+"longitude": "113.868988",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 35535,
+"name_intl": "Hongfa QCC Tower C",
+"status": "COM",
+"latitude": "22.573278",
+"longitude": "113.868416",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 35536,
+"name_intl": "Hongfa QCC Tower D",
+"status": "COM",
+"latitude": "22.572798",
+"longitude": "113.867973",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 35537,
+"name_intl": "Hongfa QCC Tower E",
+"status": "COM",
+"latitude": "22.573462",
+"longitude": "113.867302",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 35538,
+"name_intl": "Hongfa QCC Tower F",
+"status": "COM",
+"latitude": "22.574060",
+"longitude": "113.867615",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 35539,
+"name_intl": "Hongfa QCC Tower G",
+"status": "COM",
+"latitude": "22.574635",
+"longitude": "113.867943",
+"height_architecture": "177.55",
+"completed": 2018
+},
+{
+"id": 43679,
+"name_intl": "KK TIME Tower 5",
+"status": "COM",
+"latitude": "22.571871",
+"longitude": "114.118927",
+"height_architecture": "177.50",
+"completed": 2023
+},
+{
+"id": 43680,
+"name_intl": "KK TIME Tower 7",
+"status": "COM",
+"latitude": "22.571840",
+"longitude": "114.119553",
+"height_architecture": "177.50",
+"completed": 2023
+},
+{
+"id": 43681,
+"name_intl": "KK TIME Tower 8",
+"status": "COM",
+"latitude": "22.571354",
+"longitude": "114.119690",
+"height_architecture": "177.50",
+"completed": 2023
+},
+{
+"id": 2452,
+"name_intl": "Vanke Shennan Plaza East Tower",
+"status": "COM",
+"latitude": "22.546881",
+"longitude": "114.124290",
+"height_architecture": "177.00",
+"completed": 2019
+},
+{
+"id": 29356,
+"name_intl": "China Mobile Building",
+"status": "COM",
+"latitude": "22.544100",
+"longitude": "114.058792",
+"height_architecture": "177.00",
+"completed": 2015
+},
+{
+"id": 35522,
+"name_intl": "China Guangdong Nuclear Power South Tower",
+"status": "COM",
+"latitude": "22.544127",
+"longitude": "114.061768",
+"height_architecture": "177.00",
+"completed": 2015
+},
+{
+"id": 36811,
+"name_intl": "Vanke Yun Cloud City Tower 8",
+"status": "COM",
+"latitude": "22.577749",
+"longitude": "113.942680",
+"height_architecture": "176.45",
+"completed": 2018
+},
+{
+"id": 15659,
+"name_intl": "NEO Tower B",
+"status": "COM",
+"latitude": "22.538860",
+"longitude": "114.025299",
+"height_architecture": "176.00",
+"completed": 2010
+},
+{
+"id": 36922,
+"name_intl": "Junlin Haiyu Phase II",
+"status": "COM",
+"latitude": "22.559242",
+"longitude": "114.238960",
+"height_architecture": "175.50",
+"completed": 2016
+},
+{
+"id": 37040,
+"name_intl": "Kingkey Yujingfeng Mansion Block 1",
+"status": "COM",
+"latitude": "22.600779",
+"longitude": "114.007080",
+"height_architecture": "175.45",
+"completed": 2019
+},
+{
+"id": 37041,
+"name_intl": "Kingkey Yujingfeng Mansion Block 2",
+"status": "COM",
+"latitude": "22.601126",
+"longitude": "114.007561",
+"height_architecture": "175.45",
+"completed": 2019
+},
+{
+"id": 35503,
+"name_intl": "China Resources Shenzhen Bay Yuefu Phase 1 Tower 1",
+"status": "COM",
+"latitude": "22.523478",
+"longitude": "113.941513",
+"height_architecture": "175.00",
+"completed": 2017
+},
+{
+"id": 35699,
+"name_intl": "Cite du Ciel Tower A",
+"status": "COM",
+"latitude": "22.532848",
+"longitude": "114.040886",
+"height_architecture": "174.95",
+"completed": 2013
+},
+{
+"id": 35700,
+"name_intl": "Cite du Ciel Tower B",
+"status": "COM",
+"latitude": "22.533188",
+"longitude": "114.041245",
+"height_architecture": "174.95",
+"completed": 2013
+},
+{
+"id": 36105,
+"name_intl": "COFCO Xiangyun Longyu Block 2A",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "174.10",
+"completed": 2018
+},
+{
+"id": 2596,
+"name_intl": "Shen Fang Plaza",
+"status": "COM",
+"latitude": "22.543921",
+"longitude": "114.112839",
+"height_architecture": "173.00",
+"completed": 1996
+},
+{
+"id": 35723,
+"name_intl": "Swan Lake Garden Phase III Block C",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "172.50",
+"completed": 2019
+},
+{
+"id": 35724,
+"name_intl": "Swan Lake Garden Phase III Block D",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "172.50",
+"completed": 2019
+},
+{
+"id": 36891,
+"name_intl": "China Resources City Renfu Phase II Block D",
+"status": "COM",
+"latitude": "22.546160",
+"longitude": "113.949303",
+"height_architecture": "172.45",
+"completed": 2018
+},
+{
+"id": 36892,
+"name_intl": "China Resources City Renfu Phase II Block E",
+"status": "COM",
+"latitude": "22.546833",
+"longitude": "113.949348",
+"height_architecture": "172.45",
+"completed": 2018
+},
+{
+"id": 48950,
+"name_intl": "Shum Yip Century Valley Phase 3C",
+"status": "UCT",
+"latitude": "22.549231",
+"longitude": "113.962059",
+"height_architecture": "172.10",
+"completed": 2025
+},
+{
+"id": 35504,
+"name_intl": "China Resources Shenzhen Bay Yuefu Phase 1 Tower 2",
+"status": "COM",
+"latitude": "22.522755",
+"longitude": "113.941330",
+"height_architecture": "172.00",
+"completed": 2017
+},
+{
+"id": 44665,
+"name_intl": "Shuiwei Chenghan Office Tower",
+"status": "UC",
+"latitude": "22.520458",
+"longitude": "114.058296",
+"height_architecture": "172.00",
+"completed": null
+},
+{
+"id": 36886,
+"name_intl": "Hony Center Headquarters",
+"status": "COM",
+"latitude": "22.530008",
+"longitude": "113.893456",
+"height_architecture": "172.00",
+"completed": 2019
+},
+{
+"id": 36890,
+"name_intl": "China Resources City Renfu Phase III Tower 3",
+"status": "COM",
+"latitude": "22.548346",
+"longitude": "113.949448",
+"height_architecture": "171.98",
+"completed": 2019
+},
+{
+"id": 36887,
+"name_intl": "China Resources City Renfu Phase III Tower 6",
+"status": "COM",
+"latitude": "22.550344",
+"longitude": "113.949921",
+"height_architecture": "171.75",
+"completed": 2019
+},
+{
+"id": 36819,
+"name_intl": "Baoneng City East Tower 1 Block A",
+"status": "COM",
+"latitude": "22.593773",
+"longitude": "113.994949",
+"height_architecture": "171.60",
+"completed": 2017
+},
+{
+"id": 36820,
+"name_intl": "Baoneng City East Tower 1 Block B",
+"status": "COM",
+"latitude": "22.593410",
+"longitude": "113.994598",
+"height_architecture": "171.60",
+"completed": 2017
+},
+{
+"id": 41808,
+"name_intl": "Shenzhen Gemdale Viseen North Tower",
+"status": "COM",
+"latitude": "22.531389",
+"longitude": "113.946381",
+"height_architecture": "171.00",
+"completed": 2021
+},
+{
+"id": 36837,
+"name_intl": "KIC Cloud City Block C",
+"status": "COM",
+"latitude": "22.582438",
+"longitude": "113.933334",
+"height_architecture": "170.80",
+"completed": 2019
+},
+{
+"id": 36838,
+"name_intl": "KIC Cloud City Block D",
+"status": "COM",
+"latitude": "22.582806",
+"longitude": "113.934029",
+"height_architecture": "170.80",
+"completed": 2019
+},
+{
+"id": 36888,
+"name_intl": "China Resources City Renfu Phase III Tower 5",
+"status": "COM",
+"latitude": "22.549631",
+"longitude": "113.949867",
+"height_architecture": "170.75",
+"completed": 2019
+},
+{
+"id": 49016,
+"name_intl": "Yitian Yulong Tiandi Building 3",
+"status": "COM",
+"latitude": "22.554882",
+"longitude": "114.126320",
+"height_architecture": "170.00",
+"completed": 2024
+},
+{
+"id": 2745,
+"name_intl": "World Trade Plaza",
+"status": "COM",
+"latitude": "22.541651",
+"longitude": "114.078171",
+"height_architecture": "170.00",
+"completed": 2000
+},
+{
+"id": 27938,
+"name_intl": "Galaxy Century A",
+"status": "COM",
+"latitude": "22.541670",
+"longitude": "114.062286",
+"height_architecture": "170.00",
+"completed": 2006
+},
+{
+"id": 33979,
+"name_intl": "Shenzhen Bay Ecocity B-Tech Tower 4",
+"status": "COM",
+"latitude": "22.534031",
+"longitude": "113.947052",
+"height_architecture": "170.00",
+"completed": 2018
+},
+{
+"id": 38609,
+"name_intl": "Sungang MixC Market Hall Office Tower 1",
+"status": "COM",
+"latitude": "22.565269",
+"longitude": "114.105759",
+"height_architecture": "170.00",
+"completed": 2022
+},
+{
+"id": 35514,
+"name_intl": "Shencheng Investment Center",
+"status": "COM",
+"latitude": "22.537548",
+"longitude": "114.102142",
+"height_architecture": "170.00",
+"completed": 2017
+},
+{
+"id": 2779,
+"name_intl": "Shenzhen Kerry Centre I",
+"status": "COM",
+"latitude": "22.540390",
+"longitude": "114.114227",
+"height_architecture": "170.00",
+"completed": 1997
+},
+{
+"id": 2776,
+"name_intl": "Jiangsheng Tower",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "169.80",
+"completed": 2008
+},
+{
+"id": 40743,
+"name_intl": "The Peninsula Phase III Tower 1",
+"status": "COM",
+"latitude": "22.482315",
+"longitude": "113.930412",
+"height_architecture": "169.60",
+"completed": 2018
+},
+{
+"id": 35721,
+"name_intl": "Swan Lake Garden Phase III Block A",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "169.50",
+"completed": 2019
+},
+{
+"id": 35722,
+"name_intl": "Swan Lake Garden Phase III Block B",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "169.50",
+"completed": 2019
+},
+{
+"id": 37043,
+"name_intl": "Kingkey Yujingfeng Mansion Block 4",
+"status": "COM",
+"latitude": "22.601086",
+"longitude": "114.008636",
+"height_architecture": "169.45",
+"completed": 2019
+},
+{
+"id": 37044,
+"name_intl": "Kingkey Yujingfeng Mansion Block 5",
+"status": "COM",
+"latitude": "22.600769",
+"longitude": "114.009026",
+"height_architecture": "169.45",
+"completed": 2019
+},
+{
+"id": 40748,
+"name_intl": "The Peninsula Phase III Tower 2",
+"status": "COM",
+"latitude": "22.482950",
+"longitude": "113.930717",
+"height_architecture": "169.40",
+"completed": 2018
+},
+{
+"id": 48789,
+"name_intl": "Qi Jie Fang Lianjian Building A",
+"status": "PRO",
+"latitude": "22.572687",
+"longitude": "113.941681",
+"height_architecture": "169.30",
+"completed": 2027
+},
+{
+"id": 37047,
+"name_intl": "Kingkey Yuling Mansion Block 1",
+"status": "COM",
+"latitude": "22.600288",
+"longitude": "114.006561",
+"height_architecture": "169.10",
+"completed": 2019
+},
+{
+"id": 17067,
+"name_intl": "Shenzhen Bay Innovation and Technology Centre Building C",
+"status": "COM",
+"latitude": "22.531124",
+"longitude": "113.942474",
+"height_architecture": "169.10",
+"completed": 2020
+},
+{
+"id": 35505,
+"name_intl": "Golden Land Center",
+"status": "COM",
+"latitude": "22.541491",
+"longitude": "114.058464",
+"height_architecture": "168.90",
+"completed": 2017
+},
+{
+"id": 37048,
+"name_intl": "Kingkey Yuling Mansion Block 2",
+"status": "COM",
+"latitude": "22.599739",
+"longitude": "114.006287",
+"height_architecture": "168.25",
+"completed": 2020
+},
+{
+"id": 37049,
+"name_intl": "Kingkey Yuling Mansion Block 3",
+"status": "COM",
+"latitude": "22.599230",
+"longitude": "114.006195",
+"height_architecture": "168.25",
+"completed": 2020
+},
+{
+"id": 35235,
+"name_intl": "Huating Court",
+"status": "COM",
+"latitude": "22.553982",
+"longitude": "114.039398",
+"height_architecture": "168.00",
+"completed": 2003
+},
+{
+"id": 35234,
+"name_intl": "Qingtian Court",
+"status": "COM",
+"latitude": "22.553652",
+"longitude": "114.039482",
+"height_architecture": "168.00",
+"completed": 2003
+},
+{
+"id": 35477,
+"name_intl": "Dehong World Tower D",
+"status": "COM",
+"latitude": "22.565519",
+"longitude": "114.119507",
+"height_architecture": "167.80",
+"completed": 2011
+},
+{
+"id": 35478,
+"name_intl": "Dehong World Tower E",
+"status": "COM",
+"latitude": "22.565392",
+"longitude": "114.120079",
+"height_architecture": "167.80",
+"completed": 2011
+},
+{
+"id": 35508,
+"name_intl": "Sinolink Building",
+"status": "COM",
+"latitude": "22.569733",
+"longitude": "114.137108",
+"height_architecture": "167.20",
+"completed": 2012
+},
+{
+"id": 43326,
+"name_intl": "Luohu Food Building",
+"status": "UC",
+"latitude": "22.540857",
+"longitude": "114.121078",
+"height_architecture": "167.10",
+"completed": null
+},
+{
+"id": 43403,
+"name_intl": "Huangdu Plaza Building C",
+"status": "COM",
+"latitude": "22.530287",
+"longitude": "114.052032",
+"height_architecture": "167.00",
+"completed": 2004
+},
+{
+"id": 36889,
+"name_intl": "China Resources City Renfu Phase III Tower 4",
+"status": "COM",
+"latitude": "22.548887",
+"longitude": "113.949982",
+"height_architecture": "166.60",
+"completed": 2019
+},
+{
+"id": 35541,
+"name_intl": "Shuibei Jewelry Headquarters Block B",
+"status": "COM",
+"latitude": "22.577934",
+"longitude": "114.120026",
+"height_architecture": "166.30",
+"completed": 2018
+},
+{
+"id": 47922,
+"name_intl": "OCT Creation and Innovation Building A",
+"status": "COM",
+"latitude": "22.620146",
+"longitude": "114.023117",
+"height_architecture": "166.25",
+"completed": 2021
+},
+{
+"id": 36810,
+"name_intl": "Sunshine City Tianyue",
+"status": "UCT",
+"latitude": "22.545582",
+"longitude": "114.123741",
+"height_architecture": "166.10",
+"completed": 2021
+},
+{
+"id": 35562,
+"name_intl": "Greenview Hongshuwan Yihao Tower B",
+"status": "COM",
+"latitude": "22.522469",
+"longitude": "114.030762",
+"height_architecture": "166.00",
+"completed": 2018
+},
+{
+"id": 35506,
+"name_intl": "Metropolis Residence A",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "166.00",
+"completed": 2012
+},
+{
+"id": 41262,
+"name_intl": "Cscecsteel HQ Tower",
+"status": "COM",
+"latitude": "22.511948",
+"longitude": "113.935883",
+"height_architecture": "165.90",
+"completed": 2017
+},
+{
+"id": 46631,
+"name_intl": "Costco Galaxy Global Business Center Tower 2",
+"status": "COM",
+"latitude": "22.630322",
+"longitude": "114.009506",
+"height_architecture": "165.45",
+"completed": 2024
+},
+{
+"id": 46632,
+"name_intl": "Costco Galaxy Global Business Center Tower 3",
+"status": "COM",
+"latitude": "22.629629",
+"longitude": "114.009804",
+"height_architecture": "165.45",
+"completed": 2024
+},
+{
+"id": 3021,
+"name_intl": "Shenzhen Development Center",
+"status": "COM",
+"latitude": "22.541059",
+"longitude": "114.114128",
+"height_architecture": "165.30",
+"completed": 1987
+},
+{
+"id": 3067,
+"name_intl": "Chinese Mercantile Bank Building",
+"status": "COM",
+"latitude": "22.543930",
+"longitude": "114.084763",
+"height_architecture": "165.00",
+"completed": null
+},
+{
+"id": 3072,
+"name_intl": "News Center Building",
+"status": "COM",
+"latitude": "22.544060",
+"longitude": "114.097717",
+"height_architecture": "165.00",
+"completed": 1996
+},
+{
+"id": 18761,
+"name_intl": "China Life Tower",
+"status": "COM",
+"latitude": "22.537939",
+"longitude": "114.046379",
+"height_architecture": "165.00",
+"completed": 2016
+},
+{
+"id": 36904,
+"name_intl": "Jindi Century",
+"status": "COM",
+"latitude": "22.544813",
+"longitude": "113.988335",
+"height_architecture": "164.85",
+"completed": 2018
+},
+{
+"id": 43381,
+"name_intl": "Lengine Group Headquarters",
+"status": "COM",
+"latitude": "22.582209",
+"longitude": "113.940704",
+"height_architecture": "164.70",
+"completed": 2025
+},
+{
+"id": 44288,
+"name_intl": "Bagualing Technology Center",
+"status": "UC",
+"latitude": "22.564095",
+"longitude": "114.089973",
+"height_architecture": "164.70",
+"completed": null
+},
+{
+"id": 34879,
+"name_intl": "The New Swan Stone Castle Tower B",
+"status": "COM",
+"latitude": "22.550388",
+"longitude": "113.977737",
+"height_architecture": "164.60",
+"completed": 2018
+},
+{
+"id": 45593,
+"name_intl": "Jiuyue Plaza Tower 2",
+"status": "PRO",
+"latitude": "22.781389",
+"longitude": "113.931610",
+"height_architecture": "163.63",
+"completed": null
+},
+{
+"id": 44779,
+"name_intl": "Qianhai Upper Bay Tower 2",
+"status": "COM",
+"latitude": "22.482317",
+"longitude": "113.894119",
+"height_architecture": "163.00",
+"completed": 2024
+},
+{
+"id": 44780,
+"name_intl": "Qianhai Upper Bay Tower 3",
+"status": "COM",
+"latitude": "22.482325",
+"longitude": "113.893387",
+"height_architecture": "163.00",
+"completed": 2024
+},
+{
+"id": 27077,
+"name_intl": "China Horoy Qianhai Guanze Office Tower 2",
+"status": "COM",
+"latitude": "22.531876",
+"longitude": "113.892380",
+"height_architecture": "163.00",
+"completed": 2022
+},
+{
+"id": 36759,
+"name_intl": "Rongchao Houhai Mansion",
+"status": "COM",
+"latitude": "22.525339",
+"longitude": "113.935890",
+"height_architecture": "162.85",
+"completed": 2018
+},
+{
+"id": 47871,
+"name_intl": "Scenic City West Tower",
+"status": "UC",
+"latitude": "22.527428",
+"longitude": "113.971428",
+"height_architecture": "162.80",
+"completed": 2027
+},
+{
+"id": 3191,
+"name_intl": "Exemption Tower",
+"status": "COM",
+"latitude": "22.539841",
+"longitude": "114.050568",
+"height_architecture": "162.40",
+"completed": 2006
+},
+{
+"id": 48793,
+"name_intl": "Qi Jie Fang Lianjian Northwest Residential Building",
+"status": "PRO",
+"latitude": "22.574642",
+"longitude": "113.940346",
+"height_architecture": "162.00",
+"completed": 2027
+},
+{
+"id": 3212,
+"name_intl": "Anlian Tower",
+"status": "COM",
+"latitude": "22.544930",
+"longitude": "114.058548",
+"height_architecture": "162.00",
+"completed": 2004
+},
+{
+"id": 35428,
+"name_intl": "Xizhilang Diamond Tower",
+"status": "COM",
+"latitude": "22.514278",
+"longitude": "113.934669",
+"height_architecture": "162.00",
+"completed": null
+},
+{
+"id": 35418,
+"name_intl": "Qianhai Xinlikang Building",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "162.00",
+"completed": 2018
+},
+{
+"id": 36474,
+"name_intl": "THE ICON",
+"status": "COM",
+"latitude": "22.509909",
+"longitude": "113.927795",
+"height_architecture": "161.85",
+"completed": 2015
+},
+{
+"id": 35417,
+"name_intl": "Free Trade Building",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "161.85",
+"completed": null
+},
+{
+"id": 37096,
+"name_intl": "Changyuan Jingji Yujingfeng Mansion Block 2",
+"status": "COM",
+"latitude": "22.601566",
+"longitude": "114.006798",
+"height_architecture": "161.55",
+"completed": 2020
+},
+{
+"id": 37097,
+"name_intl": "Changyuan Jingji Yujingfeng Mansion Block 3",
+"status": "COM",
+"latitude": "22.601072",
+"longitude": "114.006432",
+"height_architecture": "161.55",
+"completed": 2020
+},
+{
+"id": 34513,
+"name_intl": "Vanke Jierong Tower",
+"status": "COM",
+"latitude": "22.532801",
+"longitude": "114.020760",
+"height_architecture": "161.40",
+"completed": 2018
+},
+{
+"id": 34479,
+"name_intl": "UNI-Center Tower B",
+"status": "COM",
+"latitude": "22.556479",
+"longitude": "113.882866",
+"height_architecture": "161.30",
+"completed": 2017
+},
+{
+"id": 35529,
+"name_intl": "The Peninsula Phase 4 Tower B",
+"status": "COM",
+"latitude": "22.484034",
+"longitude": "113.929054",
+"height_architecture": "161.00",
+"completed": 2019
+},
+{
+"id": 35527,
+"name_intl": "The Peninsula Phase 4 Tower C",
+"status": "COM",
+"latitude": "22.483509",
+"longitude": "113.928123",
+"height_architecture": "161.00",
+"completed": 2019
+},
+{
+"id": 35528,
+"name_intl": "The Peninsula Phase 4 Tower D",
+"status": "COM",
+"latitude": "22.482727",
+"longitude": "113.927910",
+"height_architecture": "161.00",
+"completed": 2019
+},
+{
+"id": 36832,
+"name_intl": "Hengyu Bincheng Phase 2 Tower 1",
+"status": "COM",
+"latitude": "22.497005",
+"longitude": "113.934525",
+"height_architecture": "161.00",
+"completed": 2017
+},
+{
+"id": 36833,
+"name_intl": "Hengyu Bincheng Phase 2 Tower 2",
+"status": "COM",
+"latitude": "22.497442",
+"longitude": "113.934380",
+"height_architecture": "161.00",
+"completed": 2017
+},
+{
+"id": 36834,
+"name_intl": "Hengyu Bincheng Phase 2 Tower 3",
+"status": "COM",
+"latitude": "22.498140",
+"longitude": "113.934196",
+"height_architecture": "161.00",
+"completed": 2017
+},
+{
+"id": 36835,
+"name_intl": "Hengyu Bincheng Phase 2 Tower 5",
+"status": "COM",
+"latitude": "22.498676",
+"longitude": "113.934563",
+"height_architecture": "161.00",
+"completed": 2017
+},
+{
+"id": 36836,
+"name_intl": "Hengyu Bincheng Phase 2 Tower 4",
+"status": "COM",
+"latitude": "22.498663",
+"longitude": "113.933968",
+"height_architecture": "161.00",
+"completed": 2017
+},
+{
+"id": 35553,
+"name_intl": "Xin Jinan Yihao Mansion Block 1A",
+"status": "COM",
+"latitude": "22.554741",
+"longitude": "113.888618",
+"height_architecture": "160.95",
+"completed": 2016
+},
+{
+"id": 35554,
+"name_intl": "Xin Jinan Yihao Mansion Block 1B",
+"status": "COM",
+"latitude": "22.555145",
+"longitude": "113.889084",
+"height_architecture": "160.95",
+"completed": 2016
+},
+{
+"id": 35555,
+"name_intl": "Xin Jinan Yihao Mansion Block 1C",
+"status": "COM",
+"latitude": "22.555517",
+"longitude": "113.889557",
+"height_architecture": "160.95",
+"completed": 2016
+},
+{
+"id": 35556,
+"name_intl": "Xin Jinan Yihao Mansion Block 2A",
+"status": "COM",
+"latitude": "22.554211",
+"longitude": "113.889404",
+"height_architecture": "160.95",
+"completed": 2016
+},
+{
+"id": 35557,
+"name_intl": "Xin Jinan Yihao Mansion Block 2B",
+"status": "COM",
+"latitude": "22.554811",
+"longitude": "113.890236",
+"height_architecture": "160.95",
+"completed": 2016
+},
+{
+"id": 36758,
+"name_intl": "Greenview Meijing Guangchang",
+"status": "COM",
+"latitude": "22.555847",
+"longitude": "113.973633",
+"height_architecture": "160.95",
+"completed": 2019
+},
+{
+"id": 32452,
+"name_intl": "Zhongzhou E-ClASS",
+"status": "COM",
+"latitude": "22.575356",
+"longitude": "113.902122",
+"height_architecture": "160.30",
+"completed": 2016
+},
+{
+"id": 3300,
+"name_intl": "International Foreign Trade Center",
+"status": "COM",
+"latitude": "22.543190",
+"longitude": "114.114662",
+"height_architecture": "160.00",
+"completed": 1985
+},
+{
+"id": 3301,
+"name_intl": "Juno Tower",
+"status": "COM",
+"latitude": "22.554100",
+"longitude": "114.125809",
+"height_architecture": "160.00",
+"completed": 1999
+},
+{
+"id": 13866,
+"name_intl": "Park Lane Manor - Tower 1",
+"status": "COM",
+"latitude": "22.540060",
+"longitude": "114.104942",
+"height_architecture": "160.00",
+"completed": 2009
+},
+{
+"id": 13867,
+"name_intl": "Park Lane Manor - Tower 2",
+"status": "COM",
+"latitude": "22.539551",
+"longitude": "114.105278",
+"height_architecture": "160.00",
+"completed": 2009
+},
+{
+"id": 13868,
+"name_intl": "Park Lane Manor - Tower 3",
+"status": "COM",
+"latitude": "22.539061",
+"longitude": "114.105690",
+"height_architecture": "160.00",
+"completed": 2009
+},
+{
+"id": 35510,
+"name_intl": "Fuyingmen",
+"status": "COM",
+"latitude": "22.533968",
+"longitude": "114.072289",
+"height_architecture": "160.00",
+"completed": 2015
+},
+{
+"id": 36913,
+"name_intl": "Emerald Island Plaza",
+"status": "COM",
+"latitude": "22.584423",
+"longitude": "114.265747",
+"height_architecture": "160.00",
+"completed": 2017
+},
+{
+"id": 35521,
+"name_intl": "Caixun Technology Building",
+"status": "COM",
+"latitude": "22.537260",
+"longitude": "113.943535",
+"height_architecture": "160.00",
+"completed": 2016
+},
+{
+"id": 34531,
+"name_intl": "Sunshine Insurance Headquarters",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "160.00",
+"completed": 2019
+},
+{
+"id": 44535,
+"name_intl": "Evergrande City Light Tower 1",
+"status": "COM",
+"latitude": "22.701630",
+"longitude": "114.231659",
+"height_architecture": "160.00",
+"completed": null
+},
+{
+"id": 39902,
+"name_intl": "Shenzhen Qianhai Tencent Headquarters Tower 2",
+"status": "COM",
+"latitude": "22.538597",
+"longitude": "113.893799",
+"height_architecture": "160.00",
+"completed": 2022
+},
+{
+"id": 34847,
+"name_intl": "Guoyin Minsheng Financial Building 1",
+"status": "COM",
+"latitude": "22.545069",
+"longitude": "114.059326",
+"height_architecture": "159.70",
+"completed": 2018
+},
+{
+"id": 16422,
+"name_intl": "China Resources Qianhai Center Tower 3",
+"status": "COM",
+"latitude": "22.533533",
+"longitude": "113.893486",
+"height_architecture": "159.50",
+"completed": 2021
+},
+{
+"id": 17794,
+"name_intl": "Marco Polo Shenzhen",
+"status": "COM",
+"latitude": "22.539770",
+"longitude": "114.048843",
+"height_architecture": "159.30",
+"completed": 2006
+},
+{
+"id": 40750,
+"name_intl": "The Peninsula Phase III Tower 4",
+"status": "COM",
+"latitude": "22.484175",
+"longitude": "113.931160",
+"height_architecture": "159.25",
+"completed": 2018
+},
+{
+"id": 36762,
+"name_intl": "Shenye Central City Tower 6B",
+"status": "UCT",
+"latitude": "22.543055",
+"longitude": "114.018318",
+"height_architecture": "159.25",
+"completed": 2020
+},
+{
+"id": 41665,
+"name_intl": "Shenzhen Transsion Holdings Headquarters",
+"status": "COM",
+"latitude": "22.581354",
+"longitude": "113.939934",
+"height_architecture": "159.15",
+"completed": 2024
+},
+{
+"id": 40751,
+"name_intl": "The Peninsula Phase III Tower 5",
+"status": "COM",
+"latitude": "22.484196",
+"longitude": "113.930374",
+"height_architecture": "158.80",
+"completed": 2018
+},
+{
+"id": 34481,
+"name_intl": "UNI-Center Tower 2",
+"status": "COM",
+"latitude": "22.554638",
+"longitude": "113.881721",
+"height_architecture": "158.75",
+"completed": 2017
+},
+{
+"id": 36872,
+"name_intl": "Longgang Jiuzuan Block 3A",
+"status": "COM",
+"latitude": "22.625151",
+"longitude": "114.015953",
+"height_architecture": "158.70",
+"completed": 2019
+},
+{
+"id": 36873,
+"name_intl": "Longgang Jiuzuan Block 3B",
+"status": "COM",
+"latitude": "22.625116",
+"longitude": "114.016426",
+"height_architecture": "158.70",
+"completed": 2019
+},
+{
+"id": 23620,
+"name_intl": "Greater China World Financial Center Tower 2",
+"status": "COM",
+"latitude": "22.537020",
+"longitude": "114.114487",
+"height_architecture": "158.70",
+"completed": 2021
+},
+{
+"id": 35565,
+"name_intl": "Hezheng Rongyue A",
+"status": "COM",
+"latitude": "22.555977",
+"longitude": "114.124489",
+"height_architecture": "158.55",
+"completed": 2013
+},
+{
+"id": 35474,
+"name_intl": "Dehong World Tower A",
+"status": "COM",
+"latitude": "22.564281",
+"longitude": "114.119652",
+"height_architecture": "158.35",
+"completed": 2011
+},
+{
+"id": 35475,
+"name_intl": "Dehong World Tower B",
+"status": "COM",
+"latitude": "22.564577",
+"longitude": "114.119164",
+"height_architecture": "158.35",
+"completed": 2011
+},
+{
+"id": 35476,
+"name_intl": "Dehong World Tower C",
+"status": "COM",
+"latitude": "22.565144",
+"longitude": "114.119110",
+"height_architecture": "158.35",
+"completed": 2011
+},
+{
+"id": 35479,
+"name_intl": "Dehong World Tower F",
+"status": "COM",
+"latitude": "22.565113",
+"longitude": "114.120598",
+"height_architecture": "158.35",
+"completed": 2011
+},
+{
+"id": 35480,
+"name_intl": "Dehong World Tower G",
+"status": "COM",
+"latitude": "22.564936",
+"longitude": "114.121056",
+"height_architecture": "158.35",
+"completed": 2011
+},
+{
+"id": 35481,
+"name_intl": "Dehong World Tower H",
+"status": "COM",
+"latitude": "22.564484",
+"longitude": "114.121010",
+"height_architecture": "158.35",
+"completed": 2011
+},
+{
+"id": 35374,
+"name_intl": "Jinyu Lanwan Phase III",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "158.00",
+"completed": null
+},
+{
+"id": 22576,
+"name_intl": "Shenzhen Rural Commercial Bank Headquarters",
+"status": "COM",
+"latitude": "22.553513",
+"longitude": "113.876259",
+"height_architecture": "158.00",
+"completed": 2020
+},
+{
+"id": 45281,
+"name_intl": "Shum Yip Innovation Center",
+"status": "UC",
+"latitude": "22.568127",
+"longitude": "114.103119",
+"height_architecture": "158.00",
+"completed": null
+},
+{
+"id": 42174,
+"name_intl": "Yihua Financial Technology Building",
+"status": "COM",
+"latitude": "22.527021",
+"longitude": "113.931511",
+"height_architecture": "158.00",
+"completed": 2014
+},
+{
+"id": 15838,
+"name_intl": "Excellence Meilin Project Tower 1",
+"status": "COM",
+"latitude": "22.571791",
+"longitude": "114.055450",
+"height_architecture": "158.00",
+"completed": 2016
+},
+{
+"id": 15839,
+"name_intl": "Excellence Meilin Project Tower 2",
+"status": "COM",
+"latitude": "22.573111",
+"longitude": "114.055313",
+"height_architecture": "158.00",
+"completed": 2016
+},
+{
+"id": 34486,
+"name_intl": "UNI-Center Tower 7",
+"status": "COM",
+"latitude": "22.555405",
+"longitude": "113.884087",
+"height_architecture": "157.80",
+"completed": 2017
+},
+{
+"id": 50530,
+"name_intl": "ByteDance Houhai Center",
+"status": "COM",
+"latitude": "22.515198",
+"longitude": "113.936279",
+"height_architecture": "157.80",
+"completed": 2025
+},
+{
+"id": 36871,
+"name_intl": "Longgang Jiuzuan Block 2B",
+"status": "COM",
+"latitude": "22.625830",
+"longitude": "114.015373",
+"height_architecture": "157.60",
+"completed": 2019
+},
+{
+"id": 23594,
+"name_intl": "Shenzhen Zhongzhou Holdings Financial Center Tower B",
+"status": "COM",
+"latitude": "22.520800",
+"longitude": "113.929070",
+"height_architecture": "157.60",
+"completed": 2014
+},
+{
+"id": 36926,
+"name_intl": "Riverfront Times Square Tower 3",
+"status": "COM",
+"latitude": "22.528999",
+"longitude": "114.022415",
+"height_architecture": "157.50",
+"completed": 2014
+},
+{
+"id": 34483,
+"name_intl": "UNI-Center Tower 4",
+"status": "COM",
+"latitude": "22.554045",
+"longitude": "113.882706",
+"height_architecture": "157.50",
+"completed": 2017
+},
+{
+"id": 35512,
+"name_intl": "China Resources Shenzhen Bay Yuefu Phase 2 Tower 1",
+"status": "COM",
+"latitude": "22.519867",
+"longitude": "113.941162",
+"height_architecture": "157.34",
+"completed": 2018
+},
+{
+"id": 36924,
+"name_intl": "Riverfront Times Square Tower 1",
+"status": "COM",
+"latitude": "22.530046",
+"longitude": "114.022469",
+"height_architecture": "157.00",
+"completed": 2014
+},
+{
+"id": 36925,
+"name_intl": "Riverfront Times Square Tower 2",
+"status": "COM",
+"latitude": "22.529591",
+"longitude": "114.022514",
+"height_architecture": "157.00",
+"completed": 2014
+},
+{
+"id": 35241,
+"name_intl": "Huaqiang Square Block A",
+"status": "COM",
+"latitude": "22.546638",
+"longitude": "114.080986",
+"height_architecture": "157.00",
+"completed": 2007
+},
+{
+"id": 36869,
+"name_intl": "Chiwan Headquarters Building",
+"status": "COM",
+"latitude": "22.481888",
+"longitude": "113.891090",
+"height_architecture": "156.90",
+"completed": 2018
+},
+{
+"id": 43486,
+"name_intl": "Appotronics Headquarters",
+"status": "UCT",
+"latitude": "22.582035",
+"longitude": "113.942162",
+"height_architecture": "156.30",
+"completed": 2024
+},
+{
+"id": 4068,
+"name_intl": "Excellence Century Plaza Tower 4",
+"status": "COM",
+"latitude": "22.534060",
+"longitude": "114.060120",
+"height_architecture": "156.00",
+"completed": 2010
+},
+{
+"id": 23691,
+"name_intl": "Shenzhen Xinhe World Office Tower A",
+"status": "COM",
+"latitude": "22.607321",
+"longitude": "114.054550",
+"height_architecture": "155.90",
+"completed": 2015
+},
+{
+"id": 23692,
+"name_intl": "Shenzhen Xinhe World Office Tower B",
+"status": "COM",
+"latitude": "22.605730",
+"longitude": "114.054550",
+"height_architecture": "155.90",
+"completed": 2015
+},
+{
+"id": 40752,
+"name_intl": "The Peninsula Phase III Tower 6",
+"status": "COM",
+"latitude": "22.483553",
+"longitude": "113.930168",
+"height_architecture": "155.80",
+"completed": 2018
+},
+{
+"id": 35373,
+"name_intl": "iCarbonx Headquarters Residential Tower",
+"status": "OH",
+"latitude": "22.527634",
+"longitude": "113.969994",
+"height_architecture": "155.56",
+"completed": 2026
+},
+{
+"id": 41867,
+"name_intl": "Shimao International Exhibition Center Tower B",
+"status": "COM",
+"latitude": "22.565825",
+"longitude": "114.088280",
+"height_architecture": "155.43",
+"completed": 2024
+},
+{
+"id": 50417,
+"name_intl": "GDH City Residential Block 1A",
+"status": "COM",
+"latitude": "22.581011",
+"longitude": "114.127579",
+"height_architecture": "155.07",
+"completed": 2020
+},
+{
+"id": 3681,
+"name_intl": "Grace Mansion",
+"status": "COM",
+"latitude": "22.536711",
+"longitude": "114.107918",
+"height_architecture": "155.00",
+"completed": 2001
+},
+{
+"id": 3674,
+"name_intl": "Shen Ye Center",
+"status": "COM",
+"latitude": "22.543280",
+"longitude": "114.103607",
+"height_architecture": "155.00",
+"completed": null
+},
+{
+"id": 36942,
+"name_intl": "Vanke Longgang Office Tower",
+"status": "COM",
+"latitude": "22.716038",
+"longitude": "114.237549",
+"height_architecture": "155.00",
+"completed": 2015
+},
+{
+"id": 8740,
+"name_intl": "Shenzhen Coastal City West Tower",
+"status": "COM",
+"latitude": "22.521240",
+"longitude": "113.931633",
+"height_architecture": "155.00",
+"completed": 2008
+},
+{
+"id": 3677,
+"name_intl": "East Pacific Center Tower D",
+"status": "COM",
+"latitude": "22.539221",
+"longitude": "114.016640",
+"height_architecture": "155.00",
+"completed": 2010
+},
+{
+"id": 35733,
+"name_intl": "Hongshu Bay Metro Station Building G",
+"status": "COM",
+"latitude": "22.527235",
+"longitude": "113.964348",
+"height_architecture": "154.70",
+"completed": 2020
+},
+{
+"id": 35732,
+"name_intl": "Hongshu Bay Metro Station Building H",
+"status": "COM",
+"latitude": "22.527735",
+"longitude": "113.965088",
+"height_architecture": "154.70",
+"completed": 2020
+},
+{
+"id": 43441,
+"name_intl": "Lepu Medical Tower A",
+"status": "UCT",
+"latitude": "22.584927",
+"longitude": "113.931061",
+"height_architecture": "154.70",
+"completed": null
+},
+{
+"id": 43568,
+"name_intl": "Lepu Medical Tower B",
+"status": "UCT",
+"latitude": "22.584927",
+"longitude": "113.931061",
+"height_architecture": "154.70",
+"completed": null
+},
+{
+"id": 43445,
+"name_intl": "Lepu Tower A",
+"status": "UCT",
+"latitude": "22.585402",
+"longitude": "113.925591",
+"height_architecture": "154.70",
+"completed": null
+},
+{
+"id": 36870,
+"name_intl": "Longgang Jiuzuan Block 1A",
+"status": "COM",
+"latitude": "22.626263",
+"longitude": "114.016335",
+"height_architecture": "154.40",
+"completed": 2019
+},
+{
+"id": 43446,
+"name_intl": "Lepu Tower B",
+"status": "UCT",
+"latitude": "22.585402",
+"longitude": "113.925591",
+"height_architecture": "154.10",
+"completed": null
+},
+{
+"id": 36874,
+"name_intl": "Longgang Jiuzuan Block 3C",
+"status": "COM",
+"latitude": "22.625731",
+"longitude": "114.016762",
+"height_architecture": "154.10",
+"completed": 2019
+},
+{
+"id": 50418,
+"name_intl": "GDH City Residential Block 1B",
+"status": "COM",
+"latitude": "22.580952",
+"longitude": "114.128143",
+"height_architecture": "154.07",
+"completed": 2020
+},
+{
+"id": 35520,
+"name_intl": "ZTE Research and Development Center",
+"status": "COM",
+"latitude": "22.541014",
+"longitude": "113.943939",
+"height_architecture": "153.80",
+"completed": 2006
+},
+{
+"id": 35513,
+"name_intl": "China Resources Shenzhen Bay Yuefu Phase 2 Tower 2",
+"status": "COM",
+"latitude": "22.519119",
+"longitude": "113.940948",
+"height_architecture": "153.74",
+"completed": 2018
+},
+{
+"id": 23668,
+"name_intl": "Dayong Commercial Center 1",
+"status": "COM",
+"latitude": "22.544109",
+"longitude": "113.946602",
+"height_architecture": "153.15",
+"completed": 2015
+},
+{
+"id": 40753,
+"name_intl": "The Peninsula Phase III Tower 7",
+"status": "COM",
+"latitude": "22.482759",
+"longitude": "113.930000",
+"height_architecture": "152.80",
+"completed": 2018
+},
+{
+"id": 3798,
+"name_intl": "China Travel Tower",
+"status": "COM",
+"latitude": "22.541330",
+"longitude": "114.050438",
+"height_architecture": "152.71",
+"completed": 2008
+},
+{
+"id": 37140,
+"name_intl": "Hengchang Technology Building West Tower",
+"status": "UCT",
+"latitude": "22.526209",
+"longitude": "113.888496",
+"height_architecture": "152.50",
+"completed": 2020
+},
+{
+"id": 44418,
+"name_intl": "Zhaobangji IBO",
+"status": "STO",
+"latitude": "22.583361",
+"longitude": "114.132690",
+"height_architecture": "152.20",
+"completed": null
+},
+{
+"id": 35526,
+"name_intl": "The Peninsula Phase 4 Tower A",
+"status": "COM",
+"latitude": "22.484451",
+"longitude": "113.929527",
+"height_architecture": "152.00",
+"completed": 2018
+},
+{
+"id": 37139,
+"name_intl": "Hengchang Technology Building East Tower",
+"status": "UCT",
+"latitude": "22.524830",
+"longitude": "113.890076",
+"height_architecture": "151.85",
+"completed": 2020
+},
+{
+"id": 48792,
+"name_intl": "Qi Jie Fang Lianjian Northeast Residential Building",
+"status": "PRO",
+"latitude": "22.574638",
+"longitude": "113.940887",
+"height_architecture": "151.00",
+"completed": 2027
+},
+{
+"id": 39903,
+"name_intl": "Zhaoxin Huijin Center Tower B",
+"status": "COM",
+"latitude": "22.544916",
+"longitude": "114.111343",
+"height_architecture": "151.00",
+"completed": 2022
+},
+{
+"id": 35471,
+"name_intl": "Peng Runda Commercial Plaza East Tower",
+"status": "COM",
+"latitude": "22.521109",
+"longitude": "113.937180",
+"height_architecture": "151.00",
+"completed": 2019
+},
+{
+"id": 35470,
+"name_intl": "Peng Runda Commercial Plaza West Tower",
+"status": "COM",
+"latitude": "22.521315",
+"longitude": "113.936363",
+"height_architecture": "151.00",
+"completed": 2019
+},
+{
+"id": 43763,
+"name_intl": "Huangcheng Plaza",
+"status": "COM",
+"latitude": "22.527437",
+"longitude": "114.070984",
+"height_architecture": "150.80",
+"completed": 1996
+},
+{
+"id": 37071,
+"name_intl": "Hansen Mansion",
+"status": "COM",
+"latitude": "22.536409",
+"longitude": "114.062363",
+"height_architecture": "150.50",
+"completed": 2013
+},
+{
+"id": 36760,
+"name_intl": "Shenye Central City Tower 1",
+"status": "UCT",
+"latitude": "22.544100",
+"longitude": "114.019478",
+"height_architecture": "150.40",
+"completed": 2020
+},
+{
+"id": 14403,
+"name_intl": "One Palace",
+"status": "COM",
+"latitude": "22.539009",
+"longitude": "114.059319",
+"height_architecture": "150.39",
+"completed": 2019
+},
+{
+"id": 48169,
+"name_intl": "China Resources Hubei Center Plot A4 Block B",
+"status": "COM",
+"latitude": "22.549040",
+"longitude": "114.123245",
+"height_architecture": "150.10",
+"completed": 2024
+},
+{
+"id": 35517,
+"name_intl": "Xintian CBC Tower C",
+"status": "COM",
+"latitude": "22.522934",
+"longitude": "114.048111",
+"height_architecture": "150.00",
+"completed": 2015
+},
+{
+"id": 30965,
+"name_intl": "Green View Apartments R1",
+"status": "COM",
+"latitude": "22.563774",
+"longitude": "114.035362",
+"height_architecture": "150.00",
+"completed": 2016
+},
+{
+"id": 30966,
+"name_intl": "Green View Apartments R2",
+"status": "COM",
+"latitude": "22.563414",
+"longitude": "114.034821",
+"height_architecture": "150.00",
+"completed": 2016
+},
+{
+"id": 30967,
+"name_intl": "Green View Apartments R3",
+"status": "COM",
+"latitude": "22.563625",
+"longitude": "114.033958",
+"height_architecture": "150.00",
+"completed": 2016
+},
+{
+"id": 30968,
+"name_intl": "Green View Apartments R4",
+"status": "COM",
+"latitude": "22.564255",
+"longitude": "114.034065",
+"height_architecture": "150.00",
+"completed": 2016
+},
+{
+"id": 37069,
+"name_intl": "Mindray R & D Building Block B",
+"status": "COM",
+"latitude": "22.541622",
+"longitude": "113.950226",
+"height_architecture": "150.00",
+"completed": 2010
+},
+{
+"id": 35363,
+"name_intl": "Baidu Headquarters West Tower",
+"status": "COM",
+"latitude": "22.527517",
+"longitude": "113.937187",
+"height_architecture": "150.00",
+"completed": 2018
+},
+{
+"id": 43442,
+"name_intl": "Lexin Headquarters Building",
+"status": "UC",
+"latitude": "22.518833",
+"longitude": "113.939728",
+"height_architecture": "150.00",
+"completed": 2024
+},
+{
+"id": 41044,
+"name_intl": "Shenzhen Metro Headquarter",
+"status": "COM",
+"latitude": "22.549765",
+"longitude": "114.058487",
+"height_architecture": "150.00",
+"completed": 2006
+},
+{
+"id": 38790,
+"name_intl": "Vivo Headquarters",
+"status": "UC",
+"latitude": "22.534307",
+"longitude": "113.890686",
+"height_architecture": "150.00",
+"completed": 2025
+},
+{
+"id": 40542,
+"name_intl": "China Electronics Headquarters Tower 1",
+"status": "PRO",
+"latitude": "22.524563",
+"longitude": "113.972549",
+"height_architecture": "150.00",
+"completed": null
+},
+{
+"id": 35946,
+"name_intl": "China Telling Communications South Tower",
+"status": "UCT",
+"latitude": "22.530132",
+"longitude": "113.967415",
+"height_architecture": "150.00",
+"completed": 2022
+},
+{
+"id": 48491,
+"name_intl": "Qianhai International Hub Tower 1",
+"status": "PRO",
+"latitude": "22.541912",
+"longitude": "113.891792",
+"height_architecture": "150.00",
+"completed": null
+},
+{
+"id": 44967,
+"name_intl": "Anju High-Tech Garden South Tower 3",
+"status": "COM",
+"latitude": "22.536520",
+"longitude": "113.946777",
+"height_architecture": "149.95",
+"completed": 2023
+},
+{
+"id": 43401,
+"name_intl": "Shum Yip Century Valley Phase 1A",
+"status": "COM",
+"latitude": "22.548082",
+"longitude": "113.962723",
+"height_architecture": "149.50",
+"completed": 2023
+},
+{
+"id": 23669,
+"name_intl": "Dayong Commercial Center 2",
+"status": "COM",
+"latitude": "22.544149",
+"longitude": "113.947281",
+"height_architecture": "149.35",
+"completed": 2015
+},
+{
+"id": 43754,
+"name_intl": "Nanshan Innovation Technology Center Tower 6",
+"status": "COM",
+"latitude": "22.572241",
+"longitude": "113.936096",
+"height_architecture": "149.00",
+"completed": 2024
+},
+{
+"id": 35420,
+"name_intl": "Hisense South HQ",
+"status": "COM",
+"latitude": "22.515448",
+"longitude": "113.935631",
+"height_architecture": "149.00",
+"completed": 2017
+},
+{
+"id": 49623,
+"name_intl": "Innovation Cloud Center Tower A",
+"status": "COM",
+"latitude": "22.569290",
+"longitude": "114.057266",
+"height_architecture": "148.85",
+"completed": 2023
+},
+{
+"id": 45707,
+"name_intl": "Avary Time Center Tower A",
+"status": "COM",
+"latitude": "22.553164",
+"longitude": "113.874702",
+"height_architecture": "148.70",
+"completed": 2022
+},
+{
+"id": 46619,
+"name_intl": "Anju Phoenix Garden Tower 1",
+"status": "COM",
+"latitude": "22.726225",
+"longitude": "114.380173",
+"height_architecture": "148.60",
+"completed": 2024
+},
+{
+"id": 45891,
+"name_intl": "Moofun World Artists Studios North Tower",
+"status": "COM",
+"latitude": "22.788204",
+"longitude": "113.829681",
+"height_architecture": "148.00",
+"completed": 2018
+},
+{
+"id": 46620,
+"name_intl": "Anju Phoenix Garden Tower 2",
+"status": "COM",
+"latitude": "22.726362",
+"longitude": "114.380623",
+"height_architecture": "147.70",
+"completed": 2024
+},
+{
+"id": 35578,
+"name_intl": "CLP Great Wall Building North Tower",
+"status": "COM",
+"latitude": "22.545820",
+"longitude": "113.941582",
+"height_architecture": "147.10",
+"completed": 2019
+},
+{
+"id": 43757,
+"name_intl": "Nanshan Innovation Technology Center Tower 2",
+"status": "COM",
+"latitude": "22.574011",
+"longitude": "113.936623",
+"height_architecture": "147.00",
+"completed": 2024
+},
+{
+"id": 36824,
+"name_intl": "Zhongguan Times Square Tower B",
+"status": "COM",
+"latitude": "22.586060",
+"longitude": "113.959473",
+"height_architecture": "146.90",
+"completed": 2017
+},
+{
+"id": 46840,
+"name_intl": "Tencent Helix Tower 1",
+"status": "PRO",
+"latitude": "22.537821",
+"longitude": "113.862526",
+"height_architecture": "146.80",
+"completed": null
+},
+{
+"id": 41701,
+"name_intl": "WeBank Headquarters",
+"status": "COM",
+"latitude": "22.540096",
+"longitude": "113.899254",
+"height_architecture": "146.60",
+"completed": 2023
+},
+{
+"id": 44965,
+"name_intl": "Anju High-Tech Garden South Tower 1",
+"status": "COM",
+"latitude": "22.536570",
+"longitude": "113.945694",
+"height_architecture": "145.95",
+"completed": 2023
+},
+{
+"id": 44966,
+"name_intl": "Anju High-Tech Garden South Tower 2",
+"status": "COM",
+"latitude": "22.536337",
+"longitude": "113.946243",
+"height_architecture": "145.95",
+"completed": 2023
+},
+{
+"id": 36789,
+"name_intl": "Tanglang City Tower B#",
+"status": "COM",
+"latitude": "22.591579",
+"longitude": "113.995110",
+"height_architecture": "145.60",
+"completed": 2019
+},
+{
+"id": 36790,
+"name_intl": "Tanglang City Tower C#",
+"status": "COM",
+"latitude": "22.591297",
+"longitude": "113.994377",
+"height_architecture": "145.60",
+"completed": 2019
+},
+{
+"id": 20884,
+"name_intl": "Minmetals Financial Center",
+"status": "COM",
+"latitude": "22.523626",
+"longitude": "113.937637",
+"height_architecture": "145.30",
+"completed": 2020
+},
+{
+"id": 14591,
+"name_intl": "China Resources Vanguard Headquarter Building",
+"status": "COM",
+"latitude": "22.518167",
+"longitude": "113.940826",
+"height_architecture": "145.10",
+"completed": 2021
+},
+{
+"id": 35564,
+"name_intl": "Greenview Hongshuwan Yihao Tower C",
+"status": "COM",
+"latitude": "22.522642",
+"longitude": "114.032654",
+"height_architecture": "145.00",
+"completed": 2018
+},
+{
+"id": 49569,
+"name_intl": "Shenzhen Exchange Group Headquarters Building",
+"status": "COM",
+"latitude": "22.573082",
+"longitude": "113.948967",
+"height_architecture": "145.00",
+"completed": 2022
+},
+{
+"id": 35736,
+"name_intl": "Hongshu Bay Metro Station Building D",
+"status": "COM",
+"latitude": "22.527578",
+"longitude": "113.962662",
+"height_architecture": "144.80",
+"completed": 2020
+},
+{
+"id": 35737,
+"name_intl": "Hongshu Bay Metro Station Building C",
+"status": "COM",
+"latitude": "22.526794",
+"longitude": "113.962807",
+"height_architecture": "144.10",
+"completed": 2020
+},
+{
+"id": 49012,
+"name_intl": "Yitian Yulong Tiandi Building 1D",
+"status": "COM",
+"latitude": "22.556095",
+"longitude": "114.127281",
+"height_architecture": "144.00",
+"completed": 2024
+},
+{
+"id": 44205,
+"name_intl": "Zhengqi Future Science and Technology City Tower B",
+"status": "UCT",
+"latitude": "22.701790",
+"longitude": "114.346672",
+"height_architecture": "142.20",
+"completed": 2026
+},
+{
+"id": 35735,
+"name_intl": "Hongshu Bay Metro Station Building E",
+"status": "COM",
+"latitude": "22.527578",
+"longitude": "113.963188",
+"height_architecture": "141.80",
+"completed": 2020
+},
+{
+"id": 29411,
+"name_intl": "Rongchao Commercial Center, Block B",
+"status": "COM",
+"latitude": "22.547079",
+"longitude": "114.050560",
+"height_architecture": "141.00",
+"completed": null
+},
+{
+"id": 48791,
+"name_intl": "Qi Jie Fang Lianjian Central Residential Building",
+"status": "PRO",
+"latitude": "22.573994",
+"longitude": "113.940804",
+"height_architecture": "140.00",
+"completed": 2027
+},
+{
+"id": 46842,
+"name_intl": "Tencent Helix Tower 3",
+"status": "PRO",
+"latitude": "22.539366",
+"longitude": "113.862114",
+"height_architecture": "139.90",
+"completed": null
+},
+{
+"id": 27955,
+"name_intl": "Qianhai Financial Centre - T3",
+"status": "COM",
+"latitude": "22.535540",
+"longitude": "113.889389",
+"height_architecture": "139.45",
+"completed": 2020
+},
+{
+"id": 37020,
+"name_intl": "Hanshan Yuehai City Tower D1",
+"status": "COM",
+"latitude": "22.504593",
+"longitude": "113.915291",
+"height_architecture": "138.00",
+"completed": 2021
+},
+{
+"id": 48951,
+"name_intl": "Shum Yip Century Valley Phase 2",
+"status": "COM",
+"latitude": "22.549299",
+"longitude": "113.962883",
+"height_architecture": "137.65",
+"completed": 2023
+},
+{
+"id": 22729,
+"name_intl": "CNPEC Headquarters Tower C",
+"status": "COM",
+"latitude": "22.698416",
+"longitude": "114.290971",
+"height_architecture": "137.03",
+"completed": 2024
+},
+{
+"id": 23408,
+"name_intl": "One Shenzhen Bay Tower 6",
+"status": "COM",
+"latitude": "22.509649",
+"longitude": "113.937263",
+"height_architecture": "136.00",
+"completed": 2015
+},
+{
+"id": 47977,
+"name_intl": "TP-Link Global R&D Headquarters",
+"status": "COM",
+"latitude": "22.547667",
+"longitude": "113.938171",
+"height_architecture": "136.00",
+"completed": 2024
+},
+{
+"id": 37067,
+"name_intl": "China Resources City Runxi Phase I Tower 4",
+"status": "UC",
+"latitude": "22.547031",
+"longitude": "113.953445",
+"height_architecture": "135.70",
+"completed": 2022
+},
+{
+"id": 35563,
+"name_intl": "Greenview Hongshuwan Yihao Tower D",
+"status": "COM",
+"latitude": "22.522968",
+"longitude": "114.032013",
+"height_architecture": "135.00",
+"completed": 2018
+},
+{
+"id": 15804,
+"name_intl": "CASC International Center South Tower",
+"status": "COM",
+"latitude": "22.522240",
+"longitude": "113.937080",
+"height_architecture": "134.75",
+"completed": 2015
+},
+{
+"id": 33980,
+"name_intl": "Shenzhen Bay Ecocity B-Tech Tower 5",
+"status": "COM",
+"latitude": "22.533098",
+"longitude": "113.946686",
+"height_architecture": "134.00",
+"completed": 2018
+},
+{
+"id": 29794,
+"name_intl": "Shenzhen Lenovo Tower 1B",
+"status": "COM",
+"latitude": "22.519262",
+"longitude": "113.936516",
+"height_architecture": "132.70",
+"completed": 2022
+},
+{
+"id": 19329,
+"name_intl": "China Resources Building",
+"status": "COM",
+"latitude": "22.543730",
+"longitude": "114.105614",
+"height_architecture": "132.00",
+"completed": null
+},
+{
+"id": 23707,
+"name_intl": "Seaview Building",
+"status": "COM",
+"latitude": "22.485889",
+"longitude": "113.909599",
+"height_architecture": "132.00",
+"completed": null
+},
+{
+"id": 50573,
+"name_intl": "Shenzhen Building Craftsman Headquarters",
+"status": "COM",
+"latitude": "22.518658",
+"longitude": "113.939743",
+"height_architecture": "131.35",
+"completed": 2025
+},
+{
+"id": 23670,
+"name_intl": "Dayong Commercial Center 3",
+"status": "COM",
+"latitude": "22.544170",
+"longitude": "113.947983",
+"height_architecture": "130.35",
+"completed": 2015
+},
+{
+"id": 37022,
+"name_intl": "Hanshan Yuehai City Tower D2",
+"status": "COM",
+"latitude": "22.504766",
+"longitude": "113.915611",
+"height_architecture": "130.30",
+"completed": 2021
+},
+{
+"id": 45430,
+"name_intl": "Dacheng Fund Headquarter Building",
+"status": "COM",
+"latitude": "22.521498",
+"longitude": "113.939552",
+"height_architecture": "130.00",
+"completed": null
+},
+{
+"id": 33470,
+"name_intl": "Chow Tai Fook Headquarters South Tower",
+"status": "COM",
+"latitude": "22.533724",
+"longitude": "113.892151",
+"height_architecture": "129.55",
+"completed": 2023
+},
+{
+"id": 50419,
+"name_intl": "GDH City Residential Block 2",
+"status": "COM",
+"latitude": "22.581224",
+"longitude": "114.128838",
+"height_architecture": "128.88",
+"completed": 2020
+},
+{
+"id": 50420,
+"name_intl": "GDH City Residential Block 3",
+"status": "COM",
+"latitude": "22.581749",
+"longitude": "114.128815",
+"height_architecture": "128.88",
+"completed": 2020
+},
+{
+"id": 37019,
+"name_intl": "Hanshan Yuehai City Tower C",
+"status": "COM",
+"latitude": "22.504410",
+"longitude": "113.915932",
+"height_architecture": "128.00",
+"completed": 2021
+},
+{
+"id": 36813,
+"name_intl": "Vanke Yun Cloud City Tower 9B",
+"status": "COM",
+"latitude": "22.575680",
+"longitude": "113.942795",
+"height_architecture": "127.45",
+"completed": 2018
+},
+{
+"id": 47082,
+"name_intl": "Qianhai Kerry Centre Phase 1 Tower 1",
+"status": "COM",
+"latitude": "22.528868",
+"longitude": "113.887421",
+"height_architecture": "127.00",
+"completed": 2020
+},
+{
+"id": 23409,
+"name_intl": "One Shenzhen Bay Tower 8",
+"status": "COM",
+"latitude": "22.508780",
+"longitude": "113.938263",
+"height_architecture": "125.39",
+"completed": 2016
+},
+{
+"id": 23404,
+"name_intl": "One Shenzhen Bay Tower 2",
+"status": "COM",
+"latitude": "22.511141",
+"longitude": "113.937347",
+"height_architecture": "125.35",
+"completed": 2014
+},
+{
+"id": 47080,
+"name_intl": "Qianhai Kerry Centre Phase 2 Tower 1",
+"status": "COM",
+"latitude": "22.528065",
+"longitude": "113.887733",
+"height_architecture": "123.00",
+"completed": 2023
+},
+{
+"id": 45708,
+"name_intl": "Avary Time Center Tower B",
+"status": "COM",
+"latitude": "22.552921",
+"longitude": "113.874039",
+"height_architecture": "122.10",
+"completed": 2022
+},
+{
+"id": 31550,
+"name_intl": "Futian Technology Plaza Tower 3",
+"status": "COM",
+"latitude": "22.544170",
+"longitude": "114.065468",
+"height_architecture": "120.00",
+"completed": 2013
+},
+{
+"id": 50934,
+"name_intl": "KDL Portal",
+"status": "UC",
+"latitude": null,
+"longitude": null,
+"height_architecture": "120.00",
+"completed": 2026
+},
+{
+"id": 46841,
+"name_intl": "Tencent Helix Tower 2",
+"status": "PRO",
+"latitude": "22.539009",
+"longitude": "113.863007",
+"height_architecture": "119.90",
+"completed": null
+},
+{
+"id": 36816,
+"name_intl": "Vanke Yun Cloud City Tower 4",
+"status": "COM",
+"latitude": "22.576727",
+"longitude": "113.941780",
+"height_architecture": "119.15",
+"completed": 2017
+},
+{
+"id": 48906,
+"name_intl": "Chentian Kaiyuan Plaza North Office Tower",
+"status": "COM",
+"latitude": "22.596294",
+"longitude": "113.867424",
+"height_architecture": "119.00",
+"completed": 2023
+},
+{
+"id": 47083,
+"name_intl": "Qianhai Kerry Centre Phase 1 Tower 2",
+"status": "COM",
+"latitude": "22.529028",
+"longitude": "113.886475",
+"height_architecture": "119.00",
+"completed": 2020
+},
+{
+"id": 36814,
+"name_intl": "Vanke Yun Cloud City Tower 1",
+"status": "COM",
+"latitude": "22.577761",
+"longitude": "113.941788",
+"height_architecture": "118.90",
+"completed": 2017
+},
+{
+"id": 36817,
+"name_intl": "Vanke Yun Cloud City Tower 5",
+"status": "COM",
+"latitude": "22.576193",
+"longitude": "113.941765",
+"height_architecture": "118.75",
+"completed": 2017
+},
+{
+"id": 36818,
+"name_intl": "Vanke Yun Cloud City Tower 6",
+"status": "COM",
+"latitude": "22.575647",
+"longitude": "113.941742",
+"height_architecture": "118.75",
+"completed": 2017
+},
+{
+"id": 35739,
+"name_intl": "Hongshu Bay Metro Station Building A",
+"status": "COM",
+"latitude": "22.526796",
+"longitude": "113.963989",
+"height_architecture": "118.40",
+"completed": 2020
+},
+{
+"id": 35738,
+"name_intl": "Hongshu Bay Metro Station Building B",
+"status": "COM",
+"latitude": "22.526806",
+"longitude": "113.963280",
+"height_architecture": "118.40",
+"completed": 2020
+},
+{
+"id": 37119,
+"name_intl": "Antosan Headquarters Block B",
+"status": "UCT",
+"latitude": "22.554976",
+"longitude": "114.002823",
+"height_architecture": "118.25",
+"completed": 2022
+},
+{
+"id": 29614,
+"name_intl": "Hanking Hill Block A",
+"status": "COM",
+"latitude": "22.508410",
+"longitude": "113.914864",
+"height_architecture": "116.00",
+"completed": null
+},
+{
+"id": 29615,
+"name_intl": "Hanking Hill Block B",
+"status": "COM",
+"latitude": "22.508600",
+"longitude": "113.915527",
+"height_architecture": "116.00",
+"completed": null
+},
+{
+"id": 42817,
+"name_intl": "Chentian Kaiyuan Plaza South Office Tower",
+"status": "COM",
+"latitude": "22.594751",
+"longitude": "113.868477",
+"height_architecture": "114.00",
+"completed": 2023
+},
+{
+"id": 43405,
+"name_intl": "Huangdu Plaza Building A",
+"status": "COM",
+"latitude": "22.531078",
+"longitude": "114.052322",
+"height_architecture": "113.00",
+"completed": 2003
+},
+{
+"id": 43404,
+"name_intl": "Huangdu Plaza Building B",
+"status": "COM",
+"latitude": "22.530684",
+"longitude": "114.052277",
+"height_architecture": "113.00",
+"completed": 2003
+},
+{
+"id": 18372,
+"name_intl": "JW Marriott Shenzhen Bao'an",
+"status": "COM",
+"latitude": "22.537951",
+"longitude": "114.027382",
+"height_architecture": "112.00",
+"completed": 2015
+},
+{
+"id": 30921,
+"name_intl": "China Unicom Building",
+"status": "COM",
+"latitude": "22.541353",
+"longitude": "114.049232",
+"height_architecture": "111.56",
+"completed": 2002
+},
+{
+"id": 48794,
+"name_intl": "Qianhai Wantao Building",
+"status": "UC",
+"latitude": "22.537556",
+"longitude": "113.893921",
+"height_architecture": "111.34",
+"completed": 2026
+},
+{
+"id": 14296,
+"name_intl": "Shenzhen Energy Headquarters South Tower",
+"status": "COM",
+"latitude": "22.532471",
+"longitude": "114.058830",
+"height_architecture": "111.30",
+"completed": 2017
+},
+{
+"id": 23671,
+"name_intl": "Dayong Commercial Center 4",
+"status": "COM",
+"latitude": "22.544210",
+"longitude": "113.948593",
+"height_architecture": "110.40",
+"completed": 2015
+},
+{
+"id": 27939,
+"name_intl": "Galaxy Century B",
+"status": "COM",
+"latitude": "22.540689",
+"longitude": "114.062370",
+"height_architecture": "110.00",
+"completed": 2006
+},
+{
+"id": 17069,
+"name_intl": "Shenzhen Bay Innovation and Technology Centre Building A",
+"status": "COM",
+"latitude": "22.530476",
+"longitude": "113.941490",
+"height_architecture": "110.00",
+"completed": 2020
+},
+{
+"id": 17493,
+"name_intl": "Prince's Building",
+"status": "PRO",
+"latitude": "22.489281",
+"longitude": "113.911278",
+"height_architecture": "110.00",
+"completed": null
+},
+{
+"id": 29355,
+"name_intl": "A8 Music Building",
+"status": "COM",
+"latitude": "22.525290",
+"longitude": "113.933777",
+"height_architecture": "110.00",
+"completed": 2013
+},
+{
+"id": 23599,
+"name_intl": "Genzon Times Square 1",
+"status": "COM",
+"latitude": "22.727867",
+"longitude": "114.251099",
+"height_architecture": "110.00",
+"completed": null
+},
+{
+"id": 23600,
+"name_intl": "Genzon Times Square 2",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "110.00",
+"completed": null
+},
+{
+"id": 45441,
+"name_intl": "Gionee Group Headquarters",
+"status": "COM",
+"latitude": "22.505882",
+"longitude": "113.884346",
+"height_architecture": "110.00",
+"completed": 2021
+},
+{
+"id": 29616,
+"name_intl": "Hanking International Building",
+"status": "COM",
+"latitude": "22.514610",
+"longitude": "113.919220",
+"height_architecture": "110.00",
+"completed": null
+},
+{
+"id": 47084,
+"name_intl": "Qianhai Kerry Centre Phase 3",
+"status": "COM",
+"latitude": "22.527809",
+"longitude": "113.886238",
+"height_architecture": "110.00",
+"completed": 2024
+},
+{
+"id": 46239,
+"name_intl": "Yitian Yike Tower A",
+"status": "COM",
+"latitude": "22.705591",
+"longitude": "114.360268",
+"height_architecture": "109.90",
+"completed": 2020
+},
+{
+"id": 46240,
+"name_intl": "Yitian Yike Tower B",
+"status": "COM",
+"latitude": "22.705116",
+"longitude": "114.359940",
+"height_architecture": "109.70",
+"completed": 2020
+},
+{
+"id": 34848,
+"name_intl": "Guoyin Minsheng Financial Building 2",
+"status": "COM",
+"latitude": "22.544958",
+"longitude": "114.060097",
+"height_architecture": "109.30",
+"completed": 2018
+},
+{
+"id": 45883,
+"name_intl": "China Overseas Headquarters",
+"status": "COM",
+"latitude": "22.516247",
+"longitude": "113.936661",
+"height_architecture": "108.95",
+"completed": 2023
+},
+{
+"id": 47780,
+"name_intl": "China Merchants Bank Global Headquarters Lot 2 North Building",
+"status": "COM",
+"latitude": "22.524620",
+"longitude": "113.964828",
+"height_architecture": "108.80",
+"completed": 2025
+},
+{
+"id": 47781,
+"name_intl": "China Merchants Bank Global Headquarters Lot 3 North Building",
+"status": "COM",
+"latitude": "22.524759",
+"longitude": "113.965668",
+"height_architecture": "108.80",
+"completed": 2025
+},
+{
+"id": 46843,
+"name_intl": "Tencent Helix Tower 4",
+"status": "PRO",
+"latitude": "22.538336",
+"longitude": "113.861511",
+"height_architecture": "108.80",
+"completed": null
+},
+{
+"id": 30945,
+"name_intl": "Shenzhen International Chamber Of Commerce Building A",
+"status": "COM",
+"latitude": "22.539755",
+"longitude": "114.046112",
+"height_architecture": "108.50",
+"completed": 2002
+},
+{
+"id": 23601,
+"name_intl": "China Construction Bank Building",
+"status": "COM",
+"latitude": null,
+"longitude": null,
+"height_architecture": "108.20",
+"completed": 1987
+},
+{
+"id": 47403,
+"name_intl": "Shenzhen Women & Children’s Centre",
+"status": "COM",
+"latitude": "22.555502",
+"longitude": "114.039444",
+"height_architecture": "108.07",
+"completed": 2023
+},
+{
+"id": 17068,
+"name_intl": "Shenzhen Bay Innovation and Technology Centre Building B",
+"status": "COM",
+"latitude": "22.530584",
+"longitude": "113.942230",
+"height_architecture": "108.00",
+"completed": 2020
+},
+{
+"id": 49015,
+"name_intl": "Yitian Yulong Tiandi Building 2",
+"status": "COM",
+"latitude": "22.555164",
+"longitude": "114.126701",
+"height_architecture": "108.00",
+"completed": 2024
+},
+{
+"id": 49007,
+"name_intl": "Yitian Yulong Tiandi Building 7B",
+"status": "COM",
+"latitude": "22.556829",
+"longitude": "114.125908",
+"height_architecture": "108.00",
+"completed": 2024
+},
+{
+"id": 15660,
+"name_intl": "NEO Tower C",
+"status": "COM",
+"latitude": "22.538780",
+"longitude": "114.025841",
+"height_architecture": "108.00",
+"completed": 2009
+},
+{
+"id": 44679,
+"name_intl": "COFCO Futian Joy City Office Tower 2",
+"status": "PRO",
+"latitude": "22.566124",
+"longitude": "114.041771",
+"height_architecture": "108.00",
+"completed": null
+},
+{
+"id": 27078,
+"name_intl": "Conrad Shenzhen",
+"status": "COM",
+"latitude": "22.530802",
+"longitude": "113.892326",
+"height_architecture": "107.70",
+"completed": 2023
+},
+{
+"id": 46916,
+"name_intl": "Shenzhen Science and Technology City Tower B",
+"status": "COM",
+"latitude": "22.565762",
+"longitude": "114.063271",
+"height_architecture": "107.50",
+"completed": 2023
+},
+{
+"id": 49624,
+"name_intl": "Innovation Cloud Center Tower B",
+"status": "COM",
+"latitude": "22.569107",
+"longitude": "114.057945",
+"height_architecture": "106.25",
+"completed": 2023
+},
+{
+"id": 41820,
+"name_intl": "Hony Center Residential Tower",
+"status": "COM",
+"latitude": "22.530554",
+"longitude": "113.893768",
+"height_architecture": "106.00",
+"completed": 2020
+},
+{
+"id": 20137,
+"name_intl": "Shenye TaiRan Building",
+"status": "COM",
+"latitude": "22.533270",
+"longitude": "114.016983",
+"height_architecture": "106.00",
+"completed": 2012
+},
+{
+"id": 36923,
+"name_intl": "Junlin Haiyu Phase I",
+"status": "COM",
+"latitude": "22.558746",
+"longitude": "114.238647",
+"height_architecture": "105.25",
+"completed": 2015
+},
+{
+"id": 35523,
+"name_intl": "China Guangdong Nuclear Power North Tower",
+"status": "COM",
+"latitude": "22.545038",
+"longitude": "114.061958",
+"height_architecture": "105.00",
+"completed": 2013
+},
+{
+"id": 42566,
+"name_intl": "Rongchuang Shenzhen Zhihui Plaza",
+"status": "COM",
+"latitude": "22.645809",
+"longitude": "114.014114",
+"height_architecture": "104.25",
+"completed": 2019
+},
+{
+"id": 25503,
+"name_intl": "One Shenzhen Bay Tower 1",
+"status": "COM",
+"latitude": "22.511589",
+"longitude": "113.937241",
+"height_architecture": "104.05",
+"completed": 2014
+},
+{
+"id": 46917,
+"name_intl": "Shenzhen Science and Technology City Tower C",
+"status": "COM",
+"latitude": "22.566456",
+"longitude": "114.063507",
+"height_architecture": "103.20",
+"completed": 2023
+},
+{
+"id": 37083,
+"name_intl": "Great China IFC Block D",
+"status": "COM",
+"latitude": "22.541342",
+"longitude": "114.063431",
+"height_architecture": "103.00",
+"completed": 2011
+},
+{
+"id": 48790,
+"name_intl": "Qi Jie Fang Lianjian South Residential Building",
+"status": "PRO",
+"latitude": "22.573013",
+"longitude": "113.940826",
+"height_architecture": "100.00",
+"completed": 2027
+},
+{
+"id": 27520,
+"name_intl": "Huide Apartment Tower",
+"status": "COM",
+"latitude": "22.616051",
+"longitude": "114.026138",
+"height_architecture": "100.00",
+"completed": 2019
+},
+{
+"id": 20016,
+"name_intl": "The Langham Shenzhen",
+"status": "COM",
+"latitude": "22.538940",
+"longitude": "114.015648",
+"height_architecture": "100.00",
+"completed": 2012
+},
+{
+"id": 35696,
+"name_intl": "Fangda Square T2",
+"status": "COM",
+"latitude": "22.558674",
+"longitude": "113.968575",
+"height_architecture": "100.00",
+"completed": 2018
+},
+{
+"id": 35697,
+"name_intl": "Fangda Square T3",
+"status": "COM",
+"latitude": "22.559614",
+"longitude": "113.968590",
+"height_architecture": "100.00",
+"completed": 2018
+},
+{
+"id": 35698,
+"name_intl": "Fangda Square T4",
+"status": "COM",
+"latitude": "22.559801",
+"longitude": "113.967659",
+"height_architecture": "100.00",
+"completed": 2018
+},
+{
+"id": 35945,
+"name_intl": "China Telling Communications North Tower",
+"status": "PRO",
+"latitude": "22.531128",
+"longitude": "113.967415",
+"height_architecture": "100.00",
+"completed": null
+},
+{
+"id": 47233,
+"name_intl": "Anju Phoenix Garden Tower 8",
+"status": "COM",
+"latitude": "22.725590",
+"longitude": "114.381607",
+"height_architecture": "99.90",
+"completed": 2024
+},
+{
+"id": 47234,
+"name_intl": "Anju Phoenix Garden Tower 9",
+"status": "COM",
+"latitude": "22.725550",
+"longitude": "114.380913",
+"height_architecture": "99.90",
+"completed": 2024
+},
+{
+"id": 44714,
+"name_intl": "KK TIME Tower B",
+"status": "COM",
+"latitude": "22.570137",
+"longitude": "114.118958",
+"height_architecture": "99.70",
+"completed": 2023
+},
+{
+"id": 36763,
+"name_intl": "Shenye Central City Tower 2",
+"status": "COM",
+"latitude": "22.543917",
+"longitude": "114.018555",
+"height_architecture": "99.65",
+"completed": 2020
+},
+{
+"id": 36764,
+"name_intl": "Shenye Central City Tower 3",
+"status": "COM",
+"latitude": "22.543535",
+"longitude": "114.019035",
+"height_architecture": "99.65",
+"completed": 2020
+},
+{
+"id": 36815,
+"name_intl": "Vanke Yun Cloud City Tower 2",
+"status": "COM",
+"latitude": "22.577410",
+"longitude": "113.942200",
+"height_architecture": "99.30",
+"completed": 2017
+},
+{
+"id": 18373,
+"name_intl": "Qianhai Haiyi Plaza Apartments",
+"status": "COM",
+"latitude": "22.537889",
+"longitude": "114.027046",
+"height_architecture": "99.00",
+"completed": 2015
+},
+{
+"id": 47087,
+"name_intl": "Qianhai Kerry Centre Phase 1 Tower A3",
+"status": "COM",
+"latitude": "22.529493",
+"longitude": "113.887726",
+"height_architecture": "99.00",
+"completed": 2019
+},
+{
+"id": 37045,
+"name_intl": "Kingkey Yujingfeng Mansion Block 6",
+"status": "COM",
+"latitude": "22.600393",
+"longitude": "114.008507",
+"height_architecture": "98.95",
+"completed": 2019
+},
+{
+"id": 37046,
+"name_intl": "Kingkey Yujingfeng Mansion Block 7",
+"status": "COM",
+"latitude": "22.600521",
+"longitude": "114.007950",
+"height_architecture": "98.95",
+"completed": 2019
+},
+{
+"id": 37120,
+"name_intl": "Antosan Headquarters Block C",
+"status": "UCT",
+"latitude": "22.554926",
+"longitude": "114.003517",
+"height_architecture": "97.50",
+"completed": 2022
+},
+{
+"id": 35734,
+"name_intl": "Hongshu Bay Metro Station Building F",
+"status": "COM",
+"latitude": "22.527672",
+"longitude": "113.963867",
+"height_architecture": "97.10",
+"completed": 2020
+},
+{
+"id": 41401,
+"name_intl": "Shenzhen Kerry Hotel Jen",
+"status": "STO",
+"latitude": null,
+"longitude": null,
+"height_architecture": "96.10",
+"completed": 2021
+},
+{
+"id": 17601,
+"name_intl": "One Excellence Tower 4",
+"status": "COM",
+"latitude": "22.531853",
+"longitude": "113.894302",
+"height_architecture": "96.05",
+"completed": 2018
+},
+{
+"id": 48952,
+"name_intl": "Shum Yip Century Valley Phase 1B",
+"status": "COM",
+"latitude": "22.548576",
+"longitude": "113.963226",
+"height_architecture": "92.50",
+"completed": 2023
+},
+{
+"id": 36812,
+"name_intl": "Vanke Yun Cloud City Tower 9A",
+"status": "COM",
+"latitude": "22.576828",
+"longitude": "113.942680",
+"height_architecture": "92.45",
+"completed": 2018
+},
+{
+"id": 38610,
+"name_intl": "Sungang MixC Market Hall Office Tower 2",
+"status": "COM",
+"latitude": "22.564892",
+"longitude": "114.105217",
+"height_architecture": "90.00",
+"completed": 2022
+},
+{
+"id": 37081,
+"name_intl": "Great China IFC Block B",
+"status": "COM",
+"latitude": "22.541897",
+"longitude": "114.064499",
+"height_architecture": "88.00",
+"completed": 2011
+},
+{
+"id": 29771,
+"name_intl": "Hard Rock Hotel Shenzhen",
+"status": "COM",
+"latitude": "22.723728",
+"longitude": "114.069824",
+"height_architecture": "88.00",
+"completed": 2017
+},
+{
+"id": 36550,
+"name_intl": "Hybrid Tower",
+"status": "COM",
+"latitude": "22.518425",
+"longitude": "113.931190",
+"height_architecture": "87.35",
+"completed": 2019
+},
+{
+"id": 38710,
+"name_intl": "OCT Ring Ping City Tower 2",
+"status": "PRO",
+"latitude": "22.681650",
+"longitude": "114.329086",
+"height_architecture": "87.00",
+"completed": null
+},
+{
+"id": 42496,
+"name_intl": "Kuantan-Chi Future Center Block B",
+"status": "COM",
+"latitude": "22.540026",
+"longitude": "113.946693",
+"height_architecture": "86.70",
+"completed": 2021
+},
+{
+"id": 47086,
+"name_intl": "Qianhai Kerry Centre Phase 1 Tower A2",
+"status": "COM",
+"latitude": "22.529921",
+"longitude": "113.887192",
+"height_architecture": "86.00",
+"completed": 2019
+},
+{
+"id": 23406,
+"name_intl": "One Shenzhen Bay Tower 4",
+"status": "COM",
+"latitude": "22.511181",
+"longitude": "113.938263",
+"height_architecture": "84.50",
+"completed": 2014
+},
+{
+"id": 43715,
+"name_intl": "KK TIME Tower A",
+"status": "COM",
+"latitude": "22.570528",
+"longitude": "114.118996",
+"height_architecture": "84.30",
+"completed": 2023
+},
+{
+"id": 37300,
+"name_intl": "Ali Center Tower 2",
+"status": "COM",
+"latitude": "22.512691",
+"longitude": "113.937531",
+"height_architecture": "84.20",
+"completed": 2018
+},
+{
+"id": 24748,
+"name_intl": "Shenzhen Fourth People's Hospital New People's Ward Tower",
+"status": "COM",
+"latitude": "22.541622",
+"longitude": "114.074478",
+"height_architecture": "83.30",
+"completed": 2017
+},
+{
+"id": 50533,
+"name_intl": "Dajia Insurance Group Headquarters Tower 2",
+"status": "COM",
+"latitude": "22.520828",
+"longitude": "113.937775",
+"height_architecture": "83.00",
+"completed": 2026
+},
+{
+"id": 39356,
+"name_intl": "China Venture Capital Tower B",
+"status": "COM",
+"latitude": "22.543140",
+"longitude": "113.898033",
+"height_architecture": "80.48",
+"completed": 2024
+},
+{
+"id": 50139,
+"name_intl": "Gate of Hubei West Tower",
+"status": "UC",
+"latitude": "22.548355",
+"longitude": "114.123886",
+"height_architecture": "80.11",
+"completed": null
+},
+{
+"id": 47778,
+"name_intl": "China Merchants Bank Global Headquarters Lot 2 South Building",
+"status": "COM",
+"latitude": "22.523848",
+"longitude": "113.964828",
+"height_architecture": "80.00",
+"completed": 2025
+},
+{
+"id": 47779,
+"name_intl": "China Merchants Bank Global Headquarters Lot 3 South Building",
+"status": "COM",
+"latitude": "22.523968",
+"longitude": "113.965881",
+"height_architecture": "80.00",
+"completed": 2025
+},
+{
+"id": 35203,
+"name_intl": "Hengli International Cultural Tower",
+"status": "PRO",
+"latitude": "22.525137",
+"longitude": "113.972244",
+"height_architecture": "80.00",
+"completed": null
+},
+{
+"id": 37082,
+"name_intl": "Great China IFC Block C",
+"status": "COM",
+"latitude": "22.541882",
+"longitude": "114.063789",
+"height_architecture": "79.00",
+"completed": 2011
+},
+{
+"id": 47085,
+"name_intl": "Qianhai Kerry Centre Phase 1 Tower A1",
+"status": "COM",
+"latitude": "22.530088",
+"longitude": "113.886826",
+"height_architecture": "79.00",
+"completed": 2019
+},
+{
+"id": 47079,
+"name_intl": "BEA Tower",
+"status": "COM",
+"latitude": "22.529005",
+"longitude": "113.888321",
+"height_architecture": "79.00",
+"completed": 2023
+},
+{
+"id": 25504,
+"name_intl": "One Shenzhen Bay Tower 3",
+"status": "COM",
+"latitude": "22.511560",
+"longitude": "113.938179",
+"height_architecture": "75.60",
+"completed": 2014
+},
+{
+"id": 37303,
+"name_intl": "Ali Center Tower 3",
+"status": "COM",
+"latitude": "22.511980",
+"longitude": "113.937531",
+"height_architecture": "75.20",
+"completed": 2018
+},
+{
+"id": 23593,
+"name_intl": "Shenzhen CFC Changfu Centre Apartments",
+"status": "COM",
+"latitude": "22.508760",
+"longitude": "114.051468",
+"height_architecture": "74.80",
+"completed": 2015
+},
+{
+"id": 46186,
+"name_intl": "Hengmingzhu International Financial Center Tower 2",
+"status": "COM",
+"latitude": "22.560181",
+"longitude": "113.904716",
+"height_architecture": "74.80",
+"completed": 2020
+},
+{
+"id": 48170,
+"name_intl": "China Resources Hubei Center Plot A4 Block A",
+"status": "COM",
+"latitude": "22.549099",
+"longitude": "114.124046",
+"height_architecture": "74.10",
+"completed": 2024
+},
+{
+"id": 16862,
+"name_intl": "Hotel Kapok Shenzhen Bay",
+"status": "COM",
+"latitude": "22.521940",
+"longitude": "113.942299",
+"height_architecture": "73.00",
+"completed": 2012
+},
+{
+"id": 49018,
+"name_intl": "Yitian Yulong Tiandi Building 5",
+"status": "COM",
+"latitude": "22.555580",
+"longitude": "114.126259",
+"height_architecture": "69.00",
+"completed": 2024
+},
+{
+"id": 27519,
+"name_intl": "Shenzhen Gate Tower 2",
+"status": "COM",
+"latitude": "22.612600",
+"longitude": "114.028442",
+"height_architecture": "68.00",
+"completed": 2019
+},
+{
+"id": 18053,
+"name_intl": "China Merchants Shekou Industrial Zone Building 4",
+"status": "COM",
+"latitude": "22.474964",
+"longitude": "113.904564",
+"height_architecture": "66.00",
+"completed": null
+},
+{
+"id": 45892,
+"name_intl": "International Art Design Center",
+"status": "COM",
+"latitude": "22.786228",
+"longitude": "113.831856",
+"height_architecture": "65.75",
+"completed": 2018
+},
+{
+"id": 47081,
+"name_intl": "Qianhai Kerry Centre Phase 2 Tower 2",
+"status": "COM",
+"latitude": "22.527205",
+"longitude": "113.887344",
+"height_architecture": "65.00",
+"completed": 2023
+},
+{
+"id": 24749,
+"name_intl": "Shenzhen Fourth People's Hospital IMC Ward",
+"status": "COM",
+"latitude": "22.540623",
+"longitude": "114.074661",
+"height_architecture": "64.80",
+"completed": 2017
+},
+{
+"id": 32501,
+"name_intl": "Tsinghua Ocean Center",
+"status": "COM",
+"latitude": "22.594908",
+"longitude": "113.966995",
+"height_architecture": "63.15",
+"completed": 2016
+},
+{
+"id": 18050,
+"name_intl": "China Merchants Shekou Industrial Zone Building 1",
+"status": "COM",
+"latitude": "22.475933",
+"longitude": "113.906090",
+"height_architecture": "57.00",
+"completed": null
+},
+{
+"id": 18051,
+"name_intl": "China Merchants Shekou Industrial Zone Building 2",
+"status": "COM",
+"latitude": "22.476515",
+"longitude": "113.905602",
+"height_architecture": "57.00",
+"completed": null
+},
+{
+"id": 18052,
+"name_intl": "China Merchants Shekou Industrial Zone Building 3",
+"status": "COM",
+"latitude": "22.475466",
+"longitude": "113.904205",
+"height_architecture": "57.00",
+"completed": null
+},
+{
+"id": 46194,
+"name_intl": "Moofun World Artists Studios South Tower",
+"status": "COM",
+"latitude": "22.787249",
+"longitude": "113.829742",
+"height_architecture": "53.60",
+"completed": 2018
+},
+{
+"id": 37302,
+"name_intl": "Ali Center Tower 1",
+"status": "COM",
+"latitude": "22.512676",
+"longitude": "113.938431",
+"height_architecture": "52.70",
+"completed": 2018
+},
+{
+"id": 23830,
+"name_intl": "Hilton Shenzhen Shekou Nanhai",
+"status": "COM",
+"latitude": "22.482389",
+"longitude": "113.911163",
+"height_architecture": "50.00",
+"completed": null
+},
+{
+"id": 47872,
+"name_intl": "Scenic City South Building",
+"status": "UC",
+"latitude": "22.526659",
+"longitude": "113.972198",
+"height_architecture": "50.00",
+"completed": 2027
+},
+{
+"id": 37304,
+"name_intl": "Ali Center Tower 4",
+"status": "COM",
+"latitude": "22.511883",
+"longitude": "113.938454",
+"height_architecture": "43.70",
+"completed": 2018
+},
+{
+"id": 50969,
+"name_intl": "The Living Bridge",
+"status": "PRO",
+"latitude": "22.536937",
+"longitude": "113.896284",
+"height_architecture": "35.00",
+"completed": null
+},
+{
+"id": 48905,
+"name_intl": "Chentian Kaiyuan Plaza North Serviced Apartment Tower",
+"status": "COM",
+"latitude": "22.595776",
+"longitude": "113.867790",
+"height_architecture": "0.00",
+"completed": 2023
+},
+{
+"id": 48904,
+"name_intl": "Chentian Kaiyuan Plaza South Serviced Apartment Tower",
+"status": "COM",
+"latitude": "22.595203",
+"longitude": "113.868126",
+"height_architecture": "0.00",
+"completed": 2023
+},
+{
+"id": 49449,
+"name_intl": "Houhai Plot T107-0084 South Tower",
+"status": "PRO",
+"latitude": "22.511454",
+"longitude": "113.933983",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 44101,
+"name_intl": "Helios Mansion Tower 1",
+"status": "UC",
+"latitude": "22.530321",
+"longitude": "114.045319",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 44104,
+"name_intl": "Helios Mansion Tower 2",
+"status": "UC",
+"latitude": "22.530260",
+"longitude": "114.044876",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 49445,
+"name_intl": "Houhai Plot T107-0008 North Tower",
+"status": "PRO",
+"latitude": "22.514172",
+"longitude": "113.933823",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 48369,
+"name_intl": "CITIC Urban Development & Operation Shenzhen Dongjiaotou Northwest Building",
+"status": "UC",
+"latitude": "22.489891",
+"longitude": "113.936073",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 48366,
+"name_intl": "CITIC Urban Development & Operation Shenzhen Dongjiaotou Southwest Building",
+"status": "UC",
+"latitude": "22.488775",
+"longitude": "113.936607",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 48363,
+"name_intl": "CITIC Urban Development & Operation Shenzhen Dongjiaotou South-Central Building",
+"status": "UC",
+"latitude": "22.488815",
+"longitude": "113.937187",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 49446,
+"name_intl": "Houhai Plot T107-0008 South Tower",
+"status": "PRO",
+"latitude": "22.513514",
+"longitude": "113.933769",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 48367,
+"name_intl": "CITIC Urban Development & Operation Shenzhen Dongjiaotou Northeast Building",
+"status": "UC",
+"latitude": "22.490110",
+"longitude": "113.936913",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 49448,
+"name_intl": "Houhai Plot T107-0084 Middle Tower",
+"status": "PRO",
+"latitude": "22.511908",
+"longitude": "113.933716",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 45227,
+"name_intl": "Park Hyatt Bay Business Centre Tower 3",
+"status": "UC",
+"latitude": "22.510052",
+"longitude": "113.913986",
+"height_architecture": null,
+"completed": 2023
+},
+{
+"id": 45228,
+"name_intl": "Park Hyatt Bay Business Centre Tower 4",
+"status": "UC",
+"latitude": "22.509556",
+"longitude": "113.914589",
+"height_architecture": null,
+"completed": 2023
+},
+{
+"id": 48362,
+"name_intl": "CITIC Urban Development & Operation Shenzhen Dongjiaotou Southeast Building",
+"status": "UC",
+"latitude": "22.489267",
+"longitude": "113.937416",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 49447,
+"name_intl": "Houhai Plot T107-0084 North Tower",
+"status": "PRO",
+"latitude": "22.512650",
+"longitude": "113.933746",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 44105,
+"name_intl": "Helios Mansion Tower 3",
+"status": "UC",
+"latitude": "22.530081",
+"longitude": "114.044724",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 44209,
+"name_intl": "Fisherman's Wharf Shekou T1A",
+"status": "UC",
+"latitude": "22.483084",
+"longitude": "113.923347",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 44210,
+"name_intl": "Fisherman's Wharf Shekou T1B",
+"status": "UC",
+"latitude": "22.482697",
+"longitude": "113.922577",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 35089,
+"name_intl": "Shimao Pingshan Center Tower 2",
+"status": "OH",
+"latitude": "22.685085",
+"longitude": "114.324867",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 15995,
+"name_intl": "Tianji Bay International Plaza Tower 5",
+"status": "PRO",
+"latitude": null,
+"longitude": null,
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 33245,
+"name_intl": "Prince Bay Hotel",
+"status": "PRO",
+"latitude": "22.473360",
+"longitude": "113.907928",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 49562,
+"name_intl": "Tencent Music Technology Building",
+"status": "UC",
+"latitude": "22.523308",
+"longitude": "113.940445",
+"height_architecture": null,
+"completed": 2027
+},
+{
+"id": 48240,
+"name_intl": "The Sweet Spot Tower",
+"status": "PRO",
+"latitude": "22.670731",
+"longitude": "114.325783",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 51198,
+"name_intl": "CMG Times Center Tower 3",
+"status": "STO",
+"latitude": "22.508394",
+"longitude": "113.882277",
+"height_architecture": null,
+"completed": 2026
+},
+{
+"id": 44746,
+"name_intl": "Jindi Industrial Zone Redevelopment Tower 12",
+"status": "UC",
+"latitude": "22.523218",
+"longitude": "114.033852",
+"height_architecture": null,
+"completed": 2026
+},
+{
+"id": 44706,
+"name_intl": "Lai Meng International West Building",
+"status": "UC",
+"latitude": "22.637440",
+"longitude": "114.006355",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 39133,
+"name_intl": "Associated Shenzhen Children's Hospital West Building",
+"status": "COM",
+"latitude": "22.550224",
+"longitude": "114.048241",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 31193,
+"name_intl": "Bao’an Art and Culture Centre",
+"status": "UC",
+"latitude": "22.558678",
+"longitude": "113.882248",
+"height_architecture": null,
+"completed": 2026
+},
+{
+"id": 36118,
+"name_intl": "Yuehai Community Sport and Cultural Center",
+"status": "UC",
+"latitude": "22.526815",
+"longitude": "113.945778",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 39131,
+"name_intl": "Shenzhen Children’s Hospital and Science and Education Building",
+"status": "PRO",
+"latitude": "22.550018",
+"longitude": "114.047089",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 39137,
+"name_intl": "Associated Shenzhen Children's Hospital East Building",
+"status": "COM",
+"latitude": "22.550270",
+"longitude": "114.049744",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 46426,
+"name_intl": "Bay Opera of Shenzhen",
+"status": "COM",
+"latitude": "22.547295",
+"longitude": "113.877541",
+"height_architecture": null,
+"completed": 2021
+},
+{
+"id": 27079,
+"name_intl": "China Horoy Qianhai Guanze Apartment Tower 1",
+"status": "PRO",
+"latitude": null,
+"longitude": null,
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 27080,
+"name_intl": "China Horoy Qianhai Guanze Apartment Tower 2",
+"status": "PRO",
+"latitude": null,
+"longitude": null,
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 43991,
+"name_intl": "Nanshan Innovation Center Tower 2",
+"status": "UC",
+"latitude": "22.524794",
+"longitude": "113.965172",
+"height_architecture": null,
+"completed": null
+},
+{
+"id": 47356,
+"name_intl": "Tencent P5 Tower 1",
+"status": "STO",
+"latitude": "22.549295",
+"longitude": "113.858505",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47365,
+"name_intl": "Tencent P5 Tower 10",
+"status": "STO",
+"latitude": "22.544041",
+"longitude": "113.861694",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47366,
+"name_intl": "Tencent P5 Tower 11",
+"status": "STO",
+"latitude": "22.543318",
+"longitude": "113.861252",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47357,
+"name_intl": "Tencent P5 Tower 2",
+"status": "STO",
+"latitude": "22.549702",
+"longitude": "113.859825",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47358,
+"name_intl": "Tencent P5 Tower 3",
+"status": "STO",
+"latitude": "22.549196",
+"longitude": "113.859329",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47359,
+"name_intl": "Tencent P5 Tower 4",
+"status": "STO",
+"latitude": "22.547977",
+"longitude": "113.859360",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47360,
+"name_intl": "Tencent P5 Tower 5",
+"status": "STO",
+"latitude": "22.548155",
+"longitude": "113.860237",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47361,
+"name_intl": "Tencent P5 Tower 6",
+"status": "STO",
+"latitude": "22.547550",
+"longitude": "113.859886",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47362,
+"name_intl": "Tencent P5 Tower 7",
+"status": "STO",
+"latitude": "22.546499",
+"longitude": "113.859879",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47363,
+"name_intl": "Tencent P5 Tower 8",
+"status": "STO",
+"latitude": "22.545786",
+"longitude": "113.861038",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 47364,
+"name_intl": "Tencent P5 Tower 9",
+"status": "STO",
+"latitude": "22.544834",
+"longitude": "113.860161",
+"height_architecture": null,
+"completed": 2025
+},
+{
+"id": 35350,
+"name_intl": "The New Swan Stone Castle Tower A",
+"status": "COM",
+"latitude": "22.549900",
+"longitude": "113.977264",
+"height_architecture": null,
+"completed": 2018
+},
+{
+"id": 35351,
+"name_intl": "The New Swan Stone Castle Tower C",
+"status": "COM",
+"latitude": "22.549814",
+"longitude": "113.978767",
+"height_architecture": null,
+"completed": 2018
+},
+{
+"id": 35352,
+"name_intl": "The New Swan Stone Castle Tower D",
+"status": "COM",
+"latitude": "22.549292",
+"longitude": "113.979797",
+"height_architecture": null,
+"completed": 2018
+}
+]
+}

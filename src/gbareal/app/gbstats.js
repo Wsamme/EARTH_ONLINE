@@ -36,6 +36,6 @@ function sgrRenderIslandStats(){
   const S = SGR.stats;
   const rows = [['陆地面积', 'Land', `${world.landKm2.toFixed(0)} km²`], ['最高峰', 'Peak', `${world.peak.name[0]} ${Math.round(world.peak.h)} m`],
     ['森林覆盖', 'Forest', `${Math.round(world.forestPct*100)}%`], ['岛屿', 'Islands', '香港岛 · 大屿山 · 南丫岛 · 长洲'],
-    ['建筑', 'Buildings', S ? `${S.n.toLocaleString()} 栋` : '…'], ['地图', 'Map', '1:1 · 126 × 126 km'], ['数据', 'Data', 'OpenStreetMap · Terrain Tiles (AWS)']];
+    ['建筑', 'Buildings', S ? `${S.n.toLocaleString()} 栋` : '…'], ['地图', 'Map', '1:1 · 126 × 126 km'], ['数据', 'Data', 'OpenStreetMap · Overture Maps · 3D-GloBFP (Che et al. 2024) · CTBUH · Terrain Tiles (AWS)']];
   $('#islandStats').innerHTML = rows.map(r => `<dt>${r[0]}<small>${r[1]}</small></dt><dd>${r[2]}</dd>`).join('');
 }

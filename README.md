@@ -108,7 +108,7 @@ The generator (plan, districts, traffic, terrain tools, seeds, presets) is still
 | New York | [Open](https://earth-online-wsammes-projects.vercel.app/nyc.html) | `nyc.html` | The five boroughs, plus Jersey City and Newark. About 1.65 million footprints. |
 | Hong Kong | [Open](https://earth-online-wsammes-projects.vercel.app/hk.html) | `hk.html` | Hong Kong Island, Kowloon, the New Territories, Lantau and the islands. 205 labelled landmarks and parks; the neon and sign layer (all names invented). Shenzhen is context, not the subject. |
 | Tokyo | [Open](https://earth-online-wsammes-projects.vercel.app/tyo.html) | `tyo.html` | The 23 wards out through Kawasaki, Yokohama and Saitama, Tokyo Bay, and Mount Fuji on the horizon. About 3.5 million footprints. |
-| Greater Bay | [Open](https://earth-online-wsammes-projects.vercel.app/gba.html) | `gba.html` | Dongguan, Shenzhen and Hong Kong in one 126 km square: about 228,000 footprints and 318 labelled landmarks and parks (Hong Kong 189, Shenzhen 103, Dongguan 26). Work in progress: built with the October engine (no phone streaming yet), data as `.txt` in `gbadata/`. Source: `src/gba/`, `src/gbareal/`. |
+| Greater Bay | [Open](https://earth-online-wsammes-projects.vercel.app/gba.html) | `gba.html` | Dongguan, Shenzhen and Hong Kong in one 126 km square: about 975,000 footprints (Shenzhen and Dongguan from Overture Maps, heights from OpenStreetMap, 3D-GloBFP and the CTBUH tall-building lists) and 318 labelled landmarks and parks (Hong Kong 189, Shenzhen 103, Dongguan 26). Work in progress: built with the October engine (no phone streaming yet), data as `.txt` in `gbadata/`. Source: `src/gba/`, `src/gbareal/`. |
 
 Every city opens in View. The buttons in the corner switch among the six pages in the same folder.
 
@@ -227,6 +227,8 @@ Two licences, on purpose.
 
 **Hong Kong buildings.** About a thousand buildings on the Hong Kong page (`site/hkdata/hk3d.bin`, made by `src/hk/zz_hk3d/tools/`) are simplified from the Lands Department's *3D Visualisation Map* (non-textured models, 3d.map.gov.hk / CSDI portal), and their names come from the Lands Department's *Building* dataset (CSDI `landsd_rcd_1637211194312_35158`, via DATA.GOV.HK). Free to use, commercial use included, on condition that the source is credited: “Source: HKSAR Government, Lands Department”. The Hong Kong page shows that credit in the corner. Details in [DATA_LICENSE](DATA_LICENSE).
 
+**Shenzhen and Dongguan buildings.** On the Greater Bay page, Shenzhen and Dongguan footprints are from Overture Maps (OpenStreetMap, ODbL; East Asian buildings by Shi et al., CC BY 4.0). Heights come from OpenStreetMap where it has them, from the CTBUH Skyscraper Center for tall buildings, and otherwise from 3D-GloBFP (Che et al. 2024, CC BY 4.0), a machine-learning estimate. Details in [DATA_LICENSE](DATA_LICENSE).
+
 The running map repeats both credits in the corner, including while the rest of the interface is hidden. Leave them there.
 
 three.js r128 is loaded from a CDN and stays under its own MIT licence. Noto Sans SC and JetBrains Mono come from Google Fonts and are not in this repository.
@@ -239,6 +241,7 @@ three.js r128 is loaded from a CDN and stays under its own MIT licence. Noto San
 - [AWS Open Data](https://registry.opendata.aws/terrain-tiles/) and [Tilezen](https://github.com/tilezen/joerd/blob/master/docs/attribution.md), for the terrain tiles
 - Overture Maps and the HDB3D attributes used while the Singapore buildings were built. See `DATA_LICENSE` before you pass those on
 - HKSAR Government, Lands Department, for the 3D Visualisation Map and the Building dataset (via [DATA.GOV.HK](https://data.gov.hk/))
+- Overture Maps Foundation; Shi et al. (East Asian buildings); Che et al. (3D-GloBFP); the CTBUH Skyscraper Center
 - [three.js](https://github.com/mrdoob/three.js/)
 
 ## Star history

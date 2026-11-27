@@ -46,7 +46,8 @@ for bb in REF['buildings']:
     else:
         kept.append((bb, poly))
         if not G.is_empty and poly.intersection(G).area > 2: clash.append((bb, poly, poly.intersection(G).area))
-tgt = next((bb for bb in REF['buildings'] if REF['meta'].get('osm') and bb.get('osm') == REF['meta'].get('osm')), None)
+tgts = [bb for bb in REF['buildings'] if bb.get('target')] or [bb for bb in REF['buildings'] if REF['meta'].get('osm') and bb.get('osm') == REF['meta'].get('osm')]
+tgt = {'osm':REF['meta'].get('osm'), 'ring':list(unary_union([Polygon(bb['ring']).buffer(0) for bb in tgts]).convex_hull.exterior.coords)} if tgts else None   # the target footprint: the app pieces flagged target (refs_sz.py)
 gc = G.centroid if not G.is_empty else None
 print('%s: place lat %.6f lon %.6f rot %.4f | tris %d | hull area %d m2 | model <4 m plan %d m2' % (key, pl['lat'], pl['lon'], rot, n, H.area, G.area))
 print('hidden real buildings (%d):' % len(hidden), ', '.join('%s %s h%.0f' % (bb.get('osm', '-'), bb.get('name') or '', bb['h']) for bb, _ in hidden[:40]))

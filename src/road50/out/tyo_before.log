@@ -1,0 +1,359 @@
+[0.4s] tyo lines 393687
+[9.2s] prep: junction nodes 511074
+[14.7s] traffic network: links 1081979 pieces 587855 nodes 408891 movements 2194345
+[20.6s] weak components 3088 main 95.7% others >=1 km 119 | SCC main 94.8%
+[34.6s] dead ends {"total":54932,"tunnel":0,"edge":1627,"chunk":0,"gap3":764,"gap6":435,"gap12":1377,"levelgap":8811,"service":7478,"deckend":344,"water":189,"culdesac":33907,"oneway":3891} sinks 106 sources 1020
+[48.0s] crossings {"falsejunc":221,"lowclear":2482,"missedjunc":2976,"overpass":7720,"atgrade":119640}
+[48.4s] levels / water {"step1_3":1263,"step3_15":3394,"step15":292,"steep":996,"inwater":398,"inwaterM":48529,"shortdeck":0}
+[109.8s] routes {"pairs":2000,"ok":1895,"fail":105,"failIsland":94,"failOneway":11,"detourMed":1.18,"detour3":3,"far":1892,"okPct":94.8}
+[110.9s] movements {"moves":2194345,"zjump1_5":564,"zjump5":470,"xyFar":0}
+[111.0s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+{
+ "city": "tyo",
+ "tag": "before",
+ "dir": "/home/claude/earth_online/site/tyodata",
+ "lines": 393687,
+ "drivableKm": 44727.3,
+ "links": 1081979,
+ "nodes": 408891,
+ "junctionNodes": 511074,
+ "weakComponents": 3088,
+ "mainWeakPct": 95.75,
+ "otherComponentsOver1km": 119,
+ "otherKm": 1901.4,
+ "mainSccPctApp": 86.36,
+ "mainSccPct": 94.81,
+ "closedOnewaySets": 55,
+ "closedOnewayKm": 18.36,
+ "sinkLinksInMain": 1291,
+ "sourceLinksInMain": 2200,
+ "deadEnds": {
+  "total": 54932,
+  "tunnel": 0,
+  "edge": 1627,
+  "chunk": 0,
+  "gap3": 764,
+  "gap6": 435,
+  "gap12": 1377,
+  "levelgap": 8811,
+  "service": 7478,
+  "deckend": 344,
+  "water": 189,
+  "culdesac": 33907,
+  "oneway": 3891
+ },
+ "onewaySinks": 106,
+ "onewaySources": 1020,
+ "crossings": {
+  "falsejunc": 221,
+  "lowclear": 2482,
+  "missedjunc": 2976,
+  "overpass": 7720,
+  "atgrade": 119640
+ },
+ "levels": {
+  "step1_3": 1263,
+  "step3_15": 3394,
+  "step15": 292,
+  "steep": 996,
+  "inwater": 398,
+  "inwaterM": 48529,
+  "shortdeck": 0
+ },
+ "movements": {
+  "moves": 2194345,
+  "zjump1_5": 564,
+  "zjump5": 470,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1895,
+  "fail": 105,
+  "failIsland": 94,
+  "failOneway": 11,
+  "detourMed": 1.18,
+  "detour3": 3,
+  "far": 1892,
+  "okPct": 94.8
+ },
+ "tunnels": {
+  "portals": 0,
+  "pairs": 0,
+  "unmatched": 0
+ },
+ "problemCounts": {
+  "island": 119,
+  "oneway_trap": 55,
+  "oneway_noentry": 6,
+  "dead_levelgap": 8811,
+  "source": 1020,
+  "sink": 106,
+  "dead_deckend": 344,
+  "dead_gap12": 1377,
+  "dead_edge": 1627,
+  "dead_gap6": 435,
+  "dead_gap3": 764,
+  "dead_water": 189,
+  "missedjunc": 2976,
+  "lowclear": 2482,
+  "falsejunc": 221,
+  "step": 4949,
+  "inwater": 398,
+  "steep": 996,
+  "zjump": 564
+ },
+ "topIslands": [
+  {
+   "len": 940099,
+   "x": 22053,
+   "y": -24233,
+   "cls": 0,
+   "names": [
+    "Tokyo-Wan-Aqua-Line Expressway",
+    "Aqua Renraku Expressway",
+    "東京湾アクアライン;東京湾横断・木更津東金道路",
+    "東京湾岸道路"
+   ]
+  },
+  {
+   "len": 43377,
+   "x": 863,
+   "y": -18011,
+   "cls": 0,
+   "names": [
+    "Bayshore Route",
+    "Tokyo Wangan Road",
+    "Wangan Road",
+    "東京湾岸道路"
+   ]
+  },
+  {
+   "len": 33151,
+   "x": -1146,
+   "y": 18110,
+   "cls": 0,
+   "names": [
+    "Tokyo Gaikan Expressway"
+   ]
+  },
+  {
+   "len": 22607,
+   "x": -11178,
+   "y": 22074,
+   "cls": 0,
+   "names": [
+    "Route 5 Ikebukuro Line",
+    "Saitama-Omiya Expressway",
+    "Saitama-Shintoshin Expressway"
+   ]
+  },
+  {
+   "len": 22140,
+   "x": 5459,
+   "y": 8018,
+   "cls": 0,
+   "names": [
+    "Central Circular Route"
+   ]
+  },
+  {
+   "len": 22047,
+   "x": -9743,
+   "y": 19155,
+   "cls": 0,
+   "names": [
+    "Route 5 Ikebukuro Line",
+    "Saitama-Omiya Expressway",
+    "Saitama-Shintoshin Expressway"
+   ]
+  },
+  {
+   "len": 20987,
+   "x": 7782,
+   "y": 18869,
+   "cls": 0,
+   "names": [
+    "Tokyo Gaikan Expressway"
+   ]
+  },
+  {
+   "len": 17952,
+   "x": -3176,
+   "y": -15191,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 1 Haneda Line",
+    "Kanagawa Route 6 Kawasaki Line",
+    "Kanagawa Route 1 Yokohane Line"
+   ]
+  },
+  {
+   "len": 17304,
+   "x": 3148,
+   "y": -12008,
+   "cls": 0,
+   "names": [
+    "Bayshore Route"
+   ]
+  },
+  {
+   "len": 12182,
+   "x": -10074,
+   "y": 17365,
+   "cls": 0,
+   "names": [
+    "Tokyo Gaikan Expressway"
+   ]
+  },
+  {
+   "len": 10764,
+   "x": -27823,
+   "y": -24845,
+   "cls": 4,
+   "names": [
+    "Nakahara Kaidō",
+    "Shiyakusho Minamidori"
+   ]
+  },
+  {
+   "len": 9029,
+   "x": -436,
+   "y": 4687,
+   "cls": 0,
+   "names": [
+    "Route 5 Ikebukuro Line"
+   ]
+  },
+  {
+   "len": 8390,
+   "x": -1824,
+   "y": 5843,
+   "cls": 0,
+   "names": [
+    "Route 5 Ikebukuro Line"
+   ]
+  },
+  {
+   "len": 8304,
+   "x": 6744,
+   "y": 3809,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 7 Komatsugawa Line"
+   ]
+  },
+  {
+   "len": 8107,
+   "x": 3780,
+   "y": -13177,
+   "cls": 1,
+   "names": [
+    "Tokyo Wangan Road",
+    "国道357号",
+    "Kampachi-dori"
+   ]
+  },
+  {
+   "len": 7818,
+   "x": 8890,
+   "y": 17763,
+   "cls": 0,
+   "names": [
+    "Joban Expressway",
+    "Shuto Expressway Route 6 Misato Line",
+    "首都高速6号三郷線"
+   ]
+  },
+  {
+   "len": 7578,
+   "x": 5453,
+   "y": 7119,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 6 Mukojima Line",
+    "Metropolitan Expressway Route 6 Mukojima Line"
+   ]
+  },
+  {
+   "len": 7340,
+   "x": -4967,
+   "y": 2248,
+   "cls": 0,
+   "names": [
+    "Route 4 Shinjuku Line"
+   ]
+  },
+  {
+   "len": 6928,
+   "x": 5254,
+   "y": -683,
+   "cls": 0,
+   "names": [
+    "Bayshore Route",
+    "Shuto Expressway Route 9 Fukagawa Line"
+   ]
+  },
+  {
+   "len": 6915,
+   "x": 5335,
+   "y": -847,
+   "cls": 0,
+   "names": [
+    "Fukagawa Route",
+    "Shuto Expressway Route 9 Fukagawa Line"
+   ]
+  },
+  {
+   "len": 6850,
+   "x": 4421,
+   "y": 4917,
+   "cls": 0,
+   "names": [
+    "Metropolitan Expressway Route 6 Mukojima Line",
+    "Shuto Expressway Route 6 Mukojima Line"
+   ]
+  },
+  {
+   "len": 6825,
+   "x": -766,
+   "y": 342,
+   "cls": 0,
+   "names": [
+    "Circle 1",
+    "Shuto Expressway Inner Circular Route",
+    "Route 3 Shibuya Line"
+   ]
+  },
+  {
+   "len": 6433,
+   "x": -11686,
+   "y": -24766,
+   "cls": 0,
+   "names": [
+    "Kanagawa Route 3 Kariba Line"
+   ]
+  },
+  {
+   "len": 6302,
+   "x": -2872,
+   "y": 9810,
+   "cls": 0,
+   "names": [
+    "Central Circular Route"
+   ]
+  },
+  {
+   "len": 6130,
+   "x": -2064,
+   "y": -2038,
+   "cls": 0,
+   "names": [
+    "Route 2 Meguro Line"
+   ]
+  }
+ ]
+}
+[111.4s] map /home/claude/earth_online/src/road50/out/tyo_before_chiyoda.png
+[111.8s] map /home/claude/earth_online/src/road50/out/tyo_before_shinjuku.png
+[112.2s] map /home/claude/earth_online/src/road50/out/tyo_before_shibuya.png

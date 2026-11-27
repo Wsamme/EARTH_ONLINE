@@ -11,5 +11,6 @@ SRC=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$SRC"
 if [ "$LM" = "all" ]; then unset TYOLM; else export TYOLM="$LM"; fi
 CITY=tyo APPJS="t_$NAME-app.js" EXTRA_MODS="$EXTRA" python3 sgreal/patch17.py city-brush-v16.html "$OUT/t_$NAME.html" | grep -v '^post' | grep -v '^ok' | sed 's/^modules /modules: /' | tr -d '[]' | cut -c1-2000
+python3 "$SRC/lm50/ty50kit/mktest.py" "$OUT/t_$NAME.html"
 node --check "$OUT/t_$NAME-app.js"
 ls -la "$OUT/t_$NAME.html" "$OUT/t_$NAME-app.js"

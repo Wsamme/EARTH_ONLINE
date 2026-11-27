@@ -30,6 +30,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     if (k % 10 === 0) console.log('t', ((Date.now() - t0)/1000).toFixed(0), JSON.stringify(st)); if (st.on && !st.q && k > 2) break; if (errs.some(e => e.startsWith('PAGEERR'))) break; }
   console.log('ready in', ((Date.now() - t0)/1000).toFixed(0), 's');
   await p.evaluate(() => { window.__budget = 0; document.querySelector('#collapse') && document.querySelector('#collapse').click(); const t = document.querySelector('#trayClose'); if (t) t.click(); const s = document.querySelector('#stats'); if (s) s.style.display = 'none'; const f = document.querySelector('#showFlow'); if (f && f.checked){ f.checked = false; f.dispatchEvent(new Event('change')); } });
+  if (!process.env.UI) await p.evaluate(() => { const k = document.querySelector('#kbUi'); if (k) k.click(); const h = document.querySelector('#uiHint'); if (h) h.hidden = true; });   // hide the whole UI (UI=1 keeps it)
   if (KEYS.length) console.log('LANDMARKS', JSON.stringify(await p.evaluate(keys => { const T = window.__t, o = {};
     for (const k of keys){ const L = T.landmarks.find(l => l.type === k), d = T.LANDMARKS[k]; if (!L){ o[k] = d ? 'defined, not placed' : 'MISSING'; continue; }
       const H = T.SGR.hulls && T.SGR.hulls.get(L.id); o[k] = {x:Math.round(L.x), y:Math.round(L.y), rot:L.rot, top:+(L.top || 0).toFixed(1), r:d.r, h:d.h, hull:H ? H.P.length : 0}; }

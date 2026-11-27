@@ -47,7 +47,8 @@ the Wikipedia city lists of tallest buildings); OSM height tags quoted in `hs` a
 Made with `K/ny50_refs.py` (the NYC refs tool for this round — `nycreal/b9_refs.py` cannot run: the `nycreal/out/*.pkl` pipeline
 outputs it reads no longer exist anywhere on the machine). It reads **the app's own staged data** (`R/../site/nycdata/*.bin` via
 `K/ny50_appdata.py`: the footprints, heights and building parts the app draws and hides, the road centrelines with the app's deck heights,
-the terrain) and **OpenStreetMap via Overpass** (`maps.mail.ru` mirror; overpass-api.de is unreachable from here) for OSM ids, names,
+the terrain) and **OpenStreetMap** (Overpass on the `maps.mail.ru` mirror — overpass-api.de is unreachable from here — with the OSM API
+`map?bbox=` as fallback) for OSM ids, names,
 height / level tags, building:part ids, land-use areas and named POIs.
 `targets.<key>`: `meta` (the targets row), `anchor`, `radius` = max(1.6 r, r + 60) capped at 700 m, `ground`, `buildings` (app records:
 `ring`, `holes`, `h`, `base`, `type`, `osm` + `match` (IoU with the OSM footprint), `name`, `h_osm`, `levels`, `parts` = setback tiers
@@ -72,7 +73,8 @@ Offline, as often as you like (no browser):
    <refkey> out.png [half m]` → HIDDEN list (osm id, name, h), CLASHES, centroid offset; PNG north up: grey kept, red hidden, orange
    clash, blue hull, green model below 4 m. Look at every PNG.  [tested on nychanin with a fresh ref: 3 hidden, 0 clashes]
 5. **Refs for a corrected anchor** (like lm40 reref.sh): `bash SC/lm33/kit/heavy.sh python3 K/ny50_refs.py --one <key> <lat> <lon>
-   <radius> R/nyc/ny50x/ref_<key>.json` (write it into your own folder)  [~20–50 s]
+   <radius> R/nyc/ny50x/ref_<key>.json` (write it into your own folder)  [used for nybkpost (re-anchored on r3262986): 18 s of work, 2 min 47 s
+   with the lock wait]
 6. Hulls of all existing models (only if the R/nyc modules change): `node K/ny50tool.js hulls K/ny50_hulls_existing.json`;
    regenerate the node harness after an app rebuild: `bash K/mklmbase_ny50.sh` (slices LMCTX…lmMerge + the detail helpers out of
    `R/../site/nyc-app.js`).
@@ -87,7 +89,10 @@ lock, then poll the log:
    views `[name, lat, lon, dist m, elev °, azim °, hour, "js", waitMs]` (azim 0 = camera south of the target). The log prints `LANDMARKS`
    (placed x / y / rot / top / hull size per key), each view's draw calls / triangles, every failed request, `FAILED-URLS` and `PAGEERR`.
    Pass = PAGEERR 0 and FAILED-URLS only the city-switch probes of sibling pages (`/site/index.html`, `sg.html`, `bay.html`, `hk.html`,
-   `tyo.html`, `gba.html` …) and `/favicon.ico`. Then `rm SC/lm50/ny/site/t_<name>*`.  [RESULT_SHOT]
+   `tyo.html`, `gba.html` …) and `/favicon.ico`. Then `rm SC/lm50/ny/site/t_<name>*`.  [test: page t_ny50test (module ny42 only), NEAR=40.7512,-73.9767,1200, KEYS=nychanin,nysocony,
+   2 views: waited ~25 min for the browser lock, then ready in 22 s; LANDMARKS printed both keys (hull 20 / 21 points); 212 / 221 draw calls,
+   3.3 M triangles; PAGEERR 0; FAILED-URLS = only the sibling-page probes (/site/sg|bay|hk|tyo|gba|index.html) and /favicon.ico.
+   The whole UI is hidden for the shots since that test (UI=1 keeps it).]
 Shots ≤ 1280×800; keep your scratch folder small; kill by PID only.
 
 ## Neighbours already modelled (include their folders in your in-situ page)
@@ -141,7 +146,7 @@ Shots ≤ 1280×800; keep your scratch folder small; kill by PID only.
 - `nynewtown` (ny50g, osm w242620837): the eight digester eggs are NOT mapped as footprints in OSM / the app data; anchor = the whole plant polygon (210 000 m2). Locate the eggs from the refs (storage_tank / chimney objects) and photos before modelling; do not invent positions
 - `nyravenswood` (ny50g, osm w351669970+w351669971+w351669972+w351669969+w280642174): anchor on the four chimney footprints (OSM man_made=chimney ways w351669969-72) plus the main hall w280642174; enwiki: three stacks 152 m, one 120 m (OSM tags one at 122 m - which one is the short stack: check photos); the station is large, model the stacks and the hall
 - `nywatchtower` (ny50g, osm w245118692+w245118694): two separate buildings ~100 m apart, matched by address (25 and 30 Columbia Heights), unnamed in OSM: labelled key + sub-key (label:false), one hull each; which is which is not checked
-- `nybkpost` (ny50g, osm -): POI anchor only (OSM node "Cadman Plaza Post Office"); no building footprint contains it within 25 m: find the post office footprint in the refs
+- `nybkpost` (ny50g, osm r3262986): OSM names the footprint "Conrad B. Duberstein United States Bankruptcy Courthouse" (the same building, per enwiki); the 1933 seven-storey north addition is part of it
 - `nyaquarium` (ny50g, osm w118767087): anchored on the aquarium site polygon (OSM tourism=aquarium w118767087); the Ocean Wonders building is w604729335 inside it
 - `nyfloydbennett` (ny50g, osm w285107139): anchored on the building that contains the "Ryan Visitor Center" POI (the 1931 terminal); the hangar row is separate
 - `nyjacksonpark` (ny50g, osm w679250139+w679250137+w679250144): three towers as one key (only one is named in OSM)
@@ -158,3 +163,11 @@ Also:
   One Astor Plaza, the Marquis: keep those keys, build around them (their hulls already hide part of your footprints).
 - Riverbank State Park (site) and American Dream (r ≈ 517 m) are large: sites / several sub-keys; the refs radius is capped at 700 m.
 - Data source of every position: the OSM footprint in `osm` (Overpass, 27 Nov 2026) = the footprint the app draws (IoU in the refs).
+
+## How the targets were made (reproducible; scripts in `SC/lm50/ny/`)
+`ny50_existing.js` + `K/ny50tool.js hulls` (existing keys, positions and hulls) → candidates from Overpass (named / wikidata / tall
+buildings in the 56 × 56 km map square) → `picks_ny50.py` (the hand-picked list) → OSM footprints by name / address / wikidata
+(`resolve_ny50.py`, `sel_ny50.py`, `geom_ny50.py`) → vetting against the existing hulls and site keeps with the app hide rule
+(`fp_ny50.py`, `K/ny50_vet.py`) → heights from the enwiki articles (raw wikitext, infobox fields; every article checked to be about the
+New York building — wrong / disambiguation pages replaced or dropped) and the city lists read with WebFetch (`make_targets_ny50.py`)
+→ `R/lm50/targets_ny.json` → `K/ny50_refs.py` → `R/lm50/ref_ny50a…h.json` (`refmeta_ny50.py` refreshes their `meta`).

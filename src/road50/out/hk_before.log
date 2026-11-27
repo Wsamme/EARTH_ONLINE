@@ -1,0 +1,375 @@
+[0.2s] hk lines 128993
+[1.8s] prep: junction nodes 59358
+[2.0s] traffic network: links 39973 pieces 29514 nodes 23647 movements 57579
+[2.4s] weak components 665 main 71.0% others >=1 km 85 | SCC main 60.2%
+[2.8s] dead ends {"total":5307,"tunnel":0,"edge":0,"chunk":0,"gap3":93,"gap6":15,"gap12":54,"levelgap":1534,"service":903,"deckend":116,"water":16,"culdesac":2576,"oneway":1575} sinks 55 sources 133
+[3.1s] crossings {"falsejunc":41,"lowclear":313,"missedjunc":238,"overpass":2437,"atgrade":3402}
+[3.2s] levels / water {"step1_3":278,"step3_15":883,"step15":109,"steep":119,"inwater":46,"inwaterM":4331,"shortdeck":10}
+[3.4s] routes {"pairs":2000,"ok":888,"fail":1112,"failIsland":1029,"failOneway":83,"detourMed":1.96,"detour3":173,"far":878,"okPct":44.4}
+[3.5s] movements {"moves":57579,"zjump1_5":215,"zjump5":184,"xyFar":0}
+[3.5s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+{
+ "city": "hk",
+ "tag": "before",
+ "dir": "/home/claude/earth_online/site/hkdata",
+ "lines": 128993,
+ "drivableKm": 3860.6,
+ "links": 39973,
+ "nodes": 23647,
+ "junctionNodes": 59358,
+ "weakComponents": 665,
+ "mainWeakPct": 70.99,
+ "otherComponentsOver1km": 85,
+ "otherKm": 1120.2,
+ "mainSccPctApp": 43.89,
+ "mainSccPct": 60.16,
+ "closedOnewaySets": 12,
+ "closedOnewayKm": 7.34,
+ "sinkLinksInMain": 396,
+ "sourceLinksInMain": 447,
+ "deadEnds": {
+  "total": 5307,
+  "tunnel": 0,
+  "edge": 0,
+  "chunk": 0,
+  "gap3": 93,
+  "gap6": 15,
+  "gap12": 54,
+  "levelgap": 1534,
+  "service": 903,
+  "deckend": 116,
+  "water": 16,
+  "culdesac": 2576,
+  "oneway": 1575
+ },
+ "onewaySinks": 55,
+ "onewaySources": 133,
+ "crossings": {
+  "falsejunc": 41,
+  "lowclear": 313,
+  "missedjunc": 238,
+  "overpass": 2437,
+  "atgrade": 3402
+ },
+ "levels": {
+  "step1_3": 278,
+  "step3_15": 883,
+  "step15": 109,
+  "steep": 119,
+  "inwater": 46,
+  "inwaterM": 4331,
+  "shortdeck": 10
+ },
+ "movements": {
+  "moves": 57579,
+  "zjump1_5": 215,
+  "zjump5": 184,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 888,
+  "fail": 1112,
+  "failIsland": 1029,
+  "failOneway": 83,
+  "detourMed": 1.96,
+  "detour3": 173,
+  "far": 878,
+  "okPct": 44.4
+ },
+ "tunnels": {
+  "portals": 0,
+  "pairs": 0,
+  "unmatched": 0
+ },
+ "problemCounts": {
+  "island": 85,
+  "oneway_noentry": 3,
+  "oneway_trap": 12,
+  "dead_levelgap": 1534,
+  "sink": 55,
+  "dead_gap12": 54,
+  "dead_gap3": 93,
+  "dead_gap6": 15,
+  "dead_deckend": 106,
+  "dead_water": 16,
+  "source": 133,
+  "dead_shortdeck": 10,
+  "lowclear": 313,
+  "missedjunc": 238,
+  "falsejunc": 41,
+  "step": 1270,
+  "inwater": 46,
+  "steep": 119,
+  "zjump": 215
+ },
+ "topIslands": [
+  {
+   "len": 462615,
+   "x": 6157,
+   "y": -7277,
+   "cls": 0,
+   "names": [
+    "Wong Chuk Hang Road",
+    "Peak Road",
+    "Connaught Road Central",
+    "Cotton Tree Drive"
+   ]
+  },
+  {
+   "len": 115468,
+   "x": -18079,
+   "y": -3735,
+   "cls": 0,
+   "names": [
+    "Airport North Interchange",
+    "Cheong Lin Road",
+    "Airport Road",
+    "Sky City Interchange"
+   ]
+  },
+  {
+   "len": 76031,
+   "x": -17551,
+   "y": -8985,
+   "cls": 4,
+   "names": [
+    "Shun Tung Road",
+    "Yu Tung Road",
+    "Tat Tung Road",
+    "Fu Tung Street"
+   ]
+  },
+  {
+   "len": 31372,
+   "x": 8273,
+   "y": 9082,
+   "cls": 6,
+   "names": [
+    "Chung Chi Road",
+    "Pond Crescent",
+    "Station Road",
+    "Residence Lane 1"
+   ]
+  },
+  {
+   "len": 17573,
+   "x": -8482,
+   "y": -2008,
+   "cls": 0,
+   "names": [
+    "Sea Point Road",
+    "Penny's Bay Highway",
+    "Magic Road",
+    "Fantasy Road"
+   ]
+  },
+  {
+   "len": 16299,
+   "x": 17721,
+   "y": -4392,
+   "cls": 6,
+   "names": [
+    "Lung Ha Wan Road",
+    "Tai Wan Tau Road",
+    "Po Toi O Chuen Road",
+    "Tai Au Mun Road"
+   ]
+  },
+  {
+   "len": 16121,
+   "x": -10786,
+   "y": -4279,
+   "cls": 6,
+   "names": [
+    "Seabee Lane",
+    "Seahorse Lane",
+    "Marina Drive",
+    "Caperidge Drive"
+   ]
+  },
+  {
+   "len": 15340,
+   "x": -9463,
+   "y": -14673,
+   "cls": 10,
+   "names": [
+    "San Hing Street",
+    "Tung Wan Road",
+    "Hing Lung Main Street",
+    "Hing Lung Back Street"
+   ]
+  },
+  {
+   "len": 12842,
+   "x": -14397,
+   "y": -3915,
+   "cls": 6,
+   "names": [
+    "Cheung Tung Road Access Road",
+    "Cheung Tung Road",
+    "Sham Shui Kok Drive",
+    "Hong Kong Olympic Trail"
+   ]
+  },
+  {
+   "len": 11664,
+   "x": 3607,
+   "y": -10683,
+   "cls": 3,
+   "names": [
+    "Ap Lei Chau Drive",
+    "Ap Lei Chau Praya Road",
+    "Ap Lei Chau Bridge Road",
+    "Lee Nam Road"
+   ]
+  },
+  {
+   "len": 9305,
+   "x": -23638,
+   "y": -5937,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ]
+  },
+  {
+   "len": 9292,
+   "x": -23641,
+   "y": -5923,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ]
+  },
+  {
+   "len": 6786,
+   "x": -17312,
+   "y": -2546,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ]
+  },
+  {
+   "len": 6779,
+   "x": -8059,
+   "y": 9535,
+   "cls": 10,
+   "names": [
+    "Tai Shu Ha Road East"
+   ]
+  },
+  {
+   "len": 5924,
+   "x": -17557,
+   "y": -2593,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ]
+  },
+  {
+   "len": 5898,
+   "x": -9059,
+   "y": -9399,
+   "cls": 10,
+   "names": [
+    "Hei Ling Chau Road"
+   ]
+  },
+  {
+   "len": 5671,
+   "x": 3670,
+   "y": 14892,
+   "cls": 8,
+   "names": [
+    "Tai Wo Service Road East"
+   ]
+  },
+  {
+   "len": 5655,
+   "x": -7667,
+   "y": 12641,
+   "cls": 10,
+   "names": [
+    "Nam Sang Wai Road"
+   ]
+  },
+  {
+   "len": 5269,
+   "x": 4192,
+   "y": 22350,
+   "cls": 2,
+   "names": [
+    "Heung Yuen Wai Highway"
+   ]
+  },
+  {
+   "len": 5210,
+   "x": 4058,
+   "y": 22443,
+   "cls": 2,
+   "names": [
+    "Heung Yuen Wai Highway"
+   ]
+  },
+  {
+   "len": 5049,
+   "x": -12150,
+   "y": 3963,
+   "cls": 8,
+   "names": [
+    "So Kwun Wat Road",
+    "Kwun Chui Road",
+    "So Kwun Wat Tsuen Road"
+   ]
+  },
+  {
+   "len": 4914,
+   "x": -19086,
+   "y": -11768,
+   "cls": 10,
+   "names": [
+    "Tong Fuk Catchwater"
+   ]
+  },
+  {
+   "len": 4409,
+   "x": 8115,
+   "y": -11491,
+   "cls": 8,
+   "names": [
+    "South Bay Close",
+    "Seaview Promenade",
+    "Beach Road",
+    "South Bay Path"
+   ]
+  },
+  {
+   "len": 4343,
+   "x": 4521,
+   "y": 10263,
+   "cls": 8,
+   "names": [
+    "Wun Yiu Road",
+    "Tat Wan Road"
+   ]
+  },
+  {
+   "len": 4238,
+   "x": -8468,
+   "y": -6008,
+   "cls": 10,
+   "names": [
+    "Lo Peng Street",
+    "Chi Yan Street",
+    "Wing On Side Street",
+    "Fu Peng Street"
+   ]
+  }
+ ]
+}
+[3.6s] map /home/claude/earth_online/src/road50/out/hk_before_central.png
+[3.9s] map /home/claude/earth_online/src/road50/out/hk_before_kowloon.png
+[4.0s] map /home/claude/earth_online/src/road50/out/hk_before_shatin.png

@@ -1,0 +1,378 @@
+[0.5s] bay lines 364573
+[7.0s] prep: junction nodes 319082
+[8.6s] traffic network: links 306963 pieces 176118 nodes 129463 movements 586249
+[10.3s] weak components 270 main 99.2% others >=1 km 35 | SCC main 98.2%
+[13.1s] dead ends {"total":26053,"tunnel":50,"edge":478,"chunk":0,"gap3":93,"gap6":22,"gap12":305,"levelgap":320,"service":4540,"deckend":67,"water":13,"culdesac":20165,"oneway":550} sinks 42 sources 324
+[15.6s] crossings {"falsejunc":5,"lowclear":451,"missedjunc":283,"overpass":3871,"atgrade":32494}
+[15.8s] levels / water {"step1_3":120,"step3_15":227,"step15":41,"steep":275,"inwater":27,"inwaterM":2455,"shortdeck":1}
+[26.0s] routes {"pairs":2000,"ok":1974,"fail":26,"failIsland":20,"failOneway":6,"detourMed":1.26,"detour3":65,"far":1971,"okPct":98.7}
+[26.3s] movements {"moves":586249,"zjump1_5":7,"zjump5":7,"xyFar":0}
+[35.7s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":98.7}
+{
+ "city": "bay",
+ "tag": "before",
+ "dir": "/home/claude/earth_online/site/baydata",
+ "lines": 364573,
+ "drivableKm": 23120,
+ "links": 306963,
+ "nodes": 129463,
+ "junctionNodes": 319082,
+ "weakComponents": 270,
+ "mainWeakPct": 99.19,
+ "otherComponentsOver1km": 35,
+ "otherKm": 188.2,
+ "mainSccPctApp": 81.05,
+ "mainSccPct": 98.15,
+ "closedOnewaySets": 15,
+ "closedOnewayKm": 45.62,
+ "sinkLinksInMain": 265,
+ "sourceLinksInMain": 551,
+ "deadEnds": {
+  "total": 26053,
+  "tunnel": 50,
+  "edge": 478,
+  "chunk": 0,
+  "gap3": 93,
+  "gap6": 22,
+  "gap12": 305,
+  "levelgap": 320,
+  "service": 4540,
+  "deckend": 67,
+  "water": 13,
+  "culdesac": 20165,
+  "oneway": 550
+ },
+ "onewaySinks": 42,
+ "onewaySources": 324,
+ "crossings": {
+  "falsejunc": 5,
+  "lowclear": 451,
+  "missedjunc": 283,
+  "overpass": 3871,
+  "atgrade": 32494
+ },
+ "levels": {
+  "step1_3": 120,
+  "step3_15": 227,
+  "step15": 41,
+  "steep": 275,
+  "inwater": 27,
+  "inwaterM": 2455,
+  "shortdeck": 1
+ },
+ "movements": {
+  "moves": 586249,
+  "zjump1_5": 7,
+  "zjump5": 7,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1974,
+  "fail": 26,
+  "failIsland": 20,
+  "failOneway": 6,
+  "detourMed": 1.26,
+  "detour3": 65,
+  "far": 1971,
+  "okPct": 98.7
+ },
+ "tunnels": {
+  "portals": 50,
+  "pairs": 21,
+  "unmatched": 14,
+  "routesOkPctWithTunnels": 98.7
+ },
+ "problemCounts": {
+  "island": 35,
+  "oneway_noentry": 3,
+  "oneway_trap": 15,
+  "dead_levelgap": 320,
+  "dead_edge": 478,
+  "source": 324,
+  "sink": 42,
+  "dead_tunnel": 50,
+  "dead_gap3": 93,
+  "dead_gap12": 305,
+  "dead_gap6": 22,
+  "dead_deckend": 66,
+  "dead_water": 13,
+  "dead_shortdeck": 1,
+  "lowclear": 451,
+  "falsejunc": 5,
+  "missedjunc": 283,
+  "step": 388,
+  "steep": 275,
+  "inwater": 27,
+  "zjump": 7,
+  "tunnel_unpaired": 14
+ },
+ "topIslands": [
+  {
+   "len": 23202,
+   "x": -15922,
+   "y": 21855,
+   "cls": 1,
+   "names": [
+    "6th Street",
+    "10th Street",
+    "Chinook Court",
+    "Gateview Avenue"
+   ]
+  },
+  {
+   "len": 9914,
+   "x": -32600,
+   "y": 35499,
+   "cls": 10,
+   "names": [
+    "Upland Road",
+    "Madrone Way",
+    "Fern Way",
+    "Evergreen Drive"
+   ]
+  },
+  {
+   "len": 9394,
+   "x": -21222,
+   "y": 26657,
+   "cls": 10,
+   "names": [
+    "Perimeter Road",
+    "Fire Road"
+   ]
+  },
+  {
+   "len": 8623,
+   "x": -29225,
+   "y": 35693,
+   "cls": 8,
+   "names": [
+    "Scott Place",
+    "Gregory Place",
+    "Barry Way",
+    "Parkside Way"
+   ]
+  },
+  {
+   "len": 6836,
+   "x": 34329,
+   "y": 33020,
+   "cls": 10,
+   "names": [
+    "Chadbourne Road"
+   ]
+  },
+  {
+   "len": 6593,
+   "x": 6309,
+   "y": -33897,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 5105,
+   "x": 35007,
+   "y": 34558,
+   "cls": 10,
+   "names": [
+    "Empire Mine Road"
+   ]
+  },
+  {
+   "len": 4416,
+   "x": 29560,
+   "y": 12899,
+   "cls": 10,
+   "names": [
+    "Palisades Drive",
+    "Oak Ridge Court",
+    "Mount Dana Drive",
+    "Mount Dana Court"
+   ]
+  },
+  {
+   "len": 4259,
+   "x": 33493,
+   "y": 31470,
+   "cls": 10,
+   "names": [
+    "Briones Valley Road"
+   ]
+  },
+  {
+   "len": 3792,
+   "x": -1884,
+   "y": -31000,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 3426,
+   "x": 18010,
+   "y": 35922,
+   "cls": 10,
+   "names": [
+    "Barberry Court",
+    "Deerberry Court",
+    "Pitch Pine Court",
+    "River Ash Court"
+   ]
+  },
+  {
+   "len": 2733,
+   "x": 16982,
+   "y": 35816,
+   "cls": 10,
+   "names": [
+    "Limeridge Drive",
+    "Kearsarge Court",
+    "Fair Weather Circle",
+    "Shellflower Court"
+   ]
+  },
+  {
+   "len": 2616,
+   "x": 23376,
+   "y": 11661,
+   "cls": 10,
+   "names": [
+    "Dogwood Court",
+    "Wisteria Street",
+    "Winged Foot Court",
+    "Carlisle Court"
+   ]
+  },
+  {
+   "len": 2512,
+   "x": 26005,
+   "y": 11823,
+   "cls": 10,
+   "names": [
+    "Frog Bend Road",
+    "Albrook Road"
+   ]
+  },
+  {
+   "len": 2387,
+   "x": -35267,
+   "y": 33404,
+   "cls": 8,
+   "names": [
+    "East Ridgecrest Boulevard"
+   ]
+  },
+  {
+   "len": 2221,
+   "x": 23709,
+   "y": 17784,
+   "cls": 10,
+   "names": [
+    "Ginger Court",
+    "Elder Court",
+    "Sunflower Court",
+    "Morning Glory Court"
+   ]
+  },
+  {
+   "len": 2195,
+   "x": -669,
+   "y": -28773,
+   "cls": 10,
+   "names": [
+    "Tierra Arboles"
+   ]
+  },
+  {
+   "len": 2174,
+   "x": 35005,
+   "y": 29880,
+   "cls": 10,
+   "names": [
+    "Sherman Drive",
+    "Helen Lane",
+    "John Marsh Road",
+    "John Marsh Drive"
+   ]
+  },
+  {
+   "len": 1934,
+   "x": 12949,
+   "y": 35852,
+   "cls": 10,
+   "names": [
+    "Orange Street",
+    "Peach Place",
+    "Pear Drive",
+    "Apple Drive"
+   ]
+  },
+  {
+   "len": 1730,
+   "x": 19087,
+   "y": -22624,
+   "cls": 10,
+   "names": [
+    "Sunrise Drive",
+    "Seaview Drive",
+    "East Channel Drive",
+    "Horizon Circle"
+   ]
+  },
+  {
+   "len": 1730,
+   "x": -2671,
+   "y": -18124,
+   "cls": 10,
+   "names": [
+    "Sheffield Lane",
+    "Whitehall Lane",
+    "Yarborough Lane",
+    "Chatsworth Lane"
+   ]
+  },
+  {
+   "len": 1568,
+   "x": 26728,
+   "y": 2638,
+   "cls": 10,
+   "names": [
+    "East Creek Court",
+    "Stonecliff Vista Lane",
+    "Sterling Greens Circle",
+    "Rocky Creek Place"
+   ]
+  },
+  {
+   "len": 1542,
+   "x": -18667,
+   "y": 3962,
+   "cls": 6,
+   "names": [
+    "Dubuque Avenue"
+   ]
+  },
+  {
+   "len": 1527,
+   "x": -17761,
+   "y": -7335,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1517,
+   "x": 30393,
+   "y": -35679,
+   "cls": 10,
+   "names": [
+    "Sheridan Place",
+    "Sue Avenue",
+    "Feldspar Drive",
+    "Arctic Avenue"
+   ]
+  }
+ ]
+}
+[36.6s] map /home/claude/earth_online/src/road50/out/bay_before_sf.png
+[36.9s] map /home/claude/earth_online/src/road50/out/bay_before_oakland.png
+[37.2s] map /home/claude/earth_online/src/road50/out/bay_before_sanjose.png

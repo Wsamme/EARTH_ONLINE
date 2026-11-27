@@ -24,7 +24,7 @@ NOTE = ('Greater Bay map frame (gbareal: lon0 114.052048203, lat0 22.656070182, 
         'ring, h (the app\'s height: OSM height / levels where mapped, otherwise an estimate; Shenzhen has levels on ~19 % of its OSM footprints, and '
         'part of the city comes from other footprint sources without heights), type, area, centroid; osm / name / zh / floors when an OSM building '
         'outline covers it (matched by position, so a footprint without osm is not in OSM or is split differently). parts = the app\'s building:part '
-        'pieces inside the footprint with base / top. roads = the app\'s road lines: cls 0-1 freeway, 2-9 arterials, 10 local, 11 service, 12 path, '
+        'pieces inside the footprint with base / top. target = true on the app footprints that lie on the target\'s own OSM footprint (meta.osm). roads = the app\'s road lines: cls 0-1 freeway, 2-9 arterials, 10 local, 11 service, 12 path, '
         '13 runway, 14 taxiway, 15 rail, 16 people mover, 17 pier; bridge; elev = deck height above the ground per vertex (the app\'s data has no OSM '
         'layer). areas = OSM land-use / leisure / amenity / natural / tourism polygons clipped to the box. pois = named OSM nodes. terrain = ground '
         'heights (m) on a grid around the anchor (rows north to south; the app\'s grid). ground = terrain height at the anchor. sel = what was listed: '
@@ -74,15 +74,16 @@ def make(meta, key, lat, lon, rad, els, own=None):
         if BTl is not None:
             for j in BTl.query(p, predicate='intersects'): host = base_recs[int(j)]; break
         (parts_of[host].append(i) if host is not None else loose.append(i))
-    def osm_match(g):
+    def osm_match(g):   # the OSM building outline that best fits the app footprint (intersection over union; podium outlines lose to the tower)
         if OBT is None: return None
-        best = None; ba = 0
+        best = None; bi = 0
         for j in OBT.query(g):
             oi, t, og = OB[int(j)]
-            try: a = og.intersection(g).area
+            try: a = og.intersection(g).area; u = og.union(g).area
             except Exception: continue
-            if a > ba: ba, best = a, OB[int(j)]
-        return best if best and ba > 0.4*min(g.area, best[2].area) else None
+            if u > 0 and a/u > bi: bi, best = a/u, OB[int(j)]
+        return best if best and bi > 0.3 else None
+    tp = own_poly(meta['osm']) if meta and meta.get('osm') else None    # the target's own OSM footprint (web/geom.json)
     for i in base_recs + loose:
         b = A.S['bld'][i]; g = A.G[i]
         if g.is_empty or (selname != 'box' and g.area < 60): continue
@@ -98,6 +99,10 @@ def make(meta, key, lat, lon, rad, els, own=None):
             if t.get('name'): q['zh'] = t['name']
             if t.get('building:levels'): q['floors'] = t['building:levels']
             if t.get('height'): q['h_osm'] = t['height']
+        if tp is not None and not tp.is_empty:
+            try:
+                if tp.contains(g.representative_point()) or g.intersection(tp).area > 0.5*g.area: q['target'] = True
+            except Exception: pass
         if parts_of.get(i): q['parts'] = [{'base':A.S['bld'][k]['base'], 'top':A.S['bld'][k]['h'], 'ring':[loc(x, y) for x, y in A.S['bld'][k]['rings'][0]]} for k in parts_of[i]]
         T['buildings'].append(q)
     # roads (the app's lines)

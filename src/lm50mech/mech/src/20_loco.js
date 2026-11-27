@@ -61,19 +61,25 @@ const ML = (() => {
   function toW(S, m){ const a = yawOf(S.hdg), c = Math.cos(a), s = Math.sin(a); return [S.X + c*m[0] + s*m[2], S.Y + s*m[0] - c*m[2], S.Zb + m[1]]; }
   function ideal(i, X, Y, hdg){ const s = i ? -1 : 1, a = yawOf(hdg), c = Math.cos(a), sn = Math.sin(a), mx = s*FOOTX, mz = 0.6; return [X + c*mx + sn*mz, Y + sn*mx - c*mz]; }
   function placeFoot(S, F){ const p = ideal(F.i, S.X, S.Y, S.hdg); F.x = p[0]; F.y = p[1]; F.z = gnd(p[0], p[1]); F.yaw = S.hdg; F.sw = false; F.h = 0; F.pitch = 0; }
+  // where a foot that lifts now should land: ahead of the body's predicted place at landing (the velocity anticipates the wanted one)
+  function landAt(S, F, Trem, lead, turnRate){
+    const vx = lerp(S.vx, S.wvx || 0, 0.5), vy = lerp(S.vy, S.wvy || 0, 0.5), Xb = S.X + vx*Trem, Yb = S.Y + vy*Trem, dh = wrapA(S.hdgWant - S.hdg), hL = S.hdg + clamp(dh, -turnRate*Trem*1.1, turnRate*Trem*1.1);
+    const p = ideal(F.i, Xb, Yb, hL); F.bx = p[0] + vx*lead; F.by = p[1] + vy*lead; F.byaw = hL;
+  }
   function startStep(S, i, Tsw, lead, turnRate){
-    const F = S.feet[i], Xb = S.X + S.vx*Tsw, Yb = S.Y + S.vy*Tsw, dh = wrapA(S.hdgWant - S.hdg), hL = S.hdg + clamp(dh, -turnRate*Tsw*1.1, turnRate*Tsw*1.1);
-    const p = ideal(i, Xb, Yb, hL), bx = p[0] + S.vx*lead, by = p[1] + S.vy*lead;
-    F.ax = F.x; F.ay = F.y; F.az = F.z; F.ayaw = F.yaw; F.bx = bx; F.by = by; F.bz = gnd(bx, by); F.byaw = hL; F.dur = Tsw; F.u = 0; F.sw = true;
-    const d = Math.hypot(bx - F.x, by - F.y); F.lift = clamp(2.2 + 0.2*d, 2.2, 8.5) + Math.max(0, F.bz - F.az)*0.6;
+    const F = S.feet[i];
+    F.ax = F.x; F.ay = F.y; F.az = F.z; F.ayaw = F.yaw; F.dur = Tsw; F.u = 0; F.sw = true; F.lead = lead; F.tr = turnRate; landAt(S, F, Tsw, lead, turnRate); F.bz = gnd(F.bx, F.by);
+    const d = Math.hypot(F.bx - F.x, F.by - F.y); F.lift = clamp(2.2 + 0.2*d, 2.2, 8.5) + Math.max(0, F.bz - F.az)*0.6;
     F.d = d; S.ev.push({e:'lift', i, x:F.x, y:F.y, z:F.z, d});
   }
+  // how far a planted foot trails its place under the hip (m, horizontal)
+  function lagOf(S, F){ const p = ideal(F.i, S.X, S.Y, S.hdg); return Math.hypot(F.x - p[0], F.y - p[1]); }
   // one step of the walk: inp {vx, vy (desired world velocity), hdg (desired heading or null), turn (rad/s)}
   function loco(S, inp, dt){
     S.t += dt; S.ev.length = 0;
     // velocity: heavy acceleration
     const ax = inp.vx - S.vx, ay = inp.vy - S.vy, al = Math.hypot(ax, ay), acc = (Math.hypot(inp.vx, inp.vy) > S.spd ? 7 : 10)*dt;
-    const k = al > acc ? acc/al : 1; S.vx += ax*k; S.vy += ay*k; S.spd = Math.hypot(S.vx, S.vy);
+    const k = al > acc ? acc/al : 1; S.vx += ax*k; S.vy += ay*k; S.spd = Math.hypot(S.vx, S.vy); S.wvx = inp.vx; S.wvy = inp.vy;
     // heading
     if (inp.hdg !== null && inp.hdg !== undefined) S.hdgWant = inp.hdg; else if (S.spd > 1.2) S.hdgWant = Math.atan2(S.vx, S.vy);
     const tr = (inp.turn || 0.9)*dt, de = wrapA(S.hdgWant - S.hdg); S.hdg = wrapA(S.hdg + clamp(de, -tr, tr)); S.turnV = clamp(de, -tr, tr)/Math.max(dt, 1e-4);
@@ -82,19 +88,24 @@ const ML = (() => {
     let anySw = false;
     for (const F of S.feet){
       if (!F.sw) continue; anySw = true;
-      F.u += dt/F.dur; const u = Math.min(1, F.u), e = u*u*u*(u*(u*6 - 15) + 10);
+      // a swing hurries when the stance foot trails too far (the body outruns the gait); the landing point follows the speed
+      const O = S.feet[F.i ^ 1], lag = O.sw ? 0 : lagOf(S, O), hurry = 1 + clamp((lag - 9)*0.16, 0, 2.2);
+      F.u += dt/F.dur*hurry;
+      if (F.u < 0.6){ const bx0 = F.bx, by0 = F.by; landAt(S, F, Math.max(0.05, (1 - F.u)*F.dur/hurry), F.lead || 0, F.tr || 0.9); F.bx = lerp(bx0, F.bx, Math.min(1, dt*6)); F.by = lerp(by0, F.by, Math.min(1, dt*6)); F.bz = gnd(F.bx, F.by); }
+      const u = Math.min(1, F.u), e = u*u*u*(u*(u*6 - 15) + 10);
       F.x = lerp(F.ax, F.bx, e); F.y = lerp(F.ay, F.by, e); F.h = F.lift*Math.pow(Math.sin(PI*u), 0.85); F.z = lerp(F.az, F.bz, e); F.yaw = F.ayaw + wrapA(F.byaw - F.ayaw)*e;
       F.pitch = 0.34*Math.sin(PI*clamp(u*2.2, 0, 1))*(1 - sstep(0.35, 0.55, u)) - 0.22*sstep(0.5, 0.82, u)*(1 - sstep(0.9, 1, u));
       if (F.u >= 1){ F.sw = false; F.h = 0; F.pitch = 0; F.x = F.bx; F.y = F.by; F.z = F.bz; F.yaw = F.byaw; S.ev.push({e:'land', i:F.i, x:F.x, y:F.y, z:F.z, k:clamp(0.35 + 0.035*S.spd + 0.04*(F.d || 0), 0.3, 1), water:wet(F.x, F.y)}); S.pel.v -= 1.2 + 0.09*S.spd; }
     }
     S.stepT += dt;
-    if (!S.lockFeet && !S.feet.some(F => F.sw)){
+    const swF = S.feet.find(F => F.sw), vgo = Math.max(S.spd, Math.hypot(S.wvx || 0, S.wvy || 0)*0.6);
+    // (running: the next foot may lift as the other comes down - a short flight phase)
+    if (!S.lockFeet && (!swF || (vgo > 15 && swF.u > 0.82 && !S.feet[swF.i ^ 1].sw && swF.i !== S.next))){
       const tRate = inp.turn || 0.9;
-      if (S.spd > 0.7){
-        const Tst = clamp(2.5 - 0.06*S.spd, 1.1, 2.5), Tsw = Tst*0.8;
-        const e1 = Math.hypot(S.feet[S.next].x - ideal(S.next, S.X, S.Y, S.hdg)[0], S.feet[S.next].y - ideal(S.next, S.X, S.Y, S.hdg)[1]);
-        if (S.stepT >= Tst*(1 - 0.2*clamp((e1 - S.spd*Tst*0.7)/10, 0, 1))){ startStep(S, S.next, Tsw, Tst*0.5, tRate); S.next ^= 1; S.stepT = 0; }
-      } else {
+      if (vgo > 0.7){
+        const Tst = clamp(2.4 - 0.055*vgo, 1.05, 2.4), Tsw = Tst*0.78, lag = lagOf(S, S.feet[S.next]);
+        if (S.stepT >= Tst || lag > 8 + 0.25*vgo){ startStep(S, S.next, Tsw, Tst*0.5, tRate); S.next ^= 1; S.stepT = 0; }
+      } else if (!swF){
         let bi = -1, be = 0;
         for (let i = 0; i < 2; i++){ const F = S.feet[i], p = ideal(i, S.X, S.Y, S.hdgWant), e = Math.hypot(F.x - p[0], F.y - p[1]) + 9*Math.abs(wrapA(F.yaw - S.hdgWant)); if (e > be){ be = e; bi = i; } }
         if (be > 1.8 && S.stepT > 0.3){ startStep(S, bi, 1.35, 0, tRate); S.next = bi ^ 1; S.stepT = 0; }
@@ -111,7 +122,7 @@ const ML = (() => {
     for (const F of S.feet) if (F.sw){ const s = F.i ? -1 : 1, w = Math.sin(PI*Math.min(1, F.u)); bob += 0.55*w; sway += -s*0.9*w; roll += -s*0.035*w; tw += s*0.05*Math.sin(PI*Math.min(1, F.u)*2 - PI/2); }
     const target = py - S.Zb - 0.6 + bob + S.extra.dy;
     // critically damped spring for the pelvis height (landing dips through pel.v)
-    const kS = 70, dS = 2*Math.sqrt(kS)*0.75; S.pel.v += (kS*(target - S.pel.y) - dS*S.pel.v)*dt; S.pel.y += S.pel.v*dt; S.pel.y = Math.min(S.pel.y, py - S.Zb + 0.4);
+    const kS = 70, dS = 2*Math.sqrt(kS)*0.75; S.pel.v += (kS*(Math.max(target, 27 + S.extra.dy) - S.pel.y) - dS*S.pel.v)*dt; S.pel.y += S.pel.v*dt; S.pel.y = Math.max(Math.min(S.pel.y, py - S.Zb + 0.4), 26 + S.extra.dy);
     const kk = Math.min(1, dt*5); S.pel.sway += (sway - S.pel.sway)*kk; S.pel.roll += (roll + S.extra.roll - S.pel.roll)*kk; S.pel.tw += (tw - S.pel.tw)*kk;
     const fwdAcc = ((S.vx - (S.pvx || 0))*Math.sin(S.hdg) + (S.vy - (S.pvy || 0))*Math.cos(S.hdg))/Math.max(dt, 1e-4); S.pvx = S.vx; S.pvy = S.vy;
     S.accF += (clamp(fwdAcc, -10, 10) - S.accF)*Math.min(1, dt*3);

@@ -1,0 +1,396 @@
+[0.3s] nyc lines 370838
+[6.7s] prep: junction nodes 296284
+[8.0s] traffic network: links 357298 pieces 216888 nodes 145376 movements 712134
+[10.6s] weak components 262 main 98.8% others >=1 km 31 | SCC main 97.6%
+[12.4s] dead ends {"total":15870,"tunnel":87,"edge":945,"chunk":0,"gap3":81,"gap6":21,"gap12":196,"levelgap":390,"service":2439,"deckend":80,"water":77,"culdesac":11554,"oneway":777} sinks 131 sources 657
+[14.6s] crossings {"falsejunc":52,"lowclear":834,"missedjunc":644,"overpass":6537,"atgrade":53139}
+[14.9s] levels / water {"step1_3":136,"step3_15":301,"step15":41,"steep":649,"inwater":32,"inwaterM":2610,"shortdeck":0}
+[28.1s] routes {"pairs":2000,"ok":1963,"fail":37,"failIsland":23,"failOneway":14,"detourMed":1.27,"detour3":70,"far":1957,"okPct":98.2}
+[28.4s] movements {"moves":712134,"zjump1_5":30,"zjump5":25,"xyFar":0}
+[43.2s] tunnels {"portals":87,"pairs":32,"unmatched":27,"routesOkPctWithTunnels":98.2}
+{
+ "city": "nyc",
+ "tag": "before",
+ "dir": "/home/claude/earth_online/site/nycdata",
+ "lines": 370838,
+ "drivableKm": 26197.3,
+ "links": 357298,
+ "nodes": 145376,
+ "junctionNodes": 296284,
+ "weakComponents": 262,
+ "mainWeakPct": 98.8,
+ "otherComponentsOver1km": 31,
+ "otherKm": 313.7,
+ "mainSccPctApp": 89.39,
+ "mainSccPct": 97.56,
+ "closedOnewaySets": 33,
+ "closedOnewayKm": 14.32,
+ "sinkLinksInMain": 440,
+ "sourceLinksInMain": 935,
+ "deadEnds": {
+  "total": 15870,
+  "tunnel": 87,
+  "edge": 945,
+  "chunk": 0,
+  "gap3": 81,
+  "gap6": 21,
+  "gap12": 196,
+  "levelgap": 390,
+  "service": 2439,
+  "deckend": 80,
+  "water": 77,
+  "culdesac": 11554,
+  "oneway": 777
+ },
+ "onewaySinks": 131,
+ "onewaySources": 657,
+ "crossings": {
+  "falsejunc": 52,
+  "lowclear": 834,
+  "missedjunc": 644,
+  "overpass": 6537,
+  "atgrade": 53139
+ },
+ "levels": {
+  "step1_3": 136,
+  "step3_15": 301,
+  "step15": 41,
+  "steep": 649,
+  "inwater": 32,
+  "inwaterM": 2610,
+  "shortdeck": 0
+ },
+ "movements": {
+  "moves": 712134,
+  "zjump1_5": 30,
+  "zjump5": 25,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1963,
+  "fail": 37,
+  "failIsland": 23,
+  "failOneway": 14,
+  "detourMed": 1.27,
+  "detour3": 70,
+  "far": 1957,
+  "okPct": 98.2
+ },
+ "tunnels": {
+  "portals": 87,
+  "pairs": 32,
+  "unmatched": 27,
+  "routesOkPctWithTunnels": 98.2
+ },
+ "problemCounts": {
+  "island": 31,
+  "oneway_noentry": 6,
+  "oneway_trap": 33,
+  "dead_gap12": 196,
+  "source": 657,
+  "dead_levelgap": 390,
+  "dead_tunnel": 87,
+  "dead_gap3": 81,
+  "sink": 131,
+  "dead_deckend": 80,
+  "dead_edge": 945,
+  "dead_gap6": 21,
+  "dead_water": 77,
+  "missedjunc": 644,
+  "lowclear": 834,
+  "falsejunc": 52,
+  "step": 478,
+  "steep": 649,
+  "inwater": 32,
+  "zjump": 30,
+  "tunnel_unpaired": 27
+ },
+ "topIslands": [
+  {
+   "len": 152001,
+   "x": 25429,
+   "y": -12082,
+   "cls": 2,
+   "names": [
+    "Riverside Boulevard",
+    "Roosevelt Place",
+    "Lewis Avenue",
+    "Nassau Avenue"
+   ]
+  },
+  {
+   "len": 18804,
+   "x": -13015,
+   "y": -27696,
+   "cls": 8,
+   "names": [
+    "Main Street",
+    "Bay Avenue",
+    "Oak Street",
+    "Woodside Avenue"
+   ]
+  },
+  {
+   "len": 14162,
+   "x": -1995,
+   "y": -26395,
+   "cls": 6,
+   "names": [
+    "Jackson Street",
+    "Pennington Street",
+    "Gunnison Road",
+    "Mast Way"
+   ]
+  },
+  {
+   "len": 9341,
+   "x": 27847,
+   "y": 16207,
+   "cls": 6,
+   "names": [
+    "12th Avenue",
+    "Bay Avenue",
+    "19th Avenue",
+    "16th Avenue"
+   ]
+  },
+  {
+   "len": 7637,
+   "x": 21586,
+   "y": 27541,
+   "cls": 10,
+   "names": [
+    "Oakhurst Road",
+    "Alda Road",
+    "Shore Acres Drive",
+    "The Parkway"
+   ]
+  },
+  {
+   "len": 6486,
+   "x": -16378,
+   "y": -27744,
+   "cls": 8,
+   "names": [
+    "3rd Street",
+    "Beach Street",
+    "Dock Street",
+    "Pine Street"
+   ]
+  },
+  {
+   "len": 5375,
+   "x": -26892,
+   "y": 6685,
+   "cls": 10,
+   "names": [
+    "Garden Drive",
+    "Short Drive",
+    "Pool Drive",
+    "Meyer Court"
+   ]
+  },
+  {
+   "len": 4747,
+   "x": 27821,
+   "y": 18274,
+   "cls": 8,
+   "names": [
+    "Jackson Street",
+    "Woodland Road",
+    "Soundview Drive",
+    "Spencer Place"
+   ]
+  },
+  {
+   "len": 4733,
+   "x": 2576,
+   "y": 6940,
+   "cls": 8,
+   "names": [
+    "Main Street",
+    "North Loop Road",
+    "South Loop Road",
+    "West Main Street"
+   ]
+  },
+  {
+   "len": 3869,
+   "x": -27661,
+   "y": -27515,
+   "cls": 10,
+   "names": [
+    "Harvard Road",
+    "Brown Court",
+    "Amherst Court",
+    "Dartmouth Road"
+   ]
+  },
+  {
+   "len": 3787,
+   "x": 24509,
+   "y": 27449,
+   "cls": 8,
+   "names": [
+    "Stuyvesant Avenue",
+    "Forest Avenue",
+    "Pine Island Road",
+    "Warriston Lane"
+   ]
+  },
+  {
+   "len": 3722,
+   "x": 4609,
+   "y": 9011,
+   "cls": 0,
+   "names": [
+    "Robert F. Kennedy Bridge"
+   ]
+  },
+  {
+   "len": 3405,
+   "x": 22653,
+   "y": 27678,
+   "cls": 10,
+   "names": [
+    "Norman Place",
+    "Shore Road",
+    "Brevoort Lane",
+    "Norman Drive"
+   ]
+  },
+  {
+   "len": 2756,
+   "x": -27782,
+   "y": 5406,
+   "cls": 10,
+   "names": [
+    "Noel Drive",
+    "Fairfield Drive",
+    "Martindale Road",
+    "Martindale Place"
+   ]
+  },
+  {
+   "len": 2230,
+   "x": 27850,
+   "y": 19586,
+   "cls": 10,
+   "names": [
+    "Cedar Lane",
+    "Ridge Road",
+    "Whitney Circle",
+    "Tower Road"
+   ]
+  },
+  {
+   "len": 2085,
+   "x": 22215,
+   "y": 27642,
+   "cls": 10,
+   "names": [
+    "Colonial Court",
+    "Shadow Lane",
+    "Taylors Lane",
+    "Barrymore Lane"
+   ]
+  },
+  {
+   "len": 1894,
+   "x": 2973,
+   "y": 16663,
+   "cls": 0,
+   "names": [
+    "George Washington Bridge Lower Level"
+   ]
+  },
+  {
+   "len": 1855,
+   "x": -853,
+   "y": 673,
+   "cls": 4,
+   "names": [
+    "Canal Street",
+    "Flatbush Avenue Extension"
+   ]
+  },
+  {
+   "len": 1775,
+   "x": 2223,
+   "y": 7049,
+   "cls": 0,
+   "names": [
+    "FDR Drive"
+   ]
+  },
+  {
+   "len": 1722,
+   "x": -27511,
+   "y": 12866,
+   "cls": 5,
+   "names": [
+    "Choctaw Way",
+    "Adp Boulevard"
+   ]
+  },
+  {
+   "len": 1497,
+   "x": -26434,
+   "y": 6553,
+   "cls": 10,
+   "names": [
+    "Valley View Drive"
+   ]
+  },
+  {
+   "len": 1458,
+   "x": 20050,
+   "y": -7089,
+   "cls": 10,
+   "names": [
+    "Bayview Avenue",
+    "East Avenue",
+    "Meyer Avenue",
+    "North Street"
+   ]
+  },
+  {
+   "len": 1374,
+   "x": -27281,
+   "y": -26772,
+   "cls": 10,
+   "names": [
+    "Louis Street",
+    "Center Avenue",
+    "Vincent Street",
+    "Parkway Place"
+   ]
+  },
+  {
+   "len": 1337,
+   "x": 89,
+   "y": 356,
+   "cls": 10,
+   "names": [
+    "West Way",
+    "East Way",
+    "West Street",
+    "Ship Ways Avenue"
+   ]
+  },
+  {
+   "len": 1324,
+   "x": 27722,
+   "y": 19182,
+   "cls": 10,
+   "names": [
+    "Delamar Court",
+    "Pembroke Drive"
+   ]
+  }
+ ]
+}
+[43.4s] map /home/claude/earth_online/src/road50/out/nyc_before_midtown.png
+[43.7s] map /home/claude/earth_online/src/road50/out/nyc_before_downtown_bk.png
+[44.0s] map /home/claude/earth_online/src/road50/out/nyc_before_queens.png

@@ -256,7 +256,7 @@ const MK = (() => {
     let lampsRest = null, litMesh = null;
     for (let L = 0; L < 3; L++){
       const P = parts(L), m = new THREE.SkinnedMesh(geo(P.B), mat); m.name = 'mech_lod' + L; m.castShadow = true; m.receiveShadow = true; m.visible = L === 0; root.add(m); m.bind(skel); lods.push(m); tris.push(P.B.tris);
-      if (L === 0){ lampsRest = P.lamps; litMesh = new THREE.SkinnedMesh(geo(P.LB), matL); litMesh.name = 'mech_lamps'; root.add(litMesh); litMesh.bind(skel); tris.push(P.LB.tris); }
+      if (L === 0){ lampsRest = P.lamps; litMesh = new THREE.SkinnedMesh(geo(P.LB), matL); litMesh.name = 'mech_lamps'; root.add(litMesh); litMesh.bind(skel); litMesh.trisN = P.LB.tris; }
     }
     // glow sprites at the lamps (world positions written every frame), the floodlight pools on the ground
     const gl = lampsRest.filter(l => l.s > 0), gg = new THREE.BufferGeometry(), gp = new Float32Array(gl.length*3), gc = new Float32Array(gl.length*3), gs = new Float32Array(gl.length);
@@ -267,15 +267,16 @@ const MK = (() => {
     const pg = new THREE.PlaneGeometry(2, 2); pg.rotateX(-PI/2);
     const pm = new THREE.ShaderMaterial({uniforms:{uA:{value:0}}, vertexShader:POOL_VS, fragmentShader:POOL_FS, transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, polygonOffset:true, polygonOffsetFactor:-4});
     const pools = [0, 1].map(i => { const q = new THREE.Mesh(pg, pm); q.name = 'mech_pool' + i; q.visible = false; q.renderOrder = 5; return q; });
+    tris.push(litMesh.trisN);     // [LOD 0, LOD 1, LOD 2, lamps]
     MOD = {root, bones, skel, lods, lit:litMesh, tris, glow, glowL:gl, pools, mat, matL, ms:performance.now() - t0, lod:0};
     return MOD;
   }
   function attach(){ const M = build(); if (M.root.parent !== scene){ scene.add(M.root); scene.add(M.glow); for (const q of M.pools) scene.add(q); } return M; }
   function detach(){ if (!MOD) return; MOD.root.visible = false; MOD.glow.visible = false; for (const q of MOD.pools) q.visible = false; }
   // the pose: Q (NB quaternions [x,y,z,w], bone-local) and the root bone's position; group placement; level of detail by distance
-  function setPose(Q, rootP, X, Y, Z, hdg){
+  function setPose(Q, rootP, X, Y, Z, hdg, tilt){
     const M = MOD; if (!M) return;
-    M.root.position.set(X, Z, -Y); M.root.rotation.set(0, PI - hdg, 0);
+    M.root.position.set(X, Z, -Y); M.root.rotation.set(tilt || 0, PI - hdg, 0, 'YXZ');     // (tilt: a fall forward about the feet)
     for (let i = 0; i < NB; i++){ const q = Q[i]; M.bones[i].quaternion.set(q[0], q[1], q[2], q[3]); }
     M.bones[0].position.set(rootP[0], rootP[1], rootP[2]);
     M.root.visible = true; M.root.updateMatrixWorld(true);

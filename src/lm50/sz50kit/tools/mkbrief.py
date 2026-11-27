@@ -42,13 +42,16 @@ adds what is specific to the lm50 Shenzhen groups. `R = /home/claude/earth_onlin
   **Made from the app's own data**: `gbareal/out` (what refs.py reads) no longer exists on this machine, so `K/tools/refs_sz.py`
   decodes the staged page data (`site/gbadata`, 22 Nov build: base, bld0-2, the 228 road chunks) and takes OSM ids / names / levels,
   land-use areas and POIs from OSM (Overpass, 27 Nov). `buildings[]`: `ring` (+ `holes`), `h` (the app's height), `base`, `type`,
-  `area`, `centroid`, `parts` (the app's building:part pieces on it, base / top), and when an OSM outline covers it `osm`, `name`, `zh`,
-  `floors`, `h_osm`. `roads[]`: `cls`, `name`, `bridge`, `pts`, `elev` (deck height above ground per vertex; the app data has no OSM
+  `area`, `centroid`, `parts` (the app's building:part pieces on it, base / top), `target: true` on the app footprints lying on the
+  target's own OSM footprint (`meta.osm`: what your model replaces), and when an OSM outline fits it (best intersection-over-union)
+  `osm`, `name`, `zh`, `floors`, `h_osm`. `roads[]`: `cls`, `name`, `bridge`, `pts`, `elev` (deck height above ground per vertex; the app data has no OSM
   `layer`). The app also has ~2x more footprints than OSM in Shenzhen (other footprint sources, no names / heights): those have no
   `osm`. Towers are sometimes several app pieces on one OSM outline (e.g. szpafcs: 4 pieces 196-289 m); the app hides all pieces under
   your hull.
-- Re-anchored refs for one key (if your anchor moves): `cd K/tools && python3 osmbox.py` is not needed — run
-  `bash $H python3 refs_sz.py --reref sz50x_1 <key> <lat> <lon> <radius>` → `R/lm50/ref_sz50x_1.json` (~1 min + the lock wait).
+- Command that made them (27 Nov): `cd $K/tools && python3 osmbox.py ../../targets_sz.json && bash $H python3 refs_sz.py`
+  (OSM boxes cached in `SC/lm50/sz/osmbox/`; ~1 min of work under the heavy lock).
+- Re-anchored refs for one key (if your anchor moves): `cd $K/tools && bash $H python3 refs_sz.py --reref sz50x_1 <key> <lat> <lon> <radius>`
+  → `R/lm50/ref_sz50x_1.json` (fetches its own OSM box; ~1 min + the lock wait).
 - Tools that made the targets (for the coordinator): `K/tools/` (cands_sz.py = the curated list, mktargets.py, match.py = CTBUH↔OSM,
   inv.js = inventory of existing models, osmgeom.py / osmbox.py = Overpass, stage.py + szcut.py = decoder of site/gbadata →
   `SC/lm50/sz/stage_sz.pkl`). Data stays in `SC/lm50/sz/` (stage_sz.pkl 126 MB, osmbox/ and web/ caches).

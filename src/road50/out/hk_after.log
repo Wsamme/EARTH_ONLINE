@@ -1,0 +1,22 @@
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata/hk_base.bin'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at readGz (/home/claude/earth_online/src/road50/lib.js:16:16)
+    at Object.loadCity (/home/claude/earth_online/src/road50/lib.js:33:27)
+    at Object.<anonymous> (/home/claude/earth_online/src/road50/diag.js:16:15)
+    at Module._compile (node:internal/modules/cjs/loader:1781:14)
+    at Object..js (node:internal/modules/cjs/loader:1913:10)
+    at Module.load (node:internal/modules/cjs/loader:1505:32)
+    at Function._load (node:internal/modules/cjs/loader:1309:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata/hk_base.bin'
+}
+
+Node.js v22.23.4

@@ -45,8 +45,8 @@ adds what is specific to the lm50 Shenzhen groups. `R = /home/claude/earth_onlin
   `area`, `centroid`, `parts` (the app's building:part pieces on it, base / top), `target: true` on the app footprints lying on the
   target's own OSM footprint (`meta.osm`: what your model replaces), and when an OSM outline fits it (best intersection-over-union)
   `osm`, `name`, `zh`, `floors`, `h_osm`. `roads[]`: `cls`, `name`, `bridge`, `pts`, `elev` (deck height above ground per vertex; the app data has no OSM
-  `layer`). The app also has ~2x more footprints than OSM in Shenzhen (other footprint sources, no names / heights): those have no
-  `osm`. Towers are sometimes several app pieces on one OSM outline (e.g. szpafcs: 4 pieces 196-289 m); the app hides all pieces under
+  `layer`). The app has far more footprints than OSM (481 986 app footprints in the box round Shenzhen vs 82 210 OSM buildings in Shenzhen
+  in the October count: other footprint sources, no names / heights): those have no `osm`. Towers are sometimes several app pieces on one OSM outline (e.g. szpafcs: 4 pieces 196-289 m); the app hides all pieces under
   your hull.
 - Command that made them (27 Nov): `cd $K/tools && python3 osmbox.py ../../targets_sz.json && bash $H python3 refs_sz.py`
   (OSM boxes cached in `SC/lm50/sz/osmbox/`; ~1 min of work under the heavy lock).
@@ -76,9 +76,11 @@ Offline, as often as you like (no browser; ~0.1-10 s):
 cd $K
 node near.js <lat> <lon> [r=600] [../../gba/sz50x/sz50x.js]      # existing models near a point: landmark hulls (INSIDE / distance) and site keeps
 node nstat.js ../../gba/sz50x/sz50x.js [key1,key2]                # tris, calls, mats, ms, rmax, y range, last SG_PLACES entry
-node ndump.js ../../gba/sz50x/sz50x.js <key> $SC/lm50/sz/<key>.bin && \\
-  python3 nrender.py $SC/lm50/sz/<key>.bin $SC/lm50/sz/<key>.png 0 <h/2> 0 <dist> 20 200 400 400   # shaded preview (model coords)
-python3 oplan.py ../../gba/sz50x/sz50x.js <key> ../ref_sz50x.json $SC/lm50/sz/<key>_plan.png   # plan vs real footprints: hidden, CLASHES, offset
+node ndump.js ../../gba/sz50x/sz50x.js <key> ../../gba/sz50x/tmp/<key>.bin && \\
+  python3 nrender.py ../../gba/sz50x/tmp/<key>.bin ../../gba/sz50x/tmp/<key>.png 0 <h/2> 0 <dist> 20 200 400 400   # shaded preview (model coords)
+python3 oplan.py ../../gba/sz50x/sz50x.js <key> ../ref_sz50x.json [<refkey>] ../../gba/sz50x/tmp/<key>_plan.png [half m]   # plan vs real footprints
+#   prints hidden real buildings, CLASHES (kept buildings your lower 4 m overlaps), the offset to the target footprint (the app pieces
+#   flagged target in the refs); PNG: grey kept, red hidden, orange clash, blue hull, green model below 4 m, red outline = target
 ```
 (tested: `node nstat.js ../../gba/szcbd/szcbd.js szneo,szdabaihui`, `node ndump.js … szneo` + `nrender.py`, `node near.js 22.5384 114.0226 600`,
 `python3 oplan.py ../../gba/szcbd/szcbd.js szneo <reref of szneo> out.png`). The offline kit is `R/lm50/ty50kit` adapted: the builder
@@ -89,8 +91,8 @@ build offline — material colour helper — none of them in Shenzhen). Look at 
 Browser (at most 2 runs per group; through the browser lock, detached, poll the log):
 ```
 cd $K && bash $H bash mkpage_sz.sh sz50x sz50x          # in-situ page: only your group + the Hong Kong copies -> SC/lm50/sz/site/t_sz50x.html (~2 s)
-(cd $K && NEAR=<lat>,<lon> setsid nohup bash $B node appshot_sz.js t_sz50x.html $SC/lm50/sz/shots/sz50x \\
-  '[["<key>_d",lat,lon,500,30,200,13],["<key>_n",lat,lon,500,30,200,20.5]]' > $SC/lm50/sz/sz50x_app.log 2>&1 &)
+(cd $K && NEAR=<lat>,<lon> setsid nohup bash $B node appshot_sz.js t_sz50x.html $R/gba/sz50x/shots/app1 \\
+  '[["<key>_d",lat,lon,500,30,200,13,"",8000],["<key>_n",lat,lon,500,30,200,20.5,"",8000]]' > $R/gba/sz50x/app1.log 2>&1 &)
 ```
 Views `[name, lat, lon, distance m, elevation °, azimuth ° (0 = camera south looking north), hour (20.5 = night), "optional JS", waitMs]`.
 The log prints readiness, per-view calls / tris, landmark label count, heap, every failed request (FAILED-URLS) and PAGEERR.
@@ -98,7 +100,7 @@ Pass = 0 PAGEERR and only the expected failures: 404 + ERR_ABORTED for the city-
 /hk.html /tyo.html /index.html` and 404 `/favicon.ico` (13 lines, and 11 matching "Failed to load resource" console errors). Tested run (27 Nov,
 GBALM=szcbd page, NEAR=22.5384,114.0226, 2 views): ready in 48 s, 0 PAGEERR, 198 labels, heap 1555 MB, ~2.0 M tris day / 3.8 M night.
 Tiles are still streaming at the default wait ("Building the real city 35/2602" in the shot): give `waitMs` 6000-10000 for the views you judge. For the full-app check build `mkpage_sz.sh sz50x_all all` instead (every
-module). Delete the page afterwards (`rm $SC/lm50/sz/site/t_sz50x*.html`, ~7-9 MB).
+module). Delete the page afterwards (`rm $SC/lm50/sz/site/t_sz50x*.html`, ~7-9 MB); keep shots small and `tmp/` out of the module.
 The old Greater Bay in-situ harness `R/gbareal/targets/kit` does **not** run any more (it needs `gbareal/out/*.bin.gz`,
 `hkreal/kit/engine_helpers.js` + `lmbase.js` and chromium-1194, all gone): use the test page above; the offline `oplan.py` replaces its
 plan overlay.

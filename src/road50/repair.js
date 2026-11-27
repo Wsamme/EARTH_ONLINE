@@ -85,27 +85,107 @@ function contacts(li, E, Q){
   return out;
 }
 // contacts at the same level (<= 1.2 m, the roads module's junction test), as a set of rounded keys
+let LASTWHY = '', LASTKEY = '';
 const sameSet = C => { const s = new Set(); for (const c of C) if (Math.abs(c.e - c.e2) <= 1.2) s.add(c.li2 + ':' + Math.round(c.x) + ':' + Math.round(c.y)); return s; };
 const lowSet = C => { const s = new Set(); for (const c of C) { const d = Math.abs(c.e - c.e2); if (d > 1.2 && d < 4.2 && lines[c.li2].c <= 10) s.add(c.li2 + ':' + Math.round(c.x) + ':' + Math.round(c.y)); } return s; };
 // a new E profile for line li keeps every same-level contact and creates none (except those in 'allow' / dropping those in 'drop')
 function keepsContacts(li, Enew, allowNew, allowLost, Qnew){
   const before = contacts(li), after = contacts(li, Enew, Qnew), A = sameSet(before), B = sameSet(after);
-  for (const k of A) if (!B.has(k) && !(allowLost && allowLost(k))) return false;
-  for (const k of B) if (!A.has(k) && !(allowNew && allowNew(k))) return false;
+  const cl = k => lines[+k.split(':')[0]].c + ((lines[+k.split(':')[0]].flags & 2) ? 'b' : '');
+  for (const k of A) if (!B.has(k) && !(allowLost && allowLost(k))){ LASTWHY = 'loses junction (c' + cl(k) + ')'; LASTKEY = k; return false; }
+  for (const k of B) if (!A.has(k) && !(allowNew && allowNew(k))){ LASTWHY = 'makes a new junction (c' + cl(k) + ')'; LASTKEY = k; return false; }
   // no new low-clearance crossing either
-  const L0 = lowSet(before), L1 = lowSet(after); for (const k of L1) if (!L0.has(k)) return false;
+  const L0 = lowSet(before), L1 = lowSet(after); for (const k of L1) if (!L0.has(k)){ LASTWHY = 'low clearance over c' + cl(k); LASTKEY = k; return false; }
   return true;
 }
 function setE(li, Enew, rule, x, y, o){
   const g = G[li]; g.E = Enew; g.dirty = true; chg(rule, li, x, y, o);
 }
 log(city, 'lines', lines.length);
+const qkey = (X, Y) => X + ',' + Y;
+buildIdx();
+// ================================================================ R3 junction level continuity (ramp heights)
+// Contacts where the data joins two drivable lines (a shared vertex, or a line end within 0.6 m of another line) at different
+// heights (1.2 < |dE| <= 15 m) are not junctions for the roads module or traffic. H = the higher line there, Lo = the lower one.
+//   - H is not bridge-tagged (its height is a pipeline ramp lift towards a deck) or H ends there (a deck end meeting a road):
+//     H is pinned down to Lo's level at the contact: E_H(s) = min(E_H(s), e_Lo + g |s - s0|)  (a ramp of grade g away from it)
+//   - H is a bridge deck passing through and Lo ends there (a slip road joining the deck): Lo is raised at its end:
+//     E_Lo(s) = max(E_Lo(s), e_H - g d)
+//   - else (a deck sharing a node mid-span with a road passing through): flagged.
+// g = 5.5 % (the pipelines' ramp grade), raised to 8 % / 12 % if the ramp would otherwise change another junction of the line;
+// every change keeps all other same-level contacts of the line and creates no low-clearance crossing, or it is flagged.
+function levelConflicts(){
+  const out = [], at = new Map();
+  for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g);
+    for (let k = 0; k < m; k++){ const key = qkey(Math.round(g.Q[k*2]/2), Math.round(g.Q[k*2+1]/2)); let a = at.get(key); if (!a) at.set(key, a = []); a.push({li, k, end:(k === 0 || k === m - 1)}); } }
+  const seen = new Set();
+  for (const [key, A] of at){ if (A.length < 2) continue;
+    for (let i = 0; i < A.length; i++) for (let j = i + 1; j < A.length; j++){ const p = A[i], q = A[j]; if (p.li === q.li) continue;
+      const ep = eAt(G[p.li], p.k), eq = eAt(G[q.li], q.k), d = Math.abs(ep - eq); if (d <= 1.2 || d > 15) continue;
+      const H = ep > eq ? p : q, Lo = ep > eq ? q : p, gH = G[H.li];
+      const sk = H.li + ':' + Lo.li + ':' + key; if (seen.has(sk)) continue; seen.add(sk);
+      out.push({H:H.li, Lo:Lo.li, sH:null, kH:H.k, kLo:Lo.k, endH:H.end, endLo:Lo.end, eH:Math.max(ep, eq), eL:Math.min(ep, eq), x:qx(gH, H.k), y:qy(gH, H.k)}); } }
+  // line ends within 0.6 m of another line's segment (not at its vertices)
+  for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g);
+    for (const k of [0, m - 1]){ const x = qx(g, k), y = qy(g, k), e = eAt(g, k);
+      for (const l2 of linesNear(x - 1, y - 1, x + 1, y + 1)){ if (l2 === li || !drv(l2)) continue; const h = G[l2], m2 = nv(h);
+        for (let j = 0; j + 1 < m2; j++){ const ax = qx(h, j), ay = qy(h, j), ex = qx(h, j+1) - ax, ey = qy(h, j+1) - ay, L2 = ex*ex + ey*ey; if (L2 < 1e-6) continue;
+          const u = ((x - ax)*ex + (y - ay)*ey)/L2; if (u <= 0.0 || u >= 1.0) continue; if (Math.hypot(ax + ex*u - x, ay + ey*u - y) > 0.6) continue;
+          if (Math.hypot(ex, ey)*Math.min(u, 1 - u) < 0.3) continue;                 // at its vertex: done above
+          const e2 = eAt(h, j) + (eAt(h, j+1) - eAt(h, j))*u, d = Math.abs(e - e2); if (d <= 1.2 || d > 15) continue;
+          if (e > e2) out.push({H:li, Lo:l2, kH:k, endH:true, endLo:false, segLo:[j, u], eH:e, eL:e2, x, y});
+          else out.push({H:l2, Lo:li, segH:[j, u], endH:false, kLo:k, endLo:true, eH:e2, eL:e, x, y});
+        } } } }
+  return out;
+}
+function sOn(g, s, k, seg){ if (seg) return s[seg[0]] + (s[seg[0]+1] - s[seg[0]])*seg[1]; return s[k]; }
+if (RULES.has('R3')){
+  let nC = 0, nFix = 0;
+  for (let pass = 0; pass < 3; pass++){
+    const CF = levelConflicts(); if (pass === 0) nC = CF.length; let fixed = 0; const shifted = new Set();
+    CF.sort((a, b) => (a.eH - a.eL) - (b.eH - b.eL));
+    for (const f of CF){
+      if (shifted.has(f.H) || shifted.has(f.Lo)) continue;
+      const gH = G[f.H], gL = G[f.Lo];
+      // still a conflict? (an earlier fix may have solved it)
+      const sH = arcS(gH), sL = arcS(gL), s0H = sOn(gH, sH, f.kH, f.segH), s0L = sOn(gL, sL, f.kLo, f.segLo);
+      const eHn = f.segH ? eAt(gH, f.segH[0]) + (eAt(gH, f.segH[0]+1) - eAt(gH, f.segH[0]))*f.segH[1] : eAt(gH, f.kH);
+      const eLn = f.segLo ? eAt(gL, f.segLo[0]) + (eAt(gL, f.segLo[0]+1) - eAt(gL, f.segLo[0]))*f.segLo[1] : eAt(gL, f.kLo);
+      if (Math.abs(eHn - eLn) <= 1.2) continue;
+      const key = f.Lo + ':' + Math.round(f.x) + ':' + Math.round(f.y), keyH = f.H + ':' + Math.round(f.x) + ':' + Math.round(f.y);
+      const allow = k => k === key || k === keyH || k.endsWith(':' + Math.round(f.x) + ':' + Math.round(f.y));
+      const brH = (lines[f.H].flags & 2) !== 0;
+      let mode, li, g, s, s0, tgt;
+      if (!brH || f.endH){ mode = 'pin'; li = f.H; g = gH; s = sH; s0 = s0H; tgt = eLn; }
+      else if (f.endLo){ mode = 'raise'; li = f.Lo; g = gL; s = sL; s0 = s0L; tgt = eHn; }
+      else { if (pass === 0) flg('R3', f.x, f.y, {li:f.H, to:f.Lo, dE:+(eHn - eLn).toFixed(1), why:'bridge deck shares a node mid-span with a road below'}); continue; }
+      let done = false;
+      for (const gr of [0.055, 0.08, 0.12]){
+        const E0 = g.E || new Array(nv(g)).fill(0), En = E0.slice();
+        for (let k = 0; k < nv(g); k++){ const d = Math.abs(s[k] - s0); En[k] = mode === 'pin' ? Math.min(En[k], tgt + gr*d) : Math.max(En[k], tgt - gr*d); if (En[k] < 0) En[k] = 0; }
+        // a contact on a segment: put a vertex there so the height is exact
+        let Qn = null, Enn = En;
+        const seg = mode === 'pin' ? f.segH : f.segLo;
+        if (seg){ const [j, u] = seg; Qn = g.Q.slice(); Qn.splice((j + 1)*2, 0, Math.round(g.Q[j*2] + (g.Q[j*2+2] - g.Q[j*2])*u), Math.round(g.Q[j*2+1] + (g.Q[j*2+3] - g.Q[j*2+1])*u)); Enn = En.slice(); Enn.splice(j + 1, 0, tgt); }
+        if (!keepsContacts(li, Enn, allow, null, Qn || undefined)) continue;
+        let mx = 0; for (let k = 0; k < nv(g); k++) mx = Math.max(mx, Math.abs(En[k] - E0[k]));
+        if (Qn){ g.Q = Qn; shifted.add(li); }
+        setE(li, Enn, 'R3', f.x, f.y, {mode, dE:+(eHn - eLn).toFixed(2), grade:gr, maxChange:+mx.toFixed(2), other:mode === 'pin' ? f.Lo : f.H, bridge:!!(lines[li].flags & 2)});
+        done = true; fixed++; break;
+      }
+      if (!done && pass === 2) flg('R3', f.x, f.y, {li, to:mode === 'pin' ? f.Lo : f.H, dE:+(eHn - eLn).toFixed(1), mode, why:'12 % ramp ' + LASTWHY, key:LASTKEY});
+    }
+    nFix += fixed; log('R3 pass', pass, 'conflicts', CF.length, 'fixed', fixed);
+  }
+  log('R3: conflicts', nC, 'fixed', nFix, 'flagged', FLAG.filter(f => f.rule === 'R3').length);
+}
+// rebuild the roads module's junction graph and the traffic network on the current geometry
+function curLines(){ return G.map((g, i) => ({c:lines[i].c, flags:(lines[i].flags & ~(4 | 32)) | (g.E && g.E.some(v => v > 0.05) ? 4 : 0), name:lines[i].name, ref:lines[i].ref, P:Float32Array.from(g.Q, v => v/4), E:g.E && g.E.some(v => v > 0.05) ? Float32Array.from(g.E) : null})); }
 // ================================================================ R1 gap join (+ R2 chunk seams)
-D.C = D.SGRoads._dbg.prep(lines);
-const N = TG.build(D, {step:15});
+const D2 = {SGRoads:D.SGRoads, lines:curLines()}; D2.C = D.SGRoads._dbg.prep(D2.lines);
+const N = TG.build(D2, {step:15});
 buildIdx();
 const anchors = new Set();                         // Q keys of vertices used as join points
-const qkey = (X, Y) => X + ',' + Y;
 const insertions = new Map();                      // li -> [{k, u, X, Y, e}]
 const endMoves = [];                               // {li, end, X, Y, e, mode: 'move' | 'extend'}
 const compatible = (c1, c2) => { const lo = Math.min(c1, c2), hi = Math.max(c1, c2); if (lo === 0) return hi <= 5; if (lo === 1) return hi <= 9; return true; };
@@ -113,7 +193,7 @@ if (RULES.has('R1') || RULES.has('R2')){
   let nDead = 0;
   for (const [nd, Nd] of N.NODE){
     if (Nd.arms !== 1) continue;
-    const a = Nd.A[0], li = a.P.li, L = lines[li], g = G[li], m = nv(g), atEnd = a.end ? (a.P.b >= N.J.LEN(li) - 0.01) : (a.P.a <= 0.01);
+    const a = Nd.A[0], li = a.P.li, L = D2.lines[li], g = G[li], m = nv(g), atEnd = a.end ? (a.P.b >= N.J.LEN(li) - 0.01) : (a.P.a <= 0.01);
     if (!atEnd) continue; nDead++;
     const end = a.end, k = end ? m - 1 : 0, x = qx(g, k), y = qy(g, k), e = eAt(g, k);
     if ((end ? (L.flags & 128) : (L.flags & 64)) || Math.abs(x) > HALF - 30 || Math.abs(y) > HALF - 30) continue;
@@ -166,35 +246,6 @@ if (RULES.has('R1') || RULES.has('R2')){
   buildIdx();
 }
 function isSeam(x, y){ const fx = ((x + HALF) % 8000 + 8000) % 8000, fy = ((y + HALF) % 8000 + 8000) % 8000; return Math.min(fx, 8000 - fx) < 0.6 || Math.min(fy, 8000 - fy) < 0.6; }
-// ================================================================ R3 level steps at shared vertices
-if (RULES.has('R3')){
-  const at = new Map();                            // Q key -> [{li, k, end}]
-  for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g);
-    for (let k = 0; k < m; k++){ const key = qkey(Math.round(g.Q[k*2]/2), Math.round(g.Q[k*2+1]/2)); let a = at.get(key); if (!a) at.set(key, a = []); a.push({li, k, end:k === 0 ? 0 : k === m - 1 ? 1 : -1}); } }
-  let nStep = 0, nFix = 0;
-  for (const [key, A] of at){
-    if (A.length < 2 || !A.some(o => o.end >= 0)) continue;
-    let emin = Infinity, emax = -Infinity; for (const o of A){ const e = eAt(G[o.li], o.k); emin = Math.min(emin, e); emax = Math.max(emax, e); }
-    if (emax - emin <= 1.2) continue; nStep++;
-    // the anchor level: a line passing through, else a bridge-tagged line, else the most important class; ties: higher
-    const score = o => (o.end < 0 ? 100 : 0) + ((lines[o.li].flags & 2) ? 50 : 0) + (20 - lines[o.li].c) + eAt(G[o.li], o.k)*0.01;
-    const anc = A.reduce((b, o) => score(o) > score(b) ? o : b, A[0]), eA = eAt(G[anc.li], anc.k);
-    const x = qx(G[anc.li], anc.k), y = qy(G[anc.li], anc.k);
-    for (const o of A){
-      if (o === anc || o.end < 0) continue; const g = G[o.li], e0 = eAt(g, o.k), dE = eA - e0; if (Math.abs(dE) <= 1.2) continue;
-      if (Math.abs(dE) > 15){ flg('R3', x, y, {li:o.li, dE:+dE.toFixed(1), why:'step > 15 m'}); continue; }
-      if (lines[o.li].flags & 2){ flg('R3', x, y, {li:o.li, dE:+dE.toFixed(1), why:'both bridge decks (profiles kept)'}); continue; }
-      const s = arcS(g), Lt = s[s.length - 1]; let Lr = Math.abs(dE)/0.055; if (Lr > Lt) Lr = Lt;
-      if (Math.abs(dE)/Lr > 0.12){ flg('R3', x, y, {li:o.li, dE:+dE.toFixed(1), len:+Lt.toFixed(0), why:'line too short for a 12 % ramp'}); continue; }
-      const En = new Array(nv(g)); for (let k = 0; k < nv(g); k++){ const d = o.end ? Lt - s[k] : s[k]; const f = d < Lr ? 1 - d/Lr : 0; const v = eAt(g, k) + dE*f*f*(3 - 2*f)/1; En[k] = v < 0 ? 0 : v; }
-      En[o.k] = eA;
-      const anchorKey = anc.li + ':' + Math.round(x) + ':' + Math.round(y);
-      if (!keepsContacts(o.li, En, k2 => k2.split(':')[1] + ':' + k2.split(':')[2] === Math.round(x) + ':' + Math.round(y))){ flg('R3', x, y, {li:o.li, dE:+dE.toFixed(1), why:'easing would change another junction'}); continue; }
-      setE(o.li, En, 'R3', x, y, {dE:+dE.toFixed(2), ramp:+Lr.toFixed(0), to:anc.li}); nFix++;
-    }
-  }
-  log('R3: step vertices', nStep, 'eased lines', nFix, 'flagged', FLAG.filter(f => f.rule === 'R3').length);
-}
 // ================================================================ R4 clearance over at-grade roads (bridge-tagged upper line)
 if (RULES.has('R4')){
   let nC = 0, nFix = 0;
@@ -217,7 +268,7 @@ if (RULES.has('R4')){
     }
     const was = Math.max(...E2);
     for (let k = 1; k < S2.length - 1; k++) for (const r of req){ const v = r.h - r.g*Math.abs(S2[k] - r.s); if (v > E2[k]) E2[k] = v; }
-    if (!keepsContacts(li, E2, null, k => req.some(r => r.key === k), Q2)){ for (const r of req) flg('R4', r.x, r.y, {li, why:'raising would change another junction'}); continue; }
+    if (!keepsContacts(li, E2, null, k => req.some(r => r.key === k), Q2)){ for (const r of req) flg('R4', r.x, r.y, {li, why:'raising: ' + LASTWHY}); continue; }
     g.Q = Q2; setE(li, E2, 'R4', req[0].x, req[0].y, {crossings:req.length, maxE:+Math.max(...E2).toFixed(1), was:+was.toFixed(1), grade:+Math.max(...req.map(r => r.g)).toFixed(3)}); nFix++;
   }
   log('R4: low crossings', nC, 'raised bridges', nFix, 'flagged', FLAG.filter(f => f.rule === 'R4').length);
@@ -242,7 +293,7 @@ if (RULES.has('R5')){
     let still = false; for (let k = 0; k + 1 < m; k++){ const d = s[k+1] - s[k], de = Math.abs(En[k+1] - En[k]); if (de > 1.0 && de > 0.12*d){ still = true; break; } }
     const kx = Math.floor(m/2), x = qx(g, kx), y = qy(g, kx);
     if (still){ flg('R5', x, y, {li, why:'jump next to a fixed junction / line end'}); continue; }
-    if (!keepsContacts(li, En)){ flg('R5', x, y, {li, why:'re-grading would change a junction or clearance'}); continue; }
+    if (!keepsContacts(li, En)){ flg('R5', x, y, {li, why:'re-grading: ' + LASTWHY}); continue; }
     let mx = 0; for (let k = 0; k < m; k++) mx = Math.max(mx, Math.abs(En[k] - g.E[k]));
     setE(li, En, 'R5', x, y, {maxChange:+mx.toFixed(2)}); nFix++;
   }

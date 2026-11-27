@@ -13,7 +13,7 @@ const CORE0 = [[-33.5,42.6],[-21.0,50.1],[-13.3,37.1],[-25.8,30.1]];
 const T2_0 = [[25.5,-68.4],[-10.3,-9.1],[13.5,5.1],[49.2,-53.6]];
 const GAL0 = [[-11.6,-9.1],[13.5,6.1],[-56.2,119.3],[-81.3,104.1],[-61.0,71.1]];
 const C0 = [0, 0], [T1F, CORE, T2, GAL] = shAll([T1F0, CORE0, T2_0, GAL0], C0);
-LANDMARKS.sgoue = {zh:'华联海湾大厦', en:'OUE Downtown', cat:'new', r:137, h:201,
+LANDMARKS.sgoue = {zh:'华联海湾中心', en:'OUE Downtown', cat:'new', r:137, h:201,
   lt:{m:1, c:'#ffe7c4', k:0.45}, build(){
   const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
   const GL1 = {c:'#3a444d', m:1, fh:3.9, cw:1.8}, FIN = {c:'#555b61', m:0, lk:0.2}, MUL1 = {c:'#4c535a', m:0, lk:0.15}, DARK = '#23282d',

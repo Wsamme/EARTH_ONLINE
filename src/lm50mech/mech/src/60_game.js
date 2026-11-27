@@ -251,6 +251,9 @@ const SGMech = {
   input(o){ o = o || {}; if (o.fw !== undefined || o.rt !== undefined){ IN.ty = +o.fw || 0; IN.tx = +o.rt || 0; } if (o.run !== undefined){ if (o.run) IN.keys.add('ShiftLeft'); else IN.keys.delete('ShiftLeft'); }
     if (isFinite(o.yaw)) CAM.yaw = +o.yaw; if (isFinite(o.pitch)) CAM.pitch = +o.pitch; if (isFinite(o.dist)) CAM.dist = +o.dist; if (o.beam !== undefined) ST.beamOn = !!o.beam; return true; },
   act:(a, on) => MG.act(a, on),
+  // tests: put the mech at (x, y) facing hdg (feet replanted); point the camera so the crosshair looks at (x, y, z)
+  place(x, y, hdg){ const S = ST.S; if (!S || !isFinite(x) || !isFinite(y)) return false; S.X = +x; S.Y = +y; if (isFinite(hdg)) S.hdg = S.hdgWant = +hdg; S.vx = S.vy = 0; S.Zb = gnd(S.X, S.Y); for (const F of S.feet) ML.placeFoot(S, F); CAM.P = null; return true; },
+  face(x, y, z){ const S = ST.S; if (!S) return false; CAM.yaw = Math.atan2(x - S.X, y - S.Y); const dh = Math.hypot(x - S.X, y - S.Y); CAM.pitch = clamp(-Math.atan2((+z || 0) - (S.Zb + 54), dh + CAM.dist), -0.28, 1.15); CAM.P = null; return true; },
   // advance the creature and the mech in fixed steps (tests): {steps, msPerStep, status}
   sim(sec, dt){ dt = dt || 1/30; const n = Math.round(sec/dt), t0 = performance.now(), KG = KG_();
     for (let i = 0; i < n; i++){ try { if (KG) KG.frame(KG.G.t + dt, dt); } catch (e){ console.error('[mech] sim kaiju', e); } MG.frame(0, dt); }

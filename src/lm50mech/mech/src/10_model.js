@@ -100,7 +100,7 @@ const MK = (() => {
     for (const s of [1, -1]){ box('root', C.WHITE, s*5.2, 35.2, 5.5, 2.4, 3.2, 0.7, {b:0.35, rx:-0.14}); if (D1) box('root', C.ORANGE, s*5.2, 37.6, 6.05, 2.0, 0.28, 0.12, {rx:-0.14}); }
     box('root', C.WHITE2, 0, 36.2, -5.7, 5.6, 2.8, 0.9, {b:0.4, rx:0.12});
     if (D0) for (let i = 0; i < 4; i++) box('root', C.DARK, -3 + i*2, 33.4, -5.2, 0.35, 0.8, 0.5);
-    cyl('waist', C.GUN, 0, 40.6, 0, 5.3, 5.7, 4.6, 20, {sm:true});
+    cyl('waist', C.GUN, 0, 40.6, 0, 5.3, 5.7, 4.6, 28, {sm:true});
     if (D1) for (const y of [39.0, 42.3]) cyl('waist', C.DARK, 0, y, 0, 5.95, 5.95, 0.5, 20, {sm:true});
     for (let i = 0; i < 3; i++) box('waist', C.WHITE, 0, 39.0 + i*1.75, 5.2 - i*0.05, 3.4 - i*0.2, 0.75, 0.9, {b:0.3});
     if (D0) for (const s of [1, -1]){ cab('waist', C.STEEL, [s*4.2, 38.0, 3.2], [s*4.6, 44.5, 3.4], 0.35, 0.35, 8); cab('waist', C.DARK, [s*4.2, 38.0, 3.2], [s*4.35, 41.0, 3.3], 0.6, 0.6, 8); cab('waist', C.STEEL, [s*4.0, 38.2, -3.6], [s*4.4, 44.5, -3.8], 0.35, 0.35, 8); }
@@ -125,7 +125,7 @@ const MK = (() => {
     // collar, shoulder sockets
     cyl('chest', C.GUN, 0, 58.2, 0.6, 4.3, 3.9, 1.8, 18, {sm:true});
     box('chest', C.WHITE, 0, 58.6, 4.3, 5.0, 1.5, 1.2, {b:0.5, rx:-0.2});
-    for (const s of [1, -1]){ box('chest', C.WHITE, s*5.7, 59.2, 1.0, 1.0, 2.2, 3.5, {b:0.4, rz:-s*0.12}); cyl('chest', C.GUN, s*12.4, 57.5, 0, 3.4, 3.4, 3.2, 16, {rz:PI/2, sm:true}); }
+    for (const s of [1, -1]){ box('chest', C.WHITE, s*5.7, 59.2, 1.0, 1.0, 2.2, 3.5, {b:0.4, rz:-s*0.12}); cyl('chest', C.GUN, s*12.4, 57.5, 0, 3.4, 3.4, 3.2, 24, {rz:PI/2, sm:true}); }
     // power pack with radiator fins and two exhaust stacks
     box('chest', C.GUN, 0, 52.2, -8.4, 7.4, 6.4, 2.4, {b:0.8});
     box('chest', C.WHITE2, 0, 57.0, -6.4, 6.0, 1.8, 2.0, {b:0.5});
@@ -160,11 +160,11 @@ const MK = (() => {
       lamp(cl, LC.LAMP, s*17.3, 59.3, 6.32, 1.0, 0.62, 0.06, 6);
       if (D0) rivets(cl, [[s*13.0, 63.0, 4.7], [s*16.4, 63.4, 4.65], [s*19.6, 62.6, 4.4]], 'z');
       // upper arm
-      sph(ua, C.GUN, s*15.5, 57.5, 0, 3.3, 16);
+      sph(ua, C.GUN, s*15.5, 57.5, 0, 3.3, 22);
       box(ua, C.GUN, s*16.0, 50.0, 0, 2.6, 6.0, 2.7, {b:0.5});
       box(ua, C.WHITE, s*16.3, 50.8, 0.5, 3.0, 4.6, 3.2, {b:0.9, tx:1.12, tz:1.08});
       if (D0){ cab(ua, C.STEEL, [s*16.0, 54.5, -3.0], [s*16.4, 44.5, -2.6], 0.4, 0.4, 8); cab(ua, C.DARK, [s*16.0, 54.5, -3.0], [s*16.2, 49.5, -2.8], 0.7, 0.7, 8); }
-      cyl(ua, C.GUN, s*16.5, 42.5, 0.3, 2.6, 2.6, 5.4, 16, {rz:PI/2, sm:true});
+      cyl(ua, C.GUN, s*16.5, 42.5, 0.3, 2.6, 2.6, 5.4, 24, {rz:PI/2, sm:true});
       if (D0) for (const sx of [1, -1]) cyl(ua, C.STEEL, s*16.5 + sx*2.75, 42.5, 0.3, 1.0, 1.0, 0.3, 6, {rz:PI/2});
       // forearm (gauntlet: wider at the wrist)
       box(fa, C.WHITE2, s*16.5, 43.0, -2.6, 2.4, 2.3, 0.7, {b:0.3});
@@ -197,14 +197,14 @@ const MK = (() => {
     // ===== legs
     for (const [s, n] of [[1, 'L'], [-1, 'R']]){
       const tg = 'thigh' + n, sh = 'shin' + n, ft = 'foot' + n, to = 'toe' + n;
-      sph(tg, C.GUN, s*7.5, 35, 0, 3.3, 16);
+      sph(tg, C.GUN, s*7.5, 35, 0, 3.3, 22);
       box(tg, C.GUN, s*7.8, 28.0, 0.2, 3.3, 6.4, 3.5, {b:0.7, tx:1.1, tz:1.08});
       box(tg, C.WHITE, s*7.9, 28.6, 2.4, 3.5, 5.4, 1.9, {b:0.8, tx:1.08});
       box(tg, C.WHITE2, s*11.4, 29.4, 0.3, 0.8, 4.8, 3.3, {b:0.3});
       if (D1) box(tg, C.ORANGE, s*12.22, 29.4, 0.3, 0.08, 3.8, 0.4);
       box(tg, C.WHITE, s*11.7, 35.4, 0, 1.1, 2.9, 4.0, {b:0.4, rz:s*0.1});
       if (D0){ cab(tg, C.STEEL, [s*7.4, 33.0, -3.2], [s*7.9, 22.0, -2.6], 0.5, 0.5, 8); cab(tg, C.DARK, [s*7.4, 33.0, -3.2], [s*7.6, 28.0, -2.9], 0.85, 0.85, 8); rivets(tg, [[s*6.0, 33.0, 4.0], [s*9.8, 33.0, 4.0], [s*6.2, 24.5, 4.1], [s*9.6, 24.5, 4.1]], 'z'); }
-      cyl(sh, C.GUN, s*8.0, 20.0, 0.6, 2.7, 2.7, 6.3, 16, {rz:PI/2, sm:true});
+      cyl(sh, C.GUN, s*8.0, 20.0, 0.6, 2.7, 2.7, 6.3, 24, {rz:PI/2, sm:true});
       if (D0) for (const sx of [1, -1]) cyl(sh, C.STEEL, s*8.0 + sx*3.2, 20.0, 0.6, 1.1, 1.1, 0.3, 6, {rz:PI/2});
       box(sh, C.ORANGE, s*8.0, 21.0, 3.6, 3.0, 2.7, 1.4, {b:0.7, tx:0.8});
       box(sh, C.GUN, s*8.3, 13.0, -0.2, 3.3, 6.9, 3.4, {b:0.7, tx:0.95});
@@ -223,6 +223,57 @@ const MK = (() => {
       if (D1) box(to, C.ORANGE, s*8.5, 3.18, 7.7, 3.4, 0.08, 0.45);
       box(to, C.RUB, s*8.5, 0.4, 8.4, 4.5, 0.4, 2.3, {b:0.12});
       if (D0) for (const dx of [-2.6, 0, 2.6]) box(to, C.DARK, s*8.5 + dx, 1.0, 10.45, 0.7, 0.6, 0.25, {b:0.1});
+    }
+    // ===== detail pass (LOD 0, some LOD 1): panel grooves, bolt rows and rings, hoses, pipes, handles, louvres
+    if (D1){
+      const groove = (bn, x, y, z, hx, hy, hz, o) => box(bn, C.DARK, x, y, z, hx, hy, hz, o);
+      const row = (bn, p0, p1, n, ax) => { const pts = []; for (let i = 0; i < n; i++){ const t = n > 1 ? i/(n - 1) : 0.5; pts.push([lerp(p0[0], p1[0], t), lerp(p0[1], p1[1], t), lerp(p0[2], p1[2], t)]); } rivets(bn, pts, ax); };
+      const ring = (bn, c, r, n, ax) => { const pts = []; for (let i = 0; i < n; i++){ const a = i/n*TAU; pts.push(ax === 'x' ? [c[0], c[1] + Math.cos(a)*r, c[2] + Math.sin(a)*r] : ax === 'y' ? [c[0] + Math.cos(a)*r, c[1], c[2] + Math.sin(a)*r] : [c[0] + Math.cos(a)*r, c[1] + Math.sin(a)*r, c[2]]); } rivets(bn, pts, ax); };
+      const hose = (bn, p, q, sag, r, n) => { if (!D0) return; n = n || 6; let prev = p; for (let i = 1; i <= n; i++){ const t = i/n, m = [lerp(p[0], q[0], t) + sag[0]*4*t*(1 - t), lerp(p[1], q[1], t) + sag[1]*4*t*(1 - t), lerp(p[2], q[2], t) + sag[2]*4*t*(1 - t)]; cab(bn, C.RUB, prev, m, r, r, 6); prev = m; } };
+      // chest: grooves across the plate, side seams, louvres on the pack, pipes to the stacks, handles, a small mast
+      for (const y of [48.2, 53.0]) groove('chest', 0, y, 7.95 - (y - 51.6)*0.12, 7.6, 0.09, 0.1, {rx:-0.12});
+      for (const s of [1, -1]){ groove('chest', s*4.2, 50.6, 7.85, 0.09, 4.2, 0.1, {rx:-0.12}); groove('chest', s*11.5, 54.5, 2.0, 0.1, 2.4, 3.2, {rz:-s*0.14}); }
+      if (D0){
+        for (const s of [1, -1]){ for (let i = 0; i < 5; i++) box('chest', C.DARK, s*7.45, 49.0 + i*1.3, -8.4, 0.12, 0.35, 1.8, {rz:s*0.6});
+          cab('chest', C.STEEL, [s*2.2, 57.4, -10.2], [s*4.0, 58.9, -9.6], 0.45, 0.45, 8); cab('chest', C.STEEL, [s*6.2, 47.0, -10.6], [s*6.2, 56.5, -10.6], 0.35, 0.35, 8);
+          cab('chest', C.GUN, [s*9.6, 46.6, 3.8], [s*9.6, 46.6, 6.0], 0.22, 0.22, 6); cab('chest', C.GUN, [s*9.6, 46.6, 6.0], [s*9.6, 49.0, 6.0], 0.22, 0.22, 6); cab('chest', C.GUN, [s*9.6, 49.0, 6.0], [s*9.6, 49.0, 3.8], 0.22, 0.22, 6);
+          hose('chest', [s*3.0, 45.5, -6.4], [s*5.6, 57.2, -8.3], [s*1.5, 0, -1.2], 0.38, 7); }
+        row('chest', [-7.2, 57.2, 6.9], [7.2, 57.2, 6.9], 9, 'z'); row('chest', [-6.8, 45.9, 6.5], [6.8, 45.9, 6.5], 9, 'z');
+        row('chest', [-6.4, 58.0, -10.85], [6.4, 58.0, -10.85], 8, 'z'); row('chest', [-6.4, 46.0, -10.85], [6.4, 46.0, -10.85], 8, 'z');
+        cyl('chest', C.DARK, -6.6, 61.5, -9.8, 0.1, 0.06, 6.5, 4); cyl('chest', C.GUN, -6.6, 58.6, -9.8, 0.45, 0.45, 0.9, 8);
+        // waist: bolt ring, belt plates
+        ring('waist', [0, 42.6, 0], 5.9, 16, 'y'); for (const s of [1, -1]) box('waist', C.WHITE2, s*5.6, 40.4, 0, 0.6, 1.8, 2.4, {b:0.2});
+        row('root', [-6.2, 38.9, 5.45], [6.2, 38.9, 5.45], 7, 'z'); row('root', [-4.5, 36.3, -6.65], [4.5, 36.3, -6.65], 5, 'z');
+        // head: brow bolts, vents on the cheeks
+        row('head', [-2.6, 66.35, 5.9], [2.6, 66.35, 5.9], 5, 'z'); for (const s of [1, -1]) for (let i = 0; i < 3; i++) box('head', C.DARK, s*3.15, 63.5 + i*0.55, 4.2, 0.1, 0.12, 1.2, {rz:-s*0.14});
+      }
+      for (const [s, n] of [[1, 'L'], [-1, 'R']]){
+        const cl = 'clav' + n, ua = 'uarm' + n, fa = 'farm' + n, ha = 'hand' + n, tg = 'thigh' + n, sh = 'shin' + n, ft = 'foot' + n, to = 'toe' + n;
+        // shoulder block: seams, a vent, the pod's hatch rails
+        groove(cl, s*16.4, 61.2, 5.0, 4.0, 0.09, 0.1, {rz:s*0.1}); groove(cl, s*12.2, 61.0, 0, 0.1, 2.6, 4.6);
+        if (D0){ for (let i = 0; i < 4; i++) box(cl, C.DARK, s*19.4, 60.3 - i*0.8, -3.6, 0.6, 0.12, 1.4, {rz:s*0.22});
+          for (const x of [-1.9, 1.9]) box(cl, C.STEEL, s*15.2 + x, 67.15, -2.0, 0.12, 0.08, 3.1); row(cl, [s*12.6, 63.1, -3.4], [s*12.6, 63.1, 3.4], 4, 'x');
+          ring(cl, [s*12.4 - s*1.7, 57.5, 0], 2.7, 10, 'x'); }
+        // upper arm: seams, elbow hoses, the elbow's bolt circles
+        groove(ua, s*16.3, 51.0, 3.85, 2.6, 0.09, 0.1); groove(ua, s*19.45, 51.0, 0.5, 0.1, 4.0, 2.6);
+        if (D0){ ring(ua, [s*16.5 + s*2.8, 42.5, 0.3], 1.8, 8, 'x'); ring(ua, [s*16.5 - s*2.8, 42.5, 0.3], 1.8, 8, 'x');
+          hose(ua, [s*14.2, 46.0, -2.4], [s*14.6, 39.0, -1.6], [-s*0.6, -0.6, -2.2], 0.32, 6); row(ua, [s*13.6, 54.6, 3.6], [s*19.0, 54.6, 3.6], 4, 'z'); }
+        // forearm: seams, wrist ring, knuckle studs
+        groove(fa, s*16.8, 36.0, 4.05, 2.7, 0.09, 0.1); groove(fa, s*16.8, 38.5, 3.9, 0.09, 2.2, 0.1);
+        if (D0){ ring(fa, [s*16.9, 31.3, 0.8], 3.9, 12, 'y'); row(fa, [s*14.0, 40.6, 3.6], [s*19.6, 40.6, 3.6], 4, 'z'); hose(fa, [s*19.0, 41.0, -1.8], [s*19.6, 31.4, -1.2], [s*1.0, 0, -0.8], 0.3, 6);
+          for (const z of [-0.75, 0.9, 2.55]) cyl('fing' + n, C.STEEL, s*14.25, 25.3, z, 0.35, 0.35, 0.3, 6, {rz:PI/2}); row(ha, [s*20.4, 26.6, -0.6], [s*20.4, 26.6, 2.4], 3, 'x'); }
+        // thigh: seams, the hip's bolt ring, knee hoses
+        groove(tg, s*7.9, 28.6, 4.35, 3.0, 0.09, 0.1); groove(tg, s*7.9, 31.4, 4.3, 0.09, 2.4, 0.1); groove(tg, s*12.25, 29.4, -2.0, 0.1, 4.2, 0.08);
+        if (D0){ hose(tg, [s*5.2, 24.0, -3.0], [s*5.4, 17.0, -2.6], [-s*0.8, -0.2, -1.6], 0.36, 6); hose(tg, [s*10.8, 24.0, -2.6], [s*10.9, 17.0, -2.4], [s*0.8, -0.2, -1.6], 0.36, 6);
+          ring(sh, [s*8.0 + s*3.2, 20.0, 0.6], 2.0, 8, 'x'); ring(sh, [s*8.0 - s*3.2, 20.0, 0.6], 2.0, 8, 'x'); }
+        // shin: side plates, seams, ankle pistons; foot: side panels, toe claws, heel bolts
+        box(sh, C.WHITE2, s*11.85, 12.0, -0.4, 0.45, 4.6, 2.6, {b:0.2}); box(sh, C.WHITE2, s*4.75, 12.0, -0.4, 0.45, 4.6, 2.6, {b:0.2});
+        groove(sh, s*8.3, 15.4, 4.1, 3.1, 0.09, 0.1); groove(sh, s*8.3, 11.0, 4.05, 0.09, 3.2, 0.1);
+        if (D0){ row(sh, [s*12.35, 15.5, -2.4], [s*12.35, 8.5, -2.4], 4, 'x'); row(sh, [s*4.25, 15.5, -2.4], [s*4.25, 8.5, -2.4], 4, 'x');
+          for (const dx of [2.2, -2.2]){ cab(sh, C.STEEL, [s*8.3 + dx, 9.5, 3.4], [s*8.4 + dx, 6.6, 2.4], 0.4, 0.4, 8); cab(sh, C.DARK, [s*8.3 + dx, 9.5, 3.4], [s*8.35 + dx, 8.3, 3.0], 0.6, 0.6, 8); }
+          for (const sx of [1, -1]) box(ft, C.WHITE2, s*8.5 + sx*4.05, 2.4, 0.6, 0.35, 1.4, 3.6, {b:0.15}); row(ft, [s*8.5 - 2.0, 1.6, -7.75], [s*8.5 + 2.0, 1.6, -7.75], 3, 'z');
+          for (const dx of [-2.6, 0, 2.6]) box(to, C.GUN, s*8.5 + dx, 0.9, 11.0, 0.55, 0.45, 0.6, {b:0.15, tz:0.5}); groove(to, s*8.5, 2.2, 10.3, 3.2, 0.08, 0.1, {rx:-0.6}); }
+      }
     }
     return {B, LB, lamps};
   }

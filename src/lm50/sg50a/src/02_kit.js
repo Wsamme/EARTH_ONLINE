@@ -66,3 +66,9 @@ function tw50(B, P, y0, y1, s){
   if (s.cap !== false) capP(B.p(s.roof || '#8e9192'), P, y1);
   if (s.par){ wallP(B.p(s.fr || s.mul), P, y1, y1 + s.par); }
 }
+// register a key: LANDMARKS entry + its SG_PLACES line (model origin = local (C0) of the ref anchor A0, rot 0)
+function K50(key, zh, en, A0, C0, def){ LANDMARKS[key] = Object.assign({zh, en, cat:'new'}, def); const PL = LL40(A0[0], A0[1], C0[0], C0[1]); SG_PLACES.push({type:key, lat:PL.lat, lon:PL.lon, rot:0}); }
+// common colour specs
+const ROOF50 = '#8e9192', MECH50 = '#72777a', FOUND50 = '#bdb7ab', PAVE50 = '#c4beb2', LOB50 = {c:'#b4c2c6', m:0, glow:'#ffe6c0', gk:0.8};
+// glazed recessed lobby band + foundation for a tower plan
+function baseP(B, P, yl){ foundP(B.p(FOUND50), P); wallP(B.p(LOB50), offP(P, 1.2), 0.3, yl || 5); capP(B.p(ROOF50), offP(P, 1.2), 0.3); }

@@ -35,7 +35,7 @@ LANDMARKS.sgvshenton = {zh:'V on Shenton', en:'V on Shenton', cat:'new', r:91, h
   const YP = 26.4, YR = 226, YRT = 237, YO = 123;
   // ---- plinth: grey hexagon panels, a glazed base, the sky-garden deck on top ----
   foundP(B.p(FOUND), SITE); wallP(B.p(POD), SITE, 6, YP); capP(B.p('#7d8a74'), SITE, YP);
-  wallP(B.p(LOB), offP(SITE, 1.2), 0.3, 6); capP(B.p(PAVE), SITE, 0.3);
+  wallP(B.p(LOB), offP(SITE, 1.2), 0.3, 6); capP(B.p(ROOF), SITE, 0.3);
   for (const e of edgesF(SITE)) if (e.L > 8){ hexF(B.p(HEX), e.F, 0, e.L, 6.5, YP - 0.5, 6.5, 0.22, 0.06); slabP(B.p(ROOF), rectO(0, e.L, 5.6, 6.4), e.F, 0, 1.6); }
   for (const p of SITE) segP(B.p(CH), [p[0], YP + 0.05, p[1]], [p[0], 6.4, p[1]], 0.18, 4);
   bandAtP(B.p(CH), SITE, YP - 0.25, 0.25, 0.1);

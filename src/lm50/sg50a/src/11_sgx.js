@@ -20,7 +20,7 @@ const T1T = mkT(T1raw, T1arc, 'e'), T2T = (() => { const a = T2raw.slice(); cons
 const C0 = pcen(POD0);
 const sh = T => T.map(t => [t[0] - C0[0], t[1] - C0[1], t[2]]);
 const POD = shP(POD0, C0[0], C0[1]), TW = [tagP(sh(T1T)), tagP(sh(T2T))];
-LANDMARKS.sgsgx = {zh:'新交所大厦', en:'SGX Centre', cat:'new', r:100, h:187,
+LANDMARKS.sgsgx = {zh:'新加坡交易所大厦', en:'SGX Centre', cat:'new', r:100, h:187,
   lt:{m:1, c:'#e8f0ff', k:0.55}, build(){
   const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
   const GR = {c:'#aaa59c', m:0, lk:0.35}, GR2 = {c:'#9b968d', m:0, lk:0.3}, GL = {c:'#46566a', m:1, fh:4.8, cw:1.6}, GLE = {c:'#4c5d70', m:1, fh:4.8, cw:3},

@@ -10,18 +10,25 @@ S, P, OUT = json.load(open(sys.argv[1])), json.load(open(sys.argv[2])), sys.argv
 MINH = float(sys.argv[4]) if len(sys.argv) > 4 else 100
 LON0, LAT0, MX, MY = 114.12, 22.34, 103014.2, 110734.9
 sel = [b for b in S if b['h'] >= MINH and b.get('kind', 'bld') == 'bld']
+# v46: HK3D_INFRA_ONLY=1 takes only the official infrastructure models (footbridges, covered walkways, the Mid-Levels escalator,
+# kiosks, vents) on every staged sheet; the buildings go back to the hand-made models and the map footprints. HK3D_DROP lists ids
+# left out: I346921623802063C0 is the observation wheel on the Central waterfront (the page has its own turning wheel).
+import os
+INFRA_ONLY = os.environ.get('HK3D_INFRA_ONLY') == '1'
+DROP = set(x for x in os.environ.get('HK3D_DROP', 'I346921623802063C0').split(',') if x)
+if INFRA_ONLY: sel = [b for b in S if b.get('kind') == 'infra' and b['id'] not in DROP]
 # v45: on the Central / Sheung Wan / Admiralty sheets take every model, low blocks and infrastructure (footbridges, kiosks, vents)
 # included, so the district is all official geometry and no map-data block cuts through an official one
 import os
 FULL = set(x for x in os.environ.get('HK3D_FULL', '11-SW-8D,11-SW-8B,11-SW-14A,11-SW-9C,11-SW-8C').split(',') if x)
 _sid = set(b['id'] for b in sel)
-sel += [b for b in S if b['sheet'] in FULL and b['id'] not in _sid and b['h'] >= 2]
+if not INFRA_ONLY: sel += [b for b in S if b['sheet'] in FULL and b['id'] not in _sid and b['h'] >= 2]
 # a hand-made complex (tower + podium + mall) replaced through one of its towers must not leave holes: also take every official
 # building (any height) whose centre is within the old model's radius of its anchor; repeat for anchors that fall in those
 def _xy(lat, lon): return ((lon - LON0) * MX, (lat - LAT0) * MY)
 _pls = [p for p in P if not p.get('site')]
 _ids = set(b['id'] for b in sel)
-for _it in range(3):
+for _it in range(0 if INFRA_ONLY else 3):
     added = 0
     for p in _pls:
         if not p.get('label'): continue
@@ -75,7 +82,9 @@ for n, b in enumerate(sel):
         skipped_low += 1; continue
     hq = b['h'] >= 150 or bool(rep)
     target = int(min(HQ_MAXT, max(2500, b['h'] * 50))) if hq else int(min(4500, max(160 if b['h'] < MINH else 500, b['h'] * 9)))
-    if b['sheet'] in FULL and not hq: target = max(target, int(min(6000, max(300, b['h'] * 25))))   # Central: keep the detail of low blocks
+    if INFRA_ONLY:   # a walkway is judged by its length, not its height: 18 triangles per metre of its longer side, 500 to 25,000
+        hq = False; target = int(min(25000, max(500, max(b['w'], b['d']) * 18)))
+    elif b['sheet'] in FULL and not hq: target = max(target, int(min(6000, max(300, b['h'] * 25))))   # Central: keep the detail of low blocks
     if len(F) > target:
         try: V2, F2 = fast_simplification.simplify(V.astype(np.float32), F.astype(np.int32), target_reduction=1 - target / len(F))
         except Exception as e: V2, F2 = V.astype(np.float32), F.astype(np.int32)

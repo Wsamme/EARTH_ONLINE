@@ -1,4 +1,10 @@
 // ===== v42 · hk/zz_hk3d — Hong Kong's buildings from the official 3D map =====
+// v46 (27 Nov 2026): the official BUILDINGS are out again; the hand-made landmarks and the map footprints are back. hk3d.bin now holds
+// only the official infrastructure models (footbridges, covered walkways, the Central–Mid-Levels escalator, kiosks, vents) on all
+// staged sheets, built with HK3D_INFRA_ONLY=1 (tools/build3d.py), minus the waterfront observation wheel (the page has its own
+// turning wheel). They replace and hide nothing: no landmark is swapped, and no map building under a walkway is removed
+// (nohull). Phones skip the file. The notes below describe v42–v45, when the file also carried buildings; the code for that
+// (facade styles, replacing landmarks) is kept and simply not used by an infrastructure-only file.
 // Every building of 100 m or more in Central, Sheung Wan, Admiralty, Wan Chai, Causeway Bay, Tsim Sha Tsui, Mong Kok and West
 // Kowloon (49 map sheets), plus the podiums and parts of the hand-made complexes they replace, from the Lands Department's
 // "3D Visualisation Map (Non-textured models)" (glTF, HK1980 Grid; 3d.map.gov.hk / CSDI portal). Geometry is simplified
@@ -170,13 +176,14 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
   async function load(){
     const t0 = performance.now();
     try {
+      if (typeof window !== 'undefined' && window.CB_MOBILE){ S.state = 'phone'; return; }   // v46: phones skip the footbridges
       const r = await fetch(base() + 'hk3d.bin'); if (!r.ok){ S.state = 'nofile'; return; }
       const buf = await r.arrayBuffer(), dv = new DataView(buf);
       if (dv.getUint32(0, true) !== 0x44334b48){ S.state = 'badfile'; return; }        // 'HK3D'
       const n = dv.getUint32(4, true), J = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 8, n))), off0 = (8 + n + 3) & ~3;
       const mob = typeof window !== 'undefined' && window.CB_MOBILE;
-      let list = J.b.filter(e => !mob || e.rep.length || e.h >= 180);
-      if (typeof location !== 'undefined' && /hk3dtest/.test(location.search)) list = list.filter(e => e.rep.length).slice(0, 16);   // test handle: a few landmarks only
+      let list = J.b.filter(e => e.kind === 'infra' && (!mob || e.rep.length || e.h >= 180));   // v46: infrastructure only
+      if (typeof location !== 'undefined' && /hk3dtest/.test(location.search)) list = list.slice().sort((a, b) => b.nt - a.nt).slice(0, 16);   // test handle: the 16 largest only
       S.n = list.length; S.state = 'place';
       let i = 0;
       const step = () => { const tEnd = performance.now() + 24; while (i < list.length && performance.now() < tEnd) put(list[i++], buf, off0, J.q); if (i < list.length) setTimeout(step, 0); else done(t0); };
@@ -229,7 +236,7 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
       // real name from the Lands Department building data (see tools/addnames.py); map label only for named towers of 100 m or more,
       // shown when the camera is near (1.2 km, or 2.5 km for 250 m and taller) so the skyline does not fill with text
       const lab = !!(e.lab && e.h >= 100);
-      LANDMARKS[k] = {zh:e.zh || e.en || '', en:e.zh ? (e.en || '') : '', cat:'hk3d', label:lab, near:e.h >= 250 ? 2500 : 1200, r:8, h:e.h, lt:{m:hi ? 1 : 0, c:hi ? '#d6e4ff' : '#ffc98a', k:e.kind === 'infra' ? 0 : hi ? 0.6 : 0.8}, hk3d:e.id, build};
+      LANDMARKS[k] = {zh:e.zh || e.en || '', en:e.zh ? (e.en || '') : '', cat:'hk3d', label:lab, nohull:e.kind === 'infra', near:e.h >= 250 ? 2500 : 1200, r:8, h:e.h, lt:{m:hi ? 1 : 0, c:hi ? '#d6e4ff' : '#ffc98a', k:e.kind === 'infra' ? 0 : hi ? 0.6 : 0.8}, hk3d:e.id, build};
       const L = {id:lmSeq++, type:k, x, y, rot:0, sg:true}; landmarks.push(L);
       try { placeLandmarkMesh(L); S.added++; } catch (err){ landmarks.pop(); S.err = k + ': ' + err; }
     }

@@ -39,9 +39,12 @@ The Singapore page’s data line also says “Overture” and “HDB3D”.
 - HDB block attributes (height, year completed, shops) were read from `hdb3d-data-tree/hdb.json` while the data was built. That file is not in this repository, so its upstream licence text is not copied here. The Singapore stats card already names HDB3D. If you pass those attributes on, check the dataset you took them from; Singapore government open data is usually the Singapore Open Data Licence.
   组屋的层高、竣工年份、底层店铺，是在生成数据时从 `hdb3d-data-tree/hdb.json` 读的。那个文件不在本仓库里，所以上游许可全文没有放在这里。新加坡的统计卡已经写了 HDB3D。如果继续分发这些属性，请核对你当时用的数据集；新加坡政府开放数据通常使用 Singapore Open Data Licence。
 
-## Hong Kong buildings — Lands Department 香港建筑：地政总署
+## Hong Kong footbridges and walkways — Lands Department 香港天桥与行人通道：地政总署
 
-`site/hkdata/hk3d.bin` holds about 1,000 Hong Kong buildings (every building of 100 m or more on 49 map sheets, plus some podiums). The shapes are simplified from the Lands Department's 3D Visualisation Map (non-textured glTF models, HK1980 Grid; https://3d.map.gov.hk/ and the CSDI portal, datasets `landsd_rcd_1742809441342_98380` / `landsd_rcd_1671676915450_88604`). The names are from the Lands Department's Building dataset (CSDI `landsd_rcd_1637211194312_35158`, data.gov.hk package `hk-landsd-openmap-landsd-building`, revision 2026-10-20), matched to each model by its GeoRefNo id. The models carry no colour; the facade colours on the page are our approximation, not data.
+Since v46 (27 Nov 2026) `site/hkdata/hk3d.bin` holds only the Lands Department's infrastructure models: 411 footbridges, covered walkways, the Central–Mid-Levels escalator, kiosks and vents. The buildings are the project's own hand-made models and map footprints again. The notes below describe how the file was first built (v42–v45, when it also held buildings).
+自 v46（2026 年 11 月 27 日）起，`site/hkdata/hk3d.bin` 只含地政总署的基础设施模型：411 个天桥、有盖行人通道、中环至半山自动扶梯、报亭和通风口。建筑改回本项目自己的手工模型和地图轮廓。以下说明记录该文件最初的生成方式（v42–v45，当时也包含建筑）。
+
+`site/hkdata/hk3d.bin` held about 1,000 Hong Kong buildings (every building of 100 m or more on 49 map sheets, plus some podiums). The shapes are simplified from the Lands Department's 3D Visualisation Map (non-textured glTF models, HK1980 Grid; https://3d.map.gov.hk/ and the CSDI portal, datasets `landsd_rcd_1742809441342_98380` / `landsd_rcd_1671676915450_88604`). The names are from the Lands Department's Building dataset (CSDI `landsd_rcd_1637211194312_35158`, data.gov.hk package `hk-landsd-openmap-landsd-building`, revision 2026-10-20), matched to each model by its GeoRefNo id. The models carry no colour; the facade colours on the page are our approximation, not data.
 `site/hkdata/hk3d.bin` 里约有 1,000 栋香港建筑（49 个图幅内所有 100 米以上的楼，加上一些裙楼）。形状由地政总署“三维可视化地图”（无纹理 glTF 模型，香港 1980 方格网；https://3d.map.gov.hk/ 及 CSDI 平台）简化而来；名称来自地政总署“建筑物”数据集（CSDI `landsd_rcd_1637211194312_35158`，data.gov.hk 数据包 `hk-landsd-openmap-landsd-building`，2026-10-20 版），按 GeoRefNo 编号与模型对应。模型本身没有颜色，页面上的外墙颜色是我们的近似，不是数据。
 
 Terms 条款: DATA.GOV.HK Terms and Conditions of Use (https://data.gov.hk/en/terms-and-conditions) and the Lands Department's terms for its map data. Use, including commercial use, is free on condition that you credit the source and acknowledge that the Government owns the data.
@@ -51,8 +54,20 @@ Suggested credit 建议署名：
 
 > Source: HKSAR Government, Lands Department (3D Visualisation Map; Building), via DATA.GOV.HK.
 
-The Hong Kong page shows “Buildings · HKSAR Government, Lands Department” in the map corner. Leave it there.
-香港页面在地图角落显示 “Buildings · HKSAR Government, Lands Department”。请保留。
+The Hong Kong page shows “Footbridges · HKSAR Government, Lands Department” in the map corner. Leave it there.
+香港页面在地图角落显示 “Footbridges · HKSAR Government, Lands Department”。请保留。
+
+## Downloaded 3D models — Sketchfab, CC BY 4.0 下载的三维模型：Sketchfab，CC BY 4.0
+
+These models in `site/hkdata/models/` are by other authors, under Creative Commons Attribution 4.0 (https://creativecommons.org/licenses/by/4.0/). They were optimised (WebP textures of at most 1024 px, quantised meshes) and scaled to real sizes; the author must be credited.
+`site/hkdata/models/` 里的这些模型由其他作者创作，采用知识共享署名 4.0 许可。我们做了压缩（WebP 贴图最大 1024 像素、量化网格）并按真实尺寸缩放；必须署名作者。
+
+- `boc_raise3d.glb`: “Bank of China Tower” by Raise3D, https://sketchfab.com/3d-models/b99aa9bd3f574287bfb3e208705752de
+- `taxi.glb`: “Taxi” by businessyuen, https://sketchfab.com/3d-models/8ded9c1a90eb40f387e05b2b6cc6de62
+- `bus.glb`: “Bus” by businessyuen, https://sketchfab.com/3d-models/cc159e95590b49999c6e08793eb0a76a
+
+The Hong Kong page shows “Models · Raise3D, businessyuen (CC BY 4.0)” in the map corner. Leave it there.
+香港页面在地图角落显示 “Models · Raise3D, businessyuen (CC BY 4.0)”。请保留。
 
 ## Shenzhen and Dongguan buildings — Overture, 3D-GloBFP, CTBUH 深圳、东莞建筑
 

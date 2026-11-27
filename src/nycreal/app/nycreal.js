@@ -871,7 +871,7 @@ function sgrBoot(){
   showBusy('Loading the real map of New York City');
   sgrLoad().then(() => {
     sgView(); sgBuild();
-    setTool(document.documentElement.classList.contains('cb-phone') ? 'view' : 'R'); renderStyle(); renderIslandStats(); syncLabels();
+    setTool('view'); document.getElementById('tray').classList.add('closed'); /* v46: every city opens on View, desktop too */ renderStyle(); renderIslandStats(); syncLabels();
     if (document.documentElement.classList.contains('cb-phone')){ const tr = document.getElementById('tray'); if (tr) tr.classList.add('closed'); const lab = (cat, text) => { const b = document.querySelector('.dtab[data-cat="'+cat+'"]'); if (!b) return; const s = b.querySelector('span'); if (s) s.textContent = text; }; lab('view','View'); lab('f1','Drive'); }
     buildSkeleton(); drawTex(); renderStats();
     sgView(); applyTime(); syncLabels();

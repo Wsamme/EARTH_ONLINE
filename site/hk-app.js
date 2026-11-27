@@ -2214,7 +2214,7 @@ function toMesh(B, mat){
   g.computeVertexNormals(); return new THREE.Mesh(g, mat);
 }
 function disposeGroup(g){
-  g.traverse(o => { if (o.geometry && o.geometry !== treeGeo && o.geometry !== carGeo) o.geometry.dispose(); if (o.isInstancedMesh && o.dispose) o.dispose(); });
+  g.traverse(o => { if (o.userData && o.userData.shared) return; if (o.geometry && o.geometry !== treeGeo && o.geometry !== carGeo) o.geometry.dispose(); if (o.isInstancedMesh && o.dispose) o.dispose(); });   // [v47] shared: geometry owned by a model cache
   if (g.parent) g.parent.remove(g);
 }
 
@@ -4656,9 +4656,14 @@ function placeLandmarkMesh(L){
   // [v42] live parts (g.userData.live: e.g. a wheel's rotor and gondolas) stay separate objects: each is merged on its own at the
   // origin, the rest of the landmark is merged as before, and g.userData.spin.step(t) poses them every frame (stepLmFx)
   const live = (g.userData && g.userData.live) || [];
+  // [v47] kept parts (g.userData.keep: e.g. a downloaded glTF model with its own textures) are not merged at all, so their UVs,
+  // texture maps and materials survive (lmMerge keeps only positions, normals and vertex colours)
+  const keep = (g.userData && g.userData.keep) || [];
+  for (const o of keep) g.remove(o);
   for (const o of live){ g.remove(o); o.position.set(0, 0, 0); o.quaternion.identity(); o.scale.set(1, 1, 1); o.updateMatrix(); lmMerge(o); }
   lmMerge(g);
   for (const o of live) g.add(o);
+  for (const o of keep) g.add(o);
   if (live.length && g.userData.spin && g.userData.spin.step){ LMCTX.fx.push({kind:'spin', step:g.userData.spin.step}); g.userData.spin.step(0); }
   if (!L.sg){ const plinth = lmAdd(g, new THREE.CylinderGeometry(def.r*0.98, def.r*1.02, Math.max(1, top - lo + 2), 40), '#ddd6c8', 0, -Math.max(1, top - lo + 2)/2, 0); plinth.castShadow = false; }
   L.mats = LMCTX.mats; L.fx = LMCTX.fx; LMCTX = null;
@@ -5268,7 +5273,7 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape'){ if (tour) startTour(false); if (uiHidden) setUiHidden(false); return; }
   if (e.code === 'Space'){ if (!spaceHeld){ spaceHeld = true; applyControlMode(); } e.preventDefault(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){ undo(); e.preventDefault(); return; }
-  const n = parseInt(e.key, 10); if (n >= 1 && n <= 9){ setTool(TOOLS[n-1].id); return; }
+  // [v47] the 1-9 keys used to pick a painting tool; the painting tools are gone
   if (e.key.toLowerCase() === 'r' && !e.ctrlKey && !e.metaKey){ lmRot = (lmRot + Math.PI/12) % (Math.PI*2); $('#lmRot').value = Math.round(lmRot*180/Math.PI); $('#lmRotOut').textContent = $('#lmRot').value + '°'; const L = landmarks[landmarks.length-1]; if (L && tool === 'landmark'){ L.rot = lmRot; const g = lmMeshes.get(L.id); if (g) g.rotation.y = lmRot; } return; }
   if (e.key === '[' || e.key === ']'){ brushR = Math.max(20, Math.min(300, brushR + (e.key === ']' ? 10 : -10))); $('#brush').value = brushR; $('#brushOut').textContent = brushR + ' m'; }
 });
@@ -29817,6 +29822,10 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   function breakProp(key){ if (PR.broken.has(key)) return null; const P = PR.list.find(q => q.key === key); PR.broken.set(key, SIMT); PR.stamp = -1; return P || null; }
   const API = {
     stats:() => stats(), warm, obstacles, bench, props, breakProp, hit, model:playerModel,
+    // [v47] replace the near model of one vehicle type with another geometry in the same format (position, normal, color, aPaint,
+    // aLight; x forward, y up, origin on the ground at the centre; real metres): used for downloaded glTF vehicles
+    swapModel:(k, geo) => { renderInit(); const R = RN.near[k]; if (!R || !geo) return false; const g = geo.clone(); g.setAttribute('iCol', R.ic); g.computeBoundingSphere();
+      const old = R.mesh.geometry; R.mesh.geometry = g; old.dispose(); return true; },
     toss, get thrown(){ return {launched:THROWN.n, sunk:THROWN.sunk, flying:CRASH.filter(V => V.alive && V.crash.ph !== undefined).length}; },   // [lm27/destruct]
     crashStats:() => ({pairs:CST.pairs, hits:CST.hits, chained:CST.chained, rolls:CST.rolls, ms:+CST.ms.toFixed(3), sliding:CRASH.filter(V => V.alive && V.crash.ph === undefined && Math.hypot(V.crash.vx, V.crash.vy) > 0.5).length}),   // [lm30/phys2]
     get suspend(){ return !!TRF.suspend; }, set suspend(v){ TRF.suspend = !!v; },
@@ -57959,6 +57968,12 @@ SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type
 }
 
 // ===== v42 · hk/zz_hk3d — Hong Kong's buildings from the official 3D map =====
+// v46 (27 Nov 2026): the official BUILDINGS are out again; the hand-made landmarks and the map footprints are back. hk3d.bin now holds
+// only the official infrastructure models (footbridges, covered walkways, the Central–Mid-Levels escalator, kiosks, vents) on all
+// staged sheets, built with HK3D_INFRA_ONLY=1 (tools/build3d.py), minus the waterfront observation wheel (the page has its own
+// turning wheel). They replace and hide nothing: no landmark is swapped, and no map building under a walkway is removed
+// (nohull). Phones skip the file. The notes below describe v42–v45, when the file also carried buildings; the code for that
+// (facade styles, replacing landmarks) is kept and simply not used by an infrastructure-only file.
 // Every building of 100 m or more in Central, Sheung Wan, Admiralty, Wan Chai, Causeway Bay, Tsim Sha Tsui, Mong Kok and West
 // Kowloon (49 map sheets), plus the podiums and parts of the hand-made complexes they replace, from the Lands Department's
 // "3D Visualisation Map (Non-textured models)" (glTF, HK1980 Grid; 3d.map.gov.hk / CSDI portal). Geometry is simplified
@@ -58130,13 +58145,14 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
   async function load(){
     const t0 = performance.now();
     try {
+      if (typeof window !== 'undefined' && window.CB_MOBILE){ S.state = 'phone'; return; }   // v46: phones skip the footbridges
       const r = await fetch(base() + 'hk3d.bin'); if (!r.ok){ S.state = 'nofile'; return; }
       const buf = await r.arrayBuffer(), dv = new DataView(buf);
       if (dv.getUint32(0, true) !== 0x44334b48){ S.state = 'badfile'; return; }        // 'HK3D'
       const n = dv.getUint32(4, true), J = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 8, n))), off0 = (8 + n + 3) & ~3;
       const mob = typeof window !== 'undefined' && window.CB_MOBILE;
-      let list = J.b.filter(e => !mob || e.rep.length || e.h >= 180);
-      if (typeof location !== 'undefined' && /hk3dtest/.test(location.search)) list = list.filter(e => e.rep.length).slice(0, 16);   // test handle: a few landmarks only
+      let list = J.b.filter(e => e.kind === 'infra' && (!mob || e.rep.length || e.h >= 180));   // v46: infrastructure only
+      if (typeof location !== 'undefined' && /hk3dtest/.test(location.search)) list = list.slice().sort((a, b) => b.nt - a.nt).slice(0, 16);   // test handle: the 16 largest only
       S.n = list.length; S.state = 'place';
       let i = 0;
       const step = () => { const tEnd = performance.now() + 24; while (i < list.length && performance.now() < tEnd) put(list[i++], buf, off0, J.q); if (i < list.length) setTimeout(step, 0); else done(t0); };
@@ -58189,13 +58205,168 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
       // real name from the Lands Department building data (see tools/addnames.py); map label only for named towers of 100 m or more,
       // shown when the camera is near (1.2 km, or 2.5 km for 250 m and taller) so the skyline does not fill with text
       const lab = !!(e.lab && e.h >= 100);
-      LANDMARKS[k] = {zh:e.zh || e.en || '', en:e.zh ? (e.en || '') : '', cat:'hk3d', label:lab, near:e.h >= 250 ? 2500 : 1200, r:8, h:e.h, lt:{m:hi ? 1 : 0, c:hi ? '#d6e4ff' : '#ffc98a', k:e.kind === 'infra' ? 0 : hi ? 0.6 : 0.8}, hk3d:e.id, build};
+      LANDMARKS[k] = {zh:e.zh || e.en || '', en:e.zh ? (e.en || '') : '', cat:'hk3d', label:lab, nohull:e.kind === 'infra', near:e.h >= 250 ? 2500 : 1200, r:8, h:e.h, lt:{m:hi ? 1 : 0, c:hi ? '#d6e4ff' : '#ffc98a', k:e.kind === 'infra' ? 0 : hi ? 0.6 : 0.8}, hk3d:e.id, build};
       const L = {id:lmSeq++, type:k, x, y, rot:0, sg:true}; landmarks.push(L);
       try { placeLandmarkMesh(L); S.added++; } catch (err){ landmarks.pop(); S.err = k + ': ' + err; }
     }
     for (const hk of e.hide.concat(e.rep.slice(1))){ const def = LANDMARKS[hk]; if (!def) continue; def.build = () => new THREE.Group(); def.label = false;   // emptied: no geometry, no name tag
       for (const L of landmarks) if (L.type === hk){ swapOut(L); try { placeLandmarkMesh(L); } catch (err){ } } S.hidden++; }
   }
+})();
+
+// ===== v47 · hk/zz_models — downloaded glTF models (Sketchfab, CC BY 4.0) =====
+// Free models chosen with the owner (27 Nov 2026), optimised with glTF-Transform (WebP textures at most 1024 px, quantised
+// meshes) into hkdata/models/. Every one is CC BY 4.0: the authors are credited in MODELS below, in README / DATA_LICENSE and on
+// the map. Loaded after the city is ready; until a model arrives the page keeps its own (hand-made or procedural) version.
+//  - Bank of China Tower (Raise3D): replaces the hand-made hkboc (hk/admiralty). The model's tower is a 50 m square, mast tip
+//    354.2 m above its plaza; scaled x1.0372 to the real 367.4 m tip (CTBUH), which makes the plan 51.9 m (real: 52 m). Its
+//    tallest shaft faces the model's -z side; turned 164 deg so that shaft faces the real south-west side of the OSM footprint
+//    (the corner order of the shafts, 315 / 160 / 110 / 210 m clockwise, then matches the real tower; no mirroring needed).
+//    Night: the glass keeps the window-light grid of the landmark shader, the white frame glows (the light show).
+//  - Taxi and double-decker bus (businessyuen): replace the near models of the 'taxi' and 'dd' traffic types. Their colours come
+//    from small palette textures and are baked into vertex colours; they are scaled to the traffic sizes (taxi 4.6 x 2.0 x 1.75 m
+//    with the roof sign, bus 12 x 2.9 x 4.4 m with mirrors). Head / tail lights and lit bus windows are marked by face direction
+//    and colour (an estimate of where the lamps are).
+// Needs THREE.GLTFLoader (r128, examples/js/loaders/GLTFLoader.js, added to the page by hkreal/patch_hk.py). Test handle: window.HKM.
+(() => {
+  const MODELS = {
+    boc:  {file:'boc_raise3d.glb', title:'Bank of China Tower', author:'Raise3D', url:'https://sketchfab.com/3d-models/b99aa9bd3f574287bfb3e208705752de'},
+    taxi: {file:'taxi.glb', title:'Taxi', author:'businessyuen', url:'https://sketchfab.com/3d-models/8ded9c1a90eb40f387e05b2b6cc6de62'},
+    bus:  {file:'bus.glb', title:'Bus', author:'businessyuen', url:'https://sketchfab.com/3d-models/cc159e95590b49999c6e08793eb0a76a'},
+  };
+  const S = {state:'wait', loaded:{}, err:[], boc:0, veh:{}};
+  window.HKM = S; S.MODELS = MODELS;
+  const base = () => { try { return SGR_PATH + 'models/'; } catch (e){ return 'hkdata/models/'; } };
+  const cache = new Map();
+  // glTF-Transform quantises positions / normals / UVs to normalised integers; three r128 denormalises them on the GPU but not in
+  // BufferAttribute.getX, which the page's own code (hull outlines, lmMerge, vehGeo colour sampling) uses: turn them into floats
+  function dequant(root){
+    root.traverse(o => { if (!o.isMesh) return; const g = o.geometry;
+      for (const name of Object.keys(g.attributes)){ const a = g.attributes[name]; if (!a.normalized || a.array instanceof Float32Array) continue;
+        const A = a.array, k = A instanceof Int8Array ? 127 : A instanceof Uint8Array ? 255 : A instanceof Int16Array ? 32767 : A instanceof Uint16Array ? 65535 : 1;
+        const F = new Float32Array(A.length); for (let i = 0; i < A.length; i++) F[i] = Math.max(-1, A[i]/k);
+        g.setAttribute(name, new THREE.BufferAttribute(F, a.itemSize, false)); } });
+  }
+  function load(key){
+    if (cache.has(key)) return cache.get(key);
+    const p = new Promise((res, rej) => {
+      if (!THREE.GLTFLoader){ rej(new Error('no GLTFLoader')); return; }
+      new THREE.GLTFLoader().load(base() + MODELS[key].file, g => { S.loaded[key] = true; dequant(g.scene); res(g.scene); }, undefined, e => rej(e));
+    });
+    cache.set(key, p); return p;
+  }
+  S.load = load;
+  // ---------------------------------------------------------------- Bank of China Tower
+  const BOC = {S:367.4/354.23, cx:38.5, cz:176.1, y0:-143.11, rot:2.863};
+  function bocBuild(src){
+    return function(){
+      const g = new THREE.Group(), u = LMCTX.u, top = u.base.value;
+      const L = landmarks.find(q => q.type === 'hkboc');
+      // lowest ground under the tower square (its corners and centre), so the plaza sits on Garden Road's slope like the old model
+      let gmin = Infinity;
+      if (L){ const c = Math.cos(BOC.rot), s = Math.sin(BOC.rot);
+        for (const [px, pz] of [[0, 0], [26, 26], [26, -26], [-26, 26], [-26, -26]]){ const x = px*c + pz*s, z = -px*s + pz*c; gmin = Math.min(gmin, hC(L.x + x, L.y - z)); } }
+      const dy = isFinite(gmin) ? gmin - top - 0.3 : -0.3;
+      const w = new THREE.Group(), m = src.clone(true);
+      m.position.set(-BOC.cx, -BOC.y0, -BOC.cz); w.add(m); w.scale.setScalar(BOC.S); w.rotation.y = BOC.rot; w.position.y = dy;
+      const uFrame = Object.assign({}, u, {mode:{value:0}});
+      let n = 0;
+      m.traverse(o => {
+        if (!o.isMesh) return;
+        const om = o.material, map = om.map || null, col = om.color ? om.color.clone() : new THREE.Color(1, 1, 1);
+        if (map){ map.encoding = THREE.LinearEncoding; map.anisotropy = 4; map.needsUpdate = true; }
+        const lum = 0.3*col.r + 0.59*col.g + 0.11*col.b, frame = !map && lum > 0.62;
+        const mat = new THREE.MeshLambertMaterial({color:col, map, side:THREE.FrontSide, transparent:!!om.transparent, opacity:om.opacity !== undefined ? om.opacity : 1});
+        if (frame) lmShader(mat, uFrame, '#f2f6ff', 1.25); else lmShader(mat, u, null, 0);
+        LMCTX.mats.set('glb' + (n++), mat);
+        o.material = mat; o.castShadow = true; o.receiveShadow = true;
+      });
+      g.add(w); g.userData.keep = [w];
+      return g;
+    };
+  }
+  function swapLandmark(type, build){
+    const def = LANDMARKS[type]; if (!def) return false;
+    def.build = build;
+    for (const L of landmarks) if (L.type === type){
+      const g0 = lmMeshes.get(L.id); if (g0){ lmGroup.remove(g0); g0.traverse(o => { if (o.geometry && !o.userData.glb) o.geometry.dispose(); }); lmMeshes.delete(L.id); }
+      if (L.mats){ for (const m of L.mats.values()) m.dispose(); L.mats = null; } L.fx = [];
+      placeLandmarkMesh(L);
+      try { SGR.hulls.delete(L.id); } catch (e){ }   // the outline that hides map buildings is rebuilt from the new model
+    }
+    return true;
+  }
+  // ---------------------------------------------------------------- vehicles: glTF -> traffic geometry
+  function texSampler(map){
+    const im = map && map.image; if (!im || !im.width) return null;
+    const cv = document.createElement('canvas'); cv.width = im.width; cv.height = im.height;
+    const cx = cv.getContext('2d'); cx.drawImage(im, 0, 0); const d = cx.getImageData(0, 0, im.width, im.height).data, W = im.width, H = im.height;
+    return (u, v) => { u = u - Math.floor(u); v = v - Math.floor(v); const x = Math.min(W - 1, Math.floor(u*W)), y = Math.min(H - 1, Math.floor(v*H)), i = (y*W + x)*4; return [d[i]/255, d[i + 1]/255, d[i + 2]/255]; };
+  }
+  // dims: target length (x), width (z), height (y); the model's length axis is z, its front +z
+  function vehGeo(src, dims, kind){
+    src.updateMatrixWorld(true);
+    const P = [], N = [], C = [], PA = [], LG = [];
+    const v = new THREE.Vector3(), nv = new THREE.Vector3(), nm = new THREE.Matrix3();
+    src.traverse(o => {
+      if (!o.isMesh) return;
+      const g0 = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry, pos = g0.attributes.position, nor = g0.attributes.normal, uv = g0.attributes.uv;
+      const smp = texSampler(o.material.map), base = o.material.color || new THREE.Color(1, 1, 1);
+      nm.getNormalMatrix(o.matrixWorld);
+      for (let i = 0; i < pos.count; i++){
+        v.fromBufferAttribute(pos, i).applyMatrix4(o.matrixWorld); P.push(v.x, v.y, v.z);
+        if (nor){ nv.fromBufferAttribute(nor, i).applyMatrix3(nm).normalize(); N.push(nv.x, nv.y, nv.z); } else N.push(0, 1, 0);
+        let c = [base.r, base.g, base.b]; if (smp && uv){ const t = smp(uv.getX(i), uv.getY(i)); c = [c[0]*t[0], c[1]*t[1], c[2]*t[2]]; }
+        C.push(c[0], c[1], c[2]); PA.push(0); LG.push(0);
+      }
+      if (g0 !== o.geometry) g0.dispose();
+    });
+    // bounds -> scale to the traffic size; length along x (model z -> x, model x -> -z)
+    let mn = [1e9, 1e9, 1e9], mx = [-1e9, -1e9, -1e9];
+    for (let i = 0; i < P.length; i += 3) for (let k = 0; k < 3; k++){ mn[k] = Math.min(mn[k], P[i + k]); mx[k] = Math.max(mx[k], P[i + k]); }
+    const sz = mx[2] - mn[2], sx = mx[0] - mn[0], sy = mx[1] - mn[1], cx = (mn[0] + mx[0])/2, cz = (mn[2] + mx[2])/2;
+    const kL = dims[0]/sz, kW = dims[1]/sx, kH = dims[2]/sy;
+    const P2 = new Float32Array(P.length), N2 = new Float32Array(N.length);
+    for (let i = 0; i < P.length; i += 3){
+      const X = (P[i + 2] - cz)*kL, Y = (P[i + 1] - mn[1])*kH, Z = -(P[i] - cx)*kW; P2[i] = X; P2[i + 1] = Y; P2[i + 2] = Z;
+      let nx = N[i + 2]/kL, ny = N[i + 1]/kH, nz = -N[i]/kW; const l = Math.hypot(nx, ny, nz) || 1; N2[i] = nx/l; N2[i + 1] = ny/l; N2[i + 2] = nz/l;
+    }
+    // lamps (estimate): per triangle, by facing and colour
+    const half = dims[0]/2;
+    for (let t = 0; t < P2.length/9; t++){
+      let ax = 0, ay = 0, az = 0, cr = 0, cg = 0, cb = 0, fx = 0, fy = 0, fz = 0;
+      for (let j = 0; j < 3; j++){ const i = t*9 + j*3; ax += P2[i]/3; ay += P2[i + 1]/3; az += P2[i + 2]/3; cr += C[i]/3; cg += C[i + 1]/3; cb += C[i + 2]/3; fx += N2[i]/3; fy += N2[i + 1]/3; fz += N2[i + 2]/3; }
+      const lum = 0.3*cr + 0.59*cg + 0.11*cb, hN = ay/dims[2];
+      let L = 0;
+      if (fx > 0.55 && ax > half*0.8 && hN < (kind === 'bus' ? 0.2 : 0.55) && lum > 0.6) L = 1;                       // headlamps: light, low, front
+      else if (fx < -0.55 && ax < -half*0.8 && hN < (kind === 'bus' ? 0.25 : 0.6) && cr > 0.45 && cr > cg*1.6) L = 2;  // tail lamps: red, low, rear
+      else if (kind === 'bus' && Math.abs(fz) > 0.7 && hN > 0.22 && hN < 0.92 && lum < 0.42 && Math.abs(cr - cb) < 0.25) L = 3;   // lit windows
+      else if (kind === 'taxi' && fy > 0.3 && hN > 0.88 && lum > 0.7) L = 5;                                            // roof sign
+      if (L) for (let j = 0; j < 3; j++) LG[t*3 + j] = L;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(P2, 3)); g.setAttribute('normal', new THREE.BufferAttribute(N2, 3));
+    g.setAttribute('color', new THREE.Float32BufferAttribute(C, 3)); g.setAttribute('aPaint', new THREE.Float32BufferAttribute(PA, 1)); g.setAttribute('aLight', new THREE.Float32BufferAttribute(LG, 1));
+    g.computeBoundingSphere();
+    return g;
+  }
+  S.vehGeo = vehGeo;
+  // ---------------------------------------------------------------- start
+  const ready = () => { try { return SGR.on && landmarks.length > 20 && lmMeshes.size > 20 && !!THREE.GLTFLoader; } catch (e){ return false; } };
+  let tries = 0;
+  function tick(){
+    if (!ready()){ if (++tries > 400){ S.state = 'timeout'; return; } setTimeout(tick, 700); return; }
+    S.state = 'loading';
+    const jobs = [];
+    if (LANDMARKS.hkboc) jobs.push(load('boc').then(sc => { sc.traverse(o => { if (o.isMesh) o.userData.glb = true; }); swapLandmark('hkboc', bocBuild(sc)); S.boc = 1; try { if (SGR.on) sgrLandmarksChanged(); } catch (e){ } }).catch(e => S.err.push('boc: ' + e)));
+    const T = window.SGTraffic;
+    if (T && T.swapModel){
+      jobs.push(load('taxi').then(sc => { S.veh.taxi = T.swapModel('taxi', vehGeo(sc, [4.6, 2.0, 1.75], 'taxi')); }).catch(e => S.err.push('taxi: ' + e)));
+      jobs.push(load('bus').then(sc => { S.veh.dd = T.swapModel('dd', vehGeo(sc, [12.0, 2.9, 4.4], 'bus')); }).catch(e => S.err.push('bus: ' + e)));
+    }
+    Promise.all(jobs).then(() => { S.state = 'done'; });
+  }
+  setTimeout(tick, 2500);
 })();
 
 /* ================= v22 add-on: sound — a procedural Web Audio sound system for both real maps (lm20/audio) =================
@@ -61553,6 +61724,7 @@ function sgrLandmarkHulls(){
   const live = new Set(), changed = [];
   for (const L of landmarks){
     live.add(L.id); if (SGR.hulls.has(L.id)) continue;
+    if (LANDMARKS[L.type] && LANDMARKS[L.type].nohull) continue;   // v46: footbridges and walkways stand over streets and never hide a building
     const g = lmMeshes.get(L.id); if (!g) continue;
     g.updateMatrixWorld(true); const pts = [], v = new THREE.Vector3(), base = L.top || 0;
     g.traverse(o => { if (!o.isMesh || !o.geometry.attributes.position) return; const a = o.geometry.attributes.position; const st = Math.max(1, Math.floor(a.count/6000));
@@ -62158,7 +62330,7 @@ function sgrBoot(){
   showBusy('Loading the real map of Hong Kong');
   sgrLoad().then(() => {
     sgView(); sgBuild();
-    setTool(document.documentElement.classList.contains('cb-phone') ? 'view' : 'R'); renderStyle(); renderIslandStats(); syncLabels();
+    setTool('view'); document.getElementById('tray').classList.add('closed'); /* v46: every city opens on View, desktop too */ renderStyle(); renderIslandStats(); syncLabels();
     if (document.documentElement.classList.contains('cb-phone')){ const tr = document.getElementById('tray'); if (tr) tr.classList.add('closed'); const lab = (cat, text) => { const b = document.querySelector('.dtab[data-cat="'+cat+'"]'); if (!b) return; const s = b.querySelector('span'); if (s) s.textContent = text; }; lab('view','View'); lab('f1','Drive'); }
     buildSkeleton(); drawTex(); renderStats();
     sgView(); applyTime(); syncLabels();
@@ -62779,7 +62951,7 @@ function loop(now){
 }
 
 /* ================= boot ================= */
-setTool('view'); $('#tray').classList.add('closed'); renderStyle(); applyTime();
+setTool('view'); $('#tray').classList.add('closed'); for (const c of ['zone', 'road', 'arch', 'terra']) document.querySelectorAll('.dtab[data-cat="' + c + '"]').forEach(t => t.remove()); renderStyle(); applyTime();
 runHooks('boot');
 sgrBoot();
 requestAnimationFrame(loop);

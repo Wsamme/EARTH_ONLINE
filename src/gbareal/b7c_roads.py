@@ -49,6 +49,49 @@ for i, l in enumerate(R['lines']):
     l = dict(l, _fo=fo); nfor['foreign'] += fo
     recs.append((i, l))
 print('Shenzhen roads', dict(nfor), flush=True)
+# ---- frame gz: inside the October square the released road records (site/gbadata gba_rc*: Hong Kong with its deck fixes, Shenzhen,
+# Dongguan, the context) are decoded and re-encoded unchanged (same quantised coordinates and heights), minus the old context roads
+# whose midpoint is in Guangzhou; the fresh roads are Guangzhou's (whole ways) and, outside the core, the parts outside the October square
+if FRAME == 'gz':
+    import base64, json as _json
+    from shapely.geometry import LineString as _LS
+    OLDSRC = __import__('os').environ.get('GBA_OLDDATA', '/home/claude/earth_online/site/gbadata/')
+    _ld = lambda n: gzip.decompress(base64.b64decode(open(OLDSRC + n).read()))
+    OB = _json.loads(_ld('gba_base.txt')); assert OB['HALF'] == OLD_HALF
+    GZP = prep(LND['gz']); OBOX = box(-OLD_HALF, -OLD_HALF, OLD_HALF, OLD_HALF); OBOXP = prep(OBOX)
+    nn = collections.Counter(); keep = []
+    for i, l in recs:
+        m = l['g'].interpolate(0.5, normalized=True)
+        if GZP.contains(m): keep.append((i, l)); nn['fresh Guangzhou'] += 1; continue
+        if not OBOXP.intersects(l['g']): keep.append((i, l)); nn['fresh outside'] += 1; continue
+        d = l['g'].difference(OBOX)
+        for q in (d.geoms if hasattr(d, 'geoms') else [d]):
+            if q.geom_type == 'LineString' and q.length > 1: keep.append((i, dict(l, g=q, _cut=True))); nn['fresh outside (cut at the October edge)'] += 1
+    recs = keep
+    class Rd:
+        def __init__(s, b): s.b = b; s.p = 0
+        def u8(s): v = s.b[s.p]; s.p += 1; return v
+        def vu(s):
+            v = 0; sh = 0
+            while True:
+                c = s.b[s.p]; s.p += 1; v |= (c & 127) << sh; sh += 7
+                if c < 128: return v
+        def vs(s): v = s.vu(); return (v >> 1) ^ -(v & 1)
+    ON, ORF = OB['names'], OB['refs']; oi = -1
+    for C in OB['roadChunks']:
+        r = Rd(_ld('gba_rc%d.txt' % C['k'])); assert r.b[:4] == b'SGR1'; r.p = 4; n = r.vu(); px = py = 0
+        for _ in range(n):
+            c = r.u8(); fl = r.u8(); ni = r.vu(); ri = r.vu(); m = r.vu(); cs = []
+            for _ in range(m): px += r.vs(); py += r.vs(); cs.append((px/Q, py/Q))
+            el = None
+            if fl & 4: esc = 2.5 if fl & 32 else 5.0; el = [r.u8()/esc for _ in range(m)]
+            g = _LS(cs); oi -= 1
+            if GZP.contains(g.interpolate(0.5, normalized=True)): nn['released, dropped (in Guangzhou)'] += 1; continue
+            nm_ = ON[ni] if ni else ['', '']
+            recs.append((oi, {'c':c, 'ow':bool(fl & 1), 'br':bool(fl & 2), '_fo':bool(fl & 8), 'kd':'x_link' if fl & 16 else None, 'name':nm_[0] or None, 'zh':nm_[1] or None,
+                              'ref':ORF[ri] if ri else None, 'g':g, '_el':el})); nn['released, kept'] += 1
+        assert r.p == len(r.b), ('chunk not fully read', C['k'])
+    print('gz road merge', dict(nn), flush=True)
 # gbareal: the roads in chunks of 4 x 4 tiles (8 km; the sky blocks of the app), by the tile of each line's midpoint, one file per
 # chunk (gba_rc<k>.bin.gz, 'SGR1' each); the app loads the chunks around the camera (base.roadChunks) and re-prepares the roads
 CHB = 4; CHN = (TX + CHB - 1)//CHB
@@ -62,7 +105,7 @@ for i, l in recs: byc[chunk_of(l['g'])].append((i, l))
 def enc(lst):
     wr = W(); wr.raw(b'SGR1'); wr.vu(len(lst)); px, py = 0, 0
     for i, l in lst:
-        el = None if l.get('_cut') else R['elev'].get(i)
+        el = l['_el'] if '_el' in l else None if l.get('_cut') else R['elev'].get(i)
         cs = list(l['g'].coords)
         if el is not None and len(el) != len(cs): el = None
         hasel = el is not None and max(el) > 0.05
@@ -81,7 +124,7 @@ for k in sorted(byc):
     CH.append({'k':k, 'n':len(byc[k]), 'z':z, 'bb':[-HALF + bx*CHB*T, -HALF + by*CHB*T, min(HALF, -HALF + (bx + 1)*CHB*T), min(HALF, -HALF + (by + 1)*CHB*T)]}); tot += z
 print('road chunks', len(CH), 'records', sum(c['n'] for c in CH), 'gz %.2f MB' % (tot/1e6), 'largest %.2f MB' % (max(c['z'] for c in CH)/1e6), flush=True)
 # the whole network as one file too (gba_roads.bin.gz, same names table), for pages built before the chunks
-wz('gba_roads.bin.gz', enc([r for k in sorted(byc) for r in byc[k]]))
+if FRAME != 'gz': wz('gba_roads.bin.gz', enc([r for k in sorted(byc) for r in byc[k]]))       # (frame gz: not written; the page loads the chunks)
 import gzip as _gz
 p = OUT + 'gba_base.json.gz'; Bj = json.loads(_gz.decompress(open(p, 'rb').read())); Bj['names'] = names; Bj['refs'] = refs; Bj['roadChunks'] = CH; Bj['roadChunkTiles'] = CHB
 open(p, 'wb').write(_gz.compress(json.dumps(Bj, separators=(',', ':'), ensure_ascii=False).encode(), 9)); print('base names updated')

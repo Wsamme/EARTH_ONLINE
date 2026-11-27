@@ -1,0 +1,48 @@
+--- app/gbareal.js	2026-11-27 17:03:01.574187438 +0000
++++ gz_release/app/gbareal.js	2026-11-27 19:55:51.945923222 +0000
+@@ -45,7 +45,8 @@
+     const hb = atob(base.H), h16 = new Int16Array(hb.length >> 1);
+     for (let i = 0; i < h16.length; i++) h16[i] = (hb.charCodeAt(2*i) | (hb.charCodeAt(2*i + 1) << 8)) << 16 >> 16;
+     SGR.H = new Float32Array(h16.length); for (let i = 0; i < h16.length; i++) SGR.H[i] = h16[i]/10;
+-    base.H = null; base.places = base.places.slice(0, 3000); base.pois = base.pois.slice(0, 3500); SGR.base = base; SGR.img = img;
++    base.H = null; base.places = base.places.slice(0, base.capP || 3000); base.pois = base.pois.slice(0, base.capI || 3500); SGR.base = base; SGR.img = img;
++    if (base.HALF > 100000){ const s = document.querySelector('.sub'); if (s) s.textContent = s.textContent.replace('东莞 深圳 香港', '广州 东莞 深圳 香港'); }     // v48: the 294 km square with Guangzhou
+     SG.lon0 = base.lon0; SG.lat0 = base.lat0; SG.MX = base.MX; SG.MY = base.MY;
+     SGD = {pas:base.PAS, regs:base.REGS, mrt:base.mrt, stations:base.stations, f1:base.f1};
+     SGR.rc = new Map(); SGR.rcMeta = null; { const p = window.__near ? sgXY(window.__near[0], window.__near[1]) : sgXY(22.2880, 114.1650); await sgrRcFetch(base.roadChunks.filter(C => sgrRcDist(C, p[0], p[1], 0) < SGR_RC_PRE)); }
+@@ -96,7 +97,8 @@
+   const S = tex || N; texCv.width = texCv.height = S; imgData = texCtx.createImageData(N, N);
+   terrTex.dispose(); terrTex.generateMipmaps = !!tex; terrTex.minFilter = tex ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; terrTex.anisotropy = tex ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 1;
+   skeleton = []; sbDist = new Int32Array(0); undoStack.length = 0;
+-  scene.fog.near = SGR.on ? 60000 : 22000; scene.fog.far = SGR.on ? 210000 : 68000; controls.maxDistance = SGR.on ? 150000 : 50000;
++  scene.fog.near = SGR.on ? Math.max(60000, HALF*0.95) : 22000; scene.fog.far = SGR.on ? Math.max(210000, HALF*2.6) : 68000; controls.maxDistance = SGR.on ? Math.max(150000, HALF*2.1) : 50000;
++  if (SGR.on && camera.far < HALF*2.75){ camera.far = HALF*2.75; camera.updateProjectionMatrix(); }      // v48: fog, orbit range and far plane follow the square (126 km: unchanged)
+   sea.position.y = SGR.on ? -1.6 : 0;
+ }
+ 
+--- app/gbstats.js	2026-11-22 04:29:54.675787257 +0000
++++ gz_release/app/gbstats.js	2026-11-27 19:55:51.945998916 +0000
+@@ -36,6 +36,6 @@
+   const S = SGR.stats;
+   const rows = [['陆地面积', 'Land', `${world.landKm2.toFixed(0)} km²`], ['最高峰', 'Peak', `${world.peak.name[0]} ${Math.round(world.peak.h)} m`],
+     ['森林覆盖', 'Forest', `${Math.round(world.forestPct*100)}%`], ['岛屿', 'Islands', '香港岛 · 大屿山 · 南丫岛 · 长洲'],
+-    ['建筑', 'Buildings', S ? `${S.n.toLocaleString()} 栋` : '…'], ['地图', 'Map', '1:1 · 126 × 126 km'], ['数据', 'Data', 'OpenStreetMap · Overture Maps · 3D-GloBFP (Che et al. 2024) · CTBUH · Terrain Tiles (AWS)']];
++    ['建筑', 'Buildings', S ? `${S.n.toLocaleString()} 栋` : '…'], ['地图', 'Map', `1:1 · ${Math.round(2*HALF/1000)} × ${Math.round(2*HALF/1000)} km`], ['数据', 'Data', 'OpenStreetMap · Overture Maps · 3D-GloBFP (Che et al. 2024) · CTBUH · Terrain Tiles (AWS)']];
+   $('#islandStats').innerHTML = rows.map(r => `<dt>${r[0]}<small>${r[1]}</small></dt><dd>${r[2]}</dd>`).join('');
+ }
+--- patch_gba.py	2026-11-27 18:34:03.121090649 +0000
++++ gz_release/patch_gba.py	2026-11-27 19:55:51.947112236 +0000
+@@ -36,11 +36,11 @@
+     src = re.sub(r'<title>[^<]*</title>', '<title>City Brush · Greater Bay</title>', src, count=1)
+     # ---------- the overview camera: the whole 126 km square ----------
+     R("else if (SGR.on){ const c = sgXY(22.340, 114.120); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 3500, 31000, -c[1] + 34000); }",
+-      "else if (SGR.on){ const c = sgXY(22.640, 114.050); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 6000, 72000, -c[1] + 76000); }")
++      "else if (SGR.on){ if (HALF > 100000){ const c = sgXY(23.000, 113.640); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 12000, 165000, -c[1] + 175000); } else { const c = sgXY(22.640, 114.050); tt.set(c[0], 0, -c[1]); to = new THREE.Vector3(c[0] + 6000, 72000, -c[1] + 76000); } }")     # v48: the 294 km square (HALF 147 km) with Guangzhou
+     # ---------- camera far plane and the sea plane for the 126 km square ----------
+     R("const camera = new THREE.PerspectiveCamera(38, (stage.clientWidth || innerWidth)/(stage.clientHeight || innerHeight), 5, 130000);",
+       "const camera = new THREE.PerspectiveCamera(38, (stage.clientWidth || innerWidth)/(stage.clientHeight || innerHeight), 5, 260000);")
+-    R("const sea = new THREE.Mesh(new THREE.PlaneGeometry(200000, 200000),", "const sea = new THREE.Mesh(new THREE.PlaneGeometry(420000, 420000),")
++    R("const sea = new THREE.Mesh(new THREE.PlaneGeometry(200000, 200000),", "const sea = new THREE.Mesh(new THREE.PlaneGeometry(900000, 900000),")     # v48: 900 km (the 294 km square)
+     # ---------- terrain sculpting: the chunks ----------
+     R("""  const pos = terrain.geometry.attributes.position;
+   for (let tj = Math.max(0, Math.floor((bb[1]+HALF)/TS)); tj <= Math.min(TN-1, Math.ceil((bb[3]+HALF)/TS)); tj++)

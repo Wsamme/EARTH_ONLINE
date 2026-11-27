@@ -27,6 +27,9 @@ def select(ROUTES):
         elif rt == 'subway' and '深圳地铁' in net and ref:
             r0 = ref.split(';')[0]
             key = ('szm', 'Z' + r0, 'Shenzhen Metro Line ' + r0, '深圳地铁%s号线' % r0 if r0.isdigit() else '深圳地铁' + r0 + '线', fade(col) if col else '#9a9a9a', 0)
+        elif rt == 'subway' and ('广州地铁' in net or 'Guangzhou Metro' in net) and ref and __import__('os').environ.get('GBA_FRAME') == 'gz':      # v48 (frame gz only): Guangzhou Metro, faded as Shenzhen's
+            r0 = ref.split(';')[0]
+            key = ('gzm', 'G' + r0, 'Guangzhou Metro Line ' + r0, '广州地铁%s号线' % r0 if r0.isdigit() else '广州地铁' + r0 + '线', fade(col) if col else '#9a9a9a', 0)
         if not key: continue
         g = groups.setdefault(key[1], {'grp':key[0], 'code':key[1], 'en':key[2], 'zh':key[3], 'col':key[4], 'lrt':key[5], 'cand':[]})
         if key[4] and not g['col']: g['col'] = key[4]
@@ -36,7 +39,7 @@ def select(ROUTES):
     for code, g in groups.items():
         g['cand'].sort(reverse=True)
         out.append({'code':code, 'rids':[c[1] for c in g['cand']], 'en':g['en'], 'zh':g['zh'], 'col':g['col'] or '#808080', 'grp':g['grp'], 'lrt':g['lrt']})
-    order = {'mtr':0, 'lr':1, 'tram':2, 'peak':3, 'szm':4}
+    order = {'mtr':0, 'lr':1, 'tram':2, 'peak':3, 'szm':4, 'gzm':5}
     out.sort(key=lambda d: (order[d['grp']], d['code']))
     return out
 if __name__ == '__main__':

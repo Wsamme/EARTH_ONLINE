@@ -45,8 +45,9 @@ for oid, fw, t, wk in R['areas']:
 assert hk is not None, 'no Hong Kong boundary'
 RG = pickle.load(open(DATA + 'regions.pkl', 'rb'))          # tools/count.py: Shenzhen (minus Shenshan), Dongguan, Hong Kong (lon/lat)
 sz = proj(RG['sz']).buffer(0); dg = proj(RG['dg']).buffer(0).difference(sz).buffer(0); sz = sz.difference(hk).buffer(0); dg = dg.difference(hk).buffer(0)
-core = unary_union([hk, sz, dg]).buffer(0)
-print('regions km2 (incl. sea): hk %.0f sz %.0f dg %.0f' % (hk.area/1e6, sz.area/1e6, dg.area/1e6))
+gz = proj(RG['gz']).buffer(0).difference(unary_union([hk, sz, dg])).buffer(0) if 'gz' in RG and FRAME == 'gz' else Polygon()      # frame gz: Guangzhou (region 4)
+core = unary_union([hk, sz, dg, gz]).buffer(0)
+print('regions km2 (incl. sea): hk %.0f sz %.0f dg %.0f gz %.0f' % (hk.area/1e6, sz.area/1e6, dg.area/1e6, gz.area/1e6))
 HKL = LAND.intersection(core).buffer(0); FOR = LAND.difference(core).buffer(0)
 # tiny slivers of the boundary along the coast: keep them with the side they touch most
 print('core land km2 %.1f (hk %.1f sz %.1f dg %.1f), foreign km2 %.1f' % (HKL.area/1e6, LAND.intersection(hk).area/1e6, LAND.intersection(sz).area/1e6, LAND.intersection(dg).area/1e6, FOR.area/1e6))
@@ -72,7 +73,7 @@ for wid, t, cs in R['ways']:
         wlines.append(({'kind':k, 'name':t.get('name'), 'zh':t.get('name:zh')}, LineString([w(*c) for c in cs])))
 FW = unary_union([g for p, g in fw]).intersection(LAND.buffer(60))
 print('sea-area water polygons dropped', nsea); print('fresh km2 %.2f bodies %d pools %d lines %d' % (FW.area/1e6, len(fw), len(pools), len(wlines)), collections.Counter(p['kind'] for p, g in fw))
-save({'sg':HKL, 'foreign':FOR, 'all':LAND, 'hk':hk, 'sz':sz, 'dg':dg, 'core':core, 'fresh':FW, 'fresh_list':fw, 'pools':pools, 'wlines':wlines}, 'land.pkl')
+save({'sg':HKL, 'foreign':FOR, 'all':LAND, 'hk':hk, 'sz':sz, 'dg':dg, 'gz':gz, 'core':core, 'fresh':FW, 'fresh_list':fw, 'pools':pools, 'wlines':wlines}, 'land.pkl')
 # preview
 from PIL import Image, ImageDraw
 S = 1200; im = Image.new('RGB', (S, S), (120, 160, 185)); d = ImageDraw.Draw(im)

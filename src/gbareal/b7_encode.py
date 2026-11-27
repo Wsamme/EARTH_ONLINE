@@ -60,6 +60,8 @@ for bid, ps in list(parts_by.items()):
         have.append(p)
     parts_by[bid] = have
 print('grounded plain outlines', nfix_plain, '; podium fillers', nfix_fill, flush=True)
+import json
+def area2(r): return sum(r[i][0]*r[(i+1) % len(r)][1] - r[(i+1) % len(r)][0]*r[i][1] for i in range(len(r)))
 def tile_of(x, y): return min(TX - 1, max(0, int((y + HALF)//T)))*TX + min(TX - 1, max(0, int((x + HALF)//T)))
 big_items = collections.defaultdict(list); small_items = collections.defaultdict(list)
 # statistics (the app shows them without decoding every building): floor area -> residents and jobs
@@ -75,6 +77,15 @@ def pa_of(x, y):
 import sys as _sys
 HB, AB = float(_sys.argv[1]) if len(_sys.argv) > 1 else 20.0, float(_sys.argv[2]) if len(_sys.argv) > 2 else 900.0
 print('big threshold', HB, 'm or', AB, 'm2', flush=True)
+# ---- frame gz: the tiles of the October square keep the released records (site/gbadata: Hong Kong, the Overture / 3D-GloBFP Shenzhen
+# and Dongguan of szdg, the context) byte for byte, moved to the new tile index (+42, +42); only the old context records inside
+# Guangzhou are dropped, and the fresh Guangzhou buildings are added. Tiles outside the October square: the fresh records.
+OLDSRC = __import__('os').environ.get('GBA_OLDDATA', '/home/claude/earth_online/site/gbadata/')
+SH = (HALF - OLD_HALF)//T; OTX = 2*OLD_HALF//T
+def in_old(ti): tx, ty = ti % TX, ti // TX; return SH <= tx < SH + OTX and SH <= ty < SH + OTX
+if FRAME == 'gz':
+    n0 = len(Bd['b']); Bd['b'] = [b for b in Bd['b'] if b.get('rg') == 4 or not in_old(tile_of(*b['g'].representative_point().coords[0]))]
+    print('fresh buildings kept (Guangzhou anywhere, anything outside the October square)', len(Bd['b']), 'of', n0, collections.Counter(b.get('rg') for b in Bd['b']), flush=True)
 for b in Bd['b']:
     c = b['g'].representative_point(); ti = tile_of(c.x, c.y)
     seed = int(hashlib.md5(str(b['id']).encode()).hexdigest()[:6], 16) % 251
@@ -96,10 +107,62 @@ for b in Bd['b']:
     rec = dict(b, seed=seed, part=False)
     if b['h'] >= HB or A >= AB: big_items[ti].append(rec)
     else: small_items[ti].append(rec)
+OLD_BIG = collections.defaultdict(list); OLD_SMALL = collections.defaultdict(list)
+if FRAME == 'gz':
+    from shapely.prepared import prep as _prep
+    _GZP = _prep(load('land.pkl')['gz'])
+    def _ld(n): return gzip.decompress(base64.b64decode(open(OLDSRC + n).read()))
+    class Rd:
+        def __init__(s, b, p=0): s.b = b; s.p = p
+        def u8(s): v = s.b[s.p]; s.p += 1; return v
+        def vu(s):
+            v = 0; sh = 0
+            while True:
+                c = s.b[s.p]; s.p += 1; v |= (c & 127) << sh; sh += 7
+                if c < 128: return v
+        def vs(s): v = s.vu(); return (v >> 1) ^ -(v & 1)
+    OB = json.loads(_ld('gba_base.txt')); assert OB['HALF'] == OLD_HALF and OB['TILE'] == T, (OB['HALF'], OB['TILE'])
+    b0 = _ld('gba_bld0.txt'); smallF = {k: _ld('gba_bld%d.txt' % k) for k in range(1, OB['bldParts'] + 1)}
+    r = Rd(b0, 4); assert r.vu() == T and r.vu() == OTX; npart = r.vu(); nt = r.vu()
+    idx = [tuple(r.vu() for _ in range(7)) for _ in range(nt)]; bigoff = r.p
+    nold = collections.Counter()
+    def _recs(buf, p0, ln, oti, big):
+        rr = Rd(buf, p0); end = p0 + ln; otx, oty = oti % OTX, oti // OTX; ox, oy = -OLD_HALF + otx*T, -OLD_HALF + oty*T
+        nti = (oty + SH)*TX + (otx + SH)
+        while rr.p < end:
+            q0 = rr.p; fl = rr.u8(); h = rr.vu()/10; base = rr.vu()/10; rr.u8(); rr.u8(); rr.u8()
+            if rr.u8() == 255: rr.u8(); rr.u8(); rr.u8()
+            rr.u8(); nr = rr.vu(); outer = None; px = py = 0
+            for k in range(nr):
+                m = rr.vu(); pts = []
+                for _ in range(m): px += rr.vs(); py += rr.vs(); pts.append((ox + px/Q, oy + py/Q))
+                if k == 0: outer = pts
+            raw = buf[q0:rr.p]
+            cx = sum(p[0] for p in outer)/len(outer); cy = sum(p[1] for p in outer)/len(outer)
+            if (fl & 32) and _GZP.contains(Point(cx, cy)): nold['dropped (old context in Guangzhou)'] += 1; continue
+            nold['kept big' if big else 'kept small'] += 1
+            (OLD_BIG if big else OLD_SMALL)[nti].append(raw)
+            t = fl & 31
+            if t in (13, 14, 15) or (fl & 64): continue          # (parts and context: not in the statistics, as b7 / szdg)
+            A = abs(area2(outer))/2; fl_ = max(1, round((h - base)/FH(t))); g = A*fl_
+            pop = g*PEOPLE.get(t, 0); jobs = g*JOBS.get(t, 0); P = ST['byPa'][pa_of(cx, cy)]
+            ST['n'] += 1; ST['gfa'] += g; ST['pop'] += pop; ST['jobs'] += jobs; ST['byType'][t] += g; ST['tall'] += h >= 100
+            P[0] += pop; P[1] += jobs; P[2] += 1; P[3] += g
+            z = 1 if t in (2, 3) else 5 if t == 5 else 3 if t == 6 else 6 if t in (7, 9) else 2 if t in (4, 12) else 0
+            if z:
+                key = (int((cx + HALF)//1000), int((cy + HALF)//1000), z); o = OD.get(key)
+                if o is None: o = OD[key] = [0.0, 0.0, 0.0]
+                o[0] += g; o[1] += cx*g; o[2] += cy*g
+    off = bigoff
+    for (oti, nB, lB, nS, k, so, lS) in idx:
+        _recs(b0, off, lB, oti, True); off += lB
+        if lS: _recs(smallF[k], so, lS, oti, False)
+    print('released records', dict(nold), 'in', len(idx), 'old tiles', flush=True)
+    del b0, smallF
 print('stats: n %d pop %.0f jobs %.0f gfa %.1f km2 tall %d' % (ST['n'], ST['pop'], ST['jobs'], ST['gfa']/1e6, ST['tall']), flush=True)
-def area2(r): return sum(r[i][0]*r[(i+1) % len(r)][1] - r[(i+1) % len(r)][0]*r[i][1] for i in range(len(r)))
+NREC = {}
 def enc_tile(lst, ti, big):
-    wb = W(); tx, ty = ti % TX, ti // TX; ox, oy = -HALF + tx*T, -HALF + ty*T
+    wb = W(); tx, ty = ti % TX, ti // TX; ox, oy = -HALF + tx*T, -HALF + ty*T; nw = 0
     for b in lst:
         g = b['g']
         if not big and len(g.exterior.coords) > 6: g = g.simplify(0.25)
@@ -120,11 +183,14 @@ def enc_tile(lst, ti, big):
             wb.vu(len(r))
             for (x, y) in r:
                 qx, qy = round((x - ox)*Q), round((y - oy)*Q); wb.vs(qx - px); wb.vs(qy - py); px, py = qx, qy
-    return bytes(wb.b)
-tiles = sorted(set(big_items) | set(small_items))
+        nw += 1
+    old = (OLD_BIG if big else OLD_SMALL).get(ti, [])
+    NREC[(ti, big)] = nw + len(old)
+    return bytes(wb.b) + b''.join(old)
+tiles = sorted(set(big_items) | set(small_items) | set(OLD_BIG) | set(OLD_SMALL))
 bigP = {ti: enc_tile(big_items[ti], ti, True) for ti in tiles}
 smallP = {ti: enc_tile(small_items[ti], ti, False) for ti in tiles}
-print('big', sum(len(v) for v in big_items.values()), sum(len(v) for v in bigP.values()), 'B; small', sum(len(v) for v in small_items.values()), sum(len(v) for v in smallP.values()), 'B', flush=True)
+print('big', sum(v for (t_, b_), v in NREC.items() if b_), sum(len(v) for v in bigP.values()), 'B; small', sum(v for (t_, b_), v in NREC.items() if not b_), sum(len(v) for v in smallP.values()), 'B', flush=True)
 # small payloads into parts of <= ~11.5 MB gzip
 LIM = 10.9e6
 def split(budget):
@@ -147,11 +213,11 @@ for k, p in enumerate(parts, 1):
 w0 = W(); w0.raw(b'SGB2'); w0.vu(T); w0.vu(TX); w0.vu(len(parts)); w0.vu(len(tiles))
 for ti in tiles:
     k, off = loc[ti]
-    w0.vu(ti); w0.vu(len(big_items[ti])); w0.vu(len(bigP[ti])); w0.vu(len(small_items[ti])); w0.vu(k); w0.vu(off); w0.vu(len(smallP[ti]))
+    w0.vu(ti); w0.vu(NREC[(ti, True)]); w0.vu(len(bigP[ti])); w0.vu(NREC[(ti, False)]); w0.vu(k); w0.vu(off); w0.vu(len(smallP[ti]))
 for ti in tiles: w0.raw(bigP[ti])
 z0 = wz('gba_bld0.bin.gz', w0.b)
 if z0 > 10.9e6: print('BLD0 TOO BIG', z0); raise SystemExit(3)
-del Bd, big_items, small_items, bigP, smallP, _gnd, _gtree, byid, parts_by
+del Bd, big_items, small_items, bigP, smallP, _gnd, _gtree, byid, parts_by, OLD_BIG, OLD_SMALL
 # ---------------- roads ----------------
 R = load('roads.pkl')
 names = ['']; nidx = {}
@@ -243,6 +309,11 @@ stats = {'n':ST['n'], 'gfa':round(ST['gfa']), 'pop':round(ST['pop']), 'jobs':rou
          'od':[[k[2], round(o[0]), round(o[1]/o[0]), round(o[2]/o[0])] for k, o in OD.items() if o[0] > 2000]}
 base = {'v':2, 'city':'gba', 'pa16':1, 'hkDX':HK_DX, 'hkDY':HK_DY, 'demGap':T2.get('gapTiles', []), 'demPh':T2.get('ph'), 'lon0':LON0, 'lat0':LAT0, 'MX':MX, 'MY':MY, 'HALF':HALF, 'CELL':CELL, 'N':N, 'TS':TS, 'TN':TN, 'TILE':T, 'bldParts':len(parts),
         'codes':rle(codes), 'lu':rle(lu), 'pa':rle(pa), 'H':base64.b64encode(Hq.tobytes()).decode(),
-        'names':names, 'refs':refs, 'stats':stats, **{k: M[k] for k in ('PAS', 'REGS', 'places', 'pois', 'waters', 'mrt', 'stations', 'f1', 'runways', 'stands', 'palines', 'ropes')}}
+        'names':names, 'refs':refs, 'stats':stats, 'capP':3000 if FRAME != 'gz' else 4600, 'capI':3500 if FRAME != 'gz' else 5200, **{k: M[k] for k in ('PAS', 'REGS', 'places', 'pois', 'waters', 'mrt', 'stations', 'f1', 'runways', 'stands', 'palines', 'ropes')}}
+if FRAME == 'gz':       # the released rail (MTR with its deck heights / Peak Tram fix, Shenzhen Metro), stations and the ropeway: world x / y unchanged
+    gzm = [m for m in base['mrt'] if m['code'].startswith('G')]; gzs = [s_ for s_ in base['stations'] if s_['codes'] and all(c_.startswith('G') for c_ in s_['codes'])]
+    for k in ('mrt', 'stations', 'ropes'): base[k] = OB[k]
+    base['mrt'] = base['mrt'] + gzm; base['stations'] = base['stations'] + gzs; print('Guangzhou Metro parts', len(gzm), 'stations', len(gzs), flush=True)
+    print('rail / stations / ropes from the released base', len(OB['mrt']), len(OB['stations']), len(OB['ropes']), flush=True)
 wz('gba_base.json.gz', json.dumps(base, separators=(',', ':'), ensure_ascii=False).encode())
 print('done')

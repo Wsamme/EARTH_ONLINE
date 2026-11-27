@@ -41,7 +41,7 @@ def fetch(group, points):
         q = ('[out:json][timeout:500];(way["building"](%s);relation["building"](%s);way["building:part"](%s);relation["building:part"](%s);'
              'way["landuse"](%s);relation["landuse"](%s);way["leisure"](%s);relation["leisure"](%s);way["amenity"](%s);relation["amenity"](%s);'
              'way["tourism"](%s);way["historic"](%s);way["man_made"](%s);relation["man_made"](%s);way["natural"="water"](%s););out geom;'
-             'node["name"](%s);out tags;') % ((bb,)*16)
+             'node["name"](%s);out;') % ((bb,)*16)
         tmp = out + '.part%d' % k
         d = overpass(q, tmp); os.remove(tmp)
         for e in d['elements']: els[e['type'][0] + str(e['id'])] = e
@@ -59,6 +59,15 @@ def fetch_rel(group):
         for e in r['elements']: els['r' + str(e['id'])] = e
         print(group, 'relations box', k + 1, len(r['elements']), flush=True); os.remove(out + '.rel'); time.sleep(5)
     d['elements'] = list(els.values()); json.dump(d, open(out, 'w'), separators=(',', ':'), ensure_ascii=False)
+def fetch_nodes(group):
+    """named nodes with coordinates ('out tags' drops node lat / lon) for every cached box, merged into the cache"""
+    out = os.path.join(CACHE, 'g_%s.json' % group); d = json.load(open(out)); els = {e['type'][0] + str(e['id']): e for e in d['elements']}
+    for k, b in enumerate(d['boxes']):
+        bb = '%.6f,%.6f,%.6f,%.6f' % tuple(b)
+        r = overpass('[out:json][timeout:300];node["name"](%s);out;' % bb, out + '.nodes')
+        for e in r['elements']: els['n' + str(e['id'])] = e
+        print(group, 'nodes box', k + 1, len(r['elements']), flush=True); os.remove(out + '.nodes'); time.sleep(3)
+    d['elements'] = list(els.values()); json.dump(d, open(out, 'w'), separators=(',', ':'), ensure_ascii=False)
 def load(group):
     f = os.path.join(CACHE, 'g_%s.json' % group)
     if os.path.exists(f + '.gz'): import gzip; return json.load(gzip.open(f + '.gz', 'rt'))
@@ -73,6 +82,9 @@ if __name__ == '__main__':
                 if 'center' in e: C[e['type'][0] + str(e['id'])] = (e['center']['lat'], e['center']['lon'])
     if sys.argv[1] == '--rel':
         for g in sys.argv[2:]: fetch_rel(g)
+        raise SystemExit(0)
+    if sys.argv[1] == '--nodes':
+        for g in sys.argv[2:]: fetch_nodes(g)
         raise SystemExit(0)
     for g in sys.argv[1:]:
         pts = []

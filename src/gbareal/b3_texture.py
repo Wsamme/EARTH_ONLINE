@@ -35,7 +35,18 @@ from shapely.strtree import STRtree
 from shapely.ops import unary_union
 from shapely.geometry import box as _bx
 # the land cut in 2 km cells: clipping a land-use polygon touches only the pieces it overlaps
-LPARTS = [q for gx in range(-(HALF//2000) - 1, HALF//2000 + 1) for gy in range(-(HALF//2000) - 1, HALF//2000 + 1) for q in [LANDB.intersection(_bx(gx*2000, gy*2000, gx*2000 + 2000, gy*2000 + 2000))] if not q.is_empty]
+def _qsplit(g, x0, y0, sz, out):        # quadtree cut (frame gz: 87 k cells against the whole land polygon would take an hour)
+    if g.is_empty: return
+    if sz <= 2000: out.append(g); return
+    h = sz/2
+    for dx in (0, h):
+        for dy in (0, h):
+            b = _bx(x0 + dx, y0 + dy, x0 + dx + h, y0 + dy + h)
+            q = g.intersection(b) if not b.within(g) else b
+            _qsplit(q, x0 + dx, y0 + dy, h, out)
+LPARTS = []; _S0 = 2000*2**int(np.ceil(np.log2((2*HALF + 4000)/2000)))
+_qsplit(LANDB, -_S0/2 - 1000, -_S0/2 - 1000, _S0, LPARTS)       # cells on the 2 km lattice (odd km edges, as the tiles)
+LPARTS = [q for q in LPARTS if not q.is_empty and q.area > 0]
 LTREE = STRtree(LPARTS)
 items = []; nfor = 0
 for oid, fway, t, wk in AREAS:

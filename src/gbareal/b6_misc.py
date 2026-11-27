@@ -16,6 +16,9 @@ SQ = box(-HALF, -HALF, HALF, HALF)
 A = pickle.load(open(OUT + 'raw_areas.pkl', 'rb'))
 NODES = pickle.load(open(OUT + 'raw_nodes.pkl', 'rb'))
 L = load('land.pkl'); LAND = L['all']; HKL = L['sg']; landp = prep(LAND.buffer(400)); hkp = prep(L['hk']); szp = prep(L['sz'].buffer(300)); dgp = prep(L['dg'].buffer(300))
+GZON = not L.get('gz', Polygon()).is_empty; gzp = prep(L['gz'].buffer(300)) if GZON else None       # frame gz: Guangzhou's 11 districts and its subdistricts / towns
+corep = prep(L['core'].buffer(1000))
+GZ_DIST = ('越秀区', '荔湾区', '海珠区', '天河区', '白云区', '黄埔区', '番禺区', '花都区', '南沙区', '从化区', '增城区')
 SZ_DIST = ('罗湖区', '福田区', '南山区', '宝安区', '龙岗区', '盐田区', '龙华区', '坪山区', '光明区', '大鹏新区')
 def zhof(t): return _names(t)[1]
 def enof(t): return _names(t)[0] or _names(t)[1]
@@ -23,7 +26,7 @@ def geo(wk):
     try: return proj(shapely.wkb.loads(wk)).buffer(0)
     except Exception: return None
 # ---------------- districts ----------------
-HKD, SZD, SZS = [], [], []          # Hong Kong's 18 districts, Shenzhen districts, Shenzhen subdistricts (jiedao)
+HKD, SZD, SZS, GZD = [], [], [], []          # Hong Kong's 18 districts, Shenzhen districts, Shenzhen subdistricts (jiedao) / Dongguan + Guangzhou towns, Guangzhou districts
 for oid, fw, t, wk in A:
     if t.get('boundary') != 'administrative' or not t.get('name'): continue
     al = t.get('admin_level'); g = None
@@ -35,14 +38,17 @@ for oid, fw, t, wk in A:
         elif not hkp.contains(c) and g.intersects(SQ) and t.get('name') in SZ_DIST:
             if t['name'] == '龙岗区': g = g.difference(unary_union([d[2] for d in SZD if d[1].get('name') == '大鹏新区'] + [geo(wk2) for _, fw2, t2, wk2 in A if t2.get('name') == '大鹏新区' and t2.get('boundary') == 'administrative'])).buffer(0)
             SZD.append((t.get('name:en') or t['name'], t, g))
+        elif GZON and not hkp.contains(c) and t.get('name') in GZ_DIST and gzp.contains(c) and not any(d[1].get('name') == t['name'] for d in GZD):
+            GZD.append(((t.get('name:en') or t['name']).replace(' District', ''), t, g))
     elif al == '8':
         g = geo(wk)
         if g is None or g.is_empty: continue
         c = g.representative_point()
-        if not hkp.contains(c) and g.intersects(SQ) and (szp.contains(c) or dgp.contains(c)) and g.area > 2e5: SZS.append((t.get('name:en') or t['name'], t, g))      # Shenzhen subdistricts, Dongguan towns
+        if not hkp.contains(c) and g.intersects(SQ) and (szp.contains(c) or dgp.contains(c) or (GZON and gzp.contains(c))) and g.area > 2e5: SZS.append((t.get('name:en') or t['name'], t, g))      # Shenzhen subdistricts, Dongguan / Guangzhou towns
 SZD = [d for d in SZD if d[1].get('name') != '龙岗区'] + [d for d in SZD if d[1].get('name') == '龙岗区'][:1]
 DGR = [('Dongguan', {'name':'东莞市', 'name:en':'Dongguan'}, L['dg'])]
-print('HK districts', len(HKD), 'Shenzhen districts', len(SZD), [d[1].get('name') for d in SZD], 'Shenzhen subdistricts + Dongguan towns', len(SZS))
+print('HK districts', len(HKD), 'Shenzhen districts', len(SZD), [d[1].get('name') for d in SZD], 'Guangzhou districts', len(GZD), [d[0] for d in GZD], 'subdistricts + towns', len(SZS))
+if GZON: assert len(GZD) == 11, [d[0] for d in GZD]
 assert len(HKD) == 18, [d[0] for d in HKD]
 # Hong Kong neighbourhoods: Voronoi cells of the suburb / town / quarter places (deduplicated by name), clipped to their district
 seedsrc = [(t, w(lon, lat)) for t, (lon, lat) in NODES if t.get('place') in ('suburb', 'town', 'quarter')]
@@ -89,7 +95,7 @@ for i, (nm, t, g) in enumerate(D, 1):
 assert len(PAS) < 65535, len(PAS)
 pa = np.asarray(paimg).astype(np.uint16)
 rgimg = Image.new('L', (N, N), 0); REGS = []
-for nm, t, g in HKD + SZD + DGR:
+for nm, t, g in HKD + SZD + DGR + GZD:
     g = g.intersection(SQ); gl = g.intersection(LAND)
     if gl.area < 1e6: continue
     raster([g], CELL, len(REGS) + 1, rgimg); c = gl.representative_point()
@@ -115,6 +121,7 @@ for t, (lon, lat) in NODES:
     if not k: continue
     x, y = w(lon, lat)
     if not (-HALF < x < HALF and -HALF < y < HALF) or not landp.contains(Point(x, y)): continue
+    if GZON and k not in ('city', 'town') and max(abs(x), abs(y)) > OLD_HALF and not corep.contains(Point(x, y)): continue
     nm = enof(t); key = (nm, round(x/500), round(y/500))
     if not nm: continue
     if key in seenp: continue
@@ -123,7 +130,8 @@ for t, (lon, lat) in NODES:
     except ValueError: pop = 0
     places.append({'en':nm, 'zh':zhof(t), 'k':k, 'x':round(x), 'y':round(y), 'mz':{'city':8, 'town':10, 'suburb':12, 'quarter':13, 'island':12}.get(k, 14), 'pop':pop})
 places.sort(key=lambda p: (p['mz'], -p['pop']))
-places = places[:4500]
+PCAP = 4500 if not GZON else 7000
+places = places[:PCAP]
 print('places', len(places), collections.Counter(p['k'] for p in places))
 # ---------------- POIs ----------------
 def poi_kind(t):
@@ -150,6 +158,7 @@ for oid, fw, t, wk in A:
 pois = []
 for k, t, (x, y), ar in cand:
     if not (-HALF < x < HALF and -HALF < y < HALF) or not landp.contains(Point(x, y)): continue
+    _ctx = GZON and max(abs(x), abs(y)) > OLD_HALF and not corep.contains(Point(x, y))
     wd = bool(t.get('wikidata')); z = zhof(t)
     if k == 'aerodrome': pr = 1 if t.get('iata') else 2 if wd else 3
     elif k in ('theme_park', 'zoo', 'aquarium'): pr = 1 if wd else 2
@@ -160,6 +169,7 @@ for k, t, (x, y), ar in cand:
     elif k in ('hospital', 'college', 'library', 'memorial', 'hotel', 'cinema', 'marketplace', 'place_of_worship', 'sports_centre', 'bus_station', 'casino', 'water_park'): pr = 3 if (wd or k in ('hospital', 'college')) else 4
     else: pr = 4
     if pr >= 4 and not z: continue
+    if _ctx and pr >= 3: continue
     if pr >= 3 and not wd and not z and k not in ('park', 'hospital', 'college', 'beach', 'peak', 'viewpoint', 'museum', 'golf_course'): continue
     nm = enof(t)
     if not nm: continue
@@ -170,7 +180,8 @@ seen = []; keep = []
 for p in pois:
     if any(s['en'] == p['en'] and abs(s['x'] - p['x']) < 600 and abs(s['y'] - p['y']) < 600 for s in seen): continue
     seen.append(p); keep.append(p)
-pois = keep[:5000]
+ICAP = 5000 if not GZON else 7500
+pois = keep[:ICAP]
 for p in pois: p.pop('_a'); p.pop('_w')
 print('pois', len(pois), collections.Counter(p['pr'] for p in pois), collections.Counter(p['k'] for p in pois).most_common(22))
 print('  pr1', [p['en'] for p in pois if p['pr'] == 1][:60])
@@ -319,6 +330,7 @@ def GRPTAG(t):
     if 'light rail' in s or '輕鐵' in s or t.get('station') == 'light_rail' or t.get('light_rail') == 'yes': return 'lr'
     if 'peak tram' in s or '山頂纜車' in s: return 'peak'
     if '深圳地铁' in s or 'shenzhen metro' in s: return 'szm'
+    if '广州地铁' in s or 'guangzhou metro' in s: return 'gzm'
     if 'mtr' in s or '港鐵' in s or '港铁' in s: return 'mtr'
     return None
 stations = []
@@ -363,6 +375,8 @@ for l in R['lines']:
 print('runways', [(r['len'], r['name'], [round(v, 4) for v in ll(*r['a'])][::-1]) for r in runways])
 AIRPORTS = {'HKG':(113.905, 22.300, 113.950, 22.325), 'SZX':(113.795, 22.615, 113.835, 22.650)}
 APBOX = {'HKG':(113.860, 22.280, 113.960, 22.345), 'SZX':(113.770, 22.590, 113.850, 22.680)}
+if GZON:     # Guangzhou Baiyun (CAN, 23.39 N 113.30 E): terminals / aprons box and the runway box (around the airfield, generous)
+    AIRPORTS['CAN'] = (113.280, 23.370, 113.325, 23.415); APBOX['CAN'] = (113.250, 23.330, 113.350, 23.460)
 for r_ in runways:
     m_ = ll((r_['a'][0] + r_['b'][0])/2, (r_['a'][1] + r_['b'][1])/2); r_['ap'] = next((k for k, b in APBOX.items() if b[0] <= m_[0] <= b[2] and b[1] <= m_[1] <= b[3]), '')
 print('runways at the three airports', [(r_['ap'], r_['len']) for r_ in runways if r_['ap']])

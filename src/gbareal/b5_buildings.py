@@ -13,14 +13,18 @@ BLD = pickle.load(open(OUT + 'raw_bld.pkl', 'rb'))
 lu = np.load(OUT + 'lu.npy'); L = load('land.pkl')
 HKP = prep(L['core'])           # gbareal: 'foreign' = outside Hong Kong + Shenzhen + Dongguan
 RGP = [prep(L['hk']), prep(L['sz']), prep(L['dg'])]
-def region(p): return next((k for k, P in enumerate(RGP) if P.contains(p)), 3)
+_RGI = [0, 1, 2]
+if not L.get('gz', Polygon()).is_empty: RGP.append(prep(L['gz'])); _RGI.append(4)     # frame gz: Guangzhou = region 4 (core)
+def region(p): return next((_RGI[k] for k, P in enumerate(RGP) if P.contains(p)), 3)
 # the business districts: towers are offices (Central / Admiralty / Wan Chai north, Causeway Bay, Quarry Bay, Tsim Sha Tsui,
 # West Kowloon, Kowloon East)
 CBD = [_box(*w(114.150, 22.276), *w(114.186, 22.288)), _box(*w(114.180, 22.276), *w(114.192, 22.284)), _box(*w(114.208, 22.283), *w(114.219, 22.291)),
        _box(*w(114.165, 22.293), *w(114.178, 22.302)), _box(*w(114.155, 22.300), *w(114.166, 22.307)), _box(*w(114.205, 22.307), *w(114.231, 22.326)),
        # Shenzhen: Futian CBD, Houhai (Nanshan), Qianhai, Luohu (Caiwuwei / Dongmen); Dongguan: the CBD of Nancheng
        _box(*w(114.045, 22.528), *w(114.070, 22.548)), _box(*w(113.928, 22.508), *w(113.956, 22.530)), _box(*w(113.880, 22.515), *w(113.910, 22.545)),
-       _box(*w(114.098, 22.535), *w(114.125, 22.552)), _box(*w(113.735, 23.005), *w(113.765, 23.030))]
+       _box(*w(114.098, 22.535), *w(114.125, 22.552)), _box(*w(113.735, 23.005), *w(113.765, 23.030)),
+       # Guangzhou (frame gz): Zhujiang New Town with Tianhe North up to the CITIC Plaza axis (approximate box; a typing heuristic only)
+       _box(*w(113.314, 23.112), *w(113.338, 23.150))]
 inCBD = lambda x, y: any(b.contains(Point(x, y)) for b in CBD)
 def hsh(s, k=0): return int(hashlib.md5((str(s) + ':' + str(k)).encode()).hexdigest()[:8], 16)/0xffffffff
 def num(v):

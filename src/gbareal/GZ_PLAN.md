@@ -78,6 +78,30 @@ Changes by stage:
 gbareal.js / patch_gba.py / gbstats.js: fog, far plane, orbit distance from HALF; label caps from base; overview camera and the
 "126 × 126 km" text from HALF; subtitle gets 广州 when the base is the big square; sea plane 900 km.
 
-## 6. Results / status
+## 6. Pipeline run (27 Nov 2026, frame gz, SC/lm50/gz/logs)
 
-(filled in at the end of the run: see section 7)
+| stage | time | peak RSS | notes |
+|---|---|---|---|
+| gz_regions | 11 s | 0.7 GB | GZ 3287346 + 11 districts; SZ 3464353 − Shenshan 9223823; DG 3464319; HK 913110 |
+| b0 | 131 s | **3.16 GB** | 374 358 buildings, 675 123 ways; node index in memory (now on disk for reruns) |
+| b1 | 115 s | 2.38 GB | land 52 775 km² of 87 379; GZ region 7 426 km² (incl. water) |
+| b2 | 189 s | 2.27 GB | 1122 / 1122 DEM tiles, 0 placeholder cells, H −15 … 1287 m (height cap raised 1000 → 2000 m in frame gz) |
+| b3 | 45 s | **2.76 GB** | 119 295 land-use polygons; the 8192 px canvas (ground8k_base) is the peak |
+| b4 | 77 s | **3.15 GB** | raw_ways.pkl of the 294 km square |
+| b5 | 72 s | 1.20 GB | 322 221 buildings (HK 117 443, SZ 81 501, DG 29 791, GZ **75 566**, context 17 920) |
+| b6 | 96 s | **3.25 GB** | 687 districts (283 subdistricts / towns), 40 regions (HK 18, SZ 10, DG 1, GZ 11), 7000 places, 7500 POIs, CAN 5 runway lines + 180 stands, Guangzhou Metro 358 parts / 312 stations |
+| b3b, b7, b7c, b8 | 9 / 39 / 21 / 19 s | ≤ 1.8 GB | |
+
+Stages over 2.5 GB (b0, b3, b4, b6) ran alone under the heavy lock; to bring them under 2.5 GB for reruns: b0 node index on disk
+(done), b4 / b6 should stream raw_ways instead of loading the pickle, b3 should skip ground8k_base (the 8k option) in frame gz.
+
+Data built (SC/lm50/gz/gbadata, 77 MB; production 51 MB): base 8.35 MB, bld0 9.84, bld1 12.95, bld2 4.76, water 13.91, cover 10.82,
+877 road chunks (12.2 MB gz in all, largest 0.30 MB), ground.webp 1.50 MB; largest file 13.9 MB (limit 15).
+- Buildings 1 059 232: released records kept 974 471 (230 554 big + 743 917 small; 1833 of 1977 old tiles byte for byte, the other
+  144 are the Nansha / Panyu / Huangpu edge where 2 119 old context records in Guangzhou were replaced), fresh 84 341 (GZ 75 566,
+  far context 8 775). Statistics (estimates): 1 028 012 buildings, 8 858 ≥ 100 m.
+- Roads 411 598 records: released kept 258 794 (dropped 9 593 old context roads in Guangzhou), fresh Guangzhou 99 176, fresh outside
+  53 628. Hong Kong's deck fixes (Tsing Ma, Shenzhen Bay Bridge, Avenue of Stars) come with the released records:
+  `hk/bridges/tm_deck_fix.py` no longer exists anywhere, so a fresh road build would lose the Tsing Ma profile.
+- Rail: the released MTR / Light Rail / tram / Peak Tram / Shenzhen Metro (335 parts, 558 stations, Ngong Ping 360) + Guangzhou Metro.
+- Water 10.4 MB gz (28 MB raw: the delta's fish ponds, 14 221 bodies; October 4.26 MB staged).

@@ -10,21 +10,27 @@ from scipy import ndimage as ndi
 from PIL import Image, ImageDraw
 L = load('land.pkl')
 Z = 12; X0t, X1t, Y0t, Y1t = 3338, 3352, 1776, 1790
+if FRAME == 'gz':     # the tiles covering the square (lon 112.625 - 115.479, lat 21.329 - 23.984): x 3329-3361, y 1766-1799 (1122)
+    _tx = lambda lon: int((lon + 180)/360*2**Z); _ty = lambda lat: int((1 - math.log(math.tan(math.radians(lat)) + 1/math.cos(math.radians(lat)))/math.pi)/2*2**Z)
+    _a, _b = ll(-HALF, -HALF); _c, _d = ll(HALF, HALF); X0t, X1t, Y0t, Y1t = _tx(_a), _tx(_c), _ty(_d), _ty(_b)
+DS = 2 if FRAME == 'gz' else 1        # frame gz: the mosaic is averaged 2 x 2 (~70 m pixels for the 140 m vertices; memory)
 NX, NY = (X1t - X0t + 1)*256, (Y1t - Y0t + 1)*256
 mos = np.zeros((NY, NX), np.float32); ok = np.zeros((NY, NX), bool); nt = 0
-for f in glob.glob(ROOT + 'gbadata/terrain/*.png'):
+for f in glob.glob(DEM + '*.png'):
     _, x, y = os.path.basename(f)[:-4].split('_'); x, y = int(x), int(y)
     if not (X0t <= x <= X1t and Y0t <= y <= Y1t): continue
     a = np.asarray(Image.open(f).convert('RGB')).astype(np.float32)
     mos[(y - Y0t)*256:(y - Y0t + 1)*256, (x - X0t)*256:(x - X0t + 1)*256] = a[..., 0]*256 + a[..., 1] + a[..., 2]/256 - 32768
     ok[(y - Y0t)*256:(y - Y0t + 1)*256, (x - X0t)*256:(x - X0t + 1)*256] = True; nt += 1
-print('DEM tiles on disk in the square', nt, 'of', (X1t - X0t + 1)*(Y1t - Y0t + 1), 'range', mos[ok].min(), mos[ok].max(), flush=True)
-med = ndi.median_filter(mos, size=5)
-bad = ok & ((mos < -60) | (mos > 1000) | (np.abs(mos - med) > 150))
+print('DEM tiles on disk in the square', nt, 'of', (X1t - X0t + 1)*(Y1t - Y0t + 1), 'x', X0t, X1t, 'y', Y0t, Y1t, 'range', mos[ok].min(), mos[ok].max(), flush=True)
+if DS > 1:
+    mos = mos.reshape(NY//DS, DS, NX//DS, DS).mean((1, 3), dtype=np.float32); ok = ok.reshape(NY//DS, DS, NX//DS, DS).all((1, 3)); NY //= DS; NX //= DS
+med = ndi.median_filter(mos, size=5 if DS == 1 else 3)
+bad = ok & ((mos < -60) | (mos > (1000 if FRAME != 'gz' else 1900)) | (np.abs(mos - med) > 150))
 mos = np.where(bad, med, mos); print('despiked', int(bad.sum()), flush=True); del med
 import shapely.wkb
 SS = 256*2**Z
-def mpx(lon, lat): return (lon + 180)/360*SS - X0t*256, (1 - np.log(np.tan(np.radians(lat)) + 1/np.cos(np.radians(lat)))/np.pi)/2*SS - Y0t*256
+def mpx(lon, lat): return ((lon + 180)/360*SS - X0t*256)/DS, ((1 - np.log(np.tan(np.radians(lat)) + 1/np.cos(np.radians(lat)))/np.pi)/2*SS - Y0t*256)/DS
 # urban DEM correction (as Hong Kong: the SRTM-based DEM carries the towers): building coverage at 1/2 DEM pixel
 K = 2
 cov = Image.new('L', (NX*K, NY*K), 0); dc = ImageDraw.Draw(cov)
@@ -41,7 +47,7 @@ for oid, fway, t, wk in pickle.load(open(OUT + 'raw_areas.pkl', 'rb')):
         xs, ys = mpx(np.array(p.exterior.coords)[:, 0], np.array(p.exterior.coords)[:, 1])
         if len(xs) >= 3: dc.polygon(list(zip(xs*K, ys*K)), fill=255)
 cov = np.asarray(cov.resize((NX, NY), Image.BOX)).astype(np.float32)/255.0
-wb = np.clip((ndi.gaussian_filter(cov, 4) - 0.05)/0.12, 0, 1); del cov
+wb = np.clip((ndi.gaussian_filter(cov, 4/DS) - 0.05)/0.12, 0, 1); del cov
 lm_ = Image.new('L', (NX, NY), 0); dl = ImageDraw.Draw(lm_)
 from raster import polys_of as _po
 for p in _po(L['all']):
@@ -51,17 +57,20 @@ for p in _po(L['all']):
         cx, cy = np.array(h.coords).T; lo, la = ll(cx, cy); xs, ys = mpx(lo, la)
         if len(xs) >= 3: dl.polygon(list(zip(xs, ys)), fill=0)
 lmk = np.asarray(lm_) > 0; del lm_
-ero = ndi.minimum_filter(np.where(lmk & ok, mos, 1e4), size=(21, 21))
+FS = 21 if DS == 1 else 11
+ero = ndi.minimum_filter(np.where(lmk & ok, mos, 1e4), size=(FS, FS))
 ero = np.where(ero >= 1e4, -1e4, ero)
-op = ndi.maximum_filter(ero, size=(21, 21)); del ero
+op = ndi.maximum_filter(ero, size=(FS, FS)); del ero
 op = np.where(op <= -1e4 + 1, mos, op)
-op = ndi.gaussian_filter(op, 1.5)
+op = ndi.gaussian_filter(op, 1.5/DS)
 mos = np.where(ok, mos - wb*np.minimum(80.0, np.maximum(0, mos - op)), 0).astype(np.float32); del op, wb
 print('urban DEM correction done', flush=True)
 # the placeholder: distance (DEM px ~ 35 m) into the missing area, for the 700 m blend
-dmiss = ndi.distance_transform_edt(~ok).astype(np.float32)
-near = ndi.distance_transform_edt(~ok, return_distances=False, return_indices=True)
-mosf = mos[near[0], near[1]]; del near                       # nearest valid height (for the blend only)
+if ok.all(): dmiss = np.zeros(mos.shape, np.float32); mosf = mos            # every tile present: no placeholder (and no 1 GB index arrays)
+else:
+    dmiss = ndi.distance_transform_edt(~ok).astype(np.float32)
+    near = ndi.distance_transform_edt(~ok, return_distances=False, return_indices=True)
+    mosf = mos[near[0], near[1]]; del near                       # nearest valid height (for the blend only)
 def sample(A, lon, lat, order=1):
     X, Y = mpx(lon, lat); return ndi.map_coordinates(A, [Y - 0.5, X - 0.5], order=order, mode='nearest')
 def dem(lon, lat): return sample(mos, lon, lat)
@@ -101,7 +110,7 @@ for q in sig:
 X = -HALF + np.arange(TN)*TS
 xs, ys = np.meshgrid(X, X)               # [j, i]
 lon, lat = ll(xs, ys); lon = lon.ravel(); lat = lat.ravel()
-Hd = dem(lon, lat).reshape(TN, TN); Hf = sample(mosf, lon, lat).reshape(TN, TN); Dm = sample(dmiss, lon, lat).reshape(TN, TN)*35.0
+Hd = dem(lon, lat).reshape(TN, TN); Hf = sample(mosf, lon, lat).reshape(TN, TN); Dm = sample(dmiss, lon, lat).reshape(TN, TN)*35.0*DS
 okv = Dm < 1.0                            # vertex on measured DEM
 blend = np.clip(Dm/700.0, 0, 1)           # 0 at the edge of the measured DEM, 1 at 700 m inside the gap
 del lon, lat
@@ -116,7 +125,7 @@ dland = (ndi.distance_transform_edt(~land_nw)*R).astype(np.float32)
 W_ = water[pj, pi]; WA = wany[pj, pi]; LA = lany[pj, pi]; FW_ = fw[pj, pi]; DL = dland[pj, pi]; WLv = WL[pj, pi]; WM = wmin[pj, pi]
 Hland = np.where(okv, Hd, Hf*(1 - blend) + PH_LAND*blend)            # measured, or the placeholder (blended near the measured edge)
 Hsea = np.where(okv & (Hd < 2), np.clip(Hd, -28.0, -1.6), -1.6 - np.minimum(1.0, DL/800.0)*6)
-H = np.where(W_ & ~LA, np.where(FW_, WLv - 1.5 - 2.0*np.minimum(1.0, DL/200.0), Hsea), np.where(WA, WM - 0.3, np.clip(Hland, 0.2, 1000.0))).astype(np.float32)
+H = np.where(W_ & ~LA, np.where(FW_, WLv - 1.5 - 2.0*np.minimum(1.0, DL/200.0), Hsea), np.where(WA, WM - 0.3, np.clip(Hland, 0.2, 1000.0 if FRAME != 'gz' else 2000.0))).astype(np.float32)
 print('H range', H.min(), H.max(), 'peak at', np.unravel_index(H.argmax(), H.shape), 'vertices on measured DEM %.1f %%' % (100*okv.mean()), flush=True)
 # the placeholder area as 2 km cells (for the app's note / overlay): a cell is a gap when < 50 % of its vertices are measured
 c = TILE//TS
@@ -127,7 +136,7 @@ for ty in range(TXN):
         if blk.mean() < 0.5: gap.append(ty*TXN + tx)
 print('2 km cells on the placeholder', len(gap), 'of', TXN*TXN, flush=True)
 save({'H':H, 'lvl':lvl, 'nl':nl, 'demok':okv, 'gapTiles':gap, 'ph':{'land':PH_LAND, 'water':PH_WATER, 'blend_m':700}}, 'terrain.pkl')
-np.save(OUT + 'land12.npy', land_nw); np.save(OUT + 'frm12.npy', frm & land_nw); np.save(OUT + 'fw12.npy', fw); np.save(OUT + 'dland12.npy', dland.astype(np.float16))
+np.save(OUT + 'land12.npy', land_nw); np.save(OUT + 'frm12.npy', frm & land_nw); np.save(OUT + 'fw12.npy', fw); np.save(OUT + 'dland12.npy', np.minimum(dland, 60000).astype(np.float16))
 save({'sig':sig, 'siglv':siglv, 'flat':flat, 'lvl':lvl.tolist()}, 'fresh.pkl')
 hh = np.clip((H + 20)/(980)*255, 0, 255).astype(np.uint8)
 im = Image.fromarray(hh[::-1]).convert('RGB').resize((900, 900)); a = np.asarray(im).copy()

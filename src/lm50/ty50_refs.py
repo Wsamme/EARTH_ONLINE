@@ -72,10 +72,11 @@ def make(meta, group, lat, lon, rad):
              'h':rnd(b['h']), 'floors':t.get('building:levels'), 'h_osm':t.get('height'), 'est':not (t.get('height') or t.get('building:levels')),
              'type':TYPES.get(b['t'], str(b['t'])), 'area':round(b['area']), 'centroid':loc(b['cx'], b['cy']), 'ring':[loc(x, y) for x, y in b['rings'][0]]}
         if len(b['rings']) > 1: e['holes'] = [[loc(x, y) for x, y in R] for R in b['rings'][1:]]
-        ps = []
+        ps = []; bx0, by0, bx1, by1 = P.bounds; PB = None
         for k, q in enumerate(parts):
-            if k in used_parts: continue
-            if P.buffer(1).contains(Point(q['cx'], q['cy'])): ps.append({'base':rnd(q['base']), 'top':rnd(q['h']), 'ring':[loc(x, y) for x, y in q['rings'][0]]}); used_parts.add(k)
+            if k in used_parts or not (bx0 - 1 <= q['cx'] <= bx1 + 1 and by0 - 1 <= q['cy'] <= by1 + 1): continue
+            PB = PB or P.buffer(1)
+            if PB.contains(Point(q['cx'], q['cy'])): ps.append({'base':rnd(q['base']), 'top':rnd(q['h']), 'ring':[loc(x, y) for x, y in q['rings'][0]]}); used_parts.add(k)
         if ps: e['parts'] = ps; e['outline_drawn_to'] = rnd(b['h'])
         T['buildings'].append(e)
     # parts whose building outline the app does not draw (a part starts at the ground): grouped under their OSM building
@@ -121,9 +122,13 @@ def make(meta, group, lat, lon, rad):
         try:
             x, y = (p['x'], p['y']) if 'x' in p else (p[0], p[1])
         except Exception: continue
-        if abs(x - ax) < rad and abs(y - ay) < rad: T['pois'].append({'src':'app', 'name':p.get('en') if isinstance(p, dict) else None, 'zh':p.get('zh') if isinstance(p, dict) else None, 'at':loc(x, y)})
+        if abs(x - ax) < rad and abs(y - ay) < rad: T['pois'].append({'src':'app', 'name':p.get('en'), 'zh':p.get('zh'), 'kind':p.get('k'), 'at':loc(x, y)})
+    for p in B.get('stations', []):
+        x, y = p['x'], p['y']
+        if abs(x - ax) < rad and abs(y - ay) < rad: T['pois'].append({'src':'app-station', 'name':p.get('en'), 'zh':p.get('zh'), 'at':loc(x, y)})
     keep = ('tourism', 'amenity', 'historic', 'man_made', 'leisure', 'building', 'height', 'railway', 'natural', 'shop', 'religion', 'public_transport')
     for n in nodes:
+        if 'lon' not in n: continue
         x, y = A.w(n['lon'], n['lat'])
         if abs(x - ax) < rad and abs(y - ay) < rad:
             t = n['tags']; T['pois'].append({'src':'osm', 'osm':'n%d' % n['id'], 'name':t.get('name'), 'en':t.get('name:en'), 'tags':{k: t[k] for k in keep if k in t}, 'at':loc(x, y)})

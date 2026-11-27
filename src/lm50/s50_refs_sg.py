@@ -8,7 +8,7 @@
 #     else '-'), the app's part records are grouped back under their building outline (parts: base / top / ring).
 # Local metres around each anchor: +x east, +z south. Ref radius RR = max(1.6 r, r + 60), capped at 700 m.
 # usage:  cd SC && bash lm33/kit/heavy.sh python3 /home/claude/earth_online/src/lm50/s50_refs_sg.py [group ...]   (all groups if none)
-#         REREF='<group>_<n>|<key>|<lat>|<lon>|<radius>' ... python3 s50_refs_sg.py <group>_<n>   -> ref_<group>_<n>.json (one corrected anchor)
+#         REREF='<group>_<n>|<key>|<lat>|<lon>|<radius>' [REF_OUT=<dir>] ... python3 s50_refs_sg.py <group>_<n>   -> ref_<group>_<n>.json (one corrected anchor)
 # output: /home/claude/earth_online/src/lm50/ref_<group>.json
 import sys, os, json, gzip, math, time, urllib.request, collections
 import xml.etree.ElementTree as ET
@@ -111,6 +111,9 @@ def rel_poly(nodes, ways, members):
         g = unary_union(list(polygonize([LineString(s) for s in segs if len(s) >= 2])))
         return g if not g.is_empty and g.area > 1 else None
     except Exception: return None
+def ext(g):
+    if g.geom_type != 'Polygon': g = max(g.geoms, key=lambda q: q.area)
+    return list(g.exterior.coords)[:-1]
 def num(v):
     if v is None: return None
     try: return float(str(v).replace('m', '').replace(',', '.').split(';')[0].strip())
@@ -195,7 +198,7 @@ def main():
                 if small and g.area < 40: continue
                 c = g.centroid; e = ent_of(best(g, OT, obld))
                 T['buildings'].append({'name':e['name'], 'osm':e['osm'], 'h':b['h'], 'base':b['base'], 'floors':e['floors'], 'osm_h':e['osm_h'], 'est':e['floors'] is None and e['osm_h'] is None and b['t'] != 1,
-                    'type':TYPES.get(b['t'], str(b['t'])), 'area':round(g.area), 'centroid':loc(c.x, c.y), 'ring':[loc(x, y) for x, y in list(g.exterior.coords)[:-1]]})
+                    'type':TYPES.get(b['t'], str(b['t'])), 'area':round(g.area), 'centroid':loc(c.x, c.y), 'ring':[loc(x, y) for x, y in ext(g)]})
             for gi, ps in partgroups.items():
                 U = unary_union([p['g'] for p in ps]); hull = U if U.geom_type == 'Polygon' else U.convex_hull
                 m = best(hull, OT, obld)
@@ -207,8 +210,8 @@ def main():
                         if og.intersection(U).area > 0.6*U.area: e = ent_of(((oid, tg, og), 1.0)); outline = og if og.geom_type == 'Polygon' else outline; break
                 c = outline.centroid
                 T['buildings'].append({'name':e['name'], 'osm':e['osm'], 'h':max(p['h'] for p in ps), 'base':0.0, 'floors':e['floors'], 'osm_h':e['osm_h'], 'est':False, 'type':TYPES.get(ps[0]['t'], str(ps[0]['t'])),
-                    'area':round(outline.area), 'centroid':loc(c.x, c.y), 'ring':[loc(x, y) for x, y in list(outline.exterior.coords)[:-1]],
-                    'parts':[{'base':p['base'], 'top':p['h'], 'osm':ent_of(best(p['g'], PT, oparts))['osm'], 'ring':[loc(x, y) for x, y in list(p['g'].exterior.coords)[:-1]]} for p in ps]})
+                    'area':round(outline.area), 'centroid':loc(c.x, c.y), 'ring':[loc(x, y) for x, y in ext(outline)],
+                    'parts':[{'base':p['base'], 'top':p['h'], 'osm':ent_of(best(p['g'], PT, oparts))['osm'], 'ring':[loc(x, y) for x, y in ext(p['g'])]} for p in ps]})
             for i in RT.query(bx):
                 r, g = rl[int(i)]
                 if not g.intersects(bx): continue
@@ -227,7 +230,7 @@ def main():
                 for pg in (gg.geoms if hasattr(gg, 'geoms') else [gg]):
                     if pg.geom_type != 'Polygon' or pg.area < 800: continue
                     pg = pg.simplify(1.0)
-                    T['areas'].append({'kind':kind, 'name':tg.get('name'), 'osm':oid, 'area':round(g.area), 'ring':[loc(x, y) for x, y in list(pg.exterior.coords)[:-1]]})
+                    T['areas'].append({'kind':kind, 'name':tg.get('name'), 'osm':oid, 'area':round(g.area), 'ring':[loc(x, y) for x, y in ext(pg)]})
             for nid, (lo_, la_, tg) in nodes.items():
                 if not tg.get('name'): continue
                 kind = tg.get('amenity') or tg.get('tourism') or tg.get('historic') or tg.get('leisure') or tg.get('shop') or tg.get('public_transport') or tg.get('railway') or tg.get('man_made') or tg.get('building') or tg.get('office')
@@ -238,6 +241,7 @@ def main():
             out['targets'][key] = T
             nm_ = sum(1 for b in T['buildings'] if b['osm'] != '-')
             print(grp, key, 'r', rad, 'bld', len(T['buildings']), '(osm-matched %d)' % nm_, 'roads', len(T['roads']), 'areas', len(T['areas']), 'pois', len(T['pois']), flush=True)
-        json.dump(out, open(R + 'lm50/ref_%s.json' % grp, 'w'), ensure_ascii=False, separators=(',', ':'))
-        print('wrote', R + 'lm50/ref_%s.json' % grp)
+        fo = os.path.join(os.environ.get('REF_OUT') or R + 'lm50/', 'ref_%s.json' % grp)
+        json.dump(out, open(fo, 'w'), ensure_ascii=False, separators=(',', ':'))
+        print('wrote', fo)
 if __name__ == '__main__': main()

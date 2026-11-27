@@ -14,6 +14,7 @@ EX = json.load(open(HULLS))
 EXP = [(o, Polygon([A.w(q[1], q[0]) for q in o['poly']])) for o in EX if o.get('poly') and len(o['poly']) >= 3]
 EXISTING_KEYS = {o['key'] for o in EX}
 from ty50_geom import geom
+from shapely.geometry import LineString as _LS
 def ll_of(x, y): lat, lon = A.ll(x, y); return round(lat, 6), round(lon, 6)
 def tagnote(t):
     s = []
@@ -66,7 +67,17 @@ for r in TT.ROWS:
             pts = [p for poly in (G.geoms if G.geom_type == 'MultiPolygon' else [G]) for p in poly.exterior.coords]
             rr = max(math.hypot(x - cx, y - cy) for x, y in pts) + 3; foot = G
     app = None
-    if not err:
+    if not err and r['kind'] == 'bridge':
+        # bridges: no building record; report the app's own bridge decks (road records with the bridge flag) over the outline
+        RD = A.roads(); zone = (foot if foot is not None else G).buffer(4)
+        decks = [l for l in RD if l['br'] and zone.intersects(LineString(l['pts']) if len(l['pts']) > 1 else Point(l['pts'][0]))]
+        app = {'bridge_decks':len(decks), 'deck_elev_max':round(max([float(l['elev'].max()) for l in decks if l['elev'] is not None] or [0]), 1),
+               'classes':sorted({l['c'] for l in decks})}
+        p = Point(cx, cy)
+        for o, P in EXP:
+            if P.contains(p): err = 'TAKEN: anchor inside %s %s of %s' % (o['kind'], o['key'], o['mod']); break
+        foot = None
+    if not err and app is None:
         # the app's own record(s) on this footprint
         B = A.buildings(cx - rr - 60, cy - rr - 60, cx + rr + 60, cy + rr + 60)
         if foot is not None:
@@ -95,6 +106,8 @@ for r in TT.ROWS:
                 if ov > 0.5: err = 'TAKEN: %.0f%% of the outline under %s %s' % (100*ov, o['kind'], o['key']); break
                 if ov > 0.05: msg.append('%.0f%% of the outline under %s %s' % (100*ov, o['kind'], o['key']))
         if anchor_osm in seen_osm and not err: err = 'same OSM outline as ' + seen_osm[anchor_osm]
+    if not err and r['h'] and app and app.get('h_max') is not None and app['h_max'] < 0.6*r['h']:
+        unc.append('the app draws only %.0f m on this outline (verified height %s m): the tower may be missing from the app data or mapped as another outline' % (app['h_max'], r['h']))
     if err:
         errs.append((r['key'], err)); print('ERROR %-18s %-8s %s' % (r['key'], r['group'], err)); continue
     seen_osm[anchor_osm] = r['key']

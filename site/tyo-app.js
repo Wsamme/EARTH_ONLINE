@@ -2214,7 +2214,7 @@ function toMesh(B, mat){
   g.computeVertexNormals(); return new THREE.Mesh(g, mat);
 }
 function disposeGroup(g){
-  g.traverse(o => { if (o.geometry && o.geometry !== treeGeo && o.geometry !== carGeo) o.geometry.dispose(); if (o.isInstancedMesh && o.dispose) o.dispose(); });
+  g.traverse(o => { if (o.userData && o.userData.shared) return; if (o.geometry && o.geometry !== treeGeo && o.geometry !== carGeo) o.geometry.dispose(); if (o.isInstancedMesh && o.dispose) o.dispose(); });   // [v47] shared: geometry owned by a model cache
   if (g.parent) g.parent.remove(g);
 }
 
@@ -5273,7 +5273,7 @@ window.addEventListener('keydown', e => {
   if (e.code === 'Escape'){ if (tour) startTour(false); if (uiHidden) setUiHidden(false); return; }
   if (e.code === 'Space'){ if (!spaceHeld){ spaceHeld = true; applyControlMode(); } e.preventDefault(); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){ undo(); e.preventDefault(); return; }
-  const n = parseInt(e.key, 10); if (n >= 1 && n <= 9){ setTool(TOOLS[n-1].id); return; }
+  // [v47] the 1-9 keys used to pick a painting tool; the painting tools are gone
   if (e.key.toLowerCase() === 'r' && !e.ctrlKey && !e.metaKey){ lmRot = (lmRot + Math.PI/12) % (Math.PI*2); $('#lmRot').value = Math.round(lmRot*180/Math.PI); $('#lmRotOut').textContent = $('#lmRot').value + '°'; const L = landmarks[landmarks.length-1]; if (L && tool === 'landmark'){ L.rot = lmRot; const g = lmMeshes.get(L.id); if (g) g.rotation.y = lmRot; } return; }
   if (e.key === '[' || e.key === ']'){ brushR = Math.max(20, Math.min(300, brushR + (e.key === ']' ? 10 : -10))); $('#brush').value = brushR; $('#brushOut').textContent = brushR + ' m'; }
 });
@@ -60705,7 +60705,7 @@ function loop(now){
 }
 
 /* ================= boot ================= */
-setTool('view'); $('#tray').classList.add('closed'); renderStyle(); applyTime();
+setTool('view'); $('#tray').classList.add('closed'); for (const c of ['zone', 'road', 'arch', 'terra']) document.querySelectorAll('.dtab[data-cat="' + c + '"]').forEach(t => t.remove()); renderStyle(); applyTime();
 runHooks('boot');
 sgrBoot();
 requestAnimationFrame(loop);

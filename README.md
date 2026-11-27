@@ -225,7 +225,7 @@ Two licences, on purpose.
 
 > 3DEP, SRTM and GMTED2010 terrain data courtesy of the U.S. Geological Survey. ETOPO1 terrain data courtesy of the U.S. National Oceanic and Atmospheric Administration.
 
-**Hong Kong buildings.** About a thousand buildings on the Hong Kong page (`site/hkdata/hk3d.bin`, made by `src/hk/zz_hk3d/tools/`) are simplified from the Lands Department's *3D Visualisation Map* (non-textured models, 3d.map.gov.hk / CSDI portal), and their names come from the Lands Department's *Building* dataset (CSDI `landsd_rcd_1637211194312_35158`, via DATA.GOV.HK). Free to use, commercial use included, on condition that the source is credited: “Source: HKSAR Government, Lands Department”. The Hong Kong page shows that credit in the corner. Details in [DATA_LICENSE](DATA_LICENSE).
+**Hong Kong footbridges.** Since v46 the Hong Kong page uses its own hand-made buildings again; `site/hkdata/hk3d.bin` (made by `src/hk/zz_hk3d/tools/build3d.py` with `HK3D_INFRA_ONLY=1`) holds only 411 footbridges, covered walkways, the Mid-Levels escalator and similar structures, simplified from the Lands Department's *3D Visualisation Map* (non-textured models, 3d.map.gov.hk / CSDI portal). (v42–v45 also took about a thousand buildings from it, named from the Lands Department's *Building* dataset, CSDI `landsd_rcd_1637211194312_35158`, via DATA.GOV.HK.) **Downloaded models.** The Bank of China Tower (Raise3D) and the taxi and double-decker bus in traffic (businessyuen) are Sketchfab models under CC BY 4.0, in `site/hkdata/models/`, loaded by `src/hk/zz_models/`. Free to use, commercial use included, on condition that the source is credited: “Source: HKSAR Government, Lands Department”. The Hong Kong page shows that credit in the corner. Details in [DATA_LICENSE](DATA_LICENSE).
 
 **Shenzhen and Dongguan buildings.** On the Greater Bay page, Shenzhen and Dongguan footprints are from Overture Maps (OpenStreetMap, ODbL; East Asian buildings by Shi et al., CC BY 4.0). Heights come from OpenStreetMap where it has them, from the CTBUH Skyscraper Center for tall buildings, and otherwise from 3D-GloBFP (Che et al. 2024, CC BY 4.0), a machine-learning estimate. Details in [DATA_LICENSE](DATA_LICENSE).
 
@@ -241,6 +241,7 @@ three.js r128 is loaded from a CDN and stays under its own MIT licence. Noto San
 - [AWS Open Data](https://registry.opendata.aws/terrain-tiles/) and [Tilezen](https://github.com/tilezen/joerd/blob/master/docs/attribution.md), for the terrain tiles
 - Overture Maps and the HDB3D attributes used while the Singapore buildings were built. See `DATA_LICENSE` before you pass those on
 - HKSAR Government, Lands Department, for the 3D Visualisation Map and the Building dataset (via [DATA.GOV.HK](https://data.gov.hk/))
+- Raise3D (Bank of China Tower) and businessyuen (taxi, bus) for their 3D models on [Sketchfab](https://sketchfab.com/), CC BY 4.0 (see `DATA_LICENSE`)
 - Overture Maps Foundation; Shi et al. (East Asian buildings); Che et al. (3D-GloBFP); the CTBUH Skyscraper Center
 - [three.js](https://github.com/mrdoob/three.js/)
 

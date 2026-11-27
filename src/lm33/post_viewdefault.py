@@ -9,7 +9,9 @@ def apply(src, city):
     b = "setTool('R'); renderStyle();"
     n = src.count(b)
     assert n >= 1, ('viewdefault boot', n)
-    src = src.replace(b, "setTool('view'); $('#tray').classList.add('closed'); renderStyle();")
+    src = src.replace(b, "setTool('view'); $('#tray').classList.add('closed'); for (const c of ['zone', 'road', 'arch', 'terra']) document.querySelectorAll('.dtab[data-cat=\"' + c + '\"]').forEach(t => t.remove()); renderStyle();")
+    # v47 (28 Nov 2026): the painting tools (Zones, Roads, Styles, Terrain) are gone from the dock on every city; View, Landmarks
+    # and the game modes stay. The 1-9 keys no longer pick a painting tool (src/city-brush-v16.html).
     for old, new in [
         ("erase:(x, y, r) => { pushUndo(); setTool('erase'); const b = brushR; brushR = r; paintAt([x, y]); brushR = b; drawTex(); requestRegen(); },",
          "erase:(x, y, r) => { pushUndo(); const _pt = tool, _tc = $('#tray').classList.contains('closed'); setTool('erase'); const b = brushR; brushR = r; paintAt([x, y]); brushR = b; setTool(_pt); if (_tc) $('#tray').classList.add('closed'); drawTex(); requestRegen(); },"),

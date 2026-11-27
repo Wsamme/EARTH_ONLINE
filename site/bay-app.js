@@ -527,6 +527,7 @@ function genSB(sb, sig){
   const flat = mk(), bld = mk(), deck = mk(), lines = [], trees = [], roadSegs = [], outBlocks = [], lamps = [], lampC = [], NB = {B:mk(), pts:[], col:[]}, pois = [];
   bld.uv = []; bld.gl = [];
   const budget = {n:5000};
+  const lotModels = [];   // [v47] lots claimed by a city module for a downloaded model (CB_LOT_MODEL), added by CB_LOT_MODELS_ADD
   const st = {nBlocks:0, nParcels:0, nBld:0, floor:[0,0,0,0,0,0,0], devArea:0, greenArea:0, roadLen:0, tallest:0, autoParks, wx:0, wy:0, resBlocks:0, covered:0};
   let treeFl = null;
   const addTrees = (poly, density, rng, avoid) => {
@@ -669,6 +670,10 @@ function genSB(sb, sig){
         }
         addTrees(fp, 0.0035, rng, p => shapes.some(sh => insideConvex(sh, p[0], p[1])));
       } else shapes.push(fp.p);
+      // [v47] a city module may claim a lot for one of its downloaded models (e.g. Hong Kong tong lau / tower blocks); the rest stay procedural
+      if (typeof CB_LOT_MODEL === 'function'){ const keep = []; for (const sh of shapes){ let m = null; try { m = CB_LOT_MODEL(b.zone, dn, sh, rng); } catch (e){ m = null; }
+          if (m){ m.y0 = terraceBase(deck, sh) - 0.05; lotModels.push(m); st.nBld++; st.floor[b.zone] += m.floor || 0; bFloor += m.floor || 0; st.tallest = Math.max(st.tallest, m.h || 0); } else keep.push(sh); }
+        shapes.length = 0; for (const sh of keep) shapes.push(sh); }
       for (const sh of shapes){
         const fa = areaP(sh); if (fa < 18) continue;
         const {h, mark, fh, g0} = heightFor(b.zone, centroidP(sh), rng, obb(sh).lv, BS);
@@ -733,6 +738,7 @@ function genSB(sb, sig){
     trees.forEach((t, i) => { const K = TREEK[t[4]] || TREEK.d, v = K.v || [0.1, 0.08, 0.05]; p.set(t[0], hC(t[0], t[1]) + 1 + t[2]*K.s[1]*K.l, -t[1]); sc.set(t[2]*K.s[0], t[2]*K.s[1], t[2]*K.s[0]); m.compose(p, q, sc); im.setMatrixAt(i, m); c.setRGB(K.c[0] + (t[3] - 0.5)*v[0], K.c[1] + (t[3] - 0.5)*v[1], K.c[2] + (t[3] - 0.5)*v[2]); im.setColorAt(i, c); });
     im.castShadow = true; im.userData.tree = true; group.add(im);
   }
+  if (lotModels.length && typeof CB_LOT_MODELS_ADD === 'function'){ try { CB_LOT_MODELS_ADD(group, lotModels); } catch (e){ } }
   return {key:sb.key, sig, sbId:sb.id, group, blocks:outBlocks, roadSegs, st, pois, dev:st.devArea > 0, cx:st.devArea ? st.wx/st.devArea : sb.c[0], cy:st.devArea ? st.wy/st.devArea : sb.c[1]};
 }
 
@@ -2214,7 +2220,7 @@ function toMesh(B, mat){
   g.computeVertexNormals(); return new THREE.Mesh(g, mat);
 }
 function disposeGroup(g){
-  g.traverse(o => { if (o.geometry && o.geometry !== treeGeo && o.geometry !== carGeo) o.geometry.dispose(); if (o.isInstancedMesh && o.dispose) o.dispose(); });
+  g.traverse(o => { if (o.userData && o.userData.shared) return; if (o.geometry && o.geometry !== treeGeo && o.geometry !== carGeo) o.geometry.dispose(); if (o.isInstancedMesh && o.dispose) o.dispose(); });   // [v47] shared: geometry owned by a model cache
   if (g.parent) g.parent.remove(g);
 }
 
@@ -63816,9 +63822,9 @@ Object.assign(SITES, {ucberkeley:{zh:'加州大学伯克利分校', en:'Universi
     {type:'transamerica', model:'transam', up:'y', fit:['y', 260], rot:0, ground:'base', y:0, todo:true},
     // Alcatraz Island. Frame of bay/sfwater: origin 3 m north of the reference anchor 37.8267, -122.423 (x east, z south, rot 0);
     // the coastline (sfwater COAST) is anchor-relative, so its points sit at (x, z + 3) here; y absolute (metres above the sea).
-    // OSM coastline: long axis 36 deg (from +x toward +z), 543 m x 205 m with the wharf, centre about (-13, -11 + 3).
+    // OSM coastline: long axis 36 deg (from +x toward +z), 543 m x 205 m with the wharf; the centre of that box is (-4.0, -13.5) here.
     // Real: 511 m x 180 m, 41 m at the highest point (Wikipedia, Alcatraz Island). Fit the plan to the OSM coastline.
-    {type:'alcatraz', model:'alcatraz', up:'y', fit:['x', 543], rot:0, at:[-13, -8], ground:'abs', y:0, todo:true},
+    {type:'alcatraz', model:'alcatraz', up:'y', fit:['x', 543], rot:0, at:[-4.0, -13.5], ground:'abs', y:0, todo:true},
   ];
 
   // bounding box of a scene in its own space (after the up fix)

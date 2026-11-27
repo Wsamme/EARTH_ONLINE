@@ -70,9 +70,9 @@
     {type:'transamerica', model:'transam', up:'y', fit:['y', 260], rot:0, ground:'base', y:0, todo:true},
     // Alcatraz Island. Frame of bay/sfwater: origin 3 m north of the reference anchor 37.8267, -122.423 (x east, z south, rot 0);
     // the coastline (sfwater COAST) is anchor-relative, so its points sit at (x, z + 3) here; y absolute (metres above the sea).
-    // OSM coastline: long axis 36 deg (from +x toward +z), 543 m x 205 m with the wharf, centre about (-13, -11 + 3).
+    // OSM coastline: long axis 36 deg (from +x toward +z), 543 m x 205 m with the wharf; the centre of that box is (-4.0, -13.5) here.
     // Real: 511 m x 180 m, 41 m at the highest point (Wikipedia, Alcatraz Island). Fit the plan to the OSM coastline.
-    {type:'alcatraz', model:'alcatraz', up:'y', fit:['x', 543], rot:0, at:[-13, -8], ground:'abs', y:0, todo:true},
+    {type:'alcatraz', model:'alcatraz', up:'y', fit:['x', 543], rot:0, at:[-4.0, -13.5], ground:'abs', y:0, todo:true},
   ];
 
   // bounding box of a scene in its own space (after the up fix)

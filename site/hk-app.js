@@ -58244,11 +58244,20 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
   window.HKM = S; S.MODELS = MODELS;
   const base = () => { try { return SGR_PATH + 'models/'; } catch (e){ return 'hkdata/models/'; } };
   const cache = new Map();
+  // glTF-Transform quantises positions / normals / UVs to normalised integers; three r128 denormalises them on the GPU but not in
+  // BufferAttribute.getX, which the page's own code (hull outlines, lmMerge, vehGeo colour sampling) uses: turn them into floats
+  function dequant(root){
+    root.traverse(o => { if (!o.isMesh) return; const g = o.geometry;
+      for (const name of Object.keys(g.attributes)){ const a = g.attributes[name]; if (!a.normalized || a.array instanceof Float32Array) continue;
+        const A = a.array, k = A instanceof Int8Array ? 127 : A instanceof Uint8Array ? 255 : A instanceof Int16Array ? 32767 : A instanceof Uint16Array ? 65535 : 1;
+        const F = new Float32Array(A.length); for (let i = 0; i < A.length; i++) F[i] = Math.max(-1, A[i]/k);
+        g.setAttribute(name, new THREE.BufferAttribute(F, a.itemSize, false)); } });
+  }
   function load(key){
     if (cache.has(key)) return cache.get(key);
     const p = new Promise((res, rej) => {
       if (!THREE.GLTFLoader){ rej(new Error('no GLTFLoader')); return; }
-      new THREE.GLTFLoader().load(base() + MODELS[key].file, g => { S.loaded[key] = true; res(g.scene); }, undefined, e => rej(e));
+      new THREE.GLTFLoader().load(base() + MODELS[key].file, g => { S.loaded[key] = true; dequant(g.scene); res(g.scene); }, undefined, e => rej(e));
     });
     cache.set(key, p); return p;
   }
@@ -58289,6 +58298,7 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
       const g0 = lmMeshes.get(L.id); if (g0){ lmGroup.remove(g0); g0.traverse(o => { if (o.geometry && !o.userData.glb) o.geometry.dispose(); }); lmMeshes.delete(L.id); }
       if (L.mats){ for (const m of L.mats.values()) m.dispose(); L.mats = null; } L.fx = [];
       placeLandmarkMesh(L);
+      try { SGR.hulls.delete(L.id); } catch (e){ }   // the outline that hides map buildings is rebuilt from the new model
     }
     return true;
   }

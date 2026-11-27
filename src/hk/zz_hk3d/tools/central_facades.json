@@ -1,0 +1,2896 @@
+{
+  "meta": {
+    "title": "Central / Admiralty / Sheung Wan facade reference",
+    "compiled": "2026-11-27",
+    "colour_note": "All hex colours are approximate (my estimates); where a source names a colour it is given in \"basis\". \"unsourced\" means a pure placeholder guess.",
+    "height_note": "Heights from the cited source; kind says roof / architectural / tip.",
+    "facade_type_values": [
+      "glass_curtain_grid",
+      "glass_curtain_vertical_fins",
+      "horizontal_ribbon_windows",
+      "punched_windows",
+      "exposed_structure",
+      "special"
+    ],
+    "skipped": [
+      "Nina Tower (not Central)",
+      "United Centre (Admiralty, ~206 m) - not researched: my Wikipedia fetch hit the wrong article"
+    ]
+  },
+  "buildings": [
+    {
+      "name_en": "Bank of China Tower",
+      "name_zh": "中銀大廈",
+      "district": "Central (Garden Road, Central/Admiralty edge)",
+      "height_m": {
+        "value": 367.4,
+        "kind": "architectural (to top of the two masts)",
+        "roof_m": 315.0,
+        "top_floor_m": 288.3,
+        "mast_m": 52.4,
+        "source": "https://en.wikipedia.org/wiki/Bank_of_China_Tower_(Hong_Kong)"
+      },
+      "floors": {
+        "value": 70,
+        "note": "Wikipedia infobox says 72 (+4 basement); text and zh-Wikipedia say 70; CTBUH says 72 above ground",
+        "source": [
+          "https://en.wikipedia.org/wiki/Bank_of_China_Tower_(Hong_Kong)",
+          "https://zh.wikipedia.org/wiki/中銀大廈_(香港)",
+          "https://www.skyscrapercenter.com/building/bank-of-china-tower/287"
+        ]
+      },
+      "architect": "I. M. Pei & Partners (structural: Leslie E. Robertson Associates)",
+      "facade_type": "special",
+      "facade_type_note": "Glass curtain wall on four triangular prisms, with the diagonal megastructure expressed on every face by flush aluminium covers (reads as big X / diamond shapes). For rendering: diagonal-braced glass.",
+      "main_colour": {
+        "description": "silver / blue-grey reflective glass prism",
+        "hex_approx": "#9AABB6",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "sources call it silver reflective glass + aluminium"
+      },
+      "glass_colour": {
+        "description": "silver reflective glass, reads blue-grey to sky-coloured",
+        "hex_approx": "#8FA4B2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "naturally anodised (silver-white) aluminium covers over the diagonals and verticals",
+        "hex_approx": "#DADDDF",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "base_colour": {
+        "description": "granite podium (grey)",
+        "hex_approx": "#A8A49C",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "granite base mentioned by zh-Wikipedia; colour not stated"
+      },
+      "dominant_lines": [
+        "diagonal",
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Square 52 m plan divided diagonally into four triangular shafts that stop at different heights; only one triangular prism reaches the top",
+          "source": "https://www.pcf-p.com/projects/bank-of-china-tower/"
+        },
+        {
+          "feature": "Diagonal bracing on every face, expressed by aluminium covers flush with the facade; diagonals cross each facade from about the sixth level to the top",
+          "source": "https://ddvm.org/2020/08/03/peis-bank-of-china-tower/"
+        },
+        {
+          "feature": "Megastructural steelwork expressed outside by naturally anodised panels that are part of the curtain wall",
+          "source": "https://skyscraperpage.com/cities/?buildingID=13"
+        },
+        {
+          "feature": "Horizontal members of the X were hidden so the faces read as a chain of diamonds rather than X + horizontal bars (feng-shui change)",
+          "source": "https://www.ourchinastory.com/zh/amp/547"
+        },
+        {
+          "feature": "Number of X shapes on the outward face of each shaft: 1, 2, 3 and 5 (massing diagram)",
+          "source": "https://commons.wikimedia.org/wiki/File:Bank_of_China_Tower_massing_model.svg"
+        },
+        {
+          "feature": "Shaft heights follow 1, 2, 3, 5 units (Fibonacci)",
+          "source": "https://zh.wikipedia.org/wiki/中銀大廈_(香港)"
+        },
+        {
+          "feature": "Sloped (inclined) glass roofs at the top of each shaft; SkyscraperPage heights: bottom of lowest slope 262 ft (79.9 m), bottom of another slope 433 ft (132 m), top of second-highest slope 691 ft (210.6 m), bottom of top slope 946 ft (288 m)",
+          "source": "https://skyscraperpage.com/cities/?buildingID=13"
+        },
+        {
+          "feature": "Two masts on top (decorative)",
+          "source": "https://www.britannica.com/topic/Bank-of-China-Tower"
+        },
+        {
+          "feature": "Granite podium (said to represent the Great Wall)",
+          "source": "https://zh.wikipedia.org/wiki/中銀大廈_(香港)"
+        },
+        {
+          "feature": "15-storey atrium; glazed with 25 mm thick pattern-cut glass",
+          "source": "https://skyscraperpage.com/cities/?buildingID=13"
+        }
+      ],
+      "x_bracing_modules": {
+        "faces": "All four outer faces. Each outer face belongs to one triangular shaft. Inner (diagonal) faces of the taller shafts also show bracing where they rise above shorter shafts.",
+        "x_count_per_outer_face": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "total_full_X_on_outer_faces": 11,
+        "module_height_m_approx": 52,
+        "floors_per_module_approx": 13,
+        "module_start_height_m_approx": 28,
+        "how_derived": "X counts from the Wikimedia Commons massing diagram. Module height derived by me from SkyscraperPage slope heights (79.9, 132, ~184, 288 m bottoms are ~52 m apart) and matches the 52 m plan width (PCF) and the class notes saying horizontal bracing frames sit at every 13th floor and a 12-storey major bracing configuration. Not an official figure.",
+        "compass_orientation": null,
+        "sources": [
+          "https://commons.wikimedia.org/wiki/File:Bank_of_China_Tower_massing_model.svg",
+          "https://skyscraperpage.com/cities/?buildingID=13",
+          "https://www.pcf-p.com/projects/bank-of-china-tower/",
+          "https://users.metu.edu.tr/archstr/BS536/documents/Projects/Bank%20of%20China%20-%20Serdar%20Erisen.pdf",
+          "https://zh.wikipedia.org/wiki/中銀大廈_(香港)"
+        ]
+      },
+      "crown_top": "Single triangular prism with a steeply sloped glass roof, topped by two thin masts (to 367.4 m).",
+      "night_lighting": "Part of the Symphony of Lights / Victoria Harbour Lighting Plan; lighting consultants listed include Fisher Marantz Stone, Laservision and Martin Professional. Typical look (not described in sources): white outline lights along the diagonal bracing and edges.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_16.html",
+        "https://skyscraperpage.com/cities/?buildingID=13",
+        "https://www.skyscrapercenter.com/building/bank-of-china-tower/287"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Bank_of_China_Tower_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/中銀大廈_(香港)",
+        "https://skyscraperpage.com/cities/?buildingID=13",
+        "https://www.skyscrapercenter.com/building/bank-of-china-tower/287",
+        "https://www.pcf-p.com/projects/bank-of-china-tower/",
+        "https://www.permasteelisagroup.com/historic-project/bank-of-china-tower/",
+        "https://aviewoncities.com/hong-kong/bank-of-china-tower",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_16.html"
+      ],
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Two International Finance Centre (Two IFC)",
+      "name_zh": "國際金融中心二期",
+      "height_m": {
+        "value": 412,
+        "kind": "tip (top of crown fins)",
+        "roof_m": 407,
+        "top_floor_m": 387.6,
+        "source": [
+          "https://en.wikipedia.org/wiki/International_Finance_Centre_(Hong_Kong)",
+          "https://skyscraperpage.com/cities/?buildingID=11"
+        ]
+      },
+      "floors": {
+        "value": 88,
+        "source": "https://en.wikipedia.org/wiki/International_Finance_Centre_(Hong_Kong)"
+      },
+      "architect": "Cesar Pelli & Associates; Rocco Design",
+      "facade_type": "glass_curtain_vertical_fins",
+      "main_colour": {
+        "description": "pale silver-blue glass with light (pearl) vertical mullions",
+        "hex_approx": "#B6C3CB",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "lightly reflective, pale blue-grey",
+        "hex_approx": "#A7B8C3",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "pcparch: \"lightly reflective glass panels\""
+      },
+      "frame_colour": {
+        "description": "pearl-coloured mullions",
+        "hex_approx": "#E4E1D8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "pcparch: \"pearl-colored mullions\""
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Tapers as it rises with proportioned setbacks; width 56.96 m at base and 39.148 m at main roof",
+          "source": "https://skyscraperpage.com/cities/?buildingID=11"
+        },
+        {
+          "feature": "Curtain wall of lightly reflective glass with pearl-coloured mullions",
+          "source": "https://pcparch.com/work/ifc-hong-kong"
+        },
+        {
+          "feature": "Sculptural crown with crown-shaped / tusk-like (象牙形) decoration; spire height is the tip of the fins (1,352 ft)",
+          "source": [
+            "https://zh.wikipedia.org/wiki/國際金融中心_(香港)",
+            "https://skyscraperpage.com/cities/?buildingID=11"
+          ]
+        },
+        {
+          "feature": "Outrigger trusses at refuge floors tied to eight composite perimeter columns",
+          "source": "https://en.wikipedia.org/wiki/International_Finance_Centre_(Hong_Kong)"
+        }
+      ],
+      "crown_top": "Open sculptural crown of vertical fins/tusk shapes rising above the 407 m roof to 412 m.",
+      "night_lighting": "Lit at night; the crown is lit by floodlights. Participates in Symphony of Lights.",
+      "night_lighting_sources": [
+        "https://pcparch.com/work/ifc-hong-kong",
+        "https://zh.wikipedia.org/wiki/國際金融中心_(香港)",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_24.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/International_Finance_Centre_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/國際金融中心_(香港)",
+        "https://skyscraperpage.com/cities/?buildingID=11",
+        "https://pcparch.com/work/ifc-hong-kong",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_24.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "One International Finance Centre (One IFC)",
+      "name_zh": "國際金融中心一期",
+      "height_m": {
+        "value": 210,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://en.wikipedia.org/wiki/International_Finance_Centre_(Hong_Kong)"
+        ]
+      },
+      "floors": {
+        "value": 38,
+        "note": "Wikipedia text says 39 storeys; list and SkyscraperPage say 38",
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://skyscraperpage.com/cities/?buildingID=2735"
+        ]
+      },
+      "architect": "Cesar Pelli & Associates; Rocco Design",
+      "facade_type": "glass_curtain_vertical_fins",
+      "facade_type_note": "Same design family as Two IFC (zh-Wikipedia says the two look alike: glass curtain walls with crown-like top decoration).",
+      "main_colour": {
+        "description": "pale silver-blue glass with light vertical mullions (assumed same family as Two IFC)",
+        "hex_approx": "#B6C3CB",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "lightly reflective pale blue-grey",
+        "hex_approx": "#A7B8C3",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "pearl/light grey mullions",
+        "hex_approx": "#E4E1D8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Glass curtain wall; same design language as Two IFC",
+          "source": "https://zh.wikipedia.org/wiki/國際金融中心_(香港)"
+        }
+      ],
+      "crown_top": "Stepped top with small crown-like fins (similar family to Two IFC; details not in sources).",
+      "night_lighting": "Participates in Symphony of Lights.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_25.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://en.wikipedia.org/wiki/International_Finance_Centre_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/國際金融中心_(香港)",
+        "https://skyscraperpage.com/cities/?buildingID=2735",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_25.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Four Seasons Place (Four Seasons Hotel Hong Kong, IFC complex)",
+      "name_zh": "四季匯 / 香港四季酒店",
+      "height_m": {
+        "value": 205,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://zh.wikipedia.org/wiki/香港摩天大樓列表"
+        ]
+      },
+      "floors": {
+        "value": 55,
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://zh.wikipedia.org/wiki/香港摩天大樓列表"
+        ]
+      },
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "light glass and pale cladding (not described in sources)",
+        "hex_approx": "#C9CFD2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "pale blue-grey",
+        "hex_approx": "#A9B6BE",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "light grey",
+        "hex_approx": "#D8D8D4",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Part of the IFC complex (hotel + serviced residences)",
+          "source": "https://skyscraperpage.com/cities/?buildingID=11"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "Added as a 150 m+ tower in Central. Facade not described in the sources I could read.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://zh.wikipedia.org/wiki/香港摩天大樓列表",
+        "https://skyscraperpage.com/cities/?buildingID=8450"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "architect": null,
+      "completed": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Cheung Kong Center",
+      "name_zh": "長江集團中心",
+      "height_m": {
+        "value": 282.8,
+        "kind": "architectural (flat roof)",
+        "source": "https://en.wikipedia.org/wiki/Cheung_Kong_Center"
+      },
+      "floors": {
+        "value": 63,
+        "note": "lift numbering goes to 70 (floors with 4 skipped)",
+        "source": [
+          "https://en.wikipedia.org/wiki/Cheung_Kong_Center",
+          "https://skyscraperpage.com/cities/?buildingID=1346"
+        ]
+      },
+      "architect": "Leo A Daly with Cesar Pelli",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "black / very dark glass box",
+        "hex_approx": "#1F2429",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "sources: black curtain wall"
+      },
+      "glass_colour": {
+        "description": "near-black dark glass",
+        "hex_approx": "#262C31",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "dark grey / silver grid lines (stainless look)",
+        "hex_approx": "#6E757B",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Black curtain wall; uniform glass panels 2.4 m x 2.1 m",
+          "source": "https://en.wikipedia.org/wiki/Cheung_Kong_Center"
+        },
+        {
+          "feature": "Grid of fibre-optic lights on the facade that can be programmed to change colour",
+          "source": "https://skyscraperpage.com/cities/?buildingID=1346"
+        },
+        {
+          "feature": "Simple square prism, conventional \"American black office block\"",
+          "source": "https://en.wikipedia.org/wiki/Cheung_Kong_Center"
+        }
+      ],
+      "crown_top": "Flat top of a plain square prism (no spire).",
+      "night_lighting": "Programmable colour-changing fibre-optic light grid on the black facade; light shows at night; Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://en.wikipedia.org/wiki/Cheung_Kong_Center",
+        "https://skyscraperpage.com/cities/?buildingID=1346",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_18.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Cheung_Kong_Center",
+        "https://zh.wikipedia.org/wiki/長江集團中心",
+        "https://skyscraperpage.com/cities/?buildingID=1346",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_18.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "HSBC Main Building",
+      "name_zh": "香港上海滙豐銀行總行大廈",
+      "height_m": {
+        "value": 178.8,
+        "kind": "roof",
+        "source": "https://en.wikipedia.org/wiki/HSBC_Building_(Hong_Kong)"
+      },
+      "floors": {
+        "value": 47,
+        "note": "+4 basements; SkyscraperPage says 44",
+        "source": "https://en.wikipedia.org/wiki/HSBC_Building_(Hong_Kong)"
+      },
+      "architect": "Foster + Partners (Norman Foster); engineers Ove Arup & Partners",
+      "facade_type": "exposed_structure",
+      "main_colour": {
+        "description": "grey aluminium-clad steel structure with grey-tinted glass",
+        "hex_approx": "#A3A9AD",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "clear/grey glass",
+        "hex_approx": "#7F8C94",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver-grey aluminium cladding on masts and trusses",
+        "hex_approx": "#B8BDC0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical",
+        "horizontal",
+        "diagonal"
+      ],
+      "special_features": [
+        {
+          "feature": "Eight groups of four aluminium-clad steel columns (masts) rising through the building",
+          "source": "https://en.wikipedia.org/wiki/HSBC_Building_(Hong_Kong)"
+        },
+        {
+          "feature": "Five levels of triangular suspension trusses (\"coat-hanger\" trusses) locked into the masts, spanning double-height levels",
+          "source": "https://en.wikipedia.org/wiki/HSBC_Building_(Hong_Kong)"
+        },
+        {
+          "feature": "Five prefabricated steel modules; about 30,000 t steel and 4,500 t aluminium",
+          "source": "https://en.wikipedia.org/wiki/HSBC_Building_(Hong_Kong)"
+        },
+        {
+          "feature": "10-storey, 52 m atrium over a public plaza at ground level",
+          "source": "https://skyscraperpage.com/cities/?buildingID=197"
+        },
+        {
+          "feature": "Glass stairwells (lit with colour-changing lights at night)",
+          "source": "https://skyscraperpage.com/cities/?buildingID=197"
+        }
+      ],
+      "crown_top": "Flat stepped tops with exposed structure (no spire).",
+      "night_lighting": "Victoria Harbour Lighting Plan: 716 intelligent lights incl. 450 colour-changing fluorescent fixtures in the glass stairwells, Martin Exterior fixtures on five levels, 8 searchlights, over 1 km of LED around the top. Symphony of Lights participant (with \"X-wall\").",
+      "night_lighting_sources": [
+        "https://skyscraperpage.com/cities/?buildingID=197",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_19.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/HSBC_Building_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/滙豐總行大廈",
+        "https://skyscraperpage.com/cities/?buildingID=197",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_19.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Standard Chartered Bank Building",
+      "name_zh": "渣打銀行大廈",
+      "height_m": {
+        "value": 185,
+        "kind": "roof",
+        "note": "en-Wikipedia infobox says 191 m; list and zh-Wikipedia say 185 m",
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://zh.wikipedia.org/wiki/渣打銀行大廈_(香港)"
+        ]
+      },
+      "floors": {
+        "value": 42,
+        "note": "zh-Wikipedia says 32; Symphony of Lights says 30 office storeys above the banking hall",
+        "source": "https://en.wikipedia.org/wiki/Standard_Chartered_Bank_Building"
+      },
+      "architect": "Remo Riva, Palmer & Turner",
+      "facade_type": "special",
+      "facade_type_note": "Granite-clad stepped tower with glass; profile steps in every 6 floors above the 17th floor.",
+      "main_colour": {
+        "description": "pastel / pinkish granite with silver-grey glass",
+        "hex_approx": "#BFA9A0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "zh-Wikipedia: pastel (蠟粉) colour scheme"
+      },
+      "glass_colour": {
+        "description": "silver-grey reflective",
+        "hex_approx": "#9AA6AE",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "granite piers, pinkish grey",
+        "hex_approx": "#B79C93",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Steps in every 6 floors from the 17th floor (bamboo-like \"rising section by section\")",
+          "source": "https://zh.wikipedia.org/wiki/渣打銀行大廈_(香港)"
+        },
+        {
+          "feature": "Pastel colour palette; granite and marble; 55 ft high foyer",
+          "source": [
+            "https://zh.wikipedia.org/wiki/渣打銀行大廈_(香港)",
+            "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_20.html"
+          ]
+        },
+        {
+          "feature": "Large stained-glass windows in the lobby (10 m x 2.5 m)",
+          "source": "https://en.wikipedia.org/wiki/Standard_Chartered_Bank_Building"
+        }
+      ],
+      "crown_top": "Stepped / tiered top (setbacks).",
+      "night_lighting": "Symphony of Lights participant (details not given).",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_20.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Standard_Chartered_Bank_Building",
+        "https://zh.wikipedia.org/wiki/渣打銀行大廈_(香港)",
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_20.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Jardine House",
+      "name_zh": "怡和大廈",
+      "height_m": {
+        "value": 178.5,
+        "kind": "roof",
+        "top_floor_m": 168.5,
+        "source": "https://en.wikipedia.org/wiki/Jardine_House"
+      },
+      "floors": {
+        "value": 52,
+        "source": "https://en.wikipedia.org/wiki/Jardine_House"
+      },
+      "architect": "Palmer & Turner (James Kinoshita)",
+      "facade_type": "punched_windows",
+      "main_colour": {
+        "description": "silver-grey aluminium panels",
+        "hex_approx": "#C8CBCD",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "aluminium cladding since 1984 (zh-Wikipedia)"
+      },
+      "glass_colour": {
+        "description": "dark tinted glass in round windows",
+        "hex_approx": "#3C4850",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver aluminium",
+        "hex_approx": "#D3D6D8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Round \"porthole\" / moon-gate windows over the whole facade; more than 1,700 round windows in all",
+          "source": "https://aviewoncities.com/hong-kong/jardine-house"
+        },
+        {
+          "feature": "Curtain wall of 4 mm aluminium panels with round openings and conical soffits",
+          "source": "https://www.permasteelisagroup.com/historic-project/jardine-house/"
+        },
+        {
+          "feature": "Original facade was concrete with white mosaic tiles; re-clad in aluminium panels in 1984",
+          "source": "https://zh.wikipedia.org/wiki/怡和大廈"
+        },
+        {
+          "feature": "Metal frame with curtain wall of round windows",
+          "source": "https://en.wikipedia.org/wiki/Jardine_House"
+        }
+      ],
+      "window_count": {
+        "value": null,
+        "note": "Sources say \"more than 1,700\"; the 1,750 figure was not found in a source I could read",
+        "source": "https://aviewoncities.com/hong-kong/jardine-house"
+      },
+      "crown_top": "Flat top; plain square prism with rounded corners.",
+      "night_lighting": "Symphony of Lights participant (details not given).",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_21.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Jardine_House",
+        "https://zh.wikipedia.org/wiki/怡和大廈",
+        "https://skyscraperpage.com/cities/?buildingID=316",
+        "https://aviewoncities.com/hong-kong/jardine-house",
+        "https://www.permasteelisagroup.com/historic-project/jardine-house/",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_21.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "The Center",
+      "name_zh": "中環中心",
+      "height_m": {
+        "value": 346,
+        "kind": "architectural (with mast)",
+        "roof_m": 292,
+        "top_floor_m": 275,
+        "source": "https://en.wikipedia.org/wiki/The_Center"
+      },
+      "floors": {
+        "value": 73,
+        "source": "https://en.wikipedia.org/wiki/The_Center"
+      },
+      "architect": "Dennis Lau & Ng Chun Man Architects & Engineers",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "silver-grey / blue-grey reflective glass",
+        "hex_approx": "#8F9CA6",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "blue-grey reflective",
+        "hex_approx": "#8796A2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "grey metal",
+        "hex_approx": "#6E7880",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal",
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Hundreds of neon light bars arranged in increasing frequency towards the top, cycling through spectrum colours at night",
+          "source": "https://en.wikipedia.org/wiki/The_Center"
+        },
+        {
+          "feature": "First skyscraper with colour-changing neon as decoration; 140+ computer-controlled patterns; light tubes set in 2-ft deep recesses in the curtain wall",
+          "source": "https://zh.wikipedia.org/wiki/中環中心"
+        },
+        {
+          "feature": "Plan of two overlapping squares (eight-pointed star)",
+          "source": "https://zh.wikipedia.org/wiki/中環中心"
+        },
+        {
+          "feature": "Tower lifted 20-30 m on a stainless-steel framed base",
+          "source": "https://zh.wikipedia.org/wiki/中環中心"
+        },
+        {
+          "feature": "All-steel structure (no concrete core)",
+          "source": "https://en.wikipedia.org/wiki/The_Center"
+        }
+      ],
+      "crown_top": "Stepped top with a tall mast/pole to 346 m.",
+      "night_lighting": "Horizontal neon bands that get denser towards the top and scroll through rainbow colours; Christmas-tree motif in the festive season.",
+      "night_lighting_sources": [
+        "https://en.wikipedia.org/wiki/The_Center",
+        "https://zh.wikipedia.org/wiki/中環中心"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/The_Center",
+        "https://zh.wikipedia.org/wiki/中環中心",
+        "https://skyscraperpage.com/cities/?buildingID=123"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Lippo Centre Tower 1",
+      "name_zh": "力寶中心一座",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 172,
+        "kind": "roof",
+        "top_floor_m": 166,
+        "note": "SkyscraperPage: taller tower 186 m is Lippo Centre 2, shorter 172 m is Lippo Centre 1 (en-Wikipedia infobox differs)",
+        "source": [
+          "https://skyscraperpage.com/cities/?buildingID=260",
+          "https://zh.wikipedia.org/wiki/力寶中心"
+        ]
+      },
+      "floors": {
+        "value": 42,
+        "note": "zh-Wikipedia; en-Wikipedia gives 46/42 the other way round",
+        "source": "https://zh.wikipedia.org/wiki/力寶中心"
+      },
+      "architect": "Paul Rudolph with Wong & Ouyang",
+      "facade_type": "special",
+      "facade_type_note": "Octagonal towers in dark blue glass with bulging C-shaped glass bays in three stacked sections (\"koalas hugging a tree\").",
+      "main_colour": {
+        "description": "dark blue reflective glass",
+        "hex_approx": "#23395B",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "en-Wikipedia: dark blue refractive glass curtain wall"
+      },
+      "glass_colour": {
+        "description": "dark blue reflective",
+        "hex_approx": "#2A4166",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "dark grey/blue mullions",
+        "hex_approx": "#3A4656",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal",
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Octagonal towers clad in dark blue refractive glass curtain wall",
+          "source": "https://en.wikipedia.org/wiki/Lippo_Centre_(Hong_Kong)"
+        },
+        {
+          "feature": "C-shaped glass-walled extrusions (likened to koalas clinging to a tree)",
+          "source": "https://en.wikipedia.org/wiki/Lippo_Centre_(Hong_Kong)"
+        },
+        {
+          "feature": "Octagon split into three sections that project and recess",
+          "source": "https://zh.wikipedia.org/wiki/力寶中心"
+        }
+      ],
+      "crown_top": "Stepped clusters of projecting glass bays at the top.",
+      "night_lighting": null,
+      "sources": [
+        "https://skyscraperpage.com/cities/?buildingID=260",
+        "https://en.wikipedia.org/wiki/Lippo_Centre_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/力寶中心"
+      ],
+      "status": "completed",
+      "completed": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Lippo Centre Tower 2",
+      "name_zh": "力寶中心二座",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 186,
+        "kind": "roof",
+        "top_floor_m": 180,
+        "note": "SkyscraperPage: taller tower 186 m is Lippo Centre 2, shorter 172 m is Lippo Centre 1 (en-Wikipedia infobox differs)",
+        "source": [
+          "https://skyscraperpage.com/cities/?buildingID=260",
+          "https://zh.wikipedia.org/wiki/力寶中心"
+        ]
+      },
+      "floors": {
+        "value": 46,
+        "note": "zh-Wikipedia; en-Wikipedia gives 46/42 the other way round",
+        "source": "https://zh.wikipedia.org/wiki/力寶中心"
+      },
+      "architect": "Paul Rudolph with Wong & Ouyang",
+      "facade_type": "special",
+      "facade_type_note": "Octagonal towers in dark blue glass with bulging C-shaped glass bays in three stacked sections (\"koalas hugging a tree\").",
+      "main_colour": {
+        "description": "dark blue reflective glass",
+        "hex_approx": "#23395B",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "en-Wikipedia: dark blue refractive glass curtain wall"
+      },
+      "glass_colour": {
+        "description": "dark blue reflective",
+        "hex_approx": "#2A4166",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "dark grey/blue mullions",
+        "hex_approx": "#3A4656",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal",
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Octagonal towers clad in dark blue refractive glass curtain wall",
+          "source": "https://en.wikipedia.org/wiki/Lippo_Centre_(Hong_Kong)"
+        },
+        {
+          "feature": "C-shaped glass-walled extrusions (likened to koalas clinging to a tree)",
+          "source": "https://en.wikipedia.org/wiki/Lippo_Centre_(Hong_Kong)"
+        },
+        {
+          "feature": "Octagon split into three sections that project and recess",
+          "source": "https://zh.wikipedia.org/wiki/力寶中心"
+        }
+      ],
+      "crown_top": "Stepped clusters of projecting glass bays at the top.",
+      "night_lighting": null,
+      "sources": [
+        "https://skyscraperpage.com/cities/?buildingID=260",
+        "https://en.wikipedia.org/wiki/Lippo_Centre_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/力寶中心"
+      ],
+      "status": "completed",
+      "completed": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Champion Tower (Three Garden Road; formerly Citibank Tower)",
+      "name_zh": "冠君大廈（花園道三號）",
+      "height_m": {
+        "value": 205,
+        "kind": "roof",
+        "note": "zh list gives 205.5 m",
+        "source": [
+          "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central",
+          "https://zh.wikipedia.org/wiki/香港摩天大樓列表"
+        ]
+      },
+      "floors": {
+        "value": 47,
+        "note": "zh list gives 51",
+        "source": "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central"
+      },
+      "architect": "Rocco Yim (Rocco Design)",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "silver-blue reflective glass, curved",
+        "hex_approx": "#9EB2C0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "silver-blue reflective",
+        "hex_approx": "#97ACBB",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver grey",
+        "hex_approx": "#B5BCC1",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical",
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Two characteristic curved reflective facades (complex of two wings)",
+          "source": "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central"
+        },
+        {
+          "feature": "Two ten-storey frameless glass panels light the main lobby",
+          "source": "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central",
+        "https://zh.wikipedia.org/wiki/花園道三號",
+        "https://zh.wikipedia.org/wiki/香港摩天大樓列表",
+        "https://skyscraperpage.com/cities/?buildingID=315"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "ICBC Tower (Three Garden Road)",
+      "name_zh": "中國工商銀行大廈（花園道三號）",
+      "height_m": {
+        "value": null,
+        "note": "no source found for this wing alone"
+      },
+      "floors": {
+        "value": 37,
+        "source": "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central"
+      },
+      "architect": "Rocco Yim (Rocco Design)",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "silver-blue reflective glass, curved",
+        "hex_approx": "#9EB2C0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "silver-blue reflective",
+        "hex_approx": "#97ACBB",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver grey",
+        "hex_approx": "#B5BCC1",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical",
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Shorter wing of the same complex; curved reflective facade",
+          "source": "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "\"Citibank Plaza\" = the old name of Three Garden Road (Champion Tower + ICBC Tower).",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Three_Garden_Road,_Central",
+        "https://zh.wikipedia.org/wiki/花園道三號"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "AIA Central (formerly AIG Tower)",
+      "name_zh": "友邦金融中心",
+      "height_m": {
+        "value": 185,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/AIA_Central",
+          "https://skyscraperpage.com/cities/?buildingID=7554"
+        ]
+      },
+      "floors": {
+        "value": 37,
+        "note": "infobox says 40; text and zh-Wikipedia say 37",
+        "source": [
+          "https://en.wikipedia.org/wiki/AIA_Central",
+          "https://zh.wikipedia.org/wiki/友邦金融中心_(香港)"
+        ]
+      },
+      "architect": "Skidmore, Owings & Merrill; Aedas",
+      "facade_type": "special",
+      "facade_type_note": "Glass curtain wall with three outward-curving \"sail\" facades.",
+      "main_colour": {
+        "description": "light blue-green clear glass",
+        "hex_approx": "#A3BBC1",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "pale blue-green",
+        "hex_approx": "#9DB7BF",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver struts / mullions",
+        "hex_approx": "#C7CCCF",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Shaped like a Chinese junk; three facades curve outward like billowing sails",
+          "source": [
+            "https://en.wikipedia.org/wiki/AIA_Central",
+            "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_15.html"
+          ]
+        },
+        {
+          "feature": "Large LED video display at the top",
+          "source": "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_15.html"
+        }
+      ],
+      "crown_top": "Top carries a large LED video screen.",
+      "night_lighting": "Whole building lit to look like a lantern; animated lighting on the eastern struts; LED video display at the top.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_15.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/AIA_Central",
+        "https://zh.wikipedia.org/wiki/友邦金融中心_(香港)",
+        "https://skyscraperpage.com/cities/?buildingID=7554",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_15.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "One Exchange Square",
+      "name_zh": "交易廣場第一座",
+      "height_m": {
+        "value": 188,
+        "kind": "roof",
+        "source": "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong"
+      },
+      "floors": {
+        "value": 52,
+        "source": "https://en.wikipedia.org/wiki/Exchange_Square_(Hong_Kong)"
+      },
+      "architect": "Remo Riva, Palmer & Turner",
+      "facade_type": "horizontal_ribbon_windows",
+      "main_colour": {
+        "description": "alternating bands of warm-grey/pinkish granite and silver glass",
+        "hex_approx": "#BBA89C",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "granite colour not stated in sources"
+      },
+      "glass_colour": {
+        "description": "silver reflective",
+        "hex_approx": "#A9B5BD",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "\"silver reflective glass\" (Symphony of Lights)"
+      },
+      "frame_colour": {
+        "description": "Italian granite bands",
+        "hex_approx": "#C2AEA2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Alternating bands of Italian granite and silver reflective glass, with swirling curves and distinctive edges",
+          "source": "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_22.html"
+        }
+      ],
+      "crown_top": "Flat top; rounded/curved corners.",
+      "night_lighting": "Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_22.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Exchange_Square_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/交易廣場",
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_22.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Two Exchange Square",
+      "name_zh": "交易廣場第二座",
+      "height_m": {
+        "value": 188,
+        "kind": "roof",
+        "source": "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong"
+      },
+      "floors": {
+        "value": 51,
+        "source": "https://en.wikipedia.org/wiki/Exchange_Square_(Hong_Kong)"
+      },
+      "architect": "Remo Riva, Palmer & Turner",
+      "facade_type": "horizontal_ribbon_windows",
+      "main_colour": {
+        "description": "alternating bands of warm-grey/pinkish granite and silver glass",
+        "hex_approx": "#BBA89C",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "granite colour not stated in sources"
+      },
+      "glass_colour": {
+        "description": "silver reflective",
+        "hex_approx": "#A9B5BD",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "\"silver reflective glass\" (Symphony of Lights)"
+      },
+      "frame_colour": {
+        "description": "Italian granite bands",
+        "hex_approx": "#C2AEA2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Alternating bands of Italian granite and silver reflective glass, with swirling curves and distinctive edges",
+          "source": "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_23.html"
+        }
+      ],
+      "crown_top": "Flat top; rounded/curved corners.",
+      "night_lighting": "Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_23.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Exchange_Square_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/交易廣場",
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_23.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Three Exchange Square",
+      "name_zh": "交易廣場第三座",
+      "height_m": {
+        "value": null,
+        "note": "no source found"
+      },
+      "floors": {
+        "value": 33,
+        "source": "https://en.wikipedia.org/wiki/Exchange_Square_(Hong_Kong)"
+      },
+      "architect": "Remo Riva, Palmer & Turner",
+      "facade_type": "horizontal_ribbon_windows",
+      "main_colour": {
+        "description": "alternating bands of warm-grey/pinkish granite and silver glass",
+        "hex_approx": "#BBA89C",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "granite colour not stated in sources"
+      },
+      "glass_colour": {
+        "description": "silver reflective",
+        "hex_approx": "#A9B5BD",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "\"silver reflective glass\" (Symphony of Lights)"
+      },
+      "frame_colour": {
+        "description": "Italian granite bands",
+        "hex_approx": "#C2AEA2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Alternating bands of Italian granite and silver reflective glass, with swirling curves and distinctive edges",
+          "source": "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_22.html"
+        }
+      ],
+      "crown_top": "Flat top; rounded/curved corners.",
+      "night_lighting": null,
+      "night_lighting_sources": [],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Exchange_Square_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/交易廣場",
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_22.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Bank of America Tower",
+      "name_zh": "美國銀行中心",
+      "district": "Admiralty / Central (Harcourt Road)",
+      "height_m": {
+        "value": 146,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/Bank_of_America_Tower_(Hong_Kong)",
+          "https://skyscraperpage.com/cities/?buildingID=29727"
+        ]
+      },
+      "floors": {
+        "value": 38,
+        "note": "zh-Wikipedia says 37",
+        "source": "https://en.wikipedia.org/wiki/Bank_of_America_Tower_(Hong_Kong)"
+      },
+      "architect": "Ho & Partners",
+      "facade_type": "punched_windows",
+      "main_colour": {
+        "description": "white",
+        "hex_approx": "#ECEBE6",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "Symphony of Lights: \"majestic white rectangular shape\""
+      },
+      "glass_colour": {
+        "description": "dark tinted",
+        "hex_approx": "#3B4650",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "red metal frames on some floors",
+        "hex_approx": "#B0282C",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "Symphony of Lights: \"unique red metal frames in some of the floors\""
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "White rectangular block with red metal frames on some floors and rectangular windows all round",
+          "source": "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_14.html"
+        }
+      ],
+      "crown_top": "Flat top.",
+      "night_lighting": "Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://en.wikipedia.org/wiki/Bank_of_America_Tower_(Hong_Kong)",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_14.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Bank_of_America_Tower_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/美國銀行中心_(香港)",
+        "https://skyscraperpage.com/cities/?buildingID=29727",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_14.html"
+      ],
+      "status": "completed",
+      "completed": null,
+      "notes": null
+    },
+    {
+      "name_en": "Hong Kong Club Building",
+      "name_zh": "香港會所大廈",
+      "height_m": {
+        "value": 87.4,
+        "kind": "architectural",
+        "source": "https://www.skyscrapercenter.com/building/the-hong-kong-club-building/13061"
+      },
+      "floors": {
+        "value": 23,
+        "note": "Wikipedia says 21",
+        "source": "https://www.skyscrapercenter.com/building/the-hong-kong-club-building/13061"
+      },
+      "architect": "Harry Seidler and Associates (1984)",
+      "facade_type": "horizontal_ribbon_windows",
+      "main_colour": {
+        "description": "off-white concrete (not described in sources)",
+        "hex_approx": "#E3E0D8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced visual estimate"
+      },
+      "glass_colour": {
+        "description": "dark glass",
+        "hex_approx": "#3F4A52",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "off-white concrete spandrels",
+        "hex_approx": "#E3E0D8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Designed by Harry Seidler; 8 floors club, rest offices",
+          "source": [
+            "https://en.wikipedia.org/wiki/Hong_Kong_Club_Building",
+            "https://zh.wikipedia.org/wiki/香港會所大廈"
+          ]
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "Facade materials not stated in the sources I read; colour is a guess.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Hong_Kong_Club_Building",
+        "https://zh.wikipedia.org/wiki/香港會所大廈",
+        "https://www.skyscrapercenter.com/building/the-hong-kong-club-building/13061"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Prince's Building",
+      "name_zh": "太子大廈",
+      "height_m": {
+        "value": null,
+        "note": "no height source found"
+      },
+      "floors": {
+        "value": 27,
+        "source": "https://zh.wikipedia.org/wiki/太子大廈"
+      },
+      "architect": "Palmer & Turner",
+      "facade_type": "punched_windows",
+      "main_colour": {
+        "description": "brown-and-white tiles",
+        "hex_approx": "#8C6E58",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "zh-Wikipedia: 1998-99 renovation replaced white walls with brown-and-white tiles"
+      },
+      "glass_colour": {
+        "description": "dark tinted",
+        "hex_approx": "#3D474E",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "white/cream",
+        "hex_approx": "#E8E2D8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "1998-99 renovation: old white facade replaced with brown-and-white tiles, more glazing",
+          "source": "https://zh.wikipedia.org/wiki/太子大廈"
+        },
+        {
+          "feature": "5-storey retail podium (Landmark Prince's)",
+          "source": "https://zh.wikipedia.org/wiki/太子大廈"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Prince's_Building",
+        "https://zh.wikipedia.org/wiki/太子大廈"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Gloucester Tower (The Landmark)",
+      "name_zh": "告羅士打大廈",
+      "height_m": {
+        "value": 159,
+        "kind": "architectural",
+        "source": "https://www.skyscrapercenter.com/complex/775"
+      },
+      "floors": {
+        "value": 46,
+        "note": "zh-Wikipedia says 43",
+        "source": "https://www.skyscrapercenter.com/complex/775"
+      },
+      "completed": 1980,
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "dark glass (not described in sources)",
+        "hex_approx": "#4A5359",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "dark grey",
+        "hex_approx": "#454E55",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "dark metal",
+        "hex_approx": "#3A3F44",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Office tower on top of the Landmark retail podium",
+          "source": "https://en.wikipedia.org/wiki/The_Landmark_(Hong_Kong)"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://www.skyscrapercenter.com/complex/775",
+        "https://en.wikipedia.org/wiki/The_Landmark_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/告羅士打大廈"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "architect": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Edinburgh Tower (The Landmark)",
+      "name_zh": "公爵大廈",
+      "height_m": {
+        "value": 159,
+        "kind": "architectural",
+        "source": "https://www.skyscrapercenter.com/complex/775"
+      },
+      "floors": {
+        "value": 45,
+        "source": "https://www.skyscrapercenter.com/complex/775"
+      },
+      "completed": 1983,
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "dark glass (not described in sources)",
+        "hex_approx": "#4A5359",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "dark grey",
+        "hex_approx": "#454E55",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "dark metal",
+        "hex_approx": "#3A3F44",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Lower floors hold the Landmark Mandarin Oriental hotel",
+          "source": "https://en.wikipedia.org/wiki/The_Landmark_(Hong_Kong)"
+        },
+        {
+          "feature": "Hotel frontage on Queen's Road Central re-faced (2026, Neri&Hu) with staggered terracotta elements, burnished bronze brackets and glass inserts lit at night",
+          "source": "https://www.domusweb.it/en/architecture/gallery/2026/07/15/neri-and-hu-mandarin-oriental-the-landmark-hong-kong-redevelopment.amp.html"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://www.skyscrapercenter.com/complex/775",
+        "https://en.wikipedia.org/wiki/The_Landmark_(Hong_Kong)"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "architect": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "York House (The Landmark)",
+      "name_zh": "約克大廈",
+      "height_m": {
+        "value": null,
+        "note": "no height source found"
+      },
+      "floors": {
+        "value": 24,
+        "note": "en-Wikipedia calls it a 14-floor office tower (office floors)",
+        "source": "https://zh.wikipedia.org/wiki/約克大廈"
+      },
+      "completed": 2006,
+      "architect": "Kohn Pedersen Fox; Aedas",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "light glass (not described in sources)",
+        "hex_approx": "#B4BEC4",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "pale grey-blue",
+        "hex_approx": "#A9B5BC",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver",
+        "hex_approx": "#C5C9CC",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Replaced Landmark East in the 2002-06 Landmark scheme",
+          "source": "https://en.wikipedia.org/wiki/The_Landmark_(Hong_Kong)"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://zh.wikipedia.org/wiki/約克大廈",
+        "https://en.wikipedia.org/wiki/The_Landmark_(Hong_Kong)"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Chater House",
+      "name_zh": "遮打大廈",
+      "height_m": {
+        "value": 137,
+        "kind": "architectural",
+        "source": "https://www.skyscrapercenter.com/building/chater-house/21291"
+      },
+      "floors": {
+        "value": 30,
+        "source": [
+          "https://www.skyscrapercenter.com/building/chater-house/21291",
+          "https://en.wikipedia.org/wiki/Chater_House"
+        ]
+      },
+      "completed": 2002,
+      "architect": "Kohn Pedersen Fox; Aedas",
+      "facade_type": "glass_curtain_vertical_fins",
+      "main_colour": {
+        "description": "clear/light grey glass curtain wall",
+        "hex_approx": "#B7C1C6",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "light grey-blue",
+        "hex_approx": "#AAB6BD",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver",
+        "hex_approx": "#C9CDD0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Glass curtain wall building",
+          "source": "https://zh.wikipedia.org/wiki/遮打大廈"
+        },
+        {
+          "feature": "Translucent vertical corner element that becomes an \"urban lantern\" at night; 3-storey light box above the office entrance",
+          "source": "https://www.kpf.com/project/chater-house"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": "Corner element glows like a lantern at night.",
+      "night_lighting_sources": [
+        "https://www.kpf.com/project/chater-house"
+      ],
+      "sources": [
+        "https://www.skyscrapercenter.com/building/chater-house/21291",
+        "https://en.wikipedia.org/wiki/Chater_House",
+        "https://zh.wikipedia.org/wiki/遮打大廈",
+        "https://www.kpf.com/project/chater-house"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null
+    },
+    {
+      "name_en": "Alexandra House",
+      "name_zh": "歷山大廈",
+      "height_m": {
+        "value": 124,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/Alexandra_House",
+          "https://skyscraperpage.com/cities/?buildingID=39501"
+        ]
+      },
+      "floors": {
+        "value": 36,
+        "note": "zh-Wikipedia says 34",
+        "source": "https://en.wikipedia.org/wiki/Alexandra_House"
+      },
+      "completed": 1976,
+      "architect": "P&T Architects & Engineers",
+      "facade_type": "horizontal_ribbon_windows",
+      "main_colour": {
+        "description": "not described in sources",
+        "hex_approx": "#9DA3A6",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "dark",
+        "hex_approx": "#3E4850",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "grey",
+        "hex_approx": "#8E9497",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Built by slip-forming (tallest in HK built that way at the time)",
+          "source": "https://en.wikipedia.org/wiki/Alexandra_House"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "Facade look not in sources; type and colours are placeholders.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Alexandra_House",
+        "https://zh.wikipedia.org/wiki/歷山大廈",
+        "https://skyscraperpage.com/cities/?buildingID=39501"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Hutchison House (demolished)",
+      "name_zh": "和記大廈",
+      "district": "Central (Harcourt Road)",
+      "status": "demolished from 2019 for redevelopment",
+      "height_m": {
+        "value": null
+      },
+      "floors": {
+        "value": 23,
+        "source": "https://zh.wikipedia.org/wiki/和記大廈"
+      },
+      "completed": 1974,
+      "architect": "Wong & Ouyang",
+      "facade_type": null,
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [
+        {
+          "feature": "Redeveloped by CK Asset; demolition from 2019",
+          "source": "https://zh.wikipedia.org/wiki/和記大廈"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "Site now Cheung Kong Center II (next entry); do not render the old building.",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/和記大廈"
+      ],
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Cheung Kong Center II",
+      "name_zh": "長江集團中心二期",
+      "district": "Central (Harcourt Road, former Hutchison House site)",
+      "height_m": {
+        "value": 205.5,
+        "kind": "roof",
+        "source": "https://zh.wikipedia.org/wiki/香港摩天大樓列表"
+      },
+      "floors": {
+        "value": 41,
+        "source": [
+          "https://zh.wikipedia.org/wiki/香港摩天大樓列表",
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong"
+        ]
+      },
+      "completed": 2024,
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "glass (not described in sources)",
+        "hex_approx": "#5C6A73",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "grey-blue",
+        "hex_approx": "#5D6B74",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "grey",
+        "hex_approx": "#7E868B",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "Added as 150 m+ Central tower; facade details not found.",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/香港摩天大樓列表",
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong"
+      ],
+      "status": "completed",
+      "architect": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "The Henderson (2 Murray Road)",
+      "name_zh": "恒基宏峰（美利道2號）",
+      "height_m": {
+        "value": 190,
+        "kind": "architectural",
+        "source": "https://en.wikipedia.org/wiki/The_Henderson"
+      },
+      "floors": {
+        "value": 36,
+        "source": "https://en.wikipedia.org/wiki/The_Henderson"
+      },
+      "completed": 2024,
+      "architect": "Zaha Hadid Architects (Patrik Schumacher); Ronald Lu & Partners",
+      "facade_type": "special",
+      "facade_type_note": "Curved glass envelope (bauhinia-bud form); about 20% of panes double-curved.",
+      "main_colour": {
+        "description": "silver-blue low-reflective glass",
+        "hex_approx": "#B3C3CC",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "metal-oxide reflective finish, ~20% reflective"
+      },
+      "glass_colour": {
+        "description": "pale silver-blue",
+        "hex_approx": "#AFC0CA",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver/white",
+        "hex_approx": "#D9DDE0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Curved silhouette inspired by a bauhinia bud",
+          "source": "https://en.wikipedia.org/wiki/The_Henderson"
+        },
+        {
+          "feature": "Heat-strengthened laminated low-E glass with metal-oxide reflective finish (~20% reflective); ~20% of panes double-curved; crown panes with seven glass layers",
+          "source": "https://www.architecturalrecord.com/articles/17506-zaha-hadid-architects-crafts-a-high-tech-tower-for-hong-kong"
+        },
+        {
+          "feature": "Glass-roofed banquet hall Cloud39 at the top floor",
+          "source": "https://zh.wikipedia.org/wiki/The_Henderson"
+        }
+      ],
+      "crown_top": "Curved glass crown with a glass-roofed top-floor hall (Cloud39).",
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/The_Henderson",
+        "https://zh.wikipedia.org/wiki/The_Henderson",
+        "https://www.architecturalrecord.com/articles/17506-zaha-hadid-architects-crafts-a-high-tech-tower-for-hong-kong"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "CCB Tower",
+      "name_zh": "中國建設銀行大廈",
+      "height_m": {
+        "value": 136,
+        "kind": "architectural (CTBUH estimate from floor count)",
+        "source": "https://www.skyscrapercenter.com/building/ccb-tower/21234"
+      },
+      "floors": {
+        "value": 31,
+        "note": "CTBUH 31; Symphony of Lights 30; zh-Wikipedia 26/27",
+        "source": "https://www.skyscrapercenter.com/building/ccb-tower/21234"
+      },
+      "completed": 2012,
+      "architect": "Aedas",
+      "facade_type": "glass_curtain_vertical_fins",
+      "main_colour": {
+        "description": "light grey glass with vertical lines",
+        "hex_approx": "#AEB8BE",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "glass_colour": {
+        "description": "pale grey-blue",
+        "hex_approx": "#A5B1B8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver vertical mullions",
+        "hex_approx": "#CDD1D3",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Varying block heights and vertical lines create a layered effect",
+          "source": "https://archinect.com/firms/project/6259264/aedas-designed-china-construction-bank-tower-ready-to-shine/77187110"
+        },
+        {
+          "feature": "LED screen (Symphony of Lights)",
+          "source": "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_17.html"
+        }
+      ],
+      "crown_top": "Stepped blocks; rooftop garden.",
+      "night_lighting": "Symphony of Lights participant with LED screen.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_17.html"
+      ],
+      "sources": [
+        "https://www.skyscrapercenter.com/building/ccb-tower/21234",
+        "https://zh.wikipedia.org/wiki/中國建設銀行大廈",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_17.html"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null
+    },
+    {
+      "name_en": "Far East Finance Centre",
+      "name_zh": "遠東金融中心",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 176,
+        "kind": "roof",
+        "source": "https://www.scraperbase.com/China/Hong%20Kong/Far_East_Finance_Centre"
+      },
+      "floors": {
+        "value": 48,
+        "note": "zh-Wikipedia says 41",
+        "source": [
+          "https://en.wikipedia.org/wiki/Far_East_Finance_Centre",
+          "https://www.scraperbase.com/China/Hong%20Kong/Far_East_Finance_Centre"
+        ]
+      },
+      "completed": 1982,
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "gold reflective glass",
+        "hex_approx": "#B9973F",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "zh-Wikipedia: gold glass curtain wall"
+      },
+      "glass_colour": {
+        "description": "gold mirror",
+        "hex_approx": "#C2A04A",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "gold/bronze",
+        "hex_approx": "#9C7E36",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Gold glass curtain wall, very distinctive among Admiralty towers",
+          "source": "https://zh.wikipedia.org/wiki/遠東金融中心"
+        }
+      ],
+      "crown_top": "Flat top.",
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Far_East_Finance_Centre",
+        "https://zh.wikipedia.org/wiki/遠東金融中心",
+        "https://www.scraperbase.com/China/Hong%20Kong/Far_East_Finance_Centre"
+      ],
+      "status": "completed",
+      "architect": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Admiralty Centre",
+      "name_zh": "海富中心",
+      "district": "Admiralty",
+      "height_m": {
+        "value": null,
+        "note": "no source found"
+      },
+      "floors": {
+        "value": null
+      },
+      "completed": 1980,
+      "facade_type": null,
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "Two office towers on a podium above Admiralty MTR; facade not described in sources I read.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Admiralty_Centre",
+        "https://zh.wikipedia.org/wiki/海富中心"
+      ],
+      "status": "completed",
+      "architect": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "One Pacific Place",
+      "name_zh": "太古廣場一座",
+      "district": "Admiralty",
+      "height_m": {
+        "value": null,
+        "note": "no source found"
+      },
+      "floors": {
+        "value": 36,
+        "kind": "office floors",
+        "source": "https://www.pacificplace.com.hk/-/media/Files/PacificPlace2/Pdf/1PP.ashx"
+      },
+      "completed": 1988,
+      "architect": "Wong & Ouyang",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://www.pacificplace.com.hk/-/media/Files/PacificPlace2/Pdf/1PP.ashx",
+        "https://zh.wikipedia.org/wiki/太古廣場"
+      ],
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Two Pacific Place / Island Shangri-La",
+      "name_zh": "太古廣場二座／港島香格里拉酒店",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 213.1,
+        "kind": "architectural",
+        "top_floor_m": 197.8,
+        "source": "https://en.wikipedia.org/wiki/Island_Shangri-La"
+      },
+      "floors": {
+        "value": 57,
+        "note": "zh-Wikipedia says 56",
+        "source": "https://en.wikipedia.org/wiki/Island_Shangri-La"
+      },
+      "completed": 1991,
+      "architect": "Wong & Ouyang",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "not described in sources",
+        "hex_approx": "#8E9AA2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "blue-grey",
+        "hex_approx": "#7F8E98",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "grey",
+        "hex_approx": "#9AA1A5",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Offices in lower half, hotel (floors 41-56) in upper half; tallest tower of Pacific Place",
+          "source": [
+            "https://en.wikipedia.org/wiki/Pacific_Place_(Hong_Kong)",
+            "https://zh.wikipedia.org/wiki/太古廣場"
+          ]
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Island_Shangri-La",
+        "https://en.wikipedia.org/wiki/Pacific_Place_(Hong_Kong)",
+        "https://skyscraperpage.com/cities/?buildingID=176"
+      ],
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Conrad Hong Kong (Pacific Place)",
+      "name_zh": "香港港麗酒店",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 199,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://skyscraperpage.com/cities/?buildingID=2239"
+        ]
+      },
+      "floors": {
+        "value": 61,
+        "source": "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong"
+      },
+      "completed": 1990,
+      "architect": "Wong & Ouyang",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://skyscraperpage.com/cities/?buildingID=2239",
+        "https://zh.wikipedia.org/wiki/太古廣場"
+      ],
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "JW Marriott Hotel / The Upper House (Pacific Place)",
+      "name_zh": "香港JW萬豪酒店",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 164.5,
+        "kind": "architectural",
+        "source": "https://skyscrapercenter.com/building/jw-marriott-and-the-upper-house/3100"
+      },
+      "floors": {
+        "value": 50,
+        "source": "https://skyscrapercenter.com/building/jw-marriott-and-the-upper-house/3100"
+      },
+      "completed": 1988,
+      "architect": "Wong & Ouyang",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Glass facade made of triangular window bays",
+          "source": "https://skyscrapercenter.com/building/jw-marriott-and-the-upper-house/3100"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://skyscrapercenter.com/building/jw-marriott-and-the-upper-house/3100"
+      ],
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Three Pacific Place",
+      "name_zh": "太古廣場三座",
+      "district": "Admiralty / Wan Chai edge (1 Queen's Road East)",
+      "height_m": {
+        "value": 182,
+        "kind": "roof",
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://skyscraperpage.com/cities/?buildingID=9006"
+        ]
+      },
+      "floors": {
+        "value": 40,
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://skyscraperpage.com/cities/?buildingID=9006"
+        ]
+      },
+      "completed": 2004,
+      "architect": "Wong & Ouyang",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://skyscraperpage.com/cities/?buildingID=9006"
+      ],
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Central Government Offices (Tamar)",
+      "name_zh": "香港特別行政區政府總部",
+      "district": "Admiralty (Tamar)",
+      "height_m": {
+        "value": 125.5,
+        "kind": "height",
+        "source": "https://zh.wikipedia.org/wiki/香港特別行政區政府總部_(建築物)"
+      },
+      "floors": {
+        "value": 26,
+        "source": "https://zh.wikipedia.org/wiki/香港特別行政區政府總部_(建築物)"
+      },
+      "completed": 2011,
+      "architect": "Rocco Yim (Rocco Design Architects)",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "light glass with white/grey frame",
+        "hex_approx": "#C9D1D5",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "pale blue-grey",
+        "hex_approx": "#AEBBC2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "white/light grey",
+        "hex_approx": "#E2E4E4",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "\"Door always open\" massing: two wings linked high up, framing a gap",
+          "source": "https://en.wikipedia.org/wiki/Central_Government_Complex_(Hong_Kong)"
+        },
+        {
+          "feature": "In 2020 the West Wing glass curtain wall (lower part) was replaced with an aluminium finish",
+          "source": "https://zh.wikipedia.org/wiki/香港特別行政區政府總部_(建築物)"
+        }
+      ],
+      "crown_top": "Bridge/link block over the open \"door\".",
+      "night_lighting": "Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_11.html"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Central_Government_Complex_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/香港特別行政區政府總部_(建築物)",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_11.html"
+      ],
+      "status": "completed",
+      "notes": null
+    },
+    {
+      "name_en": "Legislative Council Complex",
+      "name_zh": "立法會綜合大樓",
+      "district": "Admiralty (Tamar)",
+      "height_m": {
+        "value": 57.5,
+        "kind": "top floor of Office Block (Council Block 33.3 m), before the 2022-24 extension",
+        "source": "https://en.wikipedia.org/wiki/Legislative_Council_Complex"
+      },
+      "floors": {
+        "value": 11,
+        "note": "Office Block 11, Council Block 5 (before extension); 2021 plan added 4 + 10 floors, extension finished Nov 2024",
+        "source": [
+          "https://en.wikipedia.org/wiki/Legislative_Council_Complex",
+          "https://zh.wikipedia.org/wiki/立法會綜合大樓"
+        ]
+      },
+      "completed": 2011,
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "glass with light frames",
+        "hex_approx": "#C3CCD0",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "pale",
+        "hex_approx": "#B0BCC2",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "light grey",
+        "hex_approx": "#D5D8D9",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "Double-layered ventilated facade; green roof and sky garden",
+          "source": "https://en.wikipedia.org/wiki/Legislative_Council_Complex"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Legislative_Council_Complex",
+        "https://zh.wikipedia.org/wiki/立法會綜合大樓"
+      ],
+      "status": "completed",
+      "architect": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Queensway Government Offices",
+      "name_zh": "金鐘道政府合署",
+      "district": "Admiralty",
+      "height_m": {
+        "value": 199,
+        "kind": "roof",
+        "source": "https://en.wikipedia.org/wiki/Queensway_Government_Offices"
+      },
+      "floors": {
+        "value": 56,
+        "source": "https://en.wikipedia.org/wiki/Queensway_Government_Offices"
+      },
+      "completed": 1985,
+      "architect": "K.M. Tseng, Architectural Services Department",
+      "facade_type": "punched_windows",
+      "main_colour": {
+        "description": "not described in sources",
+        "hex_approx": "#B9B4A9",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "dark",
+        "hex_approx": "#404A52",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "light",
+        "hex_approx": "#CFC9BE",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Brand Hong Kong flying-dragon sign on the roof since 2002",
+          "source": [
+            "https://en.wikipedia.org/wiki/Queensway_Government_Offices",
+            "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_12.html"
+          ]
+        },
+        {
+          "feature": "Roof neon sign replaced by an LED screen in June 2022",
+          "source": "https://zh.wikipedia.org/wiki/金鐘道政府合署"
+        }
+      ],
+      "crown_top": "Rooftop sign (dragon logo / LED screen).",
+      "night_lighting": "Lit rooftop sign; Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_12.html",
+        "https://zh.wikipedia.org/wiki/金鐘道政府合署"
+      ],
+      "sources": [
+        "https://en.wikipedia.org/wiki/Queensway_Government_Offices",
+        "https://zh.wikipedia.org/wiki/金鐘道政府合署",
+        "https://skyscraperpage.com/cities/?buildingID=318",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_12.html"
+      ],
+      "status": "completed",
+      "notes": null
+    },
+    {
+      "name_en": "Hong Kong City Hall",
+      "name_zh": "香港大會堂",
+      "height_m": {
+        "value": null
+      },
+      "floors": {
+        "value": null
+      },
+      "completed": 1962,
+      "architect": "Ron Phillips and Alan Fitch (with Gordon Brown)",
+      "facade_type": "horizontal_ribbon_windows",
+      "main_colour": {
+        "description": "white/cream modernist blocks",
+        "hex_approx": "#E6E3DA",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "clear/dark",
+        "hex_approx": "#56636B",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "anodised aluminium",
+        "hex_approx": "#C4C7C8",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal",
+        "grid"
+      ],
+      "special_features": [
+        {
+          "feature": "International Style; steel and concrete with steel, glass and anodised aluminium",
+          "source": "https://en.wikipedia.org/wiki/Hong_Kong_City_Hall"
+        },
+        {
+          "feature": "Simple clean functionalist facades",
+          "source": "https://zh.wikipedia.org/wiki/香港大會堂"
+        }
+      ],
+      "crown_top": "Flat roofs (High Block and Low Block).",
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Hong_Kong_City_Hall",
+        "https://zh.wikipedia.org/wiki/香港大會堂"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Old Bank of China Building",
+      "name_zh": "中國銀行大廈（舊中銀大廈）",
+      "height_m": {
+        "value": 76,
+        "kind": "height",
+        "source": "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong"
+      },
+      "floors": {
+        "value": 17,
+        "source": [
+          "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+          "https://zh.wikipedia.org/wiki/中國銀行大廈_(香港)"
+        ]
+      },
+      "completed": 1951,
+      "architect": "Palmer & Turner",
+      "facade_type": "punched_windows",
+      "main_colour": {
+        "description": "local grey granite",
+        "hex_approx": "#A7A196",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "zh-Wikipedia: local granite facade"
+      },
+      "glass_colour": {
+        "description": "dark",
+        "hex_approx": "#3F4549",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "granite",
+        "hex_approx": "#A7A196",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Vertical upward composition; local granite facade; Art-Deco/modern with Chinese decoration; stone lions at entrance",
+          "source": "https://zh.wikipedia.org/wiki/中國銀行大廈_(香港)"
+        }
+      ],
+      "crown_top": "Stepped top.",
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Hong_Kong",
+        "https://en.wikipedia.org/wiki/Bank_of_China_Building_(Hong_Kong)",
+        "https://zh.wikipedia.org/wiki/中國銀行大廈_(香港)",
+        "https://skyscraperpage.com/cities/?buildingID=7517"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Court of Final Appeal Building (former Legislative Council Building / Old Supreme Court)",
+      "name_zh": "終審法院大樓",
+      "height_m": {
+        "value": 40,
+        "kind": "height",
+        "source": "https://en.wikipedia.org/wiki/Court_of_Final_Appeal_Building"
+      },
+      "floors": {
+        "value": 3,
+        "source": "https://en.wikipedia.org/wiki/Court_of_Final_Appeal_Building"
+      },
+      "completed": 1912,
+      "architect": "Aston Webb and Ingress Bell",
+      "facade_type": "special",
+      "facade_type_note": "Neo-classical granite building with Ionic colonnades.",
+      "main_colour": {
+        "description": "light grey granite",
+        "hex_approx": "#BDB7AC",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "granite stated; colour estimate"
+      },
+      "glass_colour": null,
+      "frame_colour": {
+        "description": "granite",
+        "hex_approx": "#BDB7AC",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical",
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Two-storey granite neo-classical building with Ionic columns",
+          "source": "https://en.wikipedia.org/wiki/Court_of_Final_Appeal_Building"
+        },
+        {
+          "feature": "Statue of Justice (inspired by the Old Bailey)",
+          "source": "https://en.wikipedia.org/wiki/Court_of_Final_Appeal_Building"
+        }
+      ],
+      "crown_top": "Central dome with statue of Justice (dome not described in my sources).",
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Court_of_Final_Appeal_Building",
+        "https://zh.wikipedia.org/wiki/終審法院大樓"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Man Yee Building",
+      "name_zh": "萬宜大廈",
+      "height_m": {
+        "value": null
+      },
+      "floors": {
+        "value": 31,
+        "source": "https://zh.wikipedia.org/wiki/萬宜大廈"
+      },
+      "completed": 1999,
+      "architect": "Rocco Yim (Rocco Design)",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [
+        {
+          "feature": "Designed by Rocco Yim; style similar to his International Finance Centre work",
+          "source": "https://zh.wikipedia.org/wiki/萬宜大廈"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Man_Yee_Building",
+        "https://zh.wikipedia.org/wiki/萬宜大廈"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "LHT Tower (Luk Hoi Tong)",
+      "name_zh": "陸海通大廈",
+      "height_m": {
+        "value": 130.6,
+        "kind": "height",
+        "source": "https://en.wikipedia.org/wiki/LHT_Tower"
+      },
+      "floors": {
+        "value": 28,
+        "source": "https://en.wikipedia.org/wiki/LHT_Tower"
+      },
+      "completed": 2011,
+      "architect": "Rocco Design Architects",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "zh-Wikipedia's \"dark brown glass curtain wall\" sentence refers to the old 1961 Luk Hoi Tong Building, not the 2011 tower.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/LHT_Tower",
+        "https://zh.wikipedia.org/wiki/陸海通大廈"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Cosco Tower (Grand Millennium Plaza)",
+      "name_zh": "中遠大廈",
+      "district": "Sheung Wan",
+      "height_m": {
+        "value": 228,
+        "kind": "height",
+        "source": "https://en.wikipedia.org/wiki/COSCO_Tower"
+      },
+      "floors": {
+        "value": 53,
+        "source": "https://en.wikipedia.org/wiki/COSCO_Tower"
+      },
+      "completed": 1998,
+      "architect": "Hsin Yieh Architects & Associates",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "not described in sources",
+        "hex_approx": "#8D9AA3",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced"
+      },
+      "glass_colour": {
+        "description": "blue-grey",
+        "hex_approx": "#86939C",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "light grey",
+        "hex_approx": "#B9BEC1",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Feng-shui shaping: tall rugged \"masculine\" form from the hills, paired with the rounder Grand Millennium II tower",
+          "source": "https://skyscraperpage.com/cities/?buildingID=1316"
+        },
+        {
+          "feature": "Roof once carried the Land Development Corporation \"D\" logo",
+          "source": "https://zh.wikipedia.org/wiki/中遠大廈"
+        }
+      ],
+      "crown_top": "Rooftop logo frame (see feature).",
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/COSCO_Tower",
+        "https://zh.wikipedia.org/wiki/中遠大廈",
+        "https://skyscraperpage.com/cities/?buildingID=1316"
+      ],
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Shun Tak Centre (China Merchants Tower and West Tower)",
+      "name_zh": "信德中心（招商局大廈、西座）",
+      "district": "Sheung Wan",
+      "height_m": {
+        "value": 156,
+        "kind": "each tower",
+        "source": "https://www.skyscrapercenter.com/complex/779"
+      },
+      "floors": {
+        "value": 38,
+        "note": "each tower",
+        "source": "https://www.skyscrapercenter.com/complex/779"
+      },
+      "completed": 1985,
+      "architect": "Spence Robinson",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": {
+        "description": "dark reddish glass (not described in sources)",
+        "hex_approx": "#5A3A3A",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "unsourced guess; please check photos"
+      },
+      "glass_colour": {
+        "description": "dark red-brown",
+        "hex_approx": "#553838",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "dark",
+        "hex_approx": "#3F2E2E",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "horizontal"
+      ],
+      "special_features": [
+        {
+          "feature": "Two office towers on a shared podium with the Macau ferry terminal",
+          "source": [
+            "https://zh.wikipedia.org/wiki/信德中心",
+            "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_26.html"
+          ]
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": "Symphony of Lights participant.",
+      "night_lighting_sources": [
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_26.html"
+      ],
+      "sources": [
+        "https://www.skyscrapercenter.com/complex/779",
+        "https://en.wikipedia.org/wiki/Shun_Tak_Centre",
+        "https://zh.wikipedia.org/wiki/信德中心",
+        "https://www.tourism.gov.hk/symphony/textonly/english/participating/participating_hk_26.html"
+      ],
+      "status": "completed",
+      "notes": null
+    },
+    {
+      "name_en": "Infinitus Plaza",
+      "name_zh": "無限極廣場",
+      "district": "Sheung Wan (199 Des Voeux Road Central)",
+      "height_m": {
+        "value": null
+      },
+      "floors": {
+        "value": null
+      },
+      "facade_type": null,
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [],
+      "special_features": [],
+      "crown_top": null,
+      "night_lighting": null,
+      "notes": "No Wikipedia/CTBUH source found; address from leasing listings only.",
+      "sources": [
+        "https://www.leasinghub.com/en/building/infinitus-plaza/5"
+      ],
+      "status": "completed",
+      "architect": null,
+      "completed": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "Hang Seng Bank Headquarters Building",
+      "name_zh": "恒生銀行總行大廈",
+      "height_m": {
+        "value": 137,
+        "kind": "height",
+        "source": "https://en.wikipedia.org/wiki/Hang_Seng_Bank_Headquarters_Building"
+      },
+      "floors": {
+        "value": 27,
+        "note": "zh-Wikipedia: 25 above ground + 3 basement",
+        "source": "https://en.wikipedia.org/wiki/Hang_Seng_Bank_Headquarters_Building"
+      },
+      "architect": "Wong & Ouyang",
+      "facade_type": "special",
+      "facade_type_note": "Two solid concrete service cores on east and west ends (windowless faces) with big glazed north and south faces.",
+      "main_colour": {
+        "description": "silver aluminium panels",
+        "hex_approx": "#BFC3C5",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)",
+        "basis": "zh-Wikipedia: aluminium panel facade like HSBC"
+      },
+      "glass_colour": {
+        "description": "grey glass",
+        "hex_approx": "#7C8990",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "frame_colour": {
+        "description": "silver aluminium",
+        "hex_approx": "#C9CCCE",
+        "approximate": true,
+        "note": "approximate (my estimate from typical photos/descriptions; not a measured value)"
+      },
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Two concrete service cores at east and west edges, visible outside; east and west faces windowless, north and south faces have large windows",
+          "source": "https://en.wikipedia.org/wiki/Hang_Seng_Bank_Headquarters_Building"
+        },
+        {
+          "feature": "Aluminium panel cladding",
+          "source": "https://zh.wikipedia.org/wiki/恒生銀行總行大廈"
+        }
+      ],
+      "crown_top": null,
+      "night_lighting": null,
+      "sources": [
+        "https://en.wikipedia.org/wiki/Hang_Seng_Bank_Headquarters_Building",
+        "https://zh.wikipedia.org/wiki/恒生銀行總行大廈"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "completed": null,
+      "notes": null,
+      "night_lighting_sources": []
+    },
+    {
+      "name_en": "9 Queen's Road Central",
+      "name_zh": "皇后大道中九號",
+      "height_m": {
+        "value": 187,
+        "kind": "spire (spikes)",
+        "roof_m": 171.9,
+        "source": [
+          "https://skyscraperpage.com/cities/?buildingID=1289",
+          "https://en.wikipedia.org/wiki/9_Queen's_Road_Central"
+        ]
+      },
+      "floors": {
+        "value": 39,
+        "note": "zh-Wikipedia says 34; SkyscraperPage 37",
+        "source": "https://en.wikipedia.org/wiki/9_Queen's_Road_Central"
+      },
+      "completed": 1991,
+      "architect": "Wong Tung & Partners",
+      "facade_type": "glass_curtain_grid",
+      "main_colour": null,
+      "glass_colour": null,
+      "frame_colour": null,
+      "dominant_lines": [
+        "vertical"
+      ],
+      "special_features": [
+        {
+          "feature": "Pyramidal roof (base at 507 ft) topped by a block and spikes to 614 ft; small dome at the rear of the base",
+          "source": "https://skyscraperpage.com/cities/?buildingID=1289"
+        }
+      ],
+      "crown_top": "Pyramid roof with spikes.",
+      "night_lighting": null,
+      "sources": [
+        "https://skyscraperpage.com/cities/?buildingID=1289",
+        "https://en.wikipedia.org/wiki/9_Queen's_Road_Central",
+        "https://zh.wikipedia.org/wiki/皇后大道中九號"
+      ],
+      "district": "Central",
+      "status": "completed",
+      "notes": null,
+      "night_lighting_sources": []
+    }
+  ]
+}

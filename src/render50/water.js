@@ -20,7 +20,7 @@
 const R50 = window.R50 = window.R50 || {parts:{}};
 const R5Q = /[?&]r50q=(\d)/.exec(location.search), R5OFF = /[?&]r50=0/.test(location.search) || /[?&]r50water=0/.test(location.search);
 const R5 = {on:false, q:window.CB_MOBILE ? 0 : 2, pinned:R5Q ? +R5Q[1] : -1, rt:null, ema:16, slow:0, lastT:0, lastStep:0, pass:false, passMs:0, passCalls:0,
-  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0};
+  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0};
 if (R5.pinned >= 0) R5.q = Math.min(2, R5.pinned);
 const R5U = {
   r5On:{value:0}, r5Nrm:{value:null}, r5Refl:{value:null}, r5ReflOn:{value:0}, r5TexM:{value:new THREE.Matrix4()}, r5PlaneY:{value:-0.05},
@@ -205,7 +205,11 @@ function r5Hide(on){
     }
     if (typeof forestMesh !== 'undefined') push(forestMesh);
     sea.material.visible = false;
+    // point sprites are sized from the canvas height, not the target's: shrink them to the mirror's scale
+    const k = R5_SCALE[R5.q] || 1; R5.ptm.length = 0;
+    for (const m of [typeof matLamp !== 'undefined' ? matLamp : null, typeof matNeonGlow !== 'undefined' ? matNeonGlow : null]) if (m){ R5.ptm.push([m, m.size]); m.size *= k; }
   } else {
+    for (const [m, s0] of R5.ptm) m.size = s0; R5.ptm.length = 0;
     for (const o of H) o.visible = true; H.length = 0;
     sea.material.visible = true;
   }

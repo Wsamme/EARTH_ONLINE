@@ -74,6 +74,13 @@ function build(D, opts){
     return [P[lo*2] + (P[lo*2+2] - P[lo*2])*f, P[lo*2+1] + (P[lo*2+3] - P[lo*2+1])*f];
   }
   const linkPos = (dl, u) => dl.dir > 0 ? posAt(dl.li, dl.a + u) : posAt(dl.li, dl.b - u);
+  function eAtS(li, s){
+    const L = lines[li], E = L.E; if (!E) return 0; const o = vO[li], m = L.P.length >> 1;
+    if (s <= 0) return E[0]; if (s >= VS[o+m-1]) return E[m-1];
+    let lo = 0, hi = m - 2; while (lo < hi){ const md = (lo + hi + 1) >> 1; if (VS[o+md] <= s) lo = md; else hi = md - 1; }
+    const d = VS[o+lo+1] - VS[o+lo], f = d > 1e-6 ? (s - VS[o+lo])/d : 0; return E[lo] + (E[lo+1] - E[lo])*f;
+  }
+  const linkE = (dl, u) => dl.dir > 0 ? eAtS(dl.li, dl.a + u) : eAtS(dl.li, dl.b - u);
   // nodes: arms and movements
   const nodeIds = new Set(); for (const P of PC){ nodeIds.add(P.na); nodeIds.add(P.nb); }
   const OUTS = new Array(DL.length);                // link -> [out link ids]
@@ -113,7 +120,7 @@ function build(D, opts){
     }
     NODE.set(nd, {x, y, real, dead, arms:A.length, A});
   }
-  return {lines, C, J, VB, DL, PC, LP, OUTS, NODE, nMoves, drivable, posAt, linkPos, vEnd};
+  return {lines, C, J, VB, DL, PC, LP, OUTS, NODE, nMoves, drivable, posAt, linkPos, linkE, eAtS, vEnd};
 }
 // strongly connected components (iterative Tarjan) over links
 function scc(N){

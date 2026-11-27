@@ -55,8 +55,9 @@ height / level tags, building:part ids, land-use areas and named POIs.
 (`cls`, `name`, `zh`, `bridge`, `pts`, `elev` = deck height per vertex), `areas` (OSM land-use polygons clipped to the box: parks, piers,
 campuses, plants …), `pois`. Local metres: +x east, +z south. **Data heights of towers are often the podium** (tower tiers are in `parts`;
 the plain outline of 383 Madison says 45 m, of 60 Wall 25 m): use the verified `h` and the parts.
-Command used: `cd SC/lm50/ny && bash SC/lm33/kit/heavy.sh python3 K/ny50_refs.py R/lm50/targets_ny.json R/lm50` (all groups; a group
-list after the out dir limits it; ~1–3 min per group, ~1 GB RAM).
+Command used: `bash SC/lm33/kit/heavy.sh python3 -u K/ny50_refs.py R/lm50/targets_ny.json R/lm50 [ny50a ny50b …]` (all groups, or the
+groups listed). One Overpass query per group (1–2.5 min); when the shared mirror refuses (it did for ny50c–h on 27 Nov), the tool falls
+back to the OSM API `map?bbox=` per target box (~5 min per group; partial multipolygons are reduced to their largest piece). ~1 GB RAM.
 
 ## Kit — exact commands (each tested once on 27 Nov 2026; results in brackets)
 Offline, as often as you like (no browser):
@@ -80,7 +81,7 @@ lock, then poll the log:
 7. **Test page**: `bash SC/lm33/kit/heavy.sh bash K/ny50page.sh <name> <folders> [extra]` → `SC/lm50/ny/site/t_<name>.html` (+
    `t_<name>-app.js`, ~5 MB; data via a symlink). In-situ = only your module and its neighbours, e.g.
    `bash K/ny50page.sh ny50a ny50a,ny42,nymid3,nymidtown,nymidtown2,nypark`; full app = `bash K/ny50page.sh ny50a_full all`.
-   [`ny50page.sh ny50test ny42` built in ~10 s once the lock was free]
+   [`ny50page.sh ny50kt ny42`: built in seconds once the heavy lock was free — the wait for the lock was ~7 min on 27 Nov]
 8. **Shots**: `(setsid nohup bash SC/lm33/kit/browser.sh env PAGE=t_<name>.html NEAR=<lat>,<lon>,<radius_m> KEYS=<k1,k2>
    node K/ny50shot.js SC/lm50/ny/<you>/shots '[["k_d",lat,lon,450,28,200,12],["k_n",lat,lon,450,28,200,20.5]]' > SC/lm50/ny/<you>/shot.log 2>&1 &)`
    views `[name, lat, lon, dist m, elev °, azim °, hour, "js", waitMs]` (azim 0 = camera south of the target). The log prints `LANDMARKS`

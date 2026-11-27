@@ -196,12 +196,48 @@ for (let o = 0; o < pairs[0]; o++){
 det.sort((a, b) => a - b); RT.detourMed = det.length ? +det[det.length >> 1].toFixed(2) : 0; RT.detour3 = det.filter(r => r > 3).length;
 RT.okPct = +(RT.ok/RT.pairs*100).toFixed(1);
 log('routes', JSON.stringify(RT));
+// ---------------------------------------------------------------- 6. movement continuity: where a vehicle passes from one link to the next
+// (a junction node: positions within the junction box; a virtual node: the same vertex). Height steps > 1.5 m between the in-link's end
+// and the out-link's start are vertical jumps (traffic eases one-way deck steps <= 15 m; anything else would teleport / float).
+const MV = {moves:0, zjump1_5:0, zjump5:0, xyFar:0};
+for (const dl of N.DL){ const pe = N.linkPos(dl, dl.len), ee = N.linkE(dl, dl.len);
+  for (const o of N.OUTS[dl.id]){ const od = N.DL[o]; MV.moves++; const ps = N.linkPos(od, 0), es = N.linkE(od, 0), dz = Math.abs(es - ee), dxy = Math.hypot(ps[0] - pe[0], ps[1] - pe[1]);
+    if (dz > 1.5){ MV.zjump1_5++; if (dz > 5) MV.zjump5++; prob('zjump', pe[0], pe[1], {from:dl.li, to:od.li, dz:+dz.toFixed(1)}); }
+    if (dxy > 40){ MV.xyFar++; prob('xyfar', pe[0], pe[1], {from:dl.li, to:od.li, d:+dxy.toFixed(0)}); } } }
+log('movements', JSON.stringify(MV));
+// ---------------------------------------------------------------- 7. tunnels: the data has no tunnel ways (the pipelines drop them); the line ends marked
+// as tunnel mouths (flags 64 start / 128 end) are paired by name / ref and direction to estimate what hidden tunnel links would join
+const portals = [];
+for (const [nd, Nd] of N.NODE){ if (Nd.arms !== 1) continue; const a = Nd.A[0], li = a.P.li, L = lines[li]; const t = a.end ? (L.flags & 128) : (L.flags & 64); if (!t) continue;
+  const m = L.P.length >> 1, k = a.end ? m - 1 : 0; portals.push({li, end:a.end, x:L.P[k*2], y:L.P[k*2+1], name:(L.name && L.name[0]) || '', ref:L.ref || '', ow:!!(L.flags & 1), into:a.in, outOf:a.out, used:false}); }
+const TP = []; const tun = {portals:portals.length, pairs:0, unmatched:0};
+for (const P of portals){ if (P.used || P.into === null) continue; let best = null, bd = 12000;
+  for (const Q of portals){ if (Q === P || Q.used || Q.outOf === null || Q.li === P.li) continue; if (!((P.name && P.name === Q.name) || (P.ref && P.ref === Q.ref))) continue;
+    const d = Math.hypot(Q.x - P.x, Q.y - P.y); if (d < 30 || d >= bd) continue;
+    if (P.ow && Q.ow){ /* direction: Q's line leaves its portal roughly away from P */ }
+    best = Q; bd = d; }
+  if (best){ TP.push([P, best, bd]); if (P.ow) P.used = true; if (best.ow) best.used = true; tun.pairs++; } }
+tun.unmatched = portals.filter(P => !TP.some(t => t[0] === P || t[1] === P)).length;
+for (const P of portals) if (!TP.some(t => t[0] === P || t[1] === P)) prob('tunnel_unpaired', P.x, P.y, {li:P.li, name:P.name || P.ref});
+// route test again with the paired tunnels as hidden links
+if (TP.length){
+  const OUT0 = N.OUTS.map(a => a.slice());
+  for (const [P, Q] of TP){ N.OUTS[P.into].push(Q.outOf); if (P.outOf !== null && Q.into !== null) N.OUTS[Q.into].push(P.outOf); }
+  const W2 = TG.weak(N); const rng2 = (() => { let s = 0x9e3779b9 ^ (city.charCodeAt(0)*7919); return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s/4294967296; }; })();
+  const pick2 = () => { const r = rng2()*cum[cum.length - 1]; let lo = 0, hi = cum.length - 1; while (lo < hi){ const m = (lo + hi) >> 1; if (cum[m] < r) lo = m + 1; else hi = m; } return lo; };
+  let ok = 0, tot = 0;
+  for (let o = 0; o < pairs[0]; o++){ const s0 = pick2(), Ps = N.PC[N.DL[s0].piece], dist = TG.dijkstra(N, Ps.r !== null ? [Ps.f, Ps.r] : [Ps.f], -1);
+    for (let q = 0; q < pairs[1]; q++){ const t = pick2(), Pt = N.PC[N.DL[t].piece]; tot++; if (Math.min(dist[Pt.f], Pt.r !== null ? dist[Pt.r] : Infinity) < Infinity) ok++; } }
+  tun.routesOkPctWithTunnels = +(ok/tot*100).toFixed(1);
+  for (let i = 0; i < N.OUTS.length; i++) N.OUTS[i] = OUT0[i];
+}
+log('tunnels', JSON.stringify(tun));
 // ---------------------------------------------------------------- summary
 const pc = {}; for (const p of PROB) pc[p.type] = (pc[p.type] || 0) + 1;
 const summary = {city, tag:TAG, dir:D.D, lines:lines.length, drivableKm:+(totLen/1000).toFixed(1), links:N.DL.length, nodes:N.NODE.size, junctionNodes:J.nN,
   weakComponents:wl.size, mainWeakPct:+(wsort[0][1]/totLen*100).toFixed(2), otherComponentsOver1km:bigOther.length, otherKm:+((totLen - wsort[0][1])/1000).toFixed(1),
   mainSccPctApp:+(slA[mainSA]/dirLen*100).toFixed(2), mainSccPct:+(sl[mainS]/dirLen*100).toFixed(2), closedOnewaySets:closedSets, closedOnewayKm:+(closedLen/1000).toFixed(2), sinkLinksInMain:sinkLinks, sourceLinksInMain:srcLinks,
-  deadEnds:DE, onewaySinks:owSink, onewaySources:owSource, crossings:XC, levels:ST, routes:RT, problemCounts:pc, topIslands:bigOther.slice(0, 25)};
+  deadEnds:DE, onewaySinks:owSink, onewaySources:owSource, crossings:XC, levels:ST, movements:MV, routes:RT, tunnels:tun, problemCounts:pc, topIslands:bigOther.slice(0, 25)};
 fs.writeFileSync(path.join(OUT, city + '_' + TAG + '.json'), JSON.stringify({summary, fails:fails.slice(0, 400), problems:PROB}, null, 0));
 console.log(JSON.stringify(summary, null, 1));
 // ---------------------------------------------------------------- maps

@@ -15,9 +15,11 @@ indices, so the base files stay as they are. The pipeline outputs (`*/out/roads.
 | `diag.js` | the diagnostics: components, dead ends (gap / level gap / deck in mid-air / water / tunnel mouth / map edge / chunk seam / service / cul-de-sac), one-way sinks, sources and closed sets, crossings (false junctions, low clearance, missed junctions), level steps at junction vertices, steep jumps, roads at grade in water, height jumps between links, tunnel mouths, offline route tests; JSON + problem maps |
 | `repair.js` | the repair rules R1–R5 (below); every change and every flag in `out/<city>_repair.json` |
 | `zoom.js` | close-ups of the data (lines coloured by deck height, problems ringed) |
+| `simtest.js` | the traffic system itself (traffic.js + roads.js + three.js r128) run in node on the data, no page: per view warm(25) then 8 x warm(10); vehicles, stuck (> 60 s waiting, not at a signal), jumps between samples, off the drawn road surface (`SGRoads.surfaceAt`) |
 | `probe.js` | one short headless check per city (through the browser lock): vehicles move, none stuck, none jumping, none off the drawn road surface; before (live data) and after (stage) in one browser session |
 | `compare.py` | the before / after table |
-| `run_before.sh`, `run_repair.sh`, `run_all.sh` | batches (run through `SC/lm33/kit/heavy.sh`) |
+| `run_before.sh`, `run_repair.sh`, `run_all.sh`, `run_diag.sh`, `run_sim.sh` | batches (run through `SC/lm33/kit/heavy.sh`); `run_probe.sh` (browser lock) |
+| `release.sh` | copies the repaired road files of the stage into `site/` (backups in `road50/backup/`); owner / coordinator only |
 
 Map colours (`out/<city>_<tag>_<district>.png`, 7 km wide): grey = drivable and in the main strongly connected network
 (blue-grey on decks), orange = reachable but a one-way trap / no way back, red = an island (not connected to the main
@@ -63,3 +65,100 @@ Never invents a road: R1 only joins an existing road end to an existing road a f
   read as in the water; no bridge is invented.
 - Widths from `lanes` / `width` tags: the encoded data keeps only the class (widths come from the class tables in roads.js /
   traffic.js); this needs the pipelines re-run with the tags.
+
+## Results (28 Nov 2026, live data vs the test stage)
+
+Routes: 2000 origin / destination pairs per city (40 x 50, by road length; the same points before and after, snapped to the nearest drivable link), on the traffic network (no U-turns, dead ends are sinks).
+
+| | sg before | sg after | hk before | hk after | nyc before | nyc after |
+|---|---|---|---|---|---|---|
+| weak components | 73 | 69 | 665 | 261 | 262 | 217 |
+| main component % | 98.8 | 98.82 | 70.99 | 82.36 | 98.8 | 98.89 |
+| other comps >= 1 km | 9 | 9 | 85 | 32 | 31 | 26 |
+| km outside main | 57.5 | 56.4 | 1120.2 | 681.2 | 313.7 | 289.9 |
+| main SCC % (traffic) | 85.77 | 86.31 | 43.89 | 54.7 | 89.39 | 89.78 |
+| main SCC % (turn round) | 95.92 | 96.39 | 60.16 | 74.18 | 97.56 | 97.85 |
+| dead ends: gaps <= 12 m | 72 | 36 | 162 | 81 | 298 | 221 |
+|   of which <= 6 m | 48 | 12 | 108 | 27 | 102 | 25 |
+| dead ends: level gaps | 22 | 9 | 1534 | 608 | 390 | 184 |
+| dead ends: decks in mid-air | 6 | 6 | 116 | 109 | 80 | 77 |
+| dead ends: one-way | 281 | 246 | 1575 | 905 | 777 | 630 |
+| dead ends: tunnel mouths | 102 | 102 | 0 | 0 | 87 | 87 |
+| dead ends: map edge / chunk | 0 | 0 | 0 | 0 | 945 | 943 |
+| level steps at junction vertices | 29 | 12 | 1270 | 398 | 478 | 182 |
+|   steps > 15 m | 2 | 0 | 109 | 83 | 41 | 25 |
+| steep jumps (>12 %, >1 m) | 241 | 114 | 119 | 118 | 649 | 600 |
+| false junctions (bridge at grade) | 8 | 9 | 41 | 46 | 52 | 45 |
+| low clearance crossings | 27 | 25 | 313 | 238 | 834 | 727 |
+| missed junctions | 20 | 15 | 238 | 188 | 644 | 575 |
+| roads at grade in water (> 60 m) | 14 | 14 | 46 | 46 | 32 | 32 |
+| one-way sinks / sources | 32 / 164 | 28 / 165 | 55 / 133 | 51 / 130 | 131 / 657 | 127 / 603 |
+| closed one-way sets | 2 | 2 | 12 | 9 | 33 | 22 |
+| vertical jumps between links > 1.5 m | 0 | 0 | 215 | 41 | 30 | 6 |
+| routes OK % (2000 pairs) | 97 | 97.3 | 44.4 | 57 | 98.2 | 98.4 |
+|   failed: not connected | 31 | 30 | 1029 | 713 | 23 | 20 |
+|   failed: one-way | 28 | 24 | 83 | 146 | 14 | 12 |
+| route detour median | 1.33 | 1.33 | 1.96 | 1.68 | 1.27 | 1.27 |
+
+| | tyo before | tyo after | bay before | bay after | gba before | gba after |
+|---|---|---|---|---|---|---|
+| weak components | 3088 | 1585 | 270 | 210 | 2071 | 815 |
+| main component % | 95.75 | 97.13 | 99.19 | 99.33 | 92.49 | 96.54 |
+| other comps >= 1 km | 119 | 45 | 35 | 28 | 282 | 109 |
+| km outside main | 1901.4 | 1285.2 | 188.2 | 154.9 | 2256.9 | 1040.1 |
+| main SCC % (traffic) | 86.36 | 88.4 | 81.05 | 81.39 | 71.23 | 77.57 |
+| main SCC % (turn round) | 94.81 | 95.79 | 98.15 | 98.39 | 85.66 | 90.99 |
+| dead ends: gaps <= 12 m | 2576 | 1646 | 420 | 363 | 1622 | 755 |
+|   of which <= 6 m | 1199 | 258 | 115 | 61 | 1309 | 441 |
+| dead ends: level gaps | 8811 | 3627 | 320 | 145 | 5545 | 1774 |
+| dead ends: decks in mid-air | 344 | 286 | 67 | 67 | 280 | 265 |
+| dead ends: one-way | 3891 | 2697 | 550 | 474 | 6283 | 3400 |
+| dead ends: tunnel mouths | 0 | 0 | 50 | 50 | 0 | 0 |
+| dead ends: map edge / chunk | 1627 | 1613 | 478 | 477 | 7 | 5 |
+| level steps at junction vertices | 4949 | 1657 | 388 | 138 | 3608 | 917 |
+|   steps > 15 m | 292 | 218 | 41 | 35 | 297 | 205 |
+| steep jumps (>12 %, >1 m) | 996 | 565 | 275 | 249 | 143 | 131 |
+| false junctions (bridge at grade) | 221 | 210 | 5 | 6 | 88 | 96 |
+| low clearance crossings | 2482 | 1708 | 451 | 389 | 1616 | 1214 |
+| missed junctions | 2975 | 2408 | 283 | 247 | 1548 | 1181 |
+| roads at grade in water (> 60 m) | 398 | 397 | 27 | 27 | 1162 | 1162 |
+| one-way sinks / sources | 106 / 1020 | 86 / 945 | 42 / 324 | 33 / 302 | 181 / 577 | 160 / 578 |
+| closed one-way sets | 55 | 25 | 15 | 11 | 28 | 16 |
+| vertical jumps between links > 1.5 m | 564 | 177 | 7 | 6 | 472 | 100 |
+| routes OK % (2000 pairs) | 94.8 | 95.8 | 98.7 | 99 | 79.1 | 86 |
+|   failed: not connected | 94 | 66 | 20 | 15 | 305 | 175 |
+|   failed: one-way | 11 | 18 | 6 | 6 | 113 | 105 |
+| route detour median | 1.18 | 1.16 | 1.26 | 1.26 | 1.31 | 1.28 |
+
+Changed lines and changes per rule:
+
+- sg repair: changed lines 199 changes {'R3': 88, 'R1': 34, 'R4': 1, 'R5': 73}
+- hk repair: changed lines 2153 changes {'R3': 2782, 'R1': 72, 'R5': 12}
+- nyc repair: changed lines 1546 changes {'R3': 1610, 'R1': 70, 'R4': 6, 'R5': 31}
+- tyo repair: changed lines 12579 changes {'R3': 16623, 'R1': 750, 'R4': 4, 'R5': 250}
+- bay repair: changed lines 1214 changes {'R3': 1231, 'R1': 101, 'R5': 16}
+- gba repair: changed lines 9515 changes {'R3': 10400, 'R1': 1060, 'R5': 28}
+
+### Traffic run (simtest.js: traffic.js + roads.js in node, flat ground, warm 25 s + 8 x 10 s sampled; Math.random, so runs differ a little)
+
+| city | view | vehicles b/a | teleports b/a | off surface b/a | waiting>60s (not at signal) b/a | waiting>100s at end b/a | avg speed b/a |
+|---|---|---|---|---|---|---|---|
+| sg | cbd | 1696 / 1692 | 0 / 0 | 0 (0%) / 0 (0%) | 15 / 8 | 0 / 0 | 5.2 / 5.4 |
+| sg | repairs | 521 / 522 | 0 / 0 | 1 (0.02%) / 1 (0.02%) | 21 / 24 | 0 / 0 | 5.7 / 5.1 |
+| hk | kowloon | 1640 / 1625 | 0 / 0 | 16 (0.12%) / 0 (0%) | 6 / 3 | 0 / 0 | 6.3 / 6.3 |
+| hk | central | 1340 / 1342 | 0 / 0 | 17 (0.16%) / 23 (0.22%) | 5 / 7 | 0 / 0 | 5.3 / 5 |
+| nyc | midtown | 1843 / 1843 | 0 / 0 | 2 (0.01%) / 0 (0%) | 3 / 0 | 0 / 0 | 4.4 / 4.4 |
+| nyc | repairs | 1742 / 1747 | 0 / 0 | 0 (0%) / 1 (0.01%) | 0 / 1 | 0 / 0 | 6.2 / 5.9 |
+| tyo | chiyoda | 2054 / 2075 | 0 / 0 | 59 (0.36%) / 49 (0.3%) | 36 / 44 | 0 / 0 | 5.3 / 5.2 |
+| tyo | repairs | 1260 / 1258 | 0 / 0 | 1 (0.01%) / 1 (0.01%) | 3 / 4 | 0 / 0 | 5.1 / 5.4 |
+| bay | sf | 2016 / 2009 | 0 / 0 | 3 (0.02%) / 10 (0.06%) | 2 / 4 | 0 / 0 | 5.9 / 5.8 |
+| bay | oakland | 1905 / 1908 | 0 / 0 | 1 (0.01%) / 1 (0.01%) | 3 / 3 | 0 / 0 | 6.8 / 6.8 |
+| gba | futian | 2007 / 2008 | 0 / 0 | 0 (0%) / 0 (0%) | 11 / 21 | 0 / 0 | 6.1 / 6 |
+| gba | repairs | 1167 / 1167 | 0 / 0 | 8 (0.09%) / 0 (0%) | 7 / 7 | 0 / 0 | 8 / 8.1 |
+
+## Release
+
+1. (optional) rebuild the stage from the live data: `bash SC/lm33/kit/heavy.sh src/road50/run_all.sh` (about 15 min; stage in `SC/road50/stage/<city>data/`).
+2. `bash src/road50/release.sh sg hk nyc tyo bay` (copies the five road files into `site/<city>data/`, originals to `src/road50/backup/`), then deploy as usual. No page rebuild is needed for the data.
+3. Greater Bay, only after the Guangzhou extension has re-staged `site/gbadata/`: `STAGE=SC/road50/stage CITIES=gba bash SC/lm33/kit/heavy.sh src/road50/run_repair.sh`, check `out/gba_after.json`, then `bash src/road50/release.sh gba`.
+4. `lm20/traffic/traffic.js` only gained the test helper `SGTraffic.poses()` (backup `traffic.js.v48.bak`); it reaches the pages with the next `patch17.py` build. `roads.js` is unchanged.

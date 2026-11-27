@@ -425,7 +425,7 @@ place('nyoneliberty');
 // travertine plaza on Broadway. On the plaza's north side Isamu Noguchi's Red Cube: a vermilion rhombohedron 8.5 m (28 ft) tall
 // standing on one corner, pierced by a cylindrical hole (enwiki); placed at the OSM artwork node "Red Cube". Night: lit offices.
 // Frame: rot -36.9 deg; -x = Broadway (the plaza), +x = Nassau Street, -z = Liberty Street, +z = Cedar Street.
-LANDMARKS.ny140broadway = {zh:'百老汇140号', en:'140 Broadway', cat:'new', r:40, h:210,
+LANDMARKS.ny140broadway = {zh:'百老汇140号', en:'140 Broadway', cat:'new', r:51, h:210,
   lt:{m:1, c:'#eef3ff', k:0.45}, build(){
   const g = new THREE.Group(), B = mkB(), D = FD.ny140broadway;
   const gl = {c:'#20252a', m:1, fh:3.9, cw:1.56}, mul = {c:'#3e454c', m:0, lk:0.35}, lob = {c:'#3f4a53', glow:'#fff2dc', gk:0.45}, roof = {c:'#5d6165', m:0, lk:0.2};
@@ -1001,7 +1001,7 @@ place('nystuyvesanths');
 // (colour not stated except the yellow north elevation - buff here, estimate) to the 23rd, cornices at the 23rd, terracotta and
 // arcaded windows on floors 24-30, penthouses behind a balustrade on the 31st, a rounded pediment facing south.
 // Night: lit offices, the cornices floodlit. Frames: rot -16 deg; -x = West Street, +z = Battery Place (south).
-LANDMARKS.nywhitehallbldg = {zh:'白厅大厦', en:'Whitehall Building', cat:'old', r:30, h:79,
+LANDMARKS.nywhitehallbldg = {zh:'白厅大厦', en:'Whitehall Building', cat:'old', r:33, h:79,
   lt:{m:1, c:'#ffeccc', k:0.55}, build(){
   const g = new THREE.Group(), B = mkB(), D = FD.nywhitehallbldg;
   const yel = {c:'#cfb68a', m:1, fh:3.7, cw:1.4}, red = {c:'#9b4936', m:1, fh:3.7, cw:1.4}, tan = {c:'#c4ab86', m:1, fh:3.7, cw:1.4}, lim = {c:'#cdc5b3', m:0, lk:1.0};
@@ -1023,7 +1023,7 @@ LANDMARKS.nywhitehallbldg = {zh:'白厅大厦', en:'Whitehall Building', cat:'ol
   B.flush(g);
   return g; }};
 place('nywhitehallbldg');
-LANDMARKS.nywhitehallbldg_b = {zh:'白厅大厦附楼', en:'Whitehall Building Annex', cat:'old', r:56, h:129, label:false,
+LANDMARKS.nywhitehallbldg_b = {zh:'白厅大厦附楼', en:'Whitehall Building Annex', cat:'old', r:58, h:129, label:false,
   lt:{m:1, c:'#ffeccc', k:0.55}, build(){
   const g = new THREE.Group(), B = mkB(), D = FD.nywhitehallbldg_b;
   const br = {c:'#c3a882', m:1, fh:3.9, cw:1.4}, lim = {c:'#cdc5b3', m:0, lk:1.0}, tc = {c:'#dccbab', m:1, fh:3.9, cw:1.4}, tc2 = {c:'#e3d4b8', m:0, lk:1.1, glow:'#ffecc8', gk:0.1};

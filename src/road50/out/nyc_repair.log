@@ -1,3 +1,5 @@
 [1.2s] nyc lines 370838
 [13.5s] R3 pass 0 conflicts 1718 fixed 505
 [24.0s] R3 pass 1 conflicts 998 fixed 109
+[37.3s] R3 pass 2 conflicts 852 fixed 16
+[37.3s] R3: conflicts 1718 fixed 630 flagged 824

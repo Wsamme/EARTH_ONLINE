@@ -7,7 +7,7 @@
    - Fresnel (Schlick, F0 = 0.02 for water) between the water body colour (the light module's palette) and the reflection;
    - reflection: the analytic sky of the light module along the wave-perturbed reflected ray, plus (quality 1 / 2) a planar mirror pass
      of the scene at reduced resolution (skyline, hills, ships, the city's night lights), distorted by the wave slopes; the sky in that
-     pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, roads, vehicles and small buildings are left
+     pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, minor roads, vehicles and small buildings are left
      out of the mirror pass, it looks at most 2.5-7 km far, shadows are not re-rendered for it, it is re-rendered only every 3rd
      frame while the camera is still, and it is skipped when no water is on screen or the camera is high;
    - sun / moon glint: GGX (Trowbridge-Reitz) lobe with the Smith visibility term and Fresnel at the half vector;
@@ -141,7 +141,7 @@ if (r5On > 0.5){
   float wFH = 0.02 + 0.98*pow(1.0 - max(dot(wV, wH), 0.0), 5.0);
   vec3 wSpec = lgGlintC*min(wDg*wVis*wFH*wNL*r5SunK, 24.0)*smoothstep(-0.02, 0.05, wL.y);
   // body colour: the palette's sea colour was tuned to stand in for the missing reflection; light coming up out of the water is darker
-  vec3 wBody = outgoingLight*0.62;
+  vec3 wBody = outgoingLight*0.8;
   vec3 wCol = mix(wBody, wEnv, wF) + wSpec;
   // foam: a thin broken line at the coast, moving with the waves (weaker in calm water and at night by the body colour)
   if (r5CoastOn > 0.5 && r5FoamK > 0.0 && wC < 40.0){
@@ -205,7 +205,7 @@ function r5Hide(on){
     if ((!R5.traffic || !R5.traffic.parent) && (R5.ran % 120) === 0) R5.traffic = scene.getObjectByName('traffic') || null;   // vehicles: tiny in the mirror
     push(R5.traffic);
     if (typeof SGR !== 'undefined' && SGR.tiles) for (const T of SGR.tiles.values()){
-      push(T.trees); if (T.road){ push(T.road.minor); push(T.road.paths); push(T.road.major); }   // flat: their mirror image is a sliver
+      push(T.trees); if (T.road){ push(T.road.minor); push(T.road.paths); }   // flat streets: their mirror image is a sliver (major roads stay: bridges, flyovers)
       if (T.bld) push(T.bld.small);
     }
     if (typeof forestMesh !== 'undefined') push(forestMesh);

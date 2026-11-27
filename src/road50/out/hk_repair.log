@@ -1,17 +1,8 @@
-[0.5s] hk lines 128993
-/home/claude/earth_online/src/road50/repair.js:117
-    for (let k = 0; k < m; k++){ const key = qkey(Math.round(g.Q[k*2]/2), Math.round(g.Q[k*2+1]/2)); let a = at.get(key); if (!a) at.set(key, a = []); a.push({li, k, end:(k === 0 || k === m - 1)}); } }
-                                             ^
-
-ReferenceError: Cannot access 'qkey' before initialization
-    at levelConflicts (/home/claude/earth_online/src/road50/repair.js:117:46)
-    at Object.<anonymous> (/home/claude/earth_online/src/road50/repair.js:142:16)
-    at Module._compile (node:internal/modules/cjs/loader:1781:14)
-    at Object..js (node:internal/modules/cjs/loader:1913:10)
-    at Module.load (node:internal/modules/cjs/loader:1505:32)
-    at Function._load (node:internal/modules/cjs/loader:1309:12)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
-    at node:internal/main/run_main_module:36:49
-
-Node.js v22.23.4
+[0.6s] hk lines 128993
+[4.9s] R3 pass 0 conflicts 2092 fixed 934
+[9.7s] R3 pass 1 conflicts 1105 fixed 324
+[14.8s] R3 pass 2 conflicts 764 fixed 106
+[14.8s] R3: conflicts 2092 fixed 1364 flagged 606
+[18.2s] R1/R2: dead ends 4259 joined 68 inserted vertices 12 flagged 519
+[18.8s] R4: low crossings 88 raised bridges 0 flagged 88
+[18.9s] R5: steep lines 34 re-graded 14 flagged 20

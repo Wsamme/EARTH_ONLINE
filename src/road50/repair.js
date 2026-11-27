@@ -122,7 +122,7 @@ function levelConflicts(){
   const seen = new Set();
   for (const [key, A] of at){ if (A.length < 2) continue;
     for (let i = 0; i < A.length; i++) for (let j = i + 1; j < A.length; j++){ const p = A[i], q = A[j]; if (p.li === q.li) continue;
-      const ep = eAt(G[p.li], p.k), eq = eAt(G[q.li], q.k), d = Math.abs(ep - eq); if (d <= 1.2 || d > 15) continue;
+      const ep = eAt(G[p.li], p.k), eq = eAt(G[q.li], q.k), d = Math.abs(ep - eq); if (d <= 1.2 || d > 40) continue;
       const H = ep > eq ? p : q, Lo = ep > eq ? q : p, gH = G[H.li];
       const sk = H.li + ':' + Lo.li + ':' + key; if (seen.has(sk)) continue; seen.add(sk);
       out.push({H:H.li, Lo:Lo.li, sH:null, kH:H.k, kLo:Lo.k, endH:H.end, endLo:Lo.end, eH:Math.max(ep, eq), eL:Math.min(ep, eq), x:qx(gH, H.k), y:qy(gH, H.k)}); } }
@@ -133,19 +133,19 @@ function levelConflicts(){
         for (let j = 0; j + 1 < m2; j++){ const ax = qx(h, j), ay = qy(h, j), ex = qx(h, j+1) - ax, ey = qy(h, j+1) - ay, L2 = ex*ex + ey*ey; if (L2 < 1e-6) continue;
           const u = ((x - ax)*ex + (y - ay)*ey)/L2; if (u <= 0.0 || u >= 1.0) continue; if (Math.hypot(ax + ex*u - x, ay + ey*u - y) > 0.6) continue;
           if (Math.hypot(ex, ey)*Math.min(u, 1 - u) < 0.3) continue;                 // at its vertex: done above
-          const e2 = eAt(h, j) + (eAt(h, j+1) - eAt(h, j))*u, d = Math.abs(e - e2); if (d <= 1.2 || d > 15) continue;
+          const e2 = eAt(h, j) + (eAt(h, j+1) - eAt(h, j))*u, d = Math.abs(e - e2); if (d <= 1.2 || d > 40) continue;
           if (e > e2) out.push({H:li, Lo:l2, kH:k, endH:true, endLo:false, segLo:[j, u], eH:e, eL:e2, x, y});
           else out.push({H:l2, Lo:li, segH:[j, u], endH:false, kLo:k, endLo:true, eH:e2, eL:e, x, y});
         } } } }
   return out;
 }
 // a height cone from (li, s0, v0) with grade gr, propagated into the lines joined at the same level (shared vertices) wherever it changes
-// a height: 'pin' lowers (min), 'raise' lifts (max). Returns Map li -> new E array, or null if it spreads over more than 40 lines.
+// a height: 'pin' lowers (min), 'raise' lifts (max). Returns Map li -> new E array, or null if it spreads over more than 120 lines.
 function cone(li0, s00, v0, mode, gr, shifted){
   const res = new Map(), q = [[li0, s00, v0]], visits = new Map();
   while (q.length){
     const [li, sb, vb] = q.shift(); const n = (visits.get(li) || 0) + 1; visits.set(li, n); if (n > 4) continue;
-    if (res.size > 40) return null;
+    if (res.size > 120) return null;
     const g = G[li], s = arcS(g), E0 = g.E || new Array(nv(g)).fill(0), E = res.get(li) || E0.slice();
     for (let k = 0; k < nv(g); k++){
       const c = Math.max(0, vb + gr*Math.abs(s[k] - sb));
@@ -195,13 +195,18 @@ if (RULES.has('R3')){
       if (Math.abs(eHn - eLn) <= 1.2) continue;
       const key = f.Lo + ':' + Math.round(f.x) + ':' + Math.round(f.y), keyH = f.H + ':' + Math.round(f.x) + ':' + Math.round(f.y);
       const allow = k => k === key || k === keyH || k.endsWith(':' + Math.round(f.x) + ':' + Math.round(f.y));
-      const brH = (lines[f.H].flags & 2) !== 0;
-      let mode, li, g, s, s0, tgt;
-      if (!brH || f.endH){ mode = 'pin'; li = f.H; g = gH; s = sH; s0 = s0H; tgt = eLn; }
-      else if (f.endLo){ mode = 'raise'; li = f.Lo; g = gL; s = sL; s0 = s0L; tgt = eHn; }
-      else { if (pass === 0) flg('R3', f.x, f.y, {li:f.H, to:f.Lo, dE:+(eHn - eLn).toFixed(1), why:'bridge deck shares a node mid-span with a road below'}); continue; }
-      let done = false;
-      for (const gr of [0.055, 0.08, 0.12]){
+      const brH = (lines[f.H].flags & 2) !== 0, brL = (lines[f.Lo].flags & 2) !== 0, dEc = eHn - eLn;
+      // modes in order of preference: 'pin' = H down to Lo's level; 'raise' = Lo up to H's level (an approach ramp off a deck)
+      const PIN = {mode:'pin', li:f.H, g:gH, s:sH, s0:s0H, tgt:eLn}, RAISE = {mode:'raise', li:f.Lo, g:gL, s:sL, s0:s0L, tgt:eHn};
+      let modes;
+      if (!brH) modes = [PIN, RAISE];                                     // H's height is a pipeline ramp lift
+      else if (brL) modes = f.endH ? [PIN, RAISE] : f.endLo ? [RAISE, PIN] : [];
+      else if (dEc > 8) modes = [RAISE, PIN];                             // a high deck: keep the deck, lift the approach
+      else modes = f.endH ? [PIN, RAISE] : f.endLo ? [RAISE] : [RAISE];
+      if (!modes.length){ if (pass === 0) flg('R3', f.x, f.y, {li:f.H, to:f.Lo, dE:+dEc.toFixed(1), why:'bridge decks share a node mid-span'}); continue; }
+      let done = false, mode, li;
+      for (const M of modes){ if (done) break; let g, s, s0, tgt; ({mode, li, g, s, s0, tgt} = M);
+      for (const gr of [0.055, 0.08, 0.10]){
         // a contact on a segment: put a vertex there so the height is exact
         let Qn = null; const seg = mode === 'pin' ? f.segH : f.segLo, Eg = g.E || new Array(nv(g)).fill(0);
         let sStart = s0;
@@ -209,7 +214,7 @@ if (RULES.has('R3')){
         const CHG = (() => { if (!Qn) return cone(li, sStart, tgt, mode, gr, shifted);
           const sv = {Q:g.Q, E:g.E}; g.Q = Qn; g.E = Eg.slice(); g.E.splice(seg[0] + 1, 0, Eg[seg[0]] + (Eg[seg[0]+1] - Eg[seg[0]])*seg[1]);
           try { return cone(li, arcS(g)[seg[0] + 1], tgt, mode, gr, new Set([...shifted, li])); } finally { g.Q = sv.Q; g.E = sv.E; } })();
-        if (!CHG){ LASTWHY = 'spreads over > 40 lines'; continue; }
+        if (!CHG){ LASTWHY = 'spreads over > 120 lines'; continue; }
         if (!keepsAll(CHG, allow, li, Qn)) continue;
         let mx = 0;
         for (const [l2, En] of CHG){ const g2 = G[l2], E0 = g2.E || new Array(nv(g2)).fill(0); if (l2 === li && Qn){ g2.Q = Qn; shifted.add(li); }
@@ -218,7 +223,8 @@ if (RULES.has('R3')){
         if (CHG.size > 1) for (const l2 of CHG.keys()) shifted.add(l2);         // their vertex lists are unchanged, but keep the pass simple
         done = true; fixed++; break;
       }
-      if (!done && pass === 2) flg('R3', f.x, f.y, {li, to:mode === 'pin' ? f.Lo : f.H, dE:+(eHn - eLn).toFixed(1), mode, why:'12 % ramp ' + LASTWHY, key:LASTKEY});
+      }
+      if (!done && pass === 2) flg('R3', f.x, f.y, {li, to:mode === 'pin' ? f.Lo : f.H, dE:+(eHn - eLn).toFixed(1), mode, why:'10 % ramp ' + LASTWHY, key:LASTKEY});
     }
     nFix += fixed; log('R3 pass', pass, 'conflicts', CF.length, 'fixed', fixed);
   }

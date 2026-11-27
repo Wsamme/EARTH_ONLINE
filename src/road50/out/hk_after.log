@@ -1,22 +1,435 @@
-node:fs:560
-  return binding.open(
-                 ^
-
-Error: ENOENT: no such file or directory, open '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata/hk_base.bin'
-    at Object.openSync (node:fs:560:18)
-    at Object.readFileSync (node:fs:444:35)
-    at readGz (/home/claude/earth_online/src/road50/lib.js:16:16)
-    at Object.loadCity (/home/claude/earth_online/src/road50/lib.js:33:27)
-    at Object.<anonymous> (/home/claude/earth_online/src/road50/diag.js:16:15)
-    at Module._compile (node:internal/modules/cjs/loader:1781:14)
-    at Object..js (node:internal/modules/cjs/loader:1913:10)
-    at Module.load (node:internal/modules/cjs/loader:1505:32)
-    at Function._load (node:internal/modules/cjs/loader:1309:12)
-    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19) {
-  errno: -2,
-  code: 'ENOENT',
-  syscall: 'open',
-  path: '/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata/hk_base.bin'
+[0.2s] hk lines 128993
+[2.2s] prep: junction nodes 60609
+[2.4s] traffic network: links 41390 pieces 30634 nodes 23603 movements 61141
+[3.0s] weak components 212 main 82.7% others >=1 km 30 | SCC main 69.8%
+[3.4s] dead ends {"total":4199,"tunnel":0,"edge":0,"chunk":0,"gap3":25,"gap6":1,"gap12":53,"levelgap":508,"service":903,"deckend":131,"water":17,"culdesac":2561,"oneway":828} sinks 49 sources 133
+[3.6s] crossings {"falsejunc":46,"lowclear":213,"missedjunc":182,"overpass":2463,"atgrade":3471}
+[3.7s] levels / water {"step1_3":17,"step3_15":227,"step15":61,"steep":85,"inwater":46,"inwaterM":4331,"shortdeck":9}
+[4.0s] routes {"pairs":2000,"ok":1070,"fail":930,"failIsland":713,"failOneway":217,"detourMed":1.67,"detour3":47,"far":1057,"okPct":53.5}
+[4.1s] movements {"moves":61141,"zjump1_5":12,"zjump5":11,"xyFar":0}
+[4.2s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+{
+ "city": "hk",
+ "tag": "after",
+ "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata",
+ "lines": 128993,
+ "drivableKm": 3860.7,
+ "links": 41390,
+ "nodes": 23603,
+ "junctionNodes": 60609,
+ "weakComponents": 212,
+ "mainWeakPct": 82.7,
+ "otherComponentsOver1km": 30,
+ "otherKm": 667.8,
+ "mainSccPctApp": 51.45,
+ "mainSccPct": 69.76,
+ "closedOnewaySets": 9,
+ "closedOnewayKm": 5.43,
+ "sinkLinksInMain": 309,
+ "sourceLinksInMain": 364,
+ "deadEnds": {
+  "total": 4199,
+  "tunnel": 0,
+  "edge": 0,
+  "chunk": 0,
+  "gap3": 25,
+  "gap6": 1,
+  "gap12": 53,
+  "levelgap": 508,
+  "service": 903,
+  "deckend": 131,
+  "water": 17,
+  "culdesac": 2561,
+  "oneway": 828
+ },
+ "onewaySinks": 49,
+ "onewaySources": 133,
+ "crossings": {
+  "falsejunc": 46,
+  "lowclear": 213,
+  "missedjunc": 182,
+  "overpass": 2463,
+  "atgrade": 3471
+ },
+ "levels": {
+  "step1_3": 17,
+  "step3_15": 227,
+  "step15": 61,
+  "steep": 85,
+  "inwater": 46,
+  "inwaterM": 4331,
+  "shortdeck": 9
+ },
+ "movements": {
+  "moves": 61141,
+  "zjump1_5": 12,
+  "zjump5": 11,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1070,
+  "fail": 930,
+  "failIsland": 713,
+  "failOneway": 217,
+  "detourMed": 1.67,
+  "detour3": 47,
+  "far": 1057,
+  "okPct": 53.5
+ },
+ "tunnels": {
+  "portals": 0,
+  "pairs": 0,
+  "unmatched": 0
+ },
+ "problemCounts": {
+  "island": 30,
+  "oneway_trap": 9,
+  "oneway_noentry": 2,
+  "source": 133,
+  "dead_levelgap": 508,
+  "dead_gap12": 53,
+  "dead_gap3": 25,
+  "dead_gap6": 1,
+  "dead_deckend": 122,
+  "dead_water": 17,
+  "dead_shortdeck": 9,
+  "sink": 49,
+  "lowclear": 213,
+  "falsejunc": 46,
+  "missedjunc": 182,
+  "step": 305,
+  "inwater": 46,
+  "steep": 85,
+  "zjump": 12
+ },
+ "topIslands": [
+  {
+   "len": 496491,
+   "x": 6069,
+   "y": -7389,
+   "cls": 0,
+   "names": [
+    "Wong Chuk Hang Road",
+    "Peak Road",
+    "Connaught Road Central",
+    "Cotton Tree Drive"
+   ]
+  },
+  {
+   "len": 16121,
+   "x": -10786,
+   "y": -4279,
+   "cls": 6,
+   "names": [
+    "Seabee Lane",
+    "Seahorse Lane",
+    "Marina Drive",
+    "Caperidge Drive"
+   ]
+  },
+  {
+   "len": 15680,
+   "x": -9433,
+   "y": -14682,
+   "cls": 10,
+   "names": [
+    "San Hing Street",
+    "Tung Wan Road",
+    "Hing Lung Main Street",
+    "Hing Lung Back Street"
+   ]
+  },
+  {
+   "len": 12842,
+   "x": -14397,
+   "y": -3915,
+   "cls": 6,
+   "names": [
+    "Cheung Tung Road Access Road",
+    "Cheung Tung Road",
+    "Sham Shui Kok Drive",
+    "Hong Kong Olympic Trail"
+   ],
+   "gap": {
+    "d": 9.4,
+    "x": -17813,
+    "y": -5680,
+    "e": 0,
+    "e2": 0,
+    "li": 106231,
+    "to": 94826
+   }
+  },
+  {
+   "len": 9305,
+   "x": -23638,
+   "y": -5937,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ],
+   "gap": {
+    "d": 66.2,
+    "x": -19309,
+    "y": -5273,
+    "e": 15.6,
+    "e2": 0,
+    "li": 116827,
+    "to": 100007
+   }
+  },
+  {
+   "len": 9292,
+   "x": -23641,
+   "y": -5923,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ],
+   "gap": {
+    "d": 46.1,
+    "x": -19322,
+    "y": -5242,
+    "e": 15.6,
+    "e2": 0,
+    "li": 116822,
+    "to": 100007
+   }
+  },
+  {
+   "len": 6773,
+   "x": -11978,
+   "y": 4009,
+   "cls": 8,
+   "names": [
+    "So Kwun Wat Road",
+    "Kwun Chui Road",
+    "So Kwun Wat Tsuen Road"
+   ],
+   "gap": {
+    "d": 12.3,
+    "x": -12679,
+    "y": 3862,
+    "e": 0,
+    "e2": 0,
+    "li": 110007,
+    "to": 88130
+   }
+  },
+  {
+   "len": 5924,
+   "x": -17557,
+   "y": -2593,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -17128,
+    "y": -2904,
+    "e": 0,
+    "e2": 6.6,
+    "li": 117168,
+    "to": 98481
+   }
+  },
+  {
+   "len": 5898,
+   "x": -9059,
+   "y": -9399,
+   "cls": 10,
+   "names": [
+    "Hei Ling Chau Road"
+   ]
+  },
+  {
+   "len": 4914,
+   "x": -19086,
+   "y": -11768,
+   "cls": 10,
+   "names": [
+    "Tong Fuk Catchwater"
+   ]
+  },
+  {
+   "len": 4743,
+   "x": -213,
+   "y": -12843,
+   "cls": 10,
+   "names": [
+    "Power Station Road"
+   ]
+  },
+  {
+   "len": 4238,
+   "x": -8468,
+   "y": -6008,
+   "cls": 10,
+   "names": [
+    "Lo Peng Street",
+    "Chi Yan Street",
+    "Wing On Side Street",
+    "Fu Peng Street"
+   ]
+  },
+  {
+   "len": 4099,
+   "x": -10855,
+   "y": 15310,
+   "cls": 10,
+   "names": [
+    "Border Fence Road"
+   ]
+  },
+  {
+   "len": 4074,
+   "x": -13513,
+   "y": -15916,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 3435,
+   "x": -6109,
+   "y": 1186,
+   "cls": 1,
+   "names": [
+    "Ma Wan Road",
+    "Pak Lai Road",
+    "Pak Lam Road",
+    "Fong Yuen Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -6076,
+    "y": 987,
+    "e": 2.8,
+    "e2": 26,
+    "li": 102073,
+    "to": 102077
+   }
+  },
+  {
+   "len": 2705,
+   "x": -17868,
+   "y": 17219,
+   "cls": 4,
+   "names": [
+    "Wanghai Road"
+   ]
+  },
+  {
+   "len": 2690,
+   "x": -17882,
+   "y": 17244,
+   "cls": 4,
+   "names": [
+    "Wanghai Road"
+   ]
+  },
+  {
+   "len": 2433,
+   "x": -9876,
+   "y": 2553,
+   "cls": 10,
+   "names": [
+    "Tai Lam Chung Catchwater Section J"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -10028,
+    "y": 2676,
+    "e": 0,
+    "e2": 5.6,
+    "li": 49310,
+    "to": 49279
+   }
+  },
+  {
+   "len": 1976,
+   "x": 13127,
+   "y": -4941,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1609,
+   "x": -17990,
+   "y": 17403,
+   "cls": 0,
+   "names": [
+    "Shenzhen Bay Bridge",
+    "Kong Sham Western Highway"
+   ]
+  },
+  {
+   "len": 1597,
+   "x": -10102,
+   "y": 13624,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 74.6,
+    "x": -10364,
+    "y": 13552,
+    "e": 0,
+    "e2": 0,
+    "li": 90562,
+    "to": 91616
+   }
+  },
+  {
+   "len": 1587,
+   "x": -11120,
+   "y": -5728,
+   "cls": 10,
+   "names": [
+    "Discovery Peak Road"
+   ]
+  },
+  {
+   "len": 1426,
+   "x": -19569,
+   "y": -7321,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1416,
+   "x": 578,
+   "y": 1194,
+   "cls": 1,
+   "names": [],
+   "gap": {
+    "d": 0,
+    "x": 903,
+    "y": 1677,
+    "e": 18.6,
+    "e2": 0,
+    "li": 88278,
+    "to": 97234
+   }
+  },
+  {
+   "len": 1276,
+   "x": -1876,
+   "y": 17151,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 0.3,
+    "x": -1642,
+    "y": 17251,
+    "e": 5,
+    "e2": 0,
+    "li": 89852,
+    "to": 124085
+   }
+  }
+ ]
 }
-
-Node.js v22.23.4
+[4.4s] map /home/claude/earth_online/src/road50/out/hk_after_central.png
+[4.7s] map /home/claude/earth_online/src/road50/out/hk_after_kowloon.png
+[4.8s] map /home/claude/earth_online/src/road50/out/hk_after_shatin.png

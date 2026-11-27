@@ -73,7 +73,16 @@ const compInfo = new Map();
 for (const P of N.PC){ const r = W[P.f]; if (r === mainW) continue; let o = compInfo.get(r); if (!o){ o = {len:0, x:0, y:0, n:0, cls:99, names:new Set()}; compInfo.set(r, o); }
   const L = lines[P.li], p = N.posAt(P.li, (P.a + P.b)/2); o.len += pieceLen(P); o.x += p[0]; o.y += p[1]; o.n++; if (L.c < o.cls) o.cls = L.c; if (L.name && L.name[0] && o.names.size < 4) o.names.add(L.name[0]); }
 const bigOther = [...compInfo.values()].filter(o => o.len >= 1000).sort((a, b) => b.len - a.len).map(o => ({len:Math.round(o.len), x:Math.round(o.x/o.n), y:Math.round(o.y/o.n), cls:o.cls, names:[...o.names]}));
-for (const o of bigOther.slice(0, 200)) prob('island', o.x, o.y, {len:o.len, cls:o.cls, names:o.names});
+// where each island comes closest to the main component: the nearest main-component road to any of its piece ends (<= 80 m)
+{ const mainLines = new Set(); for (const P of N.PC) if (W[P.f] === mainW) mainLines.add(P.li);
+  segsInGrid((li, L) => mainLines.has(li));
+  const isl = new Map(); for (const P of N.PC){ const r = W[P.f]; if (r === mainW) continue; const o = compInfo.get(r); if (!o || o.len < 1000) continue; let a = isl.get(r); if (!a) isl.set(r, a = []); a.push(P); }
+  for (const [r, Ps] of isl){ const o = compInfo.get(r); let best = null;
+    for (const P of Ps) for (const s of [P.a, P.b]){ const p = N.posAt(P.li, s), e = N.eAtS(P.li, s), nb = nearestSeg(p[0], p[1], 80, l2 => !mainLines.has(l2));
+      if (nb && (!best || nb[0] < best.d)) best = {d:nb[0], x:p[0], y:p[1], e, e2:nb[4], li:P.li, to:nb[1], tunnel:!!(lines[P.li].flags & 192)}; }
+    o.gap = best ? {d:+best.d.toFixed(1), x:Math.round(best.x), y:Math.round(best.y), e:+best.e.toFixed(1), e2:+best.e2.toFixed(1), li:best.li, to:best.to} : null; } }
+for (const o of bigOther) { const r = [...compInfo.entries()].find(([k, v]) => Math.round(v.len) === o.len); if (r && r[1].gap) o.gap = r[1].gap; }
+for (const o of bigOther.slice(0, 200)) prob('island', o.x, o.y, {len:o.len, cls:o.cls, names:o.names, gap:o.gap});
 log('weak components', wl.size, 'main', (wsort[0][1]/totLen*100).toFixed(1) + '%', 'others >=1 km', bigOther.length, '| SCC main', (sl[mainS]/dirLen*100).toFixed(1) + '%');
 // closed one-way sets: SCCs (not the main one) with no movement out of them; and those with no movement into them
 const sOut = new Uint8Array(S.nc), sIn = new Uint8Array(S.nc);

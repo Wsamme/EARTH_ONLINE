@@ -16,8 +16,8 @@ const POSES = "    poses:() => VEH.filter(V => V.alive && !V.crash).map(V => { p
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
   const srv = http.createServer((q, r) => {
-    let u = decodeURIComponent(q.url.split('?')[0]).replace(/^\/+/, ''), f = path.join(SITE, u);
-    if (DATA && u.startsWith(DIR + '/')) f = path.join(DATA, u.slice(DIR.length + 1));
+    let u = decodeURIComponent(q.url.split('?')[0]).replace(/^\/+/, ''); const lab = u.split('/')[0]; u = u.slice(lab.length + 1); let f = path.join(SITE, u);
+    if (DATA && lab === 'after' && u.startsWith(DIR + '/')) f = path.join(DATA, u.slice(DIR.length + 1));
     if (APP && /-?app\.js$/.test(u) && !u.includes('/')) f = APP;
     fs.readFile(f, (e, d) => { if (e){ r.writeHead(404); r.end(); return; }
       // the live app has no poses() test helper yet: add it (test only, no behaviour change)
@@ -29,13 +29,15 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const b = await puppeteer.launch({executablePath:'/opt/pw-browsers/chromium-1243/chrome-linux64/chrome', args:['--no-sandbox', '--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'], protocolTimeout:3600000});
   const p = await b.newPage(); await p.setViewport({width:960, height:600});
   const errs = []; p.on('pageerror', e => errs.push('PAGEERR ' + e.message)); p.on('console', m => { const t = m.text(); if (m.type() === 'error' || t.includes('[traffic]')) errs.push(m.type() + ' ' + t.slice(0, 300)); });
-  const t0 = Date.now(), res = {page:PAGE, city:CITY, data:DATA || 'live', app:APP || 'live', views:[]};
-  await p.goto(`http://127.0.0.1:${port}/${PAGE}`);
+  const res = {page:PAGE, city:CITY, data:DATA || 'live', app:APP || 'live', runs:[]};
+  for (const lab of (DATA ? ['before', 'after'] : ['before'])){
+  const t0 = Date.now(), R1 = {label:lab, views:[]}; res.runs.push(R1);
+  await p.goto(`http://127.0.0.1:${port}/${lab}/${PAGE}`);
   for (let k = 0; k < 200; k++){ await sleep(3000);
     const st = await p.evaluate(() => { try { return {on:!!(SGR && SGR.on), lines:SGR.lines ? SGR.lines.length : 0, tiles:SGR.tiles ? SGR.tiles.size : 0}; } catch (e){ return {err:e.message}; } });
     if (k % 10 === 0) console.log('t', ((Date.now() - t0)/1000).toFixed(0), JSON.stringify(st));
     if (st.on && st.lines > 0 && k > 3) break; if (errs.some(e => e.startsWith('PAGEERR'))) break; }
-  res.readyS = Math.round((Date.now() - t0)/1000);
+  R1.readyS = Math.round((Date.now() - t0)/1000);
   for (const [nm, lat, lon] of VIEWS){
     const r = await p.evaluate(async (lat, lon) => {
       const out = {samples:[]};
@@ -60,9 +62,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       } catch (e){ out.err = e.message + ' ' + (e.stack || '').slice(0, 300); }
       return out;
     }, lat, lon);
-    r.name = nm; res.views.push(r); console.log(nm, JSON.stringify(r).slice(0, 600));
+    r.name = nm; R1.views.push(r); console.log(lab, nm, JSON.stringify(r).slice(0, 600));
   }
-  res.errors = errs.slice(0, 30); res.totalS = Math.round((Date.now() - t0)/1000);
+  R1.totalS = Math.round((Date.now() - t0)/1000); R1.errors = errs.splice(0).slice(0, 30);
+  }
   fs.writeFileSync(OUT, JSON.stringify(res, null, 1));
   await b.close(); srv.close();
 })();

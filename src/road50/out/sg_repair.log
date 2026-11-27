@@ -1,9 +1,9 @@
-[0.5s] sg lines 154878
-[1.5s] R3 pass 0 conflicts 107 fixed 16
-[2.0s] R3 pass 1 conflicts 89 fixed 1
-[2.4s] R3 pass 2 conflicts 88 fixed 0
-[2.4s] R3: conflicts 107 fixed 17 flagged 88
-[5.5s] R1/R2: dead ends 2879 joined 35 inserted vertices 7 flagged 19
-[6.1s] R4: low crossings 9 raised bridges 1 flagged 8
-[6.1s] R5: steep lines 124 re-graded 73 flagged 51
-[6.7s] {"city":"sg","src":"/home/claude/earth_online/site/sgdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/sgdata","lines":154878,"changedLines":131,"changes":{"R3":17,"R1":35,"R4":1,"R5":73},"flagged":{"R3: bridge deck shares a node mid#span with a road below":1,"R3: # % ramp loses junction (c#b)":55,"R3: # % ramp loses junction (c#)":32,"R1: level #":15,"R1: level #, bridge / ground":2,"R1: bridge / ground":2,"R4: bridge too short to clear the road below with <= # % ramps":7,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":51},"rules":["R1","R2","R3","R4","R5"],"gap":6}
+[1.5s] sg lines 154878
+[3.7s] R3 pass 0 conflicts 109 fixed 31
+[4.9s] R3 pass 1 conflicts 65 fixed 2
+[5.9s] R3 pass 2 conflicts 63 fixed 0
+[5.9s] R3: conflicts 109 fixed 33 flagged 63
+[9.0s] R1/R2: dead ends 2871 joined 35 inserted vertices 7 flagged 11
+[9.6s] R4: low crossings 10 raised bridges 1 flagged 9
+[9.6s] R5: steep lines 121 re-graded 73 flagged 48
+[10.2s] {"city":"sg","src":"/home/claude/earth_online/site/sgdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/sgdata","lines":154878,"changedLines":202,"changes":{"R3":89,"R1":35,"R4":1,"R5":73},"flagged":{"R3: bridge decks share a node mid#span":1,"R3: # % ramp spreads over > # lines":55,"R3: # % ramp loses junction (c#b)":1,"R3: # % ramp low clearance over c#":4,"R3: # % ramp makes a new junction (c#)":1,"R3: # % ramp loses junction (c#)":1,"R1: level #":8,"R1: bridge / ground":2,"R1: level #, bridge / ground":1,"R4: bridge too short to clear the road below with <= # % ramps":8,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":48},"rules":["R1","R2","R3","R4","R5"],"gap":6}

@@ -2302,6 +2302,10 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   function breakProp(key){ if (PR.broken.has(key)) return null; const P = PR.list.find(q => q.key === key); PR.broken.set(key, SIMT); PR.stamp = -1; return P || null; }
   const API = {
     stats:() => stats(), warm, obstacles, bench, props, breakProp, hit, model:playerModel,
+    // [v47] replace the near model of one vehicle type with another geometry in the same format (position, normal, color, aPaint,
+    // aLight; x forward, y up, origin on the ground at the centre; real metres): used for downloaded glTF vehicles
+    swapModel:(k, geo) => { renderInit(); const R = RN.near[k]; if (!R || !geo) return false; const g = geo.clone(); g.setAttribute('iCol', R.ic); g.computeBoundingSphere();
+      const old = R.mesh.geometry; R.mesh.geometry = g; old.dispose(); return true; },
     toss, get thrown(){ return {launched:THROWN.n, sunk:THROWN.sunk, flying:CRASH.filter(V => V.alive && V.crash.ph !== undefined).length}; },   // [lm27/destruct]
     crashStats:() => ({pairs:CST.pairs, hits:CST.hits, chained:CST.chained, rolls:CST.rolls, ms:+CST.ms.toFixed(3), sliding:CRASH.filter(V => V.alive && V.crash.ph === undefined && Math.hypot(V.crash.vx, V.crash.vy) > 0.5).length}),   // [lm30/phys2]
     get suspend(){ return !!TRF.suspend; }, set suspend(v){ TRF.suspend = !!v; },

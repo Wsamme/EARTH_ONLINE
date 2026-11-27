@@ -235,3 +235,7 @@ unknown class. So:
    (`python3 src/road50/osm_tunnels.py <guangdong.osm.pbf> src/road50/osm/tunnels_guangdong.json 112.6,21.3,115.5,24.0`), rebuild
    gba.html with the new roads.js / traffic.js (its build embeds its own roads.js variant), `CITIES=gba bash src/road50/run_tun.sh`,
    then `STAGE=SC/road50/stage_tun bash src/road50/release.sh gba`.
+
+Browser check of the tunnels (not run: queued about 40 min behind other jobs, then cancelled). It serves the live page; the "after"
+pass uses the tunnel stage and swaps the new roads.js / traffic.js text into the live app (`--mods`):
+`bash SC/lm33/kit/browser.sh node src/road50/probe.js hk.html hk src/road50/out/probe_hk_tun.json '[["harbour",22.2900,114.1820]]' --data SC/road50/stage_tun/hkdata --mods`

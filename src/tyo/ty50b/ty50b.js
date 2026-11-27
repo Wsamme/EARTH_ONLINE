@@ -288,7 +288,7 @@ LANDMARKS.tymidhibiya = {zh:'东京中城日比谷', en:'Tokyo Midtown Hibiya', 
     prismP(B.p(DK), sclP(P, c, sF(0)*0.97), 31, y0 + 1.5, true);
     const secs = loftS(B.p(GL), P, c, y0 + 1.5, yR, 22, t => sF(t));
     { const o = B.p(FIN), n = P.length;
-      for (let i = 0; i < n; i += 2){ const S = [];
+      for (let i = 0; i < n; i++){ const S = [];
         for (const sec of secs){ const p = sec[i], dx = p[0] - c[0], dz = p[2] - c[1], l = Math.hypot(dx, dz) || 1, nx = dx/l, nz = dz/l;
           S.push([[p[0] + nx*0.03, p[1], p[2] + nz*0.03], [p[0] + nx*0.5, p[1], p[2] + nz*0.5]]); }
         stripP(o, S); } }

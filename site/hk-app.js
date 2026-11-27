@@ -58467,7 +58467,8 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
     try {
       const r = await fetch(base() + 'sheets.json'); if (!r.ok){ S.state = 'nofile'; return; }
       const list = await r.json();
-      for (const k of list.sheets){ const q = await fetch(base() + k + '.json'); if (q.ok) S.sheets.push(await q.json()); }
+      const only = (location.search.match(/[?&]tex=([^&]+)/) || [])[1]; if (only === 'off'){ S.state = 'off'; return; }
+      for (const k of list.sheets){ if (only && !only.split(',').includes(k)) continue; const q = await fetch(base() + k + '.json'); if (q.ok) S.sheets.push(await q.json()); }
       scene.add(group); S.state = 'stream'; stream(); setInterval(stream, 1500);
     } catch (e){ S.state = 'error'; S.err.push(String(e)); }
   }

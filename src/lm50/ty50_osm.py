@@ -50,7 +50,7 @@ def fetch(group, points):
     print(group, 'cached', out, len(els), 'elements', round(os.path.getsize(out)/1e6, 1), 'MB', flush=True)
 def fetch_rel(group):
     """re-fetch the relations of a cached group with their members' geometry ('out geom tags' drops relation members) and merge"""
-    out = os.path.join(CACHE, 'g_%s.json' % group); d = json.load(open(out)); els = {e['type'][0] + str(e['id']): e for e in d['elements']}
+    out = os.path.join(CACHE, 'g_%s.json' % group); d = load(group); els = {e['type'][0] + str(e['id']): e for e in d['elements']}
     for k, b in enumerate(d['boxes']):
         bb = '%.6f,%.6f,%.6f,%.6f' % tuple(b)
         q = ('[out:json][timeout:500];(relation["building"](%s);relation["building:part"](%s);relation["landuse"](%s);relation["leisure"](%s);'
@@ -61,7 +61,7 @@ def fetch_rel(group):
     d['elements'] = list(els.values()); json.dump(d, open(out, 'w'), separators=(',', ':'), ensure_ascii=False)
 def fetch_nodes(group):
     """named nodes with coordinates ('out tags' drops node lat / lon) for every cached box, merged into the cache"""
-    out = os.path.join(CACHE, 'g_%s.json' % group); d = json.load(open(out)); els = {e['type'][0] + str(e['id']): e for e in d['elements']}
+    out = os.path.join(CACHE, 'g_%s.json' % group); d = load(group); els = {e['type'][0] + str(e['id']): e for e in d['elements']}
     for k, b in enumerate(d['boxes']):
         bb = '%.6f,%.6f,%.6f,%.6f' % tuple(b)
         r = overpass('[out:json][timeout:300];node["name"](%s);out;' % bb, out + '.nodes')
@@ -70,15 +70,18 @@ def fetch_nodes(group):
     d['elements'] = list(els.values()); json.dump(d, open(out, 'w'), separators=(',', ':'), ensure_ascii=False)
 def load(group):
     f = os.path.join(CACHE, 'g_%s.json' % group)
-    if os.path.exists(f + '.gz'): import gzip; return json.load(gzip.open(f + '.gz', 'rt'))
+    if os.path.exists(f + '.gz') and (not os.path.exists(f) or os.path.getmtime(f + '.gz') >= os.path.getmtime(f)):
+        import gzip; return json.load(gzip.open(f + '.gz', 'rt'))
     return json.load(open(f))
 if __name__ == '__main__':
     # positions of the table rows from the first-pass tag caches (osm/*.json: Overpass 'out tags center' dumps made while picking)
     sys.path.insert(0, HERE); import ty50_table as TT
     C = {}
     for f in os.listdir(CACHE):
-        if f.endswith('.json') and not f.startswith('g_'):
-            for e in json.load(open(os.path.join(CACHE, f)))['elements']:
+        if (f.endswith('.json') or f.endswith('.json.gz')) and not f.startswith('g_'):
+            import gzip
+            fh = gzip.open(os.path.join(CACHE, f), 'rt') if f.endswith('.gz') else open(os.path.join(CACHE, f))
+            for e in json.load(fh)['elements']:
                 if 'center' in e: C[e['type'][0] + str(e['id'])] = (e['center']['lat'], e['center']['lon'])
     if sys.argv[1] == '--rel':
         for g in sys.argv[2:]: fetch_rel(g)

@@ -31,6 +31,11 @@
 // city, leave the car), the escape mission through 4-6 checkpoints on real roads (beacons, rings, the HUD arrow, SGNav destination and
 // markers), the creature cutting the player off on the route ahead (18_block.js: block points, waiting at junctions, crossing the road,
 // a tower toppled onto it; the flyer swoops in from ahead), a difficulty ramp per checkpoint.
+// v48 (lm50mech): the mech mode (lm50mech/mech/mech.js, window.SGMech) fights the creature. Only in a game started with start({mech:
+// {hp}}) (goal 'mech') the creature can be hurt (SGKaiju.damage) and defeated (it topples over, crushing the blocks it lands on);
+// every other mode is unchanged. Added: damage(h), onEvent(cb), status().mech, setTargets keeps hl / hw / h (the target's box),
+// the 机甲 Mech choice next to Drive / Fly / Watch (shown only when window.SGMech exists; Play hands over to SGMech.play), #mech is
+// left to the mech module. The hand-edited block is marked [v48 mech] (the src/*.js copies of mk.sh are not on this machine).
 // Integration: lm25/kaiju/kaiju.js is built from src/*.js (lm25/kaiju/mk.sh; v31: lm28/kaiju3/mk.sh lists the new files in order).
 {
 
@@ -5536,7 +5541,7 @@ const KG = (() => {
     nyc:[{zh:'乔治·华盛顿大桥', en:'George Washington Bridge', ll:[40.8517, -73.9527]}, {zh:'韦拉扎诺海峡大桥', en:'Verrazzano-Narrows Bridge', ll:[40.6066, -74.0447]}, {zh:'肯尼迪机场', en:'JFK Airport', ll:[40.6413, -73.7781]}, {zh:'拉瓜迪亚机场', en:'LaGuardia Airport', ll:[40.7769, -73.8740]}]};
   // v31: survive 10 minutes on every difficulty (the difficulty sets how fast and how often it strikes)
   const DIFFN = [['简单', 'Easy'], ['普通', 'Normal'], ['困难', 'Hard']], SURV = [600, 600, 600];
-  const G = {on:false, remote:false, diff:1, goal:'survive', veh:'drive', seed:1, t:0, sim:null, O:KC.mkOut(), P:null, buf:[], rt:null, targets:null, localId:'local',
+  const G = {cbE:[], mech:null, dead:null, knock:null, on:false, remote:false, diff:1, goal:'survive', veh:'drive', seed:1, t:0, sim:null, O:KC.mkOut(), P:null, buf:[], rt:null, targets:null, localId:'local',
     cbD:[], cbC:[], destroyedN:0, clock:0, clockSet:false, dist:0, lastP:null, exit:null, result:null, caught:null, catchT:0, tint:0, tintGoal:0, wxPrev:null, trfPrev:null, shakeT:0, nearN:0, throwN:0,
     feetPh:[0, 0], lastK:0, lastP2:0, dripAcc:0, built:false, root:null, ms:0, msMax:0, frames:0, events:[], proxy:null, savedCam:null, hud:null, stateOut:null, lastFoot:[0, 0],
     sp:'cthulhu', SP:null, spReq:'cthulhu', ctx:null, models:{}, put:null, cpSkips:0};
@@ -5594,6 +5599,7 @@ const KG = (() => {
     const P = G.P, fl = G.on && P && P.fl > 0 ? P.fl : 0;
     if (fl > 0){ const u = 1 - fl, a = 0.045*Math.sin(PI*Math.min(1, u*2.4))*fl + 0.005*Math.sin(G.t*29)*fl;
       _fa.set(-(P.fly || 0), 0, -(P.flx || 0)); if (_fa.lengthSq() > 1e-6){ _fa.normalize(); _fq.setFromAxisAngle(_fa, a); K.root.quaternion.premultiply(_fq); } }
+    if (G.dead) deadTilt(K);     // [v48 mech]
     K.root.updateMatrixWorld(true);
     if (K.place) K.place(O, P);
   }
@@ -5606,6 +5612,8 @@ const KG = (() => {
     G.spReq = o.species || (o.remote ? G.sp : 'cthulhu'); useSp(resolveSp(G.spReq, G.seed));
     ensureModel(G.sp); KW.wrapSkip();
     G.remote = !!o.remote; G.localId = o.localId || G.localId || 'local'; G.targets = null; G.buf.length = 0; G.rt = null;
+    // [v48 mech] a mech fight: the creature has hit points (only here)
+    G.dead = null; G.knock = null; G.mech = o.mech && !G.remote ? {hp:Math.max(1, +o.mech.hp || 6000), max:Math.max(1, +o.mech.hp || 6000), hits:0, lastT:-9} : null;
     G.t = 0; G.dist = 0; G.lastP = null; G.result = null; G.caught = null; G.catchT = 0; G.destroyedN = 0; G.events.length = 0; G.lastK = 0; G.lastP2 = 0; G.feetPh = [0.5, 0.5]; G.shake = 0; G.nearN = 0; G.throwN = 0; G.obHits = 0; TCM.tc = null; obsReg();
     SHK.rum = SHK.jol = SHK.rumS = SHK.jolS = 0; if (!TR.loaded) loadTR(); SHK.lv = TR.shake; G.hindN = 0; G.armyHits = 0;
     if (o.keep !== true && !G.remote) KW.restore();
@@ -5624,7 +5632,7 @@ const KG = (() => {
     KFX.siren(true); G.sirenT = 32;
     // v33: the escape route through checkpoints (falls back to the single extraction point when the map has no roads for it)
     const cpOk = cpStart(T); if (!cpOk && G.exit && G.exit.cp) G.exit = null; navOn(true);
-    hudShow(true); hudTitle(); textSync(); toast(cpOk ? `它从水下醒来……穿过 ${CP.list.length - 1} 个检查点逃出去！ · It wakes… Escape through ${CP.list.length - 1} checkpoints!` : '它从水下醒来…… · It wakes beneath the water…', 4);
+    hudShow(!G.mech); hudTitle(); textSync(); toast(cpOk ? `它从水下醒来……穿过 ${CP.list.length - 1} 个检查点逃出去！ · It wakes… Escape through ${CP.list.length - 1} checkpoints!` : '它从水下醒来…… · It wakes beneath the water…', 4);
     return true;
   }
   function stop(quiet){
@@ -5634,7 +5642,7 @@ const KG = (() => {
     SHK.rum = SHK.jol = SHK.rumS = SHK.jolS = 0;
     try { if (G.wxPrev && window.SGWx && SGWx.set) SGWx.set(G.wxPrev, false); } catch (e){ /* */ } G.wxPrev = null;
     try { if (G.trfPrev && window.SGTraffic && SGTraffic.setDensity) SGTraffic.setDensity(1); } catch (e){ /* */ } G.trfPrev = null;
-    caughtEnd(); hudShow(false); resultHide(); cpEnd(); askHide();
+    caughtEnd(); hudShow(false); resultHide(); cpEnd(); askHide(); G.dead = null; G.knock = null; G.mech = null;
     return true;
   }
   // ---- contract helpers
@@ -5663,7 +5671,7 @@ const KG = (() => {
     if (G.rt > b.t){ const ex = Math.min(0.6, G.rt - b.t), tr = G.SP.travel ? G.SP.travel(b) : b.hdg; RS.x = b.x + Math.sin(tr)*b.v*ex; RS.y = b.y + Math.cos(tr)*b.v*ex; RS.g = (b.g + ex*b.v/G.SP.strideOf(b.v, b)) % 1; RS.t = b.t + ex; }
     return RS;
   }
-  function setTargets(L){ G.targets = Array.isArray(L) && L.length ? L.filter(t => t && isFinite(t.x) && isFinite(t.y)).map(t => { const o = {id:t.id == null ? 'p' : t.id, x:+t.x, y:+t.y, z:+t.z || 0, nocatch:!!t.nocatch}; if (isFinite(t.psi)) o.psi = +t.psi; if (t.kind) o.kind = String(t.kind); return o; }) : null; return G.targets ? G.targets.length : 0; }
+  function setTargets(L){ G.targets = Array.isArray(L) && L.length ? L.filter(t => t && isFinite(t.x) && isFinite(t.y)).map(t => { const o = {id:t.id == null ? 'p' : t.id, x:+t.x, y:+t.y, z:+t.z || 0, nocatch:!!t.nocatch}; if (isFinite(t.psi)) o.psi = +t.psi; if (t.kind) o.kind = String(t.kind); for (const k of ['hl', 'hw', 'h']) if (isFinite(t[k]) && t[k] > 0) o[k] = +t[k]; return o; }) : null; return G.targets ? G.targets.length : 0; }
   function onDestroy(cb){ if (typeof cb === 'function') G.cbD.push(cb); return () => { const i = G.cbD.indexOf(cb); if (i >= 0) G.cbD.splice(i, 1); }; }
   function onCatch(cb){ if (typeof cb === 'function') G.cbC.push(cb); return () => { const i = G.cbC.indexOf(cb); if (i >= 0) G.cbC.splice(i, 1); }; }
   function destroy(L){
@@ -5675,17 +5683,57 @@ const KG = (() => {
     if (P){ for (const T of targets()){ const dd = Math.hypot(T.x - P.x, T.y - P.y); if (d === null || dd < d) d = dd; } }
     return {on:G.on, phase:P ? P.phase : 'off', dist:d === null ? null : Math.round(d), timer:+G.t.toFixed(1), remaining:G.goal === 'survive' ? Math.max(0, Math.round(SURV[G.diff] - G.t)) : null,
       caught:G.caught ? G.caught.id : null, crushed:!!(G.caught && G.caught.crush), nearMisses:G.nearN || 0, throws:G.throwN || 0, obstacleHits:G.obHits || 0, result:G.result ? G.result.kind : null, goal:G.goal, exit:G.exit ? {zh:G.exit.zh, en:G.exit.en, dist:Math.round(Math.hypot(G.exit.x - localTarget().x, G.exit.y - localTarget().y))} : null,
-      destroyed:G.destroyedN, difficulty:G.diff, remote:G.remote, species:G.sp,
+      destroyed:G.destroyedN, difficulty:G.diff, remote:G.remote, species:G.sp, mech:G.mech ? {hp:Math.round(G.mech.hp), max:G.mech.max, hits:G.mech.hits, dead:!!G.dead, landed:!!(G.dead && G.dead.landed)} : null,
       // v33: the checkpoints {n, passed, next:{n, x, y, dist}}, the creature's block {mode 0-3, x, y, n, dodged, toppled}, text on / off
       checkpoints:CP.on || CP.list.length ? {n:Math.max(0, CP.list.length - 1), passed:CP.list.filter(c => c.passed && !c.exit).length, skips:G.cpSkips || 0, next:CP.list[CP.idx] ? {n:CP.list[CP.idx].n, exit:!!CP.list[CP.idx].exit, x:Math.round(CP.list[CP.idx].x), y:Math.round(CP.list[CP.idx].y), dist:Math.round(Math.hypot(CP.list[CP.idx].x - localTarget().x, CP.list[CP.idx].y - localTarget().y))} : null} : null,
       block:G.on && !G.remote && G.sim && G.sim.S && G.sim.S.bInit ? {mode:G.sim.S.bm, x:Math.round(G.sim.S.bx), y:Math.round(G.sim.S.by), n:G.sim.S.bN, dodged:G.sim.S.bPass, gaveUp:G.sim.S.bGive, toppled:G.sim.S.bTopN} : null, text:textOn()};
   }
   // ---- v31: the army's side of the contract: hinder (a hit on the creature: it slows, flinches, turns on the shooter; never damage)
   // and body (where shells can hit: <= 24 spheres in world metres, [] without a creature; the objects are reused every frame)
-  function hinder(h){ if (!G.on || G.remote || !G.sim || !G.sim.hinder || !h || typeof h !== 'object') return false; const ok = G.sim.hinder(h); if (ok) G.hindN = (G.hindN || 0) + 1; return ok; }
+  // ================= [v48 mech] the mech fight (lm50mech): damage, a knock-back, the fall =================
+  // damage({k, x, y, z, src, push, px, py}): k hit points off (start({mech:{hp}}) games only); k >= 6 also flinches / slows it like an
+  // army hit; push (m) with the unit direction (px, py) shoves it back over ~1.2 s (it stumbles; its feet keep stepping). At 0 hp it
+  // falls: a shudder, then it topples in the push direction about its feet, the blocks under the fall line collapse (KW.blast), a dust
+  // wave, a rumble; it stays lying there (status().mech.dead / landed; events 'defeated', 'fallen' to onEvent listeners).
+  function damage(h){
+    if (!G.on || G.remote || !G.mech || G.dead || !G.sim || !h || typeof h !== 'object') return false;
+    const k = Math.max(0, +h.k || 0); if (!(k > 0)) return false;
+    const M = G.mech, S = G.sim.S; M.hp = Math.max(0, M.hp - k); M.hits++; M.lastT = G.t;
+    let px = +h.px || 0, py = +h.py || 0; if (!(Math.hypot(px, py) > 0.1) && isFinite(+h.x)){ px = S.x - +h.x; py = S.y - +h.y; } const pl = Math.hypot(px, py); if (pl > 1e-3){ px /= pl; py /= pl; } else { px = -Math.sin(S.hdg); py = -Math.cos(S.hdg); }
+    if (k >= 6 && G.sim.hinder) try { G.sim.hinder({x:isFinite(+h.x) ? +h.x : S.x, y:isFinite(+h.y) ? +h.y : S.y, z:+h.z || 0, k:Math.min(1, k/30), src:h.src === undefined ? 'mech' : h.src}); } catch (e){ /* */ }
+    if (+h.push > 0){ const d = Math.min(80, +h.push); G.knock = {vx:px*d/0.8, vy:py*d/0.8, t:0, dur:1.2}; }
+    if (M.hp <= 0){ G.dead = {t0:G.t, fx:px, fy:py, landed:false, a:0}; S.k = 0; S.p = 0; S.v = 0; G.knock = null;
+      const e = {e:'defeated', x:S.x, y:S.y}; for (const cb of G.cbE){ try { cb(e); } catch (er){ console.error('[kaiju] onEvent', er); } }
+      try { if (G.sp === 'cthulhu') KFX.roar(G.O.mouth[0], G.O.mouth[1], G.O.mouth[2], 0.8); else if (KSX.ROAR[G.sp]) KSX.ROAR[G.sp](G.O.mouth[0], G.O.mouth[1], G.O.mouth[2], 0.8); } catch (er){ /* */ } }
+    return {hp:Math.round(M.hp), max:M.max, dead:!!G.dead};
+  }
+  // the shove: eases out over dur; the gait advances with the distance (it stumbles back)
+  function knockStep(P, dt){
+    const N = G.knock; N.t += dt; const u = N.t/N.dur; if (u >= 1){ G.knock = null; return; }
+    const f = 2*(1 - u)*dt/N.dur*0.8, dx = N.vx*f, dy = N.vy*f; P.x += dx; P.y += dy;
+    if (G.SP.strideOf) P.g = (P.g + Math.hypot(dx, dy)/G.SP.strideOf(Math.max(4, P.v || 0), P)) % 1;
+  }
+  // the fallen creature: posed standing still, shuddering, then tipped over about its feet (deadTilt in placeModel)
+  function deadStep(P, dt){
+    const D = G.dead, t = G.t - D.t0; P.v = 0; P.k = 0; P.p = 0; P.t += dt;
+    if (G.SP.ctxStep) G.SP.ctxStep(G.ctx, P, ENV); G.SP.pose(P, ENV, G.O, G.ctx);
+    const u = Math.max(0, Math.min(1, (t - 1.1)/2.7)); D.a = 1.42*u*u;
+    if (u >= 1 && !D.landed){ D.landed = true; const L = 300*(G.SP.fallLen || 1), gz0 = KW.ground(P.x, P.y);
+      for (const d of [40, 95, 150, 205, 260].map(v => v*L/300)){ const x = P.x + D.fx*d, y = P.y + D.fy*d; try { const acc = KW.blast(x, y, KW.ground(x, y), 58, 0.95); if (Array.isArray(acc) && acc.length) forwardDestroyed(acc); } catch (e){ /* */ } }
+      try { const mx = P.x + D.fx*L*0.5, my = P.y + D.fy*L*0.5, gz = KW.ground(mx, my); KFX.dustWave(mx, my, gz, 90, 1.4); KFX.rumble(mx, my, gz, 7, 1); KFX.sfx('crunch', mx, my, gz + 10, 1); shakeEv(1, mx, my, gz, 600, 5); } catch (e){ /* */ }
+      void gz0; const e = {e:'fallen', x:P.x + D.fx*L*0.5, y:P.y + D.fy*L*0.5}; for (const cb of G.cbE){ try { cb(e); } catch (er){ console.error('[kaiju] onEvent', er); } } }
+    G.dripAcc = 0;
+  }
+  const _dq = new THREE.Quaternion(), _da = new THREE.Vector3();
+  function deadTilt(K){
+    const D = G.dead, t = G.t - D.t0, sh = t < 1.3 ? 0.012*Math.sin(t*23)*(1 - t/1.3) : 0, b = D.landed ? 0.02*Math.exp(-(t - 3.8)*2.5)*Math.sin((t - 3.8)*9) : 0;
+    _da.set(-D.fy, 0, -D.fx); if (_da.lengthSq() < 1e-6) return; _da.normalize(); _dq.setFromAxisAngle(_da, D.a + sh + b); K.root.quaternion.premultiply(_dq);
+    if (D.landed) K.root.position.y -= Math.min(10, (t - 3.8)*1.5);
+  }
+  function hinder(h){ if (!G.on || G.remote || G.dead || !G.sim || !G.sim.hinder || !h || typeof h !== 'object') return false; const ok = G.sim.hinder(h); if (ok) G.hindN = (G.hindN || 0) + 1; return ok; }
   const BODY = {out:[], f:-1, list:[]};
   function body(){
-    if (!G.on || !G.P || !G.O || !G.SP || !G.SP.body || (G.P.r || 0) < 0.3){ BODY.list.length = 0; return BODY.list; }
+    if (!G.on || G.dead || !G.P || !G.O || !G.SP || !G.SP.body || (G.P.r || 0) < 0.3){ BODY.list.length = 0; return BODY.list; }
     if (BODY.f !== G.frames){ BODY.f = G.frames; G.SP.body(G.O, G.P, BODY.out); BODY.list.length = 0; for (let i = 0; i < BODY.out.length && i < 24; i++) BODY.list.push(BODY.out[i]); }
     return BODY.list;
   }
@@ -5724,7 +5772,8 @@ const KG = (() => {
     let P;
     if (CP.on && !G.remote) routeUpdate(localTarget(), dt);
     if (G.remote){ P = remoteStep(dt); if (!P) return; G.P = P; if (G.SP.ctxStep) G.SP.ctxStep(G.ctx, P, ENV); G.SP.pose(P, ENV, G.O, G.ctx); mirrorTouch(P, dt); }
-    else { const out = G.sim.step(dt); P = G.P = G.sim.S; G.O = G.sim.O; for (const e of out.events) onEvent(e); }
+    else if (G.dead){ P = G.P = G.sim.S; deadStep(P, dt); }     // [v48 mech]
+    else { const out = G.sim.step(dt); P = G.P = G.sim.S; G.O = G.sim.O; for (const e of out.events) onEvent(e); if (G.knock) knockStep(P, dt); }
     G.partsClock = G.clock; G.partsWall = performance.now();
     const O = G.O; placeModel(O);
     // effects driven by the pose state (identical on host and mirror)
@@ -5755,6 +5804,7 @@ const KG = (() => {
     const ms = performance.now() - t0; G.ms = G.ms*0.95 + ms*0.05; G.msMax = Math.max(G.msMax*0.995, ms);
   }
   function onEvent(e){
+    for (const cb of G.cbE){ try { cb(e); } catch (er){ console.error('[kaiju] onEvent', er); } }     // [v48 mech]
     G.events.push(e.e === 'destroy' ? {t:+G.t.toFixed(2), e:'destroy', n:e.list.length} : Object.assign({t:+G.t.toFixed(2)}, e)); if (G.events.length > 60) G.events.shift();
     if (e.e === 'catch'){ for (const cb of G.cbC){ try { cb(e.id); } catch (er){ console.error('[kaiju] onCatch', er); } } if (String(e.id) === String(G.localId)) caughtBegin({id:e.id, x:G.sim.S.ax, y:G.sim.S.ay, z:G.sim.S.az}); }
     // v31: the car is touched only by real contact (KB.Touch): crushed under a foot, thrown by a slam / a sweep / a gust, near misses
@@ -5815,7 +5865,7 @@ const KG = (() => {
     // eyes: a dim glow by day, burning at night (and while it roars)
     const ek = (0.35 + 1.4*night + (P.k === 6 ? 0.8 : 0))*(sp === 'shoggoth' ? 0.55 : 1);
     KM.U.uEye.value = 0.8 + 2.2*night + (P.k === 6 ? 1 : 0);
-    KFX.eyes(O.eye, ek, P.r > 0.35);
+    KFX.eyes(O.eye, G.dead ? 0 : ek, P.r > 0.35 && !G.dead);
   }
   const DRIP_B = ['root', 'sp1', 'sp2', 'chest', 'head', 'head', 'uarmL', 'uarmR', 'farmL', 'farmR', 'handL', 'handR', 'wf1L', 'wf1R', 'warmL', 'warmR', 'f3_2', 'f9_1', 'tL_6', 'tR_6', 'tL_9', 'tR_9'].map(n => KC.BI[n]);
   function dripOne(O){
@@ -6419,9 +6469,9 @@ body.f1on .kjhud{top:60px}body.f1on .kjtoast{top:auto;bottom:150px}
   const spLabel = id => id === 'random' ? ['巨怪', 'creature', '随机', 'Random'] : [spOf(id).zh, spOf(id).en, spOf(id).zh, spOf(id).en];
   const ICON = '<svg width="%s" height="%s" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1c4 0 6 3 6 6.5 0 2-1 3.5-2 4.5l1 6-2-1-1 2-1-3-1 3-1-2-2 1 1-6c-1-1-2-2.5-2-4.5C4 4 6 1 10 1z" fill="currentColor"/></svg>';
   const icon = n => ICON.replace('%s', n).replace('%s', n);
-  function loadTR(){ try { const s = JSON.parse(localStorage.getItem('cb_kaiju') || 'null'); if (s){ TR.diff = Math.max(0, Math.min(2, s.diff | 0)); TR.goal = s.goal === 'extract' ? 'extract' : 'survive'; TR.veh = ['drive', 'fly', 'watch'].includes(s.veh) ? s.veh : 'drive'; TR.sp = s.sp === 'random' || KB.get(s.sp) ? s.sp : 'cthulhu'; TR.shake = [0, 1, 2].includes(s.shake) ? s.shake : 1; TR.txt = s.txt !== false; } } catch (e){ /* */ } TR.loaded = true; SHK.lv = TR.shake; }
+  function loadTR(){ try { const s = JSON.parse(localStorage.getItem('cb_kaiju') || 'null'); if (s){ TR.diff = Math.max(0, Math.min(2, s.diff | 0)); TR.goal = s.goal === 'extract' ? 'extract' : 'survive'; TR.veh = ['drive', 'fly', 'watch'].concat(window.SGMech ? ['mech'] : []).includes(s.veh) ? s.veh : 'drive'; TR.sp = s.sp === 'random' || KB.get(s.sp) ? s.sp : 'cthulhu'; TR.shake = [0, 1, 2].includes(s.shake) ? s.shake : 1; TR.txt = s.txt !== false; } } catch (e){ /* */ } TR.loaded = true; SHK.lv = TR.shake; }
   function saveTR(){ try { localStorage.setItem('cb_kaiju', JSON.stringify({diff:TR.diff, goal:TR.goal, veh:TR.veh, sp:TR.sp, shake:TR.shake, txt:TR.txt !== false})); } catch (e){ /* */ } }
-  const VEHN = {drive:['驾车', 'Drive'], fly:['飞行', 'Fly'], watch:['观看', 'Watch']};
+  const VEHN = {drive:['驾车', 'Drive'], fly:['飞行', 'Fly'], watch:['观看', 'Watch'], mech:['机甲', 'Mech']};     // [v48 mech] mech: lm50mech
   function summary(){ const L = spLabel(TR.sp), n = CPN[TR.diff]; return `${L[2]} · ${VEHN[TR.veh][0]} · ${DIFFN[TR.diff][0]} · ${TR.goal === 'extract' ? '过 ' + n + ' 个检查点再撤离' : '坚持 ' + fmt(SURV[TR.diff])}  ·  ${L[3]} · ${VEHN[TR.veh][1]} · ${DIFFN[TR.diff][1]} · ${TR.goal === 'extract' ? n + ' checkpoints, then the exit' : 'survive ' + fmt(SURV[TR.diff])}`; }
   function openTab(){ const b = document.getElementById('kjTab'); if (b && typeof showCat === 'function'){ showCat('kj', true); const br = document.getElementById('brushRow'); if (br) br.hidden = true; } }
   function fixCols(){ const tabs = document.querySelector('.dock-tabs'); if (!tabs) return; if (document.documentElement.classList.contains('cb-phone')){ tabs.style.setProperty('grid-template-columns', '1fr 1fr', 'important'); return; } const n = tabs.querySelectorAll('.dtab').length; if (n > 6) tabs.style.setProperty('grid-template-columns', `repeat(${n},minmax(0,1fr))`, 'important'); }
@@ -6443,7 +6493,7 @@ body.f1on .kjhud{top:60px}body.f1on .kjtoast{top:auto;bottom:150px}
 <div class="kjlab">怪兽 · CREATURE</div><div class="seg kjsp" role="group" aria-label="怪兽 Creature">${SPPICK().map(d => `<button type="button" data-ks="${d[0]}" aria-pressed="false">${d[1]}<small>${d[2]}</small></button>`).join('')}</div>
 <div class="kjlab">难度 · DIFFICULTY</div><div class="seg" role="group" aria-label="难度 Difficulty">${DIFFN.map((d, i) => `<button type="button" data-kd="${i}" aria-pressed="false">${d[0]}<small>${d[1]}</small></button>`).join('')}</div>
 <div class="kjlab">目标 · GOAL</div><div class="seg" role="group" aria-label="目标 Goal"><button type="button" data-kg="survive" aria-pressed="false">生存<small>Survive 10:00</small></button><button type="button" data-kg="extract" aria-pressed="false">逃离任务<small>Checkpoints → exit</small></button></div>
-<div class="kjlab">方式 · AS</div><div class="seg" role="group" aria-label="方式 Vehicle"><button type="button" data-kv="drive" aria-pressed="false">驾车<small>Drive</small></button><button type="button" data-kv="fly" aria-pressed="false">飞行<small>Fly</small></button><button type="button" data-kv="watch" aria-pressed="false">观看<small>Watch</small></button></div>
+<div class="kjlab">方式 · AS</div><div class="seg" role="group" aria-label="方式 Vehicle"><button type="button" data-kv="drive" aria-pressed="false">驾车<small>Drive</small></button><button type="button" data-kv="fly" aria-pressed="false">飞行<small>Fly</small></button><button type="button" data-kv="watch" aria-pressed="false">观看<small>Watch</small></button>${window.SGMech ? '<button type="button" data-kv="mech" aria-pressed="false" title="机甲 · Pilot a giant mech and fight it">机甲<small>Mech</small></button>' : ''}</div>
 <div class="kjlab">镜头震动 · CAMERA SHAKE</div><div class="seg" role="group" aria-label="镜头震动 Camera shake"><button type="button" data-kk="0" aria-pressed="false">关<small>Off</small></button><button type="button" data-kk="1" aria-pressed="false">弱<small>Low</small></button><button type="button" data-kk="2" aria-pressed="false">中<small>Medium</small></button></div>
 <div class="kjlab">屏幕文字 · ON-SCREEN TEXT (T)</div><div class="seg" role="group" aria-label="屏幕文字 On-screen text"><button type="button" data-kt="1" aria-pressed="false">显示<small>Show</small></button><button type="button" data-kt="0" aria-pressed="false">隐藏<small>Hide (icons only)</small></button></div>
 </div>
@@ -6492,6 +6542,7 @@ body.f1on .kjhud{top:60px}body.f1on .kjtoast{top:auto;bottom:150px}
     let spw = null;
     try { const h = decodeURIComponent((location.hash || '').toLowerCase()), q = new URLSearchParams(location.search), pm = (q.get('play') || q.get('mode') || '').toLowerCase();
       want = /cthulhu|kaiju|克苏鲁/.test(h) || /cthulhu|kaiju/.test(pm);
+      if (/mech/.test(h) || /mech/.test(pm)) return;     // [v48 mech] #mech: the mech module starts it
       for (const id of spIds().concat(['random'])) if (h.includes(id) || pm === id || (q.get('creature') || '').toLowerCase() === id){ want = true; spw = id; } } catch (e){ /* */ }
     if (!want) return;
     const t0 = performance.now();
@@ -6506,6 +6557,7 @@ body.f1on .kjhud{top:60px}body.f1on .kjtoast{top:auto;bottom:150px}
   function uiStart(o){
     loadTR(); if (o && typeof o === 'object'){ if (o.difficulty !== undefined) TR.diff = Math.max(0, Math.min(2, o.difficulty | 0)); if (o.goal) TR.goal = o.goal === 'extract' ? 'extract' : 'survive'; if (o.veh && VEHN[o.veh]) TR.veh = o.veh; if (o.species && (o.species === 'random' || KB.get(o.species))) TR.sp = o.species; }
     if (!(typeof SGR !== 'undefined' && SGR.on)){ toast('需要真实城市地图 · Needs the real city map', 3); return false; }
+    if (TR.veh === 'mech'){ if (window.SGMech && typeof SGMech.play === 'function'){ const tr = document.getElementById('tray'); if (tr) tr.classList.add('closed'); return SGMech.play({difficulty:TR.diff, species:TR.sp}); } TR.veh = 'drive'; }     // [v48 mech]
     let put = null;
     try {
       if (TR.veh === 'drive' && window.SGF1 && !(SGF1.F1 && SGF1.F1.on)){ if (SGF1.enter(KW.isBay() || KW.isNyc() ? 'car' : 'free', {place:'here'}) !== false && SGF1.F1 && SGF1.F1.on) put = 'car'; }
@@ -6519,7 +6571,7 @@ body.f1on .kjhud{top:60px}body.f1on .kjtoast{top:auto;bottom:150px}
     return ok;
   }
   return {G, uiStart, start, stop, state, applyState, setTargets, onDestroy, onCatch, destroy, status, frame, prerender, postrender, uiInit, ENV, EXITS, SURV, showResult, localTarget, spawnPoint, pickExit, ensureModel, placeModel, caughtEnd,
-    hinder, body, shakeEv, shakeIn, shakeSet, shakeStats, SHK, carView, obsFn, OBX, TCM, throwCar, caughtBegin, UI,
+    hinder, body, damage, deadStep, shakeEv, shakeIn, shakeSet, shakeStats, SHK, carView, obsFn, OBX, TCM, throwCar, caughtBegin, UI,
     species:() => spIds().map(id => ({id, zh:spOf(id).zh, en:spOf(id).en})), useSp, paneSync, TR,
     // v33
     CP, cpPlan, roadSnap, roadIdx, routeUpdate, routeNow, cpStep, cpPass, quit, quitAsk, textSet, textOn, kjKey, keyHook, markers, CPN, CPR};
@@ -6569,7 +6621,10 @@ const SGKaiju = {
   state:() => KG.state(), applyState:s => KG.applyState(s), setTargets:L => KG.setTargets(L),
   onDestroy:cb => KG.onDestroy(cb), destroy:L => KG.destroy(L), onCatch:cb => KG.onCatch(cb), status:() => KG.status(),
   restore:() => KW.restore(),
-  hinder:h => KG.hinder(h), body:() => KG.body(), shake:lv => KG.shakeSet(lv), shakeStats:reset => KG.shakeStats(reset),
+  hinder:h => KG.hinder(h), body:() => KG.body(),
+  // [v48 mech] (lm50mech): the creature's hit points in a mech game, and every core event ({e:'hit', k, x, y, z}, {e:'throw', id, ...},
+  // {e:'near'}, {e:'act', k}, {e:'defeated'}, {e:'fallen'} ...) for the mech module; onEvent returns an unsubscribe function
+  damage:h => KG.damage(h), onEvent:cb => { if (typeof cb !== 'function') return () => {}; KG.G.cbE.push(cb); return () => { const i = KG.G.cbE.indexOf(cb); if (i >= 0) KG.G.cbE.splice(i, 1); }; }, shake:lv => KG.shakeSet(lv), shakeStats:reset => KG.shakeStats(reset),
   play:o => KG.uiStart(o),
   quit:() => KG.quit(), text:on => KG.textSet(on), checkpoints:() => KG.CP.list.map(c => ({n:c.n, exit:!!c.exit, x:Math.round(c.x), y:Math.round(c.y), passed:!!c.passed, zh:c.zh, en:c.en, road:c.road ? c.road[0] || c.road[1] : null})),        // single player in one call: enter the car / aircraft from the saved (or given) options and start
   sim(sec, dt){ dt = dt || 1/30; const n = Math.round(sec/dt), t0 = performance.now(); for (let i = 0; i < n; i++) KG.frame(KG.G.t + dt, dt); return {steps:n, msPerStep:+((performance.now() - t0)/Math.max(1, n)).toFixed(3), status:KG.status()}; },

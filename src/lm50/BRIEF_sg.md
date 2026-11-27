@@ -4,7 +4,7 @@
 
 ## What exists today (evaluated, not grepped)
 
-The production build (`R/../site/app.js`, rebuilt from `R` with `patch17.py`) evaluated in the browser by `SC/lm50/sg/kit/exist50.js`: **198 labelled placed landmarks + 19 sites** (232 placed types incl. unlabelled sub-keys; 306 LANDMARKS defs incl. the world set). Dump: `SC/lm50/sg/exist_sg.json` (key, zh, en, r, h, label, lat, lon per placement; sites with r). The same set comes out of `near50.js` evaluating the patch17 MODS files in node (identical key list).
+The production build (`R/../site/app.js`, rebuilt from `R` with `patch17.py`) evaluated in the browser by `R/lm50/kit_sg/exist50.js`: **198 labelled placed landmarks + 19 sites** (232 placed types incl. unlabelled sub-keys; 306 LANDMARKS defs incl. the world set). Dump: `SC/lm50/sg/exist_sg.json` (key, zh, en, r, h, label, lat, lon per placement; sites with r). The same set comes out of `near50.js` evaluating the patch17 MODS files in node (identical key list).
 
 ## Targets
 
@@ -14,7 +14,7 @@ The production build (`R/../site/app.js`, rebuilt from `R` with `patch17.py`) ev
 
 - `unc` is set on 72 rows (anchor or data doubt: unnamed footprint, nearest-match pick, app heights far below the real tower, new buildings, campus / complex anchors). Confirm those first (refs + photos); if the anchor is wrong make a corrected ref with the REREF command below and report the OSM id you used.
 
-- Lines (`osm: "line"`): sgrobertsonbr, sgsaigonbr, sgclemenceaubr, sgkimsengbr, sgmerdekabr — the app draws the real road / path deck (`roads[].br`, `elev`); model piers, girders, parapets, lamps (Merdeka: the end pylons and lion sculptures) around it, per the lm40 bridge rules.
+- Lines (`osm: "line"`): sgrobertsonbr, sgsaigonbr, sgclemenceaubr, sgkimsengbr, sgmerdekabr — the app draws the real road / path deck (`roads[].br`, `elev`); model piers, girders, parapets, lamps (Merdeka: its lion sculptures — verify form and position from photos) around it, per the lm40 bridge rules.
 
 ## Groups (★ hero, ⚠ uncertain anchor — see `unc`)
 
@@ -52,7 +52,7 @@ Module folder per group: **`R/lm50/<group>/<group>.js`** (e.g. `R/lm50/sg50a/sg5
 - `sgonepearlbank` (sg50b, r15649684): anchor on the unnamed OSM relation under the Nominatim point; app top 129 m against 178 m listed
 - `sgcolmed` (sg50b, w172092367): OSM footprint w172092367 has no name tag
 - `sgsghacademia` (sg50b, w172268002): height not verified
-- `sgnccs` (sg50b, w47415661): the centre moved to a new building; confirm which footprint is current
+- `sgnccs` (sg50b, w47415661): the campus may hold an older and a newer NCCS building: confirm which footprint is current
 - `sgmnd` (sg50b, w117058629): OSM footprint matched is "MND Building (Annexe B)" — the main block may be a neighbour in refs
 - `sgtbmarket` (sg50b, r21297472): OSM relation r21297472 has no matching footprint in the app data (the model stands on open ground there)
 - `sgqitiangong` (sg50b, w172241932): unnamed OSM footprint under the POI
@@ -124,7 +124,7 @@ Command used for all eight groups (run from SC, ~1 min per group once the OSM bo
 cd /tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad && bash lm33/kit/heavy.sh python3 /home/claude/earth_online/src/lm50/s50_refs_sg.py [sg50a ...]
 ```
 
-## Kit — every command below was run once for this brief (27 Nov 2026)
+## Kit — every command below was run once for this brief (27 Nov 2026, with a throw-away one-block test module, since deleted)
 Most of the lm22–lm40 kit is gone from both SC and R (`SC/sgreal/kit/lmbase.js`, `insitu.html`, `shoot.js`, `lm22/marina/nstat.js`, `ndump.js`, `nrender.py`,
 `lm26/kit/oplan.js` + `oplan.py`, `lm20/kit/mkapp.sh`, `sgreal/mktest.py`'s page flow, the sgreal/out pickles), and the Chromium the old scripts hard-code
 (`/opt/pw-browsers/chromium-1194`) is now `chromium-1243`. The replacements live in **`R/lm50/kit_sg/`** (copy in `SC/lm50/sg/kit/`); run node tools from
@@ -151,7 +151,7 @@ Most of the lm22–lm40 kit is gone from both SC and R (`SC/sgreal/kit/lmbase.js
      '[["<key>_d",lat,lon,400,30,200,12],["<key>_n",lat,lon,400,30,200,20.5]]' > lm50/sg50a/app.log 2>&1 &)
    ```
    Views `[name, lat, lon, dist m, elev °, azim °, hour, "optional JS", waitMs]`; `window.__t` exposes camera, controls, scene, renderer, SGR, sgXY, hC, setTod,
-   lodTick, LANDMARKS, landmarks, SG_PLACES, SITES. Pass = **0 PAGEERR** and FAILED-URLS only the expected entries listed below. Then
+   lodTick, LANDMARKS, landmarks, SG_PLACES, SITES. Pass = **0 PAGEERR** and FAILED-URLS only the expected entries: the city-switch probes `/lm50/sg/site/{bay,nyc,hk,tyo,gba}.html` (404 + FAIL each), `/lm50/sg/site/index.html` (5 × 404 + 5 × FAIL) and `/favicon.ico` — 21 entries, with 11 matching "Failed to load resource" console errors (test run, 27 Nov: 0 PAGEERR, exactly these 21, ready in 32 s with NEAR 700 m, ~310 draw calls / 3.6 M tris per view; shots `SC/lm50/sg/shots/kit_d.png`, `kit_n.png`). The tools panel stays open on the left of the frame (the old appshot's collapse selectors no longer match): leave room for it. Then
    `rm SC/lm50/sg/site/t_sg50a.html SC/lm50/sg/site/t_sg50a-app.js`. **At most 2 browser runs per group** (round rule).
 8. Existing-model dump (only if the production app changes): `cd SC && bash lm33/kit/browser.sh env PAGE=lm50/sg/site/t_base.html node
    /home/claude/earth_online/src/lm50/kit_sg/exist50.js lm50/sg/exist_sg.json` (page from `mkapp50.sh base`), then copy it to `R/lm50/kit_sg/`.

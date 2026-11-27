@@ -91,7 +91,10 @@ cd $K && bash $H bash mkpage_sz.sh sz50x sz50x          # in-situ page: only you
 ```
 Views `[name, lat, lon, distance m, elevation °, azimuth ° (0 = camera south looking north), hour (20.5 = night), "optional JS", waitMs]`.
 The log prints readiness, per-view calls / tris, landmark label count, heap, every failed request (FAILED-URLS) and PAGEERR.
-Pass = 0 PAGEERR and only the expected failures (KITLOG). For the full-app check build `mkpage_sz.sh sz50x_all all` instead (every
+Pass = 0 PAGEERR and only the expected failures: 404 + ERR_ABORTED for the city-switch probes `/sg.html /bay.html /nyc.html
+/hk.html /tyo.html /index.html` and 404 `/favicon.ico` (13 lines, and 11 matching "Failed to load resource" console errors). Tested run (27 Nov,
+GBALM=szcbd page, NEAR=22.5384,114.0226, 2 views): ready in 48 s, 0 PAGEERR, 198 labels, heap 1555 MB, ~2.0 M tris day / 3.8 M night.
+Tiles are still streaming at the default wait ("Building the real city 35/2602" in the shot): give `waitMs` 6000-10000 for the views you judge. For the full-app check build `mkpage_sz.sh sz50x_all all` instead (every
 module). Delete the page afterwards (`rm $SC/lm50/sz/site/t_sz50x*.html`, ~7-9 MB).
 The old Greater Bay in-situ harness `R/gbareal/targets/kit` does **not** run any more (it needs `gbareal/out/*.bin.gz`,
 `hkreal/kit/engine_helpers.js` + `lmbase.js` and chromium-1194, all gone): use the test page above; the offline `oplan.py` replaces its

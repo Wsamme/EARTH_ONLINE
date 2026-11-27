@@ -19,7 +19,7 @@ g = 'ty50a'
 T(g, 'tygrannorth', '格兰东京北塔', 'GranTokyo North Tower', 'tower', 'r3818454', 205, W(205, 43, 2007), 'Glass office tower at the north end of the Yaesu side of Tokyo Station; with the South Tower it frames the GranRoof canopy (tygranroof)', hero=True)
 T(g, 'tygransouth', '格兰东京南塔', 'GranTokyo South Tower', 'tower', 'w95274405', 205, W(205, 42, 2007), 'Twin of the North Tower at the south end of the Yaesu entrance; sharp glass prism')
 T(g, 'tymidyaesu', '东京中城八重洲', 'Tokyo Midtown Yaesu', 'tower', 'w1116244124', 240, W(240, 45, 2022) + ' (Yaesu Central Tower)', 'Office / hotel tower (2022) opposite the Yaesu exit on a podium; slim crown', hero=True)
-T(g, 'tymitsuihonkan', '三井本馆', 'Mitsui Main Building', 'heritage', 'w1178732428', None, '', 'Neoclassical granite block (1929) with a giant Corinthian colonnade along Chūō-dōri, next to the Bank of Japan; Nihonbashi Mitsui Tower rises behind it', hero=True)
+T(g, 'tymitsuihonkan', '三井本馆', 'Mitsui Main Building', 'heritage', 'w1178732428', None, 'height not stated; rebuilt 1929, 5 floors above ground (effectively 7 with the continuous mezzanine) + 2 basements, steel-framed reinforced concrete, design supervision Trowbridge & Livingston (New York), national Important Cultural Property — https://www.city.chuo.lg.jp/a0052/bunkakankou/rekishi/kunibunkazai/021201.html (checked 2026-11-27)', 'Neoclassical granite block (1929) with a giant Corinthian colonnade along Chūō-dōri, next to the Bank of Japan; Nihonbashi Mitsui Tower rises behind it', hero=True)
 T(g, 'tymitsukoshi', '日本桥三越本店', 'Nihonbashi Mitsukoshi Main Store', 'heritage', 'w172599549', None, '', 'Renaissance-revival department store (1914, extended 1935) faced in pale stone, with the corner tower; no shop names or logos on the model', unc='anchored on OSM w172599549 named 本館 (main building) inside the store relation r7872611 (no building tag): confirm against photos', hero=True)
 T(g, 'tytakashimaya', '日本桥高岛屋', 'Nihonbashi Takashimaya (main building)', 'heritage', 'w187643809', None, '', 'Department store (1933) mixing Western classical masonry with Japanese details; pale facade, cornices; no names on the model')
 T(g, 'tytakamitsui', '日本桥高岛屋三井大厦', 'Nihonbashi Takashimaya Mitsui Building', 'tower', 'w449619430', 174.66, W(174.66, 31, 2018), 'Office tower (2018) behind the old Takashimaya store, on a podium that keeps the store\'s cornice line')
@@ -39,11 +39,11 @@ T(g, 'tysapia', 'Sapia塔', 'Sapia Tower', 'tower', 'w91264848', None, '', 'Slim
 T(g, 'typacific', '丸之内太平洋世纪广场', 'Pacific Century Place Marunouchi', 'tower', 'w95274368', None, '', 'Office / hotel tower (2001) at Yaesu-guchi with a glass top')
 T(g, 'tynihonbashitower', '东京日本桥塔', 'Tokyo Nihonbashi Tower', 'tower', 'w690082401', 180, W(180, 35, 2015), 'Office tower (2015) at the Nihonbashi 2-chōme crossing with a glass atrium at its foot')
 T(g, 'tymuromachi', '日本桥室町三井塔', 'Nihonbashi Muromachi Mitsui Tower', 'tower', 'w449621789', None, '', 'Office tower (2019) over the COREDO Muromachi Terrace podium on Chūō-dōri; no shop names')
-T(g, 'tynihonbashimitsui', '日本桥三井塔', 'Nihonbashi Mitsui Tower', 'tower', 'w187748880', 195, W(195, 39, 2005), 'Glass office / hotel tower (2005, Pelli) rising behind the Mitsui Main Building', unc='OSM way says 5 levels: probably the podium piece; find the tower outline in the refs')
+T(g, 'tynihonbashimitsui', '日本桥三井塔', 'Nihonbashi Mitsui Tower', 'tower', 'w187748880', 195, W(195, 39, 2005), 'Glass office / hotel tower (2005, Pelli) rising behind the Mitsui Main Building', unc='OSM w187748880 (5 levels) is drawn as one 125 m part in the app: find the tower outline in the refs')
 T(g, 'tyedogrand', '京桥Edogrand', 'Kyobashi Edogrand', 'tower', 'w855400420', 170.37, W(170.37, 32, 2016), 'Office tower (2016) in Kyōbashi that keeps the 1933 Meijiya building\'s low facade at its foot')
 T(g, 'tymuseumtower', '京桥博物馆塔', 'Museum Tower Kyobashi', 'tower', 'w187797448', None, '', 'Office tower (2019) holding the Artizon Museum in its lower floors, on Chūō-dōri in Kyōbashi')
 T(g, 'tysquaregarden', '东京Square Garden', 'Tokyo Square Garden', 'tower', 'w406737276', None, '', 'Office tower (2013) at the Kyōbashi 3-chōme crossing with stepped planted terraces on its lower floors')
-T(g, 'tytoda', '户田大厦', 'TODA Building', 'tower', 'w1322157808', None, '', 'Office tower (2024) in Kyōbashi with an arts centre in its podium', unc='new building (2024): check that the app data has its footprint')
+T(g, 'tytoda', '户田大厦', 'TODA Building', 'tower', 'w1322157808', None, '', 'Office tower (2024) in Kyōbashi with an arts centre in its podium')
 T(g, 'tymizuho', '瑞穗丸之内塔', 'Mizuho Marunouchi Tower', 'tower', 'w878611928', None, '', 'Office tower (2014) in the Marunouchi 1-chōme block (with the Ginko Kaikan facade at its foot)')
 
 # ---------------- ty50b: Hibiya, Ginza, Shimbashi, Shiodome, Takeshiba, Tsukiji, Kachidoki, Harumi, Toyosu ----------------
@@ -105,8 +105,8 @@ T(g, 'tymitagarden', '住友不动产东京三田花园塔', 'Sumitomo Fudosan T
 T(g, 'tytamachin', 'msb Tamachi 田町站塔N', 'msb Tamachi Station Tower N', 'tower', 'w333413426', 180.08, W(180.08, 36, 2020), 'Office / hotel tower (2020) at Tamachi Station east exit')
 T(g, 'tyseason', '品川Season Terrace', 'Shinagawa Season Terrace', 'tower', 'w338737796', None, '', 'Office tower (2015) over the sewage works at Kōnan, north of Shinagawa Station')
 T(g, 'tyazresa', '麻布台之丘住宅A', 'Azabudai Hills Residence A', 'tower', 'w1158739444', 237, W(237, 54, 2023), 'Residential tower (2023) of Azabudai Hills, west of the Mori JP Tower')
-T(g, 'tyazresb', '麻布台之丘住宅B', 'Azabudai Hills Residence B', 'tower', 'w1158739445', 263, W(263, 64, 2025), 'The tallest residential tower in Japan (2025), south-west of the Mori JP Tower', unc='completed 2025: check that the app data has its footprint')
-T(g, 'tyakasakatrust', '东京World Gate赤坂', 'Tokyo World Gate Akasaka (Akasaka Trust Tower)', 'tower', 'w1158701313', 209, W(209, 43, 2024), 'Office / hotel tower (2024) on the Toranomon side of Akasaka 1-chōme', unc='completed 2024: check that the app data has its footprint')
+T(g, 'tyazresb', '麻布台之丘住宅B', 'Azabudai Hills Residence B', 'tower', 'w1158739445', 263, W(263, 64, 2025), 'The tallest residential tower in Japan (2025), south-west of the Mori JP Tower')
+T(g, 'tyakasakatrust', '东京World Gate赤坂', 'Tokyo World Gate Akasaka (Akasaka Trust Tower)', 'tower', 'w1158701313', 209, W(209, 43, 2024), 'Office / hotel tower (2024) on the Toranomon side of Akasaka 1-chōme')
 T(g, 'tytvasahi', '朝日电视台总部', 'TV Asahi Headquarters', 'building', 'w103425087', None, '', 'Maki Fumihiko\'s broadcasting centre (2003) in Roppongi Hills: big glass atrium; no names')
 T(g, 'tysengakuji', '泉岳寺本堂', 'Sengaku-ji main hall', 'religious', 'a:w856209833', None, '', 'Sōtō temple at Takanawa with the graves of the 47 rōnin; the main hall and gate (architecture only)')
 
@@ -138,8 +138,7 @@ T(g, 'tyns', '新宿NS大厦', 'Shinjuku NS Building', 'tower', 'w45763022', Non
 T(g, 'tykddi', 'KDDI大厦', 'KDDI Building', 'tower', 'w95793043', None, '', 'Telecom office tower (1974) in Nishi-Shinjuku with the antenna crown; no names')
 T(g, 'tyfronttower', '新宿Front塔', 'Shinjuku Front Tower', 'tower', 'w306097616', None, '', 'Office tower (2011) at Kita-Shinjuku 2-chōme on Ōme-kaidō')
 T(g, 'tytsubouchi', '坪内博士纪念演剧博物馆', 'Tsubouchi Memorial Theatre Museum', 'heritage', 'w94117009', None, '', 'Waseda\'s theatre museum (1928), built as a copy of an Elizabethan playhouse front with timber framing')
-T(g, 'tymitsui2', '新宿Mitsui大厦二号馆', 'Shinjuku Mitsui Building No. 2', 'tower', 'w153156007', None, '', 'Office building south of the Washington Hotel', unc='minor building: spare, drop if short of time')
-T(g, 'tyltower', '新宿L塔', 'Shinjuku L Tower', 'tower', 'w116596176', None, '', 'Office tower (1989) west of Shinjuku Station with the rounded corner', unc='OSM way says 2 levels: probably the podium; find the tower outline in the refs')
+T(g, 'tyltower', '新宿L塔', 'Shinjuku L Tower', 'tower', 'w116596176', None, '', 'Office tower (1989) west of Shinjuku Station with the rounded corner', unc='OSM w116596176 (2 levels) is drawn as 3 parts up to 124 m in the app: check the outline in the refs')
 
 # ---------------- ty50e: Shibuya, Harajuku, Omotesandō, Aoyama, Ebisu, Meguro ----------------
 g = 'ty50e'
@@ -173,7 +172,7 @@ T(g, 'tyaoyamatwin', '青山Twin', 'Aoyama Twin Tower', 'tower', 'w109684612', N
 # ---------------- ty50f: Ueno, Hongō, Ochanomizu, Akihabara, Kōrakuen, Ikebukuro ----------------
 g = 'ty50f'
 T(g, 'tybunkakaikan', '东京文化会馆', 'Tokyo Bunka Kaikan', 'building', 'r5419119', None, '', 'Maekawa Kunio\'s concert hall (1961) at the Ueno Park entrance: the deep concrete eaves with upturned edges', hero=True)
-T(g, 'tyyasuda', '东京大学安田讲堂', 'Yasuda Auditorium (University of Tokyo)', 'heritage', 'w134668789', None, '', 'Brick Gothic-revival auditorium (1925) with the arched central tower, at the head of the Hongō campus ginkgo avenue', hero=True)
+T(g, 'tyyasuda', '东京大学安田讲堂', 'Yasuda Auditorium (University of Tokyo)', 'heritage', 'w134668789', None, 'height not stated; completed 1925, designed by Uchida Yoshikazu (Yoshizō), dark red tile finish, inspired by a Cambridge gate tower — https://www.u-tokyo.ac.jp/ja/about/campus-guide/b07_04_b.html (checked 2026-11-27)', 'Brick Gothic-revival auditorium (1925) with the arched central tower, at the head of the Hongō campus ginkgo avenue', hero=True)
 T(g, 'tykahaku', '国立科学博物馆日本馆', 'National Museum of Nature and Science (Japan Gallery)', 'heritage', 'w152340253', None, '', 'Neo-Renaissance museum (1931) in Ueno Park; its plan is shaped like an aeroplane; central dome', hero=True)
 T(g, 'tybunkyocivic', '文京Civic Center', 'Bunkyo Civic Center', 'tower', 'w322358860', None, 'en.wikipedia gives roof 146 m (infobox) and 142 m (text) — conflict, not resolved; 28 floors, 1994, Nikken Sekkei — https://en.wikipedia.org/wiki/Bunkyo_Civic_Center (checked 2026-11-27)', 'Ward office tower (1994) beside Kōrakuen with the observation floor at the top', hero=True)
 T(g, 'tyuenostn', '上野站', 'Ueno Station (main building)', 'station', 'a:w85395094', None, '', 'The 1932 station building with its long stone-faced front and the central concourse hall', unc='OSM w85395094 is the station area: the resolver takes its largest building; check it is the 1932 main building')
@@ -227,7 +226,7 @@ T(g, 'tyhiltonodaiba', '东京台场希尔顿', 'Hilton Tokyo Odaiba', 'building
 T(g, 'tygrandnikko', '东京台场大仓日航', 'Grand Nikko Tokyo Daiba', 'building', 'r5807214', None, '', 'Hotel (1996) at Daiba with the arched glass wings; no names')
 T(g, 'tyariakearena', '有明竞技场', 'Ariake Arena', 'stadium', 'w746064107', None, '', 'Olympic volleyball arena (2019) with the timber-clad suspended roof, beside the Ariake canal')
 T(g, 'tycoliseum', '有明体育场（有明Coliseum）', 'Ariake Coliseum', 'stadium', 'w149130179', None, '', 'Tennis stadium (1987) with the retractable roof in the Ariake Tennis Forest')
-T(g, 'tygardentheater', '东京花园剧场', 'Tokyo Garden Theater', 'building', 'w1357127331', None, '', 'Concert hall (2020) of Ariake Garden', unc='OSM way id from 2025: check the app has this outline (the Ariake Garden complex may be one outline)')
+T(g, 'tygardentheater', '东京花园剧场', 'Tokyo Garden Theater', 'building', 'w1357127331', None, '', 'Concert hall (2020) of Ariake Garden')
 T(g, 'tycruise', '东京国际邮轮码头', 'Tokyo International Cruise Terminal', 'building', 'a:w718029290', None, '', 'Cruise terminal (2020) at Aomi with the long wing-shaped roof on the pier', unc='OSM w718029290 is the pier: anchor on the terminal building in the refs')
 T(g, 'tyexchange', '东京国际交流馆', 'Tokyo International Exchange Center', 'building', 'w149833575', None, '', 'Student residence towers (2001) at Aomi beside Miraikan (anchored on building A)')
 
@@ -260,4 +259,5 @@ T(g, 'tykawasakidaishi', '川崎大师平间寺大本堂', 'Kawasaki Daishi (Hei
 T(g, 'tylandaxis', 'Land Axis塔', 'Land Axis Tower', 'tower', 'w23876976', None, '', 'Office tower (2000) at Saitama-Shintoshin beside the Super Arena')
 T(g, 'tysaitamastadium', '埼玉2002体育场', 'Saitama Stadium 2002', 'stadium', 'a:w119665760', None, '', 'Football stadium (2001) with two curved roof wings over the stands', unc='OSM w119665760 is the stadium area: anchor on its building outline in the refs')
 T(g, 'tykadokawa', '角川武藏野博物馆（所泽樱花城）', 'Kadokawa Culture Museum (Tokorozawa Sakura Town)', 'building', 'a:w942612365', None, '', 'Kuma Kengo\'s museum (2020): a giant angular block clad in granite slabs, like a rock outcrop', unc='OSM w942612365 is the Sakura Town site: anchor on the museum outline in the refs')
+
 

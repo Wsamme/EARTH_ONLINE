@@ -29,15 +29,48 @@ def osm_polys(e):
     def rings(ms):
         ls = [LineString([A.w(p['lon'], p['lat']) for p in m['geometry']]) for m in ms if len(m['geometry']) >= 2]
         return list(polygonize(linemerge(ls))) if ls else []
-    o = rings(outer); i = rings(inner)
+    o = [p.buffer(0) for p in rings(outer)]; i = [p.buffer(0) for p in rings(inner)]
+    o = [p for p in o if not p.is_empty]
     if not o: return []
-    U = unary_union(o)
-    if i: U = U.difference(unary_union(i))
+    try:
+        U = unary_union(o)
+        if i: U = U.difference(unary_union(i))
+    except Exception: U = max(o, key=lambda p: p.area)   # partial / broken multipolygon (e.g. members outside an OSM API box)
     return [g.buffer(0) for g in (U.geoms if hasattr(U, 'geoms') else [U]) if not g.is_empty]
+OSMAPI = 'https://api.openstreetmap.org/api/0.6/map?bbox=%.6f,%.6f,%.6f,%.6f'
+def api_box(s, w, n, e, depth=0):
+    """OSM API map call (fallback when Overpass fails): -> Overpass-like elements with geometry; splits the box on 'too many nodes'"""
+    import subprocess, xml.etree.ElementTree as ET
+    for k in range(4):
+        r = subprocess.run(['curl', '-s', '-w', '\n%{http_code}', '--max-time', '300', '-A', 'CityBrushLandmarkResearch/1.0', OSMAPI % (w, s, e, n)], capture_output=True)
+        body, _, code = r.stdout.rpartition(b'\n'); code = code.decode().strip()
+        if code == '200': break
+        if code == '400' and depth < 4:
+            ms, me = (s + n)/2, (w + e)/2
+            return [x for b in ((s, w, ms, me), (s, me, ms, e), (ms, w, n, me), (ms, me, n, e)) for x in api_box(*b, depth=depth + 1)]
+        time.sleep(10*(k + 1))
+    else: raise SystemExit('OSM API failed for box %s' % ((s, w, n, e),))
+    root = ET.fromstring(body); N = {}; out = []; ways = {}
+    for x in root.iter('node'):
+        t = {c.get('k'):c.get('v') for c in x.findall('tag')}; N[x.get('id')] = (float(x.get('lat')), float(x.get('lon')))
+        if t: out.append({'type':'node', 'id':int(x.get('id')), 'lat':N[x.get('id')][0], 'lon':N[x.get('id')][1], 'tags':t})
+    for x in root.iter('way'):
+        t = {c.get('k'):c.get('v') for c in x.findall('tag')}; g = [{'lat':N[nd.get('ref')][0], 'lon':N[nd.get('ref')][1]} for nd in x.findall('nd') if nd.get('ref') in N]
+        ways[x.get('id')] = g; out.append({'type':'way', 'id':int(x.get('id')), 'tags':t, 'geometry':g})
+    for x in root.iter('relation'):
+        t = {c.get('k'):c.get('v') for c in x.findall('tag')}
+        ms = [{'type':m.get('type'), 'ref':int(m.get('ref')), 'role':m.get('role'), 'geometry':ways.get(m.get('ref'))} for m in x.findall('member')]
+        out.append({'type':'relation', 'id':int(x.get('id')), 'tags':t, 'members':[m for m in ms if m['type'] != 'way' or m['geometry']]})
+    return out
 def fetch_osm(boxes):
-    """one Overpass query for the union of the boxes (lat/lon s,w,n,e)"""
+    """one Overpass query for the union of the boxes (lat/lon s,w,n,e); if Overpass fails, the OSM API per box"""
     parts = ''.join('way[building](%s);relation[building](%s);way["building:part"](%s);relation["building:part"](%s);way[~"^(leisure|landuse|amenity|man_made|tourism|natural|power|aeroway|place)$"~"."](%s);relation[~"^(leisure|landuse|amenity|man_made|tourism|natural|aeroway)$"~"."](%s);node[name](%s);' % ((b,)*7) for b in boxes)
-    return ov('[out:json][timeout:600][maxsize:1073741824];(%s);out geom;' % parts)
+    try: return ov('[out:json][timeout:600][maxsize:1073741824];(%s);out geom;' % parts, tries=3)
+    except SystemExit as e:
+        print('overpass failed, using the OSM API per box', flush=True); el = []
+        for b in boxes:
+            el += api_box(*map(float, b.split(','))); time.sleep(1)
+        return el
 def build_target(key, meta, lat, lon, rad, OSM, apb, R_lines, RT):
     ax, ay = A.w(lon, lat); bx = box(ax - rad, ay - rad, ax + rad, ay + rad)
     loc = lambda x, y: [round(x - ax, 1), round(-(y - ay), 1)]
@@ -116,9 +149,11 @@ def prep_osm(el):
         if e['type'] == 'node':
             if t.get('name'): n.append({'id':i, 'tags':t, 'xy':A.w(e['lon'], e['lat'])})
             continue
-        gs = osm_polys(e)
+        try: gs = osm_polys(e)
+        except Exception: continue
         if not gs: continue
-        g = unary_union(gs)
+        try: g = unary_union(gs)
+        except Exception: g = max(gs, key=lambda p: p.area)
         if t.get('building:part'): p.append({'id':i, 'tags':t, 'g':g})
         elif t.get('building'): b.append({'id':i, 'tags':t, 'g':g})
         else:

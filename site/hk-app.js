@@ -671,7 +671,10 @@ function genSB(sb, sig){
         addTrees(fp, 0.0035, rng, p => shapes.some(sh => insideConvex(sh, p[0], p[1])));
       } else shapes.push(fp.p);
       // [v47] a city module may claim a lot for one of its downloaded models (e.g. Hong Kong tong lau / tower blocks); the rest stay procedural
-      if (typeof CB_LOT_MODEL === 'function'){ const keep = []; for (const sh of shapes){ let m = null; try { m = CB_LOT_MODEL(b.zone, dn, sh, rng); } catch (e){ m = null; }
+      if (typeof CB_LOT_MODEL === 'function' && shapes.length){   // the whole lot first (a tower block needs its full width), then each shape
+        let mw = null; try { mw = CB_LOT_MODEL(b.zone, dn, fp.p, rng); } catch (e){ mw = null; }
+        if (mw){ mw.y0 = terraceBase(deck, fp.p) - 0.05; lotModels.push(mw); st.nBld++; st.floor[b.zone] += mw.floor || 0; bFloor += mw.floor || 0; st.tallest = Math.max(st.tallest, mw.h || 0); shapes.length = 0; } }
+      if (typeof CB_LOT_MODEL === 'function' && shapes.length){ const keep = []; for (const sh of shapes){ let m = null; try { m = CB_LOT_MODEL(b.zone, dn, sh, rng); } catch (e){ m = null; }
           if (m){ m.y0 = terraceBase(deck, sh) - 0.05; lotModels.push(m); st.nBld++; st.floor[b.zone] += m.floor || 0; bFloor += m.floor || 0; st.tallest = Math.max(st.tallest, m.h || 0); } else keep.push(sh); }
         shapes.length = 0; for (const sh of keep) shapes.push(sh); }
       for (const sh of shapes){

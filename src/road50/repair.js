@@ -114,8 +114,9 @@ buildIdx();
 //   - else (a deck sharing a node mid-span with a road passing through): flagged.
 // g = 5.5 % (the pipelines' ramp grade), raised to 8 % / 12 % if the ramp would otherwise change another junction of the line;
 // every change keeps all other same-level contacts of the line and creates no low-clearance crossing, or it is flagged.
+let VAT = null;
 function levelConflicts(){
-  const out = [], at = new Map();
+  const out = [], at = new Map(); VAT = at;
   for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g);
     for (let k = 0; k < m; k++){ const key = qkey(Math.round(g.Q[k*2]/2), Math.round(g.Q[k*2+1]/2)); let a = at.get(key); if (!a) at.set(key, a = []); a.push({li, k, end:(k === 0 || k === m - 1)}); } }
   const seen = new Set();
@@ -137,6 +138,46 @@ function levelConflicts(){
           else out.push({H:l2, Lo:li, segH:[j, u], endH:false, kLo:k, endLo:true, eH:e2, eL:e, x, y});
         } } } }
   return out;
+}
+// a height cone from (li, s0, v0) with grade gr, propagated into the lines joined at the same level (shared vertices) wherever it changes
+// a height: 'pin' lowers (min), 'raise' lifts (max). Returns Map li -> new E array, or null if it spreads over more than 40 lines.
+function cone(li0, s00, v0, mode, gr, shifted){
+  const res = new Map(), q = [[li0, s00, v0]], visits = new Map();
+  while (q.length){
+    const [li, sb, vb] = q.shift(); const n = (visits.get(li) || 0) + 1; visits.set(li, n); if (n > 4) continue;
+    if (res.size > 40) return null;
+    const g = G[li], s = arcS(g), E0 = g.E || new Array(nv(g)).fill(0), E = res.get(li) || E0.slice();
+    for (let k = 0; k < nv(g); k++){
+      const c = Math.max(0, vb + gr*Math.abs(s[k] - sb));
+      if (mode === 'pin' ? c < E[k] - 0.01 : c > E[k] + 0.01){
+        const was = E0[k]; E[k] = c;
+        // lines joined here at the old level follow
+        const A = VAT.get(qkey(Math.round(g.Q[k*2]/2), Math.round(g.Q[k*2+1]/2))) || [];
+        for (const o of A){ if (o.li === li || shifted.has(o.li)) continue; const go = G[o.li]; if (o.k >= nv(go)) continue;
+          const eo = (res.get(o.li) || go.E || [])[o.k] || 0; if (Math.abs(eo - was) <= 1.2 && (mode === 'pin' ? c < eo - 0.01 : c > eo + 0.01)) q.push([o.li, arcS(go)[o.k], c]); }
+      }
+    }
+    res.set(li, E);
+  }
+  return res;
+}
+// a set of new E profiles keeps every same-level contact of every changed line (except 'allow') and makes no new one / low crossing
+function keepsAll(CHG, allow, li0, Q0){
+  const before = new Map(); for (const li of CHG.keys()) before.set(li, contacts(li));
+  const save = new Map(); for (const [li, E] of CHG){ save.set(li, {Q:G[li].Q, E:G[li].E}); G[li].E = E; if (li === li0 && Q0) G[li].Q = Q0; }
+  let ok = true;
+  try {
+    for (const li of CHG.keys()){
+      const A = sameSet(before.get(li)), C1 = contacts(li), B = sameSet(C1), cl = k => lines[+k.split(':')[0]].c + ((lines[+k.split(':')[0]].flags & 2) ? 'b' : '');
+      for (const k of A) if (!B.has(k) && !allow(k)){ LASTWHY = 'loses junction (c' + cl(k) + ')'; LASTKEY = k; ok = false; break; }
+      if (!ok) break;
+      for (const k of B) if (!A.has(k) && !allow(k)){ LASTWHY = 'makes a new junction (c' + cl(k) + ')'; LASTKEY = k; ok = false; break; }
+      if (!ok) break;
+      const L0 = lowSet(before.get(li)), L1 = lowSet(C1); for (const k of L1) if (!L0.has(k)){ LASTWHY = 'low clearance over c' + cl(k); LASTKEY = k; ok = false; break; }
+      if (!ok) break;
+    }
+  } finally { for (const [li, o] of save){ G[li].Q = o.Q; G[li].E = o.E; } }
+  return ok;
 }
 function sOn(g, s, k, seg){ if (seg) return s[seg[0]] + (s[seg[0]+1] - s[seg[0]])*seg[1]; return s[k]; }
 if (RULES.has('R3')){
@@ -161,16 +202,20 @@ if (RULES.has('R3')){
       else { if (pass === 0) flg('R3', f.x, f.y, {li:f.H, to:f.Lo, dE:+(eHn - eLn).toFixed(1), why:'bridge deck shares a node mid-span with a road below'}); continue; }
       let done = false;
       for (const gr of [0.055, 0.08, 0.12]){
-        const E0 = g.E || new Array(nv(g)).fill(0), En = E0.slice();
-        for (let k = 0; k < nv(g); k++){ const d = Math.abs(s[k] - s0); En[k] = mode === 'pin' ? Math.min(En[k], tgt + gr*d) : Math.max(En[k], tgt - gr*d); if (En[k] < 0) En[k] = 0; }
         // a contact on a segment: put a vertex there so the height is exact
-        let Qn = null, Enn = En;
-        const seg = mode === 'pin' ? f.segH : f.segLo;
-        if (seg){ const [j, u] = seg; Qn = g.Q.slice(); Qn.splice((j + 1)*2, 0, Math.round(g.Q[j*2] + (g.Q[j*2+2] - g.Q[j*2])*u), Math.round(g.Q[j*2+1] + (g.Q[j*2+3] - g.Q[j*2+1])*u)); Enn = En.slice(); Enn.splice(j + 1, 0, tgt); }
-        if (!keepsContacts(li, Enn, allow, null, Qn || undefined)) continue;
-        let mx = 0; for (let k = 0; k < nv(g); k++) mx = Math.max(mx, Math.abs(En[k] - E0[k]));
-        if (Qn){ g.Q = Qn; shifted.add(li); }
-        setE(li, Enn, 'R3', f.x, f.y, {mode, dE:+(eHn - eLn).toFixed(2), grade:gr, maxChange:+mx.toFixed(2), other:mode === 'pin' ? f.Lo : f.H, bridge:!!(lines[li].flags & 2)});
+        let Qn = null; const seg = mode === 'pin' ? f.segH : f.segLo, Eg = g.E || new Array(nv(g)).fill(0);
+        let sStart = s0;
+        if (seg){ const [j, u] = seg; Qn = g.Q.slice(); Qn.splice((j + 1)*2, 0, Math.round(g.Q[j*2] + (g.Q[j*2+2] - g.Q[j*2])*u), Math.round(g.Q[j*2+1] + (g.Q[j*2+3] - g.Q[j*2+1])*u)); }
+        const CHG = (() => { if (!Qn) return cone(li, sStart, tgt, mode, gr, shifted);
+          const sv = {Q:g.Q, E:g.E}; g.Q = Qn; g.E = Eg.slice(); g.E.splice(seg[0] + 1, 0, Eg[seg[0]] + (Eg[seg[0]+1] - Eg[seg[0]])*seg[1]);
+          try { return cone(li, arcS(g)[seg[0] + 1], tgt, mode, gr, new Set([...shifted, li])); } finally { g.Q = sv.Q; g.E = sv.E; } })();
+        if (!CHG){ LASTWHY = 'spreads over > 40 lines'; continue; }
+        if (!keepsAll(CHG, allow, li, Qn)) continue;
+        let mx = 0;
+        for (const [l2, En] of CHG){ const g2 = G[l2], E0 = g2.E || new Array(nv(g2)).fill(0); if (l2 === li && Qn){ g2.Q = Qn; shifted.add(li); }
+          for (let k = 0; k < Math.min(En.length, E0.length); k++) mx = Math.max(mx, Math.abs(En[k] - E0[k]));
+          setE(l2, En, 'R3', f.x, f.y, {mode, dE:+(eHn - eLn).toFixed(2), grade:gr, other:mode === 'pin' ? f.Lo : f.H, bridge:!!(lines[l2].flags & 2), chain:CHG.size}); }
+        if (CHG.size > 1) for (const l2 of CHG.keys()) shifted.add(l2);         // their vertex lists are unchanged, but keep the pass simple
         done = true; fixed++; break;
       }
       if (!done && pass === 2) flg('R3', f.x, f.y, {li, to:mode === 'pin' ? f.Lo : f.H, dE:+(eHn - eLn).toFixed(1), mode, why:'12 % ramp ' + LASTWHY, key:LASTKEY});

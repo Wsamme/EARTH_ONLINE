@@ -811,7 +811,7 @@ function sgLabels(){
 }
 
 /* ---------- entering and leaving Singapore ---------- */
-const SG_SUB = 'City Brush · 大湾区 Greater Bay 1:1 · 东莞 深圳 香港 · 真实地图 Real map · © OpenStreetMap', ISL_SUB = 'City Brush · 地图 24 × 24 km';
+const SG_SUB = 'City Brush · 大湾区 Greater Bay 1:1 · 东莞 深圳 香港 · 真实地图 Real map · © OpenStreetMap · Overture · 3D-GloBFP', ISL_SUB = 'City Brush · 地图 24 × 24 km';
 function sgView(){ const t = sgXY(22.2880, 114.1650), y = 10; controls.target.set(t[0], y, -t[1]); camera.position.set(t[0] + 1200, y + 1700, -t[1] - 4200); }
 function sgFly(){ const t = sgXY(22.2850, 114.1600); flyTo(new THREE.Vector3(t[0] + 900, 900, -t[1] - 2600), new THREE.Vector3(t[0], 30, -t[1])); }
 function sgBuild(){

@@ -125,6 +125,60 @@
     return g;
   }
   S.vehGeo = vehGeo;
+  // ---------------------------------------------------------------- zone brush: downloaded buildings on painted lots
+  // Medium-density residential: tong lau (kaine027, three shophouses on a plate); high-density residential: the H-shaped block
+  // (businessyuen) or the old high-rise with photo facades (Pasha.). Generic buildings, so only where the player paints, never on
+  // a real address. Each is turned to its lot and scaled uniformly to fit inside it; a lot that would give a building outside a
+  // believable height (tong lau 10-22 m, towers 45-120 m) keeps the procedural building. Loaded on first use; phones skip them.
+  MODELS.tonglau = {file:'old_hk.glb', title:'Old Hong Kong Buildings', author:'kaine027', url:'https://sketchfab.com/3d-models/64cc0ef924ca4650b0978f8945929510'};
+  MODELS.htype = {file:'htype.glb', title:'Hong Kong H-type Residential Building', author:'businessyuen', url:'https://sketchfab.com/3d-models/55afb2fde05c460b8a60ac7f48bee098'};
+  MODELS.alley = {file:'alley.glb', title:'Hong Kong buildings Alley', author:'Pasha.', url:'https://sketchfab.com/3d-models/8192b1cd4a8144c88163c43a3a6abb3f'};
+  const LOT = {tonglau:{h:[10, 22]}, htype:{h:[45, 120]}, alley:{h:[45, 90]}};
+  const TPL = {}, want = new Set();
+  function nightLambert(om){
+    const map = om.map || null; if (map){ map.encoding = THREE.LinearEncoding; map.needsUpdate = true; }
+    const m = new THREE.MeshLambertMaterial({color:om.color ? om.color.clone() : new THREE.Color(1, 1, 1), map, transparent:!!om.transparent, alphaTest:om.alphaTest || 0, side:om.side});
+    // at night the darkest texels (window glass) glow warm: an estimate of lit windows, like the procedural blocks
+    m.onBeforeCompile = sh => { sh.uniforms.uNightM = NIGHT.uNight;
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform float uNightM;')
+        .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float l = dot(diffuseColor.rgb, vec3(0.3, 0.59, 0.11)); totalEmissiveRadiance += vec3(1.0, 0.82, 0.55)*smoothstep(0.32, 0.08, l)*uNightM*0.9; }'); };
+    return m;
+  }
+  function makeTpl(key, sc){
+    sc.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(sc), sz = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    const inner = new THREE.Group(); inner.add(sc); sc.position.set(-c.x, -box.min.y, -c.z);
+    sc.traverse(o => { if (o.isMesh){ o.material = nightLambert(o.material); o.castShadow = true; o.receiveShadow = true; o.userData.shared = true; } });
+    TPL[key] = {g:inner, sx:sz.x, sy:sz.y, sz:sz.z};
+  }
+  function need(key){
+    if (TPL[key] || want.has(key)) return; want.add(key);
+    load(key).then(sc => { makeTpl(key, sc); try { for (const c of cache.values()) c.sig = '~'; requestRegen(); } catch (e){ } }).catch(e => S.err.push(key + ': ' + e));
+  }
+  window.CB_LOT_MODEL = (zone, dens, sh, rng) => {
+    if (window.CB_MOBILE || zone !== 1 || dens < 2) return null;
+    const keys = dens === 2 ? ['tonglau'] : (rng() < 0.6 ? ['htype', 'alley'] : ['alley', 'htype']);
+    for (const key of keys){
+      const T = TPL[key]; if (!T){ need(key); continue; }
+      const o = obb(sh), lu = o.lu*0.92, lv = o.lv*0.92;
+      // try both turns; keep the larger fit
+      const s1 = Math.min(lu/T.sx, lv/T.sz), s2 = Math.min(lu/T.sz, lv/T.sx), turn = s2 > s1, s = Math.max(s1, s2);
+      let h = T.sy*s; const [h0, h1] = LOT[key].h;
+      if (h > h1){ h = h1; } if (h < h0) continue;
+      const sc = h/T.sy;
+      const rot = Math.atan2(o.u[1], o.u[0]) + (turn ? Math.PI/2 : 0);
+      return {key, x:o.c[0], y:o.c[1], rot, s:sc, h, floor:areaP(sh)*Math.max(1, Math.round(h/3.1))*0.7};
+    }
+    return null;
+  };
+  window.CB_LOT_MODELS_ADD = (group, list) => {
+    for (const m of list){ const T = TPL[m.key]; if (!T) continue;
+      const g = T.g.clone(true); g.position.set(m.x, m.y0, -m.y); g.rotation.y = m.rot; g.scale.setScalar(m.s); g.userData.shared = true;
+      group.add(g); }
+  };
+  S.lotTemplates = TPL;
+  // test handle: paint a residential patch of density d (1-3) at lat/lon, radius r metres
+  S.paint = (lat, lon, r, d) => { try { setDens(d); const [x, y] = sgXY(lat, lon); window.SGAdmin.test.paint(x, y, r, 'R'); return [Math.round(x), Math.round(y)]; } catch (e){ return String(e); } };
   // ---------------------------------------------------------------- start
   const ready = () => { try { return SGR.on && landmarks.length > 20 && lmMeshes.size > 20 && !!THREE.GLTFLoader; } catch (e){ return false; } };
   let tries = 0;

@@ -13,10 +13,17 @@ HKLM = sorted(_os.path.basename(f)[:-3] for f in _glob.glob(SC + 'gbareal/app/hk
 if _os.environ.get('GBA_HKLM') is not None: HKLM = [x for x in HKLM if x in set(_os.environ['GBA_HKLM'].split(','))]
 # the Hong Kong landmark modules as frame-shimmed copies (gbareal/tools/mkhklm.py), after the shared modules, as in the Hong Kong build
 MODS = [('gbareal/app/hk_reset.js' if m == 'hkreal/app/hk_reset.js' else m) for m in PH.MODS] + (['gbareal/app/hklm/_pre.js'] + ['gbareal/app/hklm/%s.js' % x for x in HKLM] if HKLM else [])
-APP = ['lm20/audio/audio.js', 'gbareal/app/gbareal.js', 'gbareal/app/gbstats.js', 'gbareal/app/cityswitch.js']     # (the switch with the Greater Bay button: tools/mkswitch.py)
+APP = ['lm20/audio/audio.js', 'gbareal/app/gbareal.js', 'gbareal/app/gbstats.js', 'gbareal/app/cityswitch.js', 'gbareal/app/gbmodels.js']     # (the switch with the Greater Bay button: tools/mkswitch.py; gbmodels: downloaded glTF models)
 def apply(src):
     # the Nei Lak Shan angle station test (Hong Kong frame -21796, -7793) must be in this frame: patch it inside patch_hk's own text
     src = PH.apply(src)
+    # ---------- three.js GLTFLoader (r128, as the shared page template since v47) for gbareal/app/gbmodels.js; this page is built from an
+    # older template without it ----------
+    _orb = '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>'
+    _gltf = '<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>'
+    if _gltf not in src:
+        assert src.count(_orb) == 1, 'OrbitControls tag'
+        src = src.replace(_orb, _orb + '\n' + _gltf)
     def R(a, b, count=1):
         nonlocal src
         n = src.count(a); assert n == count, (n, a[:150]); src = src.replace(a, b)

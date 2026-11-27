@@ -176,6 +176,15 @@ function keepsAll(CHG, allow, li0, Q0){
       const L0 = lowSet(before.get(li)), L1 = lowSet(C1); for (const k of L1) if (!L0.has(k)){ LASTWHY = 'low clearance over c' + cl(k); LASTKEY = k; ok = false; break; }
       if (!ok) break;
     }
+    // traffic joins one-way decks that continue at one vertex with a step <= 15 m: keep those; and lift no dead end into the air
+    if (ok && VAT) for (const li of CHG.keys()){ const g = G[li], m = nv(g), Eb = save.get(li).E;
+      for (const k of [0, m - 1]){ const key = qkey(Math.round(g.Q[k*2]/2), Math.round(g.Q[k*2+1]/2)), A = (VAT.get(key) || []).filter(o => o.li !== li);
+        const ea = eAt(g, k), eb = Eb ? Eb[Math.min(k, Eb.length - 1)] : 0;
+        if (!A.length){ if (ea > 1.5 && ea > eb + 0.5){ LASTWHY = 'lifts a dead end'; ok = false; break; } continue; }
+        for (const o of A){ const go = G[o.li]; if (o.k >= nv(go)) continue; const e2 = eAt(go, o.k), e2b = CHG.has(o.li) ? ((save.get(o.li).E || [])[o.k] || 0) : e2;
+          if (Math.abs(e2b - eb) <= 15 && Math.abs(e2 - ea) > 15){ LASTWHY = 'breaks a deck step join'; ok = false; break; } }
+        if (!ok) break; }
+      if (!ok) break; }
   } finally { for (const [li, o] of save){ G[li].Q = o.Q; G[li].E = o.E; } }
   return ok;
 }

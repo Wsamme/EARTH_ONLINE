@@ -1,9 +1,9 @@
-[0.6s] hk lines 128993
-[4.9s] R3 pass 0 conflicts 2092 fixed 934
-[9.7s] R3 pass 1 conflicts 1105 fixed 324
-[14.8s] R3 pass 2 conflicts 764 fixed 106
-[14.8s] R3: conflicts 2092 fixed 1364 flagged 606
-[18.2s] R1/R2: dead ends 4259 joined 68 inserted vertices 12 flagged 519
-[18.8s] R4: low crossings 88 raised bridges 0 flagged 88
-[18.9s] R5: steep lines 34 re-graded 14 flagged 20
-[19.5s] {"city":"hk","src":"/home/claude/earth_online/site/hkdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata","lines":128993,"changedLines":2427,"changes":{"R3":3288,"R1":68,"R5":14},"flagged":{"R3: bridge decks share a node mid#span":3,"R3: # % ramp spreads over > # lines":396,"R3: # % ramp makes a new junction (c#)":59,"R3: # % ramp loses junction (c#)":63,"R3: # % ramp low clearance over c#":46,"R3: # % ramp loses junction (c#b)":15,"R3: # % ramp makes a new junction (c#b)":14,"R3: # % ramp low clearance over c#b":10,"R1: level #":478,"R1: classes #/#":2,"R1: level #, bridge / ground":23,"R1: level #, classes #/#, bridge / ground":7,"R1: level #, classes #/#":4,"R1: bridge / ground":5,"R4: bridge too short to clear the road below with <= # % ramps":83,"R4: raising: loses junction (c#b)":4,"R4: raising: low clearance over c#":1,"R5: jump next to a fixed junction / line end":20},"rules":["R1","R2","R3","R4","R5"],"gap":6}
+[0.5s] hk lines 128993
+[5.4s] R3 pass 0 conflicts 2092 fixed 887
+[9.7s] R3 pass 1 conflicts 1150 fixed 294
+[14.1s] R3 pass 2 conflicts 832 fixed 87
+[14.1s] R3: conflicts 2092 fixed 1268 flagged 694
+[17.2s] R1/R2: dead ends 4302 joined 70 inserted vertices 14 flagged 560
+[17.8s] R4: low crossings 97 raised bridges 0 flagged 97
+[17.9s] R5: steep lines 40 re-graded 16 flagged 24
+[18.3s] {"city":"hk","src":"/home/claude/earth_online/site/hkdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata","lines":128993,"changedLines":2301,"changes":{"R3":3053,"R1":70,"R5":16},"flagged":{"R3: bridge decks share a node mid#span":3,"R3: # % ramp spreads over > # lines":406,"R3: # % ramp makes a new junction (c#)":63,"R3: # % ramp lifts a dead end":32,"R3: # % ramp loses junction (c#)":72,"R3: # % ramp low clearance over c#":57,"R3: # % ramp loses junction (c#b)":13,"R3: # % ramp makes a new junction (c#b)":29,"R3: # % ramp low clearance over c#b":18,"R3: # % ramp breaks a deck step join":1,"R1: level #":526,"R1: classes #/#":2,"R1: level #, bridge / ground":16,"R1: level #, classes #/#, bridge / ground":7,"R1: level #, classes #/#":4,"R1: bridge / ground":5,"R4: bridge too short to clear the road below with <= # % ramps":92,"R4: raising: loses junction (c#b)":4,"R4: raising: low clearance over c#":1,"R5: jump next to a fixed junction / line end":24},"rules":["R1","R2","R3","R4","R5"],"gap":6}

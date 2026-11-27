@@ -30,8 +30,8 @@ LANDMARKS.sgboc = {zh:'中国银行大厦', en:'Bank of China Building', cat:'ne
   wallsByEdge(B, TOW, 0.3, Y1, ST, slot);
   winP(B, TOW, 24, Y1 - 2, 4.2, 2.7, 1.25, 2.7, WIN, {minL:4.6, end:1, endCol:LAT});
   // a deeper slot down the middle of each long face (photo: twin dark slots with window strips)
-  for (const e of edgesF(TOW)) if (e.L > 13) for (const f of [0.3, 0.7]){ slabP(B.p(SLOT), rectO(e.L*f - 1.1, e.L*f + 1.1, 24, Y1 + 4), e.F, 0.0, 0.12);
-    for (const d of [-0.55, 0.55]) slabP(B.p(ST2), rectO(e.L*f + d - 0.06, e.L*f + d + 0.06, 24, Y1 + 4), e.F, 0.12, 0.2); }
+  for (const e of edgesF(TOW)) if (e.L > 13) for (const f of [0.3, 0.7]){ slabP(B.p(SLOT), rectO(e.L*f - 1.1, e.L*f + 1.1, 24, Y1 + 4), e.F, 0.0, 0.16);
+    for (const d of [-0.55, 0.55]) slabP(B.p(ST2), rectO(e.L*f + d - 0.06, e.L*f + d + 0.06, 24, Y1 + 4), e.F, 0.16, 0.24); }
   // string course at the crown base, then the stepped crown
   bandAtP(B.p(ST2), TOW, Y1 - 1.2, 1.2, 0.25);
   const T1 = offP(TOW, 0.9), T2 = scP(TOW, 0.72), T3 = scP(TOW, 0.5);

@@ -2,7 +2,7 @@
 # Hong Kong keeps the Singapore engine's left-hand traffic, foreign-context handling (Shenzhen: muted land, main roads, the
 # skyline as type-14 buildings) and the Singapore-style modules (signs, weather, sound) until city-specific ones exist.
 import re
-MODS = ['hkreal/app/hk_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'hkv/hksigns41/hksigns.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm33/info_hk/info_hk.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
+MODS = ['hkreal/app/hk_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'hkv/hksigns41/hksigns.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm50mech/mech/mech.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm33/info_hk/info_hk.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 APP = ['lm20/audio/audio.js', 'hkreal/app/hkreal.js', 'hkreal/app/hkstats.js', 'sgreal/app/cityswitch.js']
 def apply(src):
     def R(a, b, count=1):

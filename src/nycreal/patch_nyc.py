@@ -2,7 +2,7 @@
 # The Bay-only modules (bay/fog/wx.js, the Bay ambience in lm20/audio, the Silicon Valley drive places in lm20/f1d,
 # sgreal/app/cityswitch.js) are not New York aware yet: they stay off / inert here (SGR_BAY is not defined in this build).
 import re
-NYC_MODS = ['nycreal/app/nyc_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm20/signs/signs.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'nyc/nycapp/busdata_nyc.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_nyc1/info_nyc1.js', 'lm31/info_nyc2/info_nyc2.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
+NYC_MODS = ['nycreal/app/nyc_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm20/signs/signs.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'nyc/nycapp/busdata_nyc.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm50mech/mech/mech.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_nyc1/info_nyc1.js', 'lm31/info_nyc2/info_nyc2.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 NYC_APP = ['lm20/audio/audio.js', 'nycreal/app/nyc_post.js', 'nycreal/app/nycreal.js', 'nycreal/app/nycstats.js', 'sgreal/app/cityswitch.js']
 def apply(src):
     def R(a, b, count=1):

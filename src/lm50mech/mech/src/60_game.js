@@ -128,6 +128,7 @@ const MG = (() => {
     const vmax = (run ? 24 : 11)*(wd ? 0.6 : 1)*ST.resist*fr.vK;
     let vx = 0, vy = 0; if (ml > 0.05){ const dx = (Math.sin(yaw)*fw + Math.cos(yaw)*rt)/ml, dy = (Math.cos(yaw)*fw - Math.sin(yaw)*rt)/ml; vx = dx*mg*vmax; vy = dy*mg*vmax; }
     if (fr.vK > 1 && ml < 0.05 && ST.act && ST.act.k === 'punch'){ vx = Math.sin(S.hdg)*6; vy = Math.cos(S.hdg)*6; }     // (the step into a punch)
+    if (fr.lunge){ vx += fr.lunge[0]; vy += fr.lunge[1]; }     // (closing in on a part that is out of reach)
     ML.loco(S, {vx, vy, hdg:fr.face, turn:run ? 0.55 : fr.face !== null && fr.face !== undefined ? 1.25 : 0.9}, mdt);
     S.X = clamp(S.X, -HALF + 400, HALF - 400); S.Y = clamp(S.Y, -HALF + 400, HALF - 400);
     if (!ST.drop) MC.contacts(dt);

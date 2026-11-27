@@ -189,10 +189,17 @@ const cum = new Float64Array(N.DL.length); { let a = 0; for (let i = 0; i < N.DL
 const pick = () => { const r = rng()*cum[cum.length - 1]; let lo = 0, hi = cum.length - 1; while (lo < hi){ const m = (lo + hi) >> 1; if (cum[m] < r) lo = m + 1; else hi = m; } return lo; };
 const RT = {pairs:0, ok:0, fail:0, failIsland:0, failOneway:0, detourMed:0, detour3:0, far:0};
 const det = [], fails = [];
+// fixed OD points: the before run writes them (link midpoints), later runs snap them to the nearest drivable link (--odin)
+const ODIN = opt('odin') ? JSON.parse(fs.readFileSync(opt('odin'), 'utf8')) : null, ODOUT = [];
+function linkAt(x, y){ const nb = nearestSeg(x, y, 60, l2 => !drv(l2)); if (!nb) return -1; const li = nb[1], k = nb[2], o = C.vOff[li], sv = C.VS[o+k] + (C.VS[o+k+1] - C.VS[o+k])*nb[3];
+  const ps = N.LP[li]; if (!ps) return -1; for (const P of ps) if (sv >= P.a - 0.01 && sv <= P.b + 0.01) return P.f; return ps.length ? ps[0].f : -1; }
+let odI = 0;
+const pickOD = () => { if (ODIN){ const q = ODIN[odI++]; return linkAt(q[0], q[1]); } const l = pick(), p = N.linkPos(N.DL[l], N.DL[l].len/2); ODOUT.push([+p[0].toFixed(1), +p[1].toFixed(1)]); return l; };
 for (let o = 0; o < pairs[0]; o++){
-  const s = pick(), Ps = N.PC[N.DL[s].piece], dist = TG.dijkstra(N, Ps.r !== null ? [Ps.f, Ps.r] : [Ps.f], -1), ps = N.linkPos(N.DL[s], N.DL[s].len/2);
+  const s = pickOD(); if (s < 0){ for (let q = 0; q < pairs[1]; q++) pickOD(); continue; }
+  const Ps = N.PC[N.DL[s].piece], dist = TG.dijkstra(N, Ps.r !== null ? [Ps.f, Ps.r] : [Ps.f], -1), ps = N.linkPos(N.DL[s], N.DL[s].len/2);
   for (let q = 0; q < pairs[1]; q++){
-    const t = pick(); RT.pairs++;
+    const t = pickOD(); if (t < 0) continue; RT.pairs++;
     const Pt = N.PC[N.DL[t].piece], dt = Math.min(dist[Pt.f], Pt.r !== null ? dist[Pt.r] : Infinity);
     const pt = N.linkPos(N.DL[t], N.DL[t].len/2), eu = Math.hypot(pt[0] - ps[0], pt[1] - ps[1]);
     if (dt < Infinity){ RT.ok++; if (eu > 1000){ RT.far++; const r = (dt + N.DL[t].len/2)/eu; det.push(r); } continue; }
@@ -202,6 +209,7 @@ for (let o = 0; o < pairs[0]; o++){
       oc:lines[N.DL[s].li].c, dc:lines[N.DL[t].li].c});
   }
 }
+if (!ODIN) fs.writeFileSync(path.join(OUT, city + '_od_' + TAG + '.json'), JSON.stringify(ODOUT));
 det.sort((a, b) => a - b); RT.detourMed = det.length ? +det[det.length >> 1].toFixed(2) : 0; RT.detour3 = det.filter(r => r > 3).length;
 RT.okPct = +(RT.ok/RT.pairs*100).toFixed(1);
 log('routes', JSON.stringify(RT));

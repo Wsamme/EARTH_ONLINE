@@ -1,13 +1,13 @@
-[0.5s] bay lines 364573
-[7.0s] prep: junction nodes 319082
-[8.6s] traffic network: links 306963 pieces 176118 nodes 129463 movements 586249
-[10.3s] weak components 270 main 99.2% others >=1 km 35 | SCC main 98.2%
-[13.1s] dead ends {"total":26053,"tunnel":50,"edge":478,"chunk":0,"gap3":93,"gap6":22,"gap12":305,"levelgap":320,"service":4540,"deckend":67,"water":13,"culdesac":20165,"oneway":550} sinks 42 sources 324
-[15.6s] crossings {"falsejunc":5,"lowclear":451,"missedjunc":283,"overpass":3871,"atgrade":32494}
-[15.8s] levels / water {"step1_3":120,"step3_15":227,"step15":41,"steep":275,"inwater":27,"inwaterM":2455,"shortdeck":1}
-[26.0s] routes {"pairs":2000,"ok":1974,"fail":26,"failIsland":20,"failOneway":6,"detourMed":1.26,"detour3":65,"far":1971,"okPct":98.7}
-[26.3s] movements {"moves":586249,"zjump1_5":7,"zjump5":7,"xyFar":0}
-[35.7s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":98.7}
+[0.3s] bay lines 364573
+[5.7s] prep: junction nodes 319082
+[6.6s] traffic network: links 306963 pieces 176118 nodes 129463 movements 586249
+[8.9s] weak components 270 main 99.2% others >=1 km 35 | SCC main 98.2%
+[11.4s] dead ends {"total":26053,"tunnel":50,"edge":478,"chunk":0,"gap3":93,"gap6":22,"gap12":305,"levelgap":320,"service":4540,"deckend":67,"water":13,"culdesac":20165,"oneway":550} sinks 42 sources 324
+[12.3s] crossings {"falsejunc":5,"lowclear":451,"missedjunc":283,"overpass":3871,"atgrade":32494}
+[12.5s] levels / water {"step1_3":120,"step3_15":227,"step15":41,"steep":275,"inwater":27,"inwaterM":2455,"shortdeck":1}
+[23.7s] routes {"pairs":2000,"ok":1974,"fail":26,"failIsland":20,"failOneway":6,"detourMed":1.26,"detour3":65,"far":1971,"okPct":98.7}
+[24.1s] movements {"moves":586249,"zjump1_5":7,"zjump5":7,"xyFar":0}
+[33.2s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":98.7}
 {
  "city": "bay",
  "tag": "before",
@@ -118,7 +118,16 @@
     "10th Street",
     "Chinook Court",
     "Gateview Avenue"
-   ]
+   ],
+   "gap": {
+    "d": 0.2,
+    "x": -15137,
+    "y": 20899,
+    "e": 0.4,
+    "e2": 58.4,
+    "li": 99923,
+    "to": 316547
+   }
   },
   {
    "len": 9914,
@@ -152,7 +161,16 @@
     "Gregory Place",
     "Barry Way",
     "Parkside Way"
-   ]
+   ],
+   "gap": {
+    "d": 6.4,
+    "x": -29017,
+    "y": 35504,
+    "e": 0,
+    "e2": 0.4,
+    "li": 332775,
+    "to": 134621
+   }
   },
   {
    "len": 6836,
@@ -205,7 +223,16 @@
    "x": -1884,
    "y": -31000,
    "cls": 10,
-   "names": []
+   "names": [],
+   "gap": {
+    "d": 0,
+    "x": -1490,
+    "y": -31012,
+    "e": 5.2,
+    "e2": 0,
+    "li": 267717,
+    "to": 303319
+   }
   },
   {
    "len": 3426,
@@ -217,7 +244,16 @@
     "Deerberry Court",
     "Pitch Pine Court",
     "River Ash Court"
-   ]
+   ],
+   "gap": {
+    "d": 32.5,
+    "x": 18379,
+    "y": 35929,
+    "e": 0,
+    "e2": 0,
+    "li": 306142,
+    "to": 303879
+   }
   },
   {
    "len": 2733,
@@ -241,7 +277,16 @@
     "Wisteria Street",
     "Winged Foot Court",
     "Carlisle Court"
-   ]
+   ],
+   "gap": {
+    "d": 16.9,
+    "x": 23534,
+    "y": 11845,
+    "e": 0,
+    "e2": 0,
+    "li": 282305,
+    "to": 298722
+   }
   },
   {
    "len": 2512,
@@ -272,7 +317,16 @@
     "Elder Court",
     "Sunflower Court",
     "Morning Glory Court"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 23481,
+    "y": 18029,
+    "e": 6.2,
+    "e2": 0,
+    "li": 301307,
+    "to": 268335
+   }
   },
   {
    "len": 2195,
@@ -293,7 +347,16 @@
     "Helen Lane",
     "John Marsh Road",
     "John Marsh Drive"
-   ]
+   ],
+   "gap": {
+    "d": 29.1,
+    "x": 34858,
+    "y": 29913,
+    "e": 0,
+    "e2": 0,
+    "li": 266488,
+    "to": 342045
+   }
   },
   {
    "len": 1934,
@@ -305,7 +368,16 @@
     "Peach Place",
     "Pear Drive",
     "Apple Drive"
-   ]
+   ],
+   "gap": {
+    "d": 54,
+    "x": 13047,
+    "y": 35648,
+    "e": 0,
+    "e2": 0,
+    "li": 278992,
+    "to": 304279
+   }
   },
   {
    "len": 1730,
@@ -317,7 +389,16 @@
     "Seaview Drive",
     "East Channel Drive",
     "Horizon Circle"
-   ]
+   ],
+   "gap": {
+    "d": 6.8,
+    "x": -2758,
+    "y": -18332,
+    "e": 0,
+    "e2": 0,
+    "li": 320565,
+    "to": 322653
+   }
   },
   {
    "len": 1730,
@@ -329,7 +410,16 @@
     "Whitehall Lane",
     "Yarborough Lane",
     "Chatsworth Lane"
-   ]
+   ],
+   "gap": {
+    "d": 6.8,
+    "x": -2758,
+    "y": -18332,
+    "e": 0,
+    "e2": 0,
+    "li": 320565,
+    "to": 322653
+   }
   },
   {
    "len": 1568,
@@ -350,7 +440,16 @@
    "cls": 6,
    "names": [
     "Dubuque Avenue"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": -18499,
+    "y": 4150,
+    "e": 0,
+    "e2": 3.2,
+    "li": 350737,
+    "to": 133937
+   }
   },
   {
    "len": 1527,
@@ -373,6 +472,6 @@
   }
  ]
 }
-[36.6s] map /home/claude/earth_online/src/road50/out/bay_before_sf.png
-[36.9s] map /home/claude/earth_online/src/road50/out/bay_before_oakland.png
-[37.2s] map /home/claude/earth_online/src/road50/out/bay_before_sanjose.png
+[34.0s] map /home/claude/earth_online/src/road50/out/bay_before_sf.png
+[34.3s] map /home/claude/earth_online/src/road50/out/bay_before_oakland.png
+[34.6s] map /home/claude/earth_online/src/road50/out/bay_before_sanjose.png

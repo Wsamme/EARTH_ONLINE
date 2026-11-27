@@ -44,6 +44,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       try {
         const q = sgXY(lat, lon), y = Math.max(0, hC(q[0], q[1]));
         camera.position.set(q[0] + 300, y + 820, -q[1] + 300); controls.target.set(q[0], y, -q[1]); controls.update();
+        // let the page stream the area (tiles; the Greater Bay map's road chunks)
+        const zz = ms => new Promise(r => setTimeout(r, ms)); await zz(6000);
+        for (let i = 0; i < 40; i++){ let busy = false; try { busy = !!(SGR.rcBusy) || (SGR.queue && SGR.queue.length > 0); } catch (e){} if (!busy) break; await zz(1500); }
+        out.lines = SGR.lines ? SGR.lines.length : 0;
         if (window.SGTraffic){ SGTraffic.enabled = true; }
         out.warm = SGTraffic.warm(25);
         const seen = new Map(); let jumps = 0, offDeck = 0, n = 0; const stuck = new Map(), offs = [];

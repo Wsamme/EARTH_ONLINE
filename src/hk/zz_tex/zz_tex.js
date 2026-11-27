@@ -19,11 +19,16 @@
   const group = new THREE.Group(); group.name = 'hktex'; S.group = group;
   const NEAR = 2500, FAR = 4500;
   function dequant(root){
+    // quantised glTF (KHR_mesh_quantization): normalised integer attributes, often interleaved (vec3 int16 padded to 8-byte strides),
+    // become plain float attributes so CPU-side reads (bounds, hulls, merges) see real values
     root.traverse(o => { if (!o.isMesh) return; const g = o.geometry;
-      for (const name of Object.keys(g.attributes)){ const a = g.attributes[name]; if (!a.normalized || a.array instanceof Float32Array) continue;
-        const A = a.array, k = A instanceof Int8Array ? 127 : A instanceof Uint8Array ? 255 : A instanceof Int16Array ? 32767 : A instanceof Uint16Array ? 65535 : 1;
-        const F = new Float32Array(A.length); for (let i = 0; i < A.length; i++) F[i] = Math.max(-1, A[i]/k);
-        g.setAttribute(name, new THREE.BufferAttribute(F, a.itemSize, false)); } });
+      for (const name of Object.keys(g.attributes)){ const a = g.attributes[name]; const il = !!a.isInterleavedBufferAttribute, A = il ? a.data.array : a.array;
+        if (A instanceof Float32Array && !il) continue;
+        const C = A.constructor, k = !a.normalized ? 1 : C === Int8Array ? 127 : C === Uint8Array ? 255 : C === Int16Array ? 32767 : C === Uint16Array ? 65535 : 1;
+        const n = a.count, s = a.itemSize, st = il ? a.data.stride : s, off = il ? a.offset : 0, F = new Float32Array(n*s);
+        for (let i = 0; i < n; i++) for (let c = 0; c < s; c++) F[i*s + c] = Math.max(-1, A[i*st + off + c]/k);
+        if (!a.normalized) for (let i = 0; i < F.length; i++) F[i] = A[Math.floor(i/s)*st + off + i%s];
+        g.setAttribute(name, new THREE.BufferAttribute(F, s, false)); } });
   }
   const NIGHTU = () => (typeof NIGHT !== 'undefined' && NIGHT.uNight) ? NIGHT.uNight : {value:0};
   function texMat(om){

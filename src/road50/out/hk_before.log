@@ -1,13 +1,13 @@
-[0.2s] hk lines 128993
-[1.8s] prep: junction nodes 59358
-[2.0s] traffic network: links 39973 pieces 29514 nodes 23647 movements 57579
-[2.4s] weak components 665 main 71.0% others >=1 km 85 | SCC main 60.2%
-[2.8s] dead ends {"total":5307,"tunnel":0,"edge":0,"chunk":0,"gap3":93,"gap6":15,"gap12":54,"levelgap":1534,"service":903,"deckend":116,"water":16,"culdesac":2576,"oneway":1575} sinks 55 sources 133
-[3.1s] crossings {"falsejunc":41,"lowclear":313,"missedjunc":238,"overpass":2437,"atgrade":3402}
-[3.2s] levels / water {"step1_3":278,"step3_15":883,"step15":109,"steep":119,"inwater":46,"inwaterM":4331,"shortdeck":10}
-[3.4s] routes {"pairs":2000,"ok":888,"fail":1112,"failIsland":1029,"failOneway":83,"detourMed":1.96,"detour3":173,"far":878,"okPct":44.4}
-[3.5s] movements {"moves":57579,"zjump1_5":215,"zjump5":184,"xyFar":0}
-[3.5s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[0.1s] hk lines 128993
+[1.7s] prep: junction nodes 59358
+[1.9s] traffic network: links 39973 pieces 29514 nodes 23647 movements 57579
+[2.3s] weak components 665 main 71.0% others >=1 km 85 | SCC main 60.2%
+[2.6s] dead ends {"total":5307,"tunnel":0,"edge":0,"chunk":0,"gap3":93,"gap6":15,"gap12":54,"levelgap":1534,"service":903,"deckend":116,"water":16,"culdesac":2576,"oneway":1575} sinks 55 sources 133
+[2.8s] crossings {"falsejunc":41,"lowclear":313,"missedjunc":238,"overpass":2437,"atgrade":3402}
+[2.9s] levels / water {"step1_3":278,"step3_15":883,"step15":109,"steep":119,"inwater":46,"inwaterM":4331,"shortdeck":10}
+[3.1s] routes {"pairs":2000,"ok":888,"fail":1112,"failIsland":1029,"failOneway":83,"detourMed":1.96,"detour3":173,"far":878,"okPct":44.4}
+[3.1s] movements {"moves":57579,"zjump1_5":215,"zjump5":184,"xyFar":0}
+[3.2s] tunnels {"portals":0,"pairs":0,"unmatched":0}
 {
  "city": "hk",
  "tag": "before",
@@ -126,7 +126,16 @@
     "Cheong Lin Road",
     "Airport Road",
     "Sky City Interchange"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": -7192,
+    "y": 119,
+    "e": 27,
+    "e2": 0,
+    "li": 94850,
+    "to": 94852
+   }
   },
   {
    "len": 76031,
@@ -150,7 +159,16 @@
     "Pond Crescent",
     "Station Road",
     "Residence Lane 1"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 8982,
+    "y": 7248,
+    "e": 0,
+    "e2": 5.2,
+    "li": 110753,
+    "to": 101190
+   }
   },
   {
    "len": 17573,
@@ -174,7 +192,16 @@
     "Tai Wan Tau Road",
     "Po Toi O Chuen Road",
     "Tai Au Mun Road"
-   ]
+   ],
+   "gap": {
+    "d": 49.6,
+    "x": 17027,
+    "y": -3974,
+    "e": 0,
+    "e2": 4.4,
+    "li": 119079,
+    "to": 109209
+   }
   },
   {
    "len": 16121,
@@ -258,7 +285,16 @@
    "cls": 10,
    "names": [
     "Tai Shu Ha Road East"
-   ]
+   ],
+   "gap": {
+    "d": 0.1,
+    "x": -9123,
+    "y": 10236,
+    "e": 6.6,
+    "e2": 0,
+    "li": 108084,
+    "to": 116334
+   }
   },
   {
    "len": 5924,
@@ -285,7 +321,16 @@
    "cls": 8,
    "names": [
     "Tai Wo Service Road East"
-   ]
+   ],
+   "gap": {
+    "d": 12.3,
+    "x": 3611,
+    "y": 15369,
+    "e": 5.4,
+    "e2": 0,
+    "li": 103509,
+    "to": 103510
+   }
   },
   {
    "len": 5655,
@@ -294,7 +339,16 @@
    "cls": 10,
    "names": [
     "Nam Sang Wai Road"
-   ]
+   ],
+   "gap": {
+    "d": 0.5,
+    "x": -7252,
+    "y": 11954,
+    "e": 0,
+    "e2": 3.6,
+    "li": 108567,
+    "to": 103218
+   }
   },
   {
    "len": 5269,
@@ -303,7 +357,16 @@
    "cls": 2,
    "names": [
     "Heung Yuen Wai Highway"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 4277,
+    "y": 22047,
+    "e": 3.8,
+    "e2": 0,
+    "li": 88843,
+    "to": 119136
+   }
   },
   {
    "len": 5210,
@@ -312,7 +375,16 @@
    "cls": 2,
    "names": [
     "Heung Yuen Wai Highway"
-   ]
+   ],
+   "gap": {
+    "d": 0.5,
+    "x": 4260,
+    "y": 22010,
+    "e": 3.6,
+    "e2": 0,
+    "li": 88978,
+    "to": 119136
+   }
   },
   {
    "len": 5049,
@@ -323,7 +395,16 @@
     "So Kwun Wat Road",
     "Kwun Chui Road",
     "So Kwun Wat Tsuen Road"
-   ]
+   ],
+   "gap": {
+    "d": 12.3,
+    "x": -12679,
+    "y": 3862,
+    "e": 0,
+    "e2": 0,
+    "li": 110007,
+    "to": 88130
+   }
   },
   {
    "len": 4914,
@@ -354,7 +435,16 @@
    "names": [
     "Wun Yiu Road",
     "Tat Wan Road"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 4610,
+    "y": 10881,
+    "e": 0,
+    "e2": 5,
+    "li": 114860,
+    "to": 103654
+   }
   },
   {
    "len": 4238,
@@ -370,6 +460,6 @@
   }
  ]
 }
-[3.6s] map /home/claude/earth_online/src/road50/out/hk_before_central.png
-[3.9s] map /home/claude/earth_online/src/road50/out/hk_before_kowloon.png
-[4.0s] map /home/claude/earth_online/src/road50/out/hk_before_shatin.png
+[3.3s] map /home/claude/earth_online/src/road50/out/hk_before_central.png
+[3.5s] map /home/claude/earth_online/src/road50/out/hk_before_kowloon.png
+[3.6s] map /home/claude/earth_online/src/road50/out/hk_before_shatin.png

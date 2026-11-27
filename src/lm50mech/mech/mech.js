@@ -754,7 +754,7 @@ const MC = (() => {
   function throwRock(){ if (!ST.carry || (ST.act && ST.act.k !== 'carry')) return false; ST.act = {k:'throw', t:0, dur:1.0, rel:false}; MF.snd('servo', ST.S.X, ST.S.Y, ST.S.Zb + 50, 0.7); return true; }
   // ---- per frame: the actions drive the arms, the torso and the feet; hit tests
   function actions(dt){
-    const S = ST.S, A = ST.act, BI = MK.BI; S.arm[0] = S.arm[1] = null; let twist = 0, cp = 0, look = null, face = null, vK = 1;
+    const S = ST.S, A = ST.act, BI = MK.BI; S.arm[0] = S.arm[1] = null; let twist = 0, cp = 0, look = null, face = null, vK = 1, lunge = null;
     S.clav[0] = S.clav[1] = 0; S.extra.dy = 0; const dk = 1 - Math.min(1, dt*3); S.extra.lean *= dk; S.extra.roll *= dk;
     if (A){ A.t += dt; const u = A.t/A.dur;
       if (A.k === 'punch'){
@@ -768,6 +768,7 @@ const MC = (() => {
         twist = u < 0.25 ? s*0.28*sstep(0, 1, u/0.25) : u < 0.5 ? lerp(s*0.28, -s*0.48, sstep(0.25, 0.45, u)) : -s*0.48*(1 - sstep(0.58, 1, u));
         S.clav[i] = 0.18*Math.sin(PI*clamp(u*1.2, 0, 1)); face = Math.atan2(T[0] - S.X, T[1] - S.Y); look = T; vK = 0.45;
         if (u > 0.26 && u < 0.45) vK = 1.6;      // the step into the blow
+        if (u < 0.45 && vl > R*0.9){ const dx = T[0] - S.X, dy = T[1] - S.Y, dl = Math.hypot(dx, dy) || 1, k = Math.min(14, (vl - R*0.85)*2.2); lunge = [dx/dl*k, dy/dl*k]; }
         if (u > 0.36 && u < 0.62 && !A.hit){ const f = fistW(i);
           for (let j = 0; j < L.length; j++){ const sp = L[j]; if (Math.hypot(f[0] - sp.x, f[1] - sp.y, f[2] - sp.z) < sp.r + 7){ A.hit = true; hurt(34, sp.x, sp.y, sp.z, 7, 'punch'); sparks(f[0], f[1], f[2], 50, 26); MF.snd('punch', f[0], f[1], f[2], 1); shake(0.7, f[0], f[1], f[2], 220); ST.hitStop = 0.07; break; } }
           if (!A.bld){ const n = crushAt(f[0], f[1], f[2], 7, Math.sin(S.hdg), Math.cos(S.hdg), 0.95); if (n){ A.bld = true; MF.snd('punchB', f[0], f[1], f[2], 0.8); } try { KW_().landmarkHit(f[0], f[1], f[2], 10, kjT(), 0.9); } catch (e){ /* */ } }
@@ -779,6 +780,7 @@ const MC = (() => {
         let E = H.toM(S, T[0], T[1], T[2]); E[2] = clamp(E[2], 8, 28); E[0] = clamp(E[0], -6, 6); E[1] = clamp(E[1], 18, 56);
         if (A.ph === 'reach'){ const k = sstep(0, 1, u); for (let i = 0; i < 2; i++){ const s = i ? -1 : 1; S.arm[i] = {p:lerp3(idleP(i), [E[0] + s*6, E[1], E[2]], k), pole:[s*0.9, -0.6, -0.4], wrist:-0.1, open:k}; }
           vK = 0.25; face = sp ? Math.atan2(T[0] - S.X, T[1] - S.Y) : null; look = T;
+          if (sp){ const dx = T[0] - S.X, dy = T[1] - S.Y, dl = Math.hypot(dx, dy) || 1; if (dl - sp.r > 24) lunge = [dx/dl*12, dy/dl*12]; }
           if (u >= 1){ const hm = H.toW(S, [E[0], E[1], E[2]]);
             let hit = -1; for (let j = 0; j < L.length; j++) if (Math.hypot(hm[0] - L[j].x, hm[1] - L[j].y, hm[2] - L[j].z) < L[j].r + 12){ hit = j; break; }
             if (hit >= 0){ A.ph = 'hold'; A.t = 0; A.dur = 1.5; A.hold = hit; MF.snd('clang', hm[0], hm[1], hm[2], 0.8); sparks(hm[0], hm[1], hm[2], 30, 14); }
@@ -837,7 +839,7 @@ const MC = (() => {
       S.look[0] += (clamp(wrapA(ly), -0.9, 0.9) - S.look[0])*Math.min(1, dt*3); S.look[1] += (clamp(lp, -0.5, 0.45) - S.look[1])*Math.min(1, dt*3); }
     else { S.look[0] *= 1 - Math.min(1, dt*2); S.look[1] *= 1 - Math.min(1, dt*2); }
     if (!ST.act && ST.pending){ const p = ST.pending; ST.pending = null; if (p === 'punch') punch(); else if (p === 'grab') grab(); else if (p === 'stomp') stomp(); }
-    return {face, vK};
+    return {face, vK, lunge};
   }
   const lerp3 = (a, b, t) => [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
   const idleP = i => H.idleArm(ST.S, i).p;
@@ -1320,6 +1322,7 @@ const MG = (() => {
     const vmax = (run ? 24 : 11)*(wd ? 0.6 : 1)*ST.resist*fr.vK;
     let vx = 0, vy = 0; if (ml > 0.05){ const dx = (Math.sin(yaw)*fw + Math.cos(yaw)*rt)/ml, dy = (Math.cos(yaw)*fw - Math.sin(yaw)*rt)/ml; vx = dx*mg*vmax; vy = dy*mg*vmax; }
     if (fr.vK > 1 && ml < 0.05 && ST.act && ST.act.k === 'punch'){ vx = Math.sin(S.hdg)*6; vy = Math.cos(S.hdg)*6; }     // (the step into a punch)
+    if (fr.lunge){ vx += fr.lunge[0]; vy += fr.lunge[1]; }     // (closing in on a part that is out of reach)
     ML.loco(S, {vx, vy, hdg:fr.face, turn:run ? 0.55 : fr.face !== null && fr.face !== undefined ? 1.25 : 0.9}, mdt);
     S.X = clamp(S.X, -HALF + 400, HALF - 400); S.Y = clamp(S.Y, -HALF + 400, HALF - 400);
     if (!ST.drop) MC.contacts(dt);

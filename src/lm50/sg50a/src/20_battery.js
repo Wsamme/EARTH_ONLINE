@@ -51,7 +51,8 @@ K50('sgstraitstrading', '海峡贸易大厦', 'Straits Trading Building', A0, C0
 // and blue-green glass, a glazed base. No signs.
 {
 const A0 = [1.284169, 103.85197];
-const T0 = [[-15.2,-15.6],[-15.7,-13.9],[-19.4,-13.9],[-24.2,-12.1],[-27.7,-8.6],[-29.9,-1.6],[-29.9,2.6],[-26.4,8.6],[-21.2,12.6],[15.8,16.4],[16.6,11.6],[27.8,12.1],[29.6,-8.6],[28.6,-10.4],[26.6,-11.6]];
+// east end pulled in 3 m from the OSM outline so the app's hull (+3 m) does not swallow the centroid of CIMB Plaza (w171999336)
+const T0 = [[-15.2,-15.6],[-15.7,-13.9],[-19.4,-13.9],[-24.2,-12.1],[-27.7,-8.6],[-29.9,-1.6],[-29.9,2.6],[-26.4,8.6],[-21.2,12.6],[15.8,16.4],[16.6,11.6],[25.0,12.0],[26.6,-8.6],[25.6,-10.4],[23.8,-11.4]];
 const C0 = pcen(T0), [T] = shAll([T0], C0);
 K50('sg30raffles', '莱佛士坊30号', '30 Raffles Place', A0, C0, {r:36, h:152, lt:{m:1, c:'#ffe9cc', k:0.5}, build(){
   const g = new THREE.Group(), B = mkB();

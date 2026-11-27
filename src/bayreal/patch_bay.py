@@ -1,6 +1,6 @@
 # v22: the San Francisco Bay Area build. Called by sgreal/patch17.py (CITY=bay) on the assembled source.
 import re
-BAY_MODS = ['bayreal/app/bay_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm20/signs/signs.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_bay/info_bay.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
+BAY_MODS = ['bayreal/app/bay_reset.js', 'sgreal/mod_roads/roads.js', 'sgreal/mod_bld/bld.js', 'lm20/signs/signs.js', 'lm20/f1d/f1d.js', 'lm20/light/light.js', 'lm20/wx/wx.js', 'lm20/core/core.js', 'lm20/traffic/traffic.js', 'lm24/admin/admin.js', 'lm24/fly/fly.js', 'lm27/phys/phys.js', 'lm25/kaiju/kaiju.js', 'lm25/cityrace/cityrace.js', 'lm25/net/net.js', 'lm27/fireworks/fireworks.js', 'lm28/army/army.js', 'lm50mech/mech/mech.js', 'lm30/nav/nav.js', 'lm31/i18n/i18n.js', 'lm31/lmcard/lmcard.js', 'lm31/info_bay/info_bay.js', 'lm32/detail/detail.js', 'lm32/clock/clock.js']
 BAY_APP = ['lm20/audio/audio.js', 'bayreal/app/bay_post.js', 'bayreal/app/bayreal.js', 'bayreal/app/baystats.js', 'sgreal/app/cityswitch.js']
 def apply(src):
     def R(a, b, count=1):

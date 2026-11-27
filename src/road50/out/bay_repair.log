@@ -1,0 +1,9 @@
+[1.0s] bay lines 364573
+[7.8s] R3 pass 0 conflicts 1077 fixed 397
+[12.6s] R3 pass 1 conflicts 522 fixed 83
+[17.0s] R3 pass 2 conflicts 403 fixed 13
+[17.0s] R3: conflicts 1077 fixed 493 flagged 380
+[28.5s] R1/R2: dead ends 25839 joined 101 inserted vertices 7 flagged 110
+[30.4s] R4: low crossings 53 raised bridges 0 flagged 53
+[30.5s] R5: steep lines 105 re-graded 16 flagged 89
+[32.3s] {"city":"bay","src":"/home/claude/earth_online/site/baydata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/baydata","lines":364573,"changedLines":1314,"changes":{"R3":1378,"R1":101,"R5":16},"flagged":{"R3: # % ramp spreads over > # lines":324,"R3: # % ramp loses junction (c#)":28,"R3: # % ramp makes a new junction (c#)":12,"R3: # % ramp low clearance over c#":6,"R3: # % ramp loses junction (c#b)":6,"R3: # % ramp makes a new junction (c#b)":3,"R3: # % ramp low clearance over c#b":1,"R1: level #":95,"R1: classes #/#":1,"R1: level #, bridge / ground":8,"R1: level #, classes #/#, bridge / ground":2,"R1: bridge / ground":4,"R4: bridge too short to clear the road below with <= # % ramps":52,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":89},"rules":["R1","R2","R3","R4","R5"],"gap":6}

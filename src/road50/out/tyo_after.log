@@ -1,0 +1,476 @@
+[0.4s] tyo lines 393687
+[9.6s] prep: junction nodes 518204
+[14.5s] traffic network: links 1094323 pieces 595057 nodes 408750 movements 2232296
+[29.7s] weak components 1314 main 97.4% others >=1 km 23 | SCC main 96.2%
+[45.5s] dead ends {"total":48225,"tunnel":0,"edge":1610,"chunk":0,"gap3":237,"gap6":24,"gap12":1377,"levelgap":3096,"service":7469,"deckend":500,"water":186,"culdesac":33726,"oneway":2459} sinks 88 sources 925
+[55.9s] crossings {"falsejunc":210,"lowclear":1586,"missedjunc":2341,"overpass":7823,"atgrade":120472}
+[56.3s] levels / water {"step1_3":128,"step3_15":964,"step15":127,"steep":524,"inwater":395,"inwaterM":48162,"shortdeck":3}
+[112.6s] routes {"pairs":2000,"ok":1823,"fail":177,"failIsland":114,"failOneway":63,"detourMed":1.16,"detour3":1,"far":1821,"okPct":91.1}
+[113.8s] movements {"moves":2232296,"zjump1_5":31,"zjump5":26,"xyFar":0}
+[113.8s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+{
+ "city": "tyo",
+ "tag": "after",
+ "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/tyodata",
+ "lines": 393687,
+ "drivableKm": 44729.3,
+ "links": 1094323,
+ "nodes": 408750,
+ "junctionNodes": 518204,
+ "weakComponents": 1314,
+ "mainWeakPct": 97.39,
+ "otherComponentsOver1km": 23,
+ "otherKm": 1166.9,
+ "mainSccPctApp": 88.83,
+ "mainSccPct": 96.22,
+ "closedOnewaySets": 25,
+ "closedOnewayKm": 7.97,
+ "sinkLinksInMain": 1005,
+ "sourceLinksInMain": 1907,
+ "deadEnds": {
+  "total": 48225,
+  "tunnel": 0,
+  "edge": 1610,
+  "chunk": 0,
+  "gap3": 237,
+  "gap6": 24,
+  "gap12": 1377,
+  "levelgap": 3096,
+  "service": 7469,
+  "deckend": 500,
+  "water": 186,
+  "culdesac": 33726,
+  "oneway": 2459
+ },
+ "onewaySinks": 88,
+ "onewaySources": 925,
+ "crossings": {
+  "falsejunc": 210,
+  "lowclear": 1586,
+  "missedjunc": 2341,
+  "overpass": 7823,
+  "atgrade": 120472
+ },
+ "levels": {
+  "step1_3": 128,
+  "step3_15": 964,
+  "step15": 127,
+  "steep": 524,
+  "inwater": 395,
+  "inwaterM": 48162,
+  "shortdeck": 3
+ },
+ "movements": {
+  "moves": 2232296,
+  "zjump1_5": 31,
+  "zjump5": 26,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1823,
+  "fail": 177,
+  "failIsland": 114,
+  "failOneway": 63,
+  "detourMed": 1.16,
+  "detour3": 1,
+  "far": 1821,
+  "okPct": 91.1
+ },
+ "tunnels": {
+  "portals": 0,
+  "pairs": 0,
+  "unmatched": 0
+ },
+ "problemCounts": {
+  "island": 23,
+  "oneway_trap": 25,
+  "oneway_noentry": 6,
+  "dead_levelgap": 3096,
+  "source": 925,
+  "sink": 88,
+  "dead_deckend": 497,
+  "dead_gap12": 1377,
+  "dead_edge": 1610,
+  "dead_gap3": 237,
+  "dead_water": 186,
+  "dead_gap6": 24,
+  "dead_shortdeck": 3,
+  "missedjunc": 2341,
+  "lowclear": 1586,
+  "falsejunc": 210,
+  "step": 1219,
+  "inwater": 395,
+  "steep": 524,
+  "zjump": 31
+ },
+ "topIslands": [
+  {
+   "len": 949265,
+   "x": 22067,
+   "y": -24231,
+   "cls": 0,
+   "names": [
+    "Tokyo-Wan-Aqua-Line Expressway",
+    "Aqua Renraku Expressway",
+    "東京湾アクアライン;東京湾横断・木更津東金道路",
+    "東京湾岸道路"
+   ]
+  },
+  {
+   "len": 20602,
+   "x": 3152,
+   "y": -11998,
+   "cls": 0,
+   "names": [
+    "Bayshore Route",
+    "Tokyo Wangan Road",
+    "Wangan Road"
+   ]
+  },
+  {
+   "len": 8323,
+   "x": 3769,
+   "y": -13163,
+   "cls": 1,
+   "names": [
+    "Tokyo Wangan Road",
+    "国道357号",
+    "Kampachi-dori"
+   ]
+  },
+  {
+   "len": 4293,
+   "x": -13019,
+   "y": 19309,
+   "cls": 8,
+   "names": [],
+   "gap": {
+    "d": 0.6,
+    "x": -13463,
+    "y": 19715,
+    "e": 6.6,
+    "e2": 6.6,
+    "li": 105557,
+    "to": 357938
+   }
+  },
+  {
+   "len": 4247,
+   "x": 1880,
+   "y": -2632,
+   "cls": 0,
+   "names": [
+    "Daiba Route",
+    "Daiba Route - Port of Tokyo Connector Bridge"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 2832,
+    "y": -2915,
+    "e": 60,
+    "e2": 19.8,
+    "li": 1,
+    "to": 377576
+   }
+  },
+  {
+   "len": 4201,
+   "x": -1105,
+   "y": 752,
+   "cls": 0,
+   "names": [
+    "Circle 1",
+    "Route 3 Shibuya Line"
+   ],
+   "gap": {
+    "d": 0.1,
+    "x": -1013,
+    "y": 551,
+    "e": 0.4,
+    "e2": 20.4,
+    "li": 112287,
+    "to": 112224
+   }
+  },
+  {
+   "len": 3246,
+   "x": -19119,
+   "y": -27781,
+   "cls": 2,
+   "names": [
+    "National Highway Route 1"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -19025,
+    "y": -27658,
+    "e": 0,
+    "e2": 7.2,
+    "li": 369206,
+    "to": 388248
+   }
+  },
+  {
+   "len": 2682,
+   "x": 3831,
+   "y": -1927,
+   "cls": 0,
+   "names": [
+    "Harumi Route"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 3809,
+    "y": -2715,
+    "e": 92.8,
+    "e2": 0,
+    "li": 376672,
+    "to": 14
+   }
+  },
+  {
+   "len": 2561,
+   "x": -8938,
+   "y": 26212,
+   "cls": 0,
+   "names": [
+    "Metropilitan Expressway",
+    "Saitama-Shintoshin Expressway"
+   ],
+   "gap": {
+    "d": 0.4,
+    "x": -7832,
+    "y": 26108,
+    "e": 12,
+    "e2": 6.8,
+    "li": 391825,
+    "to": 371182
+   }
+  },
+  {
+   "len": 2475,
+   "x": 3258,
+   "y": -12133,
+   "cls": 0,
+   "names": [
+    "Bayshore Route"
+   ]
+  },
+  {
+   "len": 2475,
+   "x": -688,
+   "y": 2106,
+   "cls": 0,
+   "names": [
+    "Route 4 Shinjuku Line",
+    "Shuto Expressway Inner Circular Route",
+    "Circle 1"
+   ]
+  },
+  {
+   "len": 2164,
+   "x": -27866,
+   "y": -21136,
+   "cls": 0,
+   "names": [
+    "Tomei Expressway",
+    "大和５号橋"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -27954,
+    "y": -21243,
+    "e": 0,
+    "e2": 6.6,
+    "li": 374968,
+    "to": 102283
+   }
+  },
+  {
+   "len": 2047,
+   "x": 10291,
+   "y": 15059,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 0,
+    "x": 9975,
+    "y": 15047,
+    "e": 0,
+    "e2": 6.2,
+    "li": 210410,
+    "to": 383983
+   }
+  },
+  {
+   "len": 2026,
+   "x": -6211,
+   "y": -27890,
+   "cls": 8,
+   "names": [
+    "南本牧はま道路"
+   ],
+   "gap": {
+    "d": 10.7,
+    "x": -6398,
+    "y": -27888,
+    "e": 0,
+    "e2": 6.6,
+    "li": 118197,
+    "to": 293321
+   }
+  },
+  {
+   "len": 1874,
+   "x": -11581,
+   "y": -21353,
+   "cls": 0,
+   "names": [
+    "Kanagawa Route 2 Mitsuzawa Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -11180,
+    "y": -21235,
+    "e": 14.8,
+    "e2": 14.8,
+    "li": 376525,
+    "to": 375067
+   }
+  },
+  {
+   "len": 1775,
+   "x": -11833,
+   "y": -21298,
+   "cls": 0,
+   "names": [
+    "Kanagawa Route 2 Mitsuzawa Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -11131,
+    "y": -21218,
+    "e": 0.4,
+    "e2": 0.4,
+    "li": 374584,
+    "to": 374584
+   }
+  },
+  {
+   "len": 1632,
+   "x": -14708,
+   "y": -24115,
+   "cls": 0,
+   "names": [
+    "Kanagawa Route 3 Kariba Line"
+   ],
+   "gap": {
+    "d": 1.6,
+    "x": -14652,
+    "y": -24093,
+    "e": 0,
+    "e2": 6.6,
+    "li": 112110,
+    "to": 287353
+   }
+  },
+  {
+   "len": 1618,
+   "x": -2532,
+   "y": 23477,
+   "cls": 10,
+   "names": [
+    "美沼橋"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -2421,
+    "y": 23538,
+    "e": 6.4,
+    "e2": 0,
+    "li": 164999,
+    "to": 158514
+   }
+  },
+  {
+   "len": 1464,
+   "x": 27930,
+   "y": -17036,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1242,
+   "x": 3141,
+   "y": 2269,
+   "cls": 1,
+   "names": [
+    "Fukagawa Route",
+    "Shuto Expressway Route 9 Fukagawa Line"
+   ],
+   "gap": {
+    "d": 0.6,
+    "x": 2911,
+    "y": 2240,
+    "e": 26.4,
+    "e2": 20.4,
+    "li": 377434,
+    "to": 372629
+   }
+  },
+  {
+   "len": 1106,
+   "x": -27895,
+   "y": -13179,
+   "cls": 8,
+   "names": [
+    "Shimomori Hanamizuki St."
+   ],
+   "gap": {
+    "d": 20.2,
+    "x": -27793,
+    "y": -13172,
+    "e": 0,
+    "e2": 0,
+    "li": 102519,
+    "to": 102326
+   }
+  },
+  {
+   "len": 1079,
+   "x": -21719,
+   "y": 13739,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 1.6,
+    "x": -21558,
+    "y": 13870,
+    "e": 6.6,
+    "e2": 6.6,
+    "li": 165965,
+    "to": 287247
+   }
+  },
+  {
+   "len": 1017,
+   "x": 15322,
+   "y": 5263,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 17.1,
+    "x": 15727,
+    "y": 4966,
+    "e": 0,
+    "e2": 2.6,
+    "li": 165259,
+    "to": 391391
+   }
+  }
+ ]
+}
+[114.3s] map /home/claude/earth_online/src/road50/out/tyo_after_chiyoda.png
+[115.9s] map /home/claude/earth_online/src/road50/out/tyo_after_shinjuku.png
+[116.3s] map /home/claude/earth_online/src/road50/out/tyo_after_shibuya.png

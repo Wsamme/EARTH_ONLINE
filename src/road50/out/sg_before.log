@@ -1,13 +1,13 @@
 [0.2s] sg lines 154878
-[1.9s] prep: junction nodes 91608
-[2.4s] traffic network: links 52215 pieces 40738 nodes 28307 movements 83896
-[2.8s] weak components 73 main 98.8% others >=1 km 9 | SCC main 95.9%
-[3.6s] dead ends {"total":2885,"tunnel":102,"edge":0,"chunk":0,"gap3":45,"gap6":3,"gap12":24,"levelgap":22,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":281} sinks 32 sources 164
-[3.9s] crossings {"falsejunc":8,"lowclear":27,"missedjunc":20,"overpass":1142,"atgrade":6778}
-[4.0s] levels / water {"step1_3":5,"step3_15":22,"step15":2,"steep":241,"inwater":14,"inwaterM":1173,"shortdeck":0}
-[4.8s] routes {"pairs":2000,"ok":1941,"fail":59,"failIsland":31,"failOneway":28,"detourMed":1.33,"detour3":13,"far":1924,"okPct":97}
-[4.9s] movements {"moves":83896,"zjump1_5":0,"zjump5":0,"xyFar":0}
-[5.9s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.2}
+[1.8s] prep: junction nodes 91608
+[1.9s] traffic network: links 52215 pieces 40738 nodes 28307 movements 83896
+[2.4s] weak components 73 main 98.8% others >=1 km 9 | SCC main 95.9%
+[2.7s] dead ends {"total":2885,"tunnel":102,"edge":0,"chunk":0,"gap3":45,"gap6":3,"gap12":24,"levelgap":22,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":281} sinks 32 sources 164
+[2.9s] crossings {"falsejunc":8,"lowclear":27,"missedjunc":20,"overpass":1142,"atgrade":6778}
+[3.0s] levels / water {"step1_3":5,"step3_15":22,"step15":2,"steep":241,"inwater":14,"inwaterM":1173,"shortdeck":0}
+[3.6s] routes {"pairs":2000,"ok":1941,"fail":59,"failIsland":31,"failOneway":28,"detourMed":1.33,"detour3":13,"far":1924,"okPct":97}
+[3.6s] movements {"moves":83896,"zjump1_5":0,"zjump5":0,"xyFar":0}
+[4.2s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.2}
 {
  "city": "sg",
  "tag": "before",
@@ -111,7 +111,16 @@
    "cls": 10,
    "names": [
     "Tanah Merah Coast Road"
-   ]
+   ],
+   "gap": {
+    "d": 28.3,
+    "x": 15635,
+    "y": 366,
+    "e": 0,
+    "e2": 0,
+    "li": 80,
+    "to": 130104
+   }
   },
   {
    "len": 11261,
@@ -187,10 +196,19 @@
    "x": -6236,
    "y": -3033,
    "cls": 10,
-   "names": []
+   "names": [],
+   "gap": {
+    "d": 35.5,
+    "x": -6071,
+    "y": -3115,
+    "e": 0,
+    "e2": 0,
+    "li": 129,
+    "to": 147406
+   }
   }
  ]
 }
-[6.0s] map /home/claude/earth_online/src/road50/out/sg_before_cbd.png
-[6.3s] map /home/claude/earth_online/src/road50/out/sg_before_jurong.png
-[6.4s] map /home/claude/earth_online/src/road50/out/sg_before_tampines.png
+[4.4s] map /home/claude/earth_online/src/road50/out/sg_before_cbd.png
+[4.5s] map /home/claude/earth_online/src/road50/out/sg_before_jurong.png
+[4.6s] map /home/claude/earth_online/src/road50/out/sg_before_tampines.png

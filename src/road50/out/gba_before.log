@@ -1,13 +1,13 @@
 [0.6s] gba lines 268387
-[7.3s] prep: junction nodes 223636
-[8.2s] traffic network: links 240706 pieces 173559 nodes 128245 movements 399519
-[9.2s] weak components 2071 main 92.5% others >=1 km 282 | SCC main 85.7%
-[12.6s] dead ends {"total":21511,"tunnel":0,"edge":0,"chunk":7,"gap3":1220,"gap6":89,"gap12":313,"levelgap":5545,"service":2187,"deckend":280,"water":160,"culdesac":11710,"oneway":6283} sinks 181 sources 577
-[15.1s] crossings {"falsejunc":88,"lowclear":1616,"missedjunc":1548,"overpass":11322,"atgrade":35297}
-[15.4s] levels / water {"step1_3":800,"step3_15":2511,"step15":297,"steep":143,"inwater":1162,"inwaterM":139746,"shortdeck":16}
-[22.1s] routes {"pairs":2000,"ok":1582,"fail":418,"failIsland":305,"failOneway":113,"detourMed":1.31,"detour3":13,"far":1582,"okPct":79.1}
-[22.3s] movements {"moves":399519,"zjump1_5":472,"zjump5":413,"xyFar":0}
-[22.3s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[6.7s] prep: junction nodes 223636
+[7.8s] traffic network: links 240706 pieces 173559 nodes 128245 movements 399519
+[10.7s] weak components 2071 main 92.5% others >=1 km 282 | SCC main 85.7%
+[13.0s] dead ends {"total":21511,"tunnel":0,"edge":0,"chunk":7,"gap3":1220,"gap6":89,"gap12":313,"levelgap":5545,"service":2187,"deckend":280,"water":160,"culdesac":11710,"oneway":6283} sinks 181 sources 577
+[15.7s] crossings {"falsejunc":88,"lowclear":1616,"missedjunc":1548,"overpass":11322,"atgrade":35297}
+[16.0s] levels / water {"step1_3":800,"step3_15":2511,"step15":297,"steep":143,"inwater":1162,"inwaterM":139746,"shortdeck":16}
+[22.9s] routes {"pairs":2000,"ok":1582,"fail":418,"failIsland":305,"failOneway":113,"detourMed":1.31,"detour3":13,"far":1582,"okPct":79.1}
+[23.1s] movements {"moves":399519,"zjump1_5":472,"zjump5":413,"xyFar":0}
+[23.1s] tunnels {"portals":0,"pairs":0,"unmatched":0}
 {
  "city": "gba",
  "tag": "before",
@@ -127,7 +127,16 @@
     "Tung Chung Eastern Interchange",
     "Ying Hei Road",
     "Yi Tung Road"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": -192,
+    "y": -34881,
+    "e": 27,
+    "e2": 0,
+    "li": 39671,
+    "to": 39673
+   }
   },
   {
    "len": 89347,
@@ -139,7 +148,16 @@
     "Heba Road",
     "Kuiwan Road",
     "Baishawan Road"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 45231,
+    "y": 160,
+    "e": 0,
+    "e2": 0,
+    "li": 180803,
+    "to": 180804
+   }
   },
   {
    "len": 76031,
@@ -161,7 +179,16 @@
    "names": [
     "Guangzhou-Longchuan Expressway",
     "Hehuiguan Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 7.3,
+    "x": -26737,
+    "y": 29521,
+    "e": 7.2,
+    "e2": 0,
+    "li": 227528,
+    "to": 227345
+   }
   },
   {
    "len": 31372,
@@ -173,7 +200,16 @@
     "Pond Crescent",
     "Station Road",
     "Residence Lane 1"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 15982,
+    "y": -27752,
+    "e": 0,
+    "e2": 5.2,
+    "li": 99191,
+    "to": 98503
+   }
   },
   {
    "len": 31251,
@@ -182,7 +218,16 @@
    "cls": 0,
    "names": [
     "Conghua-Dongguan-Shenzhen Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": -2836,
+    "y": 38096,
+    "e": 7.4,
+    "e2": 0.4,
+    "li": 240542,
+    "to": 241126
+   }
   },
   {
    "len": 26192,
@@ -191,7 +236,16 @@
    "cls": 0,
    "names": [
     "Huizhou-Tangxia Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 0.1,
+    "x": 12737,
+    "y": 22378,
+    "e": 4.8,
+    "e2": 0,
+    "li": 223097,
+    "to": 223547
+   }
   },
   {
    "len": 21008,
@@ -202,7 +256,16 @@
     "Huizhou-Shenzhen Coastal Expressway",
     "Xiping South Road",
     "Yancun Rd"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 27882,
+    "y": -5674,
+    "e": 2.6,
+    "e2": 0,
+    "li": 179176,
+    "to": 179604
+   }
   },
   {
    "len": 17573,
@@ -235,7 +298,16 @@
    "cls": 0,
    "names": [
     "Shenzhen Outer Ring Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 7515,
+    "y": 13074,
+    "e": 20.4,
+    "e2": 7.2,
+    "li": 210114,
+    "to": 210069
+   }
   },
   {
    "len": 15340,
@@ -259,7 +331,16 @@
     "Lake Road",
     "Cycad Road",
     "Crape Myrtle Road"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 12178,
+    "y": -5661,
+    "e": 1,
+    "e2": 5,
+    "li": 177221,
+    "to": 177413
+   }
   },
   {
    "len": 14757,
@@ -268,7 +349,16 @@
    "cls": 1,
    "names": [
     "Heung Yuen Wai Highway"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 11277,
+    "y": -12953,
+    "e": 3.8,
+    "e2": 0,
+    "li": 157863,
+    "to": 158460
+   }
   },
   {
    "len": 14650,
@@ -277,7 +367,16 @@
    "cls": 0,
    "names": [
     "Guangzhou-Longchuan Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": -46183,
+    "y": 23642,
+    "e": 0.4,
+    "e2": 7.2,
+    "li": 216996,
+    "to": 217299
+   }
   },
   {
    "len": 14471,
@@ -286,7 +385,16 @@
    "cls": 0,
    "names": [
     "Shenzhen Outer Ring Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 0,
+    "x": 7372,
+    "y": 12883,
+    "e": 20.4,
+    "e2": 7.2,
+    "li": 210115,
+    "to": 210068
+   }
   },
   {
    "len": 13356,
@@ -295,7 +403,16 @@
    "cls": 0,
    "names": [
     "Conghua-Dongguan-Shenzhen Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 15.7,
+    "x": -835,
+    "y": 34937,
+    "e": 20.4,
+    "e2": 22.2,
+    "li": 241077,
+    "to": 241132
+   }
   },
   {
    "len": 13334,
@@ -304,7 +421,16 @@
    "cls": 0,
    "names": [
     "Shenzhen Outer Ring Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 11.4,
+    "x": -19903,
+    "y": 8989,
+    "e": 13.8,
+    "e2": 19.7,
+    "li": 185680,
+    "to": 185198
+   }
   },
   {
    "len": 13145,
@@ -316,7 +442,16 @@
     "Po Toi O Chuen Road",
     "Tai Au Mun Road",
     "Mau Po Road"
-   ]
+   ],
+   "gap": {
+    "d": 49.6,
+    "x": 24027,
+    "y": -38974,
+    "e": 0,
+    "e2": 4.4,
+    "li": 75561,
+    "to": 75047
+   }
   },
   {
    "len": 12926,
@@ -325,7 +460,16 @@
    "cls": 0,
    "names": [
     "Shenzhen Outer Ring Expressway"
-   ]
+   ],
+   "gap": {
+    "d": 29.5,
+    "x": -19888,
+    "y": 9001,
+    "e": 13.8,
+    "e2": 19.5,
+    "li": 185685,
+    "to": 185198
+   }
   },
   {
    "len": 12842,
@@ -370,6 +514,6 @@
   }
  ]
 }
-[22.5s] map /home/claude/earth_online/src/road50/out/gba_before_futian.png
-[22.9s] map /home/claude/earth_online/src/road50/out/gba_before_luohu.png
-[23.1s] map /home/claude/earth_online/src/road50/out/gba_before_dongguan.png
+[23.3s] map /home/claude/earth_online/src/road50/out/gba_before_futian.png
+[23.7s] map /home/claude/earth_online/src/road50/out/gba_before_luohu.png
+[23.8s] map /home/claude/earth_online/src/road50/out/gba_before_dongguan.png

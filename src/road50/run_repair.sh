@@ -8,5 +8,6 @@ declare -A DIRS=([sg]=sgdata [hk]=hkdata [nyc]=nycdata [tyo]=tyodata [bay]=bayda
 for c in ${CITIES:-sg hk nyc tyo bay gba}; do
   d=$STAGE/${DIRS[$c]}; rm -rf "$d"; mkdir -p "$d"
   node --max-old-space-size=2500 repair.js $c --out "$d" > out/${c}_repair.log 2>&1; echo "$c repair $?"
-  node --max-old-space-size=2500 diag.js $c --dir "$d" --png --tag after > out/${c}_after.log 2>&1; echo "$c after $?"
+  OD=""; [ -f out/${c}_od_before.json ] && OD="--odin out/${c}_od_before.json"
+  node --max-old-space-size=2500 diag.js $c --dir "$d" --png --tag after $OD > out/${c}_after.log 2>&1; echo "$c after $?"
 done

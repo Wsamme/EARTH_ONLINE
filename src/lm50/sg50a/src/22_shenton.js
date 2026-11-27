@@ -100,23 +100,27 @@ K50('sgoneshenton', '珊顿道一号', 'One Shenton', A0, C0, {r:57, h:214, lt:{
 // (photo, Commons): dark glass with horizontal bands and flowing light lines, a planted terrace on the podium.
 {
 const A0 = [1.278132, 103.847859];
-const POD0 = [[-37.7,3.4],[20.8,40.1],[38.8,12.4],[-1.2,-12.6],[12.6,-35.6],[-4.7,-46.4]];
+// the L-shaped podium is split at its inner corner: its east wing is the unlabelled key sgsbfpod, so that neither convex hull covers
+// the United Overseas Insurance Building (w172270393) standing in the notch
+const POD0 = [[-37.7,3.4],[-5.5,23.6],[-1.2,-12.6],[12.6,-35.6],[-4.7,-46.4]], PODE0 = [[-5.5,23.6],[20.8,40.1],[38.8,12.4],[-1.2,-12.6]];
 const MID0 = [[-5.4,-43.4],[-33.9,2.4],[19.6,34.9],[29.8,18.9],[-4.2,-4.9],[-9.7,-4.9],[8.8,-34.4]];
 const TW0 = [[-5.4,-43.4],[-33.9,2.4],[-19.7,11.1],[8.8,-34.4]];
-const C0 = pcen(POD0), [PODP, MID, TW] = shAll([POD0, MID0, TW0], C0);
+const C0 = pcen(POD0), [PODP, MID, TW, PODE] = shAll([POD0, MID0, TW0, PODE0], C0);
+function sbfPod(B, P, R){ wallP(B.p(LOB50), offP(P, 1.2), 0.3, 6); foundP(B.p(FOUND50), P);
+  tw50(B, P, 6, 30, {sty:'fin', gl:{c:'#33424e', m:1, fh:4.2, cw:1.6}, fr:{c:'#c6c4bd', m:0, lk:0.3}, fh:4.5, bay:2.2, fd:0.6, fw:0.5}); capP(B.p('#7d8a74'), P, 30.05);
+  for (const [x, z] of alongP(offP(P, 3), 7)){ if (inPolyS(offP(MID, -2), x, z)) continue; treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 30, z, 0.8, R); } }
 K50('sgsbf', '新加坡工商联合总会大厦', 'SBF Center', A0, C0, {r:51, h:187, lt:{m:1, c:'#e6efff', k:0.5}, build(){
   const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
   const GL = {c:'#33424e', m:1, fh:4.2, cw:1.6}, WL = {c:'#dfe3e4', m:0, lk:0.35}, PODC = {c:'#c6c4bd', m:0, lk:0.3};
-  baseP(B, PODP, 6);
-  tw50(B, PODP, 6, 30, {sty:'fin', gl:GL, fr:PODC, fh:4.5, bay:2.2, fd:0.6, fw:0.5});
-  capP(B.p('#7d8a74'), PODP, 30.05);
-  for (const [x, z] of alongP(offP(PODP, 3), 7)){ if (inPolyS(offP(MID, -2), x, z)) continue; treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 30, z, 0.8, R); }
+  sbfPod(B, PODP, R);
   tw50(B, MID, 30, 60, {sty:'rib', gl:GL, fr:WL, fh:4.2, sh:0.6, bay:1.6, mul:null});
   tw50(B, TW, 60, 183, {sty:'rib', gl:GL, fr:WL, fh:4.2, sh:0.6, bay:1.6, mul:null});
   // flowing light lines: gentle waves across the long faces
   for (const e of edgesF(TW)) if (e.L > 30) for (let y0 = 72; y0 < 175; y0 += 26){ const N = 16; for (let k = 0; k < N; k++){ const u0 = e.L*k/N, u1 = e.L*(k + 1)/N, v0 = y0 + 5*Math.sin(k/N*TAU), v1 = y0 + 5*Math.sin((k + 1)/N*TAU); shapeP(B.p(WL), [[u0, v0 - 0.35], [u1, v1 - 0.35], [u1, v1 + 0.35], [u0, v0 + 0.35]], e.F, 0.12); } }
   wallP(B.p(WL), TW, 183, 187); blkP(B, scP(TW, 0.5), 183, 186, MECH50, ROOF50); lavP(B.p(LAV50), TW, 187);
   B.flush(g); return g; }});
+K50('sgsbfpod', '新加坡工商联合总会大厦', 'SBF Center (podium east wing)', A0, C0, {r:51, h:30, label:false, lt:{m:1, c:'#e6efff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(); sbfPod(B, PODE, LMCTX.rng); B.flush(g); return g; }});
 }
 // ---- The Clift, 21 McCallum Street (sgclift): 151 m, 43 floors, 2010 (Wikipedia list). Residential slab from the OSM part
 // w326926550 inside the site outline w171995553 (plaza). Facade not verified: grey glass with white floor slabs, a roof frame.

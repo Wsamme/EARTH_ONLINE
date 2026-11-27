@@ -152,7 +152,7 @@ function plateRing(o, P, y, h, d){
 // hk01). The app splits OSM w773719240 into its four quadrant parts (OSM w775171563-66): south quadrant 289 m (51 levels), east and
 // west 266 m (49), north 196 m (35, the office floors facing the North Tower). Wall tops below each skylight, the 4.5 m pier module and
 // the floor height are estimates; the skylight crest of the south quadrant is the CTBUH height.
-LANDMARKS.szpafcs = {zh:'平安金融中心南塔', en:'Ping An Finance Center South', cat:'new', r:42, h:285.95, lt:nightLt(0.65),
+LANDMARKS.szpafcs = {zh:'平安金融中心南塔', en:'Ping An Finance Center South', cat:'new', r:55, h:285.95, lt:nightLt(0.65),
   build(){
     const g = new THREE.Group(), B = mkB(), Q = D.szpafcs.Q;
     const GL = {c:'#6f8290', m:1, fh:4.5, cw:1.5}, PIER = {c:'#c8c3b8', m:0, lk:0.35, lc:'#fff0dc'}, MUL = {c:'#b9bdbf', m:0, lk:0.3},

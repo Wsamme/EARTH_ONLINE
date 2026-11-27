@@ -1,81 +1,81 @@
-[0.4s] gba lines 268387
-[6.3s] prep: junction nodes 227834
-[7.0s] traffic network: links 246200 pieces 178069 nodes 127569 movements 414849
-[9.7s] weak components 678 main 96.7% others >=1 km 101 | SCC main 91.4%
-[11.9s] dead ends {"total":16518,"tunnel":0,"edge":0,"chunk":5,"gap3":431,"gap6":5,"gap12":311,"levelgap":1430,"service":2185,"deckend":340,"water":157,"culdesac":11654,"oneway":3102} sinks 164 sources 591
-[13.3s] crossings {"falsejunc":97,"lowclear":1120,"missedjunc":1160,"overpass":11387,"atgrade":35091}
-[13.5s] levels / water {"step1_3":48,"step3_15":448,"step15":117,"steep":123,"inwater":1158,"inwaterM":139148,"shortdeck":19}
-[19.0s] routes {"pairs":2000,"ok":1722,"fail":278,"failIsland":170,"failOneway":108,"detourMed":1.28,"detour3":3,"far":1722,"okPct":86.1}
-[19.2s] movements {"moves":414849,"zjump1_5":22,"zjump5":17,"xyFar":0}
-[19.2s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[0.6s] gba lines 268387
+[6.9s] prep: junction nodes 227724
+[7.8s] traffic network: links 246039 pieces 177948 nodes 127564 movements 414431
+[11.3s] weak components 741 main 96.7% others >=1 km 100 | SCC main 91.5%
+[14.6s] dead ends {"total":16623,"tunnel":0,"edge":0,"chunk":5,"gap3":434,"gap6":5,"gap12":314,"levelgap":1532,"service":2185,"deckend":265,"water":161,"culdesac":11722,"oneway":3160} sinks 164 sources 591
+[16.3s] crossings {"falsejunc":96,"lowclear":1200,"missedjunc":1172,"overpass":11333,"atgrade":35047}
+[16.5s] levels / water {"step1_3":55,"step3_15":559,"step15":83,"steep":123,"inwater":1162,"inwaterM":139814,"shortdeck":15}
+[24.2s] routes {"pairs":2000,"ok":1726,"fail":274,"failIsland":173,"failOneway":101,"detourMed":1.28,"detour3":2,"far":1726,"okPct":86.3}
+[24.4s] movements {"moves":414431,"zjump1_5":35,"zjump5":30,"xyFar":0}
+[24.4s] tunnels {"portals":0,"pairs":0,"unmatched":0}
 {
  "city": "gba",
  "tag": "after",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/gbadata",
  "lines": 268387,
  "drivableKm": 30061.6,
- "links": 246200,
- "nodes": 127569,
- "junctionNodes": 227834,
- "weakComponents": 678,
- "mainWeakPct": 96.7,
- "otherComponentsOver1km": 101,
- "otherKm": 993,
- "mainSccPctApp": 77.97,
- "mainSccPct": 91.42,
- "closedOnewaySets": 17,
- "closedOnewayKm": 13.62,
- "sinkLinksInMain": 1401,
- "sourceLinksInMain": 1761,
+ "links": 246039,
+ "nodes": 127564,
+ "junctionNodes": 227724,
+ "weakComponents": 741,
+ "mainWeakPct": 96.74,
+ "otherComponentsOver1km": 100,
+ "otherKm": 981.3,
+ "mainSccPctApp": 78.02,
+ "mainSccPct": 91.45,
+ "closedOnewaySets": 16,
+ "closedOnewayKm": 12.16,
+ "sinkLinksInMain": 1406,
+ "sourceLinksInMain": 1760,
  "deadEnds": {
-  "total": 16518,
+  "total": 16623,
   "tunnel": 0,
   "edge": 0,
   "chunk": 5,
-  "gap3": 431,
+  "gap3": 434,
   "gap6": 5,
-  "gap12": 311,
-  "levelgap": 1430,
+  "gap12": 314,
+  "levelgap": 1532,
   "service": 2185,
-  "deckend": 340,
-  "water": 157,
-  "culdesac": 11654,
-  "oneway": 3102
+  "deckend": 265,
+  "water": 161,
+  "culdesac": 11722,
+  "oneway": 3160
  },
  "onewaySinks": 164,
  "onewaySources": 591,
  "crossings": {
-  "falsejunc": 97,
-  "lowclear": 1120,
-  "missedjunc": 1160,
-  "overpass": 11387,
-  "atgrade": 35091
+  "falsejunc": 96,
+  "lowclear": 1200,
+  "missedjunc": 1172,
+  "overpass": 11333,
+  "atgrade": 35047
  },
  "levels": {
-  "step1_3": 48,
-  "step3_15": 448,
-  "step15": 117,
+  "step1_3": 55,
+  "step3_15": 559,
+  "step15": 83,
   "steep": 123,
-  "inwater": 1158,
-  "inwaterM": 139148,
-  "shortdeck": 19
+  "inwater": 1162,
+  "inwaterM": 139814,
+  "shortdeck": 15
  },
  "movements": {
-  "moves": 414849,
-  "zjump1_5": 22,
-  "zjump5": 17,
+  "moves": 414431,
+  "zjump1_5": 35,
+  "zjump5": 30,
   "xyFar": 0
  },
  "routes": {
   "pairs": 2000,
-  "ok": 1722,
-  "fail": 278,
-  "failIsland": 170,
-  "failOneway": 108,
+  "ok": 1726,
+  "fail": 274,
+  "failIsland": 173,
+  "failOneway": 101,
   "detourMed": 1.28,
-  "detour3": 3,
-  "far": 1722,
-  "okPct": 86.1
+  "detour3": 2,
+  "far": 1726,
+  "okPct": 86.3
  },
  "tunnels": {
   "portals": 0,
@@ -83,32 +83,32 @@
   "unmatched": 0
  },
  "problemCounts": {
-  "island": 101,
-  "oneway_trap": 17,
-  "oneway_noentry": 5,
-  "dead_deckend": 321,
-  "dead_gap3": 431,
+  "island": 100,
+  "oneway_trap": 16,
+  "oneway_noentry": 7,
+  "dead_deckend": 250,
+  "dead_gap3": 434,
   "source": 591,
-  "dead_shortdeck": 19,
-  "dead_gap12": 311,
-  "dead_water": 157,
-  "dead_levelgap": 1430,
+  "dead_shortdeck": 15,
+  "dead_gap12": 314,
+  "dead_water": 161,
+  "dead_levelgap": 1532,
   "sink": 164,
   "dead_gap6": 5,
   "dead_chunk": 5,
-  "lowclear": 1120,
-  "falsejunc": 97,
-  "missedjunc": 1160,
-  "step": 613,
-  "inwater": 1158,
+  "lowclear": 1200,
+  "missedjunc": 1172,
+  "falsejunc": 96,
+  "step": 697,
+  "inwater": 1162,
   "steep": 123,
-  "zjump": 22
+  "zjump": 35
  },
  "topIslands": [
   {
-   "len": 496535,
-   "x": 13084,
-   "y": -42390,
+   "len": 496272,
+   "x": 13092,
+   "y": -42389,
    "cls": 0,
    "names": [
     "Stanley New Street",
@@ -128,24 +128,6 @@
     "Marina Drive",
     "Caperidge Drive"
    ]
-  },
-  {
-   "len": 15876,
-   "x": -25121,
-   "y": 10246,
-   "cls": 0,
-   "names": [
-    "Shenzhen Outer Ring Expressway"
-   ],
-   "gap": {
-    "d": 0,
-    "x": -29935,
-    "y": 8632,
-    "e": 0.4,
-    "e2": 102,
-    "li": 203879,
-    "to": 183238
-   }
   },
   {
    "len": 15680,
@@ -307,25 +289,6 @@
    }
   },
   {
-   "len": 6114,
-   "x": 15664,
-   "y": -5074,
-   "cls": 0,
-   "names": [
-    "Wuhan-Shenzhen Expressway",
-    "Eastern Transit Expwy"
-   ],
-   "gap": {
-    "d": 12.7,
-    "x": 15498,
-    "y": -5309,
-    "e": 13.8,
-    "e2": 45.8,
-    "li": 177304,
-    "to": 176347
-   }
-  },
-  {
    "len": 5924,
    "x": -10557,
    "y": -37593,
@@ -446,9 +409,30 @@
    "names": [
     "Hong Kong-Zhuhai-Macao Bridge"
    ]
+  },
+  {
+   "len": 4238,
+   "x": -1468,
+   "y": -41008,
+   "cls": 10,
+   "names": [
+    "Lo Peng Street",
+    "Chi Yan Street",
+    "Wing On Side Street",
+    "Fu Peng Street"
+   ]
+  },
+  {
+   "len": 4099,
+   "x": -3855,
+   "y": -19690,
+   "cls": 10,
+   "names": [
+    "Border Fence Road"
+   ]
   }
  ]
 }
-[19.4s] map /home/claude/earth_online/src/road50/out/gba_after_futian.png
-[19.6s] map /home/claude/earth_online/src/road50/out/gba_after_luohu.png
-[19.7s] map /home/claude/earth_online/src/road50/out/gba_after_dongguan.png
+[24.6s] map /home/claude/earth_online/src/road50/out/gba_after_futian.png
+[25.1s] map /home/claude/earth_online/src/road50/out/gba_after_luohu.png
+[25.2s] map /home/claude/earth_online/src/road50/out/gba_after_dongguan.png

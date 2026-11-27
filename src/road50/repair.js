@@ -38,6 +38,8 @@ const FLAG = [];                  // flagged for the owner (not changed)
 const chg = (rule, li, x, y, o) => CH.push(Object.assign({rule, li, x:+x.toFixed(1), y:+y.toFixed(1), c:lines[li].c, name:(lines[li].name && lines[li].name[0]) || lines[li].ref || ''}, o || {}));
 const flg = (rule, x, y, o) => FLAG.push(Object.assign({rule, x:+x.toFixed(1), y:+y.toFixed(1)}, o || {}));
 const drv = li => lines[li].c <= 10 && !(lines[li].flags & 8);
+// decks with sourced profiles (the big bridges: >= 20 m) and the landmark models built on them keep their heights: no rule changes them
+const PROT = new Uint8Array(lines.length); for (let i = 0; i < lines.length; i++){ const L = lines[i]; if ((L.flags & 2) && L.E){ let m = 0; for (const v of L.E) if (v > m) m = v; if (m >= 20) PROT[i] = 1; } }
 const qx = (g, k) => g.Q[k*2]/4, qy = (g, k) => g.Q[k*2+1]/4, nv = g => g.Q.length >> 1;
 const eAt = (g, k) => g.E ? g.E[k] : 0;
 function arcS(g){ const m = nv(g), s = new Float64Array(m); for (let k = 1; k < m; k++) s[k] = s[k-1] + Math.hypot(qx(g, k) - qx(g, k-1), qy(g, k) - qy(g, k-1)); return s; }
@@ -142,7 +144,7 @@ function levelConflicts(){
 // a height cone from (li, s0, v0) with grade gr, propagated into the lines joined at the same level (shared vertices) wherever it changes
 // a height: 'pin' lowers (min), 'raise' lifts (max). Returns Map li -> new E array, or null if it spreads over more than 120 lines.
 function cone(li0, s00, v0, mode, gr, shifted){
-  const res = new Map(), q = [[li0, s00, v0]], visits = new Map();
+  const res = new Map(), q = [[li0, s00, v0]], visits = new Map(); LASTWHY = '';
   while (q.length){
     const [li, sb, vb] = q.shift(); const n = (visits.get(li) || 0) + 1; visits.set(li, n); if (n > 4) continue;
     if (res.size > 120) return null;
@@ -157,6 +159,7 @@ function cone(li0, s00, v0, mode, gr, shifted){
           const eo = (res.get(o.li) || go.E || [])[o.k] || 0; if (Math.abs(eo - was) <= 1.2 && (mode === 'pin' ? c < eo - 0.01 : c > eo + 0.01)) q.push([o.li, arcS(go)[o.k], c]); }
       }
     }
+    if (PROT[li]){ let d = 0; for (let k = 0; k < E.length; k++) d = Math.max(d, Math.abs(E[k] - E0[k])); if (d > 0.3){ LASTWHY = 'would change a sourced deck (>= 20 m)'; return null; } }
     res.set(li, E);
   }
   return res;
@@ -223,7 +226,7 @@ if (RULES.has('R3')){
         const CHG = (() => { if (!Qn) return cone(li, sStart, tgt, mode, gr, shifted);
           const sv = {Q:g.Q, E:g.E}; g.Q = Qn; g.E = Eg.slice(); g.E.splice(seg[0] + 1, 0, Eg[seg[0]] + (Eg[seg[0]+1] - Eg[seg[0]])*seg[1]);
           try { return cone(li, arcS(g)[seg[0] + 1], tgt, mode, gr, new Set([...shifted, li])); } finally { g.Q = sv.Q; g.E = sv.E; } })();
-        if (!CHG){ LASTWHY = 'spreads over > 120 lines'; continue; }
+        if (!CHG){ if (!LASTWHY.startsWith('would change')) LASTWHY = 'spreads over > 120 lines'; continue; }
         if (!keepsAll(CHG, allow, li, Qn)) continue;
         let mx = 0;
         for (const [l2, En] of CHG){ const g2 = G[l2], E0 = g2.E || new Array(nv(g2)).fill(0); if (l2 === li && Qn){ g2.Q = Qn; shifted.add(li); }
@@ -278,6 +281,10 @@ if (RULES.has('R1') || RULES.has('R2')){
     if (Math.abs(best.e2 - e) > 1.2) why.push('level ' + (best.e2 - e).toFixed(1));
     if (!compatible(L.c, L2.c)) why.push('classes ' + L.c + '/' + L2.c);
     if (!!(L.flags & 2) !== !!(L2.flags & 2) && Math.max(e, best.e2) > 2) why.push('bridge / ground');
+    if (best.d > 1.0){ for (const l3 of linesNear(Math.min(x, best.px) - 1, Math.min(y, best.py) - 1, Math.max(x, best.px) + 1, Math.max(y, best.py) + 1)){ if (l3 === li || l3 === best.l2 || lines[l3].c > 11) continue; const h3 = G[l3];
+        for (let j = 0; j + 1 < nv(h3); j++){ const ax = qx(h3, j), ay = qy(h3, j), ex = qx(h3, j+1) - ax, ey = qy(h3, j+1) - ay, fx = best.px - x, fy = best.py - y, den = ex*fy - ey*fx; if (Math.abs(den) < 1e-9) continue;
+          const u = ((x - ax)*fy - (y - ay)*fx)/den, v = ((x - ax)*ey - (y - ay)*ex)/den; if (u > 0 && u < 1 && v > 0.02 && v < 0.98){ why.push('the join would cross another road'); break; } }
+        if (why.length) break; } }
     if (why.length){ if (best.d <= GAP && !why.includes('not ahead')) flg('R1', x, y, {li, to:best.l2, d:+best.d.toFixed(1), why:why.join(', ')}); continue; }
     // join point (quantised); a vertex of the target within 0.3 m is used as is
     const h = G[best.l2]; let X = Math.round(best.px*4), Y = Math.round(best.py*4), ins = true;
@@ -310,7 +317,7 @@ function isSeam(x, y){ const fx = ((x + HALF) % 8000 + 8000) % 8000, fy = ((y + 
 if (RULES.has('R4')){
   let nC = 0, nFix = 0;
   for (let li = 0; li < G.length; li++){
-    if (!drv(li) || !(lines[li].flags & 2)) continue;
+    if (!drv(li) || !(lines[li].flags & 2) || PROT[li]) continue;
     const C = contacts(li).filter(c => drv(c.li2) && !(lines[c.li2].flags & 2) && c.e2 < 1.2 && c.e - c.e2 < 4.2 && c.u > 0.001 && c.u < 0.999 && !isVertexContact(li, c));
     if (!C.length) continue;
     const g = G[li], s = arcS(g), Lt = s[s.length - 1], E0 = eAt(g, 0), E1 = eAt(g, nv(g) - 1);
@@ -338,7 +345,7 @@ function isVertexContact(li, c){ const g = G[li]; const k = c.u < 0.5 ? c.k : c.
 if (RULES.has('R5')){
   let nS = 0, nFix = 0;
   for (let li = 0; li < G.length; li++){
-    if (!drv(li)) continue; const g = G[li]; if (!g.E) continue; const m = nv(g), s = arcS(g);
+    if (!drv(li) || PROT[li]) continue; const g = G[li]; if (!g.E) continue; const m = nv(g), s = arcS(g);
     let steep = false; for (let k = 0; k + 1 < m; k++){ const d = s[k+1] - s[k], de = Math.abs(g.E[k+1] - g.E[k]); if (de > 1.0 && de > 0.12*d){ steep = true; break; } }
     if (!steep) continue; nS++;
     const gr = 0.08, up = g.E.slice(), dn = g.E.slice();

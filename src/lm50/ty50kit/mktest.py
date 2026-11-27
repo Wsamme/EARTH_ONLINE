@@ -12,10 +12,11 @@ if 'window.__t = {' not in a:
     assert a.count(end) == 1, 'loop end marker'
     a = a.replace(end, hook + end)
     for x, y in [("while (queue.length && performance.now() - t < 22){", "while (queue.length && performance.now() - t < (window.__budget || 22)){"),
-                 ("while (SGR.queue.length && performance.now() - t < 16){", "while (SGR.queue.length && performance.now() - t < (window.__budget || 16)){"),
-                 ("const T = SGR.queue.shift(); if (T.done && !SGR.dirty.has(T.ti)) continue;", "const T = SGR.queue.shift(); if (T.done && !SGR.dirty.has(T.ti)) continue; if (window.__near){ const q = sgXY(__near[0], __near[1]); if (Math.hypot(T.cx - q[0], T.cy - q[1]) > __near[2]) continue; }")]:
+                 # tyoreal.js (v37+): two tile queues drained by sgrStep
+                 ("drain(SGR.queue, window.CB_MOBILE ? 12 : 16);", "drain(SGR.queue, window.__budget || (window.CB_MOBILE ? 12 : 16));"),
+                 ("if (T.done && !SGR.dirty.has(T.ti) && T.lod === sgrWantLod(T)) continue;", "if (T.done && !SGR.dirty.has(T.ti) && T.lod === sgrWantLod(T)) continue; if (window.__near){ const q = sgXY(__near[0], __near[1]); if (Math.hypot(T.cx - q[0], T.cy - q[1]) > __near[2]) continue; }")]:
         if a.count(x) == 1: a = a.replace(x, y)
-        else: print('warning: marker not found once:', x[:60])
+        else: raise SystemExit('mktest: marker not found exactly once: ' + x[:70])
     open(js, 'w').write(a)
 if 'window.__near' not in s:
     s = s.replace(m.group(0), '<script>{ const q = new URLSearchParams(location.search).get("near"); if (q) window.__near = q.split(",").map(Number); }</script>\n' + m.group(0), 1)

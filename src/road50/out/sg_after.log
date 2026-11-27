@@ -1,22 +1,22 @@
 [0.2s] sg lines 154878
-[2.2s] prep: junction nodes 91639
-[2.4s] traffic network: links 52249 pieces 40772 nodes 28289 movements 84022
-[3.2s] weak components 69 main 98.8% others >=1 km 9 | SCC main 96.4%
-[3.8s] dead ends {"total":2835,"tunnel":102,"edge":0,"chunk":0,"gap3":11,"gap6":0,"gap12":24,"levelgap":9,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":245} sinks 28 sources 165
-[4.1s] crossings {"falsejunc":9,"lowclear":25,"missedjunc":15,"overpass":1140,"atgrade":6783}
-[4.2s] levels / water {"step1_3":0,"step3_15":12,"step15":0,"steep":114,"inwater":14,"inwaterM":1173,"shortdeck":0}
-[5.0s] routes {"pairs":2000,"ok":1946,"fail":54,"failIsland":30,"failOneway":24,"detourMed":1.33,"detour3":14,"far":1929,"okPct":97.3}
-[5.1s] movements {"moves":84022,"zjump1_5":0,"zjump5":0,"xyFar":0}
-[5.8s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.5}
+[2.3s] prep: junction nodes 91638
+[2.6s] traffic network: links 52248 pieces 40771 nodes 28289 movements 84020
+[3.3s] weak components 69 main 98.8% others >=1 km 9 | SCC main 96.4%
+[3.8s] dead ends {"total":2836,"tunnel":102,"edge":0,"chunk":0,"gap3":11,"gap6":1,"gap12":24,"levelgap":9,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":246} sinks 28 sources 165
+[4.0s] crossings {"falsejunc":9,"lowclear":25,"missedjunc":15,"overpass":1140,"atgrade":6783}
+[4.1s] levels / water {"step1_3":0,"step3_15":12,"step15":0,"steep":114,"inwater":14,"inwaterM":1173,"shortdeck":0}
+[4.9s] routes {"pairs":2000,"ok":1946,"fail":54,"failIsland":30,"failOneway":24,"detourMed":1.33,"detour3":14,"far":1929,"okPct":97.3}
+[5.0s] movements {"moves":84020,"zjump1_5":0,"zjump5":0,"xyFar":0}
+[5.7s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.5}
 {
  "city": "sg",
  "tag": "after",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/sgdata",
  "lines": 154878,
  "drivableKm": 4788,
- "links": 52249,
+ "links": 52248,
  "nodes": 28289,
- "junctionNodes": 91639,
+ "junctionNodes": 91638,
  "weakComponents": 69,
  "mainWeakPct": 98.82,
  "otherComponentsOver1km": 9,
@@ -26,21 +26,21 @@
  "closedOnewaySets": 2,
  "closedOnewayKm": 3.41,
  "sinkLinksInMain": 129,
- "sourceLinksInMain": 268,
+ "sourceLinksInMain": 269,
  "deadEnds": {
-  "total": 2835,
+  "total": 2836,
   "tunnel": 102,
   "edge": 0,
   "chunk": 0,
   "gap3": 11,
-  "gap6": 0,
+  "gap6": 1,
   "gap12": 24,
   "levelgap": 9,
   "service": 444,
   "deckend": 6,
   "water": 10,
   "culdesac": 2229,
-  "oneway": 245
+  "oneway": 246
  },
  "onewaySinks": 28,
  "onewaySources": 165,
@@ -61,7 +61,7 @@
   "shortdeck": 0
  },
  "movements": {
-  "moves": 84022,
+  "moves": 84020,
   "zjump1_5": 0,
   "zjump5": 0,
   "xyFar": 0
@@ -93,6 +93,7 @@
   "dead_water": 10,
   "dead_gap3": 11,
   "sink": 28,
+  "dead_gap6": 1,
   "dead_levelgap": 9,
   "lowclear": 25,
   "missedjunc": 15,

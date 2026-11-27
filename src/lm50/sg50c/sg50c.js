@@ -421,7 +421,8 @@ placeK('sgndc');
 // Verified (Wikipedia; roots.gov.sg; parish site): neo-Gothic / tropical Gothic; built 1869-70 with its tower; three bells hung in
 // the belfry 1883, spire completed by Fr Galmel after 1883; transepts and sacristy 1891-92; entrance porch and facade extended
 // 1910-11; a rose window above the entrance; the belfry rises above the main entrance and carries a cross; eight columns frame the
-// porch, whose lancet arches have metal tracery; lancet windows, high altar at the east (SE) end; wooden louvred windows (2016).
+// porch, whose lancet arches have metal tracery; statues of Saints Peter and Paul flank the rose window (their niches are modelled,
+// not the figures); lancet windows, high altar at the east (SE) end; wooden louvred windows (2016).
 // Footprint w155986468 (axis 41.7 deg: entrance NW on Queen Street). Estimates (not verified): all heights (eaves 10.5 m, tower 23 m,
 // spire top 37 m), the octagonal spire, wall colour (warm white) and roof colour, the cross-gable reading of the wide front bay.
 LANDMARKS.sgsspp = {zh:'圣伯多禄圣保禄堂', en:'Church of Saints Peter and Paul', cat:'old', r:32, h:38.5,
@@ -456,7 +457,10 @@ LANDMARKS.sgsspp = {zh:'圣伯多禄圣保禄堂', en:'Church of Saints Peter an
       slabP(B.p(M.W), rectO(0, tB - tA, 0, 6.6), F, 0, 0.6);
       for (let j = 0; j < 7; j++){ const u = (j + 0.5)*(tB - tA)/7; shapeP(B.p(M.DK), mv(pArch(1.1, 5.0, 5), u, 0.3), F, 0.65); }
       for (let j = 0; j <= 7; j++){ const p = S(sP - 0.9, tA + j*(tB - tA)/7, 0); LCyl(g, 0.28, 0.32, 5.0, p[0], 0.3, p[2], M.TR, 10); }
-      slabP(B.p(M.TR), rectO(-0.2, tB - tA + 0.2, 6.6, 7.2), F, 0, 0.9); }
+      slabP(B.p(M.TR), rectO(-0.2, tB - tA + 0.2, 6.6, 7.2), F, 0, 0.9);
+      // the front wall above the porch either side of the tower, with the two saints' niches flanking the rose window (niches only)
+      const F2 = (u, v, w) => S(-21.0 - (w || 0), tA + u, v);
+      for (const u of [10 - 5.2, 10 + 5.2]){ slabP(B.p(M.TR), mv(pArch(0.8, 3.0, 5), u, 9.4), F2, 0, 0.15); shapeP(B.p(M.DK), mv(pArch(0.55, 2.6, 5), u, 9.6), F2, 0.17); slabP(B.p(M.TR), rectO(u - 0.7, u + 0.7, 9.1, 9.4), F2, 0, 0.35); } }
     // tower above the entrance: square shaft, rose window on its front, belfry with louvred lancets, corner pinnacles, octagonal spire, cross
     const tS0 = -24.0, tS1 = -18.0, tT = 3.0, YT = 23;
     rectPrism(B.p(M.W), Fr, tS0, tS1, -tT, tT, 0, YT);
@@ -801,8 +805,8 @@ LANDMARKS.sglourdes = {zh:'露德圣母堂', en:'Church of Our Lady of Lourdes',
 placeK('sglourdes');
 
 // ================= Textile Centre (Jalan Sultan) =================
-// Verified: none beyond OSM. OSM w173394787 "Textile Centre" with part w427139534 (levels 7-25 above a 7-level podium); app heights
-// 23.1 / 83.1 m (data). Facade (punched windows, floor bands) and colours are estimates.
+// Verified (Wikipedia): 25 storeys, built 1972-74; shops, offices, apartments and a carpark. OSM w173394787 with part w427139534 (a
+// 7-level podium under levels 7-25); app heights 23.1 / 83.1 m (data, not verified). Facade (punched windows, bands), colours: estimates.
 LANDMARKS.sgtextile = {zh:'纺织中心', en:'Textile Centre', cat:'new', r:DK('sgtextile').r, h:83.1,
   lt:{m:1, c:'#ffe7c4', k:0.45, fh:3.3, cw:2.8},
   build(){
@@ -819,9 +823,10 @@ LANDMARKS.sgtextile = {zh:'纺织中心', en:'Textile Centre', cat:'new', r:DK('
 placeK('sgtextile');
 
 // ================= Riverside Point (Merchant Road, facing Clarke Quay) =================
-// Verified: none beyond OSM. OSM w45070916 "Riverside Point" (4 levels, height 25) with seven parts (4 levels each, roof:shape
-// gabled; app top 13.8 m) along the river bank. Model: each part a four-storey block under its own gabled roof, a riverside arcade.
-// Colours, arcade and roof pitch are estimates.
+// Verified (Wikipedia): opened August 1996, four storeys, by Andrew Tan Architects as a lifestyle centre keeping the old-world charm of
+// the riverside godowns it replaced. OSM w45070916 (4 levels, height 25) with seven parts (4 levels each, roof:shape gabled; app top
+// 13.8 m) along the bank. Model: each part a four-storey block under its own gabled roof, an arcade. Not modelled (position unknown):
+// the pointed walk-through gateway and the tower landmark. Colours, arcade and roof pitch are estimates.
 LANDMARKS.sgriversidepoint = {zh:'河畔坊', en:'Riverside Point', cat:'new', r:DK('sgriversidepoint').r, h:19,
   lt:{m:0, c:'#ffe4bc', k:0.5, e:0.4},
   build(){

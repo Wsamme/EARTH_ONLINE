@@ -351,10 +351,10 @@ LANDMARKS.ny425park = {zh:'公园大道425号', en:'425 Park Avenue', cat:'new',
   for (const [Rc, y0, y1] of [[V2, 55, 110], [V3, 120, 219]]) for (let k = 0; k < 4; k++){ const z = lerp(Rc[2] + 3, Rc[3] - 3, k/3); boxP(B.p(SS), 0.8, y1 - y0 - 0.5, 0.8, Rc[0] - 0.45, y0, z, 0); }
   // the rear core pieces (x 9.2 .. 19.9): corrugated aluminium, heights from the OSM parts; the three blades proud and paler
   for (const [b0, t0, P] of D){ const [x0, x1, z0, z1] = bbox(P); if (x0 < 8.5) continue;
-    const blade = t0 > 260, col = blade ? BL : AL, ex = blade ? 0.4 : 0;
-    abox(B.p(col), x0, x1 + ex, -6, t0, z0, z1);
+    const blade = t0 > 260, col = blade ? BL : AL;
+    abox(B.p(col), x0, x1, -6, t0, z0, z1); if (blade) abox(B.p(BL), x1, x1 + 0.4, 46, t0, z0, z1);
     if (!blade && t0 > 100){ // corrugation: vertical ribs on the east face
-      const n = Math.max(1, Math.round((z1 - z0)/0.9)); for (let k = 0; k <= n; k++) abox(B.p(AL), x1, x1 + 0.12, 0.5, t0 - 0.5, lerp(z0, z1, k/n) - 0.06, lerp(z0, z1, k/n) + 0.06); }
+      const n = Math.max(1, Math.round((z1 - z0)/0.9)); for (let k = 0; k <= n; k++) abox(B.p(AL), x1, x1 + 0.12, 5.0, t0 - 0.5, lerp(z0, z1, k/n) - 0.06, lerp(z0, z1, k/n) + 0.06); }
   }
   // glazed lift lobbies on the east elevation between the blades
   for (const [z0, z1] of [[-8.0, -1.8], [0.9, 6.9]]) for (let y = 8; y < 214; y += 4.4) abox(B.p(LG), 19.95, 20.1, y, y + 2.6, z0 + 0.3, z1 - 0.3);
@@ -372,7 +372,7 @@ place('ny425park');
 // double-height (8.5 m) stainless-steel and granite columns in front of a glass-walled lobby / arcade that wraps 300 degrees of
 // the perimeter; a two-storey granite-clad elliptical mechanical floor sits on the roof (enwiki). Ellipses fitted to the OSM
 // parts in the grid frame. Night: ribbon windows lit, the granite warmly washed.
-LANDMARKS.nylipstick = {zh:'口红大厦', en:'Lipstick Building', cat:'new', r:35, h:138,
+LANDMARKS.nylipstick = {zh:'口红大厦', en:'Lipstick Building', cat:'new', r:47, h:138,
   lt:{m:1, c:'#ffd9c2', k:0.7, e:0.5}, build(){
   const g = new THREE.Group(), B = mkB();
   const GR1 = {c:'#8a4a3e', m:0, lc:'#ffd2b8', lk:0.35}, GR2 = {c:'#a35a4a', m:0, lc:'#ffd2b8', lk:0.35}, ST = {c:'#c9cdd0', m:0, lk:0.3};
@@ -405,6 +405,8 @@ LANDMARKS.nylipstick = {zh:'口红大厦', en:'Lipstick Building', cat:'new', r:
       cylP(B.p(ST), x, z, 0.5, 0.5, -3, FL - 0.9, 8, false); for (const yy of [2.6, 5.4]) cylP(B.p(GR1), x, z, 0.56, 0.56, yy, yy + 1.4, 8, false); }
     // closed rear (east) wall behind the core
     wallsP(B.p(GR1), ellP(cx, cz, ax - 0.3, az - 0.3, N), -5, FL - 0.9, i => { const t = (i + 0.5)/N*TAU; return Math.cos(t) > 0.86; }); }
+  // the nine-storey annex on the north-east part of the site (enwiki), app record w265461380 (37.9 m), plain masonry and windows
+  fillB(B, [[0, 37.9, [[35.5, 0.5], [35.5, -29.7], [15.4, -29.5], [15.4, -19.2], [13.5, -18.8], [15.1, -14.5], [16.1, -9.6], [16.7, 0.6]]]]);
   B.flush(g); return g; }};
 place('nylipstick');
 
@@ -456,4 +458,483 @@ LANDMARKS.ny383madison = {zh:'麦迪逊大道383号', en:'383 Madison Avenue', c
   for (const p of D.filter(p => p[0] === 205 && p[1] === 215)) { wallsP(B.p(CG), p[2], 205, 215); flatP(B.p(C), p[2], 215); }
   B.flush(g); return g; }};
 place('ny383madison');
+
+// =====================================================================================================================
+// Glass towers (medium detail): setback tiers from the OSM parts, curtain walls with mullions and floor bands, lit offices.
+const RF = {c:'#6c6a67', m:0, lk:0.05};
+// Olympic Tower (641 Fifth Avenue; SOM, 1976), Fifth Avenue at 51st-52nd Streets next to St. Patrick's: 189 m roof, 51 storeys
+// (enwiki). The Fifth Avenue face rises without setbacks; a 21-storey base ("bustle") on the north side; brown-tinted glass over
+// a black anodized aluminium curtain wall (enwiki). Tiers: OSM parts 185 / 190 (tower), 90 (north bustle), 13 / 10 (low wings).
+LANDMARKS.nyolympic = {zh:'奥林匹克大厦', en:'Olympic Tower', cat:'new', r:50, h:189,
+  lt:{m:1, c:'#ffe6c4', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nyolympic.filter(p => p[1] !== 13).map(p => [p[0], p[1] === 190 ? 189 : p[1], p[2]]);
+  const G = {c:'#4a3a2c', m:1, fh:3.7, cw:1.52, lc:'#ffe6c4', lk:0.45}, M = {c:'#1d1b1a', m:0}, SB = {c:'#2a2623', m:0};
+  curtain(B, D, {G, M, R:RF, C:M, SB, sp:1.52, mw:0.16, fh:3.7, bh:0.5, ch:1.0, gh:6.5, LB:LOBBY});
+  B.flush(g); return g; }};
+place('nyolympic');
+// the 13 m L-shaped low wing of the Olympic Tower lot (OSM part w279796499, the through-block arcade side), its own key so that the
+// tower's hull keeps clear of the Cartier Building on the corner of 52nd Street
+LANDMARKS.nyolympic_b = {zh:'奥林匹克大厦低层翼楼', en:'Olympic Tower (low wing)', cat:'new', r:42, h:13, label:false,
+  lt:{m:1, c:'#ffe6c4', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nyolympic.filter(p => p[1] === 13);
+  const G = {c:'#4a3a2c', m:1, fh:3.7, cw:1.52, lc:'#ffe6c4', lk:0.45}, M = {c:'#1d1b1a', m:0}, SB = {c:'#2a2623', m:0};
+  curtain(B, D, {G, M, R:RF, C:M, SB, sp:1.52, mw:0.16, fh:3.7, bh:0.5, ch:0.8, gh:5.5, LB:LOBBY});
+  B.flush(g); return g; }};
+SG_PLACES.push({type:'nyolympic_b', lat:PL.nyolympic[0], lon:PL.nyolympic[1], rot:PL.nyolympic[2]});
+
+// Trump Tower (725 Fifth Avenue; Der Scutt, 1983), Fifth Avenue between 56th and 57th Streets: 202.4 m, 58 storeys (enwiki).
+// A 28-sided tower of gold-tinted reflective glass; the south-west corner of the base steps back in a stack of terraces ("inverted
+// pyramid of cubes"), planted with trees (the north terrace with trees and a fountain); a five-storey atrium inside (enwiki).
+// The saw-tooth terraces are the OSM parts at 25 / 30 / 35 / 40 / 45 m nested around the 202 m tower outline.
+LANDMARKS.nytrumptower = {zh:'特朗普大厦', en:'Trump Tower', cat:'new', r:36, h:202,
+  lt:{m:1, c:'#ffe2b0', k:0.65, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nytrumptower;
+  const G = {c:'#7a6440', m:1, fh:3.4, cw:1.4, lc:'#ffe2b0', lk:0.45}, M = {c:'#4d3f2a', m:0}, SB = {c:'#5e4d33', m:0};
+  const PL2 = {c:'#7c6a52', m:0, lk:0.1};
+  curtain(B, D, {G, M, R:PL2, C:M, SB, sp:1.4, mw:0.1, fh:3.4, bh:0.4, ch:0.8, gh:5.5, LB:LOBBY});
+  // trees and planters on the terrace steps (one per step corner on each terrace level)
+  const tw = D.find(p => p[1] === 202)[2];
+  for (const [b0, t0, P] of D){ if (t0 > 50) continue;
+    for (const [x, z] of P){ if (x > 0 || z < -8) continue; if (pip(tw, x + 1.6, z - 1.6)) continue;
+      treeP(B, x + 1.8, t0, z - 1.8, 0.75, TLEAF, TTRUNK); abox(B.p(PL2), x + 0.4, x + 3.2, t0, t0 + 0.6, z - 3.2, z - 0.4); } }
+  B.flush(g); return g; }};
+place('nytrumptower');
+
+// 599 Lexington Avenue (Edward Larrabee Barnes, 1986), Lexington Avenue between 52nd and 53rd Streets: 199 m roof, 50 storeys
+// (enwiki). The OSM parts give a 26 x 51 m shaft to 175 m whose top is cut by a sloping crown rising to 199 m on its Lexington
+// (west) side, and a triangular prism bay on the Lexington front from 28 to 140 m over a low base (25-34 m) — built as such.
+// Facade colour not verified (photos: silver-grey glass and aluminium).
+LANDMARKS.ny599lex = {zh:'列克星敦大道599号', en:'599 Lexington Avenue', cat:'new', r:46, h:199,
+  lt:{m:1, c:'#e4ecff', k:0.65, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny599lex;
+  const G = {c:'#7d8a95', m:1, fh:3.9, cw:1.5, lc:'#e4ecff', lk:0.45}, M = {c:'#b7bec4', m:0, lk:0.1}, SB = {c:'#9aa3aa', m:0};
+  const shaft = [0, 175, D[0][2]], base = D.filter(p => p[1] <= 34 && p[2].length >= 4);
+  curtain(B, [shaft].concat(base.map(p => [p[0], p[1], p[2]])), {G, M, R:RF, C:M, SB, sp:1.5, mw:0.12, fh:3.9, bh:0.45, ch:0.8, gh:6, LB:LOBBY});
+  // the west prism bay (28-140 m): a triangle in plan against the shaft
+  const tri = D.find(p => p[0] === 28)[2]; wallsP(B.p(G), tri, 28, 140); flatP(B.p(RF), tri, 140); flatP(B.p(M), tri, 28);
+  stripsP(B.p(M), tri, 28.5, 139.5, 1.5, 0.12, 0.06, null, 2); for (let y = 31.2; y < 140; y += 3.9) bandP(B.p(SB), tri, y - 0.45, 0.45, 0.05);
+  // the sloping crown: from 175 at the east middle up to 199 along the west edge
+  const [x0, x1, z0, z1] = bbox(D[0][2]), A = [x1, 175, (z0 + z1)/2], NW = [x0, 199, z0], SW = [x0, 199, z1], NW0 = [x0, 175, z0], SW0 = [x0, 175, z1];
+  const o = B.p(G); triP(o, NW, SW, A); quadP(o, NW0, SW0, SW, NW); triP(o, NW0, NW, A); triP(o, SW0, A, SW);
+  segP(B.p(M), NW, SW, 0.3, 4); segP(B.p(M), NW, A, 0.3, 4); segP(B.p(M), SW, A, 0.3, 4);
+  B.flush(g); return g; }};
+place('ny599lex');
+
+// 919 Third Avenue (Skidmore, Owings & Merrill, 1970), east side of Third Avenue between 55th and 56th Streets: 187.5 m roof,
+// 47 storeys (enwiki); built around the P. J. Clarke's saloon on the corner (not part of this lot). Tower and low wings from the
+// OSM parts (178 / 187 / 20 m). Facade colour not verified (photos: dark glass and dark metal).
+LANDMARKS.ny919third = {zh:'第三大道919号', en:'919 Third Avenue', cat:'new', r:62, h:187.5,
+  lt:{m:1, c:'#ffe8cc', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny919third.filter(p => !(p[1] === 20 && bbox(p[2])[2] < -30)).map(p => [p[0], p[1] === 187 ? 187.5 : p[1], p[2]]);
+  const G = {c:'#2f3236', m:1, fh:3.8, cw:1.5, lc:'#ffe8cc', lk:0.45}, M = {c:'#1c1d1f', m:0}, SB = {c:'#26282b', m:0};
+  curtain(B, D, {G, M, R:RF, C:M, SB, sp:1.5, mw:0.2, fh:3.8, bh:0.9, ch:1.2, gh:6, LB:LOBBY});
+  B.flush(g); return g; }};
+place('ny919third');
+
+// 299 Park Avenue (Emery Roth & Sons, 1967), Park Avenue between 48th and 49th Streets: 175 m roof, 42 storeys (enwiki):
+// "a black skyscraper with alternating shiny and matte thin stainless steel mullions" (enwiki). Footprint: the app record (46 x 50 m).
+LANDMARKS.ny299park = {zh:'公园大道299号', en:'299 Park Avenue', cat:'new', r:38, h:175,
+  lt:{m:1, c:'#ffeedd', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny299park;
+  const G = {c:'#24272a', m:1, fh:3.9, cw:1.4, lc:'#ffeedd', lk:0.4}, M1 = {c:'#b9bdbf', m:0, lk:0.12}, M2 = {c:'#7f8386', m:0};
+  curtain(B, D, {G, M:M1, R:RF, C:M2, SB:G, sp:2.8, mw:0.12, fh:3.9, bh:0, ch:1.2, gh:7, LB:LOBBY});
+  stripsP(B.p(M2), D[0][2], 7.2, 173.8, 2.8, 0.1, 0.06, null, 2);   // the matte mullions between the shiny ones (offset half a bay)
+  for (const [, , P] of D) for (let i = 0; i < P.length; i++){ const f = edgeF(P, i), n = Math.round(f.L/2.8); for (let k = 0; k < n; k++){ const a = f.at(f.L*k/n, 7.2, 0.06);
+    abox(B.p(M2), a[0] - 0.05, a[0] + 0.05, 7.2, 173.8, a[2] - 0.05, a[2] + 0.05); } }
+  B.flush(g); return g; }};
+place('ny299park');
+
+// 345 Park Avenue (Emery Roth & Sons, 1969), the block of Park / Lexington Avenues and 51st / 52nd Streets: 193.2 m roof, 44 storeys
+// (enwiki). A light-coloured slab ("another black building on Park Avenue" was what the architect wanted to avoid, enwiki) behind
+// a public plaza along the whole Park Avenue front. The tower: the OSM part (88 x 34 m, long side on the cross streets).
+LANDMARKS.ny345park = {zh:'公园大道345号', en:'345 Park Avenue', cat:'new', r:72, h:193.2,
+  lt:{m:1, c:'#fff0dc', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny345park.map(p => [p[0], 193.2, p[2]]);
+  const W = {c:'#c9c3b6', m:0, lk:0.12}, SP = {c:'#a49e92', m:1, fh:3.9, cw:1.5}, GL = {c:'#4a5258', m:1, fh:3.9, cw:1.5, lc:'#fff0dc', lk:0.4};
+  const C = {c:'#d6d1c6', m:0, lk:0.15}, PAVE = {c:'#b4aea4', m:0, lk:0.05};
+  tiers(B, D, {W, SP, GL, R:RF, C, SH:SHOPG, sp:1.55, ww:1.1, fh:3.9, wh:2.4, gh:7, top:4, minL:1.5, co:0.12, ch:1.2});
+  // the plaza: paving slab and a low granite edge on the Park Avenue (west) side of the tower
+  const [x0, , z0, z1] = bbox(D[0][2]); abox(B.p(PAVE), x0 - 12, x0, -1.0, 0.25, z0 - 8, z1 + 8);
+  B.flush(g); return g; }};
+place('ny345park');
+
+// 399 Park Avenue (Carson & Lundin with Kahn & Jacobs, 1961), the whole block of Park / Lexington and 53rd / 54th Streets: 159.7 m
+// roof, top floor 143 m, 41 storeys (enwiki). Slab on the Park Avenue half over a full-block setback base (OSM parts 160 / 57 / 54
+// / 34 m). Cladding not verified (described as aluminium-clad in the target note; photos: light aluminium and glass grid).
+LANDMARKS.ny399park = {zh:'公园大道399号', en:'399 Park Avenue', cat:'new', r:70, h:159.7,
+  lt:{m:1, c:'#eef3ff', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny399park.map(p => [p[0], p[1] === 160 ? 159.7 : p[1], p[2]]);
+  const G = {c:'#59636b', m:1, fh:3.5, cw:1.5, lc:'#eef3ff', lk:0.45}, M = {c:'#c4c8ca', m:0, lk:0.12}, SB = {c:'#aeb3b6', m:0, lk:0.08};
+  curtain(B, D, {G, M, R:RF, C:M, SB, sp:1.5, mw:0.22, fh:3.5, bh:1.1, ch:1.0, gh:6.5, LB:LOBBY});
+  B.flush(g); return g; }};
+place('ny399park');
+
+// 245 Park Avenue (Shreve, Lamb & Harmon, 1967), Park Avenue between 46th and 47th Streets over the Grand Central tracks: 197.5 m
+// roof, 48 storeys (enwiki). A wide slab (OSM part 185 m, 90 x 31 m) with a raised central block (198 m) — both drawn today as parts
+// of the Grand Central Terminal relation. Facade not verified (photos: light vertical piers and dark glass).
+LANDMARKS.ny245park = {zh:'公园大道245号', en:'245 Park Avenue', cat:'new', r:66, h:197.5,
+  lt:{m:1, c:'#fff2de', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny245park.map(p => [p[0], p[1] === 198 ? 197.5 : p[1], p[2]]);
+  const W = {c:'#bdb8ae', m:0, lk:0.1}, SP = {c:'#8f8a82', m:1, fh:3.9, cw:1.6}, GL = {c:'#3f474e', m:1, fh:3.9, cw:1.6, lc:'#fff2de', lk:0.4};
+  tiers(B, D, {W, SP, GL, R:RF, C:W, SH:SHOPG, sp:1.6, ww:1.15, fh:3.9, wh:2.6, gh:7, top:3, minL:1.5, co:0.12, ch:1.0});
+  B.flush(g); return g; }};
+place('ny245park');
+
+// 277 Park Avenue (Emery Roth & Sons, 1963), the block of Park / Lexington and 47th / 48th Streets: 209.4 m roof, 50 storeys,
+// International style (enwiki). The tower on the Park Avenue half (OSM part 209 m) and the lower east blocks (70 / 50 m) — parts of
+// the Grand Central Terminal relation in the data. Facade not verified (photos: pale grid of piers with dark glass).
+LANDMARKS.ny277park = {zh:'公园大道277号', en:'277 Park Avenue', cat:'new', r:67, h:209,
+  lt:{m:1, c:'#fff2de', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny277park.map(p => [p[0], p[1] === 209 ? 209.4 : p[1], p[2]]);
+  const W = {c:'#cfcac0', m:0, lk:0.1}, SP = {c:'#9c978e', m:1, fh:3.9, cw:1.5}, GL = {c:'#424a51', m:1, fh:3.9, cw:1.5, lc:'#fff2de', lk:0.4};
+  tiers(B, D, {W, SP, GL, R:RF, C:W, SH:SHOPG, sp:1.5, ww:1.0, fh:3.9, wh:2.5, gh:7, top:3, minL:1.5, co:0.12, ch:1.0});
+  B.flush(g); return g; }};
+place('ny277park');
+
+// 875 Third Avenue (Skidmore, Owings & Merrill, 1982), east side of Third Avenue between 52nd and 53rd Streets: 121.8 m, 29 storeys
+// (CTBUH Skyscraper Center). Faceted plan with chamfered corners and a stepped top (OSM parts 115 / 122 m), low glazed corner
+// pavilions (5 / 12 / 13 / 20 m). Facade colour not verified (photos: warm grey stone bands with dark glass).
+LANDMARKS.nycitylex = {zh:'第三大道875号', en:'875 Third Avenue', cat:'new', r:45, h:122,
+  lt:{m:1, c:'#ffeedd', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nycitylex.filter(p => p[0] !== 15);
+  const W = {c:'#a99d90', m:0, lk:0.1}, SP = {c:'#7d736a', m:1, fh:3.95, cw:1.6}, GL = {c:'#3c4247', m:1, fh:3.95, cw:1.6, lc:'#ffeedd', lk:0.4};
+  const PG = {c:'#5f6e78', m:0, glow:'#ffe2b8', gk:0.35};
+  tiers(B, D.filter(p => p[1] >= 100), {W, SP, GL, R:RF, C:W, SH:SHOPG, sp:1.6, ww:1.05, fh:3.95, wh:2.3, gh:6, top:2, minL:1.5, co:0.12, ch:0.9,
+    bands:[[-6, 6.2, 0.08, {c:'#5c554f', m:0}]]});
+  for (const [b0, t0, P] of D.filter(p => p[1] < 100 && p[0] === 0)){ wallsP(B.p(PG), P, -2, t0); flatP(B.p(RF), P, t0 - 0.02); bandP(B.p(W), P, t0 - 0.6, 0.6, 0.1); }
+  B.flush(g); return g; }};
+place('nycitylex');
+
+// 712 Fifth Avenue (Kohn Pedersen Fox, 1990), west side of Fifth Avenue at 56th Street: 198.1 m roof, 52 storeys (enwiki). The
+// tower stands back 50 ft from Fifth Avenue behind the Rizzoli and Coty buildings (separate landmarks, not in this lot), flat
+// facades clad in grey Indiana limestone, white Vermont marble and green and black granite over an aluminium curtain wall;
+// rusticated limestone bands at the 14th-15th and 43rd-44th floors (mechanical levels), green granite quoins at the top and the base
+// (enwiki). Tiers: OSM parts 168 / 198 (tower and its notched top), 54 / 45 / 23 m (lower wings of the lot).
+LANDMARKS.ny712fifth = {zh:'第五大道712号', en:'712 Fifth Avenue', cat:'new', r:38, h:198,
+  lt:{m:1, c:'#fff1dc', k:0.7, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.ny712fifth.map(p => [p[0], p[1] === 198 ? 198.1 : p[1], p[2]]);
+  const W = {c:'#cbc2b0', m:0, lk:0.15}, SP = {c:'#a79f90', m:1, fh:3.75, cw:1.5}, GL = {c:'#44525a', m:1, fh:3.75, cw:1.5, lc:'#fff1dc', lk:0.4};
+  const RUS = {c:'#bdb3a0', m:0, lk:0.15}, GG = {c:'#3f5446', m:0, lk:0.1}, BRZ = {c:'#7a5c34', m:0, lk:0.3};
+  tiers(B, D, {W, SP, GL, R:RF, C:W, SH:SHOPG, sp:1.5, ww:1.0, fh:3.75, wh:2.3, gh:6, top:2, minL:1.5, co:0.15, ch:0.9,
+    bands:[[52, 7.5, 0.18, RUS], [160, 7.5, 0.18, RUS]]});
+  // green granite quoins at the tower corners near the base (23-35 m) and the top (186-198 m); bronze medallions on the top
+  const T = D[0][2], T2 = D[1][2];
+  for (const [P, ya, yb] of [[T, 23, 35], [T2, 186, 197.6]]) for (const [x, z] of P){ for (let y = ya; y < yb; y += 1.5) boxP(B.p(GG), 1.4, 0.75, 1.4, x, y, z, 0); }
+  for (let i = 0; i < T2.length; i++){ const f = edgeF(T2, i); if (f.L < 8) continue; shapeP(B.p(BRZ), octP(0, 0, 0.95), f.at(f.L/2, 193.4, 0.3), f.ux, f.uz, 0); }
+  B.flush(g); return g; }};
+place('ny712fifth');
+
+// =====================================================================================================================
+// Masonry towers of the 1920s (medium detail): brick piers and spandrels in vertical window bays over a limestone base.
+// Graybar Building (Sloan & Robertson, 1927), 420 Lexington Avenue, west side of Lexington between 43rd and 44th Streets beside
+// Grand Central: 107 m (architectural), 30 storeys (enwiki). An H-shaped west block with two arms reaching east to Lexington
+// (a C) round three light courts; setbacks only on the Lexington elevation (15th / 17th / 19th / 23rd floors); brick and Indiana
+// limestone with a limestone base, black-brick spandrels in subtle vertical bands; on Lexington the marquees rest on diagonal metal
+// struts climbed by stylised rats toward funnel-shaped guards (enwiki). Tiers from the 37 OSM parts; the data tops (to 121 m) are
+// scaled above 84 m to the verified 107 m. Brick colour not verified (photos: warm grey-buff).
+LANDMARKS.nygraybar = {zh:'格雷巴大厦', en:'Graybar Building', cat:'old', r:61, h:107,
+  lt:{m:1, c:'#ffe6c0', k:0.65, e:0.55}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const sc = t => t <= 84 ? t : 84 + (t - 84)*(107 - 84)/(121 - 84);
+  const D = PD.nygraybar.map(p => [p[0] > 0 ? sc(p[0]) : 0, sc(p[1]), p[2]]);
+  const W = {c:'#b4a68f', m:0, lk:0.1}, SP = {c:'#3c3836', m:1, fh:3.55, cw:1.7}, GL = {c:'#454a4e', m:1, fh:3.55, cw:1.7, lc:'#ffe6c0', lk:0.4};
+  const LS = {c:'#cfc6b4', m:0, lk:0.2}, MET = {c:'#3b3a38', m:0, lc:'#ffd9a0', lk:0.4};
+  tiers(B, D, {W, SP, GL, R:RF, C:LS, SH:SHOPG, sp:1.7, ww:1.0, fh:3.55, wh:2.1, gh:5.5, top:1.0, minL:1.5, co:0.15, ch:0.7,
+    bands:[[-6, 14.6, 0.14, LS]]});
+  // Lexington Avenue marquees on diagonal struts (three under the central one, two under each side one) with the rat guards
+  const xL = Math.max(...D.map(p => bbox(p[2])[1]));
+  for (const [zc, w, n] of [[3.5, 12, 3], [-21, 6, 2], [28, 6, 2]]){
+    abox(B.p(MET), xL, xL + 3.2, 5.6, 6.0, zc - w/2, zc + w/2);
+    for (let k = 0; k < n; k++){ const z = zc - w/2 + w*(k + 0.5)/n, a = [xL + 0.1, 9.5, z], b = [xL + 3.0, 6.0, z];
+      segP(B.p(MET), a, b, 0.08, 4); cylP(B.p(MET), lerp(a[0], b[0], 0.35), lerp(a[2], b[2], 0.35), 0.05, 0.32, lerp(a[1], b[1], 0.35) - 0.35, lerp(a[1], b[1], 0.35) + 0.1, 6, true);
+      for (const t of [0.55, 0.7, 0.85]){ const p = [lerp(a[0], b[0], t), lerp(a[1], b[1], t) + 0.1, z]; boxP(B.p(MET), 0.3, 0.12, 0.12, p[0], p[1], p[2], 0.85); } } }
+  B.flush(g); return g; }};
+place('nygraybar');
+
+// Shelton Hotel (now 525 Lexington Avenue; Arthur Loomis Harmon, 1924), Lexington Avenue at 48th / 49th Streets: 118 m, 34
+// floors incl. a three-storey mechanical penthouse (enwiki). Setbacks at the 15th and 21st floors; the lowest two storeys fill the
+// site; limestone base (two storeys), grayish-brown / yellowy-tan brick with terracotta and limestone trim; a set-back penthouse
+// with a pyramidal hip roof (enwiki). Tiers: OSM parts 65 / 105 / 118.4 / 50 m.
+LANDMARKS.nyshelton = {zh:'谢尔顿酒店', en:'Shelton Hotel', cat:'old', r:43, h:118,
+  lt:{m:1, c:'#ffe4bc', k:0.75, e:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nyshelton.filter(p => p[1] !== 50).map(p => [p[0], p[1] > 118 ? 112 : p[1], p[2]]);
+  const W = {c:'#a8957a', m:0, lk:0.1}, SP = {c:'#7d6c58', m:1, fh:3.3, cw:1.6}, GL = {c:'#464a4c', m:1, fh:3.3, cw:1.6, lc:'#ffe4bc', lk:0.4};
+  const LS = {c:'#cbbfa7', m:0, lk:0.2}, TC = {c:'#c2ae8c', m:0, lk:0.25}, TL = {c:'#6f6a5e', m:0, lc:'#ffe2b4', lk:0.6};
+  tiers(B, D, {W, SP, GL, R:RF, C:TC, SH:SHOPG, sp:1.6, ww:0.95, fh:3.3, wh:2.0, gh:5.5, top:1.0, minL:1.5, co:0.2, ch:0.9,
+    bands:[[-6, 13.2, 0.14, LS]]});
+  // the penthouse hip roof over the 112 m tier
+  const P = D.find(p => p[1] === 112)[2], [x0, x1, z0, z1] = bbox(P); hipP(B.p(TL), x0, x1, z0, z1, 112, 118, 1);
+  B.flush(g); return g; }};
+place('nyshelton');
+
+// Pershing Square Building (John Sloan with York & Sawyer, 1923), 100 East 42nd Street facing Grand Central: 110.6 m architectural,
+// 100.3 m roof, 24 storeys (enwiki). A square seven-storey base and a U-shaped tower; beige brick with terracotta "a soft gray
+// fire-flashed with golden brown"; three-storey arches across the base; a two-storey attic set back above the 23rd floor with
+// red-tiled hip roofs and gable-roofed penthouses (enwiki). Tiers: OSM parts 30 / 89 / 95.3 / 105 m (attic roofs to 100.3,
+// penthouse ridges to 110.6). The east side stays clear of the Bowery Savings Bank model (ny110e42) next door.
+LANDMARKS.nypershingsq = {zh:'潘兴广场大厦', en:'Pershing Square Building', cat:'old', r:40, h:110.6,
+  lt:{m:1, c:'#ffe2b8', k:0.75, e:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), DD = PD.nypershingsq;
+  const W = {c:'#cbb594', m:0, lk:0.1}, SP = {c:'#9c8466', m:1, fh:3.6, cw:1.7}, GL = {c:'#45494b', m:1, fh:3.6, cw:1.7, lc:'#ffe2b8', lk:0.4};
+  const TC = {c:'#b39673', m:0, lk:0.25}, TILE = {c:'#9a4a32', m:0, lc:'#ffd2a8', lk:0.5};
+  const body = [[0, 30, DD.find(p => p[1] === 30)[2]], [0, 89, DD.find(p => p[1] === 89)[2]], [89, 97, DD.find(p => p[1] === 95.3)[2]]];
+  tiers(B, body, {W, SP, GL, R:RF, C:TC, SH:SHOPG, sp:1.7, ww:1.0, fh:3.6, wh:2.1, gh:11.5, top:1.0, minL:1.5, co:0.25, ch:1.0, bands:[[-6, 6.3, 0.12, TC]]});
+  // three-storey arches across the base (all street fronts of the 0-89 part)
+  openPoly(B.p(GL), body[1][2], 0.5, archPts(4.2, 10.5, 8), 5.6, 0.16, visEdges(body, 1), 4);
+  // attic hip roofs (red tile) on the two arms of the U, up to 100.3 m
+  const [ax0, ax1, az0, az1] = bbox(body[2][2]);
+  hipP(B.p(TILE), ax0, ax1, az0, az0 + 16.8, 97, 100.3, 1); hipP(B.p(TILE), ax0, ax1, az1 - 16.8, az1, 97, 100.3, 1);
+  // the penthouse (OSM part 105) with a gable roof up to 110.6 m
+  const PH = DD.find(p => p[1] === 105)[2], [px0, px1, pz0, pz1] = bbox(PH);
+  abox(B.p(W), px0, px1, 97, 104, pz0, pz1); hipP(B.p(TILE), px0, px1, pz0, pz1, 104, 110.6, 1);
+  B.flush(g); return g; }};
+place('nypershingsq');
+
+// Ritz Tower (Emery Roth with Carrère & Hastings, 1926), Park Avenue and 57th Street: 164.9 m, 40 storeys (enwiki). Setbacks at
+// the 4th, 19th, 21st, 25th and 33rd storeys; three storeys of rusticated limestone, tan brick above with terracotta ornament; a
+// pyramidal roof with a copper-clad square tower, corner finials / obelisks, a limestone lantern and a central pinnacle (enwiki).
+// Tiers: the 16 OSM parts (12 .. 158 m, corner piers at 90 / 95 / 115 m), stretched above 150 m to the verified 164.9 m.
+LANDMARKS.nyritztower = {zh:'丽思大厦', en:'Ritz Tower', cat:'old', r:28, h:164.9,
+  lt:{m:1, c:'#ffe4b8', k:0.8, e:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), D0 = PD.nyritztower;
+  const W = {c:'#bfa27c', m:0, lk:0.1}, SP = {c:'#8c7458', m:1, fh:3.6, cw:1.6}, GL = {c:'#45484a', m:1, fh:3.6, cw:1.6, lc:'#ffe4b8', lk:0.4};
+  const LS = {c:'#d2c8b4', m:0, lk:0.2}, CU = {c:'#5f8a78', m:0, lc:'#ffe6c0', lk:0.7}, TC = {c:'#c9ae86', m:0, lk:0.3};
+  const D = D0.filter(p => p[1] <= 150);
+  tiers(B, D, {W, SP, GL, R:RF, C:TC, SH:SHOPG, sp:1.6, ww:0.95, fh:3.6, wh:2.1, gh:5.5, top:1.0, minL:1.2, co:0.2, ch:0.9, bands:[[-6, 11.6, 0.14, LS]]});
+  // top: the 150 m shaft (with obelisks at its corners), a pyramidal roof, the copper square tower, lantern and pinnacle
+  const S = D0.find(p => p[1] === 150)[2], [x0, x1, z0, z1] = bbox(S), cx = (x0 + x1)/2, cz = (z0 + z1)/2;
+  for (const [x, z] of [[x0, z0], [x1, z0], [x1, z1], [x0, z1]]){ pierP(B.p(LS), x, z, 150, 152, 1.3, 0); pyrPoly(B.p(LS), rectP(x - 0.5, x + 0.5, z - 0.5, z + 0.5), 152, 156.5); }
+  hipP(B.p(CU), x0 + 0.8, x1 - 0.8, z0 + 0.8, z1 - 0.8, 150, 156, 0);
+  abox(B.p(CU), cx - 4, cx + 4, 154, 159, cz - 4, cz + 4); pyrPoly(B.p(CU), rectP(cx - 4.3, cx + 4.3, cz - 4.3, cz + 4.3), 159, 160.5);
+  cylP(B.p(LS), cx, cz, 1.6, 1.4, 160.5, 162.6, 8, true); cylP(B.p(CU), cx, cz, 0.5, 0.05, 162.6, 164.9, 8, false);
+  B.flush(g); return g; }};
+place('nyritztower');
+
+// Crown Building (730 Fifth Avenue; Warren & Wetmore, 1921), south-west corner of Fifth Avenue and 57th Street: 126.8 m, 25 storeys
+// (enwiki). A nine-storey base, a twelve-storey shaft, setbacks at the 10th, 13th and 21st storeys (asymmetrical; the shaft sits
+// toward the south of the site, its south wall largely windowless); Indiana limestone base, buff brick shaft with cream terracotta,
+// gilded spandrels; a four-storey octagonal pyramidal roof painted green, pierced by two storeys of windows, ball / ring / garland
+// finial; 23-karat gold leaf on the facade; floodlit since 1983 (enwiki). Tiers: the OSM parts (50-60 / 89 / 105 / 104-123 m).
+LANDMARKS.nycrownbldg = {zh:'皇冠大厦', en:'Crown Building', cat:'old', r:52, h:126.8,
+  lt:{m:1, c:'#ffd99a', k:0.95, e:0.6, anim:'breathe'}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nycrownbldg;
+  const W = {c:'#cdb48c', m:0, lk:0.12}, SP = {c:'#b08d4c', m:1, fh:3.7, cw:1.6}, GL = {c:'#46494a', m:1, fh:3.7, cw:1.6, lc:'#ffe2b0', lk:0.45};
+  const LS = {c:'#d4cab6', m:0, lk:0.25}, GOLD = {c:'#c9a043', m:0, lc:'#ffd890', lk:1.1}, GRN = {c:'#4f7a62', m:0, lc:'#ffe2a0', lk:0.9};
+  const body = D.filter(p => p[0] === 0 && p[1] < 110);
+  tiers(B, body, {W, SP, GL, R:RF, C:LS, SH:SHOPG, sp:1.6, ww:1.0, fh:3.7, wh:2.2, gh:8, top:1.0, minL:1.5, co:0.2, ch:0.9,
+    Wf:(i, t) => t <= 60 ? LS : W, bands:[[-6, 14, 0.1, LS]]});
+  // the octagonal pyramidal roof (104-123 m) with gilded ribs and two storeys of dormer windows, then the ball-and-ring finial
+  const O = D.find(p => p[0] === 104 && p[1] === 123)[2], [ox0, ox1, oz0, oz1] = bbox(O), cx = (ox0 + ox1)/2, cz = (oz0 + oz1)/2, r = Math.min(ox1 - ox0, oz1 - oz0)/2;
+  const oc = octP(cx, cz, r/Math.cos(PI/8));
+  wallsP(B.p(GRN), oc, 104, 108); pyrPoly(B.p(GRN), oc, 108, 121.5);
+  for (const [x, z] of oc) segP(B.p(GOLD), [x, 108, z], [cx, 121.5, cz], 0.18, 4);
+  for (let i = 0; i < 8; i++){ const a = oc[i], b = oc[(i + 1) % 8], m = [(a[0] + b[0])/2, (a[1] + b[1])/2];
+    for (const [t, y] of [[0.0, 109.2], [0.35, 113.6]]){ const x = lerp(m[0], cx, t), z = lerp(m[1], cz, t); boxP(B.p(GL), 1.4, 2.2, 1.4, x, y, z, 0); boxP(B.p(GOLD), 1.7, 0.3, 1.7, x, y + 2.2, z, 0); } }
+  cylP(B.p(GOLD), cx, cz, 0.35, 0.25, 121.5, 124.5, 8, false); cylP(B.p(GOLD), cx, cz, 0.9, 0.9, 124.5, 125.0, 12, true);
+  cylP(B.p(GOLD), cx, cz, 0.6, 0.05, 125.0, 126.8, 8, false);
+  // gilded crown pinnacles on the setback corners of the 89 / 105 m tiers and gilded spandrel bands
+  for (const p of body.filter(p => p[1] >= 89)) for (const [x, z] of p[2]) cylP(B.p(GOLD), x, z, 0.45, 0.05, p[1], p[1] + 3.2, 6, false);
+  for (const p of body.filter(p => p[1] >= 89)) bandP(B.p(GOLD), p[2], p[1] - 3.0, 0.6, 0.12, visEdges(body, body.indexOf(p)));
+  B.flush(g); return g; }};
+place('nycrownbldg');
+
+// Beekman Tower (former Panhellenic Hotel; John Mead Howells, 1928), First Avenue and Mitchell Place (49th Street): 87.5 m, 26
+// storeys (enwiki). A square plan with short setbacks and chamfered corners, built to the lot lines; piers on all four sides rise to
+// the 24th floor with recessed window bays between them; a two-storey base; the 26th-floor solarium (enwiki). Footprint: the app
+// record; the upper setback (above the 24th floor, ~80 m) is an estimate. Brick colour not verified (photos: orange-tan brick).
+LANDMARKS.nybeekmantower = {zh:'比克曼大厦', en:'Beekman Tower', cat:'old', r:27, h:87.5,
+  lt:{m:1, c:'#ffe2b8', k:0.8, e:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), P = PD.nybeekmantower[0][2];
+  const W = {c:'#b98c64', m:0, lk:0.1}, SP = {c:'#7c5a40', m:1, fh:3.2, cw:1.5}, GL = {c:'#3f4244', m:1, fh:3.2, cw:1.5, lc:'#ffe2b8', lk:0.4};
+  const CS = {c:'#d0c0a4', m:0, lk:0.25}, SOL = {c:'#59656c', m:1, fh:3.2, cw:1.2, lc:'#ffe0b0', lk:0.8};
+  const [x0, x1, z0, z1] = bbox(P), up = chamf((x1 - x0)/2 - 3.2, (z1 - z0)/2 - 3.2, 2.5, (x0 + x1)/2, (z0 + z1)/2);
+  tiers(B, [[0, 80, P], [80, 84.5, up]], {W, SP, GL, R:RF, C:CS, SH:SHOPG, sp:1.5, ww:0.9, fh:3.2, wh:2.0, gh:7, top:0.8, minL:1.2, co:0.12, ch:0.6,
+    bands:[[-6, 13, 0.12, CS]]});
+  // projecting piers (the dominant verticals) on every edge up to the 24th floor
+  finsP(B.p(W), P, 7, 79.5, 3.0, 0.45);
+  // solarium on top
+  const top = scaleP(up, 0.8); wallsP(B.p(SOL), top, 84.5, 87.2); flatP(B.p(RF), top, 87.2); bandP(B.p(CS), top, 86.9, 0.6, 0.15);
+  B.flush(g); return g; }};
+place('nybeekmantower');
+
+// River House (William Lawrence Bottomley, 1931), 435 East 52nd Street on the East River: 26 storeys, Art Deco, a gated cobblestone
+// courtyard with a fountain (enwiki). Footprint: the app record (OSM height tag 92.5 m, not verified). The massing — a tall central
+// slab on the west bar of the plan with lower wings round the courtyard — is an estimate from photos (no data parts).
+LANDMARKS.nyriverhouse = {zh:'河屋', en:'River House', cat:'old', r:43, h:92.5,
+  lt:{m:1, c:'#ffe4bc', k:0.75, e:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), P = PD.nyriverhouse[0][2];
+  const W = {c:'#a77f62', m:0, lk:0.1}, SP = {c:'#7a5a44', m:1, fh:3.4, cw:1.6}, GL = {c:'#424547', m:1, fh:3.4, cw:1.6, lc:'#ffe4bc', lk:0.4};
+  const LS = {c:'#cdbfa5', m:0, lk:0.2}, CB = {c:'#8a8177', m:0, lk:0.05}, WAT = {c:'#5c7d8a', m:0};
+  // wings: the whole plan to ~48 m (estimate), the central slab (x -21..5 of the west bar) to 92.5 m
+  const core = rectP(-17.0, 4.6, -24.0, 23.5);
+  tiers(B, [[0, 48, P], [0, 92.5, core]], {W, SP, GL, R:RF, C:LS, SH:SHOPG, sp:1.6, ww:0.95, fh:3.4, wh:2.0, gh:6, top:1.0, minL:1.2, co:0.15, ch:0.8,
+    bands:[[-6, 12.6, 0.12, LS]]});
+  // a stepped crown on the slab (two short setbacks, estimate)
+  abox(B.p(W), -14.5, 2.0, 92.4, 96.5, -18, 17.5); abox(B.p(LS), -14.8, 2.3, 96.3, 96.9, -18.3, 17.8);
+  // courtyard paving and the fountain (east notch of the plan)
+  abox(B.p(CB), 5.2, 22.8, -1.0, 0.15, -9.8, 9.0); cylP(B.p(LS), 14, -0.4, 2.0, 2.0, 0.15, 0.7, 12, true); cylP(B.p(WAT), 14, -0.4, 1.7, 1.7, 0.7, 0.75, 12, true);
+  cylP(B.p(LS), 14, -0.4, 0.3, 0.2, 0.7, 2.2, 8, true);
+  B.flush(g); return g; }};
+place('nyriverhouse');
+
+// Saks Fifth Avenue flagship (Starrett & van Vleck, 1924), 611 Fifth Avenue between 49th and 50th Streets, opposite Rockefeller
+// Center: ten storeys, chamfered corners, the 8th-10th storeys stepped back; Indiana limestone, brick and cast stone in a modest
+// neoclassical style over rusticated granite at the ground; tall display windows in bronze frames, narrow 9th-storey windows between
+// colonnettes, a cornice and stone balustrade on the 10th (enwiki). Footprint: the OSM parts (street wall and the set-back top);
+// height: OSM tag 55 m (not verified), street wall at the 7th storey ~40 m (estimate). The 1990 tower behind is not part of it.
+LANDMARKS.nysaks = {zh:'萨克斯第五大道', en:'Saks Fifth Avenue', cat:'old', r:49, h:55,
+  lt:{m:1, c:'#ffe6c2', k:0.85, e:0.6}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nysaks;
+  const W = {c:'#d3c7ae', m:0, lk:0.15}, SP = {c:'#b8ab92', m:1, fh:4.6, cw:1.8}, GL = {c:'#3f4446', m:1, fh:4.6, cw:1.8, lc:'#ffe6c2', lk:0.45};
+  const GRA = {c:'#8d8478', m:0, lk:0.1}, BRZ = {c:'#6b5230', m:0, lc:'#ffd9a0', lk:0.5}, DISP = {c:'#4a4c4c', glow:'#ffe6c0', gk:0.8};
+  const P1 = D.find(p => p[1] === 62)[2], P2 = D.find(p => p[1] === 66)[2];
+  const ch = P => { const [x0, x1, z0, z1] = bbox(P), c = 3.2; return [[x0 + c, z0], [x1 - c, z0], [x1, z0 + c], [x1, z1 - c], [x1 - c, z1], [x0 + c, z1], [x0, z1 - c], [x0, z0 + c]]; };
+  // the east party wall is kept 1 m inside the lot line so that the hull spares the slender west parts of the 1990 tower behind
+  const clip = P => P.map(([x, z]) => [Math.min(x, 30.5), z]), S1 = clip(ch(P1)), S2 = clip(scaleP(ch(P2), 0.96));
+  tiers(B, [[0, 40, S1], [40, 55, S2]], {W, SP, GL, R:RF, C:W, sp:3.0, ww:1.8, fh:4.6, wh:2.6, gh:7, top:1.2, minL:2, co:0.35, ch:1.2});
+  const st = P => i => outN(P, i)[0] < 0.7;   // street fronts (not the east party wall)
+  bandP(B.p(GRA), S1, -6, 6.6, 0.12, st(S1)); stripsP(B.p(DISP), S1, 0.6, 5.8, 4.6, 3.6, 0.16, st(S1), 3); stripsP(B.p(BRZ), S1, 0.4, 6.0, 4.6, 3.9, 0.14, st(S1), 3);
+  bandP(B.p(W), S1, 39.0, 1.2, 0.5, st(S1)); balP(B, S2, 54.4, 1.4, W, st(S2));
+  B.flush(g); return g; }};
+place('nysaks');
+
+// Bloomingdale's flagship, the block of Lexington / Third Avenues and 59th / 60th Streets: the 1930 Art Deco facade on Lexington
+// Avenue by Starrett & Van Vleck (enwiki). Footprint: the app record; height: OSM tag 55 m (not verified). Facade detail not
+// verified (photos: limestone with vertical bands of dark spandrels on Lexington, plainer older fronts elsewhere).
+LANDMARKS.nybloomingdales = {zh:'布鲁明戴尔百货', en:"Bloomingdale's", cat:'old', r:75, h:55,
+  lt:{m:1, c:'#ffe6c6', k:0.8, e:0.6}, build(){
+  const g = new THREE.Group(), B = mkB(), P = PD.nybloomingdales[0][2];
+  const W = {c:'#cdbfa6', m:0, lk:0.15}, SP = {c:'#2f2d2b', m:1, fh:4.2, cw:1.6}, GL = {c:'#3c4042', m:1, fh:4.2, cw:1.6, lc:'#ffe6c6', lk:0.45};
+  const W2 = {c:'#b49f86', m:0, lk:0.1}, DISP = {c:'#4a4c4c', glow:'#ffe6c0', gk:0.8}, BLK = {c:'#262524', m:0, lk:0.1};
+  const west = i => { const f = edgeF(P, i); return f.nx < -0.7; };
+  tiers(B, [[0, 55, P]], {W:W2, SP:{c:'#6f6253', m:1, fh:4.2, cw:1.6}, GL, R:RF, C:W2, sp:2.4, ww:1.4, fh:4.2, wh:2.4, gh:7, top:2, minL:2, co:0.2, ch:1.0});
+  // the Art Deco Lexington front: limestone with continuous black spandrel strips and a stepped parapet
+  for (let i = 0; i < P.length; i++){ if (!west(i)) continue; const f = edgeF(P, i);
+    const a = f.at(0, 0, 0.2), b = f.at(f.L, 0, 0.2); quadP(B.p(W), [a[0], 0, a[2]], [b[0], 0, b[2]], [b[0], 55, b[2]], [a[0], 55, a[2]]);
+    const n = Math.round(f.L/2.6); for (let k = 1; k < n; k++){ const p = f.at(f.L*k/n, 0, 0.3); if (k % 2) quadP(B.p(SP), [p[0] - f.ux*0.7, 8, p[2] - f.uz*0.7], [p[0] + f.ux*0.7, 8, p[2] + f.uz*0.7], [p[0] + f.ux*0.7, 50, p[2] + f.uz*0.7], [p[0] - f.ux*0.7, 50, p[2] - f.uz*0.7]);
+      else abox(B.p(W), p[0] - 0.4, p[0] + 0.4, 6, 53 + (k % 4 === 0 ? 3 : 0), p[2] - 0.4, p[2] + 0.4); }
+    for (let k = 0; k < n; k += 2){ const p = f.at(f.L*(k + 0.5)/n, 0, 0.35); quadP(B.p(DISP), [p[0] - f.ux*1.6, 0.6, p[2] - f.uz*1.6], [p[0] + f.ux*1.6, 0.6, p[2] + f.uz*1.6], [p[0] + f.ux*1.6, 5.6, p[2] + f.uz*1.6], [p[0] - f.ux*1.6, 5.6, p[2] - f.uz*1.6]); }
+    abox(B.p(BLK), Math.min(a[0], b[0]) - 0.3, Math.max(a[0], b[0]) + 0.3, 6.2, 7.0, Math.min(a[2], b[2]) - 0.3, Math.max(a[2], b[2]) + 0.3); }
+  B.flush(g); return g; }};
+place('nybloomingdales');
+
+// Japan Society (Junzo Yoshimura, 1971), 333 East 47th Street: the first building of contemporary Japanese architecture in New York
+// (enwiki); five floors behind a sleek black facade divided by continuous bands of concrete, metal sunscreens (6sqft). Footprint:
+// the app record (30 x 30 m); height: OSM tag 20 m (not verified). The street front faces 47th Street (south, +z).
+LANDMARKS.nyjapansoc = {zh:'日本协会', en:'Japan Society', cat:'new', r:26, h:20,
+  lt:{m:1, c:'#ffe4c0', k:0.6, e:0.6}, build(){
+  const g = new THREE.Group(), B = mkB(), P = PD.nyjapansoc[0][2], [x0, x1, z0, z1] = bbox(P);
+  const BK = {c:'#232323', m:0, lk:0.05}, CON = {c:'#b8b2a8', m:0, lk:0.25}, GLs = {c:'#2d3134', m:1, fh:4.0, cw:0.9, lc:'#ffe4c0', lk:0.5};
+  const GR = {c:'#3a3a38', m:0, lk:0.1};
+  abox(B.p(BK), x0, x1, -4, 20, z0, z1); flatP(B.p(RF), rectP(x0, x1, z0, z1), 20.02);
+  // the 47th Street front: glass behind black metal sunscreens (vertical slats), continuous concrete bands at each floor
+  const zf = z1 + 0.05;
+  abox(B.p(GLs), x0 + 0.4, x1 - 0.4, 4.6, 19.2, zf, zf + 0.1);
+  for (let x = x0 + 0.6; x < x1 - 0.4; x += 0.45) abox(B.p(GR), x, x + 0.1, 5.0, 19.0, zf + 0.1, zf + 0.5);
+  for (const y of [4.2, 8.8, 13.0, 17.2, 19.4]) abox(B.p(CON), x0 - 0.05, x1 + 0.05, y, y + 0.55, zf - 0.2, zf + 0.75);
+  // recessed ground floor with a glazed entrance
+  abox(B.p(LOBBY), x0 + 3, x1 - 3, 0, 4.2, zf - 2.2, zf - 2.0); abox(B.p(CON), x0, x1, 4.2, 4.6, zf - 2.2, zf + 0.6);
+  B.flush(g); return g; }};
+place('nyjapansoc');
+
+// =====================================================================================================================
+// One and Two United Nations Plaza (Kevin Roche John Dinkeloo, 1976 / 1983), north side of 44th Street west of First Avenue,
+// across from the UN: each about 154 m (enwiki). Blue-green reflective glass on an aluminium curtain wall, a fine 3 x 5 ft grid
+// with no expression of the floors (enwiki). One (labelled, w261243297, the corner of First Avenue): two glass "lean-to"
+// slant-backs at ~45 degrees on the north face from the 12th and 28th floors, and a "slant-out" chamfer at the south-east corner
+// up to the 12th floor, below which the corner is sliced off (enwiki). Two (sub-key nyunplaza_b, label:false, w261243299, ~9 m west
+// of One): sloped setbacks on its north and west faces and a deep chamfer at the south-east corner (enwiki). Tiers from the OSM
+// parts (15 / 50 / 115 / 153.9 m); the slopes rise 45 degrees from each step edge. Two keys so that no hull covers the low
+// buildings between them.
+const UNG = {c:'#3f6f73', m:1, fh:3.66, cw:1.52, lc:'#e6f4ff', lk:0.45}, UNM = {c:'#5d8488', m:0, lk:0.05}, UNB = {c:'#4c7c80', m:0};
+const UNS = {c:'#4d7f84', m:0, lc:'#e6f4ff', lk:0.4};
+const UNC = {c:'#3b4144', m:0, lc:'#ffe2b8', lk:0.5};
+function canopy(B, P, h){ flatP(B.p(UNC), P, h); flatP(B.p(UNC), P, h - 0.45); wallsP(B.p(UNC), P, h - 0.45, h);
+  for (let i = 0; i < P.length; i++){ const f = edgeF(P, i); if (f.L < 3) continue; const n = Math.round(f.L/6); for (let k = 0; k <= n; k++){ const p = f.at(f.L*k/n, 0, -0.4); abox(B.p(UNM), p[0] - 0.12, p[0] + 0.12, 0, h - 0.45, p[2] - 0.12, p[2] + 0.12); } } }
+function unTower(B, D, slopes){
+  curtain(B, D, {G:UNG, M:UNM, R:RF, C:UNB, SB:UNB, sp:1.52, mw:0.05, fh:3.66, bh:0.12, ch:0.8, gh:5, LB:LOBBY});
+  // 45-degree glass slopes on top of the step parts: from the outer edge (the step top) up to the face of the higher part
+  for (const [y, A, Bq, C, Dq] of slopes){ const run = Math.hypot(C[0] - A[0], C[1] - A[1]); const o = B.p(UNS);
+    quadP(o, [A[0], y, A[1]], [Bq[0], y, Bq[1]], [Dq[0], y + run, Dq[1]], [C[0], y + run, C[1]]);
+    triP(o, [A[0], y, A[1]], [C[0], y + run, C[1]], [C[0], y, C[1]]); triP(o, [Bq[0], y, Bq[1]], [Dq[0], y, Dq[1]], [Dq[0], y + run, Dq[1]]); }
+}
+LANDMARKS.nyunplaza = {zh:'联合国广场一号及二号', en:'One and Two United Nations Plaza', cat:'new', r:36, h:154,
+  lt:{m:1, c:'#e6f4ff', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nyunplaza.filter(p => p[0] === 0);
+  unTower(B, D, [[50, [-5.8, -11.6], [27.1, -12.0], [-2.4, -7.8], [27.2, -8.0]], [115, [-2.4, -7.8], [27.2, -8.0], [1.6, -3.3], [27.2, -3.5]]]);
+  // the slant-out chamfer at the south-east corner (0-45 m), then the full corner above (OSM part 45-153.9)
+  const A = [22.3, 15.7], Bc = [27.2, 10.2], C = [27.3, 15.6], o = B.p(UNG);
+  triP(o, [A[0], 0, A[1]], [Bc[0], 0, Bc[1]], [C[0], 45, C[1]]); triP(o, [A[0], 0, A[1]], [C[0], 45, C[1]], [A[0], 45, A[1]]); triP(o, [Bc[0], 0, Bc[1]], [Bc[0], 45, Bc[1]], [C[0], 45, C[1]]);
+  const T = [[A[0], A[1]], [C[0], C[1]], [Bc[0], Bc[1]]]; wallsP(o, T, 45, 153.9); flatP(B.p(RF), T, 153.88);
+  stripsP(B.p(UNM), T, 45.5, 153, 1.52, 0.05, 0.06, null, 1);
+  // the street canopy along 44th Street and First Avenue (east part, from the tower's west wall)
+  canopy(B, [[-27.7, 17.8], [23.7, 17.8], [31.0, 9.3], [31.2, -16.2], [26.8, -16.0], [27.2, 10.2], [22.3, 15.7], [-27.7, 15.7]], 3.0);
+  B.flush(g); return g; }};
+place('nyunplaza');
+LANDMARKS.nyunplaza_b = {zh:'联合国广场二号', en:'Two United Nations Plaza', cat:'new', r:33, h:154, label:false,
+  lt:{m:1, c:'#e6f4ff', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), D = PD.nyunplaza_b;
+  unTower(B, D, [[115, [-12.4, 30.0], [-12.5, -20.7], [-3.5, 30.1], [-2.7, -20.6]], [50, [14.5, -24.4], [-12.4, -24.7], [14.5, -20.2], [-12.5, -20.7]]]);
+  B.flush(g); return g; }};
+place('nyunplaza_b');
+// the canopy on the north side of Two (OSM building=roof w379585540, 3.3 m), its own key (Two's frame and placement); the east
+// 4 m are left off so that its hull keeps clear of Uganda House
+LANDMARKS.nyunplaza_d = {zh:'联合国广场二号雨篷', en:'Two United Nations Plaza canopy', cat:'new', r:30, h:3.3, label:false,
+  lt:{m:0, c:'#ffe2b8', k:0.5, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(); canopy(B, [[19.5, -24.4], [19.5, -28.9], [-20.6, -29.1], [-20.6, -24.8]], 3.3); B.flush(g); return g; }};
+SG_PLACES.push({type:'nyunplaza_d', lat:PL.nyunplaza_b[0], lon:PL.nyunplaza_b[1], rot:PL.nyunplaza_b[2]});
+// the west part of the 44th Street canopy (w379585544) in front of the gap between the towers: its own thin key so that no tower
+// hull covers the low buildings between them (One's frame and placement)
+LANDMARKS.nyunplaza_c = {zh:'联合国广场雨篷', en:'United Nations Plaza canopy', cat:'new', r:75, h:3, label:false,
+  lt:{m:0, c:'#ffe2b8', k:0.5, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  canopy(B, [[-68.2, 17.8], [-27.7, 17.8], [-27.7, 15.7], [-27.5, 12.8], [-33.5, 6.2], [-48.0, 6.7], [-53.7, 13.3], [-62.7, 13.3], [-62.8, 8.8], [-71.5, 9.0], [-71.5, 14.1]], 3.0);
+  B.flush(g); return g; }};
+SG_PLACES.push({type:'nyunplaza_c', lat:PL.nyunplaza[0], lon:PL.nyunplaza[1], rot:PL.nyunplaza[2]});
+
+// 100 United Nations Plaza (Der Scutt, 1989), First Avenue at 48th Street: 52 storeys, "a 52-story wedge-topped condo monolith"
+// of layered brick and glass, the apex holding the mechanical floors behind terraced penthouse balconies; five columns of
+// triangular balconies on the downtown (south) face, three on the uptown face (newyorkitecture.com). Footprint: the app record;
+// height: OSM tag 170 m (not verified, enwiki not reachable here). Wedge orientation and the 150 m spring line are estimates.
+LANDMARKS.ny100unplaza = {zh:'联合国广场100号', en:'100 United Nations Plaza', cat:'new', r:32, h:170,
+  lt:{m:1, c:'#ffe8cc', k:0.6, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), P = PD.ny100unplaza[0][2], [x0, x1, z0, z1] = bbox(P);
+  const W = {c:'#b39a80', m:0, lk:0.1}, SP = {c:'#8a7560', m:1, fh:3.1, cw:1.5}, GL = {c:'#3e4a52', m:1, fh:3.1, cw:1.5, lc:'#ffe8cc', lk:0.45};
+  const BAL = {c:'#c9bba8', m:0, lk:0.15}, BG = {c:'#4f5d66', m:1, fh:3.1, cw:1.2, lc:'#ffe8cc', lk:0.45};
+  tiers(B, [[0, 150, P]], {W, SP, GL, R:RF, C:BAL, SH:SHOPG, sp:1.5, ww:0.95, fh:3.1, wh:2.0, gh:6, top:0.6, minL:1.0, co:0.12, ch:0.6});
+  // the wedge top: terraced slopes falling to the north and south faces from an east-west ridge at 170 m
+  const n = 6, cz = (z0 + z1)/2;
+  for (let k = 0; k < n; k++){ const y = 150 + k*20/n, dz = (z1 - z0)/2*(1 - k/n), dz2 = (z1 - z0)/2*(1 - (k + 1)/n);
+    abox(B.p(BG), x0 + 0.5, x1 - 0.5, y, y + 20/n, cz - dz, cz + dz); abox(B.p(BAL), x0 + 0.3, x1 - 0.3, y + 20/n - 0.15, y + 20/n + 0.9, cz - dz - 0.1, cz - dz2 + 0.1);
+    abox(B.p(BAL), x0 + 0.3, x1 - 0.3, y + 20/n - 0.15, y + 20/n + 0.9, cz + dz2 - 0.1, cz + dz + 0.1); }
+  for (const xs of [x0 + 0.2, x1 - 0.2]){ const o = B.p(W); triP(o, [xs, 150, z0], [xs, 150, z1], [xs, 170, cz]); }
+  // triangular balconies stacked in columns (5 on the south face, 3 on the north face), every floor from 20 to 148 m
+  for (const [zf, s, cnt] of [[z1, 1, 5], [z0, -1, 3]]) for (let c = 0; c < cnt; c++){ const x = lerp(x0 + 5, x1 - 5, cnt === 1 ? 0.5 : c/(cnt - 1));
+    for (let y = 20; y < 148; y += 3.1){ const o = B.p(BAL); triP(o, [x - 2.2, y, zf], [x + 2.2, y, zf], [x, y, zf + s*2.0]); triP(o, [x - 2.2, y + 0.25, zf], [x, y + 0.25, zf + s*2.0], [x + 2.2, y + 0.25, zf]);
+      quadP(o, [x - 2.2, y, zf], [x, y, zf + s*2.0], [x, y + 0.25, zf + s*2.0], [x - 2.2, y + 0.25, zf]); quadP(o, [x, y, zf + s*2.0], [x + 2.2, y, zf], [x + 2.2, y + 0.25, zf], [x, y + 0.25, zf + s*2.0]); } }
+  B.flush(g); return g; }};
+place('ny100unplaza');
+
+// Sutton Tower (Sutton 58; Thomas Juul-Hansen with Goldstein, Hill & West, 2022), 430 East 58th Street by the Queensboro Bridge:
+// 258.2 m, 65 storeys (enwiki infobox / city list). A stone-and-glass facade with five bays of windows on the north and south
+// elevations and three on the west and east; the tower cantilevers about 3 m over its eastern neighbour (enwiki). Footprint: the
+// app record (24 x 23 m); the cantilever starting height (~30 m) and the stone colour are estimates (photos: pale stone grid).
+LANDMARKS.nysuttontower = {zh:'萨顿大厦', en:'Sutton Tower', cat:'new', r:21, h:258,
+  lt:{m:1, c:'#fff0dc', k:0.65, e:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), P = PD.nysuttontower[0][2], [x0, x1, z0, z1] = bbox(P);
+  const ST = {c:'#d3ccbe', m:0, lk:0.15}, G = {c:'#3e474e', m:1, fh:3.75, cw:1.6, lc:'#fff0dc', lk:0.45}, SB = {c:'#bfb7a8', m:0, lk:0.1};
+  const xe = x1 + 3.0, yc = 30, H = 258.2;
+  abox(B.p(G), x0, x1, -5, yc, z0, z1); abox(B.p(G), x0, xe, yc, H - 1, z0, z1); flatP(B.p(RF), rectP(x0, xe, z0, z1), H - 1);
+  flatP(B.p(ST), rectP(x1, xe, z0, z1), yc - 0.02);
+  // stone frame: piers at the bay lines (5 bays N / S, 3 bays E / W), a stone band every two floors, a parapet crown
+  const pier = (x, z, ya, yb, w, d) => abox(B.p(ST), x - w/2, x + w/2, ya, yb, z - d/2, z + d/2);
+  for (let k = 0; k <= 5; k++){ const xa = lerp(x0, x1, k/5), xb = lerp(x0, xe, k/5);
+    const xi = Math.min(x1 - 0.55, Math.max(x0 + 0.55, xa));
+    for (const z of [z0, z1]){ pier(xi, z, -1, yc, 1.1, 1.0); pier(xb, z, yc, H + 2.5, 1.1, 1.0); } }
+  for (let k = 0; k <= 3; k++){ const z = lerp(z0, z1, k/3); pier(x0 + 0.5, z, -1, yc, 1.0, 1.1); pier(x0, z, yc, H + 2.5, 1.0, 1.1); pier(x1 - 0.5, z, -1, yc, 1.0, 1.1); pier(xe, z, yc, H + 2.5, 1.0, 1.1); }
+  for (let y = 7.5; y < H - 2; y += 7.5){ const xr = y > yc ? xe : x1; bandP(B.p(SB), rectP(x0, xr, z0, z1), y - 0.6, 0.6, 0.35, i => y > yc || i === 0 || i === 2); }
+  bandP(B.p(ST), rectP(x0, xe, z0, z1), H - 1.5, 4.0, 0.45);
+  bandP(B.p(LOBBY), rectP(x0, x1, z0, z1), 0, 5.5, 0.04, i => i === 0);
+  B.flush(g); return g; }};
+place('nysuttontower');
 }

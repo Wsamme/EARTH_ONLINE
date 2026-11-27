@@ -1,45 +1,45 @@
 [0.3s] bay lines 364573
-[7.1s] prep: junction nodes 319287
-[8.4s] traffic network: links 307680 pieces 176624 nodes 129479 movements 588687
-[11.5s] weak components 198 main 99.3% others >=1 km 28 | SCC main 98.5%
-[15.0s] dead ends {"total":25782,"tunnel":50,"edge":477,"chunk":0,"gap3":61,"gap6":0,"gap12":302,"levelgap":104,"service":4540,"deckend":70,"water":13,"culdesac":20165,"oneway":434} sinks 33 sources 300
-[16.7s] crossings {"falsejunc":6,"lowclear":387,"missedjunc":243,"overpass":3873,"atgrade":32560}
-[16.9s] levels / water {"step1_3":23,"step3_15":68,"step15":14,"steep":235,"inwater":27,"inwaterM":2455,"shortdeck":1}
-[29.0s] routes {"pairs":2000,"ok":1979,"fail":21,"failIsland":15,"failOneway":6,"detourMed":1.26,"detour3":47,"far":1976,"okPct":99}
-[29.4s] movements {"moves":588687,"zjump1_5":1,"zjump5":1,"xyFar":0}
-[39.4s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":99}
+[6.0s] prep: junction nodes 319284
+[6.9s] traffic network: links 307672 pieces 176619 nodes 129478 movements 588658
+[10.2s] weak components 201 main 99.3% others >=1 km 28 | SCC main 98.5%
+[13.5s] dead ends {"total":25783,"tunnel":50,"edge":477,"chunk":0,"gap3":61,"gap6":0,"gap12":302,"levelgap":105,"service":4540,"deckend":67,"water":13,"culdesac":20168,"oneway":434} sinks 33 sources 300
+[15.1s] crossings {"falsejunc":6,"lowclear":387,"missedjunc":245,"overpass":3873,"atgrade":32558}
+[15.3s] levels / water {"step1_3":25,"step3_15":67,"step15":13,"steep":235,"inwater":27,"inwaterM":2455,"shortdeck":1}
+[26.4s] routes {"pairs":2000,"ok":1980,"fail":20,"failIsland":15,"failOneway":5,"detourMed":1.26,"detour3":48,"far":1977,"okPct":99}
+[26.6s] movements {"moves":588658,"zjump1_5":1,"zjump5":1,"xyFar":0}
+[36.0s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":99}
 {
  "city": "bay",
  "tag": "after",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/baydata",
  "lines": 364573,
  "drivableKm": 23120.1,
- "links": 307680,
- "nodes": 129479,
- "junctionNodes": 319287,
- "weakComponents": 198,
+ "links": 307672,
+ "nodes": 129478,
+ "junctionNodes": 319284,
+ "weakComponents": 201,
  "mainWeakPct": 99.35,
  "otherComponentsOver1km": 28,
- "otherKm": 150.4,
+ "otherKm": 150.8,
  "mainSccPctApp": 81.48,
  "mainSccPct": 98.47,
  "closedOnewaySets": 11,
  "closedOnewayKm": 42.19,
- "sinkLinksInMain": 213,
- "sourceLinksInMain": 500,
+ "sinkLinksInMain": 212,
+ "sourceLinksInMain": 499,
  "deadEnds": {
-  "total": 25782,
+  "total": 25783,
   "tunnel": 50,
   "edge": 477,
   "chunk": 0,
   "gap3": 61,
   "gap6": 0,
   "gap12": 302,
-  "levelgap": 104,
+  "levelgap": 105,
   "service": 4540,
-  "deckend": 70,
+  "deckend": 67,
   "water": 13,
-  "culdesac": 20165,
+  "culdesac": 20168,
   "oneway": 434
  },
  "onewaySinks": 33,
@@ -47,34 +47,34 @@
  "crossings": {
   "falsejunc": 6,
   "lowclear": 387,
-  "missedjunc": 243,
+  "missedjunc": 245,
   "overpass": 3873,
-  "atgrade": 32560
+  "atgrade": 32558
  },
  "levels": {
-  "step1_3": 23,
-  "step3_15": 68,
-  "step15": 14,
+  "step1_3": 25,
+  "step3_15": 67,
+  "step15": 13,
   "steep": 235,
   "inwater": 27,
   "inwaterM": 2455,
   "shortdeck": 1
  },
  "movements": {
-  "moves": 588687,
+  "moves": 588658,
   "zjump1_5": 1,
   "zjump5": 1,
   "xyFar": 0
  },
  "routes": {
   "pairs": 2000,
-  "ok": 1979,
-  "fail": 21,
+  "ok": 1980,
+  "fail": 20,
   "failIsland": 15,
-  "failOneway": 6,
+  "failOneway": 5,
   "detourMed": 1.26,
-  "detour3": 47,
-  "far": 1976,
+  "detour3": 48,
+  "far": 1977,
   "okPct": 99
  },
  "tunnels": {
@@ -87,19 +87,19 @@
   "island": 28,
   "oneway_trap": 11,
   "oneway_noentry": 2,
-  "dead_levelgap": 104,
+  "dead_levelgap": 105,
   "dead_edge": 477,
   "source": 300,
   "sink": 33,
   "dead_tunnel": 50,
   "dead_gap3": 61,
   "dead_gap12": 302,
-  "dead_deckend": 69,
+  "dead_deckend": 66,
   "dead_water": 13,
   "dead_shortdeck": 1,
   "lowclear": 387,
   "falsejunc": 6,
-  "missedjunc": 243,
+  "missedjunc": 245,
   "step": 105,
   "steep": 235,
   "inwater": 27,
@@ -481,6 +481,6 @@
   }
  ]
 }
-[40.3s] map /home/claude/earth_online/src/road50/out/bay_after_sf.png
-[40.7s] map /home/claude/earth_online/src/road50/out/bay_after_oakland.png
-[41.0s] map /home/claude/earth_online/src/road50/out/bay_after_sanjose.png
+[36.6s] map /home/claude/earth_online/src/road50/out/bay_after_sf.png
+[36.8s] map /home/claude/earth_online/src/road50/out/bay_after_oakland.png
+[37.1s] map /home/claude/earth_online/src/road50/out/bay_after_sanjose.png

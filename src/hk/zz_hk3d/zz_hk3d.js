@@ -17,26 +17,53 @@
   if (typeof window !== 'undefined') window.HK3D = S;
   const PAL_HI = ['#8fa4b4', '#7e95a8', '#9aabb6', '#a7b4bc', '#6f8799', '#b3bec4'];
   const PAL_LO = ['#d2cdc2', '#c7c9c6', '#d9d1bf', '#bdbfbd', '#cfc6b4', '#c4c0b6', '#dad7cf'];
-  // ---- v44 facade: day window grid on top of the engine's landmark material (night windows use the same floor / column grid) ----
+  // ---- v45 facade patterns, on top of the engine's landmark material (night windows use the same floor / column grid) ----
+  // u = position along each vertical face (from the foot of the building's centre on that face), y = height above the street.
+  // 0 punched windows, 1 curtain wall, 2 vertical fins, 3 horizontal ribbons, 4 X-bracing (Bank of China), 5 round portholes (Jardine).
+  // Each glass cell gets a small random tone so a facade is not one flat colour; far away it fades to the cell average.
   const DAY_GLSL = `
 {
   vec3 Nw2 = normalize(vWN);
   float vert = 1.0 - step(0.45, abs(Nw2.y));
-  float hz2 = abs(Nw2.x) > abs(Nw2.z) ? vWP.z : vWP.x;
-  float wy = step(uSill, fract(vWP.y / uFH)), wx = step(uMul, fract(hz2 / uCW));
-  float above = step(uBase + 5.0, vWP.y);
-  float far = smoothstep(350.0, 1800.0, distance(vWP, uCam));   // own uniform: three does not set cameraPosition for Lambert
-  float cov = (1.0 - uSill) * (1.0 - uMul);
-  float win = mix(wy * wx, cov, far) * vert * above;
-  diffuseColor.rgb = mix(diffuseColor.rgb, uGlass, win * uWK);
+  vec2 tg = normalize(vec2(-Nw2.z, Nw2.x) + vec2(1e-5, 0.0));
+  float u = dot(vWP.xz - uCtr.xz, tg), y = vWP.y - uBase - uY0;
+  float far = smoothstep(380.0, 2000.0, distance(vWP, uCam));   // own uniform: three does not set cameraPosition for Lambert
+  float fy = fract(y / uFH), fx = fract(u / uCW);
+  float rnd = fract(sin(dot(floor(vec2(u / uCW, y / uFH)), vec2(12.9898, 78.233))) * 43758.5453);
+  float win = 0.0, cov = 0.0;
+  if (uPat < 0.5 || (uPat > 0.5 && uPat < 1.5)){ win = step(uSill, fy) * step(uMul, fx); cov = (1.0 - uSill) * (1.0 - uMul); }
+  else if (uPat < 2.5){ win = step(uMul, fx); cov = 1.0 - uMul; }
+  else if (uPat < 3.5){ win = step(uSill, fy); cov = 1.0 - uSill; }
+  else if (uPat < 4.5){
+    // one X per module: module height uP, face half width uR; the diagonals run corner to corner, joints at module ends
+    float a = u / (2.0 * uR), b = y / uP, w = uLW / min(uP, 2.0 * uR);
+    float la = abs(fract(b + a) - 0.5), lb = abs(fract(b - a) - 0.5), hd = min(fract(b), 1.0 - fract(b));
+    float frame = max(1.0 - step(w * 0.5, min(la, lb)), 1.0 - step(w * 0.35, hd));
+    frame = max(frame, step(uR - uLW * 0.6, abs(u))) * step(0.0, y);
+    win = (1.0 - frame) * (0.9 + 0.1 * step(0.05, fx) * step(0.07, fy)); cov = 0.8;
+  } else {
+    vec2 c = vec2(fx - 0.5, fy - 0.5) * vec2(uCW, uFH); win = 1.0 - step(uR, length(c)); cov = 3.1416 * uR * uR / (uCW * uFH);
+  }
+  win = mix(win, cov, far) * vert * step(uBase + 4.0, vWP.y);
+  vec3 gl = uGlass * mix(0.82 + 0.36 * rnd, 1.0, far);
+  diffuseColor.rgb = mix(diffuseColor.rgb, gl, win * uWK);
 }`;
+  // curtain-wall glass tones for generic towers (approximations)
+  const GLASS = ['#3d566b', '#4a6275', '#56707f', '#3f5a5c', '#5d6f7d', '#46586a', '#62788a'];
+  // Landmark facades, keyed by the hand-made landmark the official model replaces. Colours are approximations from photos;
+  // measured values (Bank of China: tower plan +/-32.1 m and X modules of about 52 m starting 28 m up, from the official model's
+  // vertices) are noted. pat: see DAY_GLSL.
+  const STYLE = {
+    hkboc:{pat:4, frame:'#e6ecef', glass:'#34485c', P:51.95, r:32.1, y0:28.15, lw:2.2, sill:0, mul:0, wk:1, fh:4.0, cw:3.2},
+  };
   const camPos = () => { try { return camera.position; } catch (e){ return new THREE.Vector3(0, 1e5, 0); } };
-  function facade(mat, st){
+  function facade(mat, st, cx, cz){
     if (mat.userData.hk3dDay) return mat;
     mat.userData.hk3dDay = true;
-    const prev = mat.onBeforeCompile, U = {uGlass:{value:new THREE.Color(st.glass)}, uSill:{value:st.sill}, uMul:{value:st.mul}, uWK:{value:st.wk}, uCam:{value:camPos()}};
+    const prev = mat.onBeforeCompile, U = {uGlass:{value:new THREE.Color(st.glass)}, uSill:{value:st.sill}, uMul:{value:st.mul}, uWK:{value:st.wk}, uCam:{value:camPos()},
+      uPat:{value:st.pat || 0}, uP:{value:st.P || 50}, uLW:{value:st.lw || 1.2}, uR:{value:st.r || 0.6}, uY0:{value:st.y0 || 0}, uCtr:{value:new THREE.Vector3(cx, 0, cz)}};
     mat.onBeforeCompile = sh => { prev(sh); Object.assign(sh.uniforms, U); S.day = (S.day || 0) + 1;
-      sh.fragmentShader = sh.fragmentShader.replace('uniform float uCW;', 'uniform float uCW; uniform vec3 uCam; uniform vec3 uGlass; uniform float uSill; uniform float uMul; uniform float uWK;')
+      sh.fragmentShader = sh.fragmentShader.replace('uniform float uCW;', 'uniform float uCW; uniform vec3 uCam; uniform vec3 uGlass; uniform float uSill; uniform float uMul; uniform float uWK; uniform float uPat; uniform float uP; uniform float uLW; uniform float uR; uniform float uY0; uniform vec3 uCtr;')
         .replace('#include <color_fragment>', '#include <color_fragment>\n' + DAY_GLSL); };
     mat.needsUpdate = true; return mat;
   }
@@ -92,15 +119,20 @@
     const rk0 = e.rep[0]; let own = null;
     if (rk0 && LANDMARKS[rk0]) for (const L of landmarks) if (L.type === rk0){ own = wallColour(lmMeshes.get(L.id)); break; }
     const wall = own || pal[hs % pal.length];
-    // towers: light frame, darker glass on a 3.8 m floor / 3 m column grid; lower blocks: wall with windows on 3.1 m / 2.6 m
-    const st = hi ? {glass:shade(wall, -0.4), sill:0.3, mul:0.2, wk:0.85, fh:3.8, cw:3.0} : {glass:shade(wall, -0.5), sill:0.38, mul:0.34, wk:0.8, fh:3.1, cw:2.6};
-    const spec = {c:hi ? shade(wall, 0.25) : wall, lk:hi ? 0.5 : 0.4, fh:st.fh, cw:st.cw};
+    // v45: a landmark with its own facade style (STYLE, keyed by the landmark it replaces) uses that; the rest get a pattern by height:
+    // towers of 150 m+ a curtain wall, 60-150 m ribbon windows or punched windows (by hash), lower blocks punched windows.
+    let st = STYLE[rk0] ? Object.assign({}, STYLE[rk0]) : null, frameC;
+    if (st){ frameC = st.frame; }
+    else if (hi){ const gl = GLASS[hs % GLASS.length]; st = {pat:1, glass:gl, sill:0.12, mul:0.1, wk:0.9, fh:3.8, cw:1.6}; frameC = shade(gl, 0.45); }
+    else if (e.h >= 60 && (hs >> 3) % 2){ st = {pat:3, glass:shade(wall, -0.55), sill:0.42, mul:0, wk:0.85, fh:3.4, cw:2.0}; frameC = wall; }
+    else { st = {pat:0, glass:shade(wall, -0.5), sill:0.38, mul:0.34, wk:0.8, fh:3.1, cw:2.6}; frameC = wall; }
+    const spec = {c:frameC, lk:hi ? 0.5 : 0.4, fh:st.fh, cw:st.cw};
     const build = () => {
       const g = new THREE.Group(), geo = geoOf(e, buf, off0, q), top = LMCTX.u.base.value, P = geo.attributes.position.array;
       // lowest ground under the footprint (vertices in the lowest 3 m), so the model stands on the street, not on the hillside
       let gmin = Infinity; for (let i = 0; i < P.length; i += 3*Math.max(1, Math.floor(P.length/3/48))) if (P[i+1] < 3) gmin = Math.min(gmin, hC(x + P[i], y - P[i+2]));
       const dy = isFinite(gmin) ? Math.min(0, gmin - top + 0.3) : 0;
-      const m = lmAdd(g, geo, spec, 0, dy, 0); facade(m.material, st); return g; };
+      const m = lmAdd(g, geo, spec, 0, dy, 0); facade(m.material, Object.assign({}, st, {y0:(st.y0 || 0) + dy}), x, -y); return g; };
     const rk = e.rep[0];
     if (rk && LANDMARKS[rk]){
       const def = LANDMARKS[rk]; def.build = build; def.r = 8; def.h = e.h; def.hk3d = e.id;

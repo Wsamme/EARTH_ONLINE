@@ -7,7 +7,7 @@
    - Fresnel (Schlick, F0 = 0.02 for water) between the water body colour (the light module's palette) and the reflection;
    - reflection: the analytic sky of the light module along the wave-perturbed reflected ray, plus (quality 1 / 2) a planar mirror pass
      of the scene at reduced resolution (skyline, hills, ships, the city's night lights), distorted by the wave slopes; the sky in that
-     pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, minor roads and small buildings are left
+     pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, roads and small buildings are left
      out of the mirror pass, shadows are not re-rendered for it, and it is skipped when no water is on screen or the camera is high;
    - sun / moon glint: GGX (Trowbridge-Reitz) lobe with the Smith visibility term and Fresnel at the half vector;
    - shore: a signed distance-to-coast texture made from the land / water grid (nat) gives a thin moving foam line at the coast and
@@ -20,7 +20,7 @@
 const R50 = window.R50 = window.R50 || {parts:{}};
 const R5Q = /[?&]r50q=(\d)/.exec(location.search), R5OFF = /[?&]r50=0/.test(location.search) || /[?&]r50water=0/.test(location.search);
 const R5 = {on:false, q:window.CB_MOBILE ? 0 : 2, pinned:R5Q ? +R5Q[1] : -1, rt:null, ema:16, slow:0, lastT:0, lastStep:0, pass:false, passMs:0, passCalls:0,
-  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0};
+  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], ups:0, dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0};
 if (R5.pinned >= 0) R5.q = Math.min(2, R5.pinned);
 const R5U = {
   r5On:{value:0}, r5Nrm:{value:null}, r5Refl:{value:null}, r5ReflOn:{value:0}, r5TexM:{value:new THREE.Matrix4()}, r5PlaneY:{value:-0.05},
@@ -99,7 +99,7 @@ if (r5On > 0.5){
     vec2 cuv = vec2((wP.x + r5CoastT.x)*r5CoastT.z, (-wP.y + r5CoastT.y)*r5CoastT.w);
     float cq = texture2D(r5Coast, cuv).r*255.0 - 128.0;
     wC = (cuv.x > 0.0 && cuv.x < 1.0 && cuv.y > 0.0 && cuv.y < 1.0) ? sign(cq)*(cq/127.0)*(cq/127.0)*2400.0 : 2400.0;   // outside the map: open water
-    wCalm = 0.45 + 0.55*smoothstep(20.0, 700.0, wC);
+    wCalm = 0.3 + 0.7*smoothstep(30.0, 1500.0, wC);
   }
   // pixel footprint on the water (m): stretched along the view by 1/cos
   float wCos = max(wV.y, 0.03), wFp = wD*r5Px/sqrt(wCos);
@@ -139,13 +139,15 @@ if (r5On > 0.5){
   float wVis = 0.5/(wNL*sqrt(wNV*wNV*(1.0 - wA2) + wA2) + wNV*sqrt(wNL*wNL*(1.0 - wA2) + wA2) + 1e-4);
   float wFH = 0.02 + 0.98*pow(1.0 - max(dot(wV, wH), 0.0), 5.0);
   vec3 wSpec = lgGlintC*min(wDg*wVis*wFH*wNL*r5SunK, 24.0)*smoothstep(-0.02, 0.05, wL.y);
-  vec3 wCol = mix(outgoingLight, wEnv, wF) + wSpec;
+  // body colour: the palette's sea colour was tuned to stand in for the missing reflection; light coming up out of the water is darker
+  vec3 wBody = outgoingLight*0.62;
+  vec3 wCol = mix(wBody, wEnv, wF) + wSpec;
   // foam: a thin broken line at the coast, moving with the waves (weaker in calm water and at night by the body colour)
   if (r5CoastOn > 0.5 && r5FoamK > 0.0 && wC < 40.0){
     float fn = texture2D(r5Nrm, u2*0.37 + vec2(wT*0.011, 0.0)).r*0.6 + texture2D(r5Nrm, u3*0.5).g*0.4;
     float band = (1.0 - smoothstep(0.0, 6.0 + 10.0*fn, wC + 2.0*sin(wT*0.9 + dot(wP, wd)*0.08)))*smoothstep(-4.0, 0.0, wC);
     float foam = band*smoothstep(0.42, 0.62, fn)*r5FoamK*r5Amp*(1.0 - smoothstep(600.0, 2500.0, wD));
-    wCol = mix(wCol, (outgoingLight + vec3(0.35))*1.15 + lgGlintC*0.15, foam);
+    wCol = mix(wCol, (outgoingLight + vec3(0.35))*1.1 + lgGlintC*0.15, foam);
   }
   outgoingLight = wCol;
   diffuseColor.a = mix(diffuseColor.a, 1.0, max(wF, r5ReflOn*0.5));
@@ -200,7 +202,7 @@ function r5Hide(on){
     const push = o => { if (o && o.visible){ o.visible = false; H.push(o); } };
     push(R5.dome);
     if (typeof SGR !== 'undefined' && SGR.tiles) for (const T of SGR.tiles.values()){
-      push(T.trees); if (T.road){ push(T.road.minor); push(T.road.paths); }
+      push(T.trees); if (T.road){ push(T.road.minor); push(T.road.paths); push(T.road.major); }   // flat: their mirror image is a sliver
       if (T.bld) push(T.bld.small);
     }
     if (typeof forestMesh !== 'undefined') push(forestMesh);
@@ -234,8 +236,9 @@ function r5Pass(){
   r5Cam.position.copy(_r5p); r5Cam.up.copy(_r5u); r5Cam.lookAt(_r5t);
   r5Cam.fov = camera.fov; r5Cam.aspect = camera.aspect; r5Cam.near = camera.near; r5Cam.updateProjectionMatrix(); r5Cam.updateMatrixWorld(); r5Cam.matrixWorldInverse.copy(r5Cam.matrixWorld).invert();
   const M = R5U.r5TexM.value; M.set(0.5, 0, 0, 0.5, 0, 0.5, 0, 0.5, 0, 0, 0.5, 0.5, 0, 0, 0, 1); M.multiply(r5Cam.projectionMatrix); M.multiply(r5Cam.matrixWorldInverse);
-  // oblique near plane = the water plane (nothing below the water shows in the mirror)
-  _r5pl.setFromNormalAndCoplanarPoint(_r5n, _r5t.set(0, py, 0)); _r5pl.applyMatrix4(r5Cam.matrixWorldInverse);
+  // oblique near plane 1 m above the water: nothing below the water shows in the mirror (the ground under the sea lies only
+  // 0.25 m below the surface, too close for depth precision at a distance)
+  _r5pl.setFromNormalAndCoplanarPoint(_r5n, _r5t.set(0, py + 1.0, 0)); _r5pl.applyMatrix4(r5Cam.matrixWorldInverse);
   _r5cp.set(_r5pl.normal.x, _r5pl.normal.y, _r5pl.normal.z, _r5pl.constant);
   const P = r5Cam.projectionMatrix.elements;
   _r5q.set((Math.sign(_r5cp.x) + P[8])/P[0], (Math.sign(_r5cp.y) + P[9])/P[5], -1, (1 + P[10])/P[14]);
@@ -264,10 +267,10 @@ function r5Pre(t){
   const now = performance.now();
   if (R5.lastT){ const dt = Math.min(250, now - R5.lastT); R5.ema = R5.ema*0.95 + dt*0.05; }
   R5.lastT = now;
-  // adaptive quality (not when pinned): step down after 3 s of slow frames, back up at most once every 30 s when fast
+  // adaptive quality (not when pinned): step down after 3 s of slow frames; back up when fast, at most once per 30 s and twice per visit (no see-saw)
   if (R5.pinned < 0 && !document.hidden){
     if (R5.ema > 34 && R5.q > 0){ R5.slow += 1; if (R5.slow > 90 && now - R5.lastStep > 3000){ R5.q--; R5.slow = 0; R5.lastStep = now; } }
-    else if (R5.ema < 17 && R5.q < (window.CB_MOBILE ? 0 : 2) && now - R5.lastStep > 30000 && R5.ran > 0){ R5.q++; R5.lastStep = now; R5.slow = 0; }
+    else if (R5.ema < 17 && R5.q < (window.CB_MOBILE ? 0 : 2) && now - R5.lastStep > 30000 && R5.ups < 2){ R5.q++; R5.ups++; R5.lastStep = now; R5.slow = 0; }
     else R5.slow = Math.max(0, R5.slow - 1);
   }
   const W = window.SGWx, wind = W && W.state && typeof W.state.wind === 'number' ? W.state.wind : 0.4;
@@ -290,8 +293,8 @@ function r5Coast(){
 }
 HOOKS.boot.push(() => { try { r5Start(); } catch (e){ console.error('render50 water', e); } });
 HOOKS.prerender.push(r5Pre);
-// the land / water grid is filled once the map data is in (and again after a city switch): build the coast texture when the city is built
-HOOKS.frame.push(() => { if (R5.on && !R5.coast && typeof SGR !== 'undefined' && SGR.on && SGR.water && (R5.cw = (R5.cw || 0) + 1) > 30) r5Coast(); });
+// the land / water grid is filled once the map data is in: build the coast texture 2.5 s after the city's water exists (once)
+HOOKS.frame.push(() => { if (!R5.on || R5.coast || R5.coastTried || typeof SGR === 'undefined' || !SGR.on || !SGR.water) return; const n = performance.now(); if (!R5.cw) R5.cw = n; else if (n - R5.cw > 2500){ R5.coastTried = true; r5Coast(); } });
 
 R50.water = {
   get on(){ return R5.on; },

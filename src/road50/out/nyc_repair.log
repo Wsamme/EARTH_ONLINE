@@ -1,9 +1,9 @@
-[1.1s] nyc lines 370838
-[12.2s] R3 pass 0 conflicts 1718 fixed 485
-[20.5s] R3 pass 1 conflicts 1021 fixed 102
-[28.8s] R3 pass 2 conflicts 886 fixed 13
-[28.8s] R3: conflicts 1718 fixed 600 flagged 868
-[40.6s] R1/R2: dead ends 15646 joined 70 inserted vertices 10 flagged 187
-[42.5s] R4: low crossings 121 raised bridges 6 flagged 106
-[42.7s] R5: steep lines 195 re-graded 31 flagged 164
-[44.4s] {"city":"nyc","src":"/home/claude/earth_online/site/nycdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/nycdata","lines":370838,"changedLines":1554,"changes":{"R3":1619,"R1":70,"R4":6,"R5":31},"flagged":{"R3: bridge decks share a node mid#span":6,"R3: # % ramp spreads over > # lines":573,"R3: # % ramp loses junction (c#)":54,"R3: # % ramp would change a sourced deck (>= # m)":195,"R3: # % ramp lifts a dead end":8,"R3: # % ramp makes a new junction (c#)":24,"R3: # % ramp low clearance over c#b":1,"R3: # % ramp loses junction (c#b)":1,"R3: # % ramp makes a new junction (c#b)":4,"R3: # % ramp low clearance over c#":2,"R1: level #":172,"R1: level #, bridge / ground":10,"R1: level #, classes #/#":1,"R1: classes #/#":1,"R1: level #, classes #/#, bridge / ground":1,"R1: bridge / ground":2,"R4: bridge too short to clear the road below with <= # % ramps":106,"R5: jump next to a fixed junction / line end":161,"R5: re#grading: loses junction (c#)":1,"R5: re#grading: low clearance over c#":2},"rules":["R1","R2","R3","R4","R5"],"gap":6}
+[0.8s] nyc lines 370838
+[10.9s] R3 pass 0 conflicts 1684 fixed 485
+[18.1s] R3 pass 1 conflicts 986 fixed 100
+[26.2s] R3 pass 2 conflicts 855 fixed 12
+[26.2s] R3: conflicts 1684 fixed 597 flagged 838
+[38.2s] R1/R2: dead ends 15646 joined 70 inserted vertices 10 flagged 187
+[39.9s] R4: low crossings 121 raised bridges 6 flagged 106
+[40.1s] R5: steep lines 195 re-graded 31 flagged 164
+[41.8s] {"city":"nyc","src":"/home/claude/earth_online/site/nycdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/.tmp_nycdata","lines":370838,"changedLines":1546,"changes":{"R3":1610,"R1":70,"R4":6,"R5":31},"flagged":{"R3: bridge decks share a node mid#span":6,"R3: # % ramp spreads over > # lines":563,"R3: # % ramp loses junction (c#)":52,"R3: # % ramp would change a sourced deck (>= # m)":186,"R3: # % ramp lifts a dead end":8,"R3: # % ramp makes a new junction (c#)":18,"R3: # % ramp low clearance over c#b":1,"R3: # % ramp loses junction (c#b)":1,"R3: # % ramp makes a new junction (c#b)":1,"R3: # % ramp low clearance over c#":2,"R1: level #":172,"R1: level #, bridge / ground":10,"R1: level #, classes #/#":1,"R1: classes #/#":1,"R1: level #, classes #/#, bridge / ground":1,"R1: bridge / ground":2,"R4: bridge too short to clear the road below with <= # % ramps":106,"R5: jump next to a fixed junction / line end":161,"R5: re#grading: loses junction (c#)":1,"R5: re#grading: low clearance over c#":2},"rules":["R1","R2","R3","R4","R5"],"gap":6}

@@ -57,7 +57,28 @@ lights, modules, chunk renames); (b) `WebGLRenderer` → `WebGPURenderer` (all c
 
 ## 5. Plan in stages
 
-(see the end of the file)
+Each stage ships on its own and keeps a working WebGL path. Gates are the headless checks of render50 (0 page errors, screenshots per
+city compared with the release, frame numbers from `SC/render50/probe.js`).
+
+0. **Done in render50 (r128, production-safe):** ocean (`render50/water.js`), shadow / label work cuts (`render50/perf.js`), the
+   WebGPU / TSL prototype of the ocean, compute and bundles (`render50/webgpu/ocean.html`).
+1. **Module loading, still r128.** Load three.js as an ES module from an import map (r128's `build/three.module.js` and
+   `examples/jsm` OrbitControls / GLTFLoader exist), keep the app script as is but make it a module. No look change. Unlocks stage 2.
+   Effort: small; risk: script order, globals used across modules (`window.CB_*` handles).
+2. **WebGLRenderer r128 → current, same look.** Steps of ~10 releases (the migration guide's advice): r138, r150, r160, r170, r187.
+   Keep the look with `ColorManagement.enabled = false`, `outputColorSpace = LinearSRGBColorSpace`, light intensities re-scaled where
+   r155 changed units, `RedFormat` for luminance textures, chunk renames in the `onBeforeCompile` patches (asserted string replacements
+   fail loudly, which helps). Per step: build all six pages, screenshot diff, frame numbers. Gains: per-fragment Lambert (sharper
+   lighting on big faces), `BatchedMesh` (one call for many different meshes: tiles, landmarks), current GLTFLoader, WebGL 2 only.
+   Effort: large (the ~50-60 shader patches per city are checked at every step); risk: moderate, mostly visual regressions.
+3. **WebGPURenderer behind a switch.** Port the material families to TSL in order of screen share: buildings (`matBld` + `NIGHT`),
+   ground (`post_ground`, `lm32/detail`), water (prototype), sky dome, landmark lights (`LM_GLSL`), roads / markings, traffic, signs.
+   A `?gpu=1` page uses `WebGPURenderer` (with its WebGL 2 backend where WebGPU is missing); the default page stays on stage 2's
+   `WebGLRenderer` until the WebGPU page matches it on all cities. Effort: very large (every `onBeforeCompile` and `ShaderMaterial`);
+   risk: high; the three.js manual still calls the renderer experimental.
+4. **WebGPU-only wins** once stage 3 is the default: vehicles / pedestrians / particles simulated in compute shaders (today ~JS per
+   frame in `lm20/traffic`), static tiles in `BundleGroup`s, GPU frustum / occlusion culling with indirect draws, timestamp-query based
+   adaptive quality (instead of frame-time guesses), cascaded or virtual shadow maps written in TSL.
 
 ## 6. Measurements
 
@@ -65,7 +86,15 @@ lights, modules, chunk renames); (b) `WebGLRenderer` → `WebGPURenderer` (all c
 
 ## 7. Risks
 
-(see the end of the file)
+- **Reach:** WebGPU is missing on Linux (most configurations), Firefox on Linux / Android, older Android phones; the WebGL path must stay
+  first-class (stage 3 keeps it). Compatibility mode helps on Android only.
+- **Maturity:** three.js calls `WebGPURenderer` experimental; its WebGL 2 backend is not the same code as `WebGLRenderer` and can be
+  slower; features (e.g. some post effects, `onBeforeCompile`) are deliberately absent.
+- **Size of the port:** ~300 custom shader edits across the six builds, written by many module authors and anchored on r128 chunk text.
+  Every landmark round adds more. A port freezes landmark work or must run beside it.
+- **Look drift:** colour management and light units change every colour unless pinned to the legacy setup (stage 2).
+- **Measurability here:** this machine's headless Chromium renders WebGL through ANGLE on Mesa llvmpipe (software), so neither frame
+  rates nor WebGPU timings from here predict a laptop GPU (see section 6).
 
 ## 8. Sources
 

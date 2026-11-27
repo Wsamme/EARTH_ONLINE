@@ -12,7 +12,7 @@
 const R50 = window.R50 = window.R50 || {parts:{}};
 const PFOFF = /[?&]r50=0/.test(location.search) || /[?&]r50perf=0/.test(location.search);
 const PF = {shadow:!PFOFF, labels:!PFOFF, f:0, shRun:0, shSkip:0, lbRun:0, lbSkip:0, s:new Float64Array(12), geo:-1, built:-1, nLm:-1,
-  cm:new Float64Array(18), lbN:-1, lbF:0, camMoved:true};
+  cm:new Float64Array(18), lbN:-1, lbF:0, camMoved:true, why:[0, 0, 0]};
 R50.parts.perf = PF;
 // camera state as numbers (matrixWorld + projection scale): did the view change since the last frame?
 function pfCamChanged(){
@@ -31,7 +31,7 @@ function pfShadow(){
   const worldCh = geo !== PF.geo || built !== PF.built || nLm !== PF.nLm; PF.geo = geo; PF.built = built; PF.nLm = nLm;
   const low = camera.position.y - Math.max(0, hAt(camera.position.x, -camera.position.z)) < 600;
   const cyc = low ? 2 : 4;
-  if (lightCh || worldCh || PF.f % cyc === 0){ renderer.shadowMap.needsUpdate = true; PF.shRun++; } else PF.shSkip++;
+  if (lightCh || worldCh || PF.f % cyc === 0){ renderer.shadowMap.needsUpdate = true; PF.shRun++; PF.why[lightCh ? 0 : worldCh ? 1 : 2]++; } else PF.shSkip++;
 }
 function pfPre(){
   PF.f++;
@@ -56,6 +56,6 @@ if (typeof placeLabels === 'function'){
 R50.perf = {
   get shadow(){ return PF.shadow; }, set shadow(v){ PF.shadow = !!v; if (!PF.shadow){ renderer.shadowMap.autoUpdate = true; } },
   get labels(){ return PF.labels; }, set labels(v){ PF.labels = !!v; },
-  info:() => ({shadow:PF.shadow, labels:PF.labels, shadowRenders:PF.shRun, shadowSkips:PF.shSkip, labelRuns:PF.lbRun, labelSkips:PF.lbSkip})
+  info:() => ({shadow:PF.shadow, labels:PF.labels, shadowRenders:PF.shRun, shadowSkips:PF.shSkip, shadowWhy:{light:PF.why[0], world:PF.why[1], cycle:PF.why[2]}, labelRuns:PF.lbRun, labelSkips:PF.lbSkip})
 };
 }

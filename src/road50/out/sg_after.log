@@ -1,13 +1,13 @@
-[0.2s] sg lines 154878
-[2.3s] prep: junction nodes 91638
-[2.6s] traffic network: links 52248 pieces 40771 nodes 28289 movements 84020
-[3.3s] weak components 69 main 98.8% others >=1 km 9 | SCC main 96.4%
-[3.8s] dead ends {"total":2836,"tunnel":102,"edge":0,"chunk":0,"gap3":11,"gap6":1,"gap12":24,"levelgap":9,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":246} sinks 28 sources 165
-[4.0s] crossings {"falsejunc":9,"lowclear":25,"missedjunc":15,"overpass":1140,"atgrade":6783}
-[4.1s] levels / water {"step1_3":0,"step3_15":12,"step15":0,"steep":114,"inwater":14,"inwaterM":1173,"shortdeck":0}
-[4.9s] routes {"pairs":2000,"ok":1946,"fail":54,"failIsland":30,"failOneway":24,"detourMed":1.33,"detour3":14,"far":1929,"okPct":97.3}
-[5.0s] movements {"moves":84020,"zjump1_5":0,"zjump5":0,"xyFar":0}
-[5.7s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.5}
+[0.1s] sg lines 154878
+[1.7s] prep: junction nodes 91638
+[1.8s] traffic network: links 52248 pieces 40771 nodes 28289 movements 84020
+[2.3s] weak components 69 main 98.8% others >=1 km 9 | SCC main 96.4%
+[2.7s] dead ends {"total":2836,"tunnel":102,"edge":0,"chunk":0,"gap3":11,"gap6":1,"gap12":24,"levelgap":9,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":246} sinks 28 sources 165
+[2.9s] crossings {"falsejunc":9,"lowclear":25,"missedjunc":15,"overpass":1140,"atgrade":6783}
+[3.0s] levels / water {"step1_3":0,"step3_15":12,"step15":0,"steep":114,"inwater":14,"inwaterM":1173,"shortdeck":0}
+[3.8s] routes {"pairs":2000,"ok":1946,"fail":54,"failIsland":30,"failOneway":24,"detourMed":1.33,"detour3":14,"far":1929,"okPct":97.3}
+[3.8s] movements {"moves":84020,"zjump1_5":0,"zjump5":0,"xyFar":0}
+[4.5s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.5}
 {
  "city": "sg",
  "tag": "after",
@@ -209,6 +209,6 @@
   }
  ]
 }
-[5.9s] map /home/claude/earth_online/src/road50/out/sg_after_cbd.png
-[6.1s] map /home/claude/earth_online/src/road50/out/sg_after_jurong.png
-[6.2s] map /home/claude/earth_online/src/road50/out/sg_after_tampines.png
+[4.7s] map /home/claude/earth_online/src/road50/out/sg_after_cbd.png
+[4.8s] map /home/claude/earth_online/src/road50/out/sg_after_jurong.png
+[4.9s] map /home/claude/earth_online/src/road50/out/sg_after_tampines.png

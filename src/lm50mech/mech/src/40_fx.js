@@ -39,8 +39,8 @@ const MF = (() => {
     const F = ensure(); if (!o){ F.core.visible = F.glow.visible = F.fl0.visible = F.fl1.visible = false; beamSnd(false); return; }
     F.t += 1/60; _a.set(o[0], o[2], -o[1]); _b.set(h[0], h[2], -h[1]); _dir.subVectors(_b, _a); const L = _dir.length(); _dir.normalize(); _q.setFromUnitVectors(_up, _dir);
     const fl = 0.85 + 0.15*Math.sin(F.t*53) + 0.08*Math.sin(F.t*91);
-    for (const [m, r] of [[F.core, 1.3*fl], [F.glow, 4.2*fl]]){ m.visible = true; m.position.copy(_a).addScaledVector(_dir, L/2); m.quaternion.copy(_q); m.scale.set(r, L, r); m.material.uniforms.uT.value = F.t; }
-    F.fl0.visible = true; F.fl0.position.copy(_a); F.fl0.scale.setScalar(16*fl); F.fl1.visible = k !== 'sky'; F.fl1.position.copy(_b); F.fl1.scale.setScalar((k === 'kaiju' ? 46 : 34)*fl);
+    for (const [m, r] of [[F.core, 2.0*fl], [F.glow, 6.5*fl]]){ m.visible = true; m.position.copy(_a).addScaledVector(_dir, L/2); m.quaternion.copy(_q); m.scale.set(r, L, r); m.material.uniforms.uT.value = F.t; }
+    F.fl0.visible = true; F.fl0.position.copy(_a); F.fl0.scale.setScalar(24*fl); F.fl1.visible = k !== 'sky'; F.fl1.position.copy(_b); F.fl1.scale.setScalar((k === 'kaiju' ? 64 : 46)*fl);
     beamSnd(true, o, h);
   }
   // instanced missiles along their velocity

@@ -344,13 +344,13 @@ const MK = (() => {
     const M = MOD; if (!M) return; const L = M.glowL, a = M.glow.geometry.attributes.position, A = a.array;
     for (let i = 0; i < L.length; i++){ boneW(L[i].bone, L[i].p, _w); A[i*3] = _w[0]; A[i*3 + 1] = _w[2]; A[i*3 + 2] = -_w[1]; }
     a.needsUpdate = true; M.glow.visible = M.root.visible;
-    M.glow.material.uniforms.uA.value = 0.18 + 0.95*nt; M.glow.material.uniforms.uK.value = (0.7 + 0.8*nt)*(1 + 0.6*(beamK || 0));
+    M.glow.material.uniforms.uA.value = 0.22 + 1.1*nt; M.glow.material.uniforms.uK.value = (0.8 + 1.2*nt)*(1 + 0.6*(beamK || 0));
     M.glow.material.uniforms.uScale.value = (renderer.domElement.height || 800)*0.9;
     const k = 0.55 + 1.1*nt; M.matL.color.setRGB(k, k, k);
     const on = nt > 0.15 && M.root.visible;
     for (let i = 0; i < 2; i++){ const q = M.pools[i]; q.visible = on; if (!on) continue; const s = i ? -1 : 1, fx = Math.sin(hdg), fy = Math.cos(hdg), rx = Math.cos(hdg), ry = -Math.sin(hdg);
       const px = X + fx*58 - rx*s*14, py = Y + fy*58 - ry*s*14; q.position.set(px, gnd(px, py) + 0.6, -py); q.rotation.set(0, PI - hdg, 0); q.scale.set(26, 1, 40); }
-    M.pools[0].material.uniforms.uA.value = 0.22*sstep(0.15, 0.6, nt);
+    M.pools[0].material.uniforms.uA.value = 0.34*sstep(0.15, 0.6, nt);
   }
   return {BS, BI, NB, PAR, REST, OFF, L_TH, L_SH, L_UA, L_FA, ANK, C, build, attach, detach, setPose, boneW, lights, parts, get M(){ return MOD; }};
 })();

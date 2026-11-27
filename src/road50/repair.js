@@ -135,6 +135,7 @@ function levelConflicts(){
         for (let j = 0; j + 1 < m2; j++){ const ax = qx(h, j), ay = qy(h, j), ex = qx(h, j+1) - ax, ey = qy(h, j+1) - ay, L2 = ex*ex + ey*ey; if (L2 < 1e-6) continue;
           const u = ((x - ax)*ex + (y - ay)*ey)/L2; if (u <= 0.0 || u >= 1.0) continue; if (Math.hypot(ax + ex*u - x, ay + ey*u - y) > 0.6) continue;
           if (Math.hypot(ex, ey)*Math.min(u, 1 - u) < 0.3) continue;                 // at its vertex: done above
+          if ((lines[l2].flags & 2) && !(lines[li].flags & 2)) continue;              // a road ending under a deck (no shared node): not a junction
           const e2 = eAt(h, j) + (eAt(h, j+1) - eAt(h, j))*u, d = Math.abs(e - e2); if (d <= 1.2 || d > 40) continue;
           if (e > e2) out.push({H:li, Lo:l2, kH:k, endH:true, endLo:false, segLo:[j, u], eH:e, eL:e2, x, y});
           else out.push({H:l2, Lo:li, segH:[j, u], endH:false, kLo:k, endLo:true, eH:e2, eL:e, x, y});
@@ -205,6 +206,7 @@ if (RULES.has('R3')){
       const eHn = f.segH ? eAt(gH, f.segH[0]) + (eAt(gH, f.segH[0]+1) - eAt(gH, f.segH[0]))*f.segH[1] : eAt(gH, f.kH);
       const eLn = f.segLo ? eAt(gL, f.segLo[0]) + (eAt(gL, f.segLo[0]+1) - eAt(gL, f.segLo[0]))*f.segLo[1] : eAt(gL, f.kLo);
       if (Math.abs(eHn - eLn) <= 1.2) continue;
+      if (eHn < eLn) continue;                                 // an earlier fix turned it round: the next pass sees it the right way
       const key = f.Lo + ':' + Math.round(f.x) + ':' + Math.round(f.y), keyH = f.H + ':' + Math.round(f.x) + ':' + Math.round(f.y);
       const allow = k => k === key || k === keyH || k.endsWith(':' + Math.round(f.x) + ':' + Math.round(f.y));
       const brH = (lines[f.H].flags & 2) !== 0, brL = (lines[f.Lo].flags & 2) !== 0, dEc = eHn - eLn;
@@ -381,7 +383,7 @@ for (const F of files){
   fs.writeFileSync(path.join(OUTD, F.name), F.name.endsWith('.txt') ? z.toString('base64') : z);
 }
 // the other data files of the city are linked unchanged (so the stage is a complete data folder; symlinks, to save disk)
-for (const f of fs.readdirSync(D.D)){ const src = path.join(D.D, f); if (fs.statSync(src).isDirectory()) continue; if (files.some(F => F.name === f)) continue; const dst = path.join(OUTD, f); if (!fs.existsSync(dst)) fs.symlinkSync(src, dst); }
+for (const f of fs.readdirSync(D.D)){ const src = path.join(D.D, f); if (files.some(F => F.name === f)) continue; const dst = path.join(OUTD, f); if (!fs.existsSync(dst)) fs.symlinkSync(src, dst); }
 const byRule = {}; for (const c of CH) byRule[c.rule] = (byRule[c.rule] || 0) + 1;
 const flagBy = {}; for (const f of FLAG) flagBy[f.rule + (f.why ? ': ' + f.why.replace(/[-0-9.]+/g, '#') : '')] = (flagBy[f.rule + (f.why ? ': ' + f.why.replace(/[-0-9.]+/g, '#') : '')] || 0) + 1;
 const rep = {city, src:D.D, out:OUTD, lines:lines.length, changedLines:nDirty, changes:byRule, flagged:flagBy, rules:[...RULES], gap:GAP};

@@ -1,13 +1,13 @@
 [0.3s] bay lines 364573
 [5.7s] prep: junction nodes 319082
 [6.6s] traffic network: links 306963 pieces 176118 nodes 129463 movements 586249
-[8.9s] weak components 270 main 99.2% others >=1 km 35 | SCC main 98.2%
-[11.4s] dead ends {"total":26053,"tunnel":50,"edge":478,"chunk":0,"gap3":93,"gap6":22,"gap12":305,"levelgap":320,"service":4540,"deckend":67,"water":13,"culdesac":20165,"oneway":550} sinks 42 sources 324
-[12.3s] crossings {"falsejunc":5,"lowclear":451,"missedjunc":283,"overpass":3871,"atgrade":32494}
-[12.5s] levels / water {"step1_3":120,"step3_15":227,"step15":41,"steep":275,"inwater":27,"inwaterM":2455,"shortdeck":1}
-[23.7s] routes {"pairs":2000,"ok":1974,"fail":26,"failIsland":20,"failOneway":6,"detourMed":1.26,"detour3":65,"far":1971,"okPct":98.7}
-[24.1s] movements {"moves":586249,"zjump1_5":7,"zjump5":7,"xyFar":0}
-[33.2s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":98.7}
+[9.2s] weak components 270 main 99.2% others >=1 km 35 | SCC main 98.2%
+[11.8s] dead ends {"total":26053,"tunnel":50,"edge":478,"chunk":0,"gap3":93,"gap6":22,"gap12":305,"levelgap":320,"service":4540,"deckend":67,"water":13,"culdesac":20165,"oneway":550} sinks 42 sources 324
+[12.8s] crossings {"falsejunc":5,"lowclear":451,"missedjunc":283,"overpass":3871,"atgrade":32494}
+[13.0s] levels / water {"step1_3":120,"step3_15":227,"step15":41,"steep":275,"inwater":27,"inwaterM":2455,"shortdeck":1}
+[21.4s] routes {"pairs":2000,"ok":1974,"fail":26,"failIsland":20,"failOneway":6,"detourMed":1.26,"detour3":65,"far":1971,"okPct":98.7}
+[21.7s] movements {"moves":586249,"zjump1_5":7,"zjump5":7,"xyFar":0}
+[30.4s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":98.7}
 {
  "city": "bay",
  "tag": "before",
@@ -472,6 +472,6 @@
   }
  ]
 }
-[34.0s] map /home/claude/earth_online/src/road50/out/bay_before_sf.png
-[34.3s] map /home/claude/earth_online/src/road50/out/bay_before_oakland.png
-[34.6s] map /home/claude/earth_online/src/road50/out/bay_before_sanjose.png
+[31.0s] map /home/claude/earth_online/src/road50/out/bay_before_sf.png
+[31.2s] map /home/claude/earth_online/src/road50/out/bay_before_oakland.png
+[31.4s] map /home/claude/earth_online/src/road50/out/bay_before_sanjose.png

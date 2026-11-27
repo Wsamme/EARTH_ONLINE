@@ -1,13 +1,13 @@
 [0.3s] tyo lines 393687
-[7.8s] prep: junction nodes 511074
-[11.0s] traffic network: links 1081979 pieces 587855 nodes 408891 movements 2194345
-[21.7s] weak components 3088 main 95.7% others >=1 km 119 | SCC main 94.8%
-[35.1s] dead ends {"total":54932,"tunnel":0,"edge":1627,"chunk":0,"gap3":764,"gap6":435,"gap12":1377,"levelgap":8811,"service":7478,"deckend":344,"water":189,"culdesac":33907,"oneway":3891} sinks 106 sources 1020
-[44.5s] crossings {"falsejunc":221,"lowclear":2482,"missedjunc":2976,"overpass":7720,"atgrade":119640}
-[44.8s] levels / water {"step1_3":1263,"step3_15":3394,"step15":292,"steep":996,"inwater":398,"inwaterM":48529,"shortdeck":0}
-[99.0s] routes {"pairs":2000,"ok":1895,"fail":105,"failIsland":94,"failOneway":11,"detourMed":1.18,"detour3":3,"far":1892,"okPct":94.8}
-[99.8s] movements {"moves":2194345,"zjump1_5":564,"zjump5":470,"xyFar":0}
-[99.8s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[8.2s] prep: junction nodes 511074
+[12.1s] traffic network: links 1081979 pieces 587855 nodes 408891 movements 2194345
+[22.6s] weak components 3088 main 95.7% others >=1 km 119 | SCC main 94.8%
+[34.4s] dead ends {"total":54932,"tunnel":0,"edge":1627,"chunk":0,"gap3":764,"gap6":435,"gap12":1377,"levelgap":8811,"service":7478,"deckend":344,"water":189,"culdesac":33907,"oneway":3891} sinks 106 sources 1020
+[42.8s] crossings {"falsejunc":221,"lowclear":2482,"missedjunc":2975,"overpass":7720,"atgrade":119641}
+[43.1s] levels / water {"step1_3":1263,"step3_15":3394,"step15":292,"steep":996,"inwater":398,"inwaterM":48529,"shortdeck":0}
+[90.1s] routes {"pairs":2000,"ok":1895,"fail":105,"failIsland":94,"failOneway":11,"detourMed":1.18,"detour3":3,"far":1892,"okPct":94.8}
+[91.0s] movements {"moves":2194345,"zjump1_5":564,"zjump5":470,"xyFar":0}
+[91.0s] tunnels {"portals":0,"pairs":0,"unmatched":0}
 {
  "city": "tyo",
  "tag": "before",
@@ -47,9 +47,9 @@
  "crossings": {
   "falsejunc": 221,
   "lowclear": 2482,
-  "missedjunc": 2976,
+  "missedjunc": 2975,
   "overpass": 7720,
-  "atgrade": 119640
+  "atgrade": 119641
  },
  "levels": {
   "step1_3": 1263,
@@ -95,7 +95,7 @@
   "dead_gap6": 435,
   "dead_gap3": 764,
   "dead_water": 189,
-  "missedjunc": 2976,
+  "missedjunc": 2975,
   "lowclear": 2482,
   "falsejunc": 221,
   "step": 4949,
@@ -552,6 +552,6 @@
   }
  ]
 }
-[100.1s] map /home/claude/earth_online/src/road50/out/tyo_before_chiyoda.png
-[100.4s] map /home/claude/earth_online/src/road50/out/tyo_before_shinjuku.png
-[100.7s] map /home/claude/earth_online/src/road50/out/tyo_before_shibuya.png
+[91.4s] map /home/claude/earth_online/src/road50/out/tyo_before_chiyoda.png
+[91.7s] map /home/claude/earth_online/src/road50/out/tyo_before_shinjuku.png
+[92.0s] map /home/claude/earth_online/src/road50/out/tyo_before_shibuya.png

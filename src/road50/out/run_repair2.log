@@ -1,0 +1,9 @@
+nyc repair 0
+nyc after 0
+./run_repair.sh: line 8: 22499 Killed                  node --max-old-space-size=2500 repair.js $c --out "$d" > out/${c}_repair.log 2>&1
+tyo repair 137
+tyo after 1
+bay repair 0
+bay after 0
+gba repair 0
+gba after 0

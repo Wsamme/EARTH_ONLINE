@@ -149,6 +149,10 @@ const XC = {falsejunc:0, lowclear:0, missedjunc:0, overpass:0, atgrade:0};
       const x = ax + ex*u, y = ay + ey*u; if (gk(x, y) !== key) continue; done.add(pk);
       const eA = LA.E ? LA.E[kA] + (LA.E[kA+1] - LA.E[kA])*u : 0, eB = LB.E ? LB.E[kB] + (LB.E[kB+1] - LB.E[kB])*v : 0, de = Math.abs(eA - eB);
       const brA = !!(LA.flags & 2), brB = !!(LB.flags & 2);
+      // next to a vertex the two lines share (a junction in the data; the simplified segments overshoot it): not a crossing
+      let shared = false; const mA = PA.length >> 1, mB = PB.length >> 1;
+      for (let i = Math.max(0, kA - 1); i <= Math.min(mA - 1, kA + 2) && !shared; i++) for (let j = Math.max(0, kB - 1); j <= Math.min(mB - 1, kB + 2); j++) if (Math.abs(PA[i*2] - PB[j*2]) < 0.01 && Math.abs(PA[i*2+1] - PB[j*2+1]) < 0.01 && Math.hypot(PA[i*2] - x, PA[i*2+1] - y) < 3){ shared = true; break; }
+      if (shared){ XC.atgrade++; continue; }
       if (de <= 1.2){ if (brA !== brB && Math.max(eA, eB) < 1.2 && (brA ? LA : LB).c <= 10){ XC.falsejunc++; prob('falsejunc', x, y, {a:iA, b:iB, eA:+eA.toFixed(1), eB:+eB.toFixed(1)}); } else XC.atgrade++; }
       else if (de < 4.2){ XC.lowclear++; prob('lowclear', x, y, {a:iA, b:iB, eA:+eA.toFixed(1), eB:+eB.toFixed(1), brA, brB}); }
       else if (!brA && !brB){ XC.missedjunc++; prob('missedjunc', x, y, {a:iA, b:iB, eA:+eA.toFixed(1), eB:+eB.toFixed(1)}); }

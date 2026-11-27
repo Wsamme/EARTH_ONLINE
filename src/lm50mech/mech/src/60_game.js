@@ -72,12 +72,15 @@ const MG = (() => {
     try { keysHeld.clear(); } catch (e){ /* */ }
     try { s.labels = labelItems; labelItems = []; } catch (e){ /* */ }
     try { if (TILT.on){ s.tilt = true; setTilt(false); } } catch (e){ /* */ }
+    // the app's panels, dock and map labels make way for the HUD (as H and L do); put back after
+    try { s.ui = uiHidden; s.lbl = labelsOff; if (!uiHidden) setUiHidden(true); const h = document.getElementById('uiHint'); if (h) h.hidden = true; if (!labelsOff) setLabelsOff(true); } catch (e){ /* */ }
   }
   function restoreApp(){
     const s = IN.saved; if (!s) return; IN.saved = null;
     controls.enabled = s.en; controls.minDistance = s.minD; controls.maxPolarAngle = s.maxP; controls.enableDamping = s.damp; camera.fov = s.fov; camera.updateProjectionMatrix();
     try { if (s.labels && !labelItems.length) labelItems = s.labels; } catch (e){ /* */ }
     try { if (s.tilt) setTilt(true); } catch (e){ /* */ }
+    try { if (s.ui === false) setUiHidden(false); if (s.lbl === false) setLabelsOff(false); } catch (e){ /* */ }
   }
   // ---------------- the camera ----------------
   function camStep(dt){
@@ -90,6 +93,8 @@ const MG = (() => {
     // pulled in before the ground and standing buildings on the line from the focus
     let k = 1; for (let i = 1; i <= 8; i++){ const u = i/8, q = [T[0] + (C[0] - T[0])*u, T[1] + (C[1] - T[1])*u, T[2] + (C[2] - T[2])*u];
       if (q[2] < gnd(q[0], q[1]) + 3 || (q[2] < 600 && MC.bldAt(q[0], q[1], q[2], 4))){ k = Math.max(0.18, (i - 1)/8); break; } }
+    // ... and before the creature's body (its legs between the mech and the camera)
+    { const len = Math.hypot(C[0] - T[0], C[1] - T[1], C[2] - T[2]) || 1, d = [(C[0] - T[0])/len, (C[1] - T[1])/len, (C[2] - T[2])/len], h = MC.raySph(T, d, MC.body(), len*k); if (h) k = Math.max(0.18, Math.min(k, (h.t - 6)/len)); }
     C = [T[0] + (C[0] - T[0])*k, T[1] + (C[1] - T[1])*k, T[2] + (C[2] - T[2])*k]; C[2] = Math.max(C[2], gnd(C[0], C[1]) + 4);
     if (!CAM.P || !dt){ CAM.P = C.slice(); CAM.T = T.slice(); }
     else { const a = Math.min(1, dt*9), b = Math.min(1, dt*12); for (let i = 0; i < 3; i++){ CAM.P[i] += (C[i] - CAM.P[i])*a; CAM.T[i] += (T[i] - CAM.T[i])*b; } CAM.P[2] = Math.max(CAM.P[2], gnd(CAM.P[0], CAM.P[1]) + 3); }

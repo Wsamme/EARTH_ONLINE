@@ -1,46 +1,46 @@
-[0.2s] hk lines 128993
-[1.9s] prep: junction nodes 60493
-[2.2s] traffic network: links 41273 pieces 30539 nodes 23613 movements 60849
-[3.0s] weak components 260 main 82.4% others >=1 km 32 | SCC main 74.2%
-[3.5s] dead ends {"total":4299,"tunnel":0,"edge":0,"chunk":0,"gap3":26,"gap6":1,"gap12":54,"levelgap":607,"service":903,"deckend":109,"water":17,"culdesac":2582,"oneway":904} sinks 51 sources 130
-[3.8s] crossings {"falsejunc":46,"lowclear":238,"missedjunc":188,"overpass":2452,"atgrade":3457}
-[3.9s] levels / water {"step1_3":18,"step3_15":297,"step15":83,"steep":118,"inwater":46,"inwaterM":4331,"shortdeck":9}
-[4.4s] routes {"pairs":2000,"ok":1141,"fail":859,"failIsland":713,"failOneway":146,"detourMed":1.68,"detour3":61,"far":1130,"okPct":57}
-[4.5s] movements {"moves":60849,"zjump1_5":41,"zjump5":40,"xyFar":0}
-[4.5s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[0.1s] hk lines 128993
+[1.7s] prep: junction nodes 60492
+[1.9s] traffic network: links 41272 pieces 30538 nodes 23613 movements 60847
+[2.2s] weak components 261 main 82.4% others >=1 km 32 | SCC main 74.2%
+[2.6s] dead ends {"total":4300,"tunnel":0,"edge":0,"chunk":0,"gap3":26,"gap6":1,"gap12":54,"levelgap":608,"service":903,"deckend":109,"water":17,"culdesac":2582,"oneway":905} sinks 51 sources 130
+[2.8s] crossings {"falsejunc":46,"lowclear":238,"missedjunc":188,"overpass":2453,"atgrade":3457}
+[2.9s] levels / water {"step1_3":18,"step3_15":297,"step15":83,"steep":118,"inwater":46,"inwaterM":4331,"shortdeck":9}
+[3.2s] routes {"pairs":2000,"ok":1141,"fail":859,"failIsland":713,"failOneway":146,"detourMed":1.68,"detour3":61,"far":1130,"okPct":57}
+[3.3s] movements {"moves":60847,"zjump1_5":41,"zjump5":40,"xyFar":0}
+[3.3s] tunnels {"portals":0,"pairs":0,"unmatched":0}
 {
  "city": "hk",
  "tag": "after",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/hkdata",
  "lines": 128993,
  "drivableKm": 3860.7,
- "links": 41273,
+ "links": 41272,
  "nodes": 23613,
- "junctionNodes": 60493,
- "weakComponents": 260,
- "mainWeakPct": 82.37,
+ "junctionNodes": 60492,
+ "weakComponents": 261,
+ "mainWeakPct": 82.36,
  "otherComponentsOver1km": 32,
- "otherKm": 680.8,
+ "otherKm": 681.2,
  "mainSccPctApp": 54.7,
  "mainSccPct": 74.18,
  "closedOnewaySets": 9,
  "closedOnewayKm": 4.76,
  "sinkLinksInMain": 314,
- "sourceLinksInMain": 366,
+ "sourceLinksInMain": 365,
  "deadEnds": {
-  "total": 4299,
+  "total": 4300,
   "tunnel": 0,
   "edge": 0,
   "chunk": 0,
   "gap3": 26,
   "gap6": 1,
   "gap12": 54,
-  "levelgap": 607,
+  "levelgap": 608,
   "service": 903,
   "deckend": 109,
   "water": 17,
   "culdesac": 2582,
-  "oneway": 904
+  "oneway": 905
  },
  "onewaySinks": 51,
  "onewaySources": 130,
@@ -48,7 +48,7 @@
   "falsejunc": 46,
   "lowclear": 238,
   "missedjunc": 188,
-  "overpass": 2452,
+  "overpass": 2453,
   "atgrade": 3457
  },
  "levels": {
@@ -61,7 +61,7 @@
   "shortdeck": 9
  },
  "movements": {
-  "moves": 60849,
+  "moves": 60847,
   "zjump1_5": 41,
   "zjump5": 40,
   "xyFar": 0
@@ -87,7 +87,7 @@
   "oneway_trap": 9,
   "oneway_noentry": 3,
   "source": 130,
-  "dead_levelgap": 607,
+  "dead_levelgap": 608,
   "dead_gap12": 54,
   "dead_gap3": 26,
   "dead_gap6": 1,
@@ -446,6 +446,6 @@
   }
  ]
 }
-[4.7s] map /home/claude/earth_online/src/road50/out/hk_after_central.png
-[4.9s] map /home/claude/earth_online/src/road50/out/hk_after_kowloon.png
-[5.1s] map /home/claude/earth_online/src/road50/out/hk_after_shatin.png
+[3.4s] map /home/claude/earth_online/src/road50/out/hk_after_central.png
+[3.6s] map /home/claude/earth_online/src/road50/out/hk_after_kowloon.png
+[3.7s] map /home/claude/earth_online/src/road50/out/hk_after_shatin.png

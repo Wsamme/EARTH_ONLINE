@@ -385,13 +385,13 @@ const MK = (() => {
     const M = MOD; if (!M) return; const L = M.glowL, a = M.glow.geometry.attributes.position, A = a.array;
     for (let i = 0; i < L.length; i++){ boneW(L[i].bone, L[i].p, _w); A[i*3] = _w[0]; A[i*3 + 1] = _w[2]; A[i*3 + 2] = -_w[1]; }
     a.needsUpdate = true; M.glow.visible = M.root.visible;
-    M.glow.material.uniforms.uA.value = 0.18 + 0.95*nt; M.glow.material.uniforms.uK.value = (0.7 + 0.8*nt)*(1 + 0.6*(beamK || 0));
+    M.glow.material.uniforms.uA.value = 0.22 + 1.1*nt; M.glow.material.uniforms.uK.value = (0.8 + 1.2*nt)*(1 + 0.6*(beamK || 0));
     M.glow.material.uniforms.uScale.value = (renderer.domElement.height || 800)*0.9;
     const k = 0.55 + 1.1*nt; M.matL.color.setRGB(k, k, k);
     const on = nt > 0.15 && M.root.visible;
     for (let i = 0; i < 2; i++){ const q = M.pools[i]; q.visible = on; if (!on) continue; const s = i ? -1 : 1, fx = Math.sin(hdg), fy = Math.cos(hdg), rx = Math.cos(hdg), ry = -Math.sin(hdg);
       const px = X + fx*58 - rx*s*14, py = Y + fy*58 - ry*s*14; q.position.set(px, gnd(px, py) + 0.6, -py); q.rotation.set(0, PI - hdg, 0); q.scale.set(26, 1, 40); }
-    M.pools[0].material.uniforms.uA.value = 0.22*sstep(0.15, 0.6, nt);
+    M.pools[0].material.uniforms.uA.value = 0.34*sstep(0.15, 0.6, nt);
   }
   return {BS, BI, NB, PAR, REST, OFF, L_TH, L_SH, L_UA, L_FA, ANK, C, build, attach, detach, setPose, boneW, lights, parts, get M(){ return MOD; }};
 })();
@@ -959,8 +959,8 @@ const MF = (() => {
     const F = ensure(); if (!o){ F.core.visible = F.glow.visible = F.fl0.visible = F.fl1.visible = false; beamSnd(false); return; }
     F.t += 1/60; _a.set(o[0], o[2], -o[1]); _b.set(h[0], h[2], -h[1]); _dir.subVectors(_b, _a); const L = _dir.length(); _dir.normalize(); _q.setFromUnitVectors(_up, _dir);
     const fl = 0.85 + 0.15*Math.sin(F.t*53) + 0.08*Math.sin(F.t*91);
-    for (const [m, r] of [[F.core, 1.3*fl], [F.glow, 4.2*fl]]){ m.visible = true; m.position.copy(_a).addScaledVector(_dir, L/2); m.quaternion.copy(_q); m.scale.set(r, L, r); m.material.uniforms.uT.value = F.t; }
-    F.fl0.visible = true; F.fl0.position.copy(_a); F.fl0.scale.setScalar(16*fl); F.fl1.visible = k !== 'sky'; F.fl1.position.copy(_b); F.fl1.scale.setScalar((k === 'kaiju' ? 46 : 34)*fl);
+    for (const [m, r] of [[F.core, 2.0*fl], [F.glow, 6.5*fl]]){ m.visible = true; m.position.copy(_a).addScaledVector(_dir, L/2); m.quaternion.copy(_q); m.scale.set(r, L, r); m.material.uniforms.uT.value = F.t; }
+    F.fl0.visible = true; F.fl0.position.copy(_a); F.fl0.scale.setScalar(24*fl); F.fl1.visible = k !== 'sky'; F.fl1.position.copy(_b); F.fl1.scale.setScalar((k === 'kaiju' ? 64 : 46)*fl);
     beamSnd(true, o, h);
   }
   // instanced missiles along their velocity
@@ -1266,12 +1266,15 @@ const MG = (() => {
     try { keysHeld.clear(); } catch (e){ /* */ }
     try { s.labels = labelItems; labelItems = []; } catch (e){ /* */ }
     try { if (TILT.on){ s.tilt = true; setTilt(false); } } catch (e){ /* */ }
+    // the app's panels, dock and map labels make way for the HUD (as H and L do); put back after
+    try { s.ui = uiHidden; s.lbl = labelsOff; if (!uiHidden) setUiHidden(true); const h = document.getElementById('uiHint'); if (h) h.hidden = true; if (!labelsOff) setLabelsOff(true); } catch (e){ /* */ }
   }
   function restoreApp(){
     const s = IN.saved; if (!s) return; IN.saved = null;
     controls.enabled = s.en; controls.minDistance = s.minD; controls.maxPolarAngle = s.maxP; controls.enableDamping = s.damp; camera.fov = s.fov; camera.updateProjectionMatrix();
     try { if (s.labels && !labelItems.length) labelItems = s.labels; } catch (e){ /* */ }
     try { if (s.tilt) setTilt(true); } catch (e){ /* */ }
+    try { if (s.ui === false) setUiHidden(false); if (s.lbl === false) setLabelsOff(false); } catch (e){ /* */ }
   }
   // ---------------- the camera ----------------
   function camStep(dt){
@@ -1284,6 +1287,8 @@ const MG = (() => {
     // pulled in before the ground and standing buildings on the line from the focus
     let k = 1; for (let i = 1; i <= 8; i++){ const u = i/8, q = [T[0] + (C[0] - T[0])*u, T[1] + (C[1] - T[1])*u, T[2] + (C[2] - T[2])*u];
       if (q[2] < gnd(q[0], q[1]) + 3 || (q[2] < 600 && MC.bldAt(q[0], q[1], q[2], 4))){ k = Math.max(0.18, (i - 1)/8); break; } }
+    // ... and before the creature's body (its legs between the mech and the camera)
+    { const len = Math.hypot(C[0] - T[0], C[1] - T[1], C[2] - T[2]) || 1, d = [(C[0] - T[0])/len, (C[1] - T[1])/len, (C[2] - T[2])/len], h = MC.raySph(T, d, MC.body(), len*k); if (h) k = Math.max(0.18, Math.min(k, (h.t - 6)/len)); }
     C = [T[0] + (C[0] - T[0])*k, T[1] + (C[1] - T[1])*k, T[2] + (C[2] - T[2])*k]; C[2] = Math.max(C[2], gnd(C[0], C[1]) + 4);
     if (!CAM.P || !dt){ CAM.P = C.slice(); CAM.T = T.slice(); }
     else { const a = Math.min(1, dt*9), b = Math.min(1, dt*12); for (let i = 0; i < 3; i++){ CAM.P[i] += (C[i] - CAM.P[i])*a; CAM.T[i] += (T[i] - CAM.T[i])*b; } CAM.P[2] = Math.max(CAM.P[2], gnd(CAM.P[0], CAM.P[1]) + 3); }

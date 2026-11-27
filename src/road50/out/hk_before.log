@@ -1,13 +1,13 @@
 [0.1s] hk lines 128993
-[1.7s] prep: junction nodes 59358
-[1.9s] traffic network: links 39973 pieces 29514 nodes 23647 movements 57579
-[2.3s] weak components 665 main 71.0% others >=1 km 85 | SCC main 60.2%
-[2.6s] dead ends {"total":5307,"tunnel":0,"edge":0,"chunk":0,"gap3":93,"gap6":15,"gap12":54,"levelgap":1534,"service":903,"deckend":116,"water":16,"culdesac":2576,"oneway":1575} sinks 55 sources 133
-[2.8s] crossings {"falsejunc":41,"lowclear":313,"missedjunc":238,"overpass":2437,"atgrade":3402}
-[2.9s] levels / water {"step1_3":278,"step3_15":883,"step15":109,"steep":119,"inwater":46,"inwaterM":4331,"shortdeck":10}
-[3.1s] routes {"pairs":2000,"ok":888,"fail":1112,"failIsland":1029,"failOneway":83,"detourMed":1.96,"detour3":173,"far":878,"okPct":44.4}
-[3.1s] movements {"moves":57579,"zjump1_5":215,"zjump5":184,"xyFar":0}
-[3.2s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[1.6s] prep: junction nodes 59358
+[1.7s] traffic network: links 39973 pieces 29514 nodes 23647 movements 57579
+[2.0s] weak components 665 main 71.0% others >=1 km 85 | SCC main 60.2%
+[2.4s] dead ends {"total":5307,"tunnel":0,"edge":0,"chunk":0,"gap3":93,"gap6":15,"gap12":54,"levelgap":1534,"service":903,"deckend":116,"water":16,"culdesac":2576,"oneway":1575} sinks 55 sources 133
+[2.5s] crossings {"falsejunc":41,"lowclear":313,"missedjunc":238,"overpass":2437,"atgrade":3402}
+[2.6s] levels / water {"step1_3":278,"step3_15":883,"step15":109,"steep":119,"inwater":46,"inwaterM":4331,"shortdeck":10}
+[2.8s] routes {"pairs":2000,"ok":888,"fail":1112,"failIsland":1029,"failOneway":83,"detourMed":1.96,"detour3":173,"far":878,"okPct":44.4}
+[2.8s] movements {"moves":57579,"zjump1_5":215,"zjump5":184,"xyFar":0}
+[2.8s] tunnels {"portals":0,"pairs":0,"unmatched":0}
 {
  "city": "hk",
  "tag": "before",
@@ -460,6 +460,6 @@
   }
  ]
 }
-[3.3s] map /home/claude/earth_online/src/road50/out/hk_before_central.png
-[3.5s] map /home/claude/earth_online/src/road50/out/hk_before_kowloon.png
-[3.6s] map /home/claude/earth_online/src/road50/out/hk_before_shatin.png
+[3.0s] map /home/claude/earth_online/src/road50/out/hk_before_central.png
+[3.2s] map /home/claude/earth_online/src/road50/out/hk_before_kowloon.png
+[3.3s] map /home/claude/earth_online/src/road50/out/hk_before_shatin.png

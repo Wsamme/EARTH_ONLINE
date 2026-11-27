@@ -1,9 +1,9 @@
 [1.0s] gba lines 268387
-[59.0s] R3 pass 0 conflicts 7425 fixed 3491
-[88.0s] R3 pass 1 conflicts 3638 fixed 1094
-[123.7s] R3 pass 2 conflicts 2423 fixed 267
-[123.7s] R3: conflicts 7425 fixed 4852 flagged 2022
-[141.1s] R1/R2: dead ends 17434 joined 1059 inserted vertices 681 flagged 1586
-[147.2s] R4: low crossings 228 raised bridges 0 flagged 228
-[147.3s] R5: steep lines 63 re-graded 30 flagged 33
-[148.1s] {"city":"gba","src":"/home/claude/earth_online/site/gbadata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/gbadata","lines":268387,"changedLines":9894,"changes":{"R3":11072,"R1":1059,"R5":30},"flagged":{"R3: bridge decks share a node mid#span":4,"R3: # % ramp makes a new junction (c#)":158,"R3: # % ramp spreads over > # lines":1192,"R3: # % ramp loses junction (c#)":263,"R3: # % ramp lifts a dead end":107,"R3: # % ramp low clearance over c#b":29,"R3: # % ramp loses junction (c#b)":17,"R3: # % ramp low clearance over c#":155,"R3: # % ramp makes a new junction (c#b)":94,"R3: # % ramp breaks a deck step join":3,"R1: bridge / ground":16,"R1: level #":1469,"R1: level #, bridge / ground":76,"R1: level #, classes #/#":8,"R1: level #, classes #/#, bridge / ground":10,"R1: classes #/#":7,"R4: bridge too short to clear the road below with <= # % ramps":223,"R4: raising: loses junction (c#b)":4,"R4: raising: low clearance over c#":1,"R5: jump next to a fixed junction / line end":33},"rules":["R1","R2","R3","R4","R5"],"gap":6}
+[49.8s] R3 pass 0 conflicts 7331 fixed 3330
+[74.1s] R3 pass 1 conflicts 3704 fixed 1003
+[101.8s] R3 pass 2 conflicts 2588 fixed 223
+[101.8s] R3: conflicts 7331 fixed 4556 flagged 2272
+[114.5s] R1/R2: dead ends 17677 joined 1060 inserted vertices 681 flagged 1828
+[118.3s] R4: low crossings 218 raised bridges 0 flagged 218
+[118.4s] R5: steep lines 43 re-graded 28 flagged 15
+[119.2s] {"city":"gba","src":"/home/claude/earth_online/site/gbadata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/.tmp_gbadata","lines":268387,"changedLines":9515,"changes":{"R3":10400,"R1":1060,"R5":28},"flagged":{"R3: bridge decks share a node mid#span":4,"R3: # % ramp makes a new junction (c#)":145,"R3: # % ramp spreads over > # lines":994,"R3: # % ramp loses junction (c#)":273,"R3: # % ramp would change a sourced deck (>= # m)":440,"R3: # % ramp lifts a dead end":136,"R3: # % ramp low clearance over c#b":27,"R3: # % ramp loses junction (c#b)":19,"R3: # % ramp low clearance over c#":141,"R3: # % ramp makes a new junction (c#b)":84,"R3: # % ramp breaks a deck step join":9,"R1: bridge / ground":16,"R1: level #":1693,"R1: level #, bridge / ground":94,"R1: level #, classes #/#":8,"R1: level #, classes #/#, bridge / ground":10,"R1: classes #/#":7,"R4: bridge too short to clear the road below with <= # % ramps":218,"R5: jump next to a fixed junction / line end":15},"rules":["R1","R2","R3","R4","R5"],"gap":6}

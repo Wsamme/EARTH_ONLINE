@@ -1,9 +1,9 @@
-[0.9s] bay lines 364573
-[7.8s] R3 pass 0 conflicts 1077 fixed 391
-[12.6s] R3 pass 1 conflicts 526 fixed 82
-[16.9s] R3 pass 2 conflicts 408 fixed 12
-[16.9s] R3: conflicts 1077 fixed 485 flagged 386
-[29.6s] R1/R2: dead ends 25840 joined 101 inserted vertices 7 flagged 111
-[31.6s] R4: low crossings 53 raised bridges 0 flagged 53
-[31.7s] R5: steep lines 105 re-graded 16 flagged 89
-[33.8s] {"city":"bay","src":"/home/claude/earth_online/site/baydata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/baydata","lines":364573,"changedLines":1308,"changes":{"R3":1371,"R1":101,"R5":16},"flagged":{"R3: # % ramp spreads over > # lines":323,"R3: # % ramp loses junction (c#)":28,"R3: # % ramp lifts a dead end":6,"R3: # % ramp makes a new junction (c#)":12,"R3: # % ramp low clearance over c#":6,"R3: # % ramp loses junction (c#b)":7,"R3: # % ramp makes a new junction (c#b)":3,"R3: # % ramp low clearance over c#b":1,"R1: level #":96,"R1: classes #/#":1,"R1: level #, bridge / ground":8,"R1: level #, classes #/#, bridge / ground":2,"R1: bridge / ground":4,"R4: bridge too short to clear the road below with <= # % ramps":52,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":89},"rules":["R1","R2","R3","R4","R5"],"gap":6}
+[1.2s] bay lines 364573
+[9.1s] R3 pass 0 conflicts 1056 fixed 363
+[13.8s] R3 pass 1 conflicts 536 fixed 69
+[18.6s] R3 pass 2 conflicts 439 fixed 9
+[18.6s] R3: conflicts 1056 fixed 441 flagged 426
+[30.7s] R1/R2: dead ends 25880 joined 101 inserted vertices 7 flagged 151
+[32.4s] R4: low crossings 53 raised bridges 0 flagged 53
+[32.5s] R5: steep lines 101 re-graded 16 flagged 85
+[34.4s] {"city":"bay","src":"/home/claude/earth_online/site/baydata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/.tmp_baydata","lines":364573,"changedLines":1214,"changes":{"R3":1231,"R1":101,"R5":16},"flagged":{"R3: # % ramp spreads over > # lines":289,"R3: # % ramp loses junction (c#)":25,"R3: # % ramp would change a sourced deck (>= # m)":89,"R3: # % ramp lifts a dead end":6,"R3: # % ramp makes a new junction (c#)":7,"R3: # % ramp low clearance over c#":4,"R3: # % ramp loses junction (c#b)":4,"R3: # % ramp makes a new junction (c#b)":2,"R1: level #":133,"R1: level #, bridge / ground":11,"R1: classes #/#":1,"R1: level #, classes #/#, bridge / ground":2,"R1: bridge / ground":4,"R4: bridge too short to clear the road below with <= # % ramps":52,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":85},"rules":["R1","R2","R3","R4","R5"],"gap":6}

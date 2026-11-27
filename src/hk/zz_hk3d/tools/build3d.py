@@ -9,7 +9,13 @@ T = Transformer.from_crs(2326, 4326, always_xy=True)
 S, P, OUT = json.load(open(sys.argv[1])), json.load(open(sys.argv[2])), sys.argv[3]
 MINH = float(sys.argv[4]) if len(sys.argv) > 4 else 100
 LON0, LAT0, MX, MY = 114.12, 22.34, 103014.2, 110734.9
-sel = [b for b in S if b['h'] >= MINH]
+sel = [b for b in S if b['h'] >= MINH and b.get('kind', 'bld') == 'bld']
+# v45: on the Central / Sheung Wan / Admiralty sheets take every model, low blocks and infrastructure (footbridges, kiosks, vents)
+# included, so the district is all official geometry and no map-data block cuts through an official one
+import os
+FULL = set(x for x in os.environ.get('HK3D_FULL', '11-SW-8D,11-SW-8B,11-SW-14A,11-SW-9C,11-SW-8C').split(',') if x)
+_sid = set(b['id'] for b in sel)
+sel += [b for b in S if b['sheet'] in FULL and b['id'] not in _sid and b['h'] >= 2]
 # a hand-made complex (tower + podium + mall) replaced through one of its towers must not leave holes: also take every official
 # building (any height) whose centre is within the old model's radius of its anchor; repeat for anchors that fall in those
 def _xy(lat, lon): return ((lon - LON0) * MX, (lat - LAT0) * MY)
@@ -49,6 +55,7 @@ pl = [p for p in P if not p.get('site')]
 ents, blobs, off, tri_in, tri_out = [], [], 0, 0, 0
 taken = {}
 HQ_MAXT = 20000
+skipped_low = 0
 for n, b in enumerate(sel):
     V, F = load(b); tri_in += len(F)
     zmin = float(V[:, 2].min()); V = V - np.array([0, 0, zmin])
@@ -63,8 +70,12 @@ for n, b in enumerate(sel):
         if hull.buffer(4).contains(Point(px, py)):
             (rep if p.get('label') else hide).append(p['k'])
     # v44: landmarks and towers of 150 m or more keep far more of the official geometry (up to 20,000 triangles, 50 per metre)
+    # a low hand-made landmark (heritage blocks such as the Court of Final Appeal, City Hall) stays: its official twin is skipped
+    if b['sheet'] in FULL and b['h'] < 70 and b.get('kind', 'bld') == 'bld' and any(p.get('label') and (p.get('h') or 0) < 70 for p in pl if p['k'] in rep):
+        skipped_low += 1; continue
     hq = b['h'] >= 150 or bool(rep)
     target = int(min(HQ_MAXT, max(2500, b['h'] * 50))) if hq else int(min(4500, max(160 if b['h'] < MINH else 500, b['h'] * 9)))
+    if b['sheet'] in FULL and not hq: target = max(target, int(min(6000, max(300, b['h'] * 25))))   # Central: keep the detail of low blocks
     if len(F) > target:
         try: V2, F2 = fast_simplification.simplify(V.astype(np.float32), F.astype(np.int32), target_reduction=1 - target / len(F))
         except Exception as e: V2, F2 = V.astype(np.float32), F.astype(np.int32)
@@ -77,12 +88,13 @@ for n, b in enumerate(sel):
     # Any further labelled placement in this hull is left for the second pass below: it may be the anchor of a neighbouring
     # tower (Exchange Square sits on the podium that replaces Hong Kong Station), and otherwise it is emptied there.
     rep = [k for k in rep if k not in taken][:1]
+    if b.get('kind', 'bld') == 'infra': rep, hide = [], []          # footbridges, kiosks, vents never replace or hide a model
     for k in rep: taken[k] = b['id']
     rr = float(np.hypot(V2[:, 0], V2[:, 1]).max())
     qp = np.round(V2 / 0.02).astype(np.int16); idx = F2.astype(np.uint16)
     blob = qp.tobytes() + idx.tobytes(); blob += b'\0' * ((-len(blob)) % 4)
     ents.append({'id': b['id'], 'lat': round(lat, 7), 'lon': round(lon, 7), 'h': round(float(V2[:, 2].max()), 1), 'r': round(rr, 1),
-                 'nv': int(len(qp)), 'nt': int(len(idx)), 'off': off, 'rep': rep, 'hide': hide, 'sheet': b['sheet'], 'hq': int(hq)})
+                 'nv': int(len(qp)), 'nt': int(len(idx)), 'off': off, 'rep': rep, 'hide': hide, 'sheet': b['sheet'], 'hq': int(hq), 'kind': b.get('kind', 'bld')})
     blobs.append(blob); off += len(blob)
     if n % 50 == 0: print(n, b['id'], round(b['h']), len(F), '->', len(F2), rep, hide, flush=True)
 # second pass: a model anchored between towers (e.g. Exchange Square) or a part of one: inside an official building's radius
@@ -92,6 +104,7 @@ for p in pl:
     x, y = (p['lon'] - LON0) * MX, (p['lat'] - LAT0) * MY
     best = None
     for e in ents:
+        if e['kind'] == 'infra': continue
         ex, ey = (e['lon'] - LON0) * MX, (e['lat'] - LAT0) * MY; dd = ((x - ex) ** 2 + (y - ey) ** 2) ** 0.5
         if dd < e['r'] and e['h'] >= 0.5 * (p.get('h') or 0) and (best is None or dd < best[0]): best = (dd, e)
     if not best: continue
@@ -104,4 +117,4 @@ idxj = json.dumps({'v': 2, 'q': 0.02, 'src': 'HKSAR Government, Lands Department
                    'n': len(ents), 'b': ents}, separators=(',', ':')).encode()
 hdr = b'HK3D' + struct.pack('<I', len(idxj)) + idxj; hdr += b'\0' * ((-len(hdr)) % 4)
 open(OUT, 'wb').write(hdr + b''.join(blobs))
-print('buildings', len(ents), 'tris in', tri_in, 'out', tri_out, 'bytes', len(hdr) + off, 'replaced', sum(len(e['rep']) for e in ents), 'hidden', sum(len(e['hide']) for e in ents))
+print('low hand-made landmarks kept', skipped_low); print('buildings', len(ents), 'tris in', tri_in, 'out', tri_out, 'bytes', len(hdr) + off, 'replaced', sum(len(e['rep']) for e in ents), 'hidden', sum(len(e['hide']) for e in ents))

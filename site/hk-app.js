@@ -58004,6 +58004,10 @@ SG_PLACES.push({type:'hkwkstation', lat:22.303998, lon:114.165396, rot:0}, {type
   } else {
     vec2 c = vec2(fx - 0.5, fy - 0.5) * vec2(uCW, uFH); win = 1.0 - step(uR, length(c)); cov = 3.1416 * uR * uR / (uCW * uFH);
   }
+  // sloped faces (crowns, Bank of China's glass roofs) of glass buildings are glass too
+  float slope = step(0.45, abs(Nw2.y)) * (1.0 - step(0.97, abs(Nw2.y)));
+  if (uPat > 0.5 && uPat < 2.5 || uPat > 3.5 && uPat < 4.5) vert = max(vert, slope);
+  if (slope > 0.5 && uPat > 3.5 && uPat < 4.5){ win = 0.92; cov = 0.92; }
   win = mix(win, cov, far) * vert * step(uBase + 4.0, vWP.y);
   vec3 gl = uGlass * mix(0.82 + 0.36 * rnd, 1.0, far);
   diffuseColor.rgb = mix(diffuseColor.rgb, gl, win * uWK);

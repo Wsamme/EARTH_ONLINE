@@ -54,7 +54,7 @@ Never invents a road: R1 only joins an existing road end to an existing road a f
 
 ## Not repaired (flagged for the owner)
 
-- **Tunnels.** The pipelines drop tunnel ways (`tunnel=yes`, `layer < 0`), so every tunnel is a break. Singapore, New York
+- **Tunnels (now R6 for Hong Kong and the Greater Bay, below; Tokyo, Singapore, New York, Bay still open).** The pipelines drop tunnel ways (`tunnel=yes`, `layer < 0`), so every tunnel is a break. Singapore, New York
   and the Bay mark the tunnel mouths (flags 64 / 128; traffic makes them sources / sinks); Hong Kong, Tokyo and the Greater
   Bay do not. Hong Kong Island (about 500 km of road) is an island for traffic: its links to Kowloon are the three
   cross-harbour tunnels. Joining them needs the tunnel ways from OSM (a pipeline change) plus hidden tunnel links in traffic.
@@ -162,3 +162,76 @@ Changed lines and changes per rule:
 2. `bash src/road50/release.sh sg hk nyc tyo bay` (copies the five road files into `site/<city>data/`, originals to `src/road50/backup/`), then deploy as usual. No page rebuild is needed for the data.
 3. Greater Bay, only after the Guangzhou extension has re-staged `site/gbadata/`: `STAGE=SC/road50/stage CITIES=gba bash SC/lm33/kit/heavy.sh src/road50/run_repair.sh`, check `out/gba_after.json`, then `bash src/road50/release.sh gba`.
 4. `lm20/traffic/traffic.js` only gained the test helper `SGTraffic.poses()` (backup `traffic.js.v48.bak`); it reaches the pages with the next `patch17.py` build. `roads.js` is unchanged.
+
+## R6 tunnels (follow-up, 28 Nov 2026)
+
+- Source: OSM, Geofabrik `guangdong.osm.pbf` (state 2026-11-27T00:47:35Z; read only from the Guangzhou agent's download folder),
+  `osm_tunnels.py` -> `osm/tunnels_guangdong.json` (1 842 ways: tunnel=yes 1 593, building_passage and layer < 0 the rest; way ids,
+  tags, node ids and positions). Every added line is logged with its `way/<id>` in `out/<city>_repair_tun.json` (rule R6).
+- Encoding: a hidden tunnel line is a road record of class c + 32 (no new flag bits; the flags byte is full). `roads.js` decodes it
+  with `L.c` = c + 32 (so every other module's class filters skip it), `L.tun = true`, `L.tc` = c; it is in no tile (nothing is
+  drawn, indexed, labelled, no piers / lamps / terrain cut), it joins the junction graph only at shared vertices (portals; no
+  crossings with the roads above), portal ends count as dead ends for drawing so the existing tunnel portal is drawn there, and the
+  surface line ends at tunnel=yes portals get the tunnel-mouth flags 64 / 128. `traffic.js` drives tunnel lines with their class
+  (lanes, speeds), hides the vehicles on them (not drawn, no obstacles, no density cull) and never spawns on them.
+- Portals: a tunnel node at the same quarter-metre position as a vertex of a drivable road, or within 1.0 m of one (a vertex is
+  added; the data and the extract are different OSM dates). Only tunnel networks with >= 2 portals are added.
+- Hong Kong: 327 ways, 117.7 km, 419 portals (35 snapped), 300 portal flags: Cross-Harbour, Eastern Harbour, Western Harbour,
+  Lion Rock, Tate's Cairn, Shing Mun, Tai Lam, Aberdeen, Tseung Kwan O, TKO-Lam Tin, Eagle's Nest, TM-CLK, Central-Wan Chai Bypass,
+  Central Kowloon Bypass, Kai Tak, Cheung Tsing, Nam Wan, Lung Shan and others. Greater Bay: 1 083 ways, 431.4 km, 1 814 portals.
+- Not done: Tokyo (no OSM extract on this machine; Geofabrik and Overpass are not reachable from here; the OSM editing API is, but
+  pulling a city's tunnels from it would break its usage policy), Singapore / New York / Bay (no extracts on disk either).
+  `bash run_tun.sh` runs R6 for any city once `osm/tunnels_<extract>.json` exists and the city is mapped in repair.js (`TJ`).
+
+### Results (live -> repaired v1 -> repaired + tunnels)
+
+| | hk live | hk repaired (v1) | hk + tunnels | gba live | gba repaired (v1) | gba + tunnels |
+|---|---|---|---|---|---|---|
+| routes OK % (2000 pairs) | 44.4 | 57 | 82.9 | 79.1 | 86 | 91.5 |
+|   failed: not connected | 1029 | 713 | 136 | 305 | 175 | 84 |
+|   failed: one-way | 83 | 146 | 206 | 113 | 105 | 85 |
+| main component % | 70.99 | 82.36 | 96.39 | 92.49 | 96.54 | 98.76 |
+| weak components | 665 | 261 | 206 | 2071 | 815 | 620 |
+| km outside main | 1120.2 | 681.2 | 143.8 | 2256.9 | 1040.1 | 378.5 |
+| main SCC % (traffic) | 43.89 | 54.7 | 67.7 | 71.23 | 77.57 | 81.65 |
+| route detour median | 1.96 | 1.68 | 1.56 | 1.31 | 1.28 | 1.25 |
+| tunnel lines / km | 0 / 0 | 0 / 0 | 327 / 117.7 | 0 / 0 | 0 / 0 | 1083 / 431.4 |
+| routes island>kowloon % (100 pairs) | 0 | 0 | 86 | 0 | 0 | 94 |
+| routes kowloon>island % (100 pairs) | 0 | 0 | 97 | 0 | 0 | 87 |
+| routes island>newterr % (100 pairs) | 0 | 0 | 92 | 0 | 0 | 98 |
+| routes island>lantau % (100 pairs) | 0 | 0 | 90 | 0 | 0 | 88 |
+| routes lantau>kowloon % (100 pairs) | 0 | 87 | 77 | 0 | 69 | 79 |
+
+| city | view | data | vehicles | in tunnels (vehicles / came out) | teleports | off surface | waiting >100 s | mesh build |
+|---|---|---|---|---|---|---|---|---|
+| hk | central | live | 1344 | 0 / 0 | 0 | 30 (0.28%) | 0 | 498293 tris |
+| hk | kowloon | live | 1631 | 0 / 0 | 0 | 29 (0.22%) | 0 | 684792 tris |
+| hk | harbour_east | live | 755 | 0 / 0 | 0 | 16 (0.27%) | 0 | 390151 tris |
+| hk | central | after | 1340 | 0 / 0 | 0 | 15 (0.14%) | 0 | 493269 tris |
+| hk | kowloon | after | 1625 | 0 / 0 | 0 | 0 (0%) | 0 | 677473 tris |
+| hk | harbour_east | after | 755 | 0 / 0 | 0 | 1 (0.02%) | 0 | 387462 tris |
+| hk | central | tun | 1340 | 108 / 52 | 0 | 18 (0.17%) | 0 | 493947 tris |
+| hk | kowloon | tun | 1627 | 104 / 29 | 0 | 1 (0.01%) | 0 | 677940 tris |
+| hk | harbour_east | tun | 753 | 47 / 19 | 0 | 1 (0.02%) | 0 | 387645 tris |
+| gba | futian | live | 2007 | 0 / 0 | 0 | 0 (0%) | 0 | 327884 tris |
+| gba | hk_central | live | 1341 | 0 / 0 | 0 | 30 (0.28%) | 0 | 501129 tris |
+| gba | repairs | live | 1167 | 0 / 0 | 0 | 5 (0.05%) | 0 | 290321 tris |
+| gba | futian | after | 2007 | 0 / 0 | 0 | 2 (0.01%) | 0 | 323056 tris |
+| gba | hk_central | after | 1339 | 0 / 0 | 0 | 18 (0.17%) | 0 | 496003 tris |
+| gba | repairs | after | 1167 | 0 / 0 | 0 | 0 (0%) | 0 | 288737 tris |
+| gba | futian | tun | 2008 | 36 / 27 | 0 | 1 (0.01%) | 0 | 323421 tris |
+| gba | hk_central | tun | 1341 | 109 / 42 | 0 | 17 (0.16%) | 0 | 496681 tris |
+| gba | repairs | tun | 1167 | 15 / 13 | 0 | 0 (0%) | 0 | 288733 tris |
+
+
+### Release of the tunnels (pages first, then data)
+
+The tunnel records (class >= 32) need the new `roads.js` + `traffic.js` in the page: an old page would draw them as roads of an
+unknown class. So:
+1. Rebuild the pages with the new modules (`CITY=hk python3 sgreal/patch17.py city-brush-v16.html ../site/hk.html`, and the other
+   cities as usual; the modules change nothing for data without tunnel records — checked on Singapore: identical graph and numbers).
+2. Then the data: `STAGE=SC/road50/stage_tun bash src/road50/release.sh hk` (the tunnel stage also holds R1-R5).
+3. Greater Bay after the Guangzhou extension: extract with its bigger box
+   (`python3 src/road50/osm_tunnels.py <guangdong.osm.pbf> src/road50/osm/tunnels_guangdong.json 112.6,21.3,115.5,24.0`), rebuild
+   gba.html with the new roads.js / traffic.js (its build embeds its own roads.js variant), `CITIES=gba bash src/road50/run_tun.sh`,
+   then `STAGE=SC/road50/stage_tun bash src/road50/release.sh gba`.

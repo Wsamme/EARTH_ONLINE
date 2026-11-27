@@ -105,3 +105,10 @@ Data built (SC/lm50/gz/gbadata, 77 MB; production 51 MB): base 8.35 MB, bld0 9.8
   `hk/bridges/tm_deck_fix.py` no longer exists anywhere, so a fresh road build would lose the Tsing Ma profile.
 - Rail: the released MTR / Light Rail / tram / Peak Tram / Shenzhen Metro (335 parts, 558 stations, Ngong Ping 360) + Guangzhou Metro.
 - Water 10.4 MB gz (28 MB raw: the delta's fish ponds, 14 221 bodies; October 4.26 MB staged).
+
+Offline checks (SC/lm50/gz/tools/check_tiles.py, check_roads.py, against site/gbadata):
+- buildings: 1833 of the 1977 October tiles contain their released payload unchanged; the 144 others lie at lon 113.5–113.7
+  (Guangzhou's edge), where only old context records were replaced.
+- roads: all 268 387 released records decoded; every one is in the new chunks unchanged (class, flags, names, ref, quantised
+  points, heights) except 9 590, all flagged context and inside Guangzhou (lon 113.47–113.90, lat 22.56–23.22).
+- page: `bash SC/lm50/gz/tools/build_gz.sh <out> R/gbareal` reproduces site/gba.html byte for byte (the build script is sound).

@@ -13,7 +13,7 @@ function build(D, opts){
   opts = opts || {};
   const lines = D.lines, C = D.C || (D.C = D.SGRoads._dbg.prep(lines)), J = C.J, VB = J.nN, n = lines.length;
   const skip = opts.skip || null;                                   // optional Uint8Array: 1 = not drivable (e.g. hidden lines)
-  const drivable = li => { const L = lines[li]; return L.c <= 10 && !(L.flags & 8) && !(skip && skip[li]); };
+  const drivable = li => { const L = lines[li]; return (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8) && !(skip && skip[li]); };
   const arms = new Uint8Array(VB).fill(255);
   const nodeArms = nd => { let v = arms[nd]; if (v !== 255) return v; let a = 0;
     for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){ const li = J.nIL[q]; if (!drivable(li)) continue; const s = J.nIS[q], Lt = J.LEN(li); a += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; }

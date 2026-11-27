@@ -7,7 +7,7 @@
    - Fresnel (Schlick, F0 = 0.02 for water) between the water body colour (the light module's palette) and the reflection;
    - reflection: the analytic sky of the light module along the wave-perturbed reflected ray, plus (quality 1 / 2) a planar mirror pass
      of the scene at reduced resolution (skyline, hills, ships, the city's night lights), distorted by the wave slopes; the sky in that
-     pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, roads and small buildings are left
+     pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, roads, vehicles and small buildings are left
      out of the mirror pass, it looks at most 2.5-7 km far, shadows are not re-rendered for it, it is re-rendered only every 3rd
      frame while the camera is still, and it is skipped when no water is on screen or the camera is high;
    - sun / moon glint: GGX (Trowbridge-Reitz) lobe with the Smith visibility term and Fresnel at the half vector;
@@ -21,7 +21,7 @@
 const R50 = window.R50 = window.R50 || {parts:{}};
 const R5Q = /[?&]r50q=(\d)/.exec(location.search), R5OFF = /[?&]r50=0/.test(location.search) || /[?&]r50water=0/.test(location.search);
 const R5 = {on:false, q:window.CB_MOBILE ? 0 : 2, pinned:R5Q ? +R5Q[1] : -1, rt:null, ema:16, slow:0, lastT:0, lastStep:0, pass:false, passMs:0, passCalls:0,
-  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], ups:0, dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0, reused:0, pass0:false, rtW:0};
+  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], ups:0, dome:null, traffic:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0, reused:0, pass0:false, rtW:0};
 if (R5.pinned >= 0) R5.q = Math.min(2, R5.pinned);
 const R5U = {
   r5On:{value:0}, r5Nrm:{value:null}, r5Refl:{value:null}, r5ReflOn:{value:0}, r5TexM:{value:new THREE.Matrix4()}, r5PlaneY:{value:-0.05},
@@ -202,6 +202,8 @@ function r5Hide(on){
     H.length = 0;
     const push = o => { if (o && o.visible){ o.visible = false; H.push(o); } };
     push(R5.dome);
+    if ((!R5.traffic || !R5.traffic.parent) && (R5.ran % 120) === 0) R5.traffic = scene.getObjectByName('traffic') || null;   // vehicles: tiny in the mirror
+    push(R5.traffic);
     if (typeof SGR !== 'undefined' && SGR.tiles) for (const T of SGR.tiles.values()){
       push(T.trees); if (T.road){ push(T.road.minor); push(T.road.paths); push(T.road.major); }   // flat: their mirror image is a sliver
       if (T.bld) push(T.bld.small);

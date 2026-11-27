@@ -100,7 +100,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // a drivable line: classes 0-10 inside the map (no Johor / Batam context), not hidden by a landmark / repainted block
   function drivable(li){
     let v = NET.skip[li]; if (v) return v === 1;
-    const L = NET.lines[li]; let ok = L.c <= 10 && !(L.flags & 8);
+    const L = NET.lines[li]; let ok = (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8);       // [road50] tunnels: their road class
     if (ok && L.c === 10 && typeof sgrSkipLine === 'function'){ try { if (sgrSkipLine(li)) ok = false; } catch (e){} }
     NET.skip[li] = ok ? 1 : 2; return ok;
   }
@@ -118,7 +118,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const GS = 7;
   function geomOf(li){
     let g = NET.GEO.get(li); if (g) return g;
-    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.c, R = R_RT[c] || 0;
+    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.tun ? L.tc : L.c, R = R_RT[c] || 0;
     const j0 = J.lJO[li], j1 = J.lJO[li+1], nmMax = 16;
     const TT = new Float64Array(np), TN = new Uint8Array(np);
     for (let k = 1; k < np - 1; k++){
@@ -236,7 +236,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const VMAX_NY = [22.4, 15.6, 20.1, 13.4, 13.4, 11.2, 11.2, 11.2, 11.2, 11.2, 11.2];
   let DLID = 0;
   function makeDl(li, g, dir, a, b, from, to){
-    const L = NET.lines[li], c = L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
+    const L = NET.lines[li], c = L.tun ? L.tc : L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
     const dl = {id:DLID++, li, g, dir, a, b, len:b - a, from, to, c, ow, link:(L.flags & 16) !== 0, nL, lane:laneOffsets(c, ow, nL),
       vmax:(NET.nyc ? VMAX_NY : NET.us ? VMAX_US : VMAX_SG)[c], name:(L.name && L.name[0]) || L.ref || '', ref:L.ref || '', elev:g.elev,
       head:new Array(nL).fill(null), tail:new Array(nL).fill(null), exitV:new Array(nL).fill(null), cnt:0,

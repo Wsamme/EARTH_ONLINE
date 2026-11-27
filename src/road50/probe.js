@@ -9,6 +9,8 @@ const puppeteer = require('/opt/npm-tools/node_modules/puppeteer');
 const http = require('http'), fs = require('fs'), path = require('path');
 const a = process.argv.slice(2), PAGE = a[0], CITY = a[1], OUT = a[2], VIEWS = JSON.parse(a[3] || '[]');
 const opt = k => { const i = a.indexOf('--' + k); return i >= 0 ? a[i+1] : null; };
+const MODS = a.includes('--mods') ? {roadsOld:fs.readFileSync(path.join(__dirname, '../sgreal/mod_roads/roads.js.v48.bak'), 'utf8'), roadsNew:fs.readFileSync(path.join(__dirname, '../sgreal/mod_roads/roads.js'), 'utf8'),
+  traffic:JSON.parse(fs.readFileSync(path.join(__dirname, 'traffic_patch.json'), 'utf8'))} : null;
 const SITE = path.resolve(opt('site') || path.join(__dirname, '..', '..', 'site')), DATA = opt('data'), APP = opt('app');
 const DIR = {sg:'sgdata', hk:'hkdata', nyc:'nycdata', tyo:'tyodata', bay:'baydata', gba:'gbadata'}[CITY];
 const TYPES = {'.html':'text/html', '.js':'text/javascript', '.webp':'image/webp', '.png':'image/png', '.bin':'application/octet-stream', '.txt':'text/plain', '.glb':'model/gltf-binary', '.json':'application/json'};
@@ -22,6 +24,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     fs.readFile(f, (e, d) => { if (e){ r.writeHead(404); r.end(); return; }
       // the live app has no poses() test helper yet: add it (test only, no behaviour change)
       if (/app\.js$/.test(f) || f.endsWith('.html')){ let t = d.toString('utf8'); const A = '    vehicles:() => VEH.filter(V => V.alive).map(';
+        // --mods (the "after" run only): the app with the road50 roads.js / traffic.js (old module text swapped, traffic hunks applied)
+        if (MODS && lab === 'after' && t.includes('SGRoads')){ const n0 = t.length;
+          if (t.includes(MODS.roadsOld)) t = t.split(MODS.roadsOld).join(MODS.roadsNew); else console.log('MODS: roads.js text not found in', u);
+          for (const [o, nw] of MODS.traffic) if (t.split(o).length === 2) t = t.replace(o, () => nw);
+          const PO = "dEnd:+(V.dl.len - V.u).toFixed(1)}; }),"; if (!t.includes('tun:V.dl.tun ? 1 : 0') && t.includes(PO)) t = t.replace(PO, () => "dEnd:+(V.dl.len - V.u).toFixed(1), tun:V.dl.tun ? 1 : 0}; }),");
+          console.log('MODS applied to', u, n0, '->', t.length, 'tunnel code', t.includes('[road50] hidden tunnel line'), t.includes('tun:!!L.tun')); d = Buffer.from(t, 'utf8'); }
         if (t.includes(A) && !t.includes('poses:()')){ t = t.replace(A, POSES + A); d = Buffer.from(t, 'utf8'); } }
       r.writeHead(200, {'Content-Type':TYPES[path.extname(f)] || 'application/octet-stream'}); r.end(d); });
   });
@@ -50,19 +58,20 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
         out.lines = SGR.lines ? SGR.lines.length : 0;
         if (window.SGTraffic){ SGTraffic.enabled = true; }
         out.warm = SGTraffic.warm(25);
-        const seen = new Map(); let jumps = 0, offDeck = 0, n = 0; const stuck = new Map(), offs = [];
+        const seen = new Map(); let jumps = 0, offDeck = 0, n = 0, tunN = 0; const tunIds = new Set(), tunOut = new Set(); const stuck = new Map(), offs = [];
         for (let s = 0; s < 6; s++){
           const P = SGTraffic.poses();
           for (const v of P){ n++;
             const o = seen.get(v.id); if (o){ const d = Math.hypot(v.x - o.x, v.y - o.y), lim = (o.v + v.v)*0.5*2.5 + 25; if (d > lim) jumps++; }
             seen.set(v.id, v);
-            const S = SGRoads.surfaceAt(v.x, v.y, v.z); if (!S || Math.abs(S.z - v.z) > 1.2){ offDeck++; if (offs.length < 12) offs.push([Math.round(v.x), Math.round(v.y), v.z, S ? +S.z.toFixed(2) : null, v.li]); }
+            if (v.tun){ tunN++; tunIds.add(v.id); } else if (tunIds.has(v.id)) tunOut.add(v.id);
+            const S = v.tun ? {z:v.z} : SGRoads.surfaceAt(v.x, v.y, v.z); if (!S || Math.abs(S.z - v.z) > 1.2){ offDeck++; if (offs.length < 12) offs.push([Math.round(v.x), Math.round(v.y), v.z, S ? +S.z.toFixed(2) : null, v.li]); }
             if (v.wait > 60 && v.ctrl !== 3) stuck.set(v.id, [Math.round(v.x), Math.round(v.y), v.wait, v.li]);
           }
           out.samples.push(P.length);
           SGTraffic.warm(2.5);
         }
-        Object.assign(out, {poses:n, jumps, offDeck, offs, stuck:stuck.size, stuckAt:[...stuck.values()].slice(0, 10), stats:SGTraffic.stats()});
+        Object.assign(out, {poses:n, tunnelPoses:tunN, tunnelVehicles:tunIds.size, outOfTunnel:tunOut.size, jumps, offDeck, offs, stuck:stuck.size, stuckAt:[...stuck.values()].slice(0, 10), stats:SGTraffic.stats()});
       } catch (e){ out.err = e.message + ' ' + (e.stack || '').slice(0, 300); }
       return out;
     }, lat, lon);

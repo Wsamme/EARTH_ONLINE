@@ -96,9 +96,9 @@ for (const dl of N.DL){ const s = S.comp[dl.id]; if (s === mainS || sDone[s]) co
   else if (!sIn[s]){ if (sCount[s] > 1){ const p = N.linkPos(dl, dl.len/2); prob('oneway_noentry', p[0], p[1], {links:sCount[s], len:Math.round(sl[s])}); } else srcLinks++; }
 }
 // ---------------------------------------------------------------- 2. dead ends, sinks, sources
-segsInGrid((li, L) => L.c <= 11 && !(L.flags & 8));
+segsInGrid((li, L) => L.c <= 11 && !(L.flags & 8) && !L.tun);
 const chunkBorder = (x, y) => { if (!D.chunkOf) return false; const fx = ((x + HALF) % 8000 + 8000) % 8000, fy = ((y + HALF) % 8000 + 8000) % 8000; return Math.min(fx, 8000 - fx) < 0.6 || Math.min(fy, 8000 - fy) < 0.6; };
-const DE = {total:0, tunnel:0, edge:0, chunk:0, gap3:0, gap6:0, gap12:0, levelgap:0, service:0, deckend:0, water:0, culdesac:0, oneway:0};
+const DE = {total:0, tunnelopen:0, tunnel:0, edge:0, chunk:0, gap3:0, gap6:0, gap12:0, levelgap:0, service:0, deckend:0, water:0, culdesac:0, oneway:0};
 let owSink = 0, owSource = 0;
 for (const [nd, Nd] of N.NODE){
   // sinks / sources at nodes with >= 2 arms
@@ -111,7 +111,8 @@ for (const [nd, Nd] of N.NODE){
   DE.total++; if (L.flags & 1) DE.oneway++;
   const tunnel = (a.end ? (L.flags & 128) : (L.flags & 64)) !== 0;
   let kind;
-  if (tunnel) kind = 'tunnel';
+  if (L.tun) kind = 'tunnelopen';
+  else if (tunnel) kind = 'tunnel';
   else if (Math.abs(x) > HALF - 30 || Math.abs(y) > HALF - 30) kind = 'edge';
   else if (chunkBorder(x, y)) kind = 'chunk';
   else {
@@ -134,7 +135,7 @@ for (const [nd, Nd] of N.NODE){
 }
 log('dead ends', JSON.stringify(DE), 'sinks', owSink, 'sources', owSource);
 // ---------------------------------------------------------------- 3. crossings: false junctions / low clearance / missed junctions
-segsInGrid((li, L) => drv(li));
+segsInGrid((li, L) => drv(li) && !L.tun);
 const XC = {falsejunc:0, lowclear:0, missedjunc:0, overpass:0, atgrade:0};
 { const done = new Set();
   for (const [key, a] of grid){ if (a.length < 2) continue;
@@ -165,13 +166,13 @@ const ST = {step1_3:0, step3_15:0, step15:0, steep:0, inwater:0, inwaterM:0, sho
 for (let nd = 0, NNn = C.nodeOff.length - 1; nd < NNn; nd++){
   const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; if (o1 - o0 < 2) continue;
   let emin = Infinity, emax = -Infinity, anyEnd = false, nD = 0, x = 0, y = 0;
-  for (let j = o0; j < o1; j++){ const li = C.incL[j]; if (!drv(li)) continue; const L = lines[li], k = C.incV[j], m = L.P.length >> 1, e = Eat(L, k); nD++; if (e < emin) emin = e; if (e > emax) emax = e; if (k === 0 || k === m - 1) anyEnd = true; x = L.P[k*2]; y = L.P[k*2+1]; }
+  for (let j = o0; j < o1; j++){ const li = C.incL[j]; if (!drv(li) || lines[li].tun) continue; const L = lines[li], k = C.incV[j], m = L.P.length >> 1, e = Eat(L, k); nD++; if (e < emin) emin = e; if (e > emax) emax = e; if (k === 0 || k === m - 1) anyEnd = true; x = L.P[k*2]; y = L.P[k*2+1]; }
   if (nD < 2 || !anyEnd) continue; const de = emax - emin; if (de <= 1.2) continue;
   if (de <= 3) ST.step1_3++; else if (de <= 15) ST.step3_15++; else ST.step15++;
   prob('step', x, y, {de:+de.toFixed(1), lo:+emin.toFixed(1), hi:+emax.toFixed(1)});
 }
 for (let li = 0; li < lines.length; li++){
-  const L = lines[li]; if (!drv(li)) continue; const P = L.P, m = P.length >> 1, br = (L.flags & 2) !== 0;
+  const L = lines[li]; if (!drv(li) || L.tun) continue; const P = L.P, m = P.length >> 1, br = (L.flags & 2) !== 0;
   if (L.E) for (let k = 0; k + 1 < m; k++){ const d = Math.hypot(P[k*2+2] - P[k*2], P[k*2+3] - P[k*2+1]), de = Math.abs(L.E[k+1] - L.E[k]); if (de > 1.0 && de > 0.12*d){ ST.steep++; prob('steep', (P[k*2] + P[k*2+2])/2, (P[k*2+1] + P[k*2+3])/2, {li, de:+de.toFixed(1), d:+d.toFixed(1)}); } }
   // at grade over water for > 60 m (sampled every 5 m; the land codes are 25-50 m cells)
   let run = 0, rx = 0, ry = 0, s = 0;
@@ -253,12 +254,29 @@ if (TP.length){
   for (let i = 0; i < N.OUTS.length; i++) N.OUTS[i] = OUT0[i];
 }
 log('tunnels', JSON.stringify(tun));
+// ---------------------------------------------------------------- 8. hidden tunnel lines (road50 R6) and routes between two regions (--regions 'A:lon0,lat0,lon1,lat1;B:...')
+const TS_ = {lines:0, km:0, links:0}; for (let li = 0; li < lines.length; li++) if (lines[li].tun){ TS_.lines++; TS_.km += C.VS[C.vOff[li+1] - 1]/1000; } TS_.km = +TS_.km.toFixed(1);
+for (const dl of N.DL) if (lines[dl.li].tun) TS_.links++;
+const REG = {};
+if (opt('regions')){
+  const R2 = opt('regions').split(';').map(t => { const [nm, b] = t.split(':'); const v = b.split(',').map(Number); return {nm, x0:(v[0] - B.lon0)*B.MX, y0:(v[1] - B.lat0)*B.MY, x1:(v[2] - B.lon0)*B.MX, y1:(v[3] - B.lat0)*B.MY}; });
+  const inR = (r, p) => p[0] >= r.x0 && p[0] <= r.x1 && p[1] >= r.y0 && p[1] <= r.y1;
+  const rr = (() => { let s = 12345; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s/4294967296; }; })();
+  const pool = R2.map(r => N.PC.filter(P => !lines[P.li].tun && inR(r, N.posAt(P.li, (P.a + P.b)/2))));
+  for (let a = 0; a < R2.length; a++) for (let b = 0; b < R2.length; b++){ if (a === b || !pool[a].length || !pool[b].length) continue;
+    let ok = 0, n = 0, len = 0;
+    for (let o = 0; o < 10; o++){ const Ps = pool[a][Math.floor(rr()*pool[a].length)], dist = TG.dijkstra(N, Ps.r !== null ? [Ps.f, Ps.r] : [Ps.f], -1);
+      for (let q = 0; q < 10; q++){ const Pt = pool[b][Math.floor(rr()*pool[b].length)], d = Math.min(dist[Pt.f], Pt.r !== null ? dist[Pt.r] : Infinity); n++; if (d < Infinity){ ok++; len += d; } } }
+    REG[R2[a].nm + '>' + R2[b].nm] = {pairs:n, ok, okPct:+(ok/n*100).toFixed(1), meanKm:ok ? +(len/ok/1000).toFixed(2) : null}; }
+  log('regions', JSON.stringify(REG));
+}
+log('tunnel lines', JSON.stringify(TS_));
 // ---------------------------------------------------------------- summary
 const pc = {}; for (const p of PROB) pc[p.type] = (pc[p.type] || 0) + 1;
 const summary = {city, tag:TAG, dir:D.D, lines:lines.length, drivableKm:+(totLen/1000).toFixed(1), links:N.DL.length, nodes:N.NODE.size, junctionNodes:J.nN,
   weakComponents:wl.size, mainWeakPct:+(wsort[0][1]/totLen*100).toFixed(2), otherComponentsOver1km:bigOther.length, otherKm:+((totLen - wsort[0][1])/1000).toFixed(1),
   mainSccPctApp:+(slA[mainSA]/dirLen*100).toFixed(2), mainSccPct:+(sl[mainS]/dirLen*100).toFixed(2), closedOnewaySets:closedSets, closedOnewayKm:+(closedLen/1000).toFixed(2), sinkLinksInMain:sinkLinks, sourceLinksInMain:srcLinks,
-  deadEnds:DE, onewaySinks:owSink, onewaySources:owSource, crossings:XC, levels:ST, movements:MV, routes:RT, tunnels:tun, problemCounts:pc, topIslands:bigOther.slice(0, 25)};
+  deadEnds:DE, onewaySinks:owSink, onewaySources:owSource, crossings:XC, levels:ST, movements:MV, routes:RT, tunnels:tun, tunnelLines:TS_, regions:REG, problemCounts:pc, topIslands:bigOther.slice(0, 25)};
 fs.writeFileSync(path.join(OUT, city + '_' + TAG + '.json'), JSON.stringify({summary, fails:fails.slice(0, 400), problems:PROB}, null, 0));
 console.log(JSON.stringify(summary, null, 1));
 // ---------------------------------------------------------------- maps
@@ -283,7 +301,7 @@ if (flag('png')){
       for (let k = 0; k < P.length; k += 2) if (Math.abs(P[k] - cx) < Wm*0.6 && Math.abs(P[k+1] - cy) < Wm*0.6){ near = true; break; } if (!near) continue;
       if (!drv(li)){ const col = L.c === 11 ? [205, 203, 196] : [225, 222, 214]; for (let k = 0; k + 3 < P.length; k += 2) cv.line(X(P[k]), Y(P[k+1]), X(P[k+2]), Y(P[k+3]), 1, col); } }
     for (const dl of N.DL){ const L = lines[dl.li], P = L.P; if (Math.abs(P[0] - cx) > Wm && Math.abs(P[P.length-2] - cx) > Wm) continue;
-      const s = sev[dl.id], w = L.c <= 1 ? 3 : L.c <= 5 ? 2.4 : L.c <= 9 ? 1.8 : 1.2, col = s === 0 ? (L.E && L.E[0] + L.E[(P.length >> 1) - 1] > 4 ? [70, 100, 140] : [95, 95, 95]) : s === 1 ? [255, 140, 0] : [230, 30, 30];
+      const s = L.tun ? 0 : sev[dl.id], w = L.tun ? 1.4 : L.c <= 1 ? 3 : L.c <= 5 ? 2.4 : L.c <= 9 ? 1.8 : 1.2, col = L.tun ? [150, 80, 210] : s === 0 ? (L.E && L.E[0] + L.E[(P.length >> 1) - 1] > 4 ? [70, 100, 140] : [95, 95, 95]) : s === 1 ? [255, 140, 0] : [230, 30, 30];
       const o = N.C.vOff[dl.li], pa = N.posAt(dl.li, dl.a), pb = N.posAt(dl.li, dl.b); let prev = [X(pa[0]), Y(pa[1])];
       for (let k = 0; k < (P.length >> 1); k++){ const sv = N.C.VS[o + k]; if (sv <= dl.a || sv >= dl.b) continue; const q = [X(P[k*2]), Y(P[k*2+1])]; cv.line(prev[0], prev[1], q[0], q[1], s ? w + 1 : w, col); prev = q; }
       cv.line(prev[0], prev[1], X(pb[0]), Y(pb[1]), s ? w + 1 : w, col); }

@@ -1,6 +1,7 @@
 #!/bin/bash
 # road50: put the repaired road files of the test stage into the live site folder (owner / coordinator only; not run by road50).
 #   bash src/road50/release.sh sg hk nyc tyo bay      # the five single-file cities
+#   STAGE=<SC>/road50/stage_tun bash src/road50/release.sh hk   # Hong Kong with tunnels: only after the pages carry the new roads.js / traffic.js
 #   bash src/road50/release.sh gba                     # Greater Bay: only AFTER the Guangzhou extension has re-staged gbadata,
 #                                                        and after re-running the repair on that new data (see README)
 # Each live road file is first copied to $BACKUP/<city>data/<file>.v48.bak (outside site/, so it is not deployed). Only the road files change (names / refs indices are unchanged,

@@ -4,8 +4,9 @@
 // merges / diverges, arc-smoothed centrelines, Singapore markings, kerbs + footways + planted medians, LED street
 // lighting with poles, tunnel portals, smooth ramps, and a drivable surface query (surfaceAt).
 // [lm24/roadfix] tunnel portals with a closed end also at the line ends the data marks as tunnel mouths (flags 64 start / 128 end, any class).
-// [road50] tunnels: records of class c + 32 are hidden tunnel / underpass lines (L.tun): they join the junction graph only at shared
-// vertices (portals) so traffic can drive them, and nothing of them is drawn, indexed or labelled; portal ends drawn as before.
+// [road50] tunnels: records of class c + 32 are hidden tunnel / underpass lines (L.tun, L.c = c + 32 so other modules' class filters skip
+// them, L.tc = c): they join the junction graph only at shared vertices (portals) so traffic can drive them, and nothing of them is drawn,
+// indexed or labelled; portal ends are drawn as before.
 // v22: a US style for the San Francisco Bay Area map (right-hand traffic, US markings, cobra-head street lights, concrete sidewalks,
 // Caltrans concrete freeways), on when the global SGR_BAY is true (or SGRoads.setUS(true)); Singapore is unchanged.
 const SGRoads = (() => {
@@ -89,7 +90,7 @@ const SGRoads = (() => {
     const vu = () => { let v = 0, m = 1, b; do { b = u8[o++]; v += (b & 127)*m; m *= 128; } while (b & 128); return v; };
     const n = vu(), lines = new Array(n); let px = 0, py = 0;
     for (let i = 0; i < n; i++){
-      const c0 = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2), tun = c0 >= 32 && c0 < 64, c = tun ? c0 - 32 : c0;
+      const c0 = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2), tun = c0 >= 32 && c0 < 64, c = c0;
       for (let k = 0; k < np; k++){
         const a = vu(), b = vu();
         px += (a % 2) ? -(a + 1)/2 : a/2; py += (b % 2) ? -(b + 1)/2 : b/2;
@@ -99,7 +100,7 @@ const SGRoads = (() => {
       if (f & 4){ const sc = (f & 32) ? 2.5 : 5; E = new Float32Array(np); for (let k = 0; k < np; k++) E[k] = u8[o++]/sc; }
       const nm = ni && names ? names[ni] : null;
       lines[i] = {c, flags:f, name:nm ? [nm[0] || '', nm[1] || ''] : null, ref:(ri && refs) ? refs[ri] || null : null, P, E};
-      if (tun) lines[i].tun = true;                                   // [road50] hidden tunnel line
+      if (tun){ lines[i].tun = true; lines[i].tc = c0 - 32; }         // [road50] hidden tunnel line: c stays >= 32 (other modules skip it), tc = its road class
     }
     return lines;
   }
@@ -205,11 +206,11 @@ const SGRoads = (() => {
     for (let nd = 0, NN = C.nodeOff.length - 1; nd < NN; nd++){
       const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; if (o1 - o0 < 2) continue;
       let cnt = 0, e0 = 0, first = -1;
-      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
+      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
       if (cnt < 2) continue;
       const L0 = lines[C.incL[first]], vx = L0.P[C.incV[first]*2], vy = L0.P[C.incV[first]*2+1];
       ev(vx, vy, e0);
-      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
+      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
     }
     TL('seeds ' + nev);
     // 2. crossings (segments registered in every 32 m cell they pass) and line ends touching another line's segment

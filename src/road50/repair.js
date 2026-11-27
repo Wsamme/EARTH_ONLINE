@@ -21,7 +21,7 @@ const path = require('path'), fs = require('fs'), lib = require('./lib.js'), TG 
 const args = process.argv.slice(2), city = args[0];
 const opt = k => { const i = args.indexOf('--' + k); return i >= 0 ? args[i+1] : null; };
 const OUTD = opt('out'); if (!OUTD) throw new Error('--out <stage folder>');
-const RULES = new Set((opt('rules') || 'R1,R2,R3,R4,R5').split(','));
+const RULES = new Set((opt('rules') || 'R6,R1,R2,R3,R4,R5').split(','));
 const GAP = +(opt('gap') || 6), T0 = Date.now(), log = (...a) => console.log('[' + ((Date.now() - T0)/1000).toFixed(1) + 's]', ...a);
 const D = lib.loadCity(city, opt('dir')), CI = lib.CITIES[city], lines = D.lines, HALF = D.HALF;
 // raw records, aligned with D.lines
@@ -37,7 +37,7 @@ const CH = [];                    // change log
 const FLAG = [];                  // flagged for the owner (not changed)
 const chg = (rule, li, x, y, o) => CH.push(Object.assign({rule, li, x:+x.toFixed(1), y:+y.toFixed(1), c:lines[li].c, name:(lines[li].name && lines[li].name[0]) || lines[li].ref || ''}, o || {}));
 const flg = (rule, x, y, o) => FLAG.push(Object.assign({rule, x:+x.toFixed(1), y:+y.toFixed(1)}, o || {}));
-const drv = li => lines[li].c <= 10 && !(lines[li].flags & 8);
+const drv = li => lines[li].c <= 10 && !(lines[li].flags & 8) && !lines[li].tun;
 // decks with sourced profiles (the big bridges: >= 20 m) and the landmark models built on them keep their heights: no rule changes them
 const PROT = new Uint8Array(lines.length); for (let i = 0; i < lines.length; i++){ const L = lines[i]; if ((L.flags & 2) && L.E){ let m = 0; for (const v of L.E) if (v > m) m = v; if (m >= 20) PROT[i] = 1; } }
 const qx = (g, k) => g.Q[k*2]/4, qy = (g, k) => g.Q[k*2+1]/4, nv = g => g.Q.length >> 1;
@@ -48,7 +48,7 @@ const CS = 16, NCX = Math.ceil(2*HALF/CS) + 2;
 let SIDX = null;
 function buildIdx(){
   SIDX = new Map();
-  for (let li = 0; li < G.length; li++){ if (lines[li].c > 11 || (lines[li].flags & 8)) continue; addIdx(li); }
+  for (let li = 0; li < G.length; li++){ if (lines[li].c > 11 || (lines[li].flags & 8) || lines[li].tun) continue; addIdx(li); }
 }
 function addIdx(li){
   const g = G[li], m = nv(g);
@@ -106,6 +106,87 @@ function setE(li, Enew, rule, x, y, o){
 log(city, 'lines', lines.length);
 const qkey = (X, Y) => X + ',' + Y;
 buildIdx();
+// ================================================================ R6 tunnels (hidden links between the portals)
+// The pipelines drop tunnel ways (tunnel=yes / building_passage, layer < 0), so every tunnel is a break in the network. R6 adds the
+// drivable OSM ways of that kind (road50/osm_tunnels.py -> road50/osm/tunnels_<extract>.json, way ids kept in the log) as hidden
+// lines (record class c + 32; roads.js draws nothing of them, traffic drives them hidden). A tunnel node is a portal where it is a
+// vertex of a drivable road of the data (same quarter-metre position), or within 1.0 m of one (the line gets a vertex there; data
+// and extract are different OSM dates). Only tunnel networks (ways joined at shared OSM nodes) with >= 2 portals are added. Heights:
+// the portal's road height at a portal, 0 inside (hidden anyway). Surface line ends at a tunnel=yes portal get the tunnel-mouth flag
+// (64 start / 128 end), so roads.js draws the portal there.
+const TJ = opt('tunnels') || ({hk:'osm/tunnels_guangdong.json', gba:'osm/tunnels_guangdong.json'})[city];
+const TUN = {ways:0, kept:0, portals:0, snapped:0, mouths:0, km:0};
+if (lines.some(l => l.tun)) log('R6: the data has tunnel lines already: skipped');
+else if (RULES.has('R6') && TJ && fs.existsSync(path.join(__dirname, TJ))){
+  const T = JSON.parse(fs.readFileSync(path.join(__dirname, TJ), 'utf8')), B0 = D.base;
+  const HWC = {motorway:0, motorway_link:1, trunk:2, trunk_link:3, primary:4, primary_link:5, secondary:6, secondary_link:7, tertiary:8, tertiary_link:9, residential:10, unclassified:10, living_street:10, road:10, residential_link:10};
+  const PX = (lon, lat) => [Math.round((lon - B0.lon0)*B0.MX*4), Math.round((lat - B0.lat0)*B0.MY*4)];
+  // drivable surface vertices by exact quarter-metre position
+  const VX = new Map(); for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g); for (let k = 0; k < m; k++){ const key = g.Q[k*2] + ',' + g.Q[k*2+1]; if (!VX.has(key)) VX.set(key, [li, k]); } }
+  const nameIdx = new Map(); (B0.names || []).forEach((n, i) => { if (i && n && n[0] && !nameIdx.has(n[0])) nameIdx.set(n[0], i); });
+  const refIdx = new Map(); (B0.refs || []).forEach((r, i) => { if (i && r && !refIdx.has(r)) refIdx.set(r, i); });
+  // ways inside the square (runs of nodes inside), as candidate lines
+  const H = HALF - 5, cand = [];
+  for (const w of T.ways){
+    const t = w.tags, c = HWC[t.highway]; if (c === undefined || t.access === 'no' || t.access === 'private' || t.motor_vehicle === 'no') continue; TUN.ways++;
+    let run = [];
+    const flush = () => { if (run.length >= 2) cand.push({w, c, nodes:run}); run = []; };
+    for (const [nid, lon, lat] of w.nodes){ const q = PX(lon, lat); if (Math.abs(q[0]/4) < H && Math.abs(q[1]/4) < H) run.push([nid, q[0], q[1]]); else flush(); }
+    flush();
+  }
+  // tunnel networks: ways joined at shared OSM nodes
+  const par = cand.map((_, i) => i), fd = a => { while (par[a] !== a){ par[a] = par[par[a]]; a = par[a]; } return a; }, byNode = new Map();
+  cand.forEach((C, i) => { for (const n of C.nodes){ const o = byNode.get(n[0]); if (o === undefined) byNode.set(n[0], i); else { const a = fd(i), b = fd(o); if (a !== b) par[a] = b; } } });
+  // portals: tunnel nodes on a drivable road of the data
+  const portal = new Map();                              // tunnel node id -> {li, k | seg:[k, u], X, Y, e, exact}
+  for (const C of cand) for (const [nid, X, Y] of C.nodes){
+    if (portal.has(nid)) continue;
+    const v = VX.get(X + ',' + Y); if (v){ portal.set(nid, {li:v[0], k:v[1], X, Y, e:eAt(G[v[0]], v[1]), exact:true}); continue; }
+    const x = X/4, y = Y/4; let best = null;
+    for (const l2 of linesNear(x - 1.2, y - 1.2, x + 1.2, y + 1.2)){ if (!drv(l2)) continue; const h = G[l2];
+      for (let j = 0; j + 1 < nv(h); j++){ const ax = qx(h, j), ay = qy(h, j), ex = qx(h, j+1) - ax, ey = qy(h, j+1) - ay, L2 = ex*ex + ey*ey; let u = L2 > 1e-9 ? ((x - ax)*ex + (y - ay)*ey)/L2 : 0; u = u < 0 ? 0 : u > 1 ? 1 : u;
+        const d = Math.hypot(ax + ex*u - x, ay + ey*u - y); if (d <= 1.0 && (!best || d < best.d)) best = {d, li:l2, j, u}; } }
+    if (best) portal.set(nid, {li:best.li, seg:[best.j, best.u], d:best.d, exact:false});
+  }
+  const nPort = new Map(); cand.forEach((C, i) => { const r = fd(i); let s2 = nPort.get(r) || new Set(); for (const n of C.nodes) if (portal.has(n[0])) s2.add(n[0]); nPort.set(r, s2); });
+  // snap the near portals onto their road: a vertex at the nearest point of the segment (or its vertex within 0.3 m)
+  const ins = new Map();
+  for (const [nid, P] of portal){ if (P.exact) continue; let used = false; for (const [i, C] of cand.entries()) if (C.nodes.some(n => n[0] === nid) && nPort.get(fd(i)).size >= 2){ used = true; break; } if (!used) continue;
+    const h = G[P.li], [j, u] = P.seg; let X = Math.round(h.Q[j*2] + (h.Q[j*2+2] - h.Q[j*2])*u), Y = Math.round(h.Q[j*2+1] + (h.Q[j*2+3] - h.Q[j*2+1])*u), atV = -1;
+    for (const jj of [j, j + 1]) if (Math.hypot(h.Q[jj*2] - X, h.Q[jj*2+1] - Y)/4 <= 0.3){ X = h.Q[jj*2]; Y = h.Q[jj*2+1]; atV = jj; }
+    P.X = X; P.Y = Y; P.e = eAt(h, j) + (eAt(h, j+1) - eAt(h, j))*u; if (atV >= 0){ P.k = atV; P.e = eAt(h, atV); }
+    else { let A = ins.get(P.li); if (!A) ins.set(P.li, A = []); A.push({j, u, X, Y, e:P.e, P}); }
+    TUN.snapped++; }
+  for (const [li, A] of ins){ const h = G[li]; A.sort((p, q) => q.j - p.j || q.u - p.u); for (const p of A){ h.Q.splice((p.j + 1)*2, 0, p.X, p.Y); if (h.E) h.E.splice(p.j + 1, 0, p.e); } h.dirty = true;
+    // the vertex indices of this line's portals after the insertions
+    for (const p of A){ for (let k = 0; k < nv(h); k++) if (h.Q[k*2] === p.X && h.Q[k*2+1] === p.Y){ p.P.k = k; break; } } }
+  // the new lines
+  const portals = new Set(), mouthSet = new Set();
+  cand.forEach((C, i) => {
+    if (nPort.get(fd(i)).size < 2) return;
+    const t = C.w.tags, Q = [], E = [];
+    for (const [nid, X, Y] of C.nodes){ const P = portal.get(nid); if (P){ Q.push(P.X, P.Y); E.push(P.e || 0); portals.add(nid); } else { Q.push(X, Y); E.push(0); } }
+    // heights: portal heights at the portals, interpolated along the way between them, 0 where neither end is a portal
+    const ends = E.map((e, k) => portal.has(C.nodes[k][0]) ? e : null), s = [0]; for (let k = 1; k < C.nodes.length; k++) s.push(s[k-1] + Math.hypot(Q[k*2] - Q[k*2-2], Q[k*2+1] - Q[k*2-1])/4);
+    for (let k = 0; k < E.length; k++){ if (ends[k] !== null) continue; let a = -1, b = -1; for (let j = k - 1; j >= 0; j--) if (ends[j] !== null){ a = j; break; } for (let j = k + 1; j < E.length; j++) if (ends[j] !== null){ b = j; break; }
+      E[k] = a >= 0 && b >= 0 ? ends[a] + (ends[b] - ends[a])*(s[k] - s[a])/(s[b] - s[a]) : 0; }
+    const ow = t.oneway === 'yes' || t.oneway === '1' || t.oneway === '-1' || ((C.c === 0 || C.c === 1) && t.oneway !== 'no') || t.junction === 'roundabout';
+    if (t.oneway === '-1'){ const Q2 = []; for (let k = C.nodes.length - 1; k >= 0; k--) Q2.push(Q[k*2], Q[k*2+1]); Q.splice(0, Q.length, ...Q2); E.reverse(); }
+    const nm = t['name:en'] || t.name || '', f = (ow ? 1 : 0) | (t.highway.endsWith('_link') ? 16 : 0);
+    const li = G.length, rec = {c:C.c + 32, f, ni:nameIdx.get(nm) || 0, ri:refIdx.get(t.ref) || 0, Q:Int32Array.from(Q), E:null};
+    REC.push(rec); G.push({Q, E:E.some(v => v > 0.05) ? E : null, dirty:true});
+    lines.push({c:C.c + 32, tc:C.c, flags:f, name:nameIdx.get(nm) ? (D.base.names[nameIdx.get(nm)]) : null, ref:t.ref || null, P:Float32Array.from(Q, v => v/4), E:null, tun:true});
+    let F = files[0]; if (CI.chunks){ const mx = Q[Math.floor(Q.length/4)*2]/4, my = Q[Math.floor(Q.length/4)*2+1]/4; const ch = D.base.roadChunks.find(c2 => mx >= c2.bb[0] && mx < c2.bb[2] && my >= c2.bb[1] && my < c2.bb[3]); F = files.find(F2 => ch && F2.k === ch.k) || files[0]; }
+    F.recs.push(rec); TUN.kept++; TUN.km += s[s.length - 1]/1000;
+    chg('R6', li, Q[0]/4, Q[1]/4, {osm:'way/' + C.w.id, src:T.source + ' ' + T.timestamp, tunnel:t.tunnel || ('layer ' + t.layer), highway:t.highway, osmName:nm, len:Math.round(s[s.length - 1])});
+    // tunnel mouths on the surface line ends (tunnel=yes only)
+    if (t.tunnel === 'yes') for (const n of [C.nodes[0][0], C.nodes[C.nodes.length - 1][0]]){ const P = portal.get(n); if (!P) continue; const h2 = G[P.li], m2 = nv(h2); if (h2.Q[0] === P.X && h2.Q[1] === P.Y) mouthSet.add(P.li + ':0'); else if (h2.Q[m2*2-2] === P.X && h2.Q[m2*2-1] === P.Y) mouthSet.add(P.li + ':1'); }
+  });
+  for (const k of mouthSet){ const [li, e] = k.split(':').map(Number), r = REC[li], b = e ? 128 : 64; if (!(r.f & b)){ r.f |= b; lines[li].flags |= b; G[li].dirty = true; TUN.mouths++; } }
+  TUN.portals = portals.size; TUN.km = +TUN.km.toFixed(1);
+  log('R6 tunnels', JSON.stringify(TUN));
+  buildIdx();
+}
 // ================================================================ R3 junction level continuity (ramp heights)
 // Contacts where the data joins two drivable lines (a shared vertex, or a line end within 0.6 m of another line) at different
 // heights (1.2 < |dE| <= 15 m) are not junctions for the roads module or traffic. H = the higher line there, Lo = the lower one.
@@ -245,7 +326,7 @@ if (RULES.has('R3')){
   log('R3: conflicts', nC, 'fixed', nFix, 'flagged', FLAG.filter(f => f.rule === 'R3').length);
 }
 // rebuild the roads module's junction graph and the traffic network on the current geometry
-function curLines(){ return G.map((g, i) => ({c:lines[i].c, flags:(lines[i].flags & ~(4 | 32)) | (g.E && g.E.some(v => v > 0.05) ? 4 : 0), name:lines[i].name, ref:lines[i].ref, P:Float32Array.from(g.Q, v => v/4), E:g.E && g.E.some(v => v > 0.05) ? Float32Array.from(g.E) : null})); }
+function curLines(){ return G.map((g, i) => ({tun:!!lines[i].tun, tc:lines[i].tc, c:lines[i].c, flags:(lines[i].flags & ~(4 | 32)) | (g.E && g.E.some(v => v > 0.05) ? 4 : 0), name:lines[i].name, ref:lines[i].ref, P:Float32Array.from(g.Q, v => v/4), E:g.E && g.E.some(v => v > 0.05) ? Float32Array.from(g.E) : null})); }
 // ================================================================ R1 gap join (+ R2 chunk seams)
 const D2 = {SGRoads:D.SGRoads, lines:curLines()}; D2.C = D.SGRoads._dbg.prep(D2.lines);
 const N = TG.build(D2, {step:15});
@@ -258,6 +339,7 @@ if (RULES.has('R1') || RULES.has('R2')){
   let nDead = 0;
   for (const [nd, Nd] of N.NODE){
     if (Nd.arms !== 1) continue;
+    if (D2.lines[Nd.A[0].P.li].tun) continue;                    // an open tunnel end: R6 keeps only tunnels between portals
     const a = Nd.A[0], li = a.P.li, L = D2.lines[li], g = G[li], m = nv(g), atEnd = a.end ? (a.P.b >= N.J.LEN(li) - 0.01) : (a.P.a <= 0.01);
     if (!atEnd) continue; nDead++;
     const end = a.end, k = end ? m - 1 : 0, x = qx(g, k), y = qy(g, k), e = eAt(g, k);
@@ -386,6 +468,6 @@ for (const F of files){
 for (const f of fs.readdirSync(D.D)){ const src = path.join(D.D, f); if (files.some(F => F.name === f)) continue; const dst = path.join(OUTD, f); if (!fs.existsSync(dst)) fs.symlinkSync(src, dst); }
 const byRule = {}; for (const c of CH) byRule[c.rule] = (byRule[c.rule] || 0) + 1;
 const flagBy = {}; for (const f of FLAG) flagBy[f.rule + (f.why ? ': ' + f.why.replace(/[-0-9.]+/g, '#') : '')] = (flagBy[f.rule + (f.why ? ': ' + f.why.replace(/[-0-9.]+/g, '#') : '')] || 0) + 1;
-const rep = {city, src:D.D, out:OUTD, lines:lines.length, changedLines:nDirty, changes:byRule, flagged:flagBy, rules:[...RULES], gap:GAP};
+const rep = {city, src:D.D, out:OUTD, lines:lines.length, tunnels:TUN, changedLines:nDirty, changes:byRule, flagged:flagBy, rules:[...RULES], gap:GAP};
 fs.writeFileSync(opt('log') || path.join(__dirname, 'out', city + '_repair.json'), JSON.stringify({summary:rep, changes:CH, flags:FLAG}));
 log(JSON.stringify(rep));

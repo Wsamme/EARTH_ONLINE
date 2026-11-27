@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebGPU Ocean Prototype</title>
+<!-- render50 prototype (28 Nov 2026): three.js r187 WebGPURenderer + TSL, with the renderer's automatic WebGL 2 fallback.
+     Synthetic test scene (generic boxes and a road grid; no map data). What it tries out for the City Brush engine:
+     - the r128 ocean of render50/water.js ported to TSL (slope map at three scales, Fresnel, GGX sun lobe with lost-detail roughness,
+       planar mirror through the reflector() node, distorted by the wave slopes);
+     - compute shaders: N vehicles moved on the GPU (instancedArray storage buffer, one compute dispatch per frame) against the same
+       vehicles moved in JavaScript (InstancedMesh matrices re-uploaded every frame), ?cpu=1;
+     - render bundles: the static skyline inside a BundleGroup (WebGPU backend; a plain group on WebGL 2), ?bundle=0 to compare;
+     - timestamp queries: GPU time of the render and compute passes when the adapter has 'timestamp-query' (trackTimestamp).
+     URL: ?gl=1 force the WebGL 2 backend, ?cars=65536, ?cpu=1, ?bundle=0, ?q=0.5 (mirror resolution scale), ?t=13 (hour).
+     Test handle: window.PROTO.stats(). -->
+<style>
+  :root{--ink:#e9e6dd;--panel:rgba(12,16,20,.72)}
+  html,body{margin:0;height:100%;background:#0c1014;overflow:hidden}
+  #hud{position:fixed;left:12px;top:12px;max-width:calc(100vw - 48px);padding:8px 10px;background:var(--panel);color:var(--ink);font:12px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;border-radius:4px}
+  canvas{display:block}
+</style>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.webgpu.js",
+  "three/webgpu":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.webgpu.js",
+  "three/tsl":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.tsl.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<div id="hud">starting…</div>
+<script type="module">
+import * as THREE from 'three/webgpu';
+import { Fn, uniform, float, vec2, vec3, vec4, positionWorld, positionLocal, cameraPosition, normalize, dot, max, min, pow, mix, sqrt, clamp,
+  smoothstep, reflector, texture, time, deltaTime, instancedArray, instanceIndex, hash, floor, mod, step, length } from 'three/tsl';
+import { SkyMesh } from 'three/addons/objects/SkyMesh.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const Q = new URLSearchParams(location.search);
+const OPT = {gl:Q.get('gl') === '1', cars:+(Q.get('cars') || 32768), cpu:Q.get('cpu') === '1', bundle:Q.get('bundle') !== '0', q:+(Q.get('q') || 0.5), hour:+(Q.get('t') || 15)};
+const hud = document.getElementById('hud');
+const S = {frames:0, cpuMs:0, carMs:0, gpuRender:null, gpuCompute:null, backend:'', err:null, fps:0, ready:false};
+
+const renderer = new THREE.WebGPURenderer({antialias:true, forceWebGL:OPT.gl, trackTimestamp:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+document.body.appendChild(renderer.domElement);
+await renderer.init();
+S.backend = renderer.backend.isWebGPUBackend ? 'WebGPU' : 'WebGL 2 (fallback)';
+S.timestamps = renderer.hasFeature ? renderer.hasFeature('timestamp-query') : false;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(38, innerWidth/innerHeight, 1, 60000);
+camera.position.set(-900, 120, 1300);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 60, -600); controls.update();
+
+/* ---------- sky and sun ---------- */
+const sky = new SkyMesh(); sky.scale.setScalar(50000);
+sky.turbidity.value = 4; sky.rayleigh.value = 1.2; sky.mieCoefficient.value = 0.004; sky.mieDirectionalG.value = 0.85;
+scene.add(sky);
+const sunDir = new THREE.Vector3();
+{ const el = Math.max(-6, 80 - Math.abs(OPT.hour - 13)*13), az = (OPT.hour < 13 ? 100 : 260)*Math.PI/180, e = el*Math.PI/180;
+  sunDir.set(Math.cos(e)*Math.sin(az), Math.sin(e), -Math.cos(e)*Math.cos(az)).normalize(); }
+sky.sunPosition.value.copy(sunDir);
+const sun = new THREE.DirectionalLight(0xfff2e0, 2.6); sun.position.copy(sunDir).multiplyScalar(3000); scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xcfe0ff, 0x8a7f6a, 0.9));
+
+/* ---------- synthetic shore and skyline (deterministic; not map data) ---------- */
+let seed = 12345; const rnd = () => (seed = (seed*1103515245 + 12345) & 0x7fffffff)/0x7fffffff;
+const land = new THREE.Mesh(new THREE.PlaneGeometry(12000, 6000).rotateX(-Math.PI/2), new THREE.MeshStandardMaterial({color:0x8d8a7e, roughness:0.95}));
+land.position.set(0, 1.5, -3400); scene.add(land);
+const NB = 1600, box = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
+const bmat = new THREE.MeshStandardMaterial({roughness:0.55, metalness:0.15});
+const blds = new THREE.InstancedMesh(box, bmat, NB), m4 = new THREE.Matrix4(), col = new THREE.Color();
+for (let i = 0; i < NB; i++){
+  const x = (rnd()*2 - 1)*4500, z = -450 - Math.pow(rnd(), 0.7)*4500, h = 12 + Math.pow(rnd(), 3)*(z > -1500 ? 260 : 120), w = 18 + rnd()*40, d = 18 + rnd()*40;
+  m4.makeScale(w, h, d).setPosition(x, 1.5, z); blds.setMatrixAt(i, m4);
+  blds.setColorAt(i, col.setHSL(0.08 + rnd()*0.5, 0.06 + rnd()*0.1, 0.45 + rnd()*0.35));
+}
+const skyline = OPT.bundle ? new THREE.BundleGroup() : new THREE.Group();
+skyline.add(blds); scene.add(skyline);
+
+/* ---------- vehicles: GPU compute (default) or JavaScript ---------- */
+const N = OPT.cars, carGeo = new THREE.BoxGeometry(4.4, 1.6, 1.9).translate(0, 2.3, 0);
+let carMesh, carStep = null, cpuCars = null;
+if (!OPT.cpu){
+  const cars = instancedArray(N, 'vec4');                        // x, z, axis (0 along x, 1 along z), speed m/s
+  const init = Fn(() => {
+    const c = cars.element(instanceIndex), h1 = hash(instanceIndex), h2 = hash(instanceIndex.add(7919)), h3 = hash(instanceIndex.add(104729));
+    const road = floor(h1.mul(60)).mul(75).sub(2250), along = h2.mul(9000).sub(4500), axis = step(0.5, h3);
+    c.assign(vec4(mix(along, road, axis), mix(road.sub(2700), along.mul(0.5).sub(2700), axis), axis, h3.mul(14).add(8)));
+  })().compute(N);
+  carStep = Fn(() => {
+    const c = cars.element(instanceIndex), d = c.w.mul(min(deltaTime, 0.1));
+    c.x.assign(mod(c.x.add(d.mul(float(1).sub(c.z))).add(4500), 9000).sub(4500));
+    c.y.assign(mod(c.y.add(d.mul(c.z)).add(4950), 4500).sub(4950));
+  })().compute(N);
+  await renderer.computeAsync(init);
+  const cm = new THREE.MeshBasicNodeMaterial({color:0xffd9a0});
+  const cv = cars.element(instanceIndex);
+  cm.positionNode = positionLocal.add(vec3(cv.x, 0, cv.y));
+  carMesh = new THREE.InstancedMesh(carGeo, cm, N); carMesh.frustumCulled = false;
+} else {
+  cpuCars = new Float32Array(N*4);
+  for (let i = 0; i < N; i++){ const road = Math.floor(rnd()*60)*75 - 2250, along = rnd()*9000 - 4500, axis = rnd() < 0.5 ? 0 : 1;
+    cpuCars.set([axis ? road : along, axis ? along*0.5 - 2700 : road - 2700, axis, 8 + rnd()*14], i*4); }
+  carMesh = new THREE.InstancedMesh(carGeo, new THREE.MeshBasicMaterial({color:0xffd9a0}), N); carMesh.frustumCulled = false;
+  carMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+}
+scene.add(carMesh);
+function stepCpuCars(dt){
+  const A = carMesh.instanceMatrix.array, C = cpuCars;
+  for (let i = 0; i < N; i++){ const o = i*4, d = C[o + 3]*dt;
+    if (C[o + 2] < 0.5) C[o] = ((C[o] + d + 4500) % 9000 + 9000) % 9000 - 4500; else C[o + 1] = ((C[o + 1] + d + 4950) % 4500 + 4500) % 4500 - 4950;
+    const m = i*16; A[m] = 1; A[m + 5] = 1; A[m + 10] = 1; A[m + 15] = 1; A[m + 12] = C[o]; A[m + 14] = C[o + 1]; }
+  carMesh.instanceMatrix.needsUpdate = true;
+}
+
+/* ---------- the ocean (TSL port of render50/water.js) ---------- */
+function slopeTexture(){
+  const SZ = 256; let s2 = 50077; const r = () => (s2 = (s2*1103515245 + 12345) & 0x7fffffff)/0x7fffffff;
+  const W = []; for (let n = 0; W.length < 40 && n < 4000; n++){ const kx = Math.round((r()*2 - 1)*22), ky = Math.round((r()*2 - 1)*22), k = Math.hypot(kx, ky);
+    if (k < 2.5 || k > 23) continue; const c = kx/k; if (c < -0.2) continue; if (r() > Math.pow(Math.max(0, 0.35 + 0.65*c), 4) + 0.04) continue; W.push([kx, ky, Math.pow(k, -1.75)*(0.6 + 0.4*r()), r()*Math.PI*2]); }
+  const sx = new Float32Array(SZ*SZ), sy = new Float32Array(SZ*SZ), T = Math.PI*2;
+  for (const [kx, ky, a, ph] of W) for (let j = 0; j < SZ; j++) for (let i = 0; i < SZ; i++){ const s = Math.sin(T*(kx*i + ky*j)/SZ + ph), o = j*SZ + i; sx[o] += -a*T*kx*s; sy[o] += -a*T*ky*s; }
+  let v = 0; for (let o = 0; o < SZ*SZ; o++) v += sx[o]*sx[o] + sy[o]*sy[o];
+  const sc = 1/(3*Math.sqrt(v/(SZ*SZ))), d = new Uint8Array(SZ*SZ*4);
+  for (let o = 0; o < SZ*SZ; o++){ d[o*4] = Math.round(127.5 + 127.5*Math.max(-1, Math.min(1, sx[o]*sc))); d[o*4 + 1] = Math.round(127.5 + 127.5*Math.max(-1, Math.min(1, sy[o]*sc))); d[o*4 + 2] = 128; d[o*4 + 3] = 255; }
+  const t = new THREE.DataTexture(d, SZ, SZ, THREE.RGBAFormat); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.generateMipmaps = true;
+  t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter; t.anisotropy = 4; t.needsUpdate = true; return t;
+}
+const slope = slopeTexture();
+const uSun = uniform(sunDir), uSunC = uniform(new THREE.Color(1, 0.94, 0.84)), uBody = uniform(new THREE.Color('#163640')), uAmp = uniform(1.05), uPx = uniform(0.001), uSunK = uniform(5.0);
+const P = positionWorld.xz, V = normalize(cameraPosition.sub(positionWorld)), dist = length(cameraPosition.sub(positionWorld));
+const fp = dist.mul(uPx).div(sqrt(max(V.y, 0.03)));
+const layer = (tile, speed, ang) => {               // one scale of the slope map: sampled in a frame rotated by ang, drifting along it
+  const c = Math.cos(ang), s = Math.sin(ang), ax = vec2(c, s), ay = vec2(-s, c);
+  const uv = vec2(dot(P, ax), dot(P, ay)).div(tile).sub(vec2(time.mul(speed), 0));
+  const t = texture(slope, uv).rg.mul(2).sub(1).mul(3), k = float(1).div(float(1).add(pow(fp.div(tile/24), 2)));
+  return {sl:ax.mul(t.x).add(ay.mul(t.y)).mul(k), k};
+};
+const L1 = layer(61, 0.0262, 0.64), L2 = layer(17.3, 0.0412, 0.99), L3 = layer(5.9, 0.071, 0.12);
+const a1 = uAmp.mul(0.55*0.12), a2 = uAmp.mul(0.38*0.12), a3 = uAmp.mul(0.26*0.12);
+const sl = L1.sl.mul(a1).add(L2.sl.mul(a2)).add(L3.sl.mul(a3));
+const lost = a1.mul(a1).mul(float(1).sub(L1.k.mul(L1.k))).add(a2.mul(a2).mul(float(1).sub(L2.k.mul(L2.k)))).add(a3.mul(a3).mul(float(1).sub(L3.k.mul(L3.k))));
+const A2 = clamp(lost.mul(2).add(0.0016), 0.0008, 0.5);
+const Nw = normalize(vec3(sl.x.negate(), 1, sl.y.negate()));
+const NV = max(dot(Nw, V), 0.002), F = float(0.02).add(float(0.98).mul(pow(float(1).sub(NV), 5)));
+const mirror = reflector({resolutionScale:OPT.q});
+mirror.target.rotateX(-Math.PI/2); scene.add(mirror.target);
+mirror.uvNode = mirror.uvNode.add(sl.mul(vec2(0.2, 0.32)).mul(float(0.08).add(float(0.92).div(dist.mul(0.0015).add(1)))));
+const H = normalize(V.add(uSun)), NL = max(dot(Nw, uSun), 0), NH = max(dot(Nw, H), 0), dd = NH.mul(NH).mul(A2.sub(1)).add(1);
+const D = A2.div(dd.mul(dd).mul(Math.PI));
+const Vis = float(0.5).div(NL.mul(sqrt(NV.mul(NV).mul(float(1).sub(A2)).add(A2))).add(NV.mul(sqrt(NL.mul(NL).mul(float(1).sub(A2)).add(A2)))).add(1e-4));
+const FH = float(0.02).add(float(0.98).mul(pow(float(1).sub(max(dot(V, H), 0)), 5)));
+const spec = uSunC.mul(min(D.mul(Vis).mul(FH).mul(NL).mul(uSunK), 24)).mul(smoothstep(-0.02, 0.05, uSun.y));
+const omat = new THREE.MeshBasicNodeMaterial();
+omat.colorNode = vec4(mix(uBody, mirror.rgb, F).add(spec), 1);
+const ocean = new THREE.Mesh(new THREE.PlaneGeometry(60000, 60000).rotateX(-Math.PI/2), omat);
+scene.add(ocean);
+
+/* ---------- loop, stats ---------- */
+let last = performance.now(), fpsT = last, fpsN = 0, pend = false;
+addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+renderer.setAnimationLoop(() => {
+  const now = performance.now(), dt = Math.min(0.1, (now - last)/1000); last = now;
+  const t0 = performance.now();
+  controls.update();
+  uPx.value = 2*Math.tan(camera.fov*Math.PI/360)/Math.max(1, renderer.domElement.height);
+  const tc = performance.now();
+  if (carStep) renderer.compute(carStep); else stepCpuCars(dt);
+  S.carMs = S.carMs*0.9 + (performance.now() - tc)*0.1;
+  renderer.render(scene, camera);
+  S.cpuMs = S.cpuMs*0.9 + (performance.now() - t0)*0.1;
+  S.frames++; fpsN++;
+  if (now - fpsT > 1000){ S.fps = fpsN*1000/(now - fpsT); fpsN = 0; fpsT = now; }
+  if (S.timestamps && !pend && S.frames % 10 === 0){ pend = true;
+    Promise.all([renderer.resolveTimestampsAsync('render'), carStep ? renderer.resolveTimestampsAsync('compute') : null]).then(([r, c]) => { S.gpuRender = r; S.gpuCompute = c; pend = false; }).catch(e => { S.err = String(e); pend = false; }); }
+  if (S.frames % 15 === 0) hud.textContent = `backend   ${S.backend}\nvehicles  ${N} on the ${carStep ? 'GPU (compute)' : 'CPU (JavaScript)'}\nskyline   ${OPT.bundle ? 'BundleGroup' : 'Group'} · ${NB} boxes\nfps       ${S.fps.toFixed(1)}\nCPU / frame  ${S.cpuMs.toFixed(2)} ms (vehicles ${S.carMs.toFixed(2)} ms)\nGPU render   ${S.gpuRender != null ? S.gpuRender.toFixed(2) + ' ms' : S.timestamps ? '…' : 'no timestamp-query'}${carStep ? `\nGPU compute  ${S.gpuCompute != null ? S.gpuCompute.toFixed(3) + ' ms' : '…'}` : ''}\ndraw calls   ${renderer.info.render.drawCalls}`;
+  S.ready = true;
+});
+window.PROTO = {renderer, scene, camera, controls, opt:OPT,
+  stats:() => ({backend:S.backend, timestamps:S.timestamps, frames:S.frames, fps:+S.fps.toFixed(2), cpuMs:+S.cpuMs.toFixed(3), carMs:+S.carMs.toFixed(3), gpuRenderMs:S.gpuRender, gpuComputeMs:S.gpuCompute,
+    drawCalls:renderer.info.render.drawCalls, triangles:renderer.info.render.triangles, err:S.err, opt:OPT})};
+</script>
+</body>
+</html>

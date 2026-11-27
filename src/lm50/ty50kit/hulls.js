@@ -2,9 +2,10 @@
 // grown 3 m — tyoreal.js sgrLandmarkHulls) and every site's keep polygon (siteKeep: S.keep or a circle of r). Evaluates the modules
 // the Tokyo build globs (src/tyo/<d>/<d>.js) + optional extra module files.
 // usage: node hulls.js <out.json> [extra.js,…]   -> [{key, kind:'lm'|'site', label, mod, lat, lon, r, poly:[[lat,lon],…]}]
-const K = require('./lmenv.js'), fs = require('fs');
-const dirs = fs.readdirSync(K.R + 'tyo').filter(d => fs.existsSync(`${K.R}tyo/${d}/${d}.js`)).sort();
-const files = dirs.map(d => `${K.R}tyo/${d}/${d}.js`).concat((process.argv[3] || '').split(',').filter(Boolean));
+const K = require('./lmenv.js'), fs = require('fs'), path = require('path');
+function compute(extra, skipDirs){
+const dirs = fs.readdirSync(K.R + 'tyo').filter(d => fs.existsSync(`${K.R}tyo/${d}/${d}.js`) && !(skipDirs || []).includes(d)).sort();
+const files = dirs.map(d => `${K.R}tyo/${d}/${d}.js`).concat((extra || []).map(f => path.resolve(f)));
 const ctx = K.makeEnv(); const own = K.loadModules(ctx, files);
 const hull = pts => { pts.sort((a, b) => a[0] - b[0] || a[1] - b[1]); if (pts.length < 3) return pts; const cr = (o, a, b) => (a[0] - o[0])*(b[1] - o[1]) - (a[1] - o[1])*(b[0] - o[0]), lo = [], up = [];
   for (const p of pts){ while (lo.length >= 2 && cr(lo[lo.length-2], lo[lo.length-1], p) <= 0) lo.pop(); lo.push(p); }
@@ -28,5 +29,11 @@ for (const [k, S] of Object.entries(ctx.SITES)){
   const P = ring ? ring.map(q => [X + q[0], Y - q[1]]) : Array.from({length:48}, (_, i) => [X + Math.cos(i/48*2*Math.PI)*S.r, Y + Math.sin(i/48*2*Math.PI)*S.r]);
   out.push({key:k, kind:'site', label:S.label !== false, mod:(own[k] || '').split('/').slice(-2)[0], lat:S.lat, lon:S.lon, r:S.r, keep:!!ring, poly:P.map(q => K.LL(q[0], q[1]).map(v => +v.toFixed(7)))});
 }
+return {out, files, nerr};
+}
+module.exports = {compute};
+if (require.main === module){
+const {out, files, nerr} = compute((process.argv[3] || '').split(',').filter(Boolean));
 fs.writeFileSync(process.argv[2], JSON.stringify(out));
 console.log('modules', files.length, 'landmark placements', out.filter(o => o.kind === 'lm').length, 'with hull', out.filter(o => o.poly && o.kind === 'lm').length, 'sites', out.filter(o => o.kind === 'site').length, 'build errors', nerr);
+}

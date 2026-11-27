@@ -96,8 +96,9 @@ if (r5On > 0.5){
   // coast: signed distance (m, water > 0) -> calmer water near land, foam line at the coast
   float wC = 2400.0, wCalm = 1.0;
   if (r5CoastOn > 0.5){
-    float cq = texture2D(r5Coast, vec2((wP.x + r5CoastT.x)*r5CoastT.z, (-wP.y + r5CoastT.y)*r5CoastT.w)).r*255.0 - 128.0;
-    wC = sign(cq)*(cq/127.0)*(cq/127.0)*2400.0;
+    vec2 cuv = vec2((wP.x + r5CoastT.x)*r5CoastT.z, (-wP.y + r5CoastT.y)*r5CoastT.w);
+    float cq = texture2D(r5Coast, cuv).r*255.0 - 128.0;
+    wC = (cuv.x > 0.0 && cuv.x < 1.0 && cuv.y > 0.0 && cuv.y < 1.0) ? sign(cq)*(cq/127.0)*(cq/127.0)*2400.0 : 2400.0;   // outside the map: open water
     wCalm = 0.45 + 0.55*smoothstep(20.0, 700.0, wC);
   }
   // pixel footprint on the water (m): stretched along the view by 1/cos
@@ -126,7 +127,7 @@ if (r5On > 0.5){
   // planar mirror of the scene (premultiplied: the sky in it is transparent)
   if (r5ReflOn > 0.5){
     vec4 pc = r5TexM*vec4(vLgW.x, r5PlaneY, vLgW.z, 1.0);
-    vec2 ruv = pc.xy/pc.w + sl*vec2(0.55, 0.9)*(0.06 + 0.94/(1.0 + wD*0.0015));
+    vec2 ruv = pc.xy/pc.w + sl*vec2(0.2, 0.32)*(0.08 + 0.92/(1.0 + wD*0.0015));
     vec4 rc = texture2D(r5Refl, ruv);
     float rw = (1.0 - smoothstep(2.0, 3.2, abs(vLgW.y - r5PlaneY)))*smoothstep(0.0, 0.03, ruv.x)*smoothstep(1.0, 0.97, ruv.x)*smoothstep(0.0, 0.02, ruv.y)*smoothstep(1.0, 0.97, ruv.y);
     wEnv = mix(wEnv, rc.rgb + wEnv*(1.0 - rc.a), rw);

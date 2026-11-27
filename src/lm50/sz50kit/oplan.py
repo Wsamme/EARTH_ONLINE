@@ -55,6 +55,8 @@ print('CLASHES (%d):' % len(clash), ', '.join('%s %s %.0f m2' % (bb.get('osm', '
 if tgt and gc is not None:
     tp = Polygon(tgt['ring']).buffer(0); print('target footprint %s: area %d m2, centroid offset model-target %.1f m E, %.1f m S; overlap %.0f %% of the target' %
           (tgt['osm'], tp.area, gc.x - tp.centroid.x, gc.y - tp.centroid.y, 100*tp.intersection(G).area/max(1, tp.area)))
+elif tgt:
+    tp = Polygon(tgt['ring']).buffer(0); print('target footprint %s: area %d m2 (hull of the app pieces flagged target); the model has no faces below 4 m with plan area (no bottom cap), so no offset: compare the hull (blue) with the red outline' % (tgt['osm'], tp.area))
 elif REF['meta'].get('osm') not in (None, '-', 'line'): print('target footprint', REF['meta'].get('osm'), 'not among the ref buildings (see unc)')
 half = float(rest[0]) if rest else max(60, 1.3*REF['radius'] if REF['radius'] < 200 else 1.1*max(abs(v) for v in H.bounds) + 40)
 S = 900; k = S/(2*half); img = Image.new('RGB', (S, S), (246, 246, 242)); d = ImageDraw.Draw(img)

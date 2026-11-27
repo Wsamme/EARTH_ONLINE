@@ -239,6 +239,21 @@ function crChain(P, n){ const out = []; for (let i = 0; i < P.length - 1; i++){ 
   out.push(P[P.length - 1].slice()); return out; }
 // tagged plan: [[x, z, tag], ...] -> {P, tags} where tags[i] is the tag of the edge from vertex i to i + 1
 const tagP = T => ({P:T.map(t => [t[0], t[1]]), tags:T.map(t => t[2])});
+// generic tower shaft on plan P between y0 and y1. s.sty: 'cw' glass + mullions + floor bands; 'rib' glass + spandrel ribbons
+// (+ mullions); 'fin' glass + vertical fins + thin bands; 'punch' solid wall (s.fr) with a window grid (s.gl).
+// s: {gl, fr, mul, band, fh, bay, sh (ribbon height), fd, fw, ww, wh, roof, cap:false, par (parapet height), minL}
+function tw50(B, P, y0, y1, s){
+  const fh = s.fh || 4, bay = s.bay || 3;
+  if (s.sty === 'punch'){ wallP(B.p(s.fr), P, y0, y1); winP(B, P, y0 + (s.w0 || 0), y1, fh, bay, s.ww || 1.4, s.wh || fh*0.55, s.gl, {minL:s.minL || 2}); }
+  else {
+    wallP(B.p(s.gl), P, y0, y1);
+    if (s.sty === 'rib'){ ribP(B.p(s.fr), P, y0 + fh - (s.sh || 1.2), y1, fh, s.sh || 1.2, 0.06); if (s.mul !== null) facadeP(B, P, y0, y1, {mul:s.mul || s.fr, bay, fd:s.fd || 0.2, fw:s.fw || 0.06, fh}); }
+    else if (s.sty === 'fin'){ finsP(B.p(s.mul || s.fr), P, y0, y1, bay, s.fd || 0.6, s.fw || 0.25); ribP(B.p(s.band || s.fr), P, y0 + fh, y1, fh, s.bh || 0.3, 0.04); }
+    else facadeP(B, P, y0, y1, {mul:s.mul || s.fr, band:s.band || s.fr, bay, fd:s.fd || 0.25, fw:s.fw || 0.07, fh, bh:s.bh || 0.35});
+  }
+  if (s.cap !== false) capP(B.p(s.roof || '#8e9192'), P, y1);
+  if (s.par){ wallP(B.p(s.fr || s.mul), P, y1, y1 + s.par); }
+}
 // ================= Bank of China Building, 4 Battery Road (sgboc, hero) =================
 // Wikipedia: the old block (Palmer & Turner, completed Dec 1953, 16 storeys, 61 m to the roof; roots.gov.sg says 18 storeys) and
 // the 2000 tower (36 storeys, 168 m) side by side on a shared podium. Plan from the OSM building:parts of w106193390: tower
@@ -319,7 +334,7 @@ SG_PLACES.push({type:'sgboc', lat:PL.lat, lon:PL.lon, rot:0});
 const A0 = [1.279274, 103.849819];
 const POD0 = [[36.7,-87.9],[-62.3,72.1],[-36.6,87.6],[61.9,-71.9]];
 // tags: g granite flank, c arced fin face, e end face (glass + ledges), n notch
-const T1raw = [[31.4,-71.9,'n'],[27.9,-66.6,'n'],[24.9,-68.9,'g'],[3.4,-33.4,'e'],[11.7,-28.1,'n'],[14.2,-31.6,'n'],[30.7,-21.4,'c']];
+const T1raw = [[31.4,-71.9,'n'],[27.9,-66.6,'n'],[24.9,-68.9,'g'],[3.4,-33.4,'e'],[11.7,-28.1,'n'],[14.2,-31.6,'e'],[30.7,-21.4,'c']];
 const T1arc = [[30.7,-21.4],[37.9,-33.9],[44.4,-46.9],[48.2,-61.9]];
 const T2raw = [[-8.6,42.6,'e'],[-27.1,31.9,'n'],[-25.8,28.9,'n'],[-32.6,24.9,'g'],[-54.1,58.6,'g'],[-50.3,61.6,'g'],[-53.3,66.4,'e'],[-36.1,76.9,'c']];
 const T2arc = [[-36.1,76.9],[-24.8,66.4],[-15.8,53.9],[-8.6,42.6]];
@@ -384,5 +399,125 @@ LANDMARKS.sgsgx = {zh:'新交所大厦', en:'SGX Centre', cat:'new', r:100, h:18
   B.flush(g); return g; }};
 const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
 SG_PLACES.push({type:'sgsgx', lat:PL.lat, lon:PL.lon, rot:0});
+}
+// ================= OUE Downtown (former DBS Building Towers), 6 Shenton Way (sgoue, hero) =================
+// Wikipedia: Tower 1, 50 storeys, 201 m (1975, Architects Team 3; tallest in Singapore 1975-86), aluminium cladding replaced by a
+// glass curtain wall in the 2017 conversion (Oakwood serviced apartments); Tower 2, 36 storeys, 150 m (1994, offices); the
+// Downtown Gallery mall runs the full length of the podium. Plans from OSM: Tower 1 w172915340 with its floor parts w510804033
+// (39-80, 84-123, 127-166, 170-183 m: the three recessed breaks between them) and the core w510804763 (to 201 m); Tower 2
+// w172915341; Downtown Gallery w510901696 (39 m). Look (photos, Commons): Tower 1 dark-grey glass divided by deep vertical fins
+// (four bays a face), dark recessed breaks, an open-grid crown; Tower 2 light grey cladding with a regular grid of small windows;
+// the Gallery glass behind slender light fins. Night: lit apartment / office windows, a softly lit crown on Tower 1.
+{
+const A0 = [1.277402, 103.848671];
+const T1F0 = [[-42.5,44.4],[-33.0,52.6],[-20.5,57.9],[-6.3,34.1],[-17.5,24.6],[-28.3,20.6]];
+const CORE0 = [[-33.5,42.6],[-21.0,50.1],[-13.3,37.1],[-25.8,30.1]];
+const T2_0 = [[25.5,-68.4],[-10.3,-9.1],[13.5,5.1],[49.2,-53.6]];
+const GAL0 = [[-11.6,-9.1],[13.5,6.1],[-56.2,119.3],[-81.3,104.1],[-61.0,71.1]];
+const C0 = [0, 0], [T1F, CORE, T2, GAL] = shAll([T1F0, CORE0, T2_0, GAL0], C0);
+LANDMARKS.sgoue = {zh:'华联海湾大厦', en:'OUE Downtown', cat:'new', r:137, h:201,
+  lt:{m:1, c:'#ffe7c4', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL1 = {c:'#3a444d', m:1, fh:3.9, cw:1.8}, FIN = {c:'#555b61', m:0, lk:0.2}, MUL1 = {c:'#4c535a', m:0, lk:0.15}, DARK = '#23282d',
+    CL2 = {c:'#cfccc4', m:0, lk:0.3}, WIN2 = {c:'#34414c', m:1, fh:4.0, cw:2.2}, ROOF = '#8b8e90', MECH = '#6e7376', FOUND = '#bdb7ab', PAVE = '#c4beb2',
+    GLG = {c:'#4a5660', m:1, fh:5.5, cw:3.2}, FING = {c:'#dcdcd6', m:0, lk:0.3}, LOB = {c:'#b4c2c6', m:0, glow:'#ffe6c0', gk:0.8}, GRID = '#5d6368', LEAF = {c:'#4f7a3e', m:0, lk:0.1};
+  // ---- Downtown Gallery podium (39 m): glass behind light vertical fins, recessed glazed ground floor, roof garden ----
+  const YG = 39;
+  foundP(B.p(FOUND), GAL); foundP(B.p(FOUND), T2);
+  wallP(B.p(GLG), GAL, 0.3, YG); capP(B.p(ROOF), GAL, YG);
+  finsP(B.p(FING), GAL, 6, YG, 2.6, 0.9, 0.35);
+  ribP(B.p(FING), GAL, 6, YG, 5.5, 0.5, 0.06); bandAtP(B.p(LOB), GAL, 0.3, 5.7, 0.04);
+  bandAtP(B.p(FING), GAL, YG - 1.2, 1.2, 0.3);
+  for (const [x, z] of alongP(offP(GAL, 5), 9)){ if (inPolyS(offP(T1F, -3), x, z)) continue; treeP(B.p('#5b4a3a'), B.p(LEAF), x, YG, z, 0.9, R); }
+  // ---- Tower 1: four glass blocks between the recessed breaks, deep fins, open-grid crown ----
+  const blocks = [[YG, 80], [84, 123], [127, 166], [170, 192]];
+  for (const [a, b] of blocks){
+    wallP(B.p(GL1), T1F, a, b); capP(B.p(ROOF), T1F, b); capP(B.p(ROOF), T1F, a);
+    facadeP(B, T1F, a, b, {mul:MUL1, bay:1.55, fd:0.12, fw:0.05, fh:3.9, band:MUL1, bh:0.18});
+    // four bays a face: three deep fins + corner fins
+    for (const e of edgesF(T1F)){ if (e.L < 6) continue; for (let k = 0; k <= 4; k++) slabP(B.p(FIN), rectO(k*e.L/4 - 0.35, k*e.L/4 + 0.35, a - 0.4, b + 0.4), e.F, 0, k % 4 ? 1.3 : 0.6); }
+    bandAtP(B.p(FIN), T1F, b - 0.9, 0.9, 0.35);
+  }
+  // breaks: the core and the structural frame show through
+  for (const [a, b] of [[80, 84], [123, 127], [166, 170]]){ blkP(B, CORE, a, b, DARK); for (const p of offP(T1F, 1.2)) segP(B.p(FIN), [p[0], a, p[1]], [p[0], b, p[1]], 0.6, 6); }
+  // crown 192-201: open grid screen round the core
+  blkP(B, CORE, 192, 201, MECH, ROOF);
+  for (const e of edgesF(T1F)){ if (e.L < 2) continue; const n = Math.max(1, Math.round(e.L/2.2));
+    for (let k = 0; k <= n; k++) slabP(B.p(GRID), rectO(k*e.L/n - 0.12, k*e.L/n + 0.12, 192, 201), e.F, -0.2, 0.2);
+    for (let y = 192; y <= 201.01; y += 3) slabP(B.p(GRID), rectO(0, e.L, y - 0.15, y + 0.15), e.F, -0.2, 0.2); }
+  lavP(B.p(LAV50), T1F, 201);
+  // ---- Tower 2 (150 m): light grey cladding with a grid of small windows, recessed glazed base ----
+  wallP(B.p(LOB), offP(T2, 1.5), 0.3, 6); wallP(B.p(CL2), T2, 6, 150); capP(B.p(ROOF), T2, 150);
+  for (const p of T2) segP(B.p(CL2), [p[0], 0.3, p[1]], [p[0], 6, p[1]], 0.8, 8);
+  winP(B, T2, 8, 146, 4.0, 2.2, 1.3, 2.0, WIN2, {minL:5});
+  bandAtP(B.p(CL2), T2, 146, 4, 0.15);
+  blkP(B, scP(T2, 0.6), 150, 155, MECH, ROOF); lavP(B.p(LAV50), T2, 150);
+  B.flush(g); return g; }};
+const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
+SG_PLACES.push({type:'sgoue', lat:PL.lat, lon:PL.lon, rot:0});
+}
+// ================= V on Shenton, 5 Shenton Way (sgvshenton, hero) =================
+// UNStudio with Architects 61 (e-architect / Wikipedia): a 53/54-storey residential tower of 237 m and a 23-storey office tower of
+// 123 m on a shared plinth (car park, sky garden over the whole 8th storey); facades on a hexagon pattern (office: curtain-wall
+// hexagon module; residential: balconies, bay windows and planters stacked into the pattern); sky lobbies on the 24th and 34th
+// floors; a chamfer line frames each tower and the plinth and lights up as a continuous line at night. Plans from OSM: plinth parts
+// (26.4 m) over the site w448084975; residential shafts w560229133 + w560229131 with the link w560229135; office tower w560229136.
+// Look (photo, Commons 2025): residential tower of two joined shafts with white balcony bands and open lattice crowns; office tower
+// silver glass with white hexagon lines; grey plinth with a large hexagon panel pattern.
+{
+const A0 = [1.277411, 103.849369];
+const SITE0 = [[31.4,-80.1],[-58.5,61.7],[-30.2,79.4],[50.9,-50.7],[53.9,-55.4],[55.9,-58.4],[58.6,-62.9]];
+const RA0 = [[-48.7,54.9],[-43.2,57.9],[-47.0,63.1],[-30.2,73.1],[-14.7,47.6],[-36.2,34.6]];
+const RB0 = [[1.5,21.6],[-20.0,8.6],[-33.7,31.1],[-12.2,44.1]];
+const LK0 = [[-33.7,31.1],[-36.2,34.6],[-14.7,47.6],[-12.2,44.1]];
+const OF0 = [[-7.0,-15.9],[18.3,-0.4],[52.3,-56.6],[51.0,-61.4],[29.0,-74.4]];
+const C0 = pcen(SITE0), [SITE, RA, RB, LK, OF] = shAll([SITE0, RA0, RB0, LK0, OF0], C0);
+// honeycomb lines (pointy-top hexagons, flat-to-flat width cw) on facade frame F over u0..u1, v0..v1, strips of width t at offset w
+function hexF(o, F, u0, u1, v0, v1, cw, t, w){
+  const hh = cw/Math.sqrt(3), rs = 1.5*hh; // hexagon circumradius, row step
+  const seg = (a, b) => { // clip to the face box, then a thin strip
+    let [ua, va] = a, [ub, vb] = b; if ((ua < u0 && ub < u0) || (ua > u1 && ub > u1) || (va < v0 && vb < v0) || (va > v1 && vb > v1)) return;
+    const cu = x => Math.max(u0, Math.min(u1, x)), cv = x => Math.max(v0, Math.min(v1, x)); ua = cu(ua); ub = cu(ub); va = cv(va); vb = cv(vb);
+    const L = Math.hypot(ub - ua, vb - va); if (L < 0.2) return; const nu = -(vb - va)/L*t/2, nv = (ub - ua)/L*t/2;
+    shapeP(o, [[ua + nu, va + nv], [ub + nu, vb + nv], [ub - nu, vb - nv], [ua - nu, va - nv]], F, w); };
+  for (let r = 0, v = v0; v < v1 + hh; r++, v += rs) for (let u = u0 + (r % 2 ? cw/2 : 0); u < u1 + cw; u += cw){
+    const P = []; for (let k = 0; k < 6; k++){ const a = PI/6 + k*PI/3; P.push([u + Math.cos(a)*hh, v + Math.sin(a)*hh]); }
+    seg(P[5], P[0]); seg(P[0], P[1]); seg(P[1], P[2]); }
+}
+LANDMARKS.sgvshenton = {zh:'V on Shenton', en:'V on Shenton', cat:'new', r:91, h:237,
+  lt:{m:1, c:'#eaf2ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GLR = {c:'#56636d', m:1, fh:3.9, cw:2.4}, LEDGE = {c:'#e3e5e3', m:0, lk:0.25}, GLO = {c:'#6f8290', m:1, fh:4.2, cw:3.0}, HEX = {c:'#e6e9ea', m:0, lk:0.3},
+    POD = {c:'#9c9e9d', m:0, lk:0.25}, PODG = {c:'#4f5a62', m:1, fh:3.3, cw:3}, ROOF = '#8b8e90', FOUND = '#bdb7ab', PAVE = '#c4beb2', DARK = '#2b3238',
+    CH = {c:'#f2f4f4', m:0, glow:'#e8f4ff', gk:1.1}, LAT = '#d7dadb', LOB = {c:'#b4c2c6', m:0, glow:'#ffe6c0', gk:0.8}, LEAF = {c:'#4f7a3e', m:0, lk:0.1};
+  const YP = 26.4, YR = 226, YRT = 237, YO = 123;
+  // ---- plinth: grey hexagon panels, a glazed base, the sky-garden deck on top ----
+  foundP(B.p(FOUND), SITE); wallP(B.p(POD), SITE, 6, YP); capP(B.p('#7d8a74'), SITE, YP);
+  wallP(B.p(LOB), offP(SITE, 1.2), 0.3, 6); capP(B.p(PAVE), SITE, 0.3);
+  for (const e of edgesF(SITE)) if (e.L > 8){ hexF(B.p(HEX), e.F, 0, e.L, 6.5, YP - 0.5, 6.5, 0.22, 0.06); slabP(B.p(ROOF), rectO(0, e.L, 5.6, 6.4), e.F, 0, 1.6); }
+  for (const p of SITE) segP(B.p(CH), [p[0], YP + 0.05, p[1]], [p[0], 6.4, p[1]], 0.18, 4);
+  bandAtP(B.p(CH), SITE, YP - 0.25, 0.25, 0.1);
+  for (const [x, z] of alongP(offP(SITE, 4), 10)){ if ([RA, RB, LK, OF].some(Q => inPolyS(offP(Q, -2), x, z))) continue; treeP(B.p('#5b4a3a'), B.p(LEAF), x, YP, z, 0.8, R); }
+  // ---- residential tower: two shafts and the recessed link, balcony bands, sky-lobby breaks, lattice crowns ----
+  for (const P of [RA, RB]){
+    wallP(B.p(GLR), P, YP, YR); capP(B.p(ROOF), P, YR);
+    ledgeP(B.p(LEDGE), P, YP + 3.9, YR - 1, 3.9, 0.9, 0.35);
+    // irregular bay windows / planters: short white fins at varying places on each floor (fixed pattern from the rng)
+    for (const e of edgesF(P)) if (e.L > 6) for (let y = YP + 3.9; y < YR - 4; y += 3.9){ const n = 1 + (R()*3 | 0); for (let k = 0; k < n; k++){ const u = 1 + R()*(e.L - 2); slabP(B.p(LEDGE), rectO(u - 0.15, u + 0.15, y, y + 3.9), e.F, 0, 0.9); } }
+    for (const yb of [88.8, 127.8]) wallP(B.p(DARK), offP(P, 1.0), yb, yb + 3.9);
+    for (const p of P) segP(B.p(CH), [p[0], YP, p[1]], [p[0], YR, p[1]], 0.16, 4);
+    latticeP(B.p(LAT), offP(P, 0.3), YR, YRT, 3.2, 0.18, 3, true);
+    capP(B.p(ROOF), offP(P, 3), YR + 1.5); lavP(B.p(LAV50), [P[0], P[2]], YRT);
+  }
+  wallP(B.p(GLR), offP(LK, 0.8), YP, YR - 4); ledgeP(B.p(LEDGE), offP(LK, 0.8), YP + 3.9, YR - 5, 3.9, 0.5, 0.3);
+  // ---- office tower: silver glass with white hexagon lines, chamfer-line edges ----
+  wallP(B.p(GLO), OF, YP, YO); capP(B.p(ROOF), OF, YO);
+  for (const e of edgesF(OF)) if (e.L > 4) hexF(B.p(HEX), e.F, 0, e.L, YP, YO, 6.0, 0.28, 0.08);
+  for (const p of OF) segP(B.p(CH), [p[0], YP, p[1]], [p[0], YO, p[1]], 0.18, 4);
+  bandAtP(B.p(CH), OF, YO - 0.3, 0.3, 0.12);
+  blkP(B, scP(OF, 0.55), YO, YO + 4, '#767b7e', ROOF); lavP(B.p(LAV50), [OF[0], OF[2]], YO);
+  B.flush(g); return g; }};
+const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
+SG_PLACES.push({type:'sgvshenton', lat:PL.lat, lon:PL.lon, rot:0});
 }
 }

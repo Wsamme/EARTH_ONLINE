@@ -8,7 +8,8 @@
    - reflection: the analytic sky of the light module along the wave-perturbed reflected ray, plus (quality 1 / 2) a planar mirror pass
      of the scene at reduced resolution (skyline, hills, ships, the city's night lights), distorted by the wave slopes; the sky in that
      pass is left transparent and comes from lgSky(), so the dome is not drawn twice; trees, roads and small buildings are left
-     out of the mirror pass, shadows are not re-rendered for it, and it is skipped when no water is on screen or the camera is high;
+     out of the mirror pass, it looks at most 2.5-7 km far, shadows are not re-rendered for it, it is re-rendered only every 3rd
+     frame while the camera is still, and it is skipped when no water is on screen or the camera is high;
    - sun / moon glint: GGX (Trowbridge-Reitz) lobe with the Smith visibility term and Fresnel at the half vector;
    - shore: a signed distance-to-coast texture made from the land / water grid (nat) gives a thin moving foam line at the coast and
      calmer water in enclosed basins (fewer waves within a few hundred metres of land); a rendering heuristic, not bathymetry
@@ -20,7 +21,7 @@
 const R50 = window.R50 = window.R50 || {parts:{}};
 const R5Q = /[?&]r50q=(\d)/.exec(location.search), R5OFF = /[?&]r50=0/.test(location.search) || /[?&]r50water=0/.test(location.search);
 const R5 = {on:false, q:window.CB_MOBILE ? 0 : 2, pinned:R5Q ? +R5Q[1] : -1, rt:null, ema:16, slow:0, lastT:0, lastStep:0, pass:false, passMs:0, passCalls:0,
-  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], ups:0, dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0};
+  vis:1, visF:0, coast:null, coastM:0, var:[0, 0, 0], hidden:[], ptm:[], ups:0, dome:null, bg:null, cc:new THREE.Color(), skipWhy:'', frames:0, ran:0, reused:0, pass0:false, rtW:0};
 if (R5.pinned >= 0) R5.q = Math.min(2, R5.pinned);
 const R5U = {
   r5On:{value:0}, r5Nrm:{value:null}, r5Refl:{value:null}, r5ReflOn:{value:0}, r5TexM:{value:new THREE.Matrix4()}, r5PlaneY:{value:-0.05},
@@ -216,17 +217,23 @@ function r5Hide(on){
     sea.material.visible = true;
   }
 }
+const _r5m = new Float64Array(16);
+function r5Still(){ const e = camera.matrixWorld.elements; let s = true; for (let i = 0; i < 16; i++) if (_r5m[i] !== e[i]){ _r5m[i] = e[i]; s = false; } return s; }
 function r5Pass(){
   R5.pass = false; R5U.r5ReflOn.value = 0;
-  if (!R5.on || R5.q === 0){ R5.skipWhy = 'quality 0'; return; }
+  if (!R5.on || R5.q === 0){ R5.pass0 = false; R5.skipWhy = 'quality 0'; return; }
   const cp = camera.position, py = R5U.r5PlaneY.value, above = cp.y - py;
   if (above < 0.8){ R5.skipWhy = 'camera at the water'; return; }
   if (above > 6500){ R5.skipWhy = 'camera high'; return; }
   const D = cp.distanceTo(controls.target);
-  r5Cam.far = Math.min(camera.far, Math.max(6000, D*3 + above*4, 9000));
+  r5Cam.far = Math.min(camera.far, Math.max(2500, Math.min(7000, D*2 + above*6)));
   if ((R5.frames++ % 6) === 0) R5.visF = r5WaterOnScreen(py);
   if (R5.visF < 0.015){ R5.skipWhy = 'no water on screen'; return; }
   const rt = r5Target(); if (!rt){ R5.skipWhy = 'no target'; return; }
+  // a still camera: the mirror image only changes by moving things (ships, trains, lights), so it is refreshed every 3rd frame
+  const still = r5Still();
+  if (still && R5.pass0 && (R5.frames % 3) !== 0 && R5.rtW === rt.width){ R5U.r5ReflOn.value = 1; R5.pass = true; R5.reused++; return; }
+  R5.rtW = rt.width;
   const t0 = performance.now();
   // the mirrored camera (as three.js Reflector does it): position and look-at point reflected in the plane, up vector reflected
   camera.updateMatrixWorld();
@@ -257,7 +264,7 @@ function r5Pass(){
     scene.background = bg; renderer.shadowMap.autoUpdate = au; renderer.info.autoReset = ar; r5Hide(false);
   }
   R5.passCalls = renderer.info.render.calls - calls0; if (ar) renderer.info.reset();
-  R5U.r5ReflOn.value = 1; R5.pass = true; R5.ran++;
+  R5U.r5ReflOn.value = 1; R5.pass = true; R5.pass0 = true; R5.ran++;
   R5.passMs = R5.passMs*0.9 + (performance.now() - t0)*0.1;
 }
 
@@ -298,11 +305,11 @@ HOOKS.frame.push(() => { if (!R5.on || R5.coast || R5.coastTried || typeof SGR =
 
 R50.water = {
   get on(){ return R5.on; },
-  set on(v){ R5.on = !!v && !!sea.material.userData.r5; R5U.r5On.value = R5.on ? 1 : 0; R5U.r5ReflOn.value = 0; },
+  set on(v){ R5.on = !!v && !!sea.material.userData.r5; R5U.r5On.value = R5.on ? 1 : 0; R5U.r5ReflOn.value = 0; R5.pass0 = false; },
   set(q){ R5.pinned = Math.max(0, Math.min(2, q|0)); R5.q = R5.pinned; },
   auto(){ R5.pinned = -1; },
   U:R5U,
-  info:() => ({on:R5.on, q:R5.q, pinned:R5.pinned, pass:R5.pass, skip:R5.pass ? '' : R5.skipWhy, passMs:+R5.passMs.toFixed(2), passCalls:R5.passCalls, waterOnScreen:+R5.visF.toFixed(3),
+  info:() => ({on:R5.on, q:R5.q, pinned:R5.pinned, pass:R5.pass, skip:R5.pass ? '' : R5.skipWhy, passMs:+R5.passMs.toFixed(2), passCalls:R5.passCalls, rendered:R5.ran, reused:R5.reused, waterOnScreen:+R5.visF.toFixed(3),
     rt:R5.rt ? [R5.rt.width, R5.rt.height] : null, emaMs:+R5.ema.toFixed(1), coast:R5.coastM ? {M:R5.coastM, texelM:+R5.coastTx.toFixed(1)} : null, waves:R5.waves, slopeRms:R5.slopeRms ? +R5.slopeRms.toFixed(3) : null})
 };
 }

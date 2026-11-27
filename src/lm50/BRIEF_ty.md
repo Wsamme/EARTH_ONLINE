@@ -109,7 +109,7 @@ Browser — **at most 2 runs per group** (1 "in-situ" batch + 1 full app), alway
    ```
    Poll `app.log`. Pass = **zero PAGEERR** and FAILED-URLS only the expected ones: `/favicon.ico`, the city-switch probes of the sibling pages (`/sg.html`, `/bay.html`, `/gba.html`, `/nyc.html`, `/hk.html`, `/index.html` — 404 + ERR_ABORTED), and `tyodata/models/*` if your build includes `zz_models`. Then
    `rm SC/lm50/ty50x/app/t_<name>.html SC/lm50/ty50x/app/t_<name>-app.js`.
-   Smoke test of this brief: PENDING
+   Smoke test of this brief: **not completed when this brief was written.** `bash K/mkapp.sh SC/lm50/ty/app kt marunouchi,ginza,palace,tyx_central lm50/ty50kit/test/kittest.js` builds and passes `node --check` (≈ 3 s, 5.9 MB script). A first browser run of that page (before `mktest.py` existed) loaded it — the only failed requests were the city-switch probes `/sg.html /bay.html /gba.html /nyc.html /hk.html /index.html` (404 + ERR_ABORTED) — but could not report ready (no `window.__t`); its marker for `?near=` also had to be updated for the two-queue tile loop of tyoreal.js (now in `mktest.py`, which stops if a marker is missing). The re-run with the hooks has been queued on the browser lock since 21:27 UTC (another agent's batch held the lock for > 50 min); its log is `SC/lm50/ty/app.log`, shots in `SC/lm50/ty/shots/`. **The first modeller to run step 6 confirms the expected FAILED-URLS list and zero PAGEERR.**
 7. There is **no separate in-situ harness for Tokyo** this round (the v37 `tyoreal/kit` read `tyoreal/out`, which is gone); step 5's
    restricted build + `NEAR` is the in-situ run: real terrain, roads, buildings and the app's own hiding, with your neighbours.
 

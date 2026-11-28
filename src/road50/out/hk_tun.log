@@ -1,0 +1,522 @@
+[0.2s] hk lines 129329
+[2.6s] prep: junction nodes 61024
+[2.7s] traffic network: links 41716 pieces 30938 nodes 23784 movements 61589
+[3.4s] weak components 205 main 96.4% others >=1 km 25 | SCC main 90.1%
+[3.7s] dead ends {"total":3929,"tunnelopen":1,"tunnel":0,"edge":0,"chunk":0,"gap3":25,"gap6":0,"gap12":34,"levelgap":601,"service":893,"deckend":80,"water":12,"culdesac":2283,"oneway":604} sinks 47 sources 130
+[4.0s] crossings {"falsejunc":46,"lowclear":238,"missedjunc":188,"overpass":2453,"atgrade":3457}
+[4.1s] levels / water {"step1_3":18,"step3_15":297,"step15":83,"steep":118,"inwater":46,"inwaterM":4331,"shortdeck":9}
+[4.9s] routes {"pairs":2000,"ok":1658,"fail":342,"failIsland":136,"failOneway":206,"detourMed":1.56,"detour3":50,"far":1647,"okPct":82.9}
+[5.0s] movements {"moves":61589,"zjump1_5":42,"zjump5":40,"xyFar":0}
+[5.0s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[7.3s] regions {"island>kowloon":{"pairs":100,"ok":86,"okPct":86,"meanKm":10.37},"island>lantau":{"pairs":100,"ok":90,"okPct":90,"meanKm":39.68},"island>newterr":{"pairs":100,"ok":92,"okPct":92,"meanKm":27.1},"kowloon>island":{"pairs":100,"ok":97,"okPct":97,"meanKm":10.8},"kowloon>lantau":{"pairs":100,"ok":92,"okPct":92,"meanKm":33.07},"kowloon>newterr":{"pairs":100,"ok":96,"okPct":96,"meanKm":21.1},"lantau>island":{"pairs":100,"ok":89,"okPct":89,"meanKm":40.77},"lantau>kowloon":{"pairs":100,"ok":77,"okPct":77,"meanKm":35.14},"lantau>newterr":{"pairs":100,"ok":98,"okPct":98,"meanKm":35.28},"newterr>island":{"pairs":100,"ok":99,"okPct":99,"meanKm":23.44},"newterr>kowloon":{"pairs":100,"ok":66,"okPct":66,"meanKm":14.76},"newterr>lantau":{"pairs":100,"ok":93,"okPct":93,"meanKm":33.9}}
+[7.3s] tunnel lines {"lines":336,"km":118.2,"links":410}
+{
+ "city": "hk",
+ "tag": "tun",
+ "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/hkdata",
+ "lines": 129329,
+ "drivableKm": 3978.9,
+ "links": 41716,
+ "nodes": 23784,
+ "junctionNodes": 61024,
+ "weakComponents": 205,
+ "mainWeakPct": 96.39,
+ "otherComponentsOver1km": 25,
+ "otherKm": 143.5,
+ "mainSccPctApp": 67.85,
+ "mainSccPct": 90.08,
+ "closedOnewaySets": 13,
+ "closedOnewayKm": 8.09,
+ "sinkLinksInMain": 274,
+ "sourceLinksInMain": 341,
+ "deadEnds": {
+  "total": 3929,
+  "tunnelopen": 1,
+  "tunnel": 0,
+  "edge": 0,
+  "chunk": 0,
+  "gap3": 25,
+  "gap6": 0,
+  "gap12": 34,
+  "levelgap": 601,
+  "service": 893,
+  "deckend": 80,
+  "water": 12,
+  "culdesac": 2283,
+  "oneway": 604
+ },
+ "onewaySinks": 47,
+ "onewaySources": 130,
+ "crossings": {
+  "falsejunc": 46,
+  "lowclear": 238,
+  "missedjunc": 188,
+  "overpass": 2453,
+  "atgrade": 3457
+ },
+ "levels": {
+  "step1_3": 18,
+  "step3_15": 297,
+  "step15": 83,
+  "steep": 118,
+  "inwater": 46,
+  "inwaterM": 4331,
+  "shortdeck": 9
+ },
+ "movements": {
+  "moves": 61589,
+  "zjump1_5": 42,
+  "zjump5": 40,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1658,
+  "fail": 342,
+  "failIsland": 136,
+  "failOneway": 206,
+  "detourMed": 1.56,
+  "detour3": 50,
+  "far": 1647,
+  "okPct": 82.9
+ },
+ "tunnels": {
+  "portals": 0,
+  "pairs": 0,
+  "unmatched": 0
+ },
+ "tunnelLines": {
+  "lines": 336,
+  "km": 118.2,
+  "links": 410
+ },
+ "regions": {
+  "island>kowloon": {
+   "pairs": 100,
+   "ok": 86,
+   "okPct": 86,
+   "meanKm": 10.37
+  },
+  "island>lantau": {
+   "pairs": 100,
+   "ok": 90,
+   "okPct": 90,
+   "meanKm": 39.68
+  },
+  "island>newterr": {
+   "pairs": 100,
+   "ok": 92,
+   "okPct": 92,
+   "meanKm": 27.1
+  },
+  "kowloon>island": {
+   "pairs": 100,
+   "ok": 97,
+   "okPct": 97,
+   "meanKm": 10.8
+  },
+  "kowloon>lantau": {
+   "pairs": 100,
+   "ok": 92,
+   "okPct": 92,
+   "meanKm": 33.07
+  },
+  "kowloon>newterr": {
+   "pairs": 100,
+   "ok": 96,
+   "okPct": 96,
+   "meanKm": 21.1
+  },
+  "lantau>island": {
+   "pairs": 100,
+   "ok": 89,
+   "okPct": 89,
+   "meanKm": 40.77
+  },
+  "lantau>kowloon": {
+   "pairs": 100,
+   "ok": 77,
+   "okPct": 77,
+   "meanKm": 35.14
+  },
+  "lantau>newterr": {
+   "pairs": 100,
+   "ok": 98,
+   "okPct": 98,
+   "meanKm": 35.28
+  },
+  "newterr>island": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 23.44
+  },
+  "newterr>kowloon": {
+   "pairs": 100,
+   "ok": 66,
+   "okPct": 66,
+   "meanKm": 14.76
+  },
+  "newterr>lantau": {
+   "pairs": 100,
+   "ok": 93,
+   "okPct": 93,
+   "meanKm": 33.9
+  }
+ },
+ "problemCounts": {
+  "island": 25,
+  "oneway_trap": 13,
+  "oneway_noentry": 4,
+  "source": 130,
+  "dead_levelgap": 601,
+  "dead_gap12": 34,
+  "dead_deckend": 71,
+  "dead_water": 12,
+  "dead_shortdeck": 9,
+  "sink": 47,
+  "dead_gap3": 25,
+  "dead_tunnelopen": 1,
+  "lowclear": 238,
+  "missedjunc": 188,
+  "falsejunc": 46,
+  "step": 398,
+  "inwater": 46,
+  "steep": 118,
+  "zjump": 42
+ },
+ "topIslands": [
+  {
+   "len": 17990,
+   "x": -10815,
+   "y": -4388,
+   "cls": 6,
+   "names": [
+    "Seabee Lane",
+    "Seahorse Lane",
+    "Marina Drive",
+    "Caperidge Drive"
+   ]
+  },
+  {
+   "len": 16349,
+   "x": -18232,
+   "y": -3107,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -17128,
+    "y": -2904,
+    "e": 0,
+    "e2": 6.6,
+    "li": 117168,
+    "to": 98481
+   }
+  },
+  {
+   "len": 15680,
+   "x": -9433,
+   "y": -14682,
+   "cls": 10,
+   "names": [
+    "San Hing Street",
+    "Tung Wan Road",
+    "Hing Lung Main Street",
+    "Hing Lung Back Street"
+   ]
+  },
+  {
+   "len": 5898,
+   "x": -9059,
+   "y": -9399,
+   "cls": 10,
+   "names": [
+    "Hei Ling Chau Road"
+   ]
+  },
+  {
+   "len": 4914,
+   "x": -19086,
+   "y": -11768,
+   "cls": 10,
+   "names": [
+    "Tong Fuk Catchwater"
+   ]
+  },
+  {
+   "len": 4743,
+   "x": -213,
+   "y": -12843,
+   "cls": 10,
+   "names": [
+    "Power Station Road"
+   ]
+  },
+  {
+   "len": 4738,
+   "x": 1001,
+   "y": 362,
+   "cls": 0,
+   "names": [
+    "Lin Cheung Road",
+    "Tsing Kwai Highway"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 2230,
+    "y": -897,
+    "e": 13.2,
+    "e2": 31.2,
+    "li": 93290,
+    "to": 95879
+   }
+  },
+  {
+   "len": 4238,
+   "x": -8468,
+   "y": -6008,
+   "cls": 10,
+   "names": [
+    "Lo Peng Street",
+    "Chi Yan Street",
+    "Wing On Side Street",
+    "Fu Peng Street"
+   ]
+  },
+  {
+   "len": 4099,
+   "x": -10855,
+   "y": 15310,
+   "cls": 10,
+   "names": [
+    "Border Fence Road"
+   ]
+  },
+  {
+   "len": 4074,
+   "x": -13495,
+   "y": -15924,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 3074,
+   "x": -6115,
+   "y": 1179,
+   "cls": 1,
+   "names": [
+    "Ma Wan Road",
+    "Pak Lai Road",
+    "Pak Lam Road",
+    "Fong Yuen Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -6076,
+    "y": 987,
+    "e": 2.8,
+    "e2": 26,
+    "li": 102073,
+    "to": 102077
+   }
+  },
+  {
+   "len": 2705,
+   "x": -17868,
+   "y": 17219,
+   "cls": 4,
+   "names": [
+    "Wanghai Road"
+   ]
+  },
+  {
+   "len": 2690,
+   "x": -17882,
+   "y": 17244,
+   "cls": 4,
+   "names": [
+    "Wanghai Road"
+   ]
+  },
+  {
+   "len": 2433,
+   "x": -9876,
+   "y": 2553,
+   "cls": 10,
+   "names": [
+    "Tai Lam Chung Catchwater Section J"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -10028,
+    "y": 2676,
+    "e": 0,
+    "e2": 5.6,
+    "li": 49310,
+    "to": 49279
+   }
+  },
+  {
+   "len": 1976,
+   "x": 13127,
+   "y": -4941,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1769,
+   "x": 2422,
+   "y": -1004,
+   "cls": 1,
+   "names": [
+    "Lai Po Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 2727,
+    "y": -1111,
+    "e": 19.6,
+    "e2": 34,
+    "li": 95862,
+    "to": 95906
+   }
+  },
+  {
+   "len": 1609,
+   "x": -17990,
+   "y": 17403,
+   "cls": 0,
+   "names": [
+    "Shenzhen Bay Bridge",
+    "Kong Sham Western Highway"
+   ]
+  },
+  {
+   "len": 1597,
+   "x": -10102,
+   "y": 13624,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 74.6,
+    "x": -10364,
+    "y": 13552,
+    "e": 0,
+    "e2": 0,
+    "li": 90562,
+    "to": 91616
+   }
+  },
+  {
+   "len": 1343,
+   "x": 1841,
+   "y": -1426,
+   "cls": 1,
+   "names": [
+    "Hing Wah Street West"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 1835,
+    "y": -1423,
+    "e": 21,
+    "e2": 5.8,
+    "li": 108537,
+    "to": 109337
+   }
+  },
+  {
+   "len": 1292,
+   "x": -19598,
+   "y": -7329,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1276,
+   "x": -1876,
+   "y": 17151,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 0.3,
+    "x": -1642,
+    "y": 17251,
+    "e": 5,
+    "e2": 0,
+    "li": 89852,
+    "to": 124085
+   }
+  },
+  {
+   "len": 1253,
+   "x": -6784,
+   "y": 11537,
+   "cls": 10,
+   "names": [
+    "Ko Po Road"
+   ],
+   "gap": {
+    "d": 0.2,
+    "x": -6412,
+    "y": 11076,
+    "e": 0,
+    "e2": 4.7,
+    "li": 108566,
+    "to": 103434
+   }
+  },
+  {
+   "len": 1129,
+   "x": -4665,
+   "y": 19613,
+   "cls": 8,
+   "names": [
+    "Innovation and Technology Park Road",
+    "Research Road"
+   ],
+   "gap": {
+    "d": 28.9,
+    "x": -4769,
+    "y": 19543,
+    "e": 5.6,
+    "e2": 0,
+    "li": 128417,
+    "to": 126939
+   }
+  },
+  {
+   "len": 1122,
+   "x": -17915,
+   "y": 17412,
+   "cls": 0,
+   "names": [
+    "Kong Sham Western Highway"
+   ]
+  },
+  {
+   "len": 1062,
+   "x": 4951,
+   "y": 10722,
+   "cls": 10,
+   "names": [
+    "Shan Tong Road"
+   ],
+   "gap": {
+    "d": 0.8,
+    "x": 5217,
+    "y": 11172,
+    "e": 6.6,
+    "e2": 6.6,
+    "li": 111171,
+    "to": 107323
+   }
+  }
+ ]
+}
+[7.5s] map /home/claude/earth_online/src/road50/out/hk_tun_central.png
+[7.9s] map /home/claude/earth_online/src/road50/out/hk_tun_kowloon.png
+[8.0s] map /home/claude/earth_online/src/road50/out/hk_tun_shatin.png

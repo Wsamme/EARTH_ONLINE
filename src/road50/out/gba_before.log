@@ -1,0 +1,519 @@
+[0.5s] gba lines 268387
+[5.9s] prep: junction nodes 223636
+[6.6s] traffic network: links 240706 pieces 173559 nodes 128245 movements 399519
+[9.2s] weak components 2071 main 92.5% others >=1 km 282 | SCC main 85.7%
+[10.9s] dead ends {"total":21511,"tunnel":0,"edge":0,"chunk":7,"gap3":1220,"gap6":89,"gap12":313,"levelgap":5545,"service":2187,"deckend":280,"water":160,"culdesac":11710,"oneway":6283} sinks 181 sources 577
+[12.6s] crossings {"falsejunc":88,"lowclear":1616,"missedjunc":1548,"overpass":11322,"atgrade":35297}
+[12.8s] levels / water {"step1_3":800,"step3_15":2511,"step15":297,"steep":143,"inwater":1162,"inwaterM":139746,"shortdeck":16}
+[17.7s] routes {"pairs":2000,"ok":1582,"fail":418,"failIsland":305,"failOneway":113,"detourMed":1.31,"detour3":13,"far":1582,"okPct":79.1}
+[17.8s] movements {"moves":399519,"zjump1_5":472,"zjump5":413,"xyFar":0}
+[17.8s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+{
+ "city": "gba",
+ "tag": "before",
+ "dir": "/home/claude/earth_online/site/gbadata",
+ "lines": 268387,
+ "drivableKm": 30061.3,
+ "links": 240706,
+ "nodes": 128245,
+ "junctionNodes": 223636,
+ "weakComponents": 2071,
+ "mainWeakPct": 92.49,
+ "otherComponentsOver1km": 282,
+ "otherKm": 2256.9,
+ "mainSccPctApp": 71.23,
+ "mainSccPct": 85.66,
+ "closedOnewaySets": 28,
+ "closedOnewayKm": 19,
+ "sinkLinksInMain": 2181,
+ "sourceLinksInMain": 2380,
+ "deadEnds": {
+  "total": 21511,
+  "tunnel": 0,
+  "edge": 0,
+  "chunk": 7,
+  "gap3": 1220,
+  "gap6": 89,
+  "gap12": 313,
+  "levelgap": 5545,
+  "service": 2187,
+  "deckend": 280,
+  "water": 160,
+  "culdesac": 11710,
+  "oneway": 6283
+ },
+ "onewaySinks": 181,
+ "onewaySources": 577,
+ "crossings": {
+  "falsejunc": 88,
+  "lowclear": 1616,
+  "missedjunc": 1548,
+  "overpass": 11322,
+  "atgrade": 35297
+ },
+ "levels": {
+  "step1_3": 800,
+  "step3_15": 2511,
+  "step15": 297,
+  "steep": 143,
+  "inwater": 1162,
+  "inwaterM": 139746,
+  "shortdeck": 16
+ },
+ "movements": {
+  "moves": 399519,
+  "zjump1_5": 472,
+  "zjump5": 413,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1582,
+  "fail": 418,
+  "failIsland": 305,
+  "failOneway": 113,
+  "detourMed": 1.31,
+  "detour3": 13,
+  "far": 1582,
+  "okPct": 79.1
+ },
+ "tunnels": {
+  "portals": 0,
+  "pairs": 0,
+  "unmatched": 0
+ },
+ "problemCounts": {
+  "island": 200,
+  "oneway_trap": 28,
+  "oneway_noentry": 8,
+  "dead_deckend": 264,
+  "dead_levelgap": 5545,
+  "dead_gap6": 89,
+  "dead_gap3": 1220,
+  "source": 577,
+  "dead_shortdeck": 16,
+  "dead_gap12": 313,
+  "dead_water": 160,
+  "sink": 181,
+  "dead_chunk": 7,
+  "lowclear": 1616,
+  "missedjunc": 1548,
+  "falsejunc": 88,
+  "step": 3608,
+  "inwater": 1162,
+  "steep": 143,
+  "zjump": 472
+ },
+ "topIslands": [
+  {
+   "len": 462059,
+   "x": 13176,
+   "y": -42278,
+   "cls": 0,
+   "names": [
+    "Stanley New Street",
+    "Stanley Village Road",
+    "Stanley Market Road",
+    "Repulse Bay Road"
+   ]
+  },
+  {
+   "len": 115468,
+   "x": -11079,
+   "y": -38735,
+   "cls": 0,
+   "names": [
+    "South Perimeter Road",
+    "Tung Chung Eastern Interchange",
+    "Ying Hei Road",
+    "Yi Tung Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -192,
+    "y": -34881,
+    "e": 27,
+    "e2": 0,
+    "li": 39671,
+    "to": 39673
+   }
+  },
+  {
+   "len": 89347,
+   "x": 45602,
+   "y": -881,
+   "cls": 0,
+   "names": [
+    "Huizhou-Shenzhen Coastal Expressway",
+    "Heba Road",
+    "Kuiwan Road",
+    "Baishawan Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 45231,
+    "y": 160,
+    "e": 0,
+    "e2": 0,
+    "li": 180803,
+    "to": 180804
+   }
+  },
+  {
+   "len": 76031,
+   "x": -10551,
+   "y": -43985,
+   "cls": 4,
+   "names": [
+    "South Lantau Road",
+    "Shek Pik Reservoir Road",
+    "Wang Pui Road",
+    "Ma Po Ping Road"
+   ]
+  },
+  {
+   "len": 46245,
+   "x": -13044,
+   "y": 34265,
+   "cls": 0,
+   "names": [
+    "Guangzhou-Longchuan Expressway",
+    "Hehuiguan Expressway"
+   ],
+   "gap": {
+    "d": 7.3,
+    "x": -26737,
+    "y": 29521,
+    "e": 7.2,
+    "e2": 0,
+    "li": 227528,
+    "to": 227345
+   }
+  },
+  {
+   "len": 31372,
+   "x": 15273,
+   "y": -25918,
+   "cls": 6,
+   "names": [
+    "Chung Chi Road",
+    "Pond Crescent",
+    "Station Road",
+    "Residence Lane 1"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 15982,
+    "y": -27752,
+    "e": 0,
+    "e2": 5.2,
+    "li": 99191,
+    "to": 98503
+   }
+  },
+  {
+   "len": 31251,
+   "x": -363,
+   "y": 38271,
+   "cls": 0,
+   "names": [
+    "Conghua-Dongguan-Shenzhen Expressway"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -2836,
+    "y": 38096,
+    "e": 7.4,
+    "e2": 0.4,
+    "li": 240542,
+    "to": 241126
+   }
+  },
+  {
+   "len": 26192,
+   "x": 12132,
+   "y": 22710,
+   "cls": 0,
+   "names": [
+    "Huizhou-Tangxia Expressway"
+   ],
+   "gap": {
+    "d": 0.1,
+    "x": 12737,
+    "y": 22378,
+    "e": 4.8,
+    "e2": 0,
+    "li": 223097,
+    "to": 223547
+   }
+  },
+  {
+   "len": 21008,
+   "x": 29393,
+   "y": -5182,
+   "cls": 0,
+   "names": [
+    "Huizhou-Shenzhen Coastal Expressway",
+    "Xiping South Road",
+    "Yancun Rd"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 27882,
+    "y": -5674,
+    "e": 2.6,
+    "e2": 0,
+    "li": 179176,
+    "to": 179604
+   }
+  },
+  {
+   "len": 17573,
+   "x": -1482,
+   "y": -37008,
+   "cls": 0,
+   "names": [
+    "Sea Point Road",
+    "Penny's Bay Highway",
+    "Magic Road",
+    "Fantasy Road"
+   ]
+  },
+  {
+   "len": 16121,
+   "x": -3786,
+   "y": -39279,
+   "cls": 6,
+   "names": [
+    "Seabee Lane",
+    "Seahorse Lane",
+    "Marina Drive",
+    "Caperidge Drive"
+   ]
+  },
+  {
+   "len": 15425,
+   "x": -949,
+   "y": 11043,
+   "cls": 0,
+   "names": [
+    "Shenzhen Outer Ring Expressway"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 7515,
+    "y": 13074,
+    "e": 20.4,
+    "e2": 7.2,
+    "li": 210114,
+    "to": 210069
+   }
+  },
+  {
+   "len": 15340,
+   "x": -2463,
+   "y": -49673,
+   "cls": 10,
+   "names": [
+    "San Hing Street",
+    "Tung Wan Road",
+    "Hing Lung Main Street",
+    "Hing Lung Back Street"
+   ]
+  },
+  {
+   "len": 15021,
+   "x": 12049,
+   "y": -7020,
+   "cls": 8,
+   "names": [
+    "Xinping Rd",
+    "Lake Road",
+    "Cycad Road",
+    "Crape Myrtle Road"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 12178,
+    "y": -5661,
+    "e": 1,
+    "e2": 5,
+    "li": 177221,
+    "to": 177413
+   }
+  },
+  {
+   "len": 14757,
+   "x": 10965,
+   "y": -12143,
+   "cls": 1,
+   "names": [
+    "Heung Yuen Wai Highway"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 11277,
+    "y": -12953,
+    "e": 3.8,
+    "e2": 0,
+    "li": 157863,
+    "to": 158460
+   }
+  },
+  {
+   "len": 14650,
+   "x": -43979,
+   "y": 24590,
+   "cls": 0,
+   "names": [
+    "Guangzhou-Longchuan Expressway"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -46183,
+    "y": 23642,
+    "e": 0.4,
+    "e2": 7.2,
+    "li": 216996,
+    "to": 217299
+   }
+  },
+  {
+   "len": 14471,
+   "x": -571,
+   "y": 11036,
+   "cls": 0,
+   "names": [
+    "Shenzhen Outer Ring Expressway"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 7372,
+    "y": 12883,
+    "e": 20.4,
+    "e2": 7.2,
+    "li": 210115,
+    "to": 210068
+   }
+  },
+  {
+   "len": 13356,
+   "x": -2612,
+   "y": 37789,
+   "cls": 0,
+   "names": [
+    "Conghua-Dongguan-Shenzhen Expressway"
+   ],
+   "gap": {
+    "d": 15.7,
+    "x": -835,
+    "y": 34937,
+    "e": 20.4,
+    "e2": 22.2,
+    "li": 241077,
+    "to": 241132
+   }
+  },
+  {
+   "len": 13334,
+   "x": -20823,
+   "y": 9172,
+   "cls": 0,
+   "names": [
+    "Shenzhen Outer Ring Expressway"
+   ],
+   "gap": {
+    "d": 11.4,
+    "x": -19903,
+    "y": 8989,
+    "e": 13.8,
+    "e2": 19.7,
+    "li": 185680,
+    "to": 185198
+   }
+  },
+  {
+   "len": 13145,
+   "x": 24739,
+   "y": -39565,
+   "cls": 6,
+   "names": [
+    "Tai Wan Tau Road",
+    "Po Toi O Chuen Road",
+    "Tai Au Mun Road",
+    "Mau Po Road"
+   ],
+   "gap": {
+    "d": 49.6,
+    "x": 24027,
+    "y": -38974,
+    "e": 0,
+    "e2": 4.4,
+    "li": 75561,
+    "to": 75047
+   }
+  },
+  {
+   "len": 12926,
+   "x": -20763,
+   "y": 9189,
+   "cls": 0,
+   "names": [
+    "Shenzhen Outer Ring Expressway"
+   ],
+   "gap": {
+    "d": 29.5,
+    "x": -19888,
+    "y": 9001,
+    "e": 13.8,
+    "e2": 19.5,
+    "li": 185685,
+    "to": 185198
+   }
+  },
+  {
+   "len": 12842,
+   "x": -7397,
+   "y": -38915,
+   "cls": 6,
+   "names": [
+    "Cheung Tung Road Access Road",
+    "Cheung Tung Road",
+    "Hong Kong Olympic Trail",
+    "Sham Shui Kok Drive"
+   ]
+  },
+  {
+   "len": 11664,
+   "x": 10607,
+   "y": -45683,
+   "cls": 3,
+   "names": [
+    "Ap Lei Chau Drive",
+    "Ap Lei Chau Praya Road",
+    "Ap Lei Chau Bridge Road",
+    "Lee Nam Road"
+   ]
+  },
+  {
+   "len": 11377,
+   "x": -26199,
+   "y": -26672,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 9766,
+   "x": -18831,
+   "y": -41220,
+   "cls": 0,
+   "names": [
+    "Hong Kong-Zhuhai-Macao Bridge Hong Kong Link Road",
+    "Hong Kong-Zhuhai-Macao Bridge"
+   ]
+  }
+ ]
+}
+[18.0s] map /home/claude/earth_online/src/road50/out/gba_before_futian.png
+[18.2s] map /home/claude/earth_online/src/road50/out/gba_before_luohu.png
+[18.4s] map /home/claude/earth_online/src/road50/out/gba_before_dongguan.png

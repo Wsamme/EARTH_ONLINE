@@ -1,0 +1,10 @@
+[1.4s] nyc lines 370838
+[5.0s] R6 tunnels {"ways":387,"kept":374,"portals":1076,"snapped":294,"mouths":316,"km":55.5,"extended":0}
+[17.3s] R3 pass 0 conflicts 1684 fixed 485
+[26.3s] R3 pass 1 conflicts 986 fixed 100
+[35.2s] R3 pass 2 conflicts 855 fixed 12
+[35.2s] R3: conflicts 1684 fixed 597 flagged 838
+[49.6s] R1/R2: dead ends 15538 joined 71 inserted vertices 10 flagged 185
+[52.2s] R4: low crossings 121 raised bridges 6 flagged 106
+[52.4s] R5: steep lines 195 re-graded 31 flagged 164
+[54.1s] {"city":"nyc","src":"/home/claude/earth_online/site/nycdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/nycdata","lines":371212,"tunnels":{"ways":387,"kept":374,"portals":1076,"snapped":294,"mouths":316,"km":55.5,"extended":0},"changedLines":2337,"changes":{"R6":374,"R3":1610,"R1":71,"R4":6,"R5":31},"flagged":{"R3: bridge decks share a node mid#span":6,"R3: # % ramp spreads over > # lines":563,"R3: # % ramp loses junction (c#)":52,"R3: # % ramp would change a sourced deck (>= # m)":186,"R3: # % ramp lifts a dead end":8,"R3: # % ramp makes a new junction (c#)":18,"R3: # % ramp low clearance over c#b":1,"R3: # % ramp loses junction (c#b)":1,"R3: # % ramp makes a new junction (c#b)":1,"R3: # % ramp low clearance over c#":2,"R1: level #":170,"R1: level #, bridge / ground":10,"R1: level #, classes #/#":1,"R1: classes #/#":1,"R1: level #, classes #/#, bridge / ground":1,"R1: bridge / ground":2,"R4: bridge too short to clear the road below with <= # % ramps":106,"R5: jump next to a fixed junction / line end":161,"R5: re#grading: loses junction (c#)":1,"R5: re#grading: low clearance over c#":2},"rules":["R6","R1","R2","R3","R4","R5"],"gap":6}

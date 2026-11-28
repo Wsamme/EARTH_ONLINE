@@ -40,6 +40,9 @@
    traffic assignment and the flow overlay still run), so stepCars() has nothing to move; the "车辆 cars" checkbox (#showCars)
    toggles these vehicles instead. Everything lives in one group in the scene, visible only with the "network" toggle
    (showNet && moverGroup.visible); HOOKS.net (network rebuilt / reset) restarts the simulation.
+   [road50] tunnels: lines the roads module marks L.tun (hidden tunnel / underpass ways, joined to the roads at their portals) are
+   ordinary links for routing and movements; vehicles on them are not drawn and are no obstacles; nothing spawns on them (they are in
+   no tile of the zone), so vehicles enter at one portal and come out at the other.
    [nyc/nycapp] New York City (SGR_NYC, tested lazily): yellow cabs by where a car appears (Manhattan below 96th Street ~35 %, upper
    Manhattan ~8 %, by the airports ~12 %, the other boroughs ~3 %, outside the city ~0.5 %; plain taxi yellow, a plain roof light),
    fewer pickups, city speeds (25 mph streets, 30 mph major arterials, 50 mph expressways), the real OSM bus stops of the map
@@ -97,7 +100,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // a drivable line: classes 0-10 inside the map (no Johor / Batam context), not hidden by a landmark / repainted block
   function drivable(li){
     let v = NET.skip[li]; if (v) return v === 1;
-    const L = NET.lines[li]; let ok = L.c <= 10 && !(L.flags & 8);
+    const L = NET.lines[li]; let ok = (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8);       // [road50] tunnels: their road class
     if (ok && L.c === 10 && typeof sgrSkipLine === 'function'){ try { if (sgrSkipLine(li)) ok = false; } catch (e){} }
     NET.skip[li] = ok ? 1 : 2; return ok;
   }
@@ -115,7 +118,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const GS = 7;
   function geomOf(li){
     let g = NET.GEO.get(li); if (g) return g;
-    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.c, R = R_RT[c] || 0;
+    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.tun ? L.tc : L.c, R = R_RT[c] || 0;
     const j0 = J.lJO[li], j1 = J.lJO[li+1], nmMax = 16;
     const TT = new Float64Array(np), TN = new Uint8Array(np);
     for (let k = 1; k < np - 1; k++){
@@ -233,11 +236,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const VMAX_NY = [22.4, 15.6, 20.1, 13.4, 13.4, 11.2, 11.2, 11.2, 11.2, 11.2, 11.2];
   let DLID = 0;
   function makeDl(li, g, dir, a, b, from, to){
-    const L = NET.lines[li], c = L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
+    const L = NET.lines[li], c = L.tun ? L.tc : L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
     const dl = {id:DLID++, li, g, dir, a, b, len:b - a, from, to, c, ow, link:(L.flags & 16) !== 0, nL, lane:laneOffsets(c, ow, nL),
       vmax:(NET.nyc ? VMAX_NY : NET.us ? VMAX_US : VMAX_SG)[c], name:(L.name && L.name[0]) || L.ref || '', ref:L.ref || '', elev:g.elev,
       head:new Array(nL).fill(null), tail:new Array(nL).fill(null), exitV:new Array(nL).fill(null), cnt:0,
-      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false};
+      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false,
+      tun:!!L.tun};                                              // [road50] a hidden tunnel link (roads module: class + 32): driven, not drawn
     NET.DL.push(dl);
     return dl;
   }
@@ -1251,7 +1255,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[CULLI++]; if (!V.alive) continue;
       const dl = V.dl, m = dl.mid || [ZONE.cx, ZONE.cy], d = Math.hypot(m[0] - ZONE.cx, m[1] - ZONE.cy);
       if (!ZONE.on || d > R || (dl.act !== ZONE.stamp && d > ZONE.R - 100)){ if (!V.vis || d > R + 400) killVehicle(V); continue; }
-      if (!V.bus){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
+      if (!V.bus && !dl.tun){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
       if (V.wait > 70 && !V.vis){ killVehicle(V); continue; }
       if (!dl.tb && !V.vis){ if (tileBuilt(dl.mid)) dl.tb = true; else { killVehicle(V); continue; } }
     }
@@ -1973,6 +1977,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[i]; if (!V.alive) continue;
       const T = V.T, len = V.len;
       if (V.crash){ renderCrash(V, cx, cy, cz, lights); continue; }
+      if (V.dl.tun){ V.cd = 1e9; V.vis = false; continue; }      // [road50] underground: hidden between the portals
       // centre first (cheap) for distance and culling
       pathAt(V, V.u - len*0.5, _r);
       const dx0 = _r.x - cx, dy0 = _r.y - cy, dz0 = _r.z - cz, d2 = dx0*dx0 + dy0*dy0 + dz0*dz0;
@@ -2282,7 +2287,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // free-drive / other modules: oriented boxes of the vehicles within r of (x, y): [{x, y, hx, hy, hl, hw, z, v}]
   function obstacles(x, y, r, out){
     out = out || []; out.length = 0; const r2 = r*r; if (TRF.suspend) return out;
-    for (const V of VEH){ if (!V.alive) continue; const K = V.crash;
+    for (const V of VEH){ if (!V.alive || (V.dl && V.dl.tun && !V.crash)) continue; const K = V.crash;
       if (K){ const dx = K.x - x, dy = K.y - y; if (dx*dx + dy*dy > r2) continue;
         out.push({x:K.x, y:K.y, hx:Math.cos(K.psi), hy:Math.sin(K.psi), hl:V.len/2, hw:V.wid/2, z:K.z, v:0, vx:K.vx, vy:K.vy, w:K.w, id:V.id, m:K.m, crash:true, k:V.T.k}); continue; }
       pathAt(V, V.u - V.len*0.5, _q); const dx = _q.x - x, dy = _q.y - y; if (dx*dx + dy*dy > r2) continue;
@@ -2327,6 +2332,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
     spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
+    // [road50] test helper: every live vehicle's pose (centre of the body on its path) for the stuck / jump / off-deck checks
+    poses:() => VEH.filter(V => V.alive && !V.crash).map(V => { pathAt(V, V.u - V.len*0.5, _q); return {id:V.id, x:+_q.x.toFixed(2), y:+_q.y.toFixed(2), z:+_q.z.toFixed(2), v:+V.v.toFixed(2), wait:+V.wait.toFixed(1), li:V.dl.li, c:V.dl.c, el:V.dl.elev ? 1 : 0, ctrl:V.dl.ctrl, dEnd:+(V.dl.len - V.u).toFixed(1), tun:V.dl.tun ? 1 : 0}; }),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),
     _int:{NET, ZONE, VEH, BUS, SIG, PR, RN},

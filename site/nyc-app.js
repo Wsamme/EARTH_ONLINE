@@ -15098,6 +15098,9 @@ SG_PLACES.length = 0; for (const k of Object.keys(SITES)) delete SITES[k];
 // merges / diverges, arc-smoothed centrelines, Singapore markings, kerbs + footways + planted medians, LED street
 // lighting with poles, tunnel portals, smooth ramps, and a drivable surface query (surfaceAt).
 // [lm24/roadfix] tunnel portals with a closed end also at the line ends the data marks as tunnel mouths (flags 64 start / 128 end, any class).
+// [road50] tunnels: records of class c + 32 are hidden tunnel / underpass lines (L.tun, L.c = c + 32 so other modules' class filters skip
+// them, L.tc = c): they join the junction graph only at shared vertices (portals) so traffic can drive them, and nothing of them is drawn,
+// indexed or labelled; portal ends are drawn as before.
 // v22: a US style for the San Francisco Bay Area map (right-hand traffic, US markings, cobra-head street lights, concrete sidewalks,
 // Caltrans concrete freeways), on when the global SGR_BAY is true (or SGRoads.setUS(true)); Singapore is unchanged.
 const SGRoads = (() => {
@@ -15181,7 +15184,7 @@ const SGRoads = (() => {
     const vu = () => { let v = 0, m = 1, b; do { b = u8[o++]; v += (b & 127)*m; m *= 128; } while (b & 128); return v; };
     const n = vu(), lines = new Array(n); let px = 0, py = 0;
     for (let i = 0; i < n; i++){
-      const c = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2);
+      const c0 = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2), tun = c0 >= 32 && c0 < 64, c = c0;
       for (let k = 0; k < np; k++){
         const a = vu(), b = vu();
         px += (a % 2) ? -(a + 1)/2 : a/2; py += (b % 2) ? -(b + 1)/2 : b/2;
@@ -15191,6 +15194,7 @@ const SGRoads = (() => {
       if (f & 4){ const sc = (f & 32) ? 2.5 : 5; E = new Float32Array(np); for (let k = 0; k < np; k++) E[k] = u8[o++]/sc; }
       const nm = ni && names ? names[ni] : null;
       lines[i] = {c, flags:f, name:nm ? [nm[0] || '', nm[1] || ''] : null, ref:(ri && refs) ? refs[ri] || null : null, P, E};
+      if (tun){ lines[i].tun = true; lines[i].tc = c0 - 32; }         // [road50] hidden tunnel line: c stays >= 32 (other modules skip it), tc = its road class
     }
     return lines;
   }
@@ -15237,6 +15241,7 @@ const SGRoads = (() => {
       for (let k = 0; k < P.length; k += 2){ const x = P[k], y = P[k+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       LBB[i*4] = x0; LBB[i*4+1] = y0; LBB[i*4+2] = x1; LBB[i*4+3] = y1;
       const a = tcl(x0), b = tcl(y0), c = tcl(x1), d = tcl(y1); tr[i*4] = a; tr[i*4+1] = b; tr[i*4+2] = c; tr[i*4+3] = d;
+      if (lines[i].tun){ tr[i*4] = 1; tr[i*4+2] = 0; continue; }         // [road50] tunnels: in no tile (not drawn, not indexed)
       for (let ty = b; ty <= d; ty++) for (let tx = a; tx <= c; tx++) cnt[ty*TXn + tx + 1]++;
     }
     for (let t = 0; t < NT; t++) cnt[t+1] += cnt[t];
@@ -15295,11 +15300,11 @@ const SGRoads = (() => {
     for (let nd = 0, NN = C.nodeOff.length - 1; nd < NN; nd++){
       const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; if (o1 - o0 < 2) continue;
       let cnt = 0, e0 = 0, first = -1;
-      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
+      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
       if (cnt < 2) continue;
       const L0 = lines[C.incL[first]], vx = L0.P[C.incV[first]*2], vy = L0.P[C.incV[first]*2+1];
       ev(vx, vy, e0);
-      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
+      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
     }
     TL('seeds ' + nev);
     // 2. crossings (segments registered in every 32 m cell they pass) and line ends touching another line's segment
@@ -15314,11 +15319,11 @@ const SGRoads = (() => {
         if (Math.abs(nx*(mx - ax) + ny*(my - ay)) <= r) fn(cy*NCX + cx);
       }
     };
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1;
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1;
       for (let k = 0; k + 1 < m; k++) visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { ccnt[key + 1]++; }); }
     for (let i = 0; i < NCELL; i++) ccnt[i+1] += ccnt[i];
     const cseg = new Int32Array(ccnt[NCELL]), cfill = ccnt.slice(0, NCELL);
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let k = 0; k + 1 < m; k++){ const gid = o + k; visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { cseg[cfill[key]++] = gid; }); } }
     TL('cells ' + cseg.length);
     const JT2 = JT*JT, cellOfXY = (x, y) => (Math.floor((y + HALF)/CS) + 2)*NCX + Math.floor((x + HALF)/CS) + 2;
@@ -15344,7 +15349,7 @@ const SGRoads = (() => {
     TL('crossings ' + nev);
     // line ends on another line's segment (not at one of its vertices)
     for (let i = 0; i < n; i++){
-      const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+      const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let w = 0; w < 2; w++){
         const k = w ? m - 1 : 0, qx = P[k*2], qy = P[k*2+1], e1 = L.E ? L.E[k] : 0;
         const gx0 = Math.floor((qx - JT + HALF)/CS) + 2, gx1 = Math.floor((qx + JT + HALF)/CS) + 2, gy0 = Math.floor((qy - JT + HALF)/CS) + 2, gy1 = Math.floor((qy + JT + HALF)/CS) + 2;
@@ -15442,7 +15447,7 @@ const SGRoads = (() => {
     const cfind = a => { while (cpar[a] !== a){ cpar[a] = cpar[cpar[a]]; a = cpar[a]; } return a; };
     // major arms per node (classes 0-10, no slip roads): only crossings of real roads merge into complexes
     const NM = new Uint8Array(nN);
-    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16)) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
+    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16) || L.tun) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
     const J = {nN, NX:NX.subarray(0, nN), NY:NY.subarray(0, nN), NE:NE.subarray(0, nN), NA:NA.subarray(0, nN), NM, nIO, nIL, nIS, nIP, lJO, lJS, lJN, LEN};
     C.J = J;
     for (let i = 0; i < n; i++){ for (let p = lJO[i]; p + 1 < lJO[i+1]; p++) if (internal(C, i, p)){ const a = cfind(lJN[p]), b = cfind(lJN[p+1]); if (a !== b) cpar[a] = b; } }
@@ -15479,7 +15484,7 @@ const SGRoads = (() => {
     let S = new Float32Array(1 << 18), LI = new Int32Array(1 << 15), FL = new Uint8Array(1 << 15), CL = new Uint8Array(1 << 15), SA0 = new Float32Array(1 << 15), ns = 0;
     let KP = new Int32Array(1 << 17), np2 = 0;                                // (cell key, piece) pairs; cells: key -> cell index (compact CSR)
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18)) continue;
+      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18) || L.tun) continue;
       const P = L.P, E = L.E, hw = hwOf(L), np = P.length >> 1; let sacc = 0;
       for (let k = 0; k + 1 < np; k++){
         const ax = P[k*2], ay = P[k*2+1], bx = P[k*2+2], by = P[k*2+3], ea = E ? E[k] : 0, eb = E ? E[k+1] : 0, d = hyp(bx - ax, by - ay), m = Math.max(1, Math.ceil(d/50));
@@ -15821,7 +15826,7 @@ const SGRoads = (() => {
     if (T[nd] === T[nd]) return T[nd];
     let best = 1e9, be = 0;
     for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c)) continue;
+      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c) || L.tun) continue;
       const s = J.nIS[q], Lt = J.LEN(li), end = s < 0.3 || s > Lt - 0.3, e = rawE(C, li, s), rank = L.c*4 + (end ? 1 : 0) + ((L.flags & 8) ? 2 : 0);
       if (rank < best || (rank === best && e < be)){ best = rank; be = e; }
     }
@@ -16058,7 +16063,7 @@ const SGRoads = (() => {
     const ccx = sx/nodes.length, ccy = sy/nodes.length, ce = se/nodes.length;
     for (const nd of nodes){
       for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c)) continue;
+        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c) || L.tun) continue;
         const j0 = J.lJO[li], j1 = J.lJO[li+1], p = J.nIP[q];
         const g = lineGeom(li), s = g.jS[p - j0], Lt = g.Lt;
         for (let dd = 0; dd < 2; dd++){
@@ -16104,14 +16109,15 @@ const SGRoads = (() => {
   function cxQuick(cx){
     const C = X.C, J = C.J, lines = C.lines; if (J.cxO[cx+1] - J.cxO[cx] !== 1) return null;
     const nd = J.cxN[J.cxO[cx]], q0 = J.nIO[nd], q1 = J.nIO[nd+1];
-    let major = 0, thr = -1, ends = 0;
-    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c)) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
+    let major = 0, thr = -1, ends = 0, ntun = 0; for (let q = q0; q < q1; q++) if (lines[J.nIL[q]].tun) ntun++;
+    if (ntun && q1 - q0 - ntun <= 1){ const b = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]}; b.slim = b; return b; }
+    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c) || L.tun) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
       if (end) ends++; if (L.c < 11){ major++; if (!end) thr = q; } }
     const base = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]};
     if (major === 0){ base.slim = base; return base; }
     if (major === 1 && thr >= 0 && J.NE[nd] < 0.3){ const L = lines[J.nIL[thr]]; if (SWC(L.c) && !(L.flags & 8)){ base.slim = base; return base; } }
     if (q1 - q0 === 2 && ends === 2){
-      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c)) return null;
+      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c) || La.tun || Lb.tun) return null;
       if (Math.abs(hwOf(La) - hwOf(Lb)) >= 0.3 || OFF[La.c] !== OFF[Lb.c]) return null;
       const ea = J.nIS[q0] < 0.3 ? 0 : (La.P.length >> 1) - 1, eb = J.nIS[q0+1] < 0.3 ? 0 : (Lb.P.length >> 1) - 1;
       if (!dirAt(La, ea, ea === 0 ? 1 : -1, _d1) || !dirAt(Lb, eb, eb === 0 ? 1 : -1, _d2)) return null;
@@ -16474,7 +16480,7 @@ const SGRoads = (() => {
   function capCompute(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
     const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; let others = 0, ol = -1, ov = -1;
-    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
+    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12 || C.lines[C.incL[j]].tun) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
     if (others === 0) return true;
     if (others > 1) return true;
     const M = C.lines[ol], mn = M.P.length >> 1;
@@ -17033,7 +17039,7 @@ const SGRoads = (() => {
   }
   function deadEnd(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
-    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li) return false;
+    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li && !C.lines[C.incL[j]].tun) return false;      // [road50] a tunnel beyond: still a portal
     return true;
   }
   function structures(c, hw, wd, foreign, L, li, JN){
@@ -17816,7 +17822,7 @@ const SGRoads = (() => {
           complexesIn(t, cseen);
         }
       } else {
-        for (let i = 0; i < lines.length; i++){ if (skip && skip(i)) continue; doLine(i, lines[i]); }
+        for (let i = 0; i < lines.length; i++){ if ((skip && skip(i)) || lines[i].tun) continue; doLine(i, lines[i]); }
         for (let cx = 0; cx < C.J.nC; cx++) doComplex(cx);
       }
     } finally { MB = null; }
@@ -18141,7 +18147,7 @@ const SGRoads = (() => {
     initGround();
     const by = new Map();
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i]; if (L.c > 10) continue;
+      const L = lines[i]; if (L.c > 10 || L.tun) continue;
       const en = L.name ? L.name[0] : '', key = en || L.ref; if (!key) continue;
       let g = by.get(key); if (!g) by.set(key, g = {en:en || null, zh:(L.name && L.name[1]) || null, ref:L.ref || null, cls:L.c, total:0, cand:[], foreign:(L.flags & 8) !== 0});
       if (L.c < g.cls) g.cls = L.c; if (!g.ref && L.ref) g.ref = L.ref; if (!g.zh && L.name && L.name[1]) g.zh = L.name[1];
@@ -18190,7 +18196,7 @@ const SGRoads = (() => {
   function graph(lines){
     const out = [];
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (c > 10) continue;
+      const L = lines[i], c = L.c; if (c > 10 || L.tun) continue;
       const gc = c <= 1 ? 2 : c <= 9 ? 1 : 0, P = L.P, E = L.E, np = P.length >> 1;
       for (let k = 0; k < np - 1; k++){
         const x0 = P[k*2], y0 = P[k*2+1], x1 = P[k*2+2], y1 = P[k*2+3]; if (x0 === x1 && y0 === y1) continue;
@@ -26892,6 +26898,9 @@ window.TRF_BUS_NY = {n:14823, stops:'vbsGgdMGrAYWWawE+hTaDPYH9BCSD7IC+BK0BYoEsEG
    traffic assignment and the flow overlay still run), so stepCars() has nothing to move; the "车辆 cars" checkbox (#showCars)
    toggles these vehicles instead. Everything lives in one group in the scene, visible only with the "network" toggle
    (showNet && moverGroup.visible); HOOKS.net (network rebuilt / reset) restarts the simulation.
+   [road50] tunnels: lines the roads module marks L.tun (hidden tunnel / underpass ways, joined to the roads at their portals) are
+   ordinary links for routing and movements; vehicles on them are not drawn and are no obstacles; nothing spawns on them (they are in
+   no tile of the zone), so vehicles enter at one portal and come out at the other.
    [nyc/nycapp] New York City (SGR_NYC, tested lazily): yellow cabs by where a car appears (Manhattan below 96th Street ~35 %, upper
    Manhattan ~8 %, by the airports ~12 %, the other boroughs ~3 %, outside the city ~0.5 %; plain taxi yellow, a plain roof light),
    fewer pickups, city speeds (25 mph streets, 30 mph major arterials, 50 mph expressways), the real OSM bus stops of the map
@@ -26949,7 +26958,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // a drivable line: classes 0-10 inside the map (no Johor / Batam context), not hidden by a landmark / repainted block
   function drivable(li){
     let v = NET.skip[li]; if (v) return v === 1;
-    const L = NET.lines[li]; let ok = L.c <= 10 && !(L.flags & 8);
+    const L = NET.lines[li]; let ok = (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8);       // [road50] tunnels: their road class
     if (ok && L.c === 10 && typeof sgrSkipLine === 'function'){ try { if (sgrSkipLine(li)) ok = false; } catch (e){} }
     NET.skip[li] = ok ? 1 : 2; return ok;
   }
@@ -26967,7 +26976,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const GS = 7;
   function geomOf(li){
     let g = NET.GEO.get(li); if (g) return g;
-    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.c, R = R_RT[c] || 0;
+    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.tun ? L.tc : L.c, R = R_RT[c] || 0;
     const j0 = J.lJO[li], j1 = J.lJO[li+1], nmMax = 16;
     const TT = new Float64Array(np), TN = new Uint8Array(np);
     for (let k = 1; k < np - 1; k++){
@@ -27085,11 +27094,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const VMAX_NY = [22.4, 15.6, 20.1, 13.4, 13.4, 11.2, 11.2, 11.2, 11.2, 11.2, 11.2];
   let DLID = 0;
   function makeDl(li, g, dir, a, b, from, to){
-    const L = NET.lines[li], c = L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
+    const L = NET.lines[li], c = L.tun ? L.tc : L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
     const dl = {id:DLID++, li, g, dir, a, b, len:b - a, from, to, c, ow, link:(L.flags & 16) !== 0, nL, lane:laneOffsets(c, ow, nL),
       vmax:(NET.nyc ? VMAX_NY : NET.us ? VMAX_US : VMAX_SG)[c], name:(L.name && L.name[0]) || L.ref || '', ref:L.ref || '', elev:g.elev,
       head:new Array(nL).fill(null), tail:new Array(nL).fill(null), exitV:new Array(nL).fill(null), cnt:0,
-      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false};
+      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false,
+      tun:!!L.tun};                                              // [road50] a hidden tunnel link (roads module: class + 32): driven, not drawn
     NET.DL.push(dl);
     return dl;
   }
@@ -28103,7 +28113,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[CULLI++]; if (!V.alive) continue;
       const dl = V.dl, m = dl.mid || [ZONE.cx, ZONE.cy], d = Math.hypot(m[0] - ZONE.cx, m[1] - ZONE.cy);
       if (!ZONE.on || d > R || (dl.act !== ZONE.stamp && d > ZONE.R - 100)){ if (!V.vis || d > R + 400) killVehicle(V); continue; }
-      if (!V.bus){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
+      if (!V.bus && !dl.tun){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
       if (V.wait > 70 && !V.vis){ killVehicle(V); continue; }
       if (!dl.tb && !V.vis){ if (tileBuilt(dl.mid)) dl.tb = true; else { killVehicle(V); continue; } }
     }
@@ -28825,6 +28835,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[i]; if (!V.alive) continue;
       const T = V.T, len = V.len;
       if (V.crash){ renderCrash(V, cx, cy, cz, lights); continue; }
+      if (V.dl.tun){ V.cd = 1e9; V.vis = false; continue; }      // [road50] underground: hidden between the portals
       // centre first (cheap) for distance and culling
       pathAt(V, V.u - len*0.5, _r);
       const dx0 = _r.x - cx, dy0 = _r.y - cy, dz0 = _r.z - cz, d2 = dx0*dx0 + dy0*dy0 + dz0*dz0;
@@ -29134,7 +29145,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // free-drive / other modules: oriented boxes of the vehicles within r of (x, y): [{x, y, hx, hy, hl, hw, z, v}]
   function obstacles(x, y, r, out){
     out = out || []; out.length = 0; const r2 = r*r; if (TRF.suspend) return out;
-    for (const V of VEH){ if (!V.alive) continue; const K = V.crash;
+    for (const V of VEH){ if (!V.alive || (V.dl && V.dl.tun && !V.crash)) continue; const K = V.crash;
       if (K){ const dx = K.x - x, dy = K.y - y; if (dx*dx + dy*dy > r2) continue;
         out.push({x:K.x, y:K.y, hx:Math.cos(K.psi), hy:Math.sin(K.psi), hl:V.len/2, hw:V.wid/2, z:K.z, v:0, vx:K.vx, vy:K.vy, w:K.w, id:V.id, m:K.m, crash:true, k:V.T.k}); continue; }
       pathAt(V, V.u - V.len*0.5, _q); const dx = _q.x - x, dy = _q.y - y; if (dx*dx + dy*dy > r2) continue;
@@ -29179,6 +29190,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
     spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
+    // [road50] test helper: every live vehicle's pose (centre of the body on its path) for the stuck / jump / off-deck checks
+    poses:() => VEH.filter(V => V.alive && !V.crash).map(V => { pathAt(V, V.u - V.len*0.5, _q); return {id:V.id, x:+_q.x.toFixed(2), y:+_q.y.toFixed(2), z:+_q.z.toFixed(2), v:+V.v.toFixed(2), wait:+V.wait.toFixed(1), li:V.dl.li, c:V.dl.c, el:V.dl.elev ? 1 : 0, ctrl:V.dl.ctrl, dEnd:+(V.dl.len - V.u).toFixed(1), tun:V.dl.tun ? 1 : 0}; }),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),
     _int:{NET, ZONE, VEH, BUS, SIG, PR, RN},

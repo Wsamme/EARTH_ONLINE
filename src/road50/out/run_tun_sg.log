@@ -1,0 +1,4 @@
+sg repair 0
+sg tun 0
+sg regions 0
+sg sim 0

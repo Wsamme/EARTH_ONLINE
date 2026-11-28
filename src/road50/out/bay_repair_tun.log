@@ -1,0 +1,10 @@
+[0.8s] bay lines 364573
+[3.7s] R6 tunnels {"ways":133,"kept":133,"portals":389,"snapped":90,"mouths":101,"km":23.1,"extended":4}
+[9.8s] R3 pass 0 conflicts 1056 fixed 363
+[13.3s] R3 pass 1 conflicts 536 fixed 69
+[16.9s] R3 pass 2 conflicts 439 fixed 9
+[16.9s] R3: conflicts 1056 fixed 441 flagged 426
+[26.2s] R1/R2: dead ends 25813 joined 101 inserted vertices 7 flagged 149
+[27.9s] R4: low crossings 53 raised bridges 0 flagged 53
+[28.0s] R5: steep lines 101 re-graded 16 flagged 85
+[29.2s] {"city":"bay","src":"/home/claude/earth_online/site/baydata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/baydata","lines":364706,"tunnels":{"ways":133,"kept":133,"portals":389,"snapped":90,"mouths":101,"km":23.1,"extended":4},"changedLines":1473,"changes":{"R6":129,"R6b":4,"R3":1231,"R1":101,"R5":16},"flagged":{"R3: # % ramp spreads over > # lines":289,"R3: # % ramp loses junction (c#)":25,"R3: # % ramp would change a sourced deck (>= # m)":89,"R3: # % ramp lifts a dead end":6,"R3: # % ramp makes a new junction (c#)":7,"R3: # % ramp low clearance over c#":4,"R3: # % ramp loses junction (c#b)":4,"R3: # % ramp makes a new junction (c#b)":2,"R1: level #":133,"R1: level #, bridge / ground":9,"R1: classes #/#":1,"R1: level #, classes #/#, bridge / ground":2,"R1: bridge / ground":4,"R4: bridge too short to clear the road below with <= # % ramps":52,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":85},"rules":["R6","R1","R2","R3","R4","R5"],"gap":6}

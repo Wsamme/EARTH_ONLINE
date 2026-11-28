@@ -1,0 +1,9 @@
+[0.3s] sg lines 154878
+[1.2s] R3 pass 0 conflicts 99 fixed 31
+[1.6s] R3 pass 1 conflicts 55 fixed 2
+[2.0s] R3 pass 2 conflicts 53 fixed 0
+[2.0s] R3: conflicts 99 fixed 33 flagged 53
+[4.2s] R1/R2: dead ends 2871 joined 34 inserted vertices 6 flagged 12
+[4.6s] R4: low crossings 10 raised bridges 1 flagged 9
+[4.6s] R5: steep lines 121 re-graded 73 flagged 48
+[5.1s] {"city":"sg","src":"/home/claude/earth_online/site/sgdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/.tmp_sgdata","lines":154878,"changedLines":199,"changes":{"R3":88,"R1":34,"R4":1,"R5":73},"flagged":{"R3: bridge decks share a node mid#span":1,"R3: # % ramp spreads over > # lines":46,"R3: # % ramp loses junction (c#b)":1,"R3: # % ramp low clearance over c#":4,"R3: # % ramp makes a new junction (c#)":1,"R1: the join would cross another road":1,"R1: level #":8,"R1: bridge / ground":2,"R1: level #, bridge / ground":1,"R4: bridge too short to clear the road below with <= # % ramps":8,"R4: raising: loses junction (c#b)":1,"R5: jump next to a fixed junction / line end":48},"rules":["R1","R2","R3","R4","R5"],"gap":6}

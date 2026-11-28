@@ -15121,6 +15121,9 @@ window.SGR_APP = true;
 // merges / diverges, arc-smoothed centrelines, Singapore markings, kerbs + footways + planted medians, LED street
 // lighting with poles, tunnel portals, smooth ramps, and a drivable surface query (surfaceAt).
 // [lm24/roadfix] tunnel portals with a closed end also at the line ends the data marks as tunnel mouths (flags 64 start / 128 end, any class).
+// [road50] tunnels: records of class c + 32 are hidden tunnel / underpass lines (L.tun, L.c = c + 32 so other modules' class filters skip
+// them, L.tc = c): they join the junction graph only at shared vertices (portals) so traffic can drive them, and nothing of them is drawn,
+// indexed or labelled; portal ends are drawn as before.
 // v22: a US style for the San Francisco Bay Area map (right-hand traffic, US markings, cobra-head street lights, concrete sidewalks,
 // Caltrans concrete freeways), on when the global SGR_BAY is true (or SGRoads.setUS(true)); Singapore is unchanged.
 const SGRoads = (() => {
@@ -15204,7 +15207,7 @@ const SGRoads = (() => {
     const vu = () => { let v = 0, m = 1, b; do { b = u8[o++]; v += (b & 127)*m; m *= 128; } while (b & 128); return v; };
     const n = vu(), lines = new Array(n); let px = 0, py = 0;
     for (let i = 0; i < n; i++){
-      const c = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2);
+      const c0 = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2), tun = c0 >= 32 && c0 < 64, c = c0;
       for (let k = 0; k < np; k++){
         const a = vu(), b = vu();
         px += (a % 2) ? -(a + 1)/2 : a/2; py += (b % 2) ? -(b + 1)/2 : b/2;
@@ -15214,6 +15217,7 @@ const SGRoads = (() => {
       if (f & 4){ const sc = (f & 32) ? 2.5 : 5; E = new Float32Array(np); for (let k = 0; k < np; k++) E[k] = u8[o++]/sc; }
       const nm = ni && names ? names[ni] : null;
       lines[i] = {c, flags:f, name:nm ? [nm[0] || '', nm[1] || ''] : null, ref:(ri && refs) ? refs[ri] || null : null, P, E};
+      if (tun){ lines[i].tun = true; lines[i].tc = c0 - 32; }         // [road50] hidden tunnel line: c stays >= 32 (other modules skip it), tc = its road class
     }
     return lines;
   }
@@ -15260,6 +15264,7 @@ const SGRoads = (() => {
       for (let k = 0; k < P.length; k += 2){ const x = P[k], y = P[k+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       LBB[i*4] = x0; LBB[i*4+1] = y0; LBB[i*4+2] = x1; LBB[i*4+3] = y1;
       const a = tcl(x0), b = tcl(y0), c = tcl(x1), d = tcl(y1); tr[i*4] = a; tr[i*4+1] = b; tr[i*4+2] = c; tr[i*4+3] = d;
+      if (lines[i].tun){ tr[i*4] = 1; tr[i*4+2] = 0; continue; }         // [road50] tunnels: in no tile (not drawn, not indexed)
       for (let ty = b; ty <= d; ty++) for (let tx = a; tx <= c; tx++) cnt[ty*TXn + tx + 1]++;
     }
     for (let t = 0; t < NT; t++) cnt[t+1] += cnt[t];
@@ -15318,11 +15323,11 @@ const SGRoads = (() => {
     for (let nd = 0, NN = C.nodeOff.length - 1; nd < NN; nd++){
       const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; if (o1 - o0 < 2) continue;
       let cnt = 0, e0 = 0, first = -1;
-      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
+      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
       if (cnt < 2) continue;
       const L0 = lines[C.incL[first]], vx = L0.P[C.incV[first]*2], vy = L0.P[C.incV[first]*2+1];
       ev(vx, vy, e0);
-      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
+      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
     }
     TL('seeds ' + nev);
     // 2. crossings (segments registered in every 32 m cell they pass) and line ends touching another line's segment
@@ -15337,11 +15342,11 @@ const SGRoads = (() => {
         if (Math.abs(nx*(mx - ax) + ny*(my - ay)) <= r) fn(cy*NCX + cx);
       }
     };
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1;
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1;
       for (let k = 0; k + 1 < m; k++) visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { ccnt[key + 1]++; }); }
     for (let i = 0; i < NCELL; i++) ccnt[i+1] += ccnt[i];
     const cseg = new Int32Array(ccnt[NCELL]), cfill = ccnt.slice(0, NCELL);
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let k = 0; k + 1 < m; k++){ const gid = o + k; visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { cseg[cfill[key]++] = gid; }); } }
     TL('cells ' + cseg.length);
     const JT2 = JT*JT, cellOfXY = (x, y) => (Math.floor((y + HALF)/CS) + 2)*NCX + Math.floor((x + HALF)/CS) + 2;
@@ -15367,7 +15372,7 @@ const SGRoads = (() => {
     TL('crossings ' + nev);
     // line ends on another line's segment (not at one of its vertices)
     for (let i = 0; i < n; i++){
-      const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+      const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let w = 0; w < 2; w++){
         const k = w ? m - 1 : 0, qx = P[k*2], qy = P[k*2+1], e1 = L.E ? L.E[k] : 0;
         const gx0 = Math.floor((qx - JT + HALF)/CS) + 2, gx1 = Math.floor((qx + JT + HALF)/CS) + 2, gy0 = Math.floor((qy - JT + HALF)/CS) + 2, gy1 = Math.floor((qy + JT + HALF)/CS) + 2;
@@ -15465,7 +15470,7 @@ const SGRoads = (() => {
     const cfind = a => { while (cpar[a] !== a){ cpar[a] = cpar[cpar[a]]; a = cpar[a]; } return a; };
     // major arms per node (classes 0-10, no slip roads): only crossings of real roads merge into complexes
     const NM = new Uint8Array(nN);
-    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16)) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
+    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16) || L.tun) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
     const J = {nN, NX:NX.subarray(0, nN), NY:NY.subarray(0, nN), NE:NE.subarray(0, nN), NA:NA.subarray(0, nN), NM, nIO, nIL, nIS, nIP, lJO, lJS, lJN, LEN};
     C.J = J;
     for (let i = 0; i < n; i++){ for (let p = lJO[i]; p + 1 < lJO[i+1]; p++) if (internal(C, i, p)){ const a = cfind(lJN[p]), b = cfind(lJN[p+1]); if (a !== b) cpar[a] = b; } }
@@ -15502,7 +15507,7 @@ const SGRoads = (() => {
     let S = new Float32Array(1 << 18), LI = new Int32Array(1 << 15), FL = new Uint8Array(1 << 15), CL = new Uint8Array(1 << 15), SA0 = new Float32Array(1 << 15), ns = 0;
     let KP = new Int32Array(1 << 17), np2 = 0;                                // (cell key, piece) pairs; cells: key -> cell index (compact CSR)
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18)) continue;
+      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18) || L.tun) continue;
       const P = L.P, E = L.E, hw = hwOf(L), np = P.length >> 1; let sacc = 0;
       for (let k = 0; k + 1 < np; k++){
         const ax = P[k*2], ay = P[k*2+1], bx = P[k*2+2], by = P[k*2+3], ea = E ? E[k] : 0, eb = E ? E[k+1] : 0, d = hyp(bx - ax, by - ay), m = Math.max(1, Math.ceil(d/50));
@@ -15844,7 +15849,7 @@ const SGRoads = (() => {
     if (T[nd] === T[nd]) return T[nd];
     let best = 1e9, be = 0;
     for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c)) continue;
+      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c) || L.tun) continue;
       const s = J.nIS[q], Lt = J.LEN(li), end = s < 0.3 || s > Lt - 0.3, e = rawE(C, li, s), rank = L.c*4 + (end ? 1 : 0) + ((L.flags & 8) ? 2 : 0);
       if (rank < best || (rank === best && e < be)){ best = rank; be = e; }
     }
@@ -16081,7 +16086,7 @@ const SGRoads = (() => {
     const ccx = sx/nodes.length, ccy = sy/nodes.length, ce = se/nodes.length;
     for (const nd of nodes){
       for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c)) continue;
+        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c) || L.tun) continue;
         const j0 = J.lJO[li], j1 = J.lJO[li+1], p = J.nIP[q];
         const g = lineGeom(li), s = g.jS[p - j0], Lt = g.Lt;
         for (let dd = 0; dd < 2; dd++){
@@ -16127,14 +16132,15 @@ const SGRoads = (() => {
   function cxQuick(cx){
     const C = X.C, J = C.J, lines = C.lines; if (J.cxO[cx+1] - J.cxO[cx] !== 1) return null;
     const nd = J.cxN[J.cxO[cx]], q0 = J.nIO[nd], q1 = J.nIO[nd+1];
-    let major = 0, thr = -1, ends = 0;
-    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c)) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
+    let major = 0, thr = -1, ends = 0, ntun = 0; for (let q = q0; q < q1; q++) if (lines[J.nIL[q]].tun) ntun++;
+    if (ntun && q1 - q0 - ntun <= 1){ const b = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]}; b.slim = b; return b; }
+    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c) || L.tun) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
       if (end) ends++; if (L.c < 11){ major++; if (!end) thr = q; } }
     const base = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]};
     if (major === 0){ base.slim = base; return base; }
     if (major === 1 && thr >= 0 && J.NE[nd] < 0.3){ const L = lines[J.nIL[thr]]; if (SWC(L.c) && !(L.flags & 8)){ base.slim = base; return base; } }
     if (q1 - q0 === 2 && ends === 2){
-      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c)) return null;
+      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c) || La.tun || Lb.tun) return null;
       if (Math.abs(hwOf(La) - hwOf(Lb)) >= 0.3 || OFF[La.c] !== OFF[Lb.c]) return null;
       const ea = J.nIS[q0] < 0.3 ? 0 : (La.P.length >> 1) - 1, eb = J.nIS[q0+1] < 0.3 ? 0 : (Lb.P.length >> 1) - 1;
       if (!dirAt(La, ea, ea === 0 ? 1 : -1, _d1) || !dirAt(Lb, eb, eb === 0 ? 1 : -1, _d2)) return null;
@@ -16497,7 +16503,7 @@ const SGRoads = (() => {
   function capCompute(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
     const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; let others = 0, ol = -1, ov = -1;
-    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
+    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12 || C.lines[C.incL[j]].tun) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
     if (others === 0) return true;
     if (others > 1) return true;
     const M = C.lines[ol], mn = M.P.length >> 1;
@@ -17056,7 +17062,7 @@ const SGRoads = (() => {
   }
   function deadEnd(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
-    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li) return false;
+    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li && !C.lines[C.incL[j]].tun) return false;      // [road50] a tunnel beyond: still a portal
     return true;
   }
   function structures(c, hw, wd, foreign, L, li, JN){
@@ -17839,7 +17845,7 @@ const SGRoads = (() => {
           complexesIn(t, cseen);
         }
       } else {
-        for (let i = 0; i < lines.length; i++){ if (skip && skip(i)) continue; doLine(i, lines[i]); }
+        for (let i = 0; i < lines.length; i++){ if ((skip && skip(i)) || lines[i].tun) continue; doLine(i, lines[i]); }
         for (let cx = 0; cx < C.J.nC; cx++) doComplex(cx);
       }
     } finally { MB = null; }
@@ -18164,7 +18170,7 @@ const SGRoads = (() => {
     initGround();
     const by = new Map();
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i]; if (L.c > 10) continue;
+      const L = lines[i]; if (L.c > 10 || L.tun) continue;
       const en = L.name ? L.name[0] : '', key = en || L.ref; if (!key) continue;
       let g = by.get(key); if (!g) by.set(key, g = {en:en || null, zh:(L.name && L.name[1]) || null, ref:L.ref || null, cls:L.c, total:0, cand:[], foreign:(L.flags & 8) !== 0});
       if (L.c < g.cls) g.cls = L.c; if (!g.ref && L.ref) g.ref = L.ref; if (!g.zh && L.name && L.name[1]) g.zh = L.name[1];
@@ -18213,7 +18219,7 @@ const SGRoads = (() => {
   function graph(lines){
     const out = [];
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (c > 10) continue;
+      const L = lines[i], c = L.c; if (c > 10 || L.tun) continue;
       const gc = c <= 1 ? 2 : c <= 9 ? 1 : 0, P = L.P, E = L.E, np = P.length >> 1;
       for (let k = 0; k < np - 1; k++){
         const x0 = P[k*2], y0 = P[k*2+1], x1 = P[k*2+2], y1 = P[k*2+3]; if (x0 === x1 && y0 === y1) continue;
@@ -50439,6 +50445,1993 @@ Object.assign(SITES, {sgchekjawa:{zh:'仄爪哇湿地', en:'Chek Jawa Wetlands (
   }}});
 }
 
+// ===== lm50/sg50a: Singapore CBD - Raffles Place, Battery Road, Collyer Quay, Robinson Road, Cecil Street, Shenton Way (City Brush lm50, real Singapore 1:1)
+// Built in the map frame (local +x = east, +z = south, rot 0) on the real OSM footprints of R/lm50/ref_sg50a.json.
+// Only LANDMARKS and SG_PLACES are touched; helpers live inside this block.
+{
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+// ---- triangle batches: many small parts of one colour spec become one LTris call ----
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+// box (w along x, d along z) standing on y, turned ry about its centre
+function boxP(o, w, h, d, x, y, z, ry){
+  const c = Math.cos(ry || 0), s = Math.sin(ry || 0), hw = w/2, hd = d/2;
+  const R = (px, py, pz) => [x + px*c + pz*s, py, z - px*s + pz*c];
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, e, f] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[e], P[f]);
+}
+// box between x0..x1, y0..y1, z0..z1 (no rotation)
+const bxP = (o, x0, x1, y0, y1, z0, z1) => boxP(o, x1 - x0, y1 - y0, z1 - z0, (x0 + x1)/2, y0, (z0 + z1)/2);
+// plan polygons ([x, z] points)
+const tri2 = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+function capP(o, P, y){ for (const [a, b, c] of tri2(P)) o.push(P[a][0], y, P[a][1], P[b][0], y, P[b][1], P[c][0], y, P[c][1]); }
+function wallP(o, P, y0, y1, open){ const n = P.length; for (let i = 0; i < (open ? n - 1 : n); i++){ const a = P[i], b = P[(i+1) % n]; quadP(o, [a[0], y0, a[1]], [b[0], y0, b[1]], [b[0], y1, b[1]], [a[0], y1, a[1]]); } }
+function prismP(o, P, y0, y1, bot){ wallP(o, P, y0, y1); capP(o, P, y1); if (bot) capP(o, P, y0); }
+const rectXZ = (x0, x1, z0, z1) => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+const ctr = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+// offset a closed plan polygon inwards by d (negative = outwards; miter, simple polygons)
+function offP(P, d){
+  const n = P.length; let A = 0; for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n]; A += a[0]*b[1] - b[0]*a[1]; }
+  const sg = A > 0 ? -1 : 1, out = [];
+  for (let i = 0; i < n; i++){
+    const p = P[(i + n - 1) % n], c = P[i], q = P[(i+1) % n];
+    let e1 = [c[0] - p[0], c[1] - p[1]], e2 = [q[0] - c[0], q[1] - c[1]]; const l1 = Math.hypot(...e1) || 1, l2 = Math.hypot(...e2) || 1;
+    e1 = [e1[0]/l1, e1[1]/l1]; e2 = [e2[0]/l2, e2[1]/l2];
+    const n1 = [e1[1]*sg, -e1[0]*sg], n2 = [e2[1]*sg, -e2[0]*sg], m = [n1[0] + n2[0], n1[1] + n2[1]], ml = Math.hypot(...m) || 1;
+    const cs = Math.max(0.35, (m[0]*n1[0] + m[1]*n1[1])/ml);
+    out.push([c[0] + m[0]/ml*d/cs, c[1] + m[1]/ml*d/cs]);
+  }
+  return out;
+}
+// points along a closed polygon every `step` m (for parapet merlons, lamps, mullions): [x, z, edge direction angle]
+function alongP(P, step, inset){
+  const out = [];
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 0.5) continue;
+    const n = Math.max(1, Math.round(L/step)), ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+    for (let k = 0; k < n; k++){ const t = (k + 0.5)/n; out.push([a[0] + (b[0] - a[0])*t, a[1] + (b[1] - a[1])*t, ang, L/n]); } }
+  return out;
+}
+// surface of revolution into a batch: prof [[r, y], ...] bottom to top; n sides; ph = start angle
+function latheP(o, prof, cx, cz, n, ph, sx, sz){
+  ph = ph || 0; sx = sx || 1; sz = sz || 1;
+  for (let j = 0; j < prof.length - 1; j++){ const [r0, y0] = prof[j], [r1, y1] = prof[j+1];
+    for (let i = 0; i < n; i++){ const a0 = ph + i/n*TAU, a1 = ph + (i+1)/n*TAU;
+      quadP(o, [cx + Math.cos(a0)*r0*sx, y0, cz + Math.sin(a0)*r0*sz], [cx + Math.cos(a1)*r0*sx, y0, cz + Math.sin(a1)*r0*sz], [cx + Math.cos(a1)*r1*sx, y1, cz + Math.sin(a1)*r1*sz], [cx + Math.cos(a0)*r1*sx, y1, cz + Math.sin(a0)*r1*sz]); } }
+}
+// cylinder segment between two points into a batch (n-sided prism)
+function segP(o, a, b, r, n){
+  n = n || 4; const d = [b[0]-a[0], b[1]-a[1], b[2]-a[2]], L = Math.hypot(...d); if (L < 1e-4) return; d[0] /= L; d[1] /= L; d[2] /= L;
+  const up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let u = [d[1]*up[2] - d[2]*up[1], d[2]*up[0] - d[0]*up[2], d[0]*up[1] - d[1]*up[0]]; const ul = Math.hypot(...u); u = u.map(q => q/ul);
+  const v = [d[1]*u[2] - d[2]*u[1], d[2]*u[0] - d[0]*u[2], d[0]*u[1] - d[1]*u[0]];
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+u[0]*c+v[0]*s, p[1]+u[1]*c+v[1]*s, p[2]+u[2]*c+v[2]*s]); } return R; };
+  const A = ring(a), B = ring(b); for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], B[j], B[i]); }
+}
+// facade frames: F(u, v, w) -> point; u along the facade, v up, w outwards
+const fZ = (z, s, cx) => (u, v, w) => [(cx || 0) + s*u, v, z + s*(w || 0)];       // plane z = const, facing s*z
+const fX = (x, s, cz) => (u, v, w) => [x + s*(w || 0), v, (cz || 0) - s*u];       // plane x = const, facing s*x
+const fA = (x, z, ang) => { const c = Math.cos(ang), s = Math.sin(ang); return (u, v, w) => [x + c*u + s*(w || 0), v, z + s*u - c*(w || 0)]; }; // along direction ang (x->z), outward = right-hand normal
+// a flat outline ([u, v] points) on a facade at offset w
+const _Q4 = [[0, 1, 2], [0, 2, 3]];
+function shapeP(o, pts, F, w){ for (const [a, b, c] of (pts.length === 4 ? _Q4 : tri2(pts))) o.push(...F(pts[a][0], pts[a][1], w), ...F(pts[b][0], pts[b][1], w), ...F(pts[c][0], pts[c][1], w)); }
+// the same outline as a slab between offsets w0 and w1 (front face + sides)
+function slabP(o, pts, F, w0, w1){ shapeP(o, pts, F, w1); for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i+1) % pts.length]; quadP(o, F(a[0], a[1], w0), F(b[0], b[1], w0), F(b[0], b[1], w1), F(a[0], a[1], w1)); } }
+const mv = (P, du, dv) => P.map(p => [p[0] + du, p[1] + dv]);
+// outlines in the facade plane
+const rectO = (u0, u1, v0, v1) => [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
+const rArchO = (hw, ht, n) => { const P = [[-hw, 0], [hw, 0]]; for (let i = 0; i <= (n || 8); i++){ const a = PI*i/(n || 8); P.push([Math.cos(a)*hw, ht - hw + Math.sin(a)*hw]); } return P; };
+const pArchO = (hw, ht, n) => pointedArch(hw, ht, n || 5);
+// ogee / cusped (Mughal) arch: pointed arch with a small reverse curve at the apex
+const ogArchO = (hw, ht, n) => { n = n || 6; const hs = ht - hw*1.25, P = [[-hw, 0], [hw, 0], [hw, hs]];
+  for (let i = 1; i < n; i++){ const t = i/n, a = t*HP; P.push([hw*Math.cos(a)*(1 - 0.18*t*t), hs + hw*0.95*Math.sin(a) + hw*0.3*t*t*t]); }
+  P.push([0, ht]);
+  for (let i = n - 1; i >= 1; i--){ const t = i/n, a = t*HP; P.push([-hw*Math.cos(a)*(1 - 0.18*t*t), hs + hw*0.95*Math.sin(a) + hw*0.3*t*t*t]); }
+  P.push([-hw, hs]); return P; };
+// a ring of n points round (cx, cz)
+const ringPts = (cx, cz, r, n, ph) => { const P = []; for (let i = 0; i < n; i++){ const a = (ph || 0) + i/n*TAU; P.push([cx + Math.cos(a)*r, cz + Math.sin(a)*r]); } return P; };
+const lerp = (a, b, t) => a + (b - a)*t;
+// parapet: a wall of thickness t along every edge of a closed plan polygon (inside it), y0..y1
+function parP(o, P, y0, y1, t){ const c = ctr(P); for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 0.05) continue;
+  const ang = Math.atan2(b[1] - a[1], b[0] - a[0]); let nx = -(b[1] - a[1])/L, nz = (b[0] - a[0])/L; const mx = (a[0] + b[0])/2, mz = (a[1] + b[1])/2; if (nx*(c[0] - mx) + nz*(c[1] - mz) < 0){ nx = -nx; nz = -nz; }
+  boxP(o, L + t*0.0, y1 - y0, t, mx + nx*t/2, y0, mz + nz*t/2, -ang); } }
+// a crescent (horns up) outline, ~1.1 m across
+const CRES = (() => { const P = []; for (let i = 0; i <= 12; i++){ const a = PI*0.25 + i/12*PI*1.5; P.push([Math.cos(a)*0.55, Math.sin(a)*0.55]); }
+  for (let i = 1; i < 12; i++){ const a = -1.227 - i/12*(TAU - 2*1.227); P.push([0.25 + Math.cos(a)*0.413, Math.sin(a)*0.413]); } return P; })();
+// vertex-coloured batch: any number of colours in one material (colourful stucco sculpture, painted bands)
+const mkV = () => ({pos:[], col:[]});
+const _vc = {};
+function vAdd(V, hex, fn){ const t = []; fn(t); let c = _vc[hex]; if (!c){ const k = new THREE.Color(hex); c = _vc[hex] = [k.r, k.g, k.b]; } for (let i = 0; i < t.length; i++) V.pos.push(t[i]); for (let i = 0; i < t.length; i += 3) V.col.push(c[0], c[1], c[2]); }
+function vFlush(g, V, spec){ if (!V.pos.length) return; const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(V.pos, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(V.col, 3)); geo.computeVertexNormals(); lmAdd(g, geo, Object.assign({c:'#ffffff', vc:true, ds:true}, spec || {}), 0, 0, 0, 0); V.pos = []; V.col = []; }
+// rectangular frustum into a batch: Lb x Wb at y0 to Lt x Wt at y0 + h, centred (cx, cz); top cap
+function frustP(o, cx, cz, Lb, Wb, Lt, Wt, y0, h, nocap){
+  const b = [[cx - Lb/2, y0, cz - Wb/2], [cx + Lb/2, y0, cz - Wb/2], [cx + Lb/2, y0, cz + Wb/2], [cx - Lb/2, y0, cz + Wb/2]];
+  const t = [[cx - Lt/2, y0 + h, cz - Wt/2], [cx + Lt/2, y0 + h, cz - Wt/2], [cx + Lt/2, y0 + h, cz + Wt/2], [cx - Lt/2, y0 + h, cz + Wt/2]];
+  for (let i = 0; i < 4; i++){ const j = (i + 1) % 4; quadP(o, b[i], b[j], t[j], t[i]); }
+  if (!nocap) quadP(o, t[0], t[3], t[2], t[1]);
+}
+const sArea = P => { let A = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; A += a[0]*b[1] - b[0]*a[1]; } return A/2; };
+// facade frames of a plan polygon's edges: u from 0 at P[i] to L at P[i+1], v up, w outwards
+function edgesF(P){ const sg = sArea(P) > 0 ? 1 : -1, out = [];
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1e-6, ex = (b[0] - a[0])/L, ez = (b[1] - a[1])/L, nx = ez*sg, nz = -ex*sg;
+    out.push({L, ang:Math.atan2(ez, ex), nx, nz, a, b, F:(u, v, w) => [a[0] + ex*u + nx*(w || 0), v, a[1] + ez*u + nz*(w || 0)]}); }
+  return out; }
+// East Asian roof into a batch: from half-sizes (a0, b0) at y to (a1, b1) at y + h (hip: a1 = ridge half-length, b1 = 0;
+// pent roof round a wall: a1, b1 = the wall; pyramid: 0, 0), concave profile (pw), corners swept up by `lift`, turned ry.
+// opt.gab (0..1): hip-and-gable - the ends stop moving in at that fraction and a gable (opt.gcol) closes the top;
+// opt.sag: the ridge and eaves sag in the middle and rise towards the ends (Hokkien curved ridges);
+// opt.fas: fascia depth under the eave line (into opt.fo); opt.hips / opt.ridge: batches for hip and ridge rolls
+function roofP(o, cx, cz, a0, b0, a1, b1, y, h, opt){
+  opt = opt || {}; const n = opt.n || 6, nt = opt.nt || 5, pw = opt.pw || 1.7, lift = opt.lift || 0, c = Math.cos(opt.ry || 0), s = Math.sin(opt.ry || 0), gab = opt.gab || 0, sag = opt.sag || 0;
+  const R = (x, yy, z) => [cx + x*c + z*s, yy, cz - x*s + z*c];
+  const A_ = u => gab ? (u < gab ? a0 + (a1 - a0)*u/gab : a1) : a0 + (a1 - a0)*u;
+  const ring = (u, dy) => {
+    const a = A_(u), b = b0 + (b1 - b0)*u, yy = y + h*Math.pow(u, pw) + dy, lu = lift*Math.pow(1 - u, 2), P = [];
+    const C = [[-a, -b], [a, -b], [a, b], [-a, b]];
+    for (let k = 0; k < 4; k++){ const A = C[k], B = C[(k+1) % 4]; for (let i = 0; i < n; i++){ const t = i/n, cc = Math.pow(Math.abs(2*t - 1), 4), f = 1 + 0.03*cc*(1 - u)*(lift ? 1 : 0), lx = (A[0] + (B[0] - A[0])*t)*f, lz = (A[1] + (B[1] - A[1])*t)*f;
+      P.push(R(lx, yy + lu*cc + sag*Math.pow(Math.min(1, Math.abs(lx)/Math.max(0.1, a0)), 2)*(0.35 + 0.65*u), lz)); } }
+    return P;
+  };
+  const S = []; for (let i = 0; i <= nt; i++) S.push(ring(i/nt, 0));
+  const m = 4*n, loft = (o2, A, B2) => { for (let i = 0; i < m; i++){ const j = (i + 1) % m; quadP(o2, A[i], A[j], B2[j], B2[i]); } };
+  for (let i = 0; i < nt; i++) loft(o, S[i], S[i+1]);
+  if (opt.fas) loft(opt.fo || o, ring(0, -opt.fas), S[0]);
+  if (opt.hips){ for (let k = 0; k < 4; k++){ const P = []; for (let i = 0; i <= nt; i++){ if (gab && i/nt > gab + 1e-6) break; P.push(S[i][k*n]); } for (let i = 0; i < P.length - 1; i++) segP(opt.hips, [P[i][0], P[i][1] + 0.12, P[i][2]], [P[i+1][0], P[i+1][1] + 0.12, P[i+1][2]], opt.hr || 0.16, 4); } }
+  const yt = y + h;
+  if (gab && opt.gcol){ const yg = y + h*Math.pow(gab, pw), bg = b0 + (b1 - b0)*gab, sg = sag*0.35 + sag*0.65*gab, st = sag; for (const sx of [-1, 1]){ const x = sx*(a1 + 0.02); triP(opt.gcol, R(x, yg + sg, -bg), R(x, yg + sg, bg), R(x, yt + st, 0)); } }
+  if (opt.ridge && a1 > 0.3 && b1 < 0.05){ const N = sag ? 8 : 1; for (let i = 0; i < N; i++){ const xa = -a1 - 0.2 + (2*a1 + 0.4)*i/N, xb = -a1 - 0.2 + (2*a1 + 0.4)*(i + 1)/N, ya = yt + 0.15 + sag*Math.pow(Math.min(1, Math.abs(xa)/a0), 2), yb = yt + 0.15 + sag*Math.pow(Math.min(1, Math.abs(xb)/a0), 2), p = R(xa, ya, 0), q = R(xb, yb, 0); segP(opt.ridge, p, q, opt.rr || 0.3, 4); } }
+  return yt;
+}
+function chiweiP(o, x, y, z, ang, s){ const P = [[-0.5, 0], [0.45, 0], [0.55, 0.6], [0.35, 1.25], [0.0, 1.55], [-0.15, 1.2], [0.15, 1.0], [0.1, 0.6], [-0.35, 0.45]].map(p => [p[0]*s, y + p[1]*s]);
+  slabP(o, P, fA(x, z, ang), -0.12*s, 0.12*s); }
+
+// ---- extra helpers (lm26/sgcbd) ----
+// local frame: F(u, y, v) -> [x, y, z]; +u at plan angle a (x east, z south), +v = +u turned 90 deg towards +z
+const frame = (ox, oz, a) => { const c = Math.cos(a), s = Math.sin(a); const f = (u, y, v) => [ox + u*c - v*s, y, oz + u*s + v*c];
+  f.P = (u, v) => [ox + u*c - v*s, oz + u*s + v*c]; f.L = (x, z) => [(x - ox)*c + (z - oz)*s, -(x - ox)*s + (z - oz)*c]; f.a = a; return f; };
+// box from local (u, y, v) ranges in frame F
+function bxF(o, F, u0, u1, y0, y1, v0, v1, bot){
+  const P = [F(u0,y0,v0), F(u1,y0,v0), F(u1,y0,v1), F(u0,y0,v1), F(u0,y1,v0), F(u1,y1,v0), F(u1,y1,v1), F(u0,y1,v1)];
+  quadP(o, P[4], P[7], P[6], P[5]); quadP(o, P[0], P[4], P[5], P[1]); quadP(o, P[1], P[5], P[6], P[2]); quadP(o, P[2], P[6], P[7], P[3]); quadP(o, P[3], P[7], P[4], P[0]); if (bot) quadP(o, P[0], P[1], P[2], P[3]);
+}
+const polyF = (F, P) => P.map(p => F.P(p[0], p[1]));
+// loft closed rings (arrays of [x, y, z], same count) into a batch
+function loftP(o, S, cap){ const n = S[0].length; for (let k = 0; k < S.length - 1; k++) for (let i = 0; i < n; i++){ const j = (i + 1) % n; quadP(o, S[k][i], S[k][j], S[k+1][j], S[k+1][i]); }
+  if (cap){ const t = S[S.length - 1], c = [0, 0, 0]; for (const p of t){ c[0] += p[0]/n; c[1] += p[1]/n; c[2] += p[2]/n; } for (let i = 0; i < n; i++) triP(o, c, t[i], t[(i + 1) % n]); } }
+// open strip lofts (rows of points, not closed)
+function sheetP(o, S){ for (let k = 0; k < S.length - 1; k++) for (let i = 0; i < S[k].length - 1; i++) quadP(o, S[k][i], S[k][i+1], S[k+1][i+1], S[k+1][i]); }
+// shift a plan polygon
+const shP = (P, dx, dz) => P.map(p => [p[0] - dx, p[1] - dz]);
+// a rounded tree (trunk + two lumps) into batches
+function treeP(oT, oC, x, y, z, s, R){ segP(oT, [x, y, z], [x, y + 2.2*s, z], 0.18*s, 4); latheP(oC, [[0.2*s, y + 1.6*s], [1.5*s, y + 2.1*s], [1.9*s, y + 2.9*s], [1.4*s, y + 3.8*s], [0.2*s, y + 4.3*s]], x + (R() - 0.5)*0.4*s, z + (R() - 0.5)*0.4*s, 7, R()*3); }
+const inPolyS = (P, x, z) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; };
+// a band of height h round a plan polygon at y, `off` proud of the walls
+function bandAtP(o, P, y, h, off){ for (const e of edgesF(P)) if (e.L > 0.2) shapeP(o, rectO(0, e.L, y, y + h), e.F, off || 0.1); }
+// ---- lm40/sg40a helpers ----
+// model origin at local (cx, cz) of a ref anchor -> SG_PLACES lat/lon (rot 0: model axes = map axes, +x east, +z south)
+const LL40 = (alat, alon, cx, cz) => ({lat:+(alat - cz/110574).toFixed(7), lon:+(alon + cx/111290.5).toFixed(7)});
+// curtain-wall facade on every edge of plan P between y0 and y1: vertical mullions (every `bay` m, `fd` deep) and floor bands
+// (every `fh` m); o = {mul, band, bay, fd, fw, fh, bh, skip(e) -> true to leave an edge bare, yb (first band), bands:false}
+function facadeP(B, P, y0, y1, o){
+  const E = edgesF(P), fw = o.fw || 0.09, fd = o.fd || 0.35, bh = o.bh || 0.5;
+  for (const e of E){
+    if (e.L < 0.6 || (o.skip && o.skip(e))) continue;
+    if (o.mul){ const nb = Math.max(1, Math.round(e.L/(o.bay || 3))), bw = e.L/nb;
+      for (let k = (o.ends ? 0 : 1); k <= (o.ends ? nb : nb - 1); k++) slabP(B.p(o.mul), rectO(k*bw - fw, k*bw + fw, y0, y1), e.F, 0, fd); }
+    if (o.band && o.bands !== false){ for (let y = (o.yb != null ? o.yb : y0 + o.fh); y < y1 - 0.3; y += o.fh) shapeP(B.p(o.band), rectO(0, e.L, y - bh/2, y + bh/2), e.F, o.bo || 0.06); }
+  }
+}
+// vertical corner posts of plan P (round, radius r) between y0 and y1
+function cornersP(o, P, y0, y1, r){ for (const p of P) segP(o, [p[0], y0, p[1]], [p[0], y1, p[1]], r, 6); }
+// rectangle of half-sizes (a along angle ang, b across) centred at (cx, cz)
+const rectA = (cx, cz, a, b, ang) => { const c = Math.cos(ang), s = Math.sin(ang); return [[-a, -b], [a, -b], [a, b], [-a, b]].map(([u, v]) => [cx + u*c - v*s, cz + u*s + v*c]); };
+// polygon centroid (area-weighted)
+const pcen = P => { let A = 0, x = 0, z = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], k = a[0]*b[1] - b[0]*a[1]; A += k; x += (a[0] + b[0])*k; z += (a[1] + b[1])*k; } return [x/(3*A), z/(3*A)]; };
+// shift a list of polygons so (cx, cz) becomes the origin
+const shAll = (L, c) => L.map(P => shP(P, c[0], c[1]));
+// lamp standard: pole + lantern (pole, lamp batches)
+function lampP(oP, oL, x, y, z, h, r){ segP(oP, [x, y, z], [x, y + h, z], r || 0.09, 6); latheP(oL, [[0.01, y + h - 0.1], [0.32, y + h], [0.3, y + h + 0.5], [0.01, y + h + 0.6]], x, z, 6); }
+// ---- lm50/sg50a kit: tower facade helpers (batched; one LTris per colour spec) ----
+// foundation skirt down to y = -5 under a plan polygon
+const foundP = (o, P, y1) => wallP(o, P, -5, y1 == null ? 0.3 : y1);
+// plain block: walls + roof cap
+function blkP(B, P, y0, y1, wall, roof){ wallP(B.p(wall), P, y0, y1); capP(B.p(roof || wall), P, y1); }
+// punched windows: on every edge longer than minL, rectangles ww x wh centred in bays of ~`bay` m, one per storey (fh), proud by w
+// o.skip(e, i) -> true leaves an edge bare; o.end: bays to leave at each edge end (filled by o.endCol panels if given)
+function winP(B, P, y0, y1, fh, bay, ww, wh, col, o){
+  o = o || {}; const E = edgesF(P);
+  E.forEach((e, i) => {
+    if (e.L < (o.minL || 2.2) || (o.skip && o.skip(e, i))) return;
+    const n = Math.max(1, Math.round(e.L/bay)), bw = e.L/n, end = Math.min(o.end || 0, Math.floor((n - 1)/2));
+    for (let y = y0; y + fh <= y1 + 0.01; y += fh) for (let k = 0; k < n; k++){
+      const u = (k + 0.5)*bw, isEnd = k < end || k >= n - end;
+      if (isEnd && !o.endCol) continue;
+      shapeP(B.p(isEnd ? o.endCol : col), rectO(u - ww/2, u + ww/2, y + (fh - wh)*0.55, y + (fh - wh)*0.55 + wh), e.F, o.w || 0.06);
+    }
+  });
+}
+// horizontal spandrel ribbons (height sh every fh) round a plan polygon, proud by w
+function ribP(o, P, y0, y1, fh, sh, w){ for (let y = y0; y < y1 - 0.2; y += fh) bandAtP(o, P, y, Math.min(sh, y1 - y), w || 0.05); }
+// floor-edge slabs / balcony ledges: a thin ring d m proud of plan P every fh m (walls + top + underside strip)
+function ledgeP(o, P, y0, y1, fh, d, t){ const Q = offP(P, -d); for (let y = y0; y < y1 - 0.3; y += fh){ wallP(o, Q, y, y + t); capP(o, Q, y + t); } }
+// per-edge wall material: walls of edges with f(e, i) -> colour spec (null = default)
+function wallsByEdge(B, P, y0, y1, def, f){ edgesF(P).forEach((e, i) => { const c = (f && f(e, i)) || def; quadP(B.p(c), [e.a[0], y0, e.a[1]], [e.b[0], y0, e.b[1]], [e.b[0], y1, e.b[1]], [e.a[0], y1, e.a[1]]); }); }
+// vertical fins on every edge (every `bay` m), d deep, t thick
+function finsP(o, P, y0, y1, bay, d, t, skip){ edgesF(P).forEach((e, i) => { if (e.L < 1.5 || (skip && skip(e, i))) return; const n = Math.max(1, Math.round(e.L/bay)), bw = e.L/n;
+  for (let k = 1; k < n; k++) slabP(o, rectO(k*bw - t/2, k*bw + t/2, y0, y1), e.F, 0, d); }); }
+// regular-ish plan polygon from a centre, half sizes and angle with corner chamfer c (8 points)
+const chamR = (cx, cz, a, b, ang, c) => { const C = Math.cos(ang), S = Math.sin(ang); return [[-a + c, -b], [a - c, -b], [a, -b + c], [a, b - c], [a - c, b], [-a + c, b], [-a, b - c], [-a, -b + c]].map(([u, v]) => [cx + u*C - v*S, cz + u*S + v*C]); };
+// scale a polygon about its centroid
+const scP = (P, s) => { const c = pcen(P); return P.map(p => [c[0] + (p[0] - c[0])*s, c[1] + (p[1] - c[1])*s]); };
+// open lattice crown: posts on the polygon's vertices and along edges, rings at heights, diagonals
+function latticeP(o, P, y0, y1, step, r, rings, diag){
+  const pts = []; for (const e of edgesF(P)){ const n = Math.max(1, Math.round(e.L/step)); for (let k = 0; k < n; k++){ const t = k/n; pts.push([e.a[0] + (e.b[0] - e.a[0])*t, e.a[1] + (e.b[1] - e.a[1])*t]); } }
+  for (const p of pts) segP(o, [p[0], y0, p[1]], [p[0], y1, p[1]], r, 4);
+  const R = rings || 2; for (let k = 0; k <= R; k++){ const y = y0 + (y1 - y0)*k/R; for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i + 1) % pts.length]; segP(o, [a[0], y, a[1]], [b[0], y, b[1]], r*0.8, 4); } }
+  if (diag) for (let k = 0; k < R; k++){ const ya = y0 + (y1 - y0)*k/R, yb = y0 + (y1 - y0)*(k + 1)/R; for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i + 1) % pts.length]; segP(o, [a[0], (k + i) % 2 ? ya : yb, a[1]], [b[0], (k + i) % 2 ? yb : ya, b[1]], r*0.7, 4); } }
+}
+// aircraft warning lamps on the corners of a polygon at y
+function lavP(o, P, y){ for (const p of P) boxP(o, 0.5, 0.6, 0.5, p[0], y, p[1]); }
+const LAV50 = {c:'#c22', glow:'#ff2a1a', gk:2};
+// street trees round a polygon (outside it), skipping points inside any of the `keep out` polygons
+function treesRound(B, P, off, step, s, R, out, T, L){ for (const [x, z] of alongP(offP(P, -off), step)){ if (out && out.some(Q => inPolyS(Q, x, z))) continue; treeP(B.p(T || '#5b4a3a'), B.p(L || {c:'#4f7a3e', m:0, lk:0.1}), x, 0.3, z, s, R); } }
+// rectangle (half sizes a, b, turned ang) with re-entrant square notches n at the four corners (12 points)
+const notchR = (cx, cz, a, b, ang, n) => { const C = Math.cos(ang), S = Math.sin(ang);
+  return [[-a+n,-b],[a-n,-b],[a-n,-b+n],[a,-b+n],[a,b-n],[a-n,b-n],[a-n,b],[-a+n,b],[-a+n,b-n],[-a,b-n],[-a,-b+n],[-a+n,-b+n]].map(([u, v]) => [cx + u*C - v*S, cz + u*S + v*C]); };
+// Catmull-Rom subdivision of an open chain of [x, z] points (keeps the end points), n pieces per segment
+function crChain(P, n){ const out = []; for (let i = 0; i < P.length - 1; i++){ const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+  for (let k = 0; k < n; k++){ const t = k/n, t2 = t*t, t3 = t2*t; out.push([0, 1].map(j => 0.5*(2*p1[j] + (-p0[j] + p2[j])*t + (2*p0[j] - 5*p1[j] + 4*p2[j] - p3[j])*t2 + (-p0[j] + 3*p1[j] - 3*p2[j] + p3[j])*t3))); } }
+  out.push(P[P.length - 1].slice()); return out; }
+// tagged plan: [[x, z, tag], ...] -> {P, tags} where tags[i] is the tag of the edge from vertex i to i + 1
+const tagP = T => ({P:T.map(t => [t[0], t[1]]), tags:T.map(t => t[2])});
+// generic tower shaft on plan P between y0 and y1. s.sty: 'cw' glass + mullions + floor bands; 'rib' glass + spandrel ribbons
+// (+ mullions); 'fin' glass + vertical fins + thin bands; 'punch' solid wall (s.fr) with a window grid (s.gl).
+// s: {gl, fr, mul, band, fh, bay, sh (ribbon height), fd, fw, ww, wh, roof, cap:false, par (parapet height), minL}
+function tw50(B, P, y0, y1, s){
+  const fh = s.fh || 4, bay = s.bay || 3;
+  if (s.sty === 'punch'){ wallP(B.p(s.fr), P, y0, y1); winP(B, P, y0 + (s.w0 || 0), y1, fh, bay, s.ww || 1.4, s.wh || fh*0.55, s.gl, {minL:s.minL || 2}); }
+  else {
+    wallP(B.p(s.gl), P, y0, y1);
+    if (s.sty === 'rib'){ ribP(B.p(s.fr), P, y0 + fh - (s.sh || 1.2), y1, fh, s.sh || 1.2, 0.06); if (s.mul !== null) facadeP(B, P, y0, y1, {mul:s.mul || s.fr, bay, fd:s.fd || 0.2, fw:s.fw || 0.06, fh}); }
+    else if (s.sty === 'fin'){ finsP(B.p(s.mul || s.fr), P, y0, y1, bay, s.fd || 0.6, s.fw || 0.25); ribP(B.p(s.band || s.fr), P, y0 + fh, y1, fh, s.bh || 0.3, 0.04); }
+    else facadeP(B, P, y0, y1, {mul:s.mul || s.fr, band:s.band || s.fr, bay, fd:s.fd || 0.25, fw:s.fw || 0.07, fh, bh:s.bh || 0.35});
+  }
+  if (s.cap !== false) capP(B.p(s.roof || '#8e9192'), P, y1);
+  if (s.par){ wallP(B.p(s.fr || s.mul), P, y1, y1 + s.par); }
+}
+// register a key: LANDMARKS entry + its SG_PLACES line (model origin = local (C0) of the ref anchor A0, rot 0)
+function K50(key, zh, en, A0, C0, def){ LANDMARKS[key] = Object.assign({zh, en, cat:'new'}, def); const PL = LL40(A0[0], A0[1], C0[0], C0[1]); SG_PLACES.push({type:key, lat:PL.lat, lon:PL.lon, rot:0}); }
+// common colour specs
+const ROOF50 = '#8e9192', MECH50 = '#72777a', FOUND50 = '#bdb7ab', PAVE50 = '#c4beb2', LOB50 = {c:'#b4c2c6', m:0, glow:'#ffe6c0', gk:0.8};
+// glazed recessed lobby band + foundation for a tower plan
+function baseP(B, P, yl){ foundP(B.p(FOUND50), P); wallP(B.p(LOB50), offP(P, 1.2), 0.3, yl || 5); capP(B.p(ROOF50), offP(P, 1.2), 0.3); }
+// ================= Bank of China Building, 4 Battery Road (sgboc, hero) =================
+// Wikipedia: the old block (Palmer & Turner, completed Dec 1953, 16 storeys, 61 m to the roof; roots.gov.sg says 18 storeys) and
+// the 2000 tower (36 storeys, 168 m) side by side on a shared podium. Plan from the OSM building:parts of w106193390: tower
+// w172916312 (notched 24-point plan), the old block w1075238476 (Battery Road / Flint Street corner, OSM top 53.4 m), podium
+// parts w1075238475 (23.7 m), w1075238477 / w1075238478 (20.4 m), w1075238474 (10.5 m).
+// Look (photos, Wikimedia Commons): white stone tower with punched windows, deep dark vertical slots, carved lattice panels in the
+// outer window columns, a stepped crown with recessed corners; the white old block / podium with rows of lattice panels.
+// Night: floodlit white stone (warm), lit windows. No signs or lettering.
+{
+const A0 = [1.285696, 103.852268];
+const SITE0 = [[22.6,7.6],[20.8,16.9],[6.2,24.0],[5.2,22.0],[-5.5,27.2],[-16.4,4.8],[-19.0,-0.7],[-25.2,-13.3],[-14.3,-18.6],[-8.9,-21.1],[5.3,-27.9],[11.5,-15.3],[14.0,-9.8]];
+// the OSM tower ring (24 points, ragged where it meets the old block) fitted with its 34 x 31 m box at -24 deg, re-entrant corner notches
+const TOW0 = notchR(-3.39, -6.94, 17.0, 15.4, -24*PI/180, 2.4);
+const OLD0 = [[13.9,2.0],[10.1,3.0],[7.1,-0.5],[-1.9,3.7],[7.1,21.0],[19.1,15.0],[20.9,7.2],[14.9,-4.0]];
+const P23_0 = [[-5.4,27.2],[7.1,21.0],[-1.9,3.7],[-4.6,5.0],[-4.1,9.7],[-7.6,11.5],[-13.1,9.0],[-15.4,4.2],[-16.4,4.9]];
+const P20a0 = [[-25.1,-13.5],[-19.1,-0.5],[-17.9,-1.0],[-19.1,-4.0],[-16.6,-5.3],[-12.6,-15.3],[-14.4,-18.8]];
+const P20b0 = [[5.3,-27.8],[-8.9,-21.3],[-7.1,-17.8],[4.9,-15.3],[8.9,-17.0],[10.1,-14.8],[11.4,-15.3]];
+const P10_0 = [[12.6,-9.3],[20.9,7.2],[19.1,15.0],[5.4,22.0],[6.1,23.7],[20.9,16.7],[22.6,7.7],[13.9,-10.0]];
+const C0 = pcen(TOW0), [SITE, TOW, OLD, P23, P20a, P20b, P10] = shAll([SITE0, TOW0, OLD0, P23_0, P20a0, P20b0, P10_0], C0);
+LANDMARKS.sgboc = {zh:'中国银行大厦', en:'Bank of China Building', cat:'new', r:34, h:168,
+  lt:{m:0, c:'#ffe9c8', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const ST = {c:'#e9e5db', m:0, lk:0.55}, ST2 = {c:'#dcd6c9', m:0, lk:0.5}, ROOF = '#b9b4a9', FOUND = '#bdb7ab', PAVE = '#c6c0b4',
+    WIN = {c:'#36434e', m:1, fh:4.2, cw:2.6}, SLOT = {c:'#24303a', m:1, fh:4.2, cw:1.6}, LAT = {c:'#cdc5b4', m:0, lk:0.4},
+    OWIN = {c:'#3c4954', m:1, fh:3.4, cw:2.4}, LOB = {c:'#b8c2c4', m:0, glow:'#ffe2b8', gk:0.7}, LION = '#d6d0c2', MECH = '#8f9395';
+  const Y1 = 150, Y2 = 160, Y3 = 166, YT = 168;
+  foundP(B.p(FOUND), SITE); capP(B.p(PAVE), SITE, 0.3);
+  // ---- tower: white stone walls; the short notch edges are the dark vertical slots ----
+  const slot = e => e.L < 3 ? ST2 : null;
+  wallsByEdge(B, TOW, 0.3, Y1, ST, slot);
+  winP(B, TOW, 24, Y1 - 2, 4.2, 2.7, 1.25, 2.7, WIN, {minL:4.6, end:1, endCol:LAT});
+  // a deeper slot down the middle of each long face (photo: twin dark slots with window strips)
+  for (const e of edgesF(TOW)) if (e.L > 13) for (const f of [0.3, 0.7]){ slabP(B.p(SLOT), rectO(e.L*f - 1.1, e.L*f + 1.1, 24, Y1 + 4), e.F, 0.0, 0.16);
+    for (const d of [-0.55, 0.55]) slabP(B.p(ST2), rectO(e.L*f + d - 0.06, e.L*f + d + 0.06, 24, Y1 + 4), e.F, 0.16, 0.24); }
+  // string course at the crown base, then the stepped crown
+  bandAtP(B.p(ST2), TOW, Y1 - 1.2, 1.2, 0.25);
+  const T1 = offP(TOW, 0.9), T2 = scP(TOW, 0.72), T3 = scP(TOW, 0.5);
+  wallsByEdge(B, T1, Y1, Y2, ST, slot); capP(B.p(ROOF), T1, Y2);
+  winP(B, T1, Y1 + 1.5, Y2 - 1.5, 7, 3.4, 1.9, 5.2, SLOT, {minL:5});
+  bandAtP(B.p(ST2), T1, Y2 - 0.8, 0.8, 0.2);
+  blkP(B, T2, Y2, Y3, ST, ROOF); winP(B, T2, Y2 + 1, Y3 - 0.5, 4.5, 4, 1.2, 3.4, LAT, {minL:4});
+  blkP(B, T3, Y3, YT, ST2, ROOF);
+  // recessed corner steps: small set-back blocks at the long-edge ends (stepped silhouette)
+  for (const e of edgesF(T1)) if (e.L > 9) for (const u of [2.2, e.L - 2.2]){ const p = e.F(u, 0, -2.4); boxP(B.p(ST), 3.2, Y3 - 1 - Y2, 3.2, p[0], Y2, p[2], -e.ang); }
+  // roof plant
+  boxP(B.p(MECH), 7, 2.2, 6, 0, YT, 0); lavP(B.p(LAV50), T3, YT);
+  // ---- old block (1953): white stone, vertical window strips, a row of lattice panels at the top floor, raised centre ----
+  wallP(B.p(ST), OLD, 0.3, 53.4); capP(B.p(ROOF), OLD, 53.4);
+  winP(B, OLD, 6, 50, 3.4, 2.2, 1.2, 2.2, OWIN, {minL:5});
+  winP(B, OLD, 50, 53.4, 3.4, 2.2, 1.7, 2.6, LAT, {minL:5, w:0.1});
+  bandAtP(B.p(ST2), OLD, 53.4 - 0.8, 0.8, 0.3); bandAtP(B.p(ST2), OLD, 5.2, 0.8, 0.25);
+  const OC = scP(OLD, 0.55); blkP(B, OC, 53.4, 58.2, ST, ROOF); bandAtP(B.p(ST2), OC, 57.6, 0.6, 0.2);
+  const OC2 = scP(OLD, 0.3); blkP(B, OC2, 58.2, 61, ST2, ROOF);
+  // entrance on Battery Road (south face) with two stone lions on plinths
+  { const e = edgesF(OLD).reduce((a, b) => (b.a[1] + b.b[1] > a.a[1] + a.b[1] ? b : a));
+    slabP(B.p(LOB), rectO(e.L/2 - 3, e.L/2 + 3, 0.3, 5), e.F, 0.02, 0.1);
+    for (const s of [-1, 1]){ const p = e.F(e.L/2 + s*4.2, 0, 1.4); boxP(B.p(ST2), 1.2, 1.1, 1.8, p[0], 0.3, p[2], -e.ang);
+      latheP(B.p(LION), [[0.5, 1.4], [0.55, 2.0], [0.42, 2.5], [0.3, 2.8], [0.01, 2.9]], p[0], p[2], 6); } }
+  // ---- podium parts ----
+  for (const [P, h] of [[P23, 23.7], [P20a, 20.4], [P20b, 20.4], [P10, 10.5]]){
+    wallP(B.p(ST), P, 0.3, h); capP(B.p(ROOF), P, h); bandAtP(B.p(ST2), P, h - 0.7, 0.7, 0.15);
+    winP(B, P, 5, h - 1.5, 4.2, 2.8, 1.6, 2.4, OWIN, {minL:4});
+    bandAtP(B.p(LOB), P, 0.3, 4.4, 0.03);
+  }
+  B.flush(g); return g; }};
+const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
+SG_PLACES.push({type:'sgboc', lat:PL.lat, lon:PL.lon, rot:0});
+}
+// ================= SGX Centre, 2 & 4 Shenton Way (sgsgx, hero) =================
+// Wikipedia: twin towers SGX Centre One (2000) and Two (2001), 30 floors each, roof 172 m, antenna spire 187 m; Kohn Pedersen Fox
+// with Architects 61; slightly arced so most floors look towards Marina Bay; vertical and horizontal fins on different sides;
+// colonnaded walkways and a glass lobby on the first storey. Plans: OSM w47345025 (Tower One, NE) and w47345024 (Tower Two, SW)
+// on the 3-storey podium w45098518 (app 11.1 m). Look (photo, Commons "SGX Centre Two"): warm-grey granite; the arced SE face
+// with closely spaced vertical fins; the narrow end faces glass with deep horizontal sun-shade ledges between granite piers that
+// rise into a crown frame with an open square at the top; a slim twin antenna mast above it.
+// Night: lit office floors, crown frame washed white. No lettering (the real crown carries a tenant sign: left out).
+{
+const A0 = [1.279274, 103.849819];
+const POD0 = [[36.7,-87.9],[-62.3,72.1],[-36.6,87.6],[61.9,-71.9]];
+// tags: g granite flank, c arced fin face, e end face (glass + ledges), n notch
+const T1raw = [[31.4,-71.9,'n'],[27.9,-66.6,'n'],[24.9,-68.9,'g'],[3.4,-33.4,'e'],[11.7,-28.1,'n'],[14.2,-31.6,'e'],[30.7,-21.4,'c']];
+const T1arc = [[30.7,-21.4],[37.9,-33.9],[44.4,-46.9],[48.2,-61.9]];
+const T2raw = [[-8.6,42.6,'e'],[-27.1,31.9,'n'],[-25.8,28.9,'n'],[-32.6,24.9,'g'],[-54.1,58.6,'g'],[-50.3,61.6,'g'],[-53.3,66.4,'e'],[-36.1,76.9,'c']];
+const T2arc = [[-36.1,76.9],[-24.8,66.4],[-15.8,53.9],[-8.6,42.6]];
+const mkT = (raw, arc, endTagAfterArc) => { const out = raw.slice(); const s = crChain(arc, 4); for (let i = 1; i < s.length - 1; i++) out.push([s[i][0], s[i][1], 'c']); out.push([arc[arc.length - 1][0], arc[arc.length - 1][1], endTagAfterArc]); return out; };
+// Tower One: after the arc comes the NE end face (48.2,-61.9) -> (31.4,-71.9); Tower Two's arc ends at its inner end face vertex
+const T1T = mkT(T1raw, T1arc, 'e'), T2T = (() => { const a = T2raw.slice(); const s = crChain(T2arc, 4); for (let i = 1; i < s.length - 1; i++) a.push([s[i][0], s[i][1], 'c']); return a; })();
+const C0 = pcen(POD0);
+const sh = T => T.map(t => [t[0] - C0[0], t[1] - C0[1], t[2]]);
+const POD = shP(POD0, C0[0], C0[1]), TW = [tagP(sh(T1T)), tagP(sh(T2T))];
+LANDMARKS.sgsgx = {zh:'新加坡交易所大厦', en:'SGX Centre', cat:'new', r:100, h:187,
+  lt:{m:1, c:'#e8f0ff', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GR = {c:'#aaa59c', m:0, lk:0.35}, GR2 = {c:'#9b968d', m:0, lk:0.3}, GL = {c:'#46566a', m:1, fh:4.8, cw:1.6}, GLE = {c:'#4c5d70', m:1, fh:4.8, cw:3},
+    LEDGE = {c:'#c9c6bf', m:0, lk:0.3}, ROOF = '#8e9192', MECH = '#727779', FOUND = '#bdb7ab', PAVE = '#c4beb2', LOB = {c:'#aebfc6', m:0, glow:'#ffe6c0', gk:0.75},
+    MAST = '#c9cccd', MURAL = {c:'#8c8478', m:0, lk:0.3}, COL = '#cfcac0';
+  const YP = 11.1, Y1 = 160, Y2 = 172, YM = 187, FH = 4.8;
+  // ---- podium: granite, glass lobby behind a colonnade along Shenton Way (SE long edge) ----
+  foundP(B.p(FOUND), POD); wallP(B.p(GR), POD, 0.3, YP); capP(B.p(ROOF), POD, YP);
+  bandAtP(B.p(GR2), POD, YP - 0.8, 0.8, 0.2);
+  const pe = edgesF(POD);
+  for (const e of pe){ if (e.L < 50) continue;
+    const se = e.nx*0 + 1; // both long sides: colonnade and glass on the Shenton Way side, plain wall with the long mural band on Robinson Road side
+    const isShenton = (e.a[0] + e.b[0]) > 0; // the SE edge lies east of the centre
+    if (isShenton){ slabP(B.p(LOB), rectO(2, e.L - 2, 0.3, 6.5), e.F, -3, -2.9); slabP(B.p(ROOF), rectO(0, e.L, 6.5, 7.2), e.F, -3.2, 0.05);
+      const n = Math.round(e.L/8.4); for (let k = 0; k <= n; k++){ const p = e.F(k*e.L/n, 0, -0.6); segP(B.p(COL), [p[0], 0.3, p[2]], [p[0], 6.5, p[2]], 0.45, 8); } }
+    else slabP(B.p(MURAL), rectO(e.L/2 - 60, e.L/2 + 60, 1.2, 5.2), e.F, 0.02, 0.12);
+  }
+  // ---- the two towers ----
+  for (const T of TW){
+    const P = T.P, E = edgesF(P);
+    // walls per edge kind
+    E.forEach((e, i) => { const t = T.tags[i], c = t === 'c' ? GL : t === 'e' ? GLE : GR;
+      quadP(B.p(c), [e.a[0], YP, e.a[1]], [e.b[0], YP, e.b[1]], [e.b[0], Y1, e.b[1]], [e.a[0], Y1, e.a[1]]); });
+    capP(B.p(ROOF), P, Y1);
+    E.forEach((e, i) => { const t = T.tags[i];
+      if (t === 'c'){ // arced face: vertical granite fins every 1.55 m
+        const n = Math.max(1, Math.round(e.L/1.55)); for (let k = 0; k < n; k++) slabP(B.p(GR), rectO(k*e.L/n - 0.14, k*e.L/n + 0.14, YP, Y2), e.F, 0, 0.75);
+        ribP(B.p(GR2), [e.a, e.b], YP + FH, Y1, FH, 0.35, 0.05);
+      } else if (t === 'g'){ // flat granite flank: narrow vertical window slits
+        const n = Math.max(1, Math.round(e.L/3)); for (let k = 0; k < n; k++) shapeP(B.p(GL), rectO((k + 0.5)*e.L/n - 0.45, (k + 0.5)*e.L/n + 0.45, YP + 2, Y1 - 2), e.F, 0.05);
+        slabP(B.p(GR), rectO(0, e.L, Y1, Y2), e.F, -0.4, 0);
+      } else if (t === 'e'){ // end face: granite piers at both sides, glass with deep sun-shade ledges between, crown frame with an open square
+        const pw = Math.min(4.2, e.L*0.2);
+        slabP(B.p(GR), rectO(0, pw, YP, Y2), e.F, 0, 0.9); slabP(B.p(GR), rectO(e.L - pw, e.L, YP, Y2), e.F, 0, 0.9);
+        for (let y = YP + FH*2; y < Y1 - 6; y += FH*2) slabP(B.p(LEDGE), rectO(pw, e.L - pw, y, y + 0.45), e.F, 0, 1.6);
+        for (let k = 1; k < 4; k++) shapeP(B.p(GR2), rectO(pw + (e.L - 2*pw)*k/4 - 0.08, pw + (e.L - 2*pw)*k/4 + 0.08, YP, Y1 - 6), e.F, 0.06);
+        slabP(B.p(GR), rectO(pw, e.L - pw, Y1 - 6, Y1 - 3.5), e.F, 0, 0.9);       // sill of the open square
+        slabP(B.p(GR), rectO(pw, e.L - pw, Y2 - 3, Y2), e.F, 0, 0.9);             // lintel
+      }
+    });
+    // crown: screen walls rise from the roof to 172 m on the flanks; roof plant set back; the twin antenna mast over one end
+    const S2 = offP(P, 2.5); wallP(B.p(MECH), offP(P, 6), Y1, Y1 + 5); capP(B.p(ROOF), offP(P, 6), Y1 + 5);
+    const ce = E.filter((e, i) => T.tags[i] === 'e').sort((a, b) => b.L - a.L)[0];
+    if (ce){ const m = ce.F(ce.L/2, 0, -4.5);
+      for (const d of [-1.2, 1.2]){ const p = [m[0] + ce.nz*0 + Math.cos(ce.ang)*d, 0, m[2] + Math.sin(ce.ang)*d]; segP(B.p(MAST), [p[0], Y1, p[2]], [p[0], YM, p[2]], 0.28, 6);
+        for (let y = Y2; y < YM - 1; y += 2.5) segP(B.p(MAST), [p[0], y, p[2]], [m[0], y + 1.25, m[2]], 0.08, 4); }
+      boxP(B.p(LAV50), 0.5, 0.6, 0.5, m[0], YM, m[2]); }
+    lavP(B.p(LAV50), [P[0], P[Math.floor(P.length/2)]], Y2);
+  }
+  // street trees along Shenton Way
+  for (const e of pe) if (e.L > 50 && (e.a[0] + e.b[0]) > 0){ const n = Math.round(e.L/14); for (let k = 0; k < n; k++){ const p = e.F((k + 0.5)*e.L/n, 0, 2.4); treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), p[0], 0.3, p[2], 1.2, R); } }
+  B.flush(g); return g; }};
+const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
+SG_PLACES.push({type:'sgsgx', lat:PL.lat, lon:PL.lon, rot:0});
+}
+// ================= OUE Downtown (former DBS Building Towers), 6 Shenton Way (sgoue, hero) =================
+// Wikipedia: Tower 1, 50 storeys, 201 m (1975, Architects Team 3; tallest in Singapore 1975-86), aluminium cladding replaced by a
+// glass curtain wall in the 2017 conversion (Oakwood serviced apartments); Tower 2, 36 storeys, 150 m (1994, offices); the
+// Downtown Gallery mall runs the full length of the podium. Plans from OSM: Tower 1 w172915340 with its floor parts w510804033
+// (39-80, 84-123, 127-166, 170-183 m: the three recessed breaks between them) and the core w510804763 (to 201 m); Tower 2
+// w172915341; Downtown Gallery w510901696 (39 m). Look (photos, Commons): Tower 1 dark-grey glass divided by deep vertical fins
+// (four bays a face), dark recessed breaks, an open-grid crown; Tower 2 light grey cladding with a regular grid of small windows;
+// the Gallery glass behind slender light fins. Night: lit apartment / office windows, a softly lit crown on Tower 1.
+{
+const A0 = [1.277402, 103.848671];
+const T1F0 = [[-42.5,44.4],[-33.0,52.6],[-20.5,57.9],[-6.3,34.1],[-17.5,24.6],[-28.3,20.6]];
+const CORE0 = [[-33.5,42.6],[-21.0,50.1],[-13.3,37.1],[-25.8,30.1]];
+const T2_0 = [[25.5,-68.4],[-10.3,-9.1],[13.5,5.1],[49.2,-53.6]];
+const GAL0 = [[-11.6,-9.1],[13.5,6.1],[-56.2,119.3],[-81.3,104.1],[-61.0,71.1]];
+const C0 = [0, 0], [T1F, CORE, T2, GAL] = shAll([T1F0, CORE0, T2_0, GAL0], C0);
+LANDMARKS.sgoue = {zh:'华联海湾中心', en:'OUE Downtown', cat:'new', r:137, h:201,
+  lt:{m:1, c:'#ffe7c4', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL1 = {c:'#3a444d', m:1, fh:3.9, cw:1.8}, FIN = {c:'#555b61', m:0, lk:0.2}, MUL1 = {c:'#4c535a', m:0, lk:0.15}, DARK = '#23282d',
+    CL2 = {c:'#cfccc4', m:0, lk:0.3}, WIN2 = {c:'#34414c', m:1, fh:4.0, cw:2.2}, ROOF = '#8b8e90', MECH = '#6e7376', FOUND = '#bdb7ab', PAVE = '#c4beb2',
+    GLG = {c:'#4a5660', m:1, fh:5.5, cw:3.2}, FING = {c:'#dcdcd6', m:0, lk:0.3}, LOB = {c:'#b4c2c6', m:0, glow:'#ffe6c0', gk:0.8}, GRID = '#5d6368', LEAF = {c:'#4f7a3e', m:0, lk:0.1};
+  // ---- Downtown Gallery podium (39 m): glass behind light vertical fins, recessed glazed ground floor, roof garden ----
+  const YG = 39;
+  foundP(B.p(FOUND), GAL); foundP(B.p(FOUND), T2);
+  wallP(B.p(GLG), GAL, 0.3, YG); capP(B.p(ROOF), GAL, YG);
+  finsP(B.p(FING), GAL, 6, YG, 2.6, 0.9, 0.35);
+  ribP(B.p(FING), GAL, 6, YG, 5.5, 0.5, 0.06); bandAtP(B.p(LOB), GAL, 0.3, 5.7, 0.04);
+  bandAtP(B.p(FING), GAL, YG - 1.2, 1.2, 0.3);
+  for (const [x, z] of alongP(offP(GAL, 5), 9)){ if (inPolyS(offP(T1F, -3), x, z)) continue; treeP(B.p('#5b4a3a'), B.p(LEAF), x, YG, z, 0.9, R); }
+  // ---- Tower 1: four glass blocks between the recessed breaks, deep fins, open-grid crown ----
+  const blocks = [[YG, 80], [84, 123], [127, 166], [170, 192]];
+  for (const [a, b] of blocks){
+    wallP(B.p(GL1), T1F, a, b); capP(B.p(ROOF), T1F, b); capP(B.p(ROOF), T1F, a);
+    facadeP(B, T1F, a, b, {mul:MUL1, bay:1.55, fd:0.12, fw:0.05, fh:3.9, band:MUL1, bh:0.18});
+    // four bays a face: three deep fins + corner fins
+    for (const e of edgesF(T1F)){ if (e.L < 6) continue; for (let k = 0; k <= 4; k++) slabP(B.p(FIN), rectO(k*e.L/4 - 0.35, k*e.L/4 + 0.35, a - 0.4, b + 0.4), e.F, 0, k % 4 ? 1.3 : 0.6); }
+    bandAtP(B.p(FIN), T1F, b - 0.9, 0.9, 0.35);
+  }
+  // breaks: the core and the structural frame show through
+  for (const [a, b] of [[80, 84], [123, 127], [166, 170]]){ blkP(B, CORE, a, b, DARK); for (const p of offP(T1F, 1.2)) segP(B.p(FIN), [p[0], a, p[1]], [p[0], b, p[1]], 0.6, 6); }
+  // crown 192-201: open grid screen round the core
+  blkP(B, CORE, 192, 201, MECH, ROOF);
+  for (const e of edgesF(T1F)){ if (e.L < 2) continue; const n = Math.max(1, Math.round(e.L/2.2));
+    for (let k = 0; k <= n; k++) slabP(B.p(GRID), rectO(k*e.L/n - 0.12, k*e.L/n + 0.12, 192, 201), e.F, -0.2, 0.2);
+    for (let y = 192; y <= 201.01; y += 3) slabP(B.p(GRID), rectO(0, e.L, y - 0.15, y + 0.15), e.F, -0.2, 0.2); }
+  lavP(B.p(LAV50), T1F, 201);
+  // ---- Tower 2 (150 m): light grey cladding with a grid of small windows, recessed glazed base ----
+  wallP(B.p(LOB), offP(T2, 1.5), 0.3, 6); wallP(B.p(CL2), T2, 6, 150); capP(B.p(ROOF), T2, 150);
+  for (const p of T2) segP(B.p(CL2), [p[0], 0.3, p[1]], [p[0], 6, p[1]], 0.8, 8);
+  winP(B, T2, 8, 146, 4.0, 2.2, 1.3, 2.0, WIN2, {minL:5});
+  bandAtP(B.p(CL2), T2, 146, 4, 0.15);
+  blkP(B, scP(T2, 0.6), 150, 155, MECH, ROOF); lavP(B.p(LAV50), T2, 150);
+  B.flush(g); return g; }};
+const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
+SG_PLACES.push({type:'sgoue', lat:PL.lat, lon:PL.lon, rot:0});
+}
+// ================= V on Shenton, 5 Shenton Way (sgvshenton, hero) =================
+// UNStudio with Architects 61 (e-architect / Wikipedia): a 53/54-storey residential tower of 237 m and a 23-storey office tower of
+// 123 m on a shared plinth (car park, sky garden over the whole 8th storey); facades on a hexagon pattern (office: curtain-wall
+// hexagon module; residential: balconies, bay windows and planters stacked into the pattern); sky lobbies on the 24th and 34th
+// floors; a chamfer line frames each tower and the plinth and lights up as a continuous line at night. Plans from OSM: plinth parts
+// (26.4 m) over the site w448084975; residential shafts w560229133 + w560229131 with the link w560229135; office tower w560229136.
+// Look (photo, Commons 2025): residential tower of two joined shafts with white balcony bands and open lattice crowns; office tower
+// silver glass with white hexagon lines; grey plinth with a large hexagon panel pattern.
+{
+const A0 = [1.277411, 103.849369];
+const SITE0 = [[31.4,-80.1],[-58.5,61.7],[-30.2,79.4],[50.9,-50.7],[53.9,-55.4],[55.9,-58.4],[58.6,-62.9]];
+const RA0 = [[-48.7,54.9],[-43.2,57.9],[-47.0,63.1],[-30.2,73.1],[-14.7,47.6],[-36.2,34.6]];
+const RB0 = [[1.5,21.6],[-20.0,8.6],[-33.7,31.1],[-12.2,44.1]];
+const LK0 = [[-33.7,31.1],[-36.2,34.6],[-14.7,47.6],[-12.2,44.1]];
+const OF0 = [[-7.0,-15.9],[18.3,-0.4],[52.3,-56.6],[51.0,-61.4],[29.0,-74.4]];
+const C0 = pcen(SITE0), [SITE, RA, RB, LK, OF] = shAll([SITE0, RA0, RB0, LK0, OF0], C0);
+// honeycomb lines (pointy-top hexagons, flat-to-flat width cw) on facade frame F over u0..u1, v0..v1, strips of width t at offset w
+function hexF(o, F, u0, u1, v0, v1, cw, t, w){
+  const hh = cw/Math.sqrt(3), rs = 1.5*hh; // hexagon circumradius, row step
+  const seg = (a, b) => { // clip to the face box, then a thin strip
+    let [ua, va] = a, [ub, vb] = b; if ((ua < u0 && ub < u0) || (ua > u1 && ub > u1) || (va < v0 && vb < v0) || (va > v1 && vb > v1)) return;
+    const cu = x => Math.max(u0, Math.min(u1, x)), cv = x => Math.max(v0, Math.min(v1, x)); ua = cu(ua); ub = cu(ub); va = cv(va); vb = cv(vb);
+    const L = Math.hypot(ub - ua, vb - va); if (L < 0.2) return; const nu = -(vb - va)/L*t/2, nv = (ub - ua)/L*t/2;
+    shapeP(o, [[ua + nu, va + nv], [ub + nu, vb + nv], [ub - nu, vb - nv], [ua - nu, va - nv]], F, w); };
+  for (let r = 0, v = v0; v < v1 + hh; r++, v += rs) for (let u = u0 + (r % 2 ? cw/2 : 0); u < u1 + cw; u += cw){
+    const P = []; for (let k = 0; k < 6; k++){ const a = PI/6 + k*PI/3; P.push([u + Math.cos(a)*hh, v + Math.sin(a)*hh]); }
+    seg(P[5], P[0]); seg(P[0], P[1]); seg(P[1], P[2]); }
+}
+LANDMARKS.sgvshenton = {zh:'V on Shenton', en:'V on Shenton', cat:'new', r:91, h:237,
+  lt:{m:1, c:'#eaf2ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GLR = {c:'#56636d', m:1, fh:3.9, cw:2.4}, LEDGE = {c:'#e3e5e3', m:0, lk:0.25}, GLO = {c:'#6f8290', m:1, fh:4.2, cw:3.0}, HEX = {c:'#e6e9ea', m:0, lk:0.3},
+    POD = {c:'#9c9e9d', m:0, lk:0.25}, PODG = {c:'#4f5a62', m:1, fh:3.3, cw:3}, ROOF = '#8b8e90', FOUND = '#bdb7ab', PAVE = '#c4beb2', DARK = '#2b3238',
+    CH = {c:'#f2f4f4', m:0, glow:'#e8f4ff', gk:1.1}, LAT = '#d7dadb', LOB = {c:'#b4c2c6', m:0, glow:'#ffe6c0', gk:0.8}, LEAF = {c:'#4f7a3e', m:0, lk:0.1};
+  const YP = 26.4, YR = 226, YRT = 237, YO = 123;
+  // ---- plinth: grey hexagon panels, a glazed base, the sky-garden deck on top ----
+  foundP(B.p(FOUND), SITE); wallP(B.p(POD), SITE, 6, YP); capP(B.p('#7d8a74'), SITE, YP);
+  wallP(B.p(LOB), offP(SITE, 1.2), 0.3, 6); capP(B.p(ROOF), SITE, 0.3);
+  for (const e of edgesF(SITE)) if (e.L > 8){ hexF(B.p(HEX), e.F, 0, e.L, 6.5, YP - 0.5, 6.5, 0.22, 0.06); slabP(B.p(ROOF), rectO(0, e.L, 5.6, 6.4), e.F, 0, 1.6); }
+  for (const p of SITE) segP(B.p(CH), [p[0], YP + 0.05, p[1]], [p[0], 6.4, p[1]], 0.18, 4);
+  bandAtP(B.p(CH), SITE, YP - 0.25, 0.25, 0.1);
+  for (const [x, z] of alongP(offP(SITE, 4), 10)){ if ([RA, RB, LK, OF].some(Q => inPolyS(offP(Q, -2), x, z))) continue; treeP(B.p('#5b4a3a'), B.p(LEAF), x, YP, z, 0.8, R); }
+  // ---- residential tower: two shafts and the recessed link, balcony bands, sky-lobby breaks, lattice crowns ----
+  for (const P of [RA, RB]){
+    wallP(B.p(GLR), P, YP, YR); capP(B.p(ROOF), P, YR);
+    ledgeP(B.p(LEDGE), P, YP + 3.9, YR - 1, 3.9, 0.9, 0.35);
+    // irregular bay windows / planters: short white fins at varying places on each floor (fixed pattern from the rng)
+    for (const e of edgesF(P)) if (e.L > 6) for (let y = YP + 3.9; y < YR - 4; y += 3.9){ const n = 1 + (R()*3 | 0); for (let k = 0; k < n; k++){ const u = 1 + R()*(e.L - 2); slabP(B.p(LEDGE), rectO(u - 0.15, u + 0.15, y, y + 3.9), e.F, 0, 0.9); } }
+    for (const yb of [88.8, 127.8]) wallP(B.p(DARK), offP(P, 1.0), yb, yb + 3.9);
+    for (const p of P) segP(B.p(CH), [p[0], YP, p[1]], [p[0], YR, p[1]], 0.16, 4);
+    latticeP(B.p(LAT), offP(P, 0.3), YR, YRT, 3.2, 0.18, 3, true);
+    capP(B.p(ROOF), offP(P, 3), YR + 1.5); lavP(B.p(LAV50), [P[0], P[2]], YRT);
+  }
+  wallP(B.p(GLR), offP(LK, 0.8), YP, YR - 4); ledgeP(B.p(LEDGE), offP(LK, 0.8), YP + 3.9, YR - 5, 3.9, 0.5, 0.3);
+  // ---- office tower: silver glass with white hexagon lines, chamfer-line edges ----
+  wallP(B.p(GLO), OF, YP, YO); capP(B.p(ROOF), OF, YO);
+  for (const e of edgesF(OF)) if (e.L > 4) hexF(B.p(HEX), e.F, 0, e.L, YP, YO, 6.0, 0.28, 0.08);
+  for (const p of OF) segP(B.p(CH), [p[0], YP, p[1]], [p[0], YO, p[1]], 0.18, 4);
+  bandAtP(B.p(CH), OF, YO - 0.3, 0.3, 0.12);
+  blkP(B, scP(OF, 0.55), YO, YO + 4, '#767b7e', ROOF); lavP(B.p(LAV50), [OF[0], OF[2]], YO);
+  B.flush(g); return g; }};
+const PL = LL40(A0[0], A0[1], C0[0], C0[1]);
+SG_PLACES.push({type:'sgvshenton', lat:PL.lat, lon:PL.lon, rot:0});
+}
+// ================= Battery Road / Collyer Quay / Raffles Place group =================
+// ---- Maybank Tower, 2 Battery Road (sgmaybank): 32 storeys, 175 m (Wikipedia list; article 175.26 m). OSM parts of w106193386:
+// podium w1075240989 (17.1 m), lower tower w1075240988 (16.5-42.9 m), upper tower split in a west strip w325793730 and an east
+// piece w1075553558 (42.9-175 m). Look (photos): beige stone bands alternating with blue glass on the vertical part; the east face
+// a blue glass facet leaning in so the tower narrows towards the top; white podium. No bank sign.
+{
+const A0 = [1.285884, 103.852534];
+const POD0 = [[-20.0,-16.5],[-0.2,23.8],[0.8,25.0],[5.8,26.3],[8.0,24.5],[17.0,13.8],[17.5,11.5],[-0.2,-26.0]];
+const LOW0 = [[9.8,-4.5],[6.3,-13.5],[-10.0,-21.2],[-20.0,-16.5],[-3.2,17.3],[6.8,12.5]];
+const W0 = [[6.8,12.5],[-10.0,-21.2],[-20.0,-16.5],[-3.2,17.3]], E0 = [[6.8,12.5],[9.8,-4.5],[6.3,-13.5],[-10.0,-21.2]];
+const C0 = pcen(LOW0), [POD, LOW, W, E] = shAll([POD0, LOW0, W0, E0], C0);
+K50('sgmaybank', '马来亚银行大厦', 'Maybank Tower', A0, C0, {r:32, h:175, lt:{m:1, c:'#dfeaff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const ST = {c:'#d8ccb4', m:0, lk:0.35}, GL = {c:'#3f6c9a', m:1, fh:4.1, cw:2.0}, WH = {c:'#e7e4dc', m:0, lk:0.35}, MUL = {c:'#9fb3c4', m:0, lk:0.15};
+  const YT = 175, YL = 42.9;
+  foundP(B.p(FOUND50), POD); wallP(B.p(WH), POD, 0.3, 17.1); capP(B.p(ROOF50), POD, 17.1); bandAtP(B.p(LOB50), POD, 0.3, 5, 0.04);
+  finsP(B.p(ST), POD, 5, 17.1, 2.4, 0.4, 0.4);
+  tw50(B, LOW, 17.1, YL, {sty:'rib', gl:GL, fr:ST, fh:4.1, sh:1.9, bay:1.6, mul:MUL});
+  tw50(B, W, YL, YT, {sty:'rib', gl:GL, fr:ST, fh:4.1, sh:1.9, bay:1.6, mul:MUL, par:2.5});
+  // the leaning east facet: loft E, its two outer corners drawn in towards the shared edge W-E as it rises
+  const S1 = E[0], S2 = E[3], dx = S2[0] - S1[0], dz = S2[1] - S1[1], L2 = dx*dx + dz*dz;
+  const sec = t => E.map((p, i) => { if (i === 0 || i === 3) return p; const k = ((p[0] - S1[0])*dx + (p[1] - S1[1])*dz)/L2, q = [S1[0] + dx*k, S1[1] + dz*k]; return [q[0] + (p[0] - q[0])*(1 - 0.82*t), q[1] + (p[1] - q[1])*(1 - 0.82*t)]; });
+  const S = []; for (let i = 0; i <= 8; i++){ const t = i/8; S.push(sec(t).map(p => [p[0], YL + (YT - YL)*t, p[1]])); }
+  loftP(B.p(GL), S, true);
+  for (let y = YL + 4.1; y < YT - 1; y += 4.1){ const t = (y - YL)/(YT - YL), P = sec(t); bandAtP(B.p(MUL), P, y, 0.25, 0.04); }
+  blkP(B, scP(W, 0.6), YT, YT + 3, MECH50, ROOF50); lavP(B.p(LAV50), W, YT + 2.5);
+  B.flush(g); return g; }});
+}
+// ---- Straits Trading Building, 9 Battery Road (sgstraitstrading): 157 m, 29 floors, 2010 (Wikipedia list); 28-storey Grade A
+// tower by Team Design Architects with two double-storey open-air gardens (property news, Jan 2008). OSM footprint w171999283
+// (named "MYP Centre" in OSM); the app has only its 22 m podium. The tower outline is not in the data: modelled on the main body
+// of the footprint scaled to 72 % (about 1,000 m2, in line with the ~8,300 sq ft floors quoted) - an estimate.
+{
+const A0 = [1.285042, 103.852358];
+const FP0 = [[15.7,-31.6],[-32.6,-8.6],[-34.3,8.3],[2.6,10.6],[-1.4,47.0],[3.4,47.0],[5.2,47.4],[18.1,7.9],[21.3,7.7],[23.6,-24.2],[24.0,-30.3]];
+const BODY0 = [[15.7,-31.6],[-32.6,-8.6],[-34.3,8.3],[2.6,10.6],[18.1,7.9],[21.3,7.7],[23.6,-24.2],[24.0,-30.3]];
+const C0 = pcen(BODY0), [FP, BODY] = shAll([FP0, BODY0], C0), TW = scP(BODY, 0.72);
+K50('sgstraitstrading', '海峡贸易大厦', 'Straits Trading Building', A0, C0, {r:64, h:157, lt:{m:1, c:'#e4f2ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#4f7684', m:1, fh:4.3, cw:1.8}, FIN = {c:'#c3cbcd', m:0, lk:0.2}, POD = {c:'#c9c7c0', m:0, lk:0.3}, DARK = '#2c3338';
+  foundP(B.p(FOUND50), FP); wallP(B.p(POD), FP, 5, 22); capP(B.p(ROOF50), FP, 22); wallP(B.p(LOB50), offP(FP, 1), 0.3, 5); capP(B.p(ROOF50), FP, 5.2);
+  winP(B, FP, 6, 21, 4, 3, 2.2, 2.6, GL, {minL:6});
+  tw50(B, TW, 22, 157, {sty:'fin', gl:GL, fr:FIN, fh:4.3, bay:1.8, fd:0.5, fw:0.18, par:3});
+  // the two double-height open-air gardens (recessed, planted)
+  for (const yb of [70, 114]){ wallP(B.p(DARK), offP(TW, 2.5), yb, yb + 8.6); for (const [x, z] of alongP(offP(TW, 1.4), 5)) treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, yb, z, 0.7, R); }
+  capP(B.p('#3d4a57'), offP(TW, 2), 156.5); lavP(B.p(LAV50), TW.filter((p, i) => i % 2 === 0), 160);
+  B.flush(g); return g; }});
+}
+// ---- 30 Raffles Place (sg30raffles): 152 m, 33 floors, 1993 (Wikipedia list; OSM w106193388 "Chevron House", 33 levels, 152 m,
+// tower parts from 16 m). Rounded west end from the OSM outline. Facade materials not verified: neutral warm-grey stone ribbons
+// and blue-green glass, a glazed base. No signs.
+{
+const A0 = [1.284169, 103.85197];
+// east end pulled in 3 m from the OSM outline so the app's hull (+3 m) does not swallow the centroid of CIMB Plaza (w171999336)
+const T0 = [[-15.2,-15.6],[-15.7,-13.9],[-19.4,-13.9],[-24.2,-12.1],[-27.7,-8.6],[-29.9,-1.6],[-29.9,2.6],[-26.4,8.6],[-21.2,12.6],[15.8,16.4],[16.6,11.6],[25.0,12.0],[26.6,-8.6],[25.6,-10.4],[23.8,-11.4]];
+const C0 = pcen(T0), [T] = shAll([T0], C0);
+K50('sg30raffles', '莱佛士坊30号', '30 Raffles Place', A0, C0, {r:36, h:152, lt:{m:1, c:'#ffe9cc', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#46707a', m:1, fh:4.3, cw:2.2}, ST = {c:'#b9aa9a', m:0, lk:0.35}, ST2 = {c:'#a79888', m:0, lk:0.3};
+  foundP(B.p(FOUND50), T); wallP(B.p(ST), T, 0.3, 16); bandAtP(B.p(LOB50), T, 0.3, 5.5, 0.05); winP(B, T, 6, 15.5, 4.8, 3.2, 2.2, 3, GL, {minL:3});
+  tw50(B, T, 16, 146, {sty:'rib', gl:GL, fr:ST, fh:4.3, sh:1.6, bay:2.2, mul:ST2});
+  bandAtP(B.p(ST2), T, 16, 1.2, 0.2);
+  const T2 = offP(T, 1.5); tw50(B, T2, 146, 152, {sty:'punch', fr:ST, gl:GL, fh:3, bay:3, ww:2, wh:1.6});
+  blkP(B, scP(T, 0.5), 152, 155, MECH50, ROOF50); lavP(B.p(LAV50), [T[5], T[11]], 152);
+  B.flush(g); return g; }});
+}
+// ---- 16 Collyer Quay (sg16collyer): 179 m, 33 floors, 1993 (Wikipedia list); the Wikipedia article (Collyer Quay Centre, former
+// Hitachi Tower / Caltex House) gives 37 storeys and 166 m - modelled as a 166 m roof with the mast to 179 m. OSM w407926393 with
+// a rounded south end (parts w172915353 / w172915363). Look (photo, Commons 2005): blue-green glass with white floor spandrels,
+// stepped vertical set-backs, a mast on top.
+{
+const A0 = [1.284177, 103.852571];
+const T0 = [[-4.9,-21.8],[-8.1,-11.8],[-10.3,-4.4],[-13.5,5.4],[-14.3,9.6],[-13.5,14.2],[-11.0,17.8],[-7.3,20.4],[-3.1,21.3],[1.5,20.4],[4.9,18.0],[7.8,14.3],[13.2,-5.3],[16.3,-15.3]];
+const RND0 = [[8.2,10],[7.4,6],[4.4,1.8],[1.7,-0.7],[-10.3,-4.2],[-14.3,9.5],[-13.3,14.3],[-11.1,17.8],[-7.3,20.3],[-3.3,21.3],[1.7,20.3],[5.2,17.8],[7.4,14.3]];
+const C0 = pcen(T0), [T, RND] = shAll([T0, RND0], C0);
+K50('sg16collyer', '哥烈码头16号', '16 Collyer Quay', A0, C0, {r:27, h:179, lt:{m:1, c:'#e6f4ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#4b7d88', m:1, fh:4.3, cw:1.8}, WH = {c:'#e3e6e4', m:0, lk:0.3}, MAST = '#c9cccd';
+  baseP(B, T, 5.5);
+  tw50(B, T, 5.5, 140, {sty:'rib', gl:GL, fr:WH, fh:4.3, sh:1.0, bay:1.8, mul:{c:'#a9bcc0', m:0, lk:0.1}});
+  const R1 = offP(RND, 1.2); tw50(B, R1, 140, 154, {sty:'rib', gl:GL, fr:WH, fh:4.3, sh:1.0, bay:1.8, mul:null});
+  const R2 = scP(R1, 0.7); tw50(B, R2, 154, 166, {sty:'rib', gl:GL, fr:WH, fh:4.3, sh:1.0, bay:1.8, mul:null, par:1.2});
+  const c = pcen(R2); segP(B.p(MAST), [c[0], 166, c[1]], [c[0], 179, c[1]], 0.35, 6); segP(B.p(MAST), [c[0], 166, c[1]], [c[0], 172, c[1]], 0.8, 6);
+  boxP(B.p(LAV50), 0.5, 0.6, 0.5, c[0], 179, c[1]); lavP(B.p(LAV50), [T[0], T[13]], 140);
+  B.flush(g); return g; }});
+}
+// ---- The Arcade, 11 Collyer Quay (sgthearcade): 20 storeys (OSM w171999284, 20 levels); the height is the app's 65 m (OSM-derived,
+// not verified). Block from the OSM part w1566589603 (0-15 m podium, 15-65 m). Facade not verified: plain light cladding with
+// window ribbons. (The 1909 Moorish Arcade on this site is long gone; nothing of it is modelled.)
+{
+const A0 = [1.283611, 103.852069];
+const T0 = [[-1.7,-11.1],[-7.0,7.9],[42.5,21.7],[47.8,2.7]];
+const C0 = pcen(T0), [T] = shAll([T0], C0);
+K50('sgthearcade', '拱廊大厦', 'The Arcade', A0, C0, {r:30, h:65, lt:{m:1, c:'#ffe9cc', k:0.4}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#47606c', m:1, fh:3.25, cw:2.0}, CL = {c:'#d6d0c3', m:0, lk:0.35};
+  baseP(B, T, 5);
+  wallP(B.p(CL), T, 5, 15); winP(B, T, 5.5, 15, 3.3, 2.6, 2.0, 2.0, GL, {minL:4}); bandAtP(B.p(CL), T, 14.6, 0.8, 0.3);
+  tw50(B, T, 15, 65, {sty:'rib', gl:GL, fr:CL, fh:3.25, sh:1.3, bay:2.0, par:1.2});
+  blkP(B, scP(T, 0.45), 65, 68, MECH50, ROOF50);
+  B.flush(g); return g; }});
+}
+// ---- One Marina Boulevard / NTUC Centre (sgntuc): 163 m, 32 floors, 2004 (Wikipedia list; OSM w172915350 31 levels, 163 m; the
+// Wikipedia article's 110 m disagrees and is not used). Plan from OSM parts w463857957 (tower) and w463857955 (27 m wing). Look
+// (photo, Commons): green glass curtain wall with fine vertical mullions, flat top. No union logo.
+{
+const A0 = [1.282282, 103.852673];
+const T0 = [[-16.9,7.0],[-1.4,17.0],[-2.7,18.7],[15.3,30.7],[38.1,-4.3],[33.1,-7.3],[34.3,-8.5],[20.6,-17.5],[20.1,-15.5],[18.8,-16.3],[10.6,-3.3],[-4.4,-12.8],[-0.2,-19.3],[-18.7,-31.0],[-34.2,-8.5],[-33.7,-8.0],[-37.2,-3.3],[-18.2,9.2]];
+const WG0 = [[-19.9,11.7],[-4.4,21.2],[-1.4,17.0],[-16.9,7.0]];
+const C0 = pcen(T0), [T, WG] = shAll([T0, WG0], C0);
+K50('sgntuc', '职总中心', 'One Marina Boulevard (NTUC Centre)', A0, C0, {r:43, h:163, lt:{m:1, c:'#dff7ee', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#3d7067', m:1, fh:4.3, cw:1.5}, MUL = {c:'#9fbdb6', m:0, lk:0.12}, CL = {c:'#c8ccc9', m:0, lk:0.3};
+  baseP(B, T, 6); foundP(B.p(FOUND50), WG);
+  tw50(B, T, 6, 160, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.3, bay:1.5, fd:0.18, fw:0.05, bh:0.25, par:3});
+  tw50(B, WG, 0.3, 27, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.3, bay:1.5, fd:0.18, fw:0.05, bh:0.25});
+  blkP(B, scP(T, 0.45), 160, 164, MECH50, ROOF50); lavP(B.p(LAV50), [T[3], T[4], T[13], T[14]], 163);
+  B.flush(g); return g; }});
+}
+// ================= Church Street / Cecil Street / Robinson Road / Raffles Quay / Central Boulevard group =================
+// ---- Samsung Hub, 3 Church Street (sgsamsunghub): 172 m, 30 floors, 2005 (Wikipedia list); 30-storey office building with a
+// 6-storey podium (Wikipedia article). OSM w146335667 (height 172; app 145 m). Look (photo, Commons): white grid frame over glass,
+// a glazed corner, a tall blade on the roof. Modelled: podium on the footprint to 27 m, tower on the footprint scaled 0.8 to the
+// app roof (145 m), the blade to 172 m (OSM height) - the split between roof and blade is an estimate.
+{
+const A0 = [1.283292, 103.849629];
+const F0 = [[0.1,-38.1],[-7.7,-32.6],[-8.9,-29.1],[-30.9,-10.1],[-32.2,-7.1],[-30.4,-1.8],[-0.7,33.2],[10.8,24.4],[14.8,30.2],[33.3,15.4],[21.6,-0.6],[21.6,-4.8]];
+const C0 = pcen(F0), [F] = shAll([F0], C0), T = scP(F, 0.8);
+K50('sgsamsunghub', '三星中心', 'Samsung Hub', A0, C0, {r:43, h:172, lt:{m:1, c:'#eef4ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#4d6878', m:1, fh:4.4, cw:1.6}, WH = {c:'#e8e8e4', m:0, lk:0.3}, BL = {c:'#dfe3e4', m:0, lk:0.5};
+  baseP(B, F, 6);
+  tw50(B, F, 6, 27, {sty:'cw', gl:GL, mul:WH, band:WH, fh:4.2, bay:3.2, fd:0.5, fw:0.3, bh:0.9});
+  tw50(B, T, 27, 145, {sty:'cw', gl:GL, mul:WH, band:WH, fh:4.4, bay:3.2, fd:0.6, fw:0.32, bh:0.9, par:2});
+  // the blade: a thin fin standing on the north-east corner of the tower
+  const p = T.reduce((a, b) => (b[0] - b[1] > a[0] - a[1] ? b : a)), q = pcen(T), ang = Math.atan2(q[1] - p[1], q[0] - p[0]);
+  slabP(B.p(BL), [[0, 120], [9, 120], [9, 150], [1.5, 172], [0, 172]], fA(p[0], p[1], ang), -0.4, 0.4);
+  blkP(B, scP(T, 0.45), 145, 149, MECH50, ROOF50); boxP(B.p(LAV50), 0.5, 0.6, 0.5, p[0] + Math.cos(ang)*0.8, 172, p[1] + Math.sin(ang)*0.8);
+  B.flush(g); return g; }});
+}
+// ---- Prudential Tower, 30 Cecil Street (sgprudential): 30 storeys, 1996 (penang-traveltips; OSM w171999306 30 levels). Height not
+// verified: the app's 145 m (OSM-derived) is used. Plan from the OSM part w326926563 (0-12 m podium, 12-145 m tower) with its
+// curved east side. Facade colours not verified: blue-green glass with light mullions.
+{
+const A0 = [1.282814, 103.849898];
+const T0 = [[-26.4,16.6],[-1.9,29.6],[11.4,12.3],[16.6,1.6],[20.9,-7.7],[-5.4,-21.9]];
+const SITE0 = [[3.6,-37.7],[22.7,-5.0],[23.9,-1.4],[24.0,3.7],[22.6,7.9],[19.7,13.2],[13.3,16.4],[8.6,21.4],[4.0,26.6],[0.3,32.7],[-27.7,16.8],[-9.5,-15.8],[-14.7,-22.9]];
+const C0 = pcen(T0), [T, SITE] = shAll([T0, SITE0], C0);
+K50('sgprudential', '保诚大厦', 'Prudential Tower', A0, C0, {r:43, h:145, lt:{m:1, c:'#e4eeff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#456c84', m:1, fh:4.3, cw:1.8}, MUL = {c:'#b9c5cc', m:0, lk:0.15}, CL = {c:'#cfccc5', m:0, lk:0.3};
+  foundP(B.p(FOUND50), SITE); capP(B.p(PAVE50), SITE, 0.3); baseP(B, T, 6);
+  tw50(B, T, 6, 12, {sty:'punch', fr:CL, gl:GL, fh:3, bay:3, ww:2.4, wh:2});
+  tw50(B, T, 12, 140, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.3, bay:1.8, fd:0.2, fw:0.06, bh:0.3});
+  tw50(B, offP(T, 1.2), 140, 145, {sty:'rib', gl:GL, fr:CL, fh:2.5, sh:1.2, bay:3, mul:null, par:1});
+  blkP(B, scP(T, 0.45), 145, 148, MECH50, ROOF50); lavP(B.p(LAV50), [T[0], T[2], T[5]], 145);
+  B.flush(g); return g; }});
+}
+// ---- AIA Tower, 1 Robinson Road (sgaia): 26 storeys, 120 m, 1993 (penang-traveltips - a secondary source, not verified further).
+// OSM w47345003: part w580003486 (0-120 m) and an octagonal part w325834251 (69-110 m) inside it; modelled as the tower to 110 m
+// and the octagon as a crown to 120 m. Colours not verified: grey-blue glass ribbons, light cladding.
+{
+const A0 = [1.281986, 103.851098];
+const T0 = [[-0.4,-20.5],[-3.4,-19.2],[-18.9,5.0],[-16.6,15.0],[-5.1,22.3],[3.6,19.3],[19.1,-5.0],[15.6,-15.7],[1.9,-24.0]];
+const O0 = [[-9.4,-8.7],[-11.9,-4.0],[-8.1,8.5],[-3.4,12.0],[9.1,8.5],[12.6,3.3],[8.4,-9.7],[3.6,-12.2]];
+const C0 = pcen(T0), [T, O] = shAll([T0, O0], C0);
+K50('sgaia', '友邦大厦', 'AIA Tower', A0, C0, {r:29, h:120, lt:{m:1, c:'#ffeccc', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#4a6273', m:1, fh:4.2, cw:2.0}, CL = {c:'#cdc8bd', m:0, lk:0.35};
+  baseP(B, T, 6);
+  tw50(B, T, 6, 110, {sty:'rib', gl:GL, fr:CL, fh:4.2, sh:1.5, bay:2.0, par:1.5});
+  tw50(B, scP(O, 1.15), 110, 118, {sty:'rib', gl:GL, fr:CL, fh:2.7, sh:1.0, bay:2.4, mul:null});
+  blkP(B, scP(O, 0.8), 118, 120, CL, ROOF50); lavP(B.p(LAV50), O.filter((p, i) => i % 2 === 0), 120);
+  B.flush(g); return g; }});
+}
+// ---- 18 Robinson (sg18robinson): 180 m, 28 floors, 2019 (Wikipedia list). KPF: a faceted office tower (twenty office floors)
+// raised over a crystalline retail podium, with an atrium garden and a roof garden between them, on a V-shaped site between
+// Market Street and Robinson Road (KPF / ArchDaily). OSM w424896147 (app 68 m). Modelled: podium on the footprint to 52 m, an open
+// garden level with the offset core to 62 m, the tower on the footprint grown 2 m (it overhangs the podium) to 180 m. Level
+// heights are estimates.
+{
+const A0 = [1.281849, 103.850566];
+const F0 = [[28.3,-7.6],[8.6,-19.6],[8.1,-30.4],[-18.2,-30.4],[-18.2,22.4],[-20.2,39.6],[-18.2,45.6],[-7.4,48.6]];
+const C0 = pcen(F0), [F] = shAll([F0], C0);
+K50('sg18robinson', '罗敏申路18号', '18 Robinson', A0, C0, {r:47, h:180, lt:{m:1, c:'#eaf3ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#5b7584', m:1, fh:4.4, cw:1.6}, GLP = {c:'#6a7f88', m:1, fh:5.2, cw:2.6}, PAN = {c:'#b7a690', m:0, lk:0.3}, MUL = {c:'#c8d0d3', m:0, lk:0.15}, CORE = '#9a9c9a';
+  baseP(B, F, 6);
+  tw50(B, F, 6, 52, {sty:'cw', gl:GLP, mul:PAN, band:PAN, fh:5.2, bay:2.6, fd:0.35, fw:0.18, bh:0.6});
+  // podium facets: diagonal panel strips (abstract nod to the terracotta roof of Lau Pa Sat; no pattern copied)
+  for (const e of edgesF(F)) if (e.L > 8){ for (let u = 2; u < e.L - 2; u += 6) slabP(B.p(PAN), [[u, 8], [u + 1.2, 8], [u + 3.2, 50], [u + 2, 50]], e.F, 0, 0.3); }
+  capP(B.p('#7d8a74'), F, 52);
+  const CO = scP(F, 0.3); blkP(B, CO, 52, 62, CORE);
+  for (const p of offP(F, 6)) segP(B.p(CORE), [p[0], 52, p[1]], [p[0], 62, p[1]], 0.7, 8);
+  for (const [x, z] of alongP(offP(F, 3.5), 6)) treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 52, z, 0.8, R);
+  const T = offP(F, -2);
+  capP(B.p(ROOF50), T, 62); tw50(B, T, 62, 176, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.4, bay:1.6, fd:0.2, fw:0.06, bh:0.3});
+  // faceted crown: the top storeys lean in
+  const S = [T.map(p => [p[0], 176, p[1]]), scP(T, 0.9).map(p => [p[0], 180, p[1]])]; loftP(B.p(GL), S, true);
+  lavP(B.p(LAV50), [T[0], T[3], T[6]], 180);
+  B.flush(g); return g; }});
+}
+// ---- Hong Leong Building, 16 Raffles Quay (sghongleong): 158 m, 45 floors, 1976 (Wikipedia list "Hong Leong Finance Building";
+// Hong Leong Building article). Slab from the OSM part w560203760 (app 145.8 m) inside the site outline w47345013 (plaza).
+// Look: 1970s concrete slab with continuous horizontal window ribbons (colours not verified: light grey concrete, dark glass).
+{
+const A0 = [1.281361, 103.850914];
+const T0 = [[2.1,36.7],[23.6,2.4],[-3.2,-14.3],[-25.4,20.2]];
+const C0 = pcen(T0), [T] = shAll([T0], C0);
+K50('sghongleong', '丰隆大厦', 'Hong Leong Building', A0, C0, {r:30, h:158, lt:{m:1, c:'#ffe9c6', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#38454f', m:1, fh:3.5, cw:2.2}, CO = {c:'#cfcdc6', m:0, lk:0.35}, CO2 = {c:'#bebcb5', m:0, lk:0.3};
+  baseP(B, T, 7);
+  for (const p of T) segP(B.p(CO), [p[0], 0.3, p[1]], [p[0], 7, p[1]], 0.9, 8);
+  tw50(B, T, 7, 152, {sty:'rib', gl:GL, fr:CO, fh:3.22, sh:1.6, bay:3.6, mul:CO2, fd:0.1});
+  // end walls: solid concrete bands on the short ends of the slab
+  for (const e of edgesF(T)) if (e.L < 33) slabP(B.p(CO2), rectO(0, 3, 7, 152), e.F, 0, 0.3), slabP(B.p(CO2), rectO(e.L - 3, e.L, 7, 152), e.F, 0, 0.3);
+  tw50(B, offP(T, 2), 152, 158, {sty:'punch', fr:CO, gl:GL, fh:3, bay:4, ww:2.5, wh:1.5});
+  lavP(B.p(LAV50), T, 158);
+  B.flush(g); return g; }});
+}
+// ---- One George Street (sgonegeorge): 153 m, 23 floors, 2005 (Wikipedia list). Massing from the OSM parts of w47300930: the
+// 0-23.7 m base on the whole site (w699176990), the main block 23-121 m (w325793736), the top block 121-153 m (w406896271); the
+// strip left open between them is the tall open atrium (frame of columns and the roof over it). Look (photo, Commons): bronze-tinted
+// glass behind fine vertical fins, large open voids in the volume.
+{
+const A0 = [1.285739, 103.84779];
+const POD0 = [[-4.8,-49.0],[-45.5,19.7],[4.7,48.7],[45.2,-19.5]];
+const M0 = [[-4.8,-49.0],[-45.5,19.7],[-17.5,35.7],[22.5,-32.5]];
+const TP0 = [[6.5,-42.0],[-34.0,26.2],[-17.5,35.7],[22.5,-32.5]];
+const AT0 = [[22.5,-32.5],[45.2,-19.5],[4.7,48.7],[-17.5,35.7]];
+const C0 = pcen(POD0), [POD, M, TP, AT] = shAll([POD0, M0, TP0, AT0], C0);
+K50('sgonegeorge', '乔治街一号', 'One George Street', A0, C0, {r:54, h:153, lt:{m:1, c:'#ffe4bf', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#5b5146', m:1, fh:5.5, cw:1.4}, FIN = {c:'#8a7660', m:0, lk:0.2}, FR = {c:'#6f6252', m:0, lk:0.2};
+  baseP(B, POD, 6);
+  tw50(B, POD, 6, 23.7, {sty:'fin', gl:GL, fr:FIN, fh:5.9, bay:1.4, fd:0.5, fw:0.12});
+  tw50(B, M, 23.7, 121, {sty:'fin', gl:GL, fr:FIN, fh:5.4, bay:1.4, fd:0.55, fw:0.12});
+  tw50(B, TP, 121, 153, {sty:'fin', gl:GL, fr:FIN, fh:5.4, bay:1.4, fd:0.55, fw:0.12, par:1});
+  capP(B.p('#7d8a74'), AT, 23.8);
+  // atrium frame: corner columns, beams every 32 m, a roof slab
+  for (const p of [AT[1], AT[2]]) segP(B.p(FR), [p[0], 23.7, p[1]], [p[0], 153, p[1]], 0.9, 8);
+  for (const y of [55, 88, 121]) for (const [a, b] of [[AT[0], AT[1]], [AT[1], AT[2]], [AT[2], AT[3]]]) segP(B.p(FR), [a[0], y, a[1]], [b[0], y, b[1]], 0.5, 4);
+  wallP(B.p(FR), AT, 150, 153); capP(B.p(ROOF50), AT, 153);
+  for (const [x, z] of alongP(offP(AT, 4), 7)) treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 23.8, z, 0.9, R);
+  lavP(B.p(LAV50), TP, 153);
+  B.flush(g); return g; }});
+}
+// ---- IOI Central Boulevard Towers (sgioi): West Tower 245 m, 2023 (Wikipedia list). Twin office towers by KPF on a shared podium.
+// Plans from OSM w1206694672 parts: podium w1075230981 (20.4 m) + w1206694673 (13.8 m), West Tower w1075230983, East Tower
+// w1075230982 (both start at 26.4 m; the app data stops at 166 / 60 m - mapped during construction). The East Tower's height is NOT
+// verified: 200 m is an estimate. Facade, garden levels and crowns simplified (silver-blue glass with vertical fins, three recessed
+// planted breaks per tower, stepped tops).
+{
+const A0 = [1.279769, 103.851516];
+const POD0 = [[58.6,58.1],[83.1,21.4],[-12.9,-40.9],[-11.2,-43.1],[-32.2,-64.6],[-44.7,-75.9],[-57.2,-55.6],[-54.7,-49.9],[-78.2,-14.1],[-39.9,10.6],[-32.2,-0.6]];
+const LOW0 = [[46.1,65.9],[53.8,54.6],[-32.2,-0.6],[-39.9,10.6]];
+const WT0 = [[-12.4,-41.4],[-11.2,-43.1],[-38.2,-60.4],[-39.2,-58.6],[-44.7,-62.1],[-76.2,-14.9],[-70.2,-11.1],[-71.4,-9.4],[-44.7,7.1],[-43.9,5.9],[-38.7,8.9],[-6.9,-38.4]];
+const ET0 = [[13.8,-19.6],[11.6,-20.6],[-9.4,10.6],[-6.9,12.6],[-8.2,14.9],[58.6,58.1],[83.1,21.4],[15.6,-21.9]];
+// two small 2-storey pieces at the north-west corner of the podium (OSM w1075230984 and an unnamed piece; 8 m) belong to the complex
+const PV0 = [[[11.3,-55.1],[4.1,-60.9],[-9.9,-39.6],[-6.9,-38.4],[-7.7,-37.4],[-2.2,-33.9]], [[-41.2,12.9],[-32.7,18.6],[-30.9,16.1],[-39.9,10.6]]];
+const C0 = [0, 0], [POD, LOW, WT, ET] = shAll([POD0, LOW0, WT0, ET0], C0), PV = shAll(PV0, C0);
+K50('sgioi', 'IOI中央林荫道大厦', 'IOI Central Boulevard Towers', A0, C0, {r:93, h:245, lt:{m:1, c:'#e8f2ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#62798a', m:1, fh:4.5, cw:1.5}, FIN = {c:'#cfd6d9', m:0, lk:0.2}, PODC = {c:'#c9c9c4', m:0, lk:0.3}, DARK = '#2d353b', LEAF = {c:'#4f7a3e', m:0, lk:0.1};
+  foundP(B.p(FOUND50), POD); foundP(B.p(FOUND50), LOW);
+  tw50(B, POD, 0.3, 20.4, {sty:'fin', gl:GL, fr:PODC, fh:5, bay:3, fd:0.8, fw:0.4}); capP(B.p('#7d8a74'), POD, 20.45);
+  tw50(B, LOW, 0.3, 13.8, {sty:'fin', gl:GL, fr:PODC, fh:4.6, bay:3, fd:0.8, fw:0.4});
+  for (const P of PV){ foundP(B.p(FOUND50), P); tw50(B, P, 0.3, 8, {sty:'fin', gl:GL, fr:PODC, fh:4, bay:2.5, fd:0.5, fw:0.3}); }
+  for (const [x, z] of alongP(offP(POD, 4), 9)){ if ([WT, ET].some(Q => inPolyS(offP(Q, -2), x, z))) continue; treeP(B.p('#5b4a3a'), B.p(LEAF), x, 20.4, z, 0.9, R); }
+  for (const [P, H] of [[WT, 245], [ET, 200]]){
+    const brk = [0.3, 0.55, 0.8].map(f => 26.4 + (H - 26.4)*f);
+    let y = 20.4;
+    for (const b of brk.concat([H - 14])){ tw50(B, P, y, b, {sty:'fin', gl:GL, fr:FIN, fh:4.5, bay:1.5, fd:0.45, fw:0.14}); if (b < H - 14){ wallP(B.p(DARK), offP(P, 2.5), b, b + 9); for (const [x, z] of alongP(offP(P, 1.4), 6)) treeP(B.p('#5b4a3a'), B.p(LEAF), x, b, z, 0.7, R); y = b + 9; } else y = b; }
+    const P2 = offP(P, 3.5); tw50(B, P2, H - 14, H - 4, {sty:'fin', gl:GL, fr:FIN, fh:4.5, bay:1.5, fd:0.45, fw:0.14});
+    wallP(B.p(FIN), offP(P, 1), H - 14, H); blkP(B, scP(P, 0.5), H - 4, H - 1, MECH50, ROOF50); lavP(B.p(LAV50), P.filter((p, i) => i % 3 === 0), H);
+  }
+  B.flush(g); return g; }});
+}
+// ================= Robinson Road / Shenton Way / McCallum Street group =================
+// ---- Robinson 77 (former SIA Building), 77 Robinson Road (sgrobinson77): 176 m, 40 floors, 1998 (Wikipedia list). Tower from the
+// OSM part w325793733 (the rest of the site outline w47345028 has no building part in the data: left as a planted forecourt).
+// Look (photo, Commons): dark blue reflective glass, notched corners, the top stepping in.
+{
+const A0 = [1.277787, 103.848471];
+const SITE0 = [[-8.0,43.7],[0.3,29.8],[8.3,16.2],[34.2,-24.5],[5.1,-42.1],[-18.5,-3.7],[-16.6,1.7],[-32.9,29.2]];
+const T0 = notchR(-12.3, 22.6, 14.4, 15.9, 29.6*PI/180, 2.5);
+const C0 = pcen(T0), [SITE, T] = shAll([SITE0, T0], C0);
+K50('sgrobinson77', '罗敏申77', 'Robinson 77', A0, C0, {r:68, h:176, lt:{m:1, c:'#e2ecff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#2f4f74', m:1, fh:4.1, cw:1.6}, MUL = {c:'#5c7894', m:0, lk:0.12};
+  foundP(B.p(FOUND50), SITE); capP(B.p(PAVE50), SITE, 0.3); baseP(B, T, 6);
+  for (const [x, z] of alongP(offP(SITE, 3), 9)){ if (inPolyS(offP(T, -3), x, z)) continue; treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 0.3, z, 1.0, R); }
+  tw50(B, T, 6, 160, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.1, bay:1.6, fd:0.12, fw:0.05, bh:0.2});
+  const T2 = scP(T, 0.82), T3 = scP(T, 0.6);
+  tw50(B, T2, 160, 169, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.1, bay:1.6, fd:0.12, fw:0.05, bh:0.2});
+  tw50(B, T3, 169, 176, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:3.5, bay:1.6, fd:0.12, fw:0.05, bh:0.2});
+  lavP(B.p(LAV50), T3.filter((p, i) => i % 3 === 0), 176);
+  B.flush(g); return g; }});
+}
+// ---- CapitaSky, 79 Robinson Road (sgcapitasky): 185 m, 29 floors, 2022 (Wikipedia list). Tower from the OSM parts of w45098519:
+// w986968492 (from 6.6 m, a break at 66.6-72.6 m - a sky terrace) on the 7.2 m base w986968491. Facade simplified: pale blue glass
+// with vertical fins.
+{
+const A0 = [1.277032, 103.847987];
+const SITE0 = [[10.8,-50.4],[39.4,-33.5],[2.9,27.6],[-0.5,33.4],[-8.7,47.0],[-10.7,50.5],[-39.3,33.6],[-29.1,16.5]];
+const T0 = [[-0.4,33.7],[39.6,-33.3],[10.8,-50.5],[-29.2,16.5]];
+const C0 = pcen(SITE0), [SITE, T] = shAll([SITE0, T0], C0);
+K50('sgcapitasky', '凯德天空', 'CapitaSky', A0, C0, {r:57, h:185, lt:{m:1, c:'#e8f4ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#5f8197', m:1, fh:4.5, cw:1.5}, FIN = {c:'#d4dbde', m:0, lk:0.2}, DARK = '#2d353b';
+  foundP(B.p(FOUND50), SITE); wallP(B.p(LOB50), SITE, 0.3, 7.2); capP(B.p('#7d8a74'), SITE, 7.2);
+  tw50(B, T, 7.2, 66.6, {sty:'fin', gl:GL, fr:FIN, fh:4.5, bay:1.5, fd:0.5, fw:0.14});
+  wallP(B.p(DARK), offP(T, 3), 66.6, 72.6); capP(B.p('#7d8a74'), T, 66.65);
+  for (const [x, z] of alongP(offP(T, 1.6), 6)) treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 66.6, z, 0.8, R);
+  for (const p of T) segP(B.p(FIN), [p[0], 66.6, p[1]], [p[0], 72.6, p[1]], 0.6, 6);
+  tw50(B, T, 72.6, 180, {sty:'fin', gl:GL, fr:FIN, fh:4.5, bay:1.5, fd:0.5, fw:0.14});
+  wallP(B.p(FIN), T, 180, 185); blkP(B, scP(T, 0.5), 180, 183, MECH50, ROOF50); lavP(B.p(LAV50), T, 185);
+  B.flush(g); return g; }});
+}
+// ---- Oxley Tower, 138 Robinson Road (sgoxley): 174 m, 33 floors, 2017 (Wikipedia list). OSM footprint w172270395 (app 92 m).
+// Look (photo, Commons Jul 2026): a rounded (elliptical) glass tower with a domed top and a dark band below it, on a curving
+// glass podium. Modelled: podium on the footprint (corners rounded) to 20 m (estimate), the elliptical shaft inside it.
+{
+const A0 = [1.278686, 103.848407];
+const F0 = [[-22.2,7.9],[4.1,23.9],[30.3,-18.9],[4.1,-35.4]];
+const C0 = pcen(F0), [F] = shAll([F0], C0);
+const ANG = Math.atan2(-18.9 - 23.9, 30.3 - 4.1); // long axis
+const ell = (a, b, n) => { const P = []; for (let i = 0; i < n; i++){ const t = i/n*TAU, x = Math.cos(t)*a, z = Math.sin(t)*b; P.push([x*Math.cos(ANG) - z*Math.sin(ANG), x*Math.sin(ANG) + z*Math.cos(ANG)]); } return P; };
+K50('sgoxley', '奥斯利大厦', 'Oxley Tower', A0, C0, {r:34, h:174, lt:{m:1, c:'#e8f2ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#577a8f', m:1, fh:4.4, cw:1.6}, MUL = {c:'#b8c8d0', m:0, lk:0.12}, DARK = {c:'#2c343b', m:0, lk:0.2};
+  const PODP = ell(25.0, 15.2, 40), TP = ell(21.0, 12.5, 40);
+  foundP(B.p(FOUND50), PODP); wallP(B.p(LOB50), offP(PODP, 1), 0.3, 6);
+  tw50(B, PODP, 6, 20, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.6, bay:2, fd:0.15, fw:0.05});
+  slabP(B.p(MUL), PODP.map(p => [p[0]*1.06, p[1]*1.06]).reverse(), (u, v, w) => [u, 20 + (w || 0), v], -0.3, 0.3);
+  tw50(B, TP, 20, 150, {sty:'cw', gl:GL, mul:MUL, band:MUL, fh:4.4, bay:2, fd:0.12, fw:0.05, bh:0.18, cap:false});
+  wallP(B.p(DARK), TP, 150, 154);
+  // domed top: the ellipse narrows to a rounded cap at 174 m
+  const S = []; for (let i = 0; i <= 8; i++){ const t = i/8, k = Math.cos(t*HP*0.92); S.push(TP.map(p => [p[0]*(0.25 + 0.75*k), 154 + 20*Math.sin(t*HP), p[1]*(0.25 + 0.75*k)])); }
+  loftP(B.p(GL), S, true);
+  boxP(B.p(LAV50), 0.5, 0.6, 0.5, 0, 174, 0);
+  B.flush(g); return g; }});
+}
+// ---- One Shenton, 1 Shenton Way (sgoneshenton): two residential towers, 214 m and 178 m, 2011 (Wikipedia list; article: 341
+// apartments, the taller tower 50 storeys; two sides of each tower clad in gold and two in blue glass). Plans from the OSM parts of
+// w47345021: w325793774 (214 m tower, north) and w325793778 (178 m tower, south; app 169 m), on the site outline (OSM 9 levels:
+// podium modelled to 30 m, estimate). Look (photo, Commons): open lattice crowns - pointed on the taller tower, rounded on the lower.
+// Which two sides are gold is not verified (here: the north- and west-facing ones).
+{
+const A0 = [1.279292, 103.850553];
+const SITE0 = [[-38.7,34.0],[-35.5,28.9],[12.8,-49.7],[38.7,-34.0],[8.9,14.6],[3.4,23.4],[-9.3,44.2],[-12.7,49.7]];
+const TA0 = [[23.8,-11.9],[29.8,-21.4],[28.5,-21.9],[30.3,-24.9],[23.3,-30.9],[15.5,-35.6],[7.8,-38.4],[2.3,-30.1],[5.8,-27.9],[3.5,-23.1]];
+const TB0 = [[5.3,15.1],[4.3,14.4],[4.0,13.4],[4.0,12.4],[5.8,8.9],[5.3,8.4],[8.3,3.6],[-8.5,-5.9],[-18.7,8.9],[-22.2,15.4],[-20.5,16.6],[-22.7,20.9],[-19.2,24.9],[-13.7,28.6],[-5.5,30.4],[-0.7,26.1]];
+const C0 = pcen(SITE0), [SITE, TA, TB] = shAll([SITE0, TA0, TB0], C0);
+K50('sgoneshenton', '珊顿道一号', 'One Shenton', A0, C0, {r:57, h:214, lt:{m:1, c:'#fff0d0', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GO = {c:'#c4a25a', m:1, fh:3.6, cw:2.2}, BL = {c:'#3d6c99', m:1, fh:3.6, cw:2.2}, LED = {c:'#e6e2d6', m:0, lk:0.3}, POD = {c:'#b9b6ae', m:0, lk:0.3}, LAT = '#cfc39b';
+  const YP = 30;
+  foundP(B.p(FOUND50), SITE); wallP(B.p(LOB50), offP(SITE, 1), 0.3, 5);
+  wallP(B.p(POD), SITE, 5, YP); capP(B.p('#7d8a74'), SITE, YP); finsP(B.p(LED), SITE, 5, YP, 1.8, 0.5, 0.3);
+  for (const [x, z] of alongP(offP(SITE, 4), 9)){ if ([TA, TB].some(Q => inPolyS(offP(Q, -2), x, z))) continue; treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, YP, z, 0.8, R); }
+  const gold = e => (e.nz < -0.3 || e.nx < -0.3); // outward normal facing north or west
+  for (const [P, Y1, YT, pointed] of [[TA, 200, 214, true], [TB, 168, 178, false]]){
+    wallsByEdge(B, P, YP, Y1, BL, e => gold(e) ? GO : null); capP(B.p(ROOF50), P, Y1);
+    ledgeP(B.p(LED), P, YP + 3.6, Y1 - 1, 3.6, 0.7, 0.3);
+    for (const yb of [YP + (Y1 - YP)*0.45, YP + (Y1 - YP)*0.75]) wallP(B.p('#2c343a'), offP(P, 1), yb, yb + 3.6);
+    // lattice crown
+    const Pc = offP(P, 0.3), c = pcen(Pc), H = YT - Y1, N = 5;
+    for (let k = 0; k < N; k++){ const s0 = pointed ? 1 - k/N*0.9 : Math.cos(k/N*HP*0.9), s1 = pointed ? 1 - (k + 1)/N*0.9 : Math.cos((k + 1)/N*HP*0.9);
+      const y0 = Y1 + H*k/N, y1 = Y1 + H*(k + 1)/N, A = Pc.map(p => [c[0] + (p[0] - c[0])*s0, c[1] + (p[1] - c[1])*s0]), Bq = Pc.map(p => [c[0] + (p[0] - c[0])*s1, c[1] + (p[1] - c[1])*s1]);
+      for (let i = 0; i < A.length; i += 2){ segP(B.p(LAT), [A[i][0], y0, A[i][1]], [Bq[i][0], y1, Bq[i][1]], 0.22, 4); const j = (i + 2) % A.length; segP(B.p(LAT), [A[i][0], y0, A[i][1]], [A[j][0], y0, A[j][1]], 0.18, 4); } }
+    boxP(B.p(LAV50), 0.5, 0.6, 0.5, c[0], YT, c[1]);
+  }
+  B.flush(g); return g; }});
+}
+// ---- SBF Center, 160 Robinson Road (sgsbf): 187 m, 31 floors, 2016 (Wikipedia list). Massing from the OSM parts (outline unmatched):
+// podium w48948265 (30 m), middle block w393385346 (30-60 m), tower w393385345 (60-190 m in OSM; list height 187 m used). Look
+// (photo, Commons): dark glass with horizontal bands and flowing light lines, a planted terrace on the podium.
+{
+const A0 = [1.278132, 103.847859];
+// the L-shaped podium is split at its inner corner: its east wing is the unlabelled key sgsbfpod, so that neither convex hull covers
+// the United Overseas Insurance Building (w172270393) standing in the notch
+const POD0 = [[-37.7,3.4],[-5.5,23.6],[-1.2,-12.6],[12.6,-35.6],[-4.7,-46.4]], PODE0 = [[-5.5,23.6],[20.8,40.1],[38.8,12.4],[-1.2,-12.6]];
+const MID0 = [[-5.4,-43.4],[-33.9,2.4],[19.6,34.9],[29.8,18.9],[-4.2,-4.9],[-9.7,-4.9],[8.8,-34.4]];
+const TW0 = [[-5.4,-43.4],[-33.9,2.4],[-19.7,11.1],[8.8,-34.4]];
+const C0 = pcen(POD0), [PODP, MID, TW, PODE] = shAll([POD0, MID0, TW0, PODE0], C0);
+function sbfPod(B, P, R){ wallP(B.p(LOB50), offP(P, 1.2), 0.3, 6); foundP(B.p(FOUND50), P);
+  tw50(B, P, 6, 30, {sty:'fin', gl:{c:'#33424e', m:1, fh:4.2, cw:1.6}, fr:{c:'#c6c4bd', m:0, lk:0.3}, fh:4.5, bay:2.2, fd:0.6, fw:0.5}); capP(B.p('#7d8a74'), P, 30.05);
+  for (const [x, z] of alongP(offP(P, 3), 7)){ if (inPolyS(offP(MID, -2), x, z)) continue; treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 30, z, 0.8, R); } }
+K50('sgsbf', '新加坡工商联合总会大厦', 'SBF Center', A0, C0, {r:56, h:187, lt:{m:1, c:'#e6efff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#33424e', m:1, fh:4.2, cw:1.6}, WL = {c:'#dfe3e4', m:0, lk:0.35}, PODC = {c:'#c6c4bd', m:0, lk:0.3};
+  sbfPod(B, PODP, R);
+  tw50(B, MID, 30, 60, {sty:'rib', gl:GL, fr:WL, fh:4.2, sh:0.6, bay:1.6, mul:null});
+  tw50(B, TW, 60, 183, {sty:'rib', gl:GL, fr:WL, fh:4.2, sh:0.6, bay:1.6, mul:null});
+  // flowing light lines: gentle waves across the long faces
+  for (const e of edgesF(TW)) if (e.L > 30) for (let y0 = 72; y0 < 175; y0 += 26){ const N = 16; for (let k = 0; k < N; k++){ const u0 = e.L*k/N, u1 = e.L*(k + 1)/N, v0 = y0 + 5*Math.sin(k/N*TAU), v1 = y0 + 5*Math.sin((k + 1)/N*TAU); shapeP(B.p(WL), [[u0, v0 - 0.35], [u1, v1 - 0.35], [u1, v1 + 0.35], [u0, v0 + 0.35]], e.F, 0.12); } }
+  wallP(B.p(WL), TW, 183, 187); blkP(B, scP(TW, 0.5), 183, 186, MECH50, ROOF50); lavP(B.p(LAV50), TW, 187);
+  B.flush(g); return g; }});
+K50('sgsbfpod', '新加坡工商联合总会大厦', 'SBF Center (podium east wing)', A0, C0, {r:61, h:30, label:false, lt:{m:1, c:'#e6efff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(); sbfPod(B, PODE, LMCTX.rng); B.flush(g); return g; }});
+}
+// ---- The Clift, 21 McCallum Street (sgclift): 151 m, 43 floors, 2010 (Wikipedia list). Residential slab from the OSM part
+// w326926550 inside the site outline w171995553 (plaza). Facade not verified: grey glass with white floor slabs, a roof frame.
+{
+const A0 = [1.279424, 103.847354];
+const SITE0 = [[32.3,-6.3],[10.5,30.2],[-32.0,5.0],[-11.4,-29.3]];
+const T0 = [[-23.2,-7.8],[17.3,17.0],[25.8,2.7],[-14.2,-22.0]];
+const C0 = pcen(T0), [SITE, T] = shAll([SITE0, T0], C0);
+K50('sgclift', 'The Clift', 'The Clift', A0, C0, {r:38, h:151, lt:{m:1, c:'#fff0d8', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB(), R = LMCTX.rng;
+  const GL = {c:'#4c5d68', m:1, fh:3.3, cw:2.0}, WH = {c:'#e4e5e2', m:0, lk:0.3};
+  foundP(B.p(FOUND50), SITE); capP(B.p(PAVE50), SITE, 0.3); baseP(B, T, 6);
+  for (const [x, z] of alongP(offP(SITE, 3), 8)){ if (inPolyS(offP(T, -3), x, z)) continue; treeP(B.p('#5b4a3a'), B.p({c:'#4f7a3e', m:0, lk:0.1}), x, 0.3, z, 0.9, R); }
+  tw50(B, T, 6, 145, {sty:'rib', gl:GL, fr:WH, fh:3.3, sh:0.45, bay:3.3, mul:WH, fd:0.3, fw:0.1});
+  for (const e of edgesF(T)) if (e.L > 30) for (const f of [0.25, 0.5, 0.75]) slabP(B.p(WH), rectO(e.L*f - 0.5, e.L*f + 0.5, 6, 145), e.F, 0, 0.6);
+  latticeP(B.p(WH), offP(T, 0.2), 145, 151, 3.3, 0.2, 2, false); blkP(B, scP(T, 0.6), 145, 148, MECH50, ROOF50);
+  lavP(B.p(LAV50), [T[0], T[2]], 151);
+  B.flush(g); return g; }});
+}
+// ---- Robinson Point, 39 Robinson Road (sgrobinsonpoint): 21 storeys (OSM w47345018); height not verified - the app's 71 m. Plan
+// from the OSM part w172915351 (stepped cross) inside the site outline. A Commons photo of July 2026 shows the tower under
+// refurbishment (scaffolding, new glass); modelled as a plain light-grey tower with glass ribbons.
+{
+const A0 = [1.279586, 103.849547];
+const SITE0 = [[-25.1,8.9],[3.0,26.2],[25.1,-8.9],[-2.9,-26.2]];
+const T0 = [[-1.5,9.4],[5.5,14.1],[9.7,7.1],[8.0,6.4],[14.0,-3.6],[1.5,-10.6],[2.0,-11.9],[-4.5,-15.4],[-8.8,-8.9],[-7.5,-8.4],[-13.5,1.1],[-1.0,8.4]];
+const C0 = pcen(T0), [SITE, T] = shAll([SITE0, T0], C0);
+K50('sgrobinsonpoint', '罗敏申点', 'Robinson Point', A0, C0, {r:32, h:71, lt:{m:1, c:'#ffecd0', k:0.4}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const GL = {c:'#4d6470', m:1, fh:3.3, cw:2.0}, CL = {c:'#cfccc6', m:0, lk:0.35};
+  foundP(B.p(FOUND50), SITE); capP(B.p(PAVE50), SITE, 0.3); baseP(B, T, 5);
+  tw50(B, T, 5, 68, {sty:'rib', gl:GL, fr:CL, fh:3.0, sh:1.1, bay:2.2, par:1.2});
+  blkP(B, scP(T, 0.5), 68, 71, MECH50, ROOF50);
+  B.flush(g); return g; }});
+}
+}
+
+// ===== lm50/sg50c: Civic & Bras Basah, Bugis, Beach Road, Kampong Glam, Marina Centre, upper river quays (City Brush lm50, real Singapore 1:1) =====
+// One block; helpers inside. Only LANDMARKS and SG_PLACES are touched. All models use rot 0: local +x = east, +z = south; plans are the
+// real OSM footprints / building parts (R/lm50/ref_sg50c.json, generated into D50C by SC/lm50/sg50c/gen.py) relative to each key's
+// origin (the area centroid of its parts). Heights: the verified figure where one exists (cited per model), else the data (OSM) heights.
+{
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+// ---- triangle batches: many small parts of one colour spec become one LTris call ----
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+// box (w along x, d along z) standing on y, turned ry about its centre
+function boxP(o, w, h, d, x, y, z, ry){
+  const c = Math.cos(ry || 0), s = Math.sin(ry || 0), hw = w/2, hd = d/2;
+  const R = (px, py, pz) => [x + px*c + pz*s, py, z - px*s + pz*c];
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, e, f] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[e], P[f]);
+}
+// box between x0..x1, y0..y1, z0..z1 (no rotation)
+const bxP = (o, x0, x1, y0, y1, z0, z1) => boxP(o, x1 - x0, y1 - y0, z1 - z0, (x0 + x1)/2, y0, (z0 + z1)/2);
+// plan polygons ([x, z] points)
+const tri2 = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+function capP(o, P, y){ for (const [a, b, c] of tri2(P)) o.push(P[a][0], y, P[a][1], P[b][0], y, P[b][1], P[c][0], y, P[c][1]); }
+function wallP(o, P, y0, y1, open){ const n = P.length; for (let i = 0; i < (open ? n - 1 : n); i++){ const a = P[i], b = P[(i+1) % n]; quadP(o, [a[0], y0, a[1]], [b[0], y0, b[1]], [b[0], y1, b[1]], [a[0], y1, a[1]]); } }
+function prismP(o, P, y0, y1, bot){ wallP(o, P, y0, y1); capP(o, P, y1); if (bot) capP(o, P, y0); }
+const rectXZ = (x0, x1, z0, z1) => [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+const ctr = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+// offset a closed plan polygon inwards by d (negative = outwards; miter, simple polygons)
+function offP(P, d){
+  const n = P.length; let A = 0; for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n]; A += a[0]*b[1] - b[0]*a[1]; }
+  const sg = A > 0 ? -1 : 1, out = [];
+  for (let i = 0; i < n; i++){
+    const p = P[(i + n - 1) % n], c = P[i], q = P[(i+1) % n];
+    let e1 = [c[0] - p[0], c[1] - p[1]], e2 = [q[0] - c[0], q[1] - c[1]]; const l1 = Math.hypot(...e1) || 1, l2 = Math.hypot(...e2) || 1;
+    e1 = [e1[0]/l1, e1[1]/l1]; e2 = [e2[0]/l2, e2[1]/l2];
+    const n1 = [e1[1]*sg, -e1[0]*sg], n2 = [e2[1]*sg, -e2[0]*sg], m = [n1[0] + n2[0], n1[1] + n2[1]], ml = Math.hypot(...m) || 1;
+    const cs = Math.max(0.35, (m[0]*n1[0] + m[1]*n1[1])/ml);
+    out.push([c[0] + m[0]/ml*d/cs, c[1] + m[1]/ml*d/cs]);
+  }
+  return out;
+}
+// points along a closed polygon every `step` m (for parapet merlons, lamps, mullions): [x, z, edge direction angle]
+function alongP(P, step, inset){
+  const out = [];
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 0.5) continue;
+    const n = Math.max(1, Math.round(L/step)), ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+    for (let k = 0; k < n; k++){ const t = (k + 0.5)/n; out.push([a[0] + (b[0] - a[0])*t, a[1] + (b[1] - a[1])*t, ang, L/n]); } }
+  return out;
+}
+// surface of revolution into a batch: prof [[r, y], ...] bottom to top; n sides; ph = start angle
+function latheP(o, prof, cx, cz, n, ph, sx, sz){
+  ph = ph || 0; sx = sx || 1; sz = sz || 1;
+  for (let j = 0; j < prof.length - 1; j++){ const [r0, y0] = prof[j], [r1, y1] = prof[j+1];
+    for (let i = 0; i < n; i++){ const a0 = ph + i/n*TAU, a1 = ph + (i+1)/n*TAU;
+      quadP(o, [cx + Math.cos(a0)*r0*sx, y0, cz + Math.sin(a0)*r0*sz], [cx + Math.cos(a1)*r0*sx, y0, cz + Math.sin(a1)*r0*sz], [cx + Math.cos(a1)*r1*sx, y1, cz + Math.sin(a1)*r1*sz], [cx + Math.cos(a0)*r1*sx, y1, cz + Math.sin(a0)*r1*sz]); } }
+}
+// cylinder segment between two points into a batch (n-sided prism)
+function segP(o, a, b, r, n){
+  n = n || 4; const d = [b[0]-a[0], b[1]-a[1], b[2]-a[2]], L = Math.hypot(...d); if (L < 1e-4) return; d[0] /= L; d[1] /= L; d[2] /= L;
+  const up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let u = [d[1]*up[2] - d[2]*up[1], d[2]*up[0] - d[0]*up[2], d[0]*up[1] - d[1]*up[0]]; const ul = Math.hypot(...u); u = u.map(q => q/ul);
+  const v = [d[1]*u[2] - d[2]*u[1], d[2]*u[0] - d[0]*u[2], d[0]*u[1] - d[1]*u[0]];
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+u[0]*c+v[0]*s, p[1]+u[1]*c+v[1]*s, p[2]+u[2]*c+v[2]*s]); } return R; };
+  const A = ring(a), B = ring(b); for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], B[j], B[i]); }
+}
+// facade frames: F(u, v, w) -> point; u along the facade, v up, w outwards
+const fZ = (z, s, cx) => (u, v, w) => [(cx || 0) + s*u, v, z + s*(w || 0)];       // plane z = const, facing s*z
+const fX = (x, s, cz) => (u, v, w) => [x + s*(w || 0), v, (cz || 0) - s*u];       // plane x = const, facing s*x
+const fA = (x, z, ang) => { const c = Math.cos(ang), s = Math.sin(ang); return (u, v, w) => [x + c*u + s*(w || 0), v, z + s*u - c*(w || 0)]; }; // along direction ang (x->z), outward = right-hand normal
+// a flat outline ([u, v] points) on a facade at offset w
+function shapeP(o, pts, F, w){ for (const [a, b, c] of tri2(pts)) o.push(...F(pts[a][0], pts[a][1], w), ...F(pts[b][0], pts[b][1], w), ...F(pts[c][0], pts[c][1], w)); }
+// the same outline as a slab between offsets w0 and w1 (front face + sides)
+function slabP(o, pts, F, w0, w1){ shapeP(o, pts, F, w1); for (let i = 0; i < pts.length; i++){ const a = pts[i], b = pts[(i+1) % pts.length]; quadP(o, F(a[0], a[1], w0), F(b[0], b[1], w0), F(b[0], b[1], w1), F(a[0], a[1], w1)); } }
+const mv = (P, du, dv) => P.map(p => [p[0] + du, p[1] + dv]);
+// outlines in the facade plane
+const rectO = (u0, u1, v0, v1) => [[u0, v0], [u1, v0], [u1, v1], [u0, v1]];
+const rArchO = (hw, ht, n) => { const P = [[-hw, 0], [hw, 0]]; for (let i = 0; i <= (n || 8); i++){ const a = PI*i/(n || 8); P.push([Math.cos(a)*hw, ht - hw + Math.sin(a)*hw]); } return P; };
+const pArchO = (hw, ht, n) => pArch(hw, ht, n || 5);
+// ogee / cusped (Mughal) arch: pointed arch with a small reverse curve at the apex
+const ogArchO = (hw, ht, n) => { n = n || 6; const hs = ht - hw*1.25, P = [[-hw, 0], [hw, 0], [hw, hs]];
+  for (let i = 1; i < n; i++){ const t = i/n, a = t*HP; P.push([hw*Math.cos(a)*(1 - 0.18*t*t), hs + hw*0.95*Math.sin(a) + hw*0.3*t*t*t]); }
+  P.push([0, ht]);
+  for (let i = n - 1; i >= 1; i--){ const t = i/n, a = t*HP; P.push([-hw*Math.cos(a)*(1 - 0.18*t*t), hs + hw*0.95*Math.sin(a) + hw*0.3*t*t*t]); }
+  P.push([-hw, hs]); return P; };
+// a ring of n points round (cx, cz)
+const ringPts = (cx, cz, r, n, ph) => { const P = []; for (let i = 0; i < n; i++){ const a = (ph || 0) + i/n*TAU; P.push([cx + Math.cos(a)*r, cz + Math.sin(a)*r]); } return P; };
+const lerp = (a, b, t) => a + (b - a)*t;
+// parapet: a wall of thickness t along every edge of a closed plan polygon (inside it), y0..y1
+function parP(o, P, y0, y1, t){ const c = ctr(P); for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); if (L < 0.05) continue;
+  const ang = Math.atan2(b[1] - a[1], b[0] - a[0]); let nx = -(b[1] - a[1])/L, nz = (b[0] - a[0])/L; const mx = (a[0] + b[0])/2, mz = (a[1] + b[1])/2; if (nx*(c[0] - mx) + nz*(c[1] - mz) < 0){ nx = -nx; nz = -nz; }
+  boxP(o, L + t*0.0, y1 - y0, t, mx + nx*t/2, y0, mz + nz*t/2, -ang); } }
+// a crescent (horns up) outline, ~1.1 m across
+const CRES = (() => { const P = []; for (let i = 0; i <= 12; i++){ const a = PI*0.25 + i/12*PI*1.5; P.push([Math.cos(a)*0.55, Math.sin(a)*0.55]); }
+  for (let i = 1; i < 12; i++){ const a = -1.227 - i/12*(TAU - 2*1.227); P.push([0.25 + Math.cos(a)*0.413, Math.sin(a)*0.413]); } return P; })();
+// vertex-coloured batch: any number of colours in one material (colourful stucco sculpture, painted bands)
+const mkV = () => ({pos:[], col:[]});
+const _vc = {};
+function vAdd(V, hex, fn){ const t = []; fn(t); let c = _vc[hex]; if (!c){ const k = new THREE.Color(hex); c = _vc[hex] = [k.r, k.g, k.b]; } for (let i = 0; i < t.length; i++) V.pos.push(t[i]); for (let i = 0; i < t.length; i += 3) V.col.push(c[0], c[1], c[2]); }
+function vFlush(g, V, spec){ if (!V.pos.length) return; const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(V.pos, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(V.col, 3)); geo.computeVertexNormals(); lmAdd(g, geo, Object.assign({c:'#ffffff', vc:true, ds:true}, spec || {}), 0, 0, 0, 0); V.pos = []; V.col = []; }
+// rectangular frustum into a batch: Lb x Wb at y0 to Lt x Wt at y0 + h, centred (cx, cz); top cap
+function frustP(o, cx, cz, Lb, Wb, Lt, Wt, y0, h, nocap){
+  const b = [[cx - Lb/2, y0, cz - Wb/2], [cx + Lb/2, y0, cz - Wb/2], [cx + Lb/2, y0, cz + Wb/2], [cx - Lb/2, y0, cz + Wb/2]];
+  const t = [[cx - Lt/2, y0 + h, cz - Wt/2], [cx + Lt/2, y0 + h, cz - Wt/2], [cx + Lt/2, y0 + h, cz + Wt/2], [cx - Lt/2, y0 + h, cz + Wt/2]];
+  for (let i = 0; i < 4; i++){ const j = (i + 1) % 4; quadP(o, b[i], b[j], t[j], t[i]); }
+  if (!nocap) quadP(o, t[0], t[3], t[2], t[1]);
+}
+const sArea = P => { let A = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; A += a[0]*b[1] - b[0]*a[1]; } return A/2; };
+// facade frames of a plan polygon's edges: u from 0 at P[i] to L at P[i+1], v up, w outwards
+function edgesF(P){ const sg = sArea(P) > 0 ? 1 : -1, out = [];
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1e-6, ex = (b[0] - a[0])/L, ez = (b[1] - a[1])/L, nx = ez*sg, nz = -ex*sg;
+    out.push({L, ang:Math.atan2(ez, ex), nx, nz, a, b, F:(u, v, w) => [a[0] + ex*u + nx*(w || 0), v, a[1] + ez*u + nz*(w || 0)]}); }
+  return out; }
+// East Asian roof into a batch: from half-sizes (a0, b0) at y to (a1, b1) at y + h (hip: a1 = ridge half-length, b1 = 0;
+// pent roof round a wall: a1, b1 = the wall; pyramid: 0, 0), concave profile (pw), corners swept up by `lift`, turned ry.
+// opt.gab (0..1): hip-and-gable - the ends stop moving in at that fraction and a gable (opt.gcol) closes the top;
+// opt.sag: the ridge and eaves sag in the middle and rise towards the ends (Hokkien curved ridges);
+// opt.fas: fascia depth under the eave line (into opt.fo); opt.hips / opt.ridge: batches for hip and ridge rolls
+function roofP(o, cx, cz, a0, b0, a1, b1, y, h, opt){
+  opt = opt || {}; const n = opt.n || 6, nt = opt.nt || 5, pw = opt.pw || 1.7, lift = opt.lift || 0, c = Math.cos(opt.ry || 0), s = Math.sin(opt.ry || 0), gab = opt.gab || 0, sag = opt.sag || 0;
+  const R = (x, yy, z) => [cx + x*c + z*s, yy, cz - x*s + z*c];
+  const A_ = u => gab ? (u < gab ? a0 + (a1 - a0)*u/gab : a1) : a0 + (a1 - a0)*u;
+  const ring = (u, dy) => {
+    const a = A_(u), b = b0 + (b1 - b0)*u, yy = y + h*Math.pow(u, pw) + dy, lu = lift*Math.pow(1 - u, 2), P = [];
+    const C = [[-a, -b], [a, -b], [a, b], [-a, b]];
+    for (let k = 0; k < 4; k++){ const A = C[k], B = C[(k+1) % 4]; for (let i = 0; i < n; i++){ const t = i/n, cc = Math.pow(Math.abs(2*t - 1), 4), f = 1 + 0.03*cc*(1 - u)*(lift ? 1 : 0), lx = (A[0] + (B[0] - A[0])*t)*f, lz = (A[1] + (B[1] - A[1])*t)*f;
+      P.push(R(lx, yy + lu*cc + sag*Math.pow(Math.min(1, Math.abs(lx)/Math.max(0.1, a0)), 2)*(0.35 + 0.65*u), lz)); } }
+    return P;
+  };
+  const S = []; for (let i = 0; i <= nt; i++) S.push(ring(i/nt, 0));
+  const m = 4*n, loft = (o2, A, B2) => { for (let i = 0; i < m; i++){ const j = (i + 1) % m; quadP(o2, A[i], A[j], B2[j], B2[i]); } };
+  for (let i = 0; i < nt; i++) loft(o, S[i], S[i+1]);
+  if (opt.fas) loft(opt.fo || o, ring(0, -opt.fas), S[0]);
+  if (opt.hips){ for (let k = 0; k < 4; k++){ const P = []; for (let i = 0; i <= nt; i++){ if (gab && i/nt > gab + 1e-6) break; P.push(S[i][k*n]); } for (let i = 0; i < P.length - 1; i++) segP(opt.hips, [P[i][0], P[i][1] + 0.12, P[i][2]], [P[i+1][0], P[i+1][1] + 0.12, P[i+1][2]], opt.hr || 0.16, 4); } }
+  const yt = y + h;
+  if (gab && opt.gcol){ const yg = y + h*Math.pow(gab, pw), bg = b0 + (b1 - b0)*gab, sg = sag*0.35 + sag*0.65*gab, st = sag; for (const sx of [-1, 1]){ const x = sx*(a1 + 0.02); triP(opt.gcol, R(x, yg + sg, -bg), R(x, yg + sg, bg), R(x, yt + st, 0)); } }
+  if (opt.ridge && a1 > 0.3 && b1 < 0.05){ const N = sag ? 8 : 1; for (let i = 0; i < N; i++){ const xa = -a1 - 0.2 + (2*a1 + 0.4)*i/N, xb = -a1 - 0.2 + (2*a1 + 0.4)*(i + 1)/N, ya = yt + 0.15 + sag*Math.pow(Math.min(1, Math.abs(xa)/a0), 2), yb = yt + 0.15 + sag*Math.pow(Math.min(1, Math.abs(xb)/a0), 2), p = R(xa, ya, 0), q = R(xb, yb, 0); segP(opt.ridge, p, q, opt.rr || 0.3, 4); } }
+  return yt;
+}
+// chiwei / ridge-end ornament: a curled fin standing on the ridge at (x, y, z), facing along ang
+function chiweiP(o, x, y, z, ang, s){ const P = [[-0.5, 0], [0.45, 0], [0.55, 0.6], [0.35, 1.25], [0.0, 1.55], [-0.15, 1.2], [0.15, 1.0], [0.1, 0.6], [-0.35, 0.45]].map(p => [p[0]*s, p[1]*s]);
+  slabP(o, P, fA(x, z, ang), -0.12*s, 0.12*s); }
+const circ = (r, n) => { const P = []; for (let i = 0; i < (n || 16); i++){ const a = i/(n || 16)*PI*2; P.push([Math.cos(a)*r, Math.sin(a)*r]); } return P; };
+const semi = (r, n) => { const P = [[r, 0]]; for (let i = 1; i < n; i++){ const a = PI*i/n; P.push([Math.cos(a)*r, Math.sin(a)*r]); } P.push([-r, 0]); return P; };
+// local metres <-> world (for terrain sampling of spread-out models)
+const W_X = lon => (lon - 103.845)*111290.5, W_Y = lat => (lat - 1.315)*110574;
+
+// Sutherland-Hodgman: polygon P clipped by the half plane a*x + b*z <= c
+function clipH(P, a, b, c){ const out = []; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], dp = a*p[0] + b*p[1] - c, dq = a*q[0] + b*q[1] - c;
+  if (dp <= 0) out.push(p); if ((dp < 0) !== (dq < 0) && Math.abs(dp - dq) > 1e-9){ const t = dp/(dp - dq); out.push([p[0] + (q[0] - p[0])*t, p[1] + (q[1] - p[1])*t]); } } return out; }
+// P clipped by the band s0 <= d.p <= s1, t0 <= n.p <= t1 (d, n unit vectors)
+function clipST(P, d, n, s0, s1, t0, t1){ let Q = P; Q = clipH(Q, d[0], d[1], s1); Q = clipH(Q, -d[0], -d[1], -s0); Q = clipH(Q, n[0], n[1], t1); Q = clipH(Q, -n[0], -n[1], -t0); return Q; }
+// windows: rectangles on every edge of plan P (outward offset w), storeys from y0 (fh tall), bays ~bay m, window fw x wh, sill
+function winP(o, P, y0, nf, fh, bay, fw, wh, sill, w, minL){ for (const E of edgesF(P)){ if (E.L < (minL || 2.5)) continue; const n = Math.max(1, Math.round(E.L/bay)), ww = Math.min(fw, E.L/n - 0.4);
+  for (let f = 0; f < nf; f++){ const v = y0 + f*fh + sill; for (let j = 0; j < n; j++){ const u = (j + 0.5)*E.L/n; shapeP(o, rectO(u - ww/2, u + ww/2, v, v + wh), E.F, w || 0.05); } } } }
+// horizontal bands on every edge (spandrels, cornices): a slab between offsets 0..dw from y to y + h
+function bandP(o, P, y, h, dw){ for (const E of edgesF(P)) slabP(o, rectO(-0.02, E.L + 0.02, y, y + h), E.F, 0, dw); }
+// a frame turned by angle a: (u, v) plan coordinates -> (x, z)
+const frm = a => { const c = Math.cos(a), s = Math.sin(a); return {X:(u, v) => [u*c - v*s, u*s + v*c], R:(u, y, v) => [u*c - v*s, y, u*s + v*c], rect:(u0, u1, v0, v1) => [[u0, v0], [u1, v0], [u1, v1], [u0, v1]].map(p => [p[0]*c - p[1]*s, p[0]*s + p[1]*c])}; };
+// gable roof in frame Fr: ridge along u (u0..u1), eaves at v0, v1 (overhang ov), eave height y, rise h, slight sag of the slopes;
+// the two gable-end triangles go to batch gw (wall colour) if given. along='v' turns it (ridge along v).
+function gableR(o, Fr, u0, u1, v0, v1, y, h, ov, gw, along, sag){
+  const R = along === 'v' ? (a, yy, b) => Fr.R(b, yy, a) : Fr.R; if (along === 'v'){ [u0, u1, v0, v1] = [v0, v1, u0, u1]; }
+  const vm = (v0 + v1)/2, N = 3, sg = sag === undefined ? 0.12 : sag;
+  const prof = []; for (let i = 0; i <= N; i++){ const t = i/N; prof.push([t, y + h*t - (i > 0 && i < N ? sg*h*Math.sin(PI*t) : 0)]); }
+  for (const side of [-1, 1]){ const ve = side < 0 ? v0 - ov : v1 + ov;
+    for (let i = 0; i < N; i++){ const [ta, ya] = prof[i], [tb, yb] = prof[i+1], va = ve + (vm - ve)*ta, vb = ve + (vm - ve)*tb, ya2 = ya - (i === 0 ? ov*h/((v1 - v0)/2) : 0);
+      quadP(o, R(u0 - ov, ya2, va), R(u1 + ov, ya2, va), R(u1 + ov, yb, vb), R(u0 - ov, yb, vb)); } }
+  if (gw) for (const u of [u0, u1]) triP(gw, R(u, y, v0), R(u, y, v1), R(u, y + h, vm));
+}
+// prism of a frame rectangle
+const rectPrism = (o, Fr, u0, u1, v0, v1, y0, y1) => prismP(o, Fr.rect(u0, u1, v0, v1), y0, y1);
+// generic storeyed block on plan P: walls, a band at each floor, windows (bay, width, height), parapet, roof cap
+function blkP(B, P, y0, nf, fh, C, o){ o = o || {}; const yt = y0 + nf*fh;
+  prismP(B.p(C.WALL), P, y0, yt, false); capP(B.p(C.ROOF || C.WALL), P, yt);
+  for (let f = 1; f < nf; f++) if (C.BAND) bandP(B.p(C.BAND), P, y0 + f*fh - 0.3, 0.35, o.bd || 0.12);
+  winP(B.p(C.WIN), P, y0 + (o.skip0 ? fh : 0), nf - (o.skip0 ? 1 : 0), fh, o.bay || 3.2, o.ww || 2.0, o.wh || fh*0.55, o.sill || fh*0.25, 0.05, 2.5);
+  if (o.par !== false) parP(B.p(C.TRIM || C.WALL), P, yt, yt + (o.par || 1.0), 0.25);
+  return yt; }
+// ---- sg50c helpers ----
+// pointed (lancet) arch outline, as the app's pointedArch (not in the offline kit)
+const pArch = (hw, ht, n) => { const hs = ht - 1.732*hw, P = [[-hw, 0], [hw, 0], [hw, hs]]; for (let i = 1; i <= n; i++){ const a = PI/3*i/n; P.push([-hw + 2*hw*Math.cos(a), hs + 2*hw*Math.sin(a)]); } for (let i = n - 1; i >= 0; i--){ const a = PI/3*i/n; P.push([hw - 2*hw*Math.cos(a), hs + 2*hw*Math.sin(a)]); } return P; };
+const DK = k => D50C[k], PK = (k, i) => D50C[k].p[i];
+const placeK = (k, rot) => SG_PLACES.push({type:k, lat:D50C[k].o[0], lon:D50C[k].o[1], rot:rot || 0});
+// a plan polygon clipped to a band along axis angle a (degrees): s0 <= d.p <= s1, t0 <= n.p <= t1 (n = d turned +90 deg)
+const axisD = a => { const r = a*PI/180; return [[Math.cos(r), Math.sin(r)], [-Math.sin(r), Math.cos(r)]]; };
+const band = (P, a, s0, s1, t0, t1) => { const [d, n] = axisD(a); return clipST(P, d, n, s0, s1, t0, t1); };
+const stXZ = (a, s, t) => { const [d, n] = axisD(a); return [s*d[0] + t*n[0], s*d[1] + t*n[1]]; };
+// glass curtain wall on plan P from y0 to y1: glass prism, spandrel band every fh, mullions every bay
+function glassP(B, P, y0, y1, S){
+  prismP(B.p(S.glass), P, y0, y1, false);
+  const fh = S.fh || 4, md = S.md || 0.22, mw = S.mw || 0.09;
+  if (S.band) for (let y = y0 + fh; y < y1 - 0.5; y += fh) bandP(B.p(S.band), P, y - (S.bh || 0.45), S.bh || 0.45, S.bd || 0.12);
+  if (S.mull) for (const E of edgesF(P)){ if (E.L < 1.2) continue; const k = Math.max(1, Math.round(E.L/(S.bay || 1.5)));
+    for (let j = 1; j < k; j++){ const u = j*E.L/k; slabP(B.p(S.mull), rectO(u - mw, u + mw, y0, y1), E.F, 0, md); }
+    slabP(B.p(S.mull), rectO(-0.15, 0.15, y0, y1), E.F, 0, md*1.4); }
+}
+// masonry / rendered block with punched windows: wall prism, windows (fw x wh per bay per floor), optional floor bands
+function punchP(B, P, y0, y1, S){
+  prismP(B.p(S.wall), P, y0, y1, false);
+  const fh = S.fh || 3.3, nf = Math.max(1, Math.round((y1 - y0 - (S.top || 0))/fh));
+  winP(B.p(S.win), P, y0 + (S.skip || 0)*fh, nf - (S.skip || 0), fh, S.bay || 3.2, S.ww || 1.6, S.wh || fh*0.55, S.sill || fh*0.25, 0.05, S.minL || 2.5);
+  if (S.band) for (let f = 1; f < nf; f++) bandP(B.p(S.band), P, y0 + f*fh - 0.25, 0.3, S.bd || 0.1);
+}
+// horizontal ribbon windows (one strip per floor on every edge)
+function ribbonP(B, P, y0, y1, S){
+  prismP(B.p(S.wall), P, y0, y1, false);
+  const fh = S.fh || 3.3, nf = Math.max(1, Math.floor((y1 - y0 - (S.top || 0.6))/fh));
+  for (const E of edgesF(P)){ if (E.L < (S.minL || 2)) continue;
+    for (let f = S.skip || 0; f < nf; f++){ const v = y0 + f*fh + (S.sill || fh*0.3); shapeP(B.p(S.win), rectO(0.35, E.L - 0.35, v, v + (S.wh || fh*0.45)), E.F, 0.05); } }
+}
+// flat roof: cap, parapet, a few plant boxes (deterministic from the plan)
+function roofF(B, P, y, S){
+  capP(B.p(S.roof || S.wall), P, y);
+  if (S.par !== 0) parP(B.p(S.parC || S.wall), P, y, y + (S.par || 1.0), 0.25);
+  if (S.plant){ const c = ctr(P), A = Math.abs(sArea(P)); if (A > 300){ const w = Math.min(14, Math.sqrt(A)*0.3); boxP(B.p(S.plant), w, 2.6, w*0.7, c[0], y, c[1]); } }
+}
+// foundation plinth from -5 to y
+const foundP = (B, P, y, col) => prismP(B.p(col), P, -5, y || 0.01, false);
+// a lattice (trellis) ring of slender members round plan P between y0 and y1
+function trellisP(B, P, y0, y1, col, step, r){
+  for (const [x, z] of alongP(P, step || 3)) segP(B.p(col), [x, y0, z], [x, y1, z], r || 0.18, 4);
+  for (let y = y0; y <= y1 + 0.01; y += (y1 - y0)/3) for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; segP(B.p(col), [a[0], y, a[1]], [b[0], y, b[1]], (r || 0.18)*1.2, 4); }
+  const Q = alongP(P, step || 3); for (let i = 0; i < Q.length; i++){ const a = Q[i], b = Q[(i+1) % Q.length]; segP(B.p(col), [a[0], y0, a[1]], [b[0], y1, b[1]], (r || 0.18)*0.8, 4); }
+}
+// a deck polyline helper for bridges: points [x, z, y] -> per-vertex frames
+function polyFr(L){ const out = []; for (let i = 0; i < L.length; i++){ const a = L[Math.max(0, i - 1)], b = L[Math.min(L.length - 1, i + 1)], dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz) || 1; out.push({p:L[i], d:[dx/l, dz/l], n:[-dz/l, dx/l]}); } return out; }
+// a ribbon along a polyline between lateral offsets o0..o1, from y(top)+dy0 to y+dy1 (closed box segments)
+function ribbonL(o, L, o0, o1, dy0, dy1){ const F = polyFr(L);
+  for (let i = 0; i < F.length - 1; i++){ const A = F[i], C = F[i+1];
+    const P = (f, off, dy) => [f.p[0] + f.n[0]*off, f.p[2] + dy, f.p[1] + f.n[1]*off];
+    const a0 = P(A, o0, dy0), a1 = P(A, o1, dy0), a2 = P(A, o1, dy1), a3 = P(A, o0, dy1), c0 = P(C, o0, dy0), c1 = P(C, o1, dy0), c2 = P(C, o1, dy1), c3 = P(C, o0, dy1);
+    quadP(o, a3, a2, c2, c3); quadP(o, a0, c0, c1, a1); quadP(o, a0, a3, c3, c0); quadP(o, a1, c1, c2, a2); } }
+// resample a polyline [[x, z, y], ...] every `step` m (linear)
+function resL(L, step){ const out = [L[0]]; for (let i = 0; i < L.length - 1; i++){ const a = L[i], b = L[i+1], l = Math.hypot(b[0] - a[0], b[1] - a[1]), n = Math.max(1, Math.round(l/step)); for (let k = 1; k <= n; k++){ const t = k/n; out.push([a[0] + (b[0] - a[0])*t, a[1] + (b[1] - a[1])*t, a[2] + (b[2] - a[2])*t]); } } return out; }
+// extras: real buildings that a key's plan hull hides but that belong to no key - plain blocks at their data heights
+// (an elevated deck - base above ground - becomes a slab on columns)
+function xtraB(B, k, shop){
+  for (const p of (DK(k).x || [])){
+    const P = p[2], c = (p[4] && p[4].c) || '#d6d1c6', W = {c, m:0, lk:0.25};
+    if (p[0] > 0.5){ prismP(B.p(W), P, p[0], p[1], true); capP(B.p((p[4] && p[4].rc) || '#b9b2a2'), P, p[1] + 0.02);
+      for (const [x, z] of alongP(offP(P, 1.2), 9)) boxP(B.p('#c9c3b8'), 0.6, p[0], 0.6, x, 0, z); }
+    else if (shop){ foundP(B, P, 0, '#8f8b84'); const nf = Math.max(2, Math.round(p[1]/4.0)); shopP(B, P, 0, nf, p[1]/nf, 4.6, shop); roofF(B, P, p[1], {wall:shop.WALL, roof:'#a9a59c', par:0.6, parC:shop.TRIM}); }
+    else { foundP(B, P, 0, '#8f8b84'); punchP(B, P, 0, p[1], {wall:W, win:{c:'#3d4850', m:1, fh:3.4, cw:2.6}, fh:3.4, bay:3.0, ww:1.4, wh:1.6, sill:1.0});
+      roofF(B, P, p[1], {wall:W, roof:'#a3a097', par:0.7, parC:'#e9e5dc'}); }
+  }
+}
+// generated by SC/lm50/sg50c/gen.py from R/lm50/ref_sg50c.json (+ OSM rings): per key o = origin [lat, lon], r, p = [[base, top, ring, osm, colour], ...]
+const D50C = {"sgguocomidtown":{"o":[1.297373,103.858008],"r":51,"p":[[0,99.6,[[-3.4,45.0],[32.3,8.0],[29.3,5.2],[38.3,-4.3],[3.6,-36.3],[-4.7,-27.5],[-10.2,-32.8],[-45.4,4.5]],"-",{}],[0,13.8,[[-4.7,-27.5],[29.3,5.2],[38.3,-4.3],[3.6,-36.3]],"w1075250784",{"c":"black","l":"4","mt":"metal"}]]},"sgndc":{"o":[1.298682,103.853414],"r":53,"p":[[0,20.0,[[11.6,31.9],[9.4,35.4],[17.1,41.9],[21.9,35.9],[24.1,37.2],[38.6,19.9],[37.4,9.9],[34.9,8.2],[36.1,6.9],[-8.1,-28.1],[-8.6,-26.8],[-24.1,-39.8],[-27.9,-39.3],[-39.1,-25.8],[-36.6,-23.8],[-39.1,-22.1],[-31.9,-16.3],[-40.9,-5.6],[-36.1,-2.1],[-31.9,-6.8],[-6.4,14.7],[-7.4,15.7]],"r3413595",{"l":"3","h":"20"}]]},"sgsspp":{"o":[1.297892,103.85129],"r":34,"p":[[0,20.0,[[-18.8,-14.7],[-17.8,-12.2],[-20.8,-9.9],[-19.5,-9.2],[-23.0,-5.2],[-11.8,4.8],[-9.3,2.6],[5.7,15.6],[6.7,14.3],[17.0,23.3],[25.2,13.8],[15.2,4.8],[15.7,3.8],[1.5,-9.2],[3.7,-12.2],[-7.5,-22.4],[-11.8,-18.2],[-12.3,-18.7],[-14.0,-16.4],[-16.5,-16.9]],"w155986468",{"l":"4","h":"20"}]]},"sgbugisjunction":{"o":[1.299879,103.855952],"r":73,"p":[[0,11.1,[[-60.2,2.7],[-44.7,13.9],[-54.2,26.4],[-36.9,38.9],[-27.4,25.9],[-8.9,40.2],[-16.7,50.2],[6.6,67.4],[48.6,11.2],[43.1,-12.1],[1.3,-53.6],[-14.2,-50.6]],"w172364977",{"l":"3"}],[9.9,50.1,[[-33.4,-19.8],[-24.9,-13.3],[-26.7,-10.8],[15.1,20.7],[17.3,17.7],[25.8,24.7],[33.6,14.7],[-26.2,-29.8]],"w427133450",{"l":"15","ml":"3"}],[9.9,43.5,[[33.1,9.9],[36.1,12.2],[46.1,0.4],[-2.9,-48.8],[-20.7,-25.8],[30.6,12.9]],"w427133463",{"l":"13","ml":"3"}]]},"sgpeninsula":{"o":[1.292332,103.850824],"r":52,"p":[[16.5,20.4,[[-20.6,-8.5],[-29.6,6.2],[-29.6,11.0],[-1.6,27.5],[3.1,26.5],[12.1,10.5],[12.1,9.2],[9.6,12.7],[4.9,14.5],[-19.6,-0.3],[-20.6,-5.0],[-18.4,-8.5]],"w257193900",{"c":"lightgrey","l":"6","ml":"5","mt":"concrete","rc":"grey"}],[0,17.1,[[43.9,-14.8],[26.9,-25.8],[25.4,-25.0],[24.4,-25.0],[23.4,-25.5],[22.6,-26.0],[22.4,-27.0],[22.4,-28.0],[22.9,-29.0],[-6.4,-45.3],[-43.4,17.5],[8.6,46.5]],"w1075234631",{"c":"lightgrey","l":"5","mt":"concrete","rc":"grey"}],[16.5,111.0,[[4.9,14.5],[9.6,12.7],[24.1,-11.5],[22.9,-16.8],[-1.1,-29.3],[-5.9,-27.5],[-20.6,-5.0],[-19.6,-0.3]],"w257193902",{"c":"lightgrey","l":"30","ml":"5","mt":"concrete","rc":"white","h":"111"}],[4.2,17.1,[[22.9,-29.0],[22.4,-28.0],[22.4,-27.0],[22.6,-26.0],[23.4,-25.5],[24.4,-25.0],[25.4,-25.0],[26.9,-25.8],[43.9,-14.8],[44.4,-15.8],[31.1,-24.0],[33.1,-27.0],[25.9,-31.0],[24.1,-28.3]],"-",{}]]},"sglourdes":{"o":[1.30318,103.856044],"r":24,"p":[[0,14.2,[[2.4,-13.0],[-16.1,3.8],[-11.8,8.0],[-15.3,11.5],[-12.3,15.0],[-8.8,11.5],[-4.6,15.5],[13.2,-1.5],[15.7,-8.7],[10.2,-14.7]],"w191010560",{}]]},"sgtextile":{"o":[1.303673,103.861444],"r":32,"p":[[23.1,83.1,[[-26.6,-0.5],[-11.6,23.7],[26.7,0.0],[11.7,-23.5]],"w427139534",{"l":"25","ml":"7"}],[0,23.1,[[-26.3,-0.5],[-11.6,23.7],[26.4,0.2],[11.4,-23.5]],"w427139534",{"l":"25","ml":"7"}]]},"sgriversidepoint":{"o":[1.289328,103.844119],"r":94,"p":[[0,13.8,[[1.8,-9.9],[-6.9,-24.7],[-24.9,-2.7],[-11.9,6.1]],"w327014374",{"l":"4","rs":"gabled"}],[0,13.8,[[-16.7,-40.2],[-39.9,-13.4],[-24.9,-2.7],[-6.9,-24.7]],"w327014370",{"l":"4","rs":"gabled"}],[0,13.8,[[-22.7,-54.4],[-28.4,-52.4],[-36.2,-57.2],[-54.2,-29.4],[-52.4,-22.2],[-39.9,-13.4],[-16.7,-40.2]],"w327014377",{"l":"4","rs":"gabled"}],[0,13.8,[[46.6,55.3],[58.6,66.6],[74.1,48.3],[59.8,41.1]],"w327014375",{"l":"4","rs":"gabled"}],[0,13.8,[[33.6,44.1],[46.6,55.3],[59.8,41.1],[43.8,32.3]],"w327014372",{"l":"4","rs":"gabled"}],[0,13.8,[[21.1,32.3],[33.6,44.1],[43.8,32.3],[30.1,21.6]],"w327014371",{"l":"4","rs":"gabled"}],[0,13.8,[[-7.7,10.8],[16.3,29.3],[27.6,16.3],[8.6,-5.7]],"w327014373",{"l":"4","rs":"gabled"}]]},"sgcentennial":{"o":[1.293422,103.860282],"r":41,"p":[[0,158.0,[[34.8,7.5],[32.3,2.3],[23.3,-10.2],[15.0,-16.7],[13.3,-14.2],[8.5,-15.0],[6.8,-17.2],[7.3,-21.0],[-1.7,-25.0],[-13.7,-26.2],[-24.5,-25.7],[-24.5,-24.5],[-23.2,-24.5],[-23.2,-22.0],[-26.7,-21.5],[-28.5,-15.5],[-32.2,-11.5],[-31.0,-9.0],[-34.5,-8.5],[-28.5,4.0],[-21.5,12.3],[-14.2,16.5],[-13.7,15.3],[-11.7,14.8],[-8.7,15.3],[-6.5,17.8],[-6.5,21.3],[9.0,26.5],[24.5,26.0],[24.5,24.8],[22.8,24.3],[22.8,22.5],[26.3,21.8],[27.5,17.8],[31.8,12.3],[31.3,8.8],[32.3,7.5],[33.0,8.3]],"w155988210",{"c":"#757974","l":"37","mt":"concrete","h":"158"}]]},"sgritzcarlton":{"o":[1.290532,103.860086],"r":62,"p":[[0,10.0,[[-49.2,-17.3],[45.0,34.4],[53.5,20.2],[-30.7,-26.8],[-30.0,-27.3],[-40.2,-33.3]],"w591619207",{"c":"#c1ccd3","l":"2","mt":"metal","h":"10"}],[30.0,140.0,[[-30.7,-26.8],[-30.0,-27.3],[-40.2,-33.3],[-49.2,-17.3],[45.0,34.4],[53.5,20.2]],"w591619207",{"c":"#c1ccd3","l":"2","mt":"metal","h":"10"}],[0,30.0,[[35.3,28.9],[43.3,14.7],[-30.7,-26.8],[-30.5,-27.6],[-40.0,-33.1],[-49.0,-17.6],[-49.0,-17.1]],"w591619207",{"c":"#c1ccd3","l":"2","mt":"metal","h":"10"}],[10.0,30.0,[[36.3,28.9],[45.0,34.4],[53.5,20.2],[44.0,14.7]],"-",{}],[10.0,30.0,[[-9.7,-14.8],[-18.2,-0.6],[-9.2,4.7],[-0.7,-10.1]],"-",{}],[10.0,30.0,[[-40.2,-33.3],[-49.2,-17.3],[-39.0,-11.8],[-30.0,-27.3]],"-",{}],[10.0,30.0,[[2.8,11.7],[11.8,15.9],[20.8,2.2],[11.0,-3.1]],"-",{}]]},"sgprinsep":{"o":[1.30173,103.851095],"r":26,"p":[[0,13.1,[[-15.6,-3.1],[-0.9,8.9],[-7.9,17.6],[-3.9,20.6],[18.9,-6.6],[15.4,-9.6],[9.9,-3.1],[-5.6,-15.6]],"w172596749",{}]],"x":[[0,6.6,[[-3.9,9.4],[-15.1,0.4],[-20.6,7.1],[-9.9,16.6]],"-",{}]]},"sgwesley":{"o":[1.297128,103.847396],"r":51,"p":[[0,13.8,[[25.9,24.8],[34.2,30.0],[41.9,18.8],[33.7,13.0]],"w1066693836",{"c":"lightgrey","l":"4","mt":"metal"}],[0,13.8,[[4.9,16.5],[10.9,20.0],[11.7,18.3],[14.7,20.5],[15.2,19.5],[25.4,26.0],[31.9,16.5],[22.4,10.5],[24.7,7.0],[15.7,1.0]],"w1066693840",{"c":"brown","l":"4","mt":"brick","rc":"red"}],[0,13.8,[[0.2,1.5],[-4.6,-1.2],[-11.1,8.3],[-0.8,15.3],[0.2,13.5],[4.9,16.5],[15.7,1.0],[4.9,-6.0]],"w1066693839",{"c":"white","l":"4","mt":"concrete","rc":"lightgrey"}],[0,13.8,[[-10.6,-2.0],[-17.1,-2.5],[-21.8,1.0],[-20.6,3.5],[-14.6,7.5],[-13.6,5.8],[-11.1,8.3],[-4.6,-1.2],[0.2,1.5],[9.9,-12.5],[7.9,-13.2],[10.9,-18.0],[3.2,-22.7],[1.4,-19.2]],"w1066693843",{"c":"white","l":"4","mt":"concrete","rc":"darkgrey"}],[0,17.1,[[-27.8,-21.0],[-27.8,-16.7],[-29.1,-16.2],[-30.8,-18.5],[-33.8,-16.7],[-32.1,-14.5],[-35.6,-15.0],[-36.8,-5.0],[-29.6,-4.2],[-24.3,2.8],[-17.1,-2.5],[-10.6,-2.0],[-9.8,-8.5],[-13.6,-9.0],[-12.8,-19.2]],"w1066693838",{"c":"brown","l":"5","mt":"brick"}],[0,7.2,[[-2.8,-22.0],[-12.3,-22.7],[-13.6,-9.0],[-9.8,-8.5],[-10.6,-2.0],[1.4,-19.2]],"w1066693837",{"c":"white","l":"2","mt":"concrete"}],[0,13.8,[[13.4,-21.0],[7.9,-13.2],[11.7,-10.7],[16.4,-18.5]],"w1066693842",{"c":"white","l":"4","mt":"concrete","rc":"lightgrey"}]]},"sgparkroyalbeach":{"o":[1.300146,103.860602],"r":85,"p":[[4.2,21.0,[[-5.3,-11.5],[-22.0,1.5],[-31.3,6.0],[-28.0,10.3],[-19.0,5.8],[-1.8,-7.7]],"-",{}],[0,21.0,[[-31.3,6.0],[-22.0,1.5],[-5.3,-11.5],[-8.0,-14.5],[-32.5,4.5]],"-",{}],[0,21.0,[[-1.8,-7.7],[-19.0,5.8],[-28.0,10.3],[-23.5,15.8],[-44.3,21.0],[-63.5,24.0],[-62.8,43.0],[-36.0,38.3],[-14.5,30.5],[4.5,19.3],[25.0,-0.2],[42.7,-21.0],[63.0,-50.0],[47.0,-58.5],[17.7,-18.7],[2.2,-3.2]],"w47134224",{"l":"6"}]]},"sgparkroyalbeach2":{"o":[1.299793,103.860762],"r":42,"p":[[0,106.8,[[-32.9,-4.2],[-31.9,12.3],[-17.4,12.3],[-3.2,15.8],[6.3,22.5],[16.6,33.0],[26.1,26.5],[18.8,13.0],[16.6,1.8],[16.6,-12.0],[20.6,-27.5],[6.3,-33.2],[-0.2,-22.7],[-18.7,-7.7]],"w190945737",{"l":"32"}]]},"sggoldenlandmark":{"o":[1.302036,103.857829],"r":57,"p":[[0,11.1,[[32.5,-18.9],[31.3,-18.2],[25.0,-16.4],[19.8,-17.9],[18.8,-18.4],[11.0,-24.7],[7.5,-30.4],[7.3,-31.7],[7.3,-34.4],[9.0,-39.2],[-1.0,-47.9],[-50.5,8.3],[0.3,52.3],[13.5,49.3],[45.8,12.6],[28.3,-2.4],[38.5,-13.7]],"w47134068",{"l":"3"}],[9.9,67.2,[[-32.0,-10.7],[-30.2,-9.4],[-33.2,-6.4],[-27.7,-1.7],[-24.7,-4.7],[-18.7,0.1],[-2.2,-20.2],[4.5,-20.2],[23.0,-2.9],[29.0,-9.4],[30.8,-7.2],[36.0,-12.4],[2.0,-42.7],[-5.0,-34.4],[-8.7,-37.4]],"w190945731",{"l":"20","ml":"3"}],[4.2,11.1,[[28.3,-22.7],[25.0,-21.7],[21.8,-22.7],[14.8,-28.4],[12.3,-32.4],[12.3,-33.2],[13.0,-35.7],[9.0,-39.2],[7.3,-34.4],[7.3,-31.7],[7.5,-30.4],[11.0,-24.7],[18.8,-18.4],[24.3,-16.4],[25.8,-16.4],[31.3,-18.2],[32.5,-18.9]],"-",{}],[0,11.1,[[13.0,-35.7],[12.3,-33.2],[12.3,-32.4],[14.8,-28.4],[21.8,-22.7],[25.0,-21.7],[28.3,-22.7]],"-",{}]]},"sghotelgp":{"o":[1.297395,103.852633],"r":41,"p":[[0,13.8,[[-9.0,32.3],[6.0,14.6],[-17.2,-4.4],[-32.2,13.3]],"w429681543",{"l":"4"}],[0,68.0,[[6.0,14.6],[31.8,-16.2],[11.3,-32.9],[-15.0,-1.9]],"w429681542",{"l":"16","h":"68"}]],"x":[[0,10.7,[[-23.0,-3.2],[-30.0,5.6],[-27.5,7.6],[-20.2,-0.9]],"-",{}]]},"sgaliwal":{"o":[1.302658,103.861036],"r":37,"p":[[0,6.1,[[-0.2,22.6],[4.6,30.4],[23.1,18.4],[18.3,10.6]],"w190945113",{}],[0,12.7,[[-7.4,-30.9],[-25.9,-18.9],[-21.2,-10.6],[-9.9,-17.6],[-4.9,-10.1],[-15.7,-3.4],[-9.9,5.9],[1.6,-0.6],[6.3,7.1],[-5.7,14.4],[-0.2,22.6],[18.3,10.6]],"w190944927",{}]]},"sgchildrensmuseum":{"o":[1.292841,103.84876],"r":25,"p":[[0,20.0,[[6.1,-17.0],[-14.2,-3.2],[-9.4,3.3],[-15.4,8.0],[-8.9,17.5],[16.8,-0.2],[15.1,-4.0]],"w172368089",{"h":"20"}]]},"sgrafflesh":{"o":[1.301173,103.857197],"r":71,"p":[[19.8,46.8,[[-26.1,-33.1],[-25.4,-28.4],[2.6,-2.4],[-29.6,33.9],[-11.1,50.4],[18.6,17.4],[22.4,21.4],[28.1,21.4],[50.4,-2.9],[50.9,-8.1],[-3.4,-50.9],[-9.4,-51.6]],"w427133451",{"c":"#d6cec4","l":"14","ml":"6","mt":"stone","rc":"#d6cec4","rs":"flat"}],[0,66.6,[[-65.4,8.9],[-45.9,27.4],[-11.9,-8.1],[-31.4,-26.6]],"w560277991",{"c":"#455241","l":"20","mt":"glass"}],[6.6,20.4,[[-11.9,-8.1],[-45.9,27.4],[-6.4,60.6],[0.1,59.9],[54.6,-0.6],[54.6,-7.1],[-8.1,-58.1],[-19.6,-57.4],[-39.9,-35.6]],"w560277989",{"c":"#d3bba3","l":"2","mt":"stone"}],[0,7.2,[[-11.9,-8.1],[-45.9,27.4],[-6.4,60.6],[0.1,59.9],[54.6,-0.6],[54.6,-7.1],[-8.1,-58.1],[-19.6,-57.4],[-39.9,-35.6]],"w560277989",{"c":"#d3bba3","l":"2","mt":"stone"}]]},"sgmarinasquare":{"o":[1.291243,103.857128],"r":180,"p":[[9.9,13.8,[[-24.5,73.3],[40.8,111.0],[68.8,63.8],[3.8,25.0]],"w742205649",{"c":"#cebc9b","l":"4","ml":"3","mt":"concrete","rc":"#B6B9A4","rs":"flat"}],[13.2,17.1,[[53.3,37.5],[34.0,26.3],[32.3,29.3],[51.5,40.5]],"w743776033",{"c":"#EDDDCD","l":"5","ml":"4","mt":"concrete","rc":"#EDDDCD","rs":"flat"}],[13.2,17.1,[[47.8,2.5],[34.0,26.3],[53.3,37.5],[67.0,13.8]],"w743776034",{"c":"#1F193A","l":"5","ml":"4","mt":"glass","rc":"#1F193A","rs":"flat"}],[13.2,17.1,[[46.0,-8.0],[26.3,25.8],[32.3,29.3],[47.8,2.5],[67.0,13.8],[51.5,40.5],[58.5,44.0],[77.8,11.0]],"w743776035",{"c":"#EDDDCD","l":"5","ml":"4","mt":"concrete","rc":"#EDDDCD","rs":"flat"}],[9.9,13.8,[[68.8,63.8],[73.0,56.5],[89.5,66.8],[120.0,14.5],[38.3,-33.0],[3.8,25.0]],"w742205650",{"c":"#cebc9b","l":"4","ml":"3","mt":"concrete","rc":"#C9B088","rs":"flat"}],[4.2,10.5,[[-129.2,-25.5],[-125.0,-20.7],[-127.5,-11.7],[-133.7,-10.2],[-135.2,-4.7],[-134.7,-4.7],[-133.7,-4.7],[-124.7,-7.2],[-123.5,-8.2],[-119.5,-20.7],[-119.5,-21.7],[-119.5,-22.5],[-120.0,-23.2],[-126.2,-30.0],[-127.5,-30.7]],"-",{}],[0,10.5,[[-133.7,-10.2],[-127.5,-11.7],[-125.0,-20.7],[-129.2,-25.5]],"-",{}],[9.9,13.8,[[-13.7,-118.5],[-34.5,-130.2],[-44.2,-114.7],[-22.7,-102.5]],"w743776028",{"c":"#768B97","l":"4","ml":"3","mt":"concrete","rc":"#768B97","rs":"skillion"}],[9.9,17.1,[[15.0,-17.5],[-7.0,2.5],[-19.7,12.0],[3.8,25.0],[25.8,-11.0]],"w742205651",{"c":"#cebc9b","l":"5","ml":"3","mt":"concrete","rc":"#3A511D"}],[0,10.5,[[-127.5,-30.7],[-126.2,-30.0],[-120.0,-23.2],[-119.5,-22.5],[-119.5,-21.7],[-119.5,-20.7],[-123.5,-8.2],[-124.7,-7.2],[-133.7,-4.7],[-135.2,-4.7],[-136.7,0.3],[-136.0,4.3],[-134.7,8.5],[-132.5,11.5],[-59.7,70.8],[-49.0,58.3],[40.8,111.0],[73.0,56.5],[89.5,66.8],[120.0,14.5],[162.5,39.3],[161.3,33.5],[175.0,11.0],[106.3,-26.5],[66.3,-50.2],[52.0,-25.2],[-30.5,-74.5],[-22.0,-88.2],[-39.2,-98.2],[-33.5,-108.2],[-22.7,-102.5],[-13.7,-118.5],[-34.5,-130.2],[-54.2,-98.2],[-81.7,-111.7],[-76.2,-117.7],[-68.5,-122.0],[-53.0,-122.0],[-44.2,-137.2],[-53.7,-139.2],[-63.2,-139.2],[-77.0,-133.7],[-89.5,-125.0],[-94.7,-118.5],[-99.0,-110.0],[-105.5,-85.7],[-110.5,-88.2]],"w742205655",{"c":"#cebc9b","l":"3","mt":"concrete","rc":"#C3AC8C","rs":"flat"}],[9.9,17.1,[[-30.5,-74.5],[-88.2,-106.5],[-108.5,-48.5],[-54.7,-17.5],[-50.7,-36.0],[-44.7,-52.0],[-56.7,-59.0],[-49.5,-72.2],[-36.2,-64.5]],"w742205652",{"c":"#cebc9b","l":"5","ml":"3","mt":"concrete","rc":"#3A511D","rs":"flat"}]],"x":[[0,8.0,[[-108.5,-93.6],[-110.5,-87.9],[-105.5,-85.6],[-103.8,-90.9]],"-",{}],[0,15.5,[[47.8,-79.6],[28.0,-90.4],[23.3,-82.1],[43.8,-71.4]],"-",{}],[0,8.6,[[13.3,-98.6],[5.5,-102.9],[0.8,-93.9],[8.5,-89.9]],"-",{}]]},"sgmarinasquare2":{"o":[1.292126,103.858077],"r":76,"p":[[3.3,10.5,[[3.2,67.0],[-37.1,43.7],[-39.3,47.5],[0.7,71.2]],"-",{}],[0,3.3,[[3.2,67.0],[-36.8,43.7],[-38.8,47.0],[0.9,70.7]],"-",{}],[5.0,10.5,[[-37.1,43.7],[3.2,67.0],[5.9,62.7],[-34.3,39.2]],"-",{}],[3.3,10.5,[[-34.3,39.2],[5.9,62.7],[17.4,44.2],[-23.3,20.7]],"-",{}],[0,3.3,[[17.4,44.2],[-23.3,20.7],[-34.3,39.2],[5.9,62.5]],"-",{}],[5.0,10.5,[[-23.3,20.7],[17.4,44.2],[23.4,34.7],[-17.6,11.2]],"-",{}],[0,3.3,[[-17.6,11.2],[23.4,34.7],[27.2,28.5],[-13.6,4.5]],"-",{}],[3.3,10.5,[[-17.6,11.2],[23.4,34.7],[27.7,28.0],[-13.1,3.7]],"-",{}],[0,10.5,[[42.4,3.0],[28.2,-5.3],[49.7,-42.5],[19.9,-59.3],[13.9,-62.3],[1.4,-63.3],[-11.1,-60.3],[-17.1,-57.5],[-21.3,-53.8],[-27.3,-43.8],[-30.3,-36.8],[-30.8,-27.3],[-30.3,-18.8],[-28.6,-12.3],[-24.3,-6.5],[-13.1,3.7],[27.7,28.0]],"w743776030",{"c":"#cebc9b","l":"3","mt":"concrete","rc":"#3D5F2C","rs":"flat"}],[9.9,13.8,[[-7.1,-5.8],[-12.3,-9.3],[-17.1,-14.8],[-20.8,-21.8],[-20.1,-36.0],[-17.1,-42.5],[-13.1,-47.3],[-7.1,-50.3],[0.7,-51.5],[9.2,-51.0],[16.9,-46.8],[23.4,-57.5],[13.9,-62.3],[7.4,-63.3],[-4.6,-62.8],[-11.1,-60.3],[-17.1,-57.5],[-21.3,-53.8],[-23.8,-50.3],[-30.3,-36.8],[-30.8,-27.3],[-30.3,-18.8],[-28.6,-12.3],[-24.3,-6.5],[-13.1,3.7]],"w743776029",{"c":"#9A9DA5","l":"4","ml":"3","mt":"concrete","rc":"#9A9DA5","rs":"flat"}]]},"sgmarinasquare3":{"o":[1.290495,103.858622],"r":94,"p":[[0,13.8,[[-23.0,31.3],[-6.3,41.6],[-3.8,37.3],[52.2,68.8],[61.2,65.3],[60.7,-5.9],[14.7,-32.2]],"w743776031",{"c":"#cebc9b","l":"4","mt":"concrete","rc":"#B6B9A4"}],[0,17.1,[[-78.5,-13.2],[-25.3,17.8],[7.0,-36.7],[-46.3,-68.2]],"w743776032",{"c":"#cebc9b","l":"5","mt":"concrete","rc":"#B6B9A4","rs":"flat"}]]},"sgmarinamandarin":{"o":[1.291366,103.85688],"r":68,"p":[[56.1,63.3,[[-19.0,-6.3],[-28.0,27.5],[-9.5,38.2],[16.3,12.7],[32.3,-9.8],[-6.5,-31.8]],"w742205657",{"c":"#A8AF9F","l":"19","ml":"17","rc":"#A8AF9F"}],[49.5,56.7,[[-15.5,-18.0],[-20.2,-6.8],[-24.5,9.2],[-28.0,27.5],[-9.5,38.2],[17.5,12.7],[25.8,2.7],[34.0,-8.5],[-7.7,-32.3]],"w742205664",{"c":"#A8AF9F","l":"17","ml":"15","rc":"#A8AF9F"}],[42.9,50.1,[[-8.7,-33.5],[-21.5,-7.5],[-25.0,9.2],[-28.0,27.5],[-9.5,38.2],[17.5,13.2],[27.0,3.2],[35.3,-8.0]],"w742205658",{"c":"#A8AF9F","l":"15","ml":"13","rc":"#A8AF9F"}],[0,36.3,[[36.5,-6.5],[-10.7,-33.8],[-18.5,-19.3],[-22.0,-8.0],[-26.2,8.7],[-28.0,27.5],[-9.2,38.2],[18.5,14.0],[28.3,4.5]],"w742205663",{"c":"#A8AF9F","l":"13","ml":"11","rc":"#A8AF9F"}],[36.3,43.5,[[-18.5,-19.3],[-22.0,-8.0],[-26.2,8.7],[-28.0,27.5],[-9.5,38.2],[18.5,14.0],[28.3,4.5],[37.0,-6.8],[-10.7,-34.0]],"w742205663",{"c":"#A8AF9F","l":"13","ml":"11","rc":"#A8AF9F"}],[23.1,30.3,[[-21.5,-21.0],[-25.0,-9.3],[-28.0,8.0],[-28.0,27.5],[-9.5,38.2],[19.8,15.2],[30.5,5.7],[40.8,-5.0],[-14.7,-37.0]],"w742205662",{"c":"#A8AF9F","l":"9","ml":"7","rc":"#A8AF9F"}],[9.9,23.7,[[-23.2,-22.3],[-26.2,-9.8],[-29.2,7.5],[-28.0,27.5],[-9.5,38.2],[20.5,16.2],[42.5,-3.8],[-17.2,-38.3]],"w742205661",{"c":"#A8AF9F","l":"7","ml":"3","rc":"#A8AF9F"}],[69.3,73.2,[[-3.5,-13.3],[-15.5,20.5],[-7.0,24.7],[16.8,-4.5],[23.3,-14.5],[4.3,-25.8]],"w742205647",{"c":"#26272B","l":"22","ml":"21","mt":"concrete","rc":"#26272B","rs":"flat"}],[72.6,76.5,[[1.3,-18.0],[0.8,-13.3],[1.3,-10.3],[3.0,-7.5],[8.5,-5.0],[15.5,-6.8],[18.0,-8.5],[22.3,-15.8],[5.5,-25.3]],"w742205648",{"c":"#FAF5E1","l":"23","ml":"22","mt":"concrete","rc":"#FAF5E1","rs":"flat"}],[9.9,76.5,[[58.5,-6.8],[54.5,-9.8],[56.3,-12.8],[50.8,-16.3],[52.5,-19.3],[-7.0,-53.8],[-8.7,-50.8],[-22.0,-58.5],[-29.2,-45.3],[53.3,2.7]],"w742205656",{"c":"#E5DCD5","l":"23","ml":"3","mt":"concrete","rc":"#F1E7CE","rs":"flat"}],[62.7,69.9,[[-17.7,-5.5],[-28.0,27.5],[-9.5,38.2],[16.3,12.2],[31.3,-10.3],[-5.2,-31.0]],"w742205665",{"c":"#A8AF9F","l":"21","ml":"19","rc":"#A8AF9F"}],[29.7,36.9,[[-13.0,-35.8],[-20.2,-20.5],[-23.7,-8.5],[-26.7,8.0],[-28.0,27.5],[-9.5,38.2],[18.5,15.2],[29.3,5.0],[39.0,-5.5]],"w742205659",{"c":"#A8AF9F","l":"11","ml":"9","rc":"#A8AF9F"}],[0,29.7,[[-13.0,-35.8],[-20.2,-20.5],[-23.7,-8.5],[-26.7,8.0],[-28.0,27.5],[-9.2,38.2],[18.5,15.2],[29.3,5.0],[38.8,-5.3],[38.5,-5.8]],"w742205659",{"c":"#A8AF9F","l":"11","ml":"9","rc":"#A8AF9F"}]]},"sgmandarinoriental":{"o":[1.290664,103.858309],"r":56,"p":[[69.3,76.5,[[-3.0,19.9],[0.5,31.9],[14.8,27.6],[11.3,15.9]],"w741934151",{"c":"#EBEEEB","l":"23","ml":"21","rc":"#9FC8B2"}],[0,73.2,[[-49.0,14.6],[11.8,50.1],[49.5,-13.4],[41.8,-17.9],[9.5,36.6],[-43.7,5.6]],"w741934166",{"c":"#7E8997","l":"22","mt":"concrete","rc":"#9FC8B2"}],[16.5,69.9,[[-39.5,0.9],[-39.0,4.6],[-43.7,5.6],[9.5,36.6],[41.8,-17.9],[37.0,-16.1],[35.0,-21.6],[29.8,-19.9],[31.0,-15.6],[26.8,-14.4],[28.0,-10.4],[23.3,-8.6],[25.0,-4.4],[20.3,-3.1],[21.5,0.9],[-16.7,12.9],[-18.0,8.6],[-22.2,9.9],[-23.5,5.6],[-28.2,6.9],[-29.2,2.9],[-33.5,3.9],[-35.2,-0.1]],"w393090402",{"c":"#EBEEEB","l":"21","ml":"5","mt":"concrete","rc":"#9FC8B2"}],[56.1,60.0,[[16.5,0.4],[7.8,2.9],[7.0,0.9],[2.3,2.1],[3.0,4.6],[0.5,5.1],[-0.0,2.9],[-4.2,4.6],[-3.7,6.4],[-12.7,9.4],[-12.0,11.1],[17.3,2.1]],"w741934152",{"c":"#EBEEEB","l":"18","ml":"17","mt":"concrete","rc":"#EBEEEB"}],[59.4,66.6,[[16.5,0.4],[-12.7,9.4],[-12.0,11.1],[17.3,2.1]],"w741934153",{"c":"#EBEEEB","l":"20","ml":"18","mt":"concrete","rc":"#EBEEEB"}],[52.8,56.7,[[16.5,0.4],[11.8,1.6],[11.3,-0.1],[7.0,0.9],[6.5,-1.4],[1.8,0.4],[2.3,2.1],[-0.0,2.9],[-0.7,0.9],[-5.0,2.1],[-4.2,4.6],[-9.0,5.6],[-8.5,8.1],[-12.7,9.4],[-12.0,11.1],[17.3,2.1]],"w741934154",{"c":"#EBEEEB","l":"17","ml":"16","mt":"concrete","rc":"#EBEEEB"}],[49.5,53.4,[[16.0,-1.9],[15.5,-3.9],[10.8,-2.6],[10.0,-4.9],[5.8,-3.1],[4.8,-5.6],[0.5,-4.4],[1.0,-1.9],[-1.2,-1.4],[-2.0,-3.1],[-6.7,-1.9],[-6.0,0.4],[-10.2,1.6],[-9.7,3.4],[-13.7,5.1],[-13.2,6.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1]],"w741934156",{"c":"#EBEEEB","l":"16","ml":"15","mt":"concrete","rc":"#EBEEEB"}],[46.2,50.1,[[15.5,-3.9],[14.3,-6.1],[10.0,-4.9],[9.5,-6.6],[4.8,-5.6],[4.0,-7.4],[-0.0,-6.1],[0.5,-4.4],[-2.0,-3.1],[-2.5,-5.6],[-7.2,-4.4],[-6.7,-1.9],[-10.7,-0.9],[-10.2,1.6],[-14.5,2.9],[-13.7,5.1],[-18.5,6.4],[-16.7,12.9],[21.5,0.9],[19.5,-5.6]],"w741934157",{"c":"#EBEEEB","l":"15","ml":"14","mt":"concrete","rc":"#EBEEEB"}],[0,46.2,[[20.3,0.6],[19.5,-3.1],[20.0,-3.9],[19.8,-5.1],[15.5,-3.9],[14.3,-6.1],[10.0,-4.9],[9.3,-6.6],[4.8,-5.6],[4.0,-7.4],[-0.0,-6.1],[0.5,-4.4],[-2.0,-3.1],[-2.7,-5.4],[-7.0,-4.4],[-6.7,-1.9],[-10.7,-0.9],[-10.2,1.6],[-14.2,2.6],[-13.7,5.1],[-18.5,6.4],[-16.2,12.1]],"w741934157",{"c":"#EBEEEB","l":"15","ml":"14","mt":"concrete","rc":"#EBEEEB"}],[39.6,43.5,[[19.0,-7.4],[17.8,-9.6],[13.5,-7.9],[13.0,-10.4],[8.8,-9.1],[8.3,-10.9],[3.5,-9.6],[3.0,-12.1],[-1.2,-10.4],[-0.7,-8.6],[-3.0,-7.4],[-3.7,-9.6],[-8.5,-8.6],[-7.7,-6.1],[-12.0,-4.9],[-11.5,-2.6],[-16.2,-1.4],[-15.7,0.9],[-19.7,2.1],[-19.2,4.6],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6]],"w741934159",{"c":"#EBEEEB","l":"13","ml":"12","mt":"concrete","rc":"#EBEEEB"}],[33.0,36.9,[[22.5,-10.9],[22.0,-13.4],[17.3,-11.4],[16.5,-13.9],[12.5,-12.6],[11.8,-14.4],[7.8,-13.4],[7.0,-15.1],[2.3,-13.9],[1.8,-16.1],[-3.0,-14.4],[-2.0,-12.6],[-5.0,-12.1],[-5.5,-13.9],[-9.7,-12.6],[-9.0,-10.4],[-13.7,-9.1],[-12.7,-6.6],[-17.5,-5.6],[-16.7,-3.9],[-21.0,-1.9],[-20.5,-0.1],[-25.2,1.6],[-24.5,3.4],[-28.7,5.1],[-28.2,6.9],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6],[28.0,-10.4],[27.3,-12.1]],"w741934161",{"c":"#EBEEEB","l":"11","ml":"10","mt":"concrete","rc":"#EBEEEB"}],[29.7,33.6,[[22.0,-13.4],[21.5,-15.1],[16.5,-13.9],[16.0,-15.6],[11.8,-14.4],[11.3,-16.9],[7.0,-15.1],[5.8,-17.4],[1.8,-16.1],[1.0,-17.9],[-3.7,-16.9],[-3.0,-14.4],[-5.5,-13.9],[-6.0,-16.1],[-10.2,-14.4],[-9.7,-12.6],[-14.5,-11.4],[-13.7,-9.1],[-18.0,-7.9],[-17.5,-5.6],[-21.5,-4.4],[-21.0,-1.9],[-25.7,-0.9],[-25.2,1.6],[-29.2,2.9],[-28.2,6.9],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6],[28.0,-10.4],[26.8,-14.4]],"w741934162",{"c":"#EBEEEB","l":"10","ml":"9","mt":"concrete","rc":"#EBEEEB"}],[19.8,23.7,[[-7.2,-20.4],[-7.7,-22.6],[-12.7,-20.9],[-11.5,-19.1],[-16.2,-17.4],[-15.7,-15.6],[-19.7,-13.9],[-19.2,-12.1],[-24.0,-10.9],[-23.5,-8.6],[-27.5,-7.4],[-27.0,-4.9],[-31.2,-3.9],[-30.5,-1.4],[-35.2,-0.1],[-33.5,3.9],[-29.2,2.9],[-28.2,6.9],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6],[28.0,-10.4],[26.8,-14.4],[31.0,-15.6],[29.8,-19.9],[25.5,-18.6],[24.3,-20.9],[20.3,-19.1],[19.5,-21.6],[14.8,-20.4],[14.3,-22.1],[10.0,-20.9],[9.5,-23.4],[4.8,-21.6],[4.0,-23.9],[-0.0,-22.1],[-1.2,-24.6],[-5.5,-23.4],[-5.0,-20.9]],"w741934165",{"c":"#EBEEEB","l":"7","ml":"6","mt":"concrete","rc":"#EBEEEB"}],[13.2,20.4,[[-35.2,-0.1],[-33.5,3.9],[-29.2,2.9],[-28.2,6.9],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6],[28.0,-10.4],[26.8,-14.4],[31.0,-15.6],[29.8,-19.9],[25.5,-18.6],[24.3,-22.1],[22.0,-21.6],[21.5,-23.9],[19.0,-23.4],[18.5,-25.6],[16.0,-24.6],[15.5,-26.9],[14.3,-26.9],[13.0,-29.9],[11.8,-29.4],[11.3,-31.1],[7.8,-29.9],[7.0,-32.1],[-4.2,-28.6],[-3.7,-26.9],[-6.0,-26.4],[-5.5,-23.4],[-7.7,-22.6],[-9.0,-25.1],[-12.7,-23.9],[-13.2,-26.4],[-25.2,-22.6],[-24.5,-20.9],[-26.5,-20.4],[-25.7,-18.6],[-27.5,-17.9],[-27.0,-15.6],[-29.2,-15.1],[-28.7,-12.6],[-31.7,-11.4],[-31.2,-9.1],[-32.2,-9.1],[-31.7,-6.6],[-34.2,-6.1],[-33.5,-4.4],[-36.5,-3.9],[-36.0,-2.6],[-37.7,-1.9],[-37.0,-1.4],[-40.0,-0.9],[-39.5,0.9]],"w741934150",{"c":"#EBEEEB","l":"6","ml":"4","mt":"concrete","rc":"#668624"}],[52.8,56.7,[[16.5,0.4],[16.0,-1.9],[11.3,-0.1],[10.8,-2.6],[6.5,-1.4],[5.8,-3.1],[1.0,-1.9],[1.8,0.4],[-0.7,0.9],[-1.2,-1.4],[-6.0,0.4],[-5.0,2.1],[-9.7,3.4],[-9.0,5.6],[-13.2,6.9],[-12.7,9.4],[-17.5,10.4],[-16.7,12.9],[21.5,0.9],[20.8,-0.9]],"w741934155",{"c":"#EBEEEB","l":"17","ml":"16","mt":"concrete","rc":"#EBEEEB"}],[0,52.8,[[-17.2,10.4],[-16.7,12.6],[21.3,0.6],[20.8,-0.6],[16.5,0.4],[15.8,-1.9],[11.3,-0.1],[10.5,-2.4],[6.5,-1.4],[5.8,-3.1],[1.5,-2.1],[1.8,0.4],[-0.7,0.9],[-1.5,-1.4],[-5.7,0.4],[-5.0,2.1],[-9.5,3.4],[-9.0,5.6],[-13.2,6.9],[-12.7,9.4]],"w741934155",{"c":"#EBEEEB","l":"17","ml":"16","mt":"concrete","rc":"#EBEEEB"}],[42.9,46.8,[[19.5,-5.6],[19.0,-7.4],[14.3,-6.1],[13.5,-7.9],[9.5,-6.6],[8.8,-9.1],[4.0,-7.4],[3.5,-9.6],[-0.7,-8.6],[-0.0,-6.1],[-2.5,-5.6],[-3.0,-7.4],[-7.7,-6.1],[-7.2,-4.4],[-11.5,-2.6],[-10.7,-0.9],[-15.7,0.9],[-14.5,2.9],[-19.2,4.6],[-18.5,6.4],[-22.7,7.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[24.3,-6.6]],"w741934158",{"c":"#EBEEEB","l":"14","ml":"13","mt":"concrete","rc":"#EBEEEB"}],[0,42.9,[[-22.7,7.4],[-22.2,9.6],[-18.0,8.6],[-16.5,12.6],[21.3,1.1],[20.3,-3.1],[24.8,-4.4],[24.5,-6.4],[19.5,-5.6],[18.8,-7.4],[14.3,-6.1],[13.5,-7.9],[9.5,-6.6],[8.8,-9.1],[4.0,-7.4],[3.3,-9.6],[-0.5,-8.6],[-0.0,-6.1],[-2.5,-5.6],[-3.2,-7.4],[-7.7,-6.1],[-7.2,-4.4],[-11.2,-2.6],[-10.7,-0.9],[-15.5,0.9],[-14.5,2.9],[-19.0,4.6],[-18.5,6.4]],"w741934158",{"c":"#EBEEEB","l":"14","ml":"13","mt":"concrete","rc":"#EBEEEB"}],[0,36.3,[[-24.5,3.6],[-22.2,9.6],[-18.0,8.6],[-16.5,12.9],[21.3,1.1],[20.3,-3.1],[24.8,-4.6],[22.5,-10.9],[17.8,-9.6],[17.0,-11.4],[13.0,-10.4],[12.3,-12.6],[8.3,-10.9],[7.5,-13.1],[3.0,-12.1],[2.0,-13.9],[-1.7,-12.6],[-1.2,-10.4],[-3.7,-9.6],[-5.0,-11.9],[-8.7,-10.4],[-8.5,-8.6],[-12.5,-6.6],[-12.0,-4.9],[-16.5,-3.9],[-16.2,-1.4],[-20.2,-0.1],[-19.7,2.1]],"w741934160",{"c":"#EBEEEB","l":"12","ml":"11","mt":"concrete","rc":"#EBEEEB"}],[36.3,40.2,[[22.5,-10.9],[17.8,-9.6],[17.3,-11.4],[13.0,-10.4],[12.5,-12.6],[8.3,-10.9],[7.8,-13.4],[3.0,-12.1],[2.3,-13.9],[-2.0,-12.6],[-1.2,-10.4],[-3.7,-9.6],[-5.0,-12.1],[-9.0,-10.4],[-8.5,-8.6],[-12.7,-6.6],[-12.0,-4.9],[-16.7,-3.9],[-16.2,-1.4],[-20.5,-0.1],[-19.7,2.1],[-24.5,3.4],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6]],"w741934160",{"c":"#EBEEEB","l":"12","ml":"11","mt":"concrete","rc":"#EBEEEB"}],[26.4,30.3,[[21.5,-15.1],[20.8,-17.4],[16.0,-15.6],[15.5,-17.9],[11.3,-16.9],[10.8,-18.6],[5.8,-17.4],[5.3,-19.9],[1.0,-17.9],[0.5,-20.4],[-4.2,-19.1],[-3.7,-16.9],[-6.0,-16.1],[-6.7,-17.9],[-10.7,-16.9],[-10.2,-14.4],[-15.0,-13.4],[-14.5,-11.4],[-18.5,-9.6],[-18.0,-7.9],[-22.2,-6.1],[-21.5,-4.4],[-26.5,-2.6],[-25.7,-0.9],[-34.7,2.1],[-33.5,3.9],[-29.2,2.9],[-28.2,6.9],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6],[28.0,-10.4],[26.3,-16.9]],"w741934163",{"c":"#EBEEEB","l":"9","ml":"8","mt":"concrete","rc":"#EBEEEB"}],[23.1,27.0,[[26.3,-16.9],[25.5,-18.6],[20.8,-17.4],[20.3,-19.1],[15.5,-17.9],[14.8,-20.4],[10.8,-18.6],[10.0,-20.9],[5.3,-19.9],[4.8,-21.6],[0.5,-20.4],[-0.0,-22.1],[-5.0,-20.9],[-4.2,-19.1],[-6.7,-17.9],[-7.2,-20.4],[-11.5,-19.1],[-10.7,-16.9],[-15.7,-15.6],[-15.0,-13.4],[-19.2,-12.1],[-18.5,-9.6],[-23.5,-8.6],[-22.2,-6.1],[-27.0,-4.9],[-26.5,-2.6],[-30.5,-1.4],[-30.0,0.4],[-34.7,2.1],[-33.5,3.9],[-29.2,2.9],[-28.2,6.9],[-23.5,5.6],[-22.2,9.9],[-18.0,8.6],[-16.7,12.9],[21.5,0.9],[20.3,-3.1],[25.0,-4.4],[23.3,-8.6],[28.0,-10.4],[26.8,-14.4],[31.0,-15.6],[30.3,-17.9]],"w741934164",{"c":"#EBEEEB","l":"8","ml":"7","mt":"concrete","rc":"#EBEEEB"}],[0,23.1,[[-34.5,2.4],[-33.5,3.9],[-29.2,2.9],[-28.0,6.9],[-23.5,5.6],[-22.0,9.9],[-18.0,8.6],[-16.5,12.6],[21.3,1.1],[20.3,-3.1],[24.8,-4.4],[23.3,-8.6],[27.8,-10.4],[26.8,-14.4],[30.8,-15.6],[30.5,-17.6],[26.3,-16.9],[25.3,-18.6],[20.8,-17.4],[20.0,-19.1],[15.5,-17.9],[14.8,-20.4],[10.8,-18.6],[10.0,-20.9],[5.3,-19.9],[4.5,-21.4],[0.5,-20.4],[-0.2,-22.1],[-4.7,-21.1],[-4.2,-19.1],[-6.7,-17.9],[-7.5,-20.4],[-11.2,-19.4],[-10.7,-16.9],[-15.5,-15.6],[-15.0,-13.4],[-19.0,-12.1],[-18.5,-9.6],[-23.2,-8.6],[-22.2,-6.1],[-26.7,-4.9],[-26.5,-2.6],[-30.2,-1.4],[-30.0,0.4]],"w741934164",{"c":"#EBEEEB","l":"8","ml":"7","mt":"concrete","rc":"#EBEEEB"}]]},"sgpanpacific":{"o":[1.292295,103.858685],"r":75,"p":[[0,17.1,[[0.5,69.7],[46.5,-8.6],[4.7,-34.6],[-14.5,-29.3],[-39.5,13.4],[-25.3,21.7],[-40.0,46.7]],"w741940347",{"c":"#F2F6F7","l":"5","mt":"concrete","rc":"#F2F6F7"}],[108.9,122.7,[[29.7,5.7],[37.0,-7.8],[44.0,-3.8],[46.5,-8.6],[4.7,-34.6],[-14.5,-29.3],[-39.5,13.4],[-33.5,16.4],[-28.8,7.4],[-24.0,9.9],[-26.3,13.4],[-21.5,16.4]],"w393090488",{"c":"#F2F6F7","l":"37","ml":"33","mt":"concrete","rc":"#F2F6F7"}],[16.5,109.5,[[19.7,5.2],[23.2,6.9],[25.5,3.4],[29.7,5.7],[37.0,-7.8],[44.0,-3.8],[46.5,-8.6],[4.7,-34.6],[-14.5,-29.3],[-39.5,13.4],[-33.5,16.4],[-28.8,7.4],[-24.0,9.9],[-26.3,13.4],[-21.5,16.4],[-19.3,12.2],[-15.0,14.7],[-12.5,11.7],[-9.0,13.4],[-6.8,9.9],[-2.5,12.2],[-0.8,8.7],[4.0,11.2],[6.0,6.9],[10.7,9.4],[13.0,5.7],[17.2,8.2]],"w172373822",{"c":"#F2F6F7","l":"33","ml":"5","mt":"concrete","rc":"#F2F6F7"}],[132.0,135.9,[[4.0,-20.3],[6.5,-26.3],[6.0,-29.3],[4.0,-32.3],[-1.3,-36.3],[-7.3,-35.8],[-12.5,-31.6],[-13.8,-28.1],[-13.3,-21.6],[-10.8,-18.6],[-7.8,-16.8],[-4.3,-16.1],[-1.3,-16.1]],"w393090400",{"c":"#F2F6F7","l":"41","ml":"40","mt":"concrete","rc":"#F2F6F7"}],[122.1,132.6,[[-15.5,-7.3],[16.0,-15.1],[8.2,-45.3],[-22.8,-37.6]],"w393090482",{"c":"#F2F6F7","l":"40","ml":"37","mt":"concrete","rc":"#F2F6F7"}]],"x":[[4.5,6.0,[[54.0,86.9],[77.0,88.7],[77.5,78.2],[59.0,77.4],[59.8,56.2],[68.0,56.2],[68.5,28.2],[81.3,28.9],[81.3,18.2],[71.0,17.7],[72.8,-16.8],[83.0,-16.8],[83.5,-26.8],[71.0,-26.8],[64.5,-29.3],[58.5,-34.6],[55.5,-40.6],[53.8,-48.8],[54.3,-60.6],[14.3,-62.6],[14.3,-66.1],[-44.7,-69.1],[-44.7,-71.3],[-50.2,-71.3],[-51.5,-53.1],[-37.7,-51.8],[-44.2,-38.8],[-18.0,-23.8],[-14.5,-29.3],[4.8,-34.6],[8.3,-40.6],[21.5,-32.8],[26.3,-40.6],[42.3,-31.1],[37.0,-22.8],[42.3,-19.8],[38.8,-13.3],[46.5,-8.6],[44.8,-5.6],[50.0,-3.1],[49.0,-0.8],[58.5,5.7],[57.3,37.2],[48.3,31.9],[47.0,70.4],[54.3,74.4]],"w393090492",{"building":"yes","building:colour":"#e3dcd8","building:material":"concrete","height":"6","layer":"1","level":"1","min_height":"4.5","roof:colour":"#C2B197","roof:material":"concrete","start_date":"1986"}]]},"sgintercon":{"o":[1.298356,103.854915],"r":56,"p":[[0,18,[[-14.0,-47.0],[-7.4,-40.5],[12.1,-26.6],[15.5,-24.1],[18.2,-22.1],[25.0,-17.3],[40.4,-5.4],[48.5,-0.5],[14.1,44.9],[1.9,46.2],[-7.6,38.2],[-13.1,33.7],[-38.9,12.4],[-51.0,2.4],[-30.8,-25.3]],"r21057404",{"l":"3","h":"18"}],[9.9,52.8,[[29.1,9.4],[30.3,9.9],[35.1,3.4],[33.8,2.9],[37.3,-1.9],[35.6,-3.6],[36.8,-4.9],[-11.4,-42.1],[-26.4,-22.6],[21.3,14.6],[22.6,12.9],[24.8,14.6]],"w254815933",{"l":"15","ml":"3","h":"12"}],[-1,-1,[[-16.5,23.0],[-2.9,5.7],[15.9,20.3],[2.3,37.5],[-3.6,32.9],[-8.8,28.9]],"inner",{}]]},"sgfunan":{"o":[1.291393,103.849858],"r":78,"p":[[19.8,33.6,[[22.4,47.0],[34.4,26.8],[24.6,20.8],[12.9,41.0]],"w699175599",{"c":"#B6BBBF","l":"10","ml":"6","mt":"metal","rc":"#B6BBBF"}],[9.9,20.4,[[39.1,31.5],[43.9,23.3],[48.7,24.3],[48.7,-14.8],[19.9,-31.2],[16.9,-31.2],[15.9,-29.0],[-2.1,-39.0],[-34.9,18.5],[-14.6,30.3],[-6.9,29.8],[43.1,59.5],[48.7,49.4],[48.7,44.1]],"w699175602",{"c":"#B6BBBF","l":"6","ml":"3","mt":"metal","rc":"#B6BBBF"}],[19.8,40.2,[[-14.6,30.3],[-6.9,29.8],[12.9,41.0],[24.6,20.8],[-21.4,-5.7],[-34.9,18.5]],"w699175600",{"c":"#405165","l":"12","ml":"6","mt":"metal","rc":"#B6BBBF"}],[0,10.5,[[19.9,-31.2],[16.9,-31.2],[15.9,-29.0],[-36.1,-58.5],[-69.6,-1.0],[-14.6,30.3],[-6.9,29.8],[43.1,59.5],[48.7,49.4],[48.7,44.1],[39.1,31.5],[43.9,23.3],[48.7,24.3],[48.7,-14.8]],"w699175605",{"c":"#B08366","l":"3","rc":"#B08366"}],[19.8,33.6,[[46.1,-16.0],[34.4,4.8],[44.4,10.3],[48.7,2.5],[48.7,-14.5]],"w699175603",{"c":"#B6BBBF","l":"10","ml":"6","mt":"metal","rc":"#B6BBBF"}],[19.8,40.2,[[19.9,-31.2],[16.9,-31.2],[15.9,-29.0],[-2.1,-39.0],[-12.4,-21.7],[34.4,4.8],[46.1,-16.0]],"w699175601",{"c":"#405165","l":"12","ml":"6","mt":"metal","rc":"#B6BBBF"}],[9.9,40.2,[[-36.1,-58.5],[-46.4,-41.5],[-27.1,-30.7],[-39.9,-8.7],[-58.9,-19.5],[-69.6,-1.0],[-34.9,18.5],[-2.1,-39.0]],"w699175606",{"c":"#B6BBBF","l":"12","ml":"3","mt":"metal","rc":"#B6BBBF"}]]},"sgfunan2":{"o":[1.291429,103.850459],"r":61,"p":[[9.9,20.4,[[-18.3,48.2],[-18.3,53.4],[-16.6,50.4]],"w699175602",{"c":"#B6BBBF","l":"6","ml":"3","mt":"metal","rc":"#B6BBBF"}],[9.9,20.4,[[-5.9,30.9],[31.1,-30.9],[19.1,-43.9],[-4.6,-2.9],[-18.3,-10.7],[-18.3,28.3]],"w699175602",{"c":"#B6BBBF","l":"6","ml":"3","mt":"metal","rc":"#B6BBBF"}],[0,10.5,[[-4.6,-2.9],[-18.3,-10.7],[-18.3,28.3],[-5.9,30.9],[18.6,-9.4],[6.6,-22.4]],"w699175605",{"c":"#B08366","l":"3","rc":"#B08366"}],[0,10.5,[[-16.6,50.4],[-18.3,48.2],[-18.3,53.4]],"w699175605",{"c":"#B08366","l":"3","rc":"#B08366"}],[19.8,33.6,[[-18.3,-10.5],[-18.3,6.6],[-11.1,-6.4]],"w699175603",{"c":"#B6BBBF","l":"10","ml":"6","mt":"metal","rc":"#B6BBBF"}]]}};
+// ---- bridges: deck lines from the refs (local metres round the bridge anchor, [x, z, elev]); the app's deck height `elev` is
+// absolute; the model's y = 0 sits at the base the app picks (LMCTX.u.base: highest ground within r + 0.6), so decks are placed at
+// elev - base (0.6 when no base is given) ----
+let BR_EL = 0.6;
+const brBase = () => { BR_EL = (LMCTX && LMCTX.u && LMCTX.u.base && isFinite(LMCTX.u.base.value) && LMCTX.u.base.value > 0.05) ? LMCTX.u.base.value : 0.6; };
+// a steel / concrete lamp post with a lit lantern
+function brLamp(B, x, y, z, h, POST, LAMP){ segP(B.p(POST), [x, y, z], [x, y + h, z], 0.07, 5); boxP(B.p(LAMP), 0.42, 0.55, 0.42, x, y + h, z); }
+// structure under / beside one deck line: underside slab (hw half-width), optional parapets on the outer side(s), lamps
+function brLine(B, L0, hw, opt){
+  const L = resL(L0.map(p => [p[0], p[1], p[2] - BR_EL]), 3);
+  ribbonL(B.p(opt.SLAB), L, -hw, hw, -opt.th, -0.12);
+  for (const s of opt.par || []){ const o = s*(hw + 0.1); ribbonL(B.p(opt.PAR), L, o - 0.15, o + 0.15, -0.3, opt.ph || 1.1); ribbonL(B.p(opt.FAS), L, o - 0.2, o + 0.2, -opt.th - 0.1, -0.2); }
+  if (opt.lamp){ const F = polyFr(L); let acc = 0; for (let i = 1; i < F.length; i++){ const a = F[i-1].p, b = F[i].p; acc += Math.hypot(b[0] - a[0], b[1] - a[1]); if (acc >= opt.lamp){ acc = 0; for (const s of opt.par || []) brLamp(B, b[0] + F[i].n[0]*s*(hw + 0.1), b[2] + 1.1, b[1] + F[i].n[1]*s*(hw + 0.1), 3.6, opt.POST, opt.LAMP); } } }
+}
+// abutment block at a deck end (along the line direction at that end)
+function brAbut(B, L0, end, hw, len, col){ const L = L0.map(p => [p[0], p[1], p[2] - BR_EL]), i = end ? L.length - 1 : 0, j = end ? L.length - 2 : 1, a = L[i], b = L[j], d = [b[0] - a[0], b[1] - a[1]], l = Math.hypot(...d), u = [d[0]/l, d[1]/l], n = [-u[1], u[0]];
+  const P = [[a[0] - u[0]*1 + n[0]*hw, a[1] - u[1]*1 + n[1]*hw], [a[0] + u[0]*len + n[0]*hw, a[1] + u[1]*len + n[1]*hw], [a[0] + u[0]*len - n[0]*hw, a[1] + u[1]*len - n[1]*hw], [a[0] - u[0]*1 - n[0]*hw, a[1] - u[1]*1 - n[1]*hw]];
+  prismP(B.p(col), P, -5, Math.max(0.05, a[2] - 0.5), false); }
+
+// ================= Robertson Bridge (footbridge over the upper Singapore River, late 1990s), Robertson Quay =================
+// Verified: a pedestrian bridge in the upper reaches of the river linking Robertson Quay and the Kim Seng Road side, one of the bridges
+// built in the years before 2000 (littledayout). Extent and deck heights from the app's path line on OSM bridge w475629843 (47 m,
+// rising to 3.6 m); river banks from OSM. Not verified (estimates): structure (steel girder deck with railings), width 4 m, colours.
+LANDMARKS.sgrobertsonbr = {zh:'罗拔申桥', en:'Robertson Bridge', cat:'new', r:30, h:5,
+  lt:{m:0, c:'#eef3ff', k:0.9, e:0.8},
+  build(){
+    brBase(); const g = new THREE.Group(), B = mkB();
+    const L = [[4.1, -22.4, 0.6], [0.9, 1.4, 3.6], [-2.4, 25.1, 0.6]];
+    // smooth arch profile through the three heights
+    const S = []; for (let i = 0; i <= 24; i++){ const t = i/24, a = t < 0.5 ? L[0] : L[1], b = t < 0.5 ? L[1] : L[2], tt = t < 0.5 ? t*2 : t*2 - 1;
+      S.push([a[0] + (b[0] - a[0])*tt, a[1] + (b[1] - a[1])*tt, 0.6 + 3.0*Math.sin(PI*t)]); }
+    const STEEL = {c:'#d9dcdb', m:0, lc:'#e8f0ff', lk:0.8}, DECK = '#8e8478', RAIL = '#c9cdcc', POST = '#5f6466', LAMP = {c:'#fff2cc', glow:'#ffe6b0', gk:1.6}, STONE = '#a59e91';
+    const SL = S.map(p => [p[0], p[1], p[2] - BR_EL]);
+    ribbonL(B.p(DECK), SL, -2.0, 2.0, -0.35, 0.0);
+    for (const s of [-1, 1]){ ribbonL(B.p(STEEL), SL, s*2.0 - 0.18, s*2.0 + 0.18, -1.3, -0.3); ribbonL(B.p(RAIL), SL, s*2.0 - 0.04, s*2.0 + 0.04, 1.0, 1.1);
+      const F = polyFr(SL); for (let i = 0; i < F.length; i += 2){ const p = F[i].p, q = [p[0] + F[i].n[0]*s*2.0, p[1] + F[i].n[1]*s*2.0]; segP(B.p(RAIL), [q[0], p[2], q[1]], [q[0], p[2] + 1.05, q[1]], 0.03, 3); } }
+    for (let i = 0; i < SL.length; i += 3){ const F = polyFr(SL)[i], p = F.p; segP(B.p(STEEL), [p[0] - F.n[0]*2, p[2] - 0.6, p[1] - F.n[1]*2], [p[0] + F.n[0]*2, p[2] - 0.6, p[1] + F.n[1]*2], 0.12, 4); }
+    brAbut(B, L, 0, 2.6, 2.5, STONE); brAbut(B, L, 1, 2.6, 2.5, STONE);
+    for (const e of [SL[0], SL[SL.length - 1]]) for (const s of [-1, 1]) brLamp(B, e[0] + s*2.3, e[2], e[1], 3.4, POST, LAMP);
+    B.flush(g); return g;
+  }};
+SG_PLACES.push({type:'sgrobertsonbr', lat:1.28995, lon:103.83644, rot:0});
+
+// ================= Pulau Saigon Bridge (1997), Saiboo Street =================
+// Verified: a vehicular bridge opened 1997, named after an island that once stood in the river (littledayout). The app draws the two
+// carriageways of Saiboo Street (OSM bridge w464779142, decks at 3.4 m); this model adds the deck structure, fascia, parapets, lamps and
+// the quay abutments. Estimates: single span (no river piers placed), parapet form, lamp spacing, colours.
+LANDMARKS.sgsaigonbr = {zh:"西贡岛桥", en:"Pulau Saigon Bridge", cat:"new", r:68, h:5,
+  lt:{m:0, c:'#fff0d6', k:0.7, e:0.7},
+  build(){
+    brBase(); const g = new THREE.Group(), B = mkB();
+    const A = [[24.0, -55.4, 0.6], [14.5, -33.2, 3.4], [4.7, -10.9, 3.4], [-5.0, 11.1, 3.4], [-14.8, 33.3, 3.4], [-24.3, 55.6, 0.6]];
+    const C = [[14.5, -57.4, 0.6], [4.7, -35.4, 3.4], [-5.0, -13.7, 3.4], [-14.8, 8.3, 3.4], [-24.5, 30.1, 3.4], [-34.3, 52.1, 0.6]];
+    const O = {SLAB:'#a8a39a', PAR:{c:'#d8d4ca', m:0, lk:0.5}, FAS:'#c4bfb4', POST:'#55595b', LAMP:{c:'#fff2cc', glow:'#ffe6b0', gk:1.6}, th:1.5, ph:1.1, lamp:18};
+    brLine(B, A, 4.6, Object.assign({par:[-1]}, O)); brLine(B, C, 4.6, Object.assign({par:[-1]}, O));
+    // the median between the two carriageways
+    { const M = A.map((p, i) => [(p[0] + C[i][0])/2, (p[1] + C[i][1])/2, (p[2] + C[i][2])/2]); brLine(B, M, 1.0, Object.assign({par:[]}, O)); }
+    for (const L of [A, C]){ brAbut(B, L, 0, 5.2, 3, '#9d978c'); brAbut(B, L, 1, 5.2, 3, '#9d978c'); }
+    B.flush(g); return g;
+  }};
+SG_PLACES.push({type:'sgsaigonbr', lat:1.28971, lon:103.83825, rot:0});
+
+// ================= Clemenceau Bridge (1991; first bridge 1940), Clemenceau Avenue =================
+// Verified (Wikipedia; littledayout): the first bridge (1940, 100 m long, 18 m wide) was demolished in 1989 for the Central Expressway;
+// the present multi-lane pre-stressed concrete road bridge (1991) links River Valley Road with the CTE tunnel; boats up to 2 m high pass
+// under it. The app draws the carriageways (decks to 4.6 m); this model adds the concrete deck structure, both footway decks (OSM paths
+// on the bridge), parapets, lamps and the quay abutments. Estimates: single river span (no piers placed), parapet form, lamp spacing.
+LANDMARKS.sgclemenceaubr = {zh:'克里孟梭桥', en:'Clemenceau Bridge', cat:'new', r:58, h:6,
+  lt:{m:0, c:'#fff0d6', k:0.7, e:0.7},
+  build(){
+    brBase(); const g = new THREE.Group(), B = mkB();
+    const CA = [[30.5, -36.7, 0.6], [19.5, -16.7, 3.4], [8.5, 3.1, 4.6], [-2.5, 23.1, 3.4], [-13.5, 43.1, 0.6]];
+    const CB = [[14.5, -36.7, 0.6], [5.5, -20.9, 2.8], [-3.5, -4.9, 4.2], [-12.5, 11.1, 4.2], [-18.2, 25.6, 2.4], [-24.0, 40.3, 0.6]];
+    const PE = [[40.3, -37.4, 0.6], [30.5, -19.9, 3.0], [20.5, -2.7, 4.6], [10.8, 14.8, 3.0], [1.0, 32.1, 0.6]];
+    const PW = [[5.8, -39.7, 0.6], [-5.0, -21.7, 3.2], [-15.5, -3.9, 4.2], [-26.0, 14.1, 3.2], [-36.7, 32.1, 0.6]];
+    const O = {SLAB:'#a9a49b', PAR:{c:'#d9d5cb', m:0, lk:0.5}, FAS:'#c5c0b5', POST:'#55595b', LAMP:{c:'#fff2cc', glow:'#ffe6b0', gk:1.6}, th:1.6, ph:1.1};
+    brLine(B, CA, 6.5, Object.assign({par:[]}, O)); brLine(B, CB, 6.5, Object.assign({par:[]}, O));
+    // footway decks (the app's paths here are replaced) with parapets on the outer side and lamps
+    const DECK = '#8f8a82';
+    for (const [L, s] of [[PE, -1], [PW, 1]]){ const LL = resL(L.map(p => [p[0], p[1], p[2] - BR_EL]), 3); ribbonL(B.p(DECK), LL, -1.6, 1.6, -0.2, 0.15);
+      brLine(B, L, 1.6, Object.assign({par:[s], lamp:16}, O)); brAbut(B, L, 0, 2.2, 3, '#9d978c'); brAbut(B, L, 1, 2.2, 3, '#9d978c'); }
+    for (const L of [CA, CB]){ brAbut(B, L, 0, 6.0, 3, '#9d978c'); brAbut(B, L, 1, 6.0, 3, '#9d978c'); }
+    B.flush(g); return g;
+  }};
+SG_PLACES.push({type:'sgclemenceaubr', lat:1.29075, lon:103.84243, rot:0});
+const byO = (k, o) => D50C[k].p.filter(p => p[3] === o);
+// ================= Guoco Midtown office tower (Denton Corker Marshall, 2024), 128 Beach Road =================
+// Verified: 192 m, 30 floors, 2024 (Wikipedia tallest list); 30-storey Grade A office tower, ~71,500 m2 (DCM). OSM: tower part
+// r16738438 = the whole outline w725743263, 30 levels, glass, 2 roof levels, roof colour teal; part w1075250784 = 4 levels, black
+// metal (the east corner). Not verified (estimates): the split of the 192 m into an 18 m base, 30 storeys of 5.5 m and a 14 m
+// two-level roof crown; mullion spacing; glass tint.
+LANDMARKS.sgguocomidtown = {zh:'国浩城中心', en:'Guoco Midtown', cat:'new', r:49, h:192,
+  lt:{m:1, c:'#d6f2ec', k:0.6, fh:5.52, cw:3.0},
+  build(){
+    const g = new THREE.Group(), B = mkB();
+    const R0 = PK('sgguocomidtown', 0)[2], Q = PK('sgguocomidtown', 1)[2];
+    const LOB = [R0[0], R0[1], R0[2], R0[5], R0[6], R0[7]];               // outline minus the black metal corner
+    const M = {GL:{c:'#55797a', m:1, fh:5.52, cw:3.0}, MUL:{c:'#c9d2d0', m:0, lk:0.15}, SP:{c:'#3c4a4b', m:0, lk:0.1}, LOB:{c:'#8fa6a6', glow:'#ffe6c2', gk:0.85},
+      BLK:{c:'#232527', m:0, lk:0.2}, FIN:{c:'#3b3e41', m:0, lk:0.2}, CROWN:{c:'#3f8f86', m:0, lc:'#bff7ee', lk:1.2}, LOUV:{c:'#7fb8b0', m:0, lc:'#bff7ee', lk:1.0}, FOUND:'#8d8a84', ROOF:'#6e7472'};
+    const Y0 = 18, YT = 178, YC = 192;
+    foundP(B, R0, 0, M.FOUND);
+    // base: glazed lobby (warm at night) behind slender columns; the east corner is a 4-storey black metal block with vertical fins
+    prismP(B.p(M.LOB), offP(LOB, 1.2), 0, Y0, false);
+    for (const [x, z] of alongP(LOB, 7.5)) boxP(B.p(M.MUL), 0.7, Y0, 0.7, x, 0, z);
+    prismP(B.p(M.BLK), Q, 0, Y0, false);
+    for (const E of edgesF(Q)){ if (E.L < 3) continue; const k = Math.round(E.L/1.2); for (let j = 1; j < k; j++) slabP(B.p(M.FIN), rectO(j*E.L/k - 0.1, j*E.L/k + 0.1, 0.4, Y0 - 0.3), E.F, 0, 0.45); }
+    capP(B.p(M.BLK), offP(LOB, 1.2), Y0);
+    // 30 storeys of glass curtain wall: mullions every 1.5 m, a dark spandrel band at each floor
+    glassP(B, R0, Y0, YT, {glass:M.GL, band:M.SP, mull:M.MUL, fh:5.52, bh:0.9, bd:0.1, bay:1.5, md:0.28});
+    bandP(B.p(M.MUL), R0, Y0 - 0.6, 0.9, 0.5);
+    // two-level roof crown (teal): set back 1.5 m, louvred screen, parapet
+    const RC = offP(R0, 1.5);
+    capP(B.p(M.ROOF), R0, YT); parP(B.p(M.MUL), R0, YT, YT + 1.2, 0.3);
+    prismP(B.p(M.CROWN), RC, YT, YC - 0.8, false); capP(B.p(M.ROOF), RC, YC - 0.8);
+    for (const E of edgesF(RC)){ if (E.L < 2) continue; for (let y = YT + 1.2; y < YC - 1.2; y += 0.9) slabP(B.p(M.LOUV), rectO(0, E.L, y, y + 0.25), E.F, 0, 0.5); }
+    parP(B.p(M.CROWN), RC, YC - 0.8, YC, 0.3);
+    B.flush(g); return g;
+  }};
+placeK('sgguocomidtown');
+
+// ================= National Design Centre (former St Anthony's Convent), 111 Middle Road =================
+// Verified (Architectural Record; indesignlive; Wikipedia): four conserved blocks - three pre-war Art Deco / colonial-to-Moderne
+// blocks of the 1920s-30s lined up along Middle Road and a post-war 1940s block behind them on the Queen Street side, whose former
+// open courtyard is now a 4-storey atrium under a folded, cable-tensioned glass skylight (SCDA, 2014); Block D has five storeys and an
+// angled entrance at its corner; all exterior surfaces white plaster; some roofs re-tiled; a 5-foot colonnade wraps the street
+// facades; the 1940s block keeps its horizontal windows. One OSM outline r3413595 (3 levels / 20 m). Estimates: the block
+// boundaries along the outline, which blocks have tiled roofs, storey heights, and the Cor-ten colour of the angled entry wall.
+LANDMARKS.sgndc = {zh:'国家设计中心', en:'National Design Centre', cat:'old', r:51, h:20.5,
+  lt:{m:0, c:'#fff2dc', k:0.55, e:0.5, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), A = 39.7, [d, n] = axisD(A);
+    const R = PK('sgndc', 0)[2];
+    const M = {W:{c:'#f3f1ea', m:0}, TR:'#ffffff', WIN:{c:'#39444a', m:1, fh:4.0, cw:2.4}, SHOP:{c:'#4a5458', glow:'#ffe2b8', gk:0.8}, TILE:'#9c5a43', ROOF:'#a8a59e',
+      SKY:{c:'#b9d0d6', glow:'#fff0d6', gk:0.5}, CABLE:'#6b7377', COR:'#8a4b2a', FOUND:'#9a958c', PIER:'#fbfaf6'};
+    let s0 = 1e9, s1 = -1e9, t0 = 1e9, t1 = -1e9; for (const p of R){ const s = p[0]*d[0] + p[1]*d[1], t = p[0]*n[0] + p[1]*n[1]; s0 = Math.min(s0, s); s1 = Math.max(s1, s); t0 = Math.min(t0, t); t1 = Math.max(t1, t); }
+    foundP(B, R, 0, M.FOUND);
+    const sD = s0 + 24, w3 = (s1 - sD)/3;
+    // Block D (1940s, Queen Street end): five storeys, horizontal strip windows, flat roof, the folded glass skylight over the atrium
+    const PD = band(R, A, s0 - 1, sD, t0 - 1, t1 + 1);
+    ribbonP(B, PD, 0, 20, {wall:M.W, win:M.WIN, fh:4.0, sill:1.1, wh:1.5, minL:3});
+    roofF(B, PD, 20, {wall:M.W, roof:M.ROOF, par:0.9, parC:M.TR});
+    { const sa = s0 + 5, sb = sD - 4, ta = t0 + 7, tb = Math.min(t1 - 5, t0 + 26), N = 6;   // folded skylight: ridges across the atrium
+      for (let i = 0; i < N; i++){ const u0 = sa + (sb - sa)*i/N, u1 = sa + (sb - sa)*(i + 0.5)/N, u2 = sa + (sb - sa)*(i + 1)/N;
+        const P = (s, t, y) => { const q = stXZ(A, s, t); return [q[0], y, q[1]]; };
+        quadP(B.p(M.SKY), P(u0, ta, 20.4), P(u0, tb, 20.4), P(u1, tb, 22.2), P(u1, ta, 22.2)); quadP(B.p(M.SKY), P(u1, ta, 22.2), P(u1, tb, 22.2), P(u2, tb, 20.4), P(u2, ta, 20.4));
+        segP(B.p(M.CABLE), P(u1, ta, 22.25), P(u1, tb, 22.25), 0.07, 4); } }
+    // the angled entrance at the Middle Road / Queen Street corner: a Cor-ten wall in the chamfer, glazed ground floor behind it
+    { const a = stXZ(A, s0 + 0.5, t0 + 2.5), b = stXZ(A, s0 + 9, t0 - 0.2), L = Math.hypot(b[0] - a[0], b[1] - a[1]), F = fA(a[0], a[1], Math.atan2(b[1] - a[1], b[0] - a[0]));
+      slabP(B.p(M.COR), rectO(0, L, 0, 5.2), F, 0.4, 0.9); shapeP(B.p(M.SHOP), rectO(0.5, L - 0.5, 0.2, 3.8), F, 0.05); }
+    // Blocks C, B, A along Middle Road: three storeys of rendered Art Deco front (pilasters, rectangular windows, stepped parapet),
+    // a colonnaded 5-foot way on the Middle Road face, hipped tiled roofs on two of them
+    for (let i = 0; i < 3; i++){
+      const P = band(R, A, sD + i*w3, sD + (i + 1)*w3, t0 - 1, t1 + 1); if (P.length < 3) continue;
+      const yE = 14.5;
+      prismP(B.p(M.W), P, 0, yE, false);
+      winP(B.p(M.WIN), P, 4.6, 2, 4.6, 3.6, 1.5, 2.4, 1.0, 0.05, 3);
+      for (const E of edgesF(P)){ if (E.L < 4) continue; const k = Math.max(2, Math.round(E.L/3.6));
+        for (let j = 0; j <= k; j++) slabP(B.p(M.TR), rectO(j*E.L/k - 0.3, j*E.L/k + 0.3, 4.4, yE + 0.6), E.F, 0, 0.18);
+        for (let j = 0; j < k; j++) shapeP(B.p(M.SHOP), rectO((j + 0.18)*E.L/k, (j + 0.82)*E.L/k, 0.3, 3.4), E.F, 0.05); }
+      bandP(B.p(M.TR), P, 4.1, 0.4, 0.25); bandP(B.p(M.TR), P, yE - 0.5, 0.5, 0.3);
+      // colonnade: square piers just outside the Middle Road face carrying the upper floors' edge beam
+      const a = stXZ(A, sD + i*w3 + 0.8, t0 - 1.6), b = stXZ(A, sD + (i + 1)*w3 - 0.8, t0 - 1.6), k = Math.round(w3/3.6);
+      for (let j = 0; j <= k; j++){ const x = a[0] + (b[0] - a[0])*j/k, z = a[1] + (b[1] - a[1])*j/k; boxP(B.p(M.PIER), 0.6, 4.2, 0.6, x, 0, z, -A*PI/180); }
+      { const P2 = [stXZ(A, sD + i*w3, t0 - 2.0), stXZ(A, sD + (i + 1)*w3, t0 - 2.0), stXZ(A, sD + (i + 1)*w3, t0 + 0.2), stXZ(A, sD + i*w3, t0 + 0.2)]; prismP(B.p(M.W), P2, 4.2, 4.9, true); }
+      if (i < 2){ const c = stXZ(A, sD + (i + 0.5)*w3, (t0 + Math.min(t1, t0 + 30))/2); hipRoof(g, c[0], c[1], w3 - 1.4, Math.min(t1 - t0, 30) - 2, yE, 4.4, M.TILE, -A*PI/180, 0.6); parP(B.p(M.TR), P, yE, yE + 0.6, 0.25); }
+      else { roofF(B, P, yE, {wall:M.W, roof:M.ROOF, par:1.2, parC:M.TR});   // stepped Art Deco parapet in the middle of the street face
+        const c = stXZ(A, sD + (i + 0.5)*w3, t0 + 0.3); boxP(B.p(M.TR), 7, 2.6, 0.6, c[0], yE, c[1], -A*PI/180); boxP(B.p(M.TR), 3.5, 4.0, 0.6, c[0], yE, c[1], -A*PI/180); }
+    }
+    B.flush(g); return g;
+  }};
+placeK('sgndc');
+
+// ================= Church of Saints Peter and Paul (1869-70; national monument), 225A Queen Street =================
+// Verified (Wikipedia; roots.gov.sg; parish site): neo-Gothic / tropical Gothic; built 1869-70 with its tower; three bells hung in
+// the belfry 1883, spire completed by Fr Galmel after 1883; transepts and sacristy 1891-92; entrance porch and facade extended
+// 1910-11; a rose window above the entrance; the belfry rises above the main entrance and carries a cross; eight columns frame the
+// porch, whose lancet arches have metal tracery; statues of Saints Peter and Paul flank the rose window (their niches are modelled,
+// not the figures); lancet windows, high altar at the east (SE) end; wooden louvred windows (2016).
+// Footprint w155986468 (axis 41.7 deg: entrance NW on Queen Street). Estimates (not verified): all heights (eaves 10.5 m, tower 23 m,
+// spire top 37 m), the octagonal spire, wall colour (warm white) and roof colour, the cross-gable reading of the wide front bay.
+LANDMARKS.sgsspp = {zh:'圣伯多禄圣保禄堂', en:'Church of Saints Peter and Paul', cat:'old', r:32, h:38.5,
+  lt:{m:0, c:'#fff1d8', k:0.65, e:0.6, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), A = 41.7, ry = -A*PI/180;
+    const R = PK('sgsspp', 0)[2];
+    const M = {W:{c:'#f2ece0', m:0}, TR:'#fbf8f1', DK:'#2c2a29', LOUV:'#5d4a3a', GLS:{c:'#5b5470', glow:'#ffd9a0', gk:0.55}, ROOF:'#7b5b4c', SPIRE:'#cfcac0', FOUND:'#a59e92', GOLD:{c:'#d8c27a', m:0, lk:1.2}};
+    const S = (s, t, y) => { const q = stXZ(A, s, t); return [q[0], y, q[1]]; }, FR = (s, t) => stXZ(A, s, t);
+    foundP(B, R, 0, M.FOUND);
+    const front = band(R, A, -30, -5.2, -20, 20), nave = band(R, A, -5.2, 14.5, -20, 20), chan = band(R, A, 14.5, 32, -20, 20);
+    const YE = 10.5;
+    for (const P of [front, nave]) prismP(B.p(M.W), P, 0, YE, false);
+    prismP(B.p(M.W), chan, 0, 9.5, false);
+    bandP(B.p(M.TR), front, YE - 0.6, 0.6, 0.25); bandP(B.p(M.TR), nave, YE - 0.6, 0.6, 0.25); bandP(B.p(M.TR), chan, 8.9, 0.6, 0.25);
+    bandP(B.p(M.TR), front, 0, 0.8, 0.15); bandP(B.p(M.TR), nave, 0, 0.8, 0.15); bandP(B.p(M.TR), chan, 0, 0.8, 0.15);
+    // roofs: nave ridge along the axis, the wide front bay as a cross gable, a lower chancel roof; gable ends in wall colour
+    const Fr = frm(A*PI/180);
+    gableR(B.p(M.ROOF), Fr, -6, 14.6, -7.7, 8.2, YE, 6.0, 0.6, B.p(M.W), 'u', 0.05);
+    gableR(B.p(M.ROOF), Fr, -20.6, -5.2, -11.6, 11.5, YE, 5.6, 0.6, B.p(M.W), 'v', 0.05);
+    gableR(B.p(M.ROOF), Fr, 14.4, 28.3, -6.4, 6.3, 9.5, 4.8, 0.5, B.p(M.W), 'u', 0.05);
+    // lancet windows with louvres between buttresses along the nave and chancel; buttresses
+    for (const [P, yt] of [[nave, YE], [chan, 9.5]]) for (const E of edgesF(P)){ if (E.L < 8) continue; const k = Math.round(E.L/4.4);
+      for (let j = 0; j <= k; j++) slabP(B.p(M.TR), [[j*E.L/k - 0.45, 0], [j*E.L/k + 0.45, 0], [j*E.L/k + 0.45, yt - 2.5], [j*E.L/k, yt - 0.6], [j*E.L/k - 0.45, yt - 2.5]], E.F, 0, 0.7);
+      for (let j = 0; j < k; j++){ const u = (j + 0.5)*E.L/k; shapeP(B.p(M.DK), mv(pArch(0.95, 5.6, 5), u, 2.2), E.F, 0.04);
+        for (let i = 0; i < 7; i++) shapeP(B.p(M.LOUV), rectO(u - 0.85, u + 0.85, 2.4 + i*0.55, 2.62 + i*0.55), E.F, 0.06); } }
+    // the transept-front side walls: tall lancets with stained glass
+    for (const E of edgesF(front)){ if (E.L < 5) continue; const k = Math.max(1, Math.round(E.L/5));
+      for (let j = 0; j < k; j++){ const u = (j + 0.5)*E.L/k; shapeP(B.p(M.GLS), mv(pArch(1.0, 6.2, 5), u, 2.0), E.F, 0.04); } }
+    // porch (1910-11): eight columns carrying lancet arches across the front, deep shadow behind
+    { const sP = -21.4, tA = -10.0, tB = 10.0, F = (u, v, w) => S(sP - (w || 0), tA + u, v);
+      slabP(B.p(M.W), rectO(0, tB - tA, 0, 6.6), F, 0, 0.6);
+      for (let j = 0; j < 7; j++){ const u = (j + 0.5)*(tB - tA)/7; shapeP(B.p(M.DK), mv(pArch(1.1, 5.0, 5), u, 0.3), F, 0.65); }
+      for (let j = 0; j <= 7; j++){ const p = S(sP - 0.9, tA + j*(tB - tA)/7, 0); LCyl(g, 0.28, 0.32, 5.0, p[0], 0.3, p[2], M.TR, 10); }
+      slabP(B.p(M.TR), rectO(-0.2, tB - tA + 0.2, 6.6, 7.2), F, 0, 0.9);
+      // the front wall above the porch either side of the tower, with the two saints' niches flanking the rose window (niches only)
+      const F2 = (u, v, w) => S(-21.0 - (w || 0), tA + u, v);
+      for (const u of [10 - 5.2, 10 + 5.2]){ slabP(B.p(M.TR), mv(pArch(0.8, 3.0, 5), u, 9.4), F2, 0, 0.15); shapeP(B.p(M.DK), mv(pArch(0.55, 2.6, 5), u, 9.6), F2, 0.17); slabP(B.p(M.TR), rectO(u - 0.7, u + 0.7, 9.1, 9.4), F2, 0, 0.35); } }
+    // tower above the entrance: square shaft, rose window on its front, belfry with louvred lancets, corner pinnacles, octagonal spire, cross
+    const tS0 = -24.0, tS1 = -18.0, tT = 3.0, YT = 23;
+    rectPrism(B.p(M.W), Fr, tS0, tS1, -tT, tT, 0, YT);
+    for (const y of [7.2, 15.0, YT - 0.5]) bandP(B.p(M.TR), Fr.rect(tS0, tS1, -tT, tT), y, 0.5, 0.25);
+    { const F = (u, v, w) => S(tS0 - (w || 0), -tT + u, v);                // front (NW) face
+      shapeP(B.p(M.DK), mv(pArch(1.2, 6.2, 5), tT, 0.2), F, 0.05);
+      const rc = [tT, 11.0]; shapeP(B.p(M.TR), mv(circ(1.85, 20), rc[0], rc[1]), F, 0.06); shapeP(B.p(M.GLS), mv(circ(1.55, 20), rc[0], rc[1]), F, 0.09);
+      for (let i = 0; i < 8; i++){ const a = i/8*TAU; slabP(B.p(M.TR), mv(rectO(-0.06, 0.06, 0, 1.55), 0, 0).map(p => [rc[0] + p[0]*Math.cos(a) - p[1]*Math.sin(a), rc[1] + p[0]*Math.sin(a) + p[1]*Math.cos(a)]), F, 0.09, 0.14); } }
+    for (const E of edgesF(Fr.rect(tS0, tS1, -tT, tT))){ for (const u of [E.L*0.3, E.L*0.7]){ shapeP(B.p(M.DK), mv(pArch(0.65, 4.2, 5), u, 17.3), E.F, 0.04); for (let i = 0; i < 6; i++) shapeP(B.p(M.LOUV), rectO(u - 0.55, u + 0.55, 17.5 + i*0.5, 17.7 + i*0.5), E.F, 0.06); } }
+    for (const [ss, tt] of [[tS0, -tT], [tS0, tT], [tS1, -tT], [tS1, tT]]){ const p = S(ss, tt, 0); LBox(g, 0.7, 2.2, 0.7, p[0], YT, p[2], M.TR, ry); LCone(g, 0.45, 2.6, p[0], YT + 2.2, p[2], M.TR, 4, PI/4 + ry); }
+    parP(B.p(M.TR), Fr.rect(tS0, tS1, -tT, tT), YT, YT + 1.0, 0.3);
+    { const c = S((tS0 + tS1)/2, 0, 0); LCyl(g, 2.3, 2.6, 1.2, c[0], YT, c[2], M.SPIRE, 8); LCone(g, 2.3, 12.4, c[0], YT + 1.2, c[2], M.SPIRE, 8);
+      LBox(g, 0.18, 2.2, 0.18, c[0], YT + 13.4, c[2], M.GOLD, ry); LBox(g, 1.1, 0.18, 0.18, c[0], YT + 14.8, c[2], M.GOLD, ry); }
+    B.flush(g); return g;
+  }};
+placeK('sgsspp');
+
+// ================= Pan Pacific Singapore (John Portman & Associates with DP Architects, 1986), Marina Square =================
+// Verified: 111 m, 32 floors above ground, 1986, Portman + DP (skyscrapercenter); 790 rooms round an atrium rising 35 floors; the
+// high-rise lifts (floors 22-38) are outdoor observation lifts (Wikipedia). Massing from the OSM parts of w155987124: a 5-level
+// podium (w741940347), the tower w172373822 with the zig-zag room bays of its south face, the top floors w393090488 behind the
+// bays, a box w393090482 and a round top w393090400 on the north side; OSM colour #F2F6F7. The OSM part heights (to 135.9 m) are
+// scaled above the podium so the top is the verified 111 m. The elevated deck w393090492 (OSM 4.5-6 m, start 1986) that meets the
+// podium is hidden by this plan and so modelled here as a slab on columns (column spacing estimated). Not placed (position unknown): the external observation lifts.
+LANDMARKS.sgpanpacific = {zh:'泛太平洋酒店', en:'Pan Pacific Singapore', cat:'new', r:120, h:111,
+  lt:{m:1, c:'#ffe7c6', k:0.6, fh:2.9, cw:3.2},
+  build(){
+    const g = new THREE.Group(), B = mkB(), k = 'sgpanpacific';
+    const Y = y => y <= 17.1 ? y : 16.5 + (y - 16.5)*(111 - 16.5)/(135.9 - 16.5);
+    const P0 = byO(k, 'w741940347')[0][2], T = byO(k, 'w172373822')[0][2], U = byO(k, 'w393090488')[0][2], X = byO(k, 'w393090482')[0][2], O = byO(k, 'w393090400')[0][2];
+    const M = {W:{c:'#eef2f2', m:0, lk:0.25}, WIN:{c:'#3d4b55', m:1, fh:2.9, cw:3.2}, TR:'#ffffff', SHOP:{c:'#47545a', glow:'#ffe2b6', gk:0.85}, ROOF:'#9ea4a6',
+      CL:{c:'#4f6670', glow:'#ffe8c8', gk:0.6}, CROWN:{c:'#f4f6f6', m:0, lc:'#fff1d6', lk:1.3}, FOUND:'#8f8b84', PL:'#7d8487'};
+    foundP(B, P0, 0, M.FOUND);
+    // podium: rendered white, a glazed ground floor, horizontal bands
+    prismP(B.p(M.W), P0, 0, 17.1, false); roofF(B, P0, 17.1, {wall:M.W, roof:M.ROOF, par:1.0, parC:M.TR});
+    for (const E of edgesF(P0)){ if (E.L < 4) continue; shapeP(B.p(M.SHOP), rectO(0.6, E.L - 0.6, 0.4, 4.6), E.F, 0.05);
+      for (const y of [6.5, 10.2, 13.9]) shapeP(B.p(M.WIN), rectO(1.0, E.L - 1.0, y, y + 1.6), E.F, 0.05); }
+    bandP(B.p(M.TR), P0, 5.2, 0.5, 0.3);
+    // tower: one window band per floor on every facet, so the zig-zag bays of the south face read as a sawtooth of glass strips
+    const y1 = Y(108.9), y2 = Y(122.7);
+    ribbonP(B, T, 17.1, y1, {wall:M.W, win:M.WIN, fh:2.9, sill:0.95, wh:1.45, minL:1.6, top:0.3});
+    ribbonP(B, U, y1, y2, {wall:M.W, win:M.WIN, fh:2.9, sill:0.95, wh:1.45, minL:1.6, top:0.6});
+    capP(B.p(M.ROOF), T, y1); roofF(B, U, y2, {wall:M.W, roof:M.ROOF, par:1.1, parC:M.TR});
+    for (const E of edgesF(T)) if (E.L > 6){ for (const u of [0.4, E.L - 0.4]) slabP(B.p(M.TR), rectO(u - 0.35, u + 0.35, 17.1, y1), E.F, 0, 0.3);
+      const k = Math.round(E.L/3.9); for (let j = 1; j < k; j++) slabP(B.p(M.TR), rectO(j*E.L/k - 0.16, j*E.L/k + 0.16, 17.1, y1), E.F, 0, 0.18); }
+    for (const E of edgesF(U)) if (E.L > 6){ const k = Math.round(E.L/3.9); for (let j = 1; j < k; j++) slabP(B.p(M.TR), rectO(j*E.L/k - 0.16, j*E.L/k + 0.16, y1, y2), E.F, 0, 0.18); }
+    // the box on the north side (former top-floor restaurant, now the club lounge) and the round top
+    const yx0 = Y(122.1), yx1 = Y(132.6), yo1 = Y(135.9);
+    prismP(B.p(M.W), X, yx0, yx1, false); for (const E of edgesF(X)) shapeP(B.p(M.CL), rectO(0.8, E.L - 0.8, yx0 + 1.0, yx1 - 1.4), E.F, 0.05);
+    roofF(B, X, yx1, {wall:M.W, roof:M.ROOF, par:0.8, parC:M.TR});
+    prismP(B.p(M.CROWN), O, yx1, yo1, false); capP(B.p(M.ROOF), O, yo1); bandP(B.p(M.TR), O, yo1 - 0.6, 0.6, 0.3);
+    { const c = ctr(U); boxP(B.p(M.PL), 10, 2.8, 6, c[0] + 6, y2, c[1] + 6); }
+    xtraB(B, k); B.flush(g); return g;
+  }};
+placeK('sgpanpacific');
+// ---- generic: one OSM building part as a block of a given style; Y = height mapping (scaling to a verified height) ----
+function partB(B, p, S, Y){
+  Y = Y || (y => y); const y0 = Y(p[0]), y1 = Y(p[1]), P = p[2];
+  if (p[0] < 0.5) foundP(B, P, 0, S.found || '#8f8b84');
+  const k = S.kind || 'punch';
+  if (k === 'glass') glassP(B, P, y0, y1, S);
+  else if (k === 'ribbon') ribbonP(B, P, y0, y1, S);
+  else if (k === 'tier'){ prismP(B.p(S.wall), P, y0, y1, false);   // a terraced block: a glazed band per floor behind balcony fronts, balustrade on top
+    const fh = S.fh || 3.3; for (const E of edgesF(P)) if (E.L > 1.2) for (let y = y1 - fh; y >= y0 - 0.1; y -= fh) shapeP(B.p(S.win), rectO(0.2, E.L - 0.2, y + 1.0, y + fh - 0.5), E.F, 0.05);
+    capP(B.p(S.roof || S.wall), P, y1); parP(B.p(S.parC || S.wall), P, y1, y1 + 1.0, 0.18); return; }
+  else if (k === 'solid') prismP(B.p(S.wall), P, y0, y1, false);
+  else punchP(B, P, y0, y1, S);
+  if (S.roofOff !== true) roofF(B, P, y1, S);
+}
+const cssC = {black:'#2a2b2d', white:'#f1f1ee', lightgrey:'#c9cacb', grey:'#9a9b9c', darkgrey:'#5f6163', brown:'#8a5a44', red:'#9b4b3a', teal:'#3f8f86'};
+const oCol = (p, def) => { const c = p[4] && p[4].c; return c ? (cssC[c] || c) : def; };
+
+// ================= Marina Square (1987), Marina Centre - the mall podium joining the three hotels =================
+// Verified: Marina Centre complex with the Pan Pacific, Mandarin Oriental and PARKROYAL COLLECTION Marina Bay (Wikipedia). Model =
+// the OSM building parts of w303311927 that are not hotel parts (assigned by the hotels' OSM outlines w155987124 / w46594816 /
+// w742205653), heights and colours from OSM (#cebc9b concrete podium, grey link blocks). Split into three keys so no plan hull
+// covers streets' buildings: the main west podium (sgmarinasquare), the north-east wing and link by the Pan Pacific (sgmarinasquare2,
+// unlabelled) and the south-east wing under the Mandarin Oriental (sgmarinasquare3, unlabelled). Facade treatment is an estimate.
+const msBuild = k => () => {
+  const g = new THREE.Group(), B = mkB();
+  const SHOP = {c:'#4c5559', glow:'#ffe0b0', gk:0.85}, WIN = {c:'#3e4a52', m:1, fh:3.4, cw:3.0}, ROOF = '#a3a29a', TR = '#efe8d8';
+  for (const p of DK(k).p){
+    const W = {c:oCol(p, '#cebc9b'), m:0, lk:0.3};
+    if (p[0] < 0.5){ foundP(B, p[2], 0, '#8f8b84'); prismP(B.p(W), p[2], 0, p[1], false);
+      for (const E of edgesF(p[2])){ if (E.L < 6) continue; shapeP(B.p(SHOP), rectO(1, E.L - 1, 0.4, 4.2), E.F, 0.05);
+        for (let y = 5.6; y < p[1] - 2.5; y += 3.4) shapeP(B.p(WIN), rectO(1.5, E.L - 1.5, y, y + 1.1), E.F, 0.05); }
+      bandP(B.p(TR), p[2], 4.6, 0.5, 0.35); }
+    else { prismP(B.p(W), p[2], p[0], p[1], false); for (const E of edgesF(p[2])) if (E.L > 5) shapeP(B.p(WIN), rectO(1, E.L - 1, p[0] + 1.0, p[1] - 1.2), E.F, 0.05); }
+    roofF(B, p[2], p[1], {wall:W, roof:ROOF, par:0.9, parC:TR, plant:'#8c8e88'});
+  }
+  xtraB(B, k); B.flush(g); return g; };
+LANDMARKS.sgmarinasquare = {zh:'滨海广场', en:'Marina Square', cat:'new', r:DK('sgmarinasquare').r, h:17.1, lt:{m:0, c:'#ffe6c4', k:0.35, e:0.3}, build:msBuild('sgmarinasquare')};
+LANDMARKS.sgmarinasquare2 = {zh:'滨海广场', en:'Marina Square', cat:'new', label:false, r:DK('sgmarinasquare2').r, h:13.8, lt:{m:0, c:'#ffe6c4', k:0.35, e:0.3}, build:msBuild('sgmarinasquare2')};
+LANDMARKS.sgmarinasquare3 = {zh:'滨海广场', en:'Marina Square', cat:'new', label:false, r:DK('sgmarinasquare3').r, h:17.1, lt:{m:0, c:'#ffe6c4', k:0.35, e:0.3}, build:msBuild('sgmarinasquare3')};
+placeK('sgmarinasquare'); placeK('sgmarinasquare2'); placeK('sgmarinasquare3');
+
+// ================= PARKROYAL COLLECTION Marina Bay (former Marina Mandarin; John Portman with DP Architects, 1987) =================
+// Verified (Wikipedia): 21 levels, opened 1987, Portman + DP, one of the largest open atriums in South-East Asia (21 levels) with
+// rooms off balconies overlooking it. Massing = the OSM parts inside w742205653: a stack of one-storey tiers (#A8AF9F) stepping back
+// in a curve above the podium, the tall room slab w742205656 (#E5DCD5) along the north-east, a dark crown storey (#26272B) and a
+// pale curved top (#FAF5E1); heights from the OSM levels (76.5 m, not verified). The tier fronts' glazing is an estimate.
+LANDMARKS.sgmarinamandarin = {zh:'滨华大酒店', en:'PARKROYAL COLLECTION Marina Bay', cat:'new', r:DK('sgmarinamandarin').r, h:76.5,
+  lt:{m:1, c:'#ffe9c8', k:0.55, fh:3.3, cw:3.0},
+  build(){
+    const g = new THREE.Group(), B = mkB(), WIN = {c:'#3b4850', m:1, fh:3.3, cw:3.0};
+    for (const p of DK('sgmarinamandarin').p){
+      const W = {c:oCol(p, '#e5dcd5'), m:0, lk:0.3}, o = p[3];
+      if (o === 'w742205656') partB(B, p, {kind:'ribbon', wall:W, win:WIN, fh:3.3, sill:0.9, wh:1.5, roof:'#9b9a94', par:1.0, parC:'#f4efe6'});
+      else if (o === 'w742205647') partB(B, p, {kind:'solid', wall:{c:'#2a2b2f', m:0, lc:'#ffe2b8', lk:1.0}, roof:'#3a3b3f', par:0.6});
+      else if (o === 'w742205648') partB(B, p, {kind:'solid', wall:{c:'#faf5e1', m:0, lc:'#fff1d4', lk:1.2}, roof:'#e8e2cc', par:0.8});
+      else partB(B, [Math.max(p[0], 10.5), p[1], p[2]], {kind:'tier', wall:W, win:WIN, fh:3.3, roof:'#b9bfae', parC:'#e9ece3'});
+    }
+    B.flush(g); return g;
+  }};
+placeK('sgmarinamandarin');
+
+// ================= Mandarin Oriental, Singapore (John Portman & Associates, 1987), Marina Square =================
+// Verified: 83.2 m, 21 floors, 1987, Portman (skyscrapercenter); the exterior was meant to resemble a fan; an atrium design
+// (Wikipedia). Massing = the OSM parts inside w46594816: one-storey tiers (#EBEEEB) whose zig-zag balcony fronts step back towards the
+// bay-side point - the fan - the tall part w393090402 and the core w741934166 (#7E8997) with its top; OSM heights (to 76.5 m) scaled
+// so the top is the verified 83.2 m.
+LANDMARKS.sgmandarinoriental = {zh:'文华东方酒店', en:'Mandarin Oriental Singapore', cat:'new', r:DK('sgmandarinoriental').r, h:83.2,
+  lt:{m:1, c:'#ffe9c8', k:0.55, fh:3.6, cw:3.0},
+  build(){
+    const g = new THREE.Group(), B = mkB(), WIN = {c:'#3b4850', m:1, fh:3.6, cw:3.0}, s = 83.2/76.5, Y = y => y*s;
+    const W = {c:'#eceeec', m:0, lk:0.3};
+    for (const p of DK('sgmandarinoriental').p){
+      const o = p[3];
+      if (o === 'w741934166') partB(B, p, {kind:'ribbon', wall:{c:'#7e8997', m:0, lk:0.2}, win:WIN, fh:3.6, sill:1.0, wh:1.4, roof:'#8d9399', par:0.8}, Y);
+      else if (o === 'w393090402') partB(B, p, {kind:'ribbon', wall:W, win:WIN, fh:3.6, sill:1.0, wh:1.6, roof:'#a9aca8', par:1.0, parC:'#ffffff'}, Y);
+      else if (o === 'w741934151') partB(B, p, {kind:'solid', wall:{c:'#eceeec', m:0, lc:'#fff1d6', lk:1.2}, roof:'#a9aca8', par:0.8}, Y);
+      else partB(B, [Math.max(Y(p[0]), 17.1), Y(p[1]), p[2]], {kind:'tier', wall:W, win:WIN, fh:3.6, roof:'#bfc4bf', parC:'#ffffff'});
+    }
+    B.flush(g); return g;
+  }};
+placeK('sgmandarinoriental');
+
+// ================= Centennial Tower (Kevin Roche John Dinkeloo; reclad by Thom Mayne / Morphosis), 3 Temasek Avenue =================
+// Verified: roof 158 m, 37 floors (Wikipedia tallest list; article); elliptical plan following the curve of Temasek Avenue; granite
+// and curtain-wall cladding, Mayne's recladding a metal covering of interlinking window modules; a 12 m ornamental trellis crowns the
+// tower (complementing the Millenia Tower pyramid). Footprint w155988210 (OSM colour #757974). The Conrad Centennial hotel is a
+// separate building (not on this footprint) and is not modelled here. Estimates: module pattern, lobby height, trellis form.
+LANDMARKS.sgcentennial = {zh:'百年大厦', en:'Centennial Tower', cat:'new', r:DK('sgcentennial').r, h:170,
+  lt:{m:1, c:'#e4eef4', k:0.6, fh:4.05, cw:3.0},
+  build(){
+    const g = new THREE.Group(), B = mkB(), P = PK('sgcentennial', 0)[2];
+    const GL = {c:'#5d6b74', m:1, fh:4.05, cw:3.0}, MET = {c:'#8f9599', m:0, lk:0.2}, MD = {c:'#6c7276', m:0, lk:0.15}, LOB = {c:'#8ea0a8', glow:'#ffe8c8', gk:0.85}, GR = '#9a958e', TRL = {c:'#b9bec2', m:0, lc:'#eaf6ff', lk:1.3};
+    foundP(B, P, 0, '#8a8680');
+    prismP(B.p(LOB), offP(P, 1.5), 0, 8, false); for (const [x, z] of alongP(P, 6)) boxP(B.p(GR), 1.0, 8, 1.0, x, 0, z);
+    const Y0 = 8, YT = 158;
+    glassP(B, P, Y0, YT, {glass:GL, band:MET, mull:MD, fh:4.05, bh:0.7, bd:0.25, bay:3.0, md:0.35, mw:0.14});
+    // interlinking window modules: a staggered pattern of deeper metal frames every two floors
+    for (const E of edgesF(P)){ if (E.L < 6) continue; const k = Math.round(E.L/6);
+      for (let f = 0; f < 37; f += 2) for (let j = 0; j < k; j++){ if ((j + f/2) % 2) continue; const u = (j + 0.5)*E.L/k, v = Y0 + f*4.05;
+        slabP(B.p(MET), rectO(u - E.L/k/2 + 0.2, u + E.L/k/2 - 0.2, v + 0.2, v + 0.6), E.F, 0.2, 0.75); slabP(B.p(MET), rectO(u - E.L/k/2 + 0.2, u - E.L/k/2 + 0.6, v + 0.2, v + 7.9), E.F, 0.2, 0.75); } }
+    roofF(B, P, YT, {wall:MET, roof:'#7b8084', par:1.0, parC:MET});
+    trellisP(B, offP(P, 1.0), YT, YT + 12, TRL, 3.2, 0.16);
+    B.flush(g); return g;
+  }};
+placeK('sgcentennial');
+
+// ================= The Ritz-Carlton, Millenia Singapore (Kevin Roche John Dinkeloo with DP Architects, 1996), Raffles Avenue =================
+// Verified: 129 m architectural height, 32 floors, 1996 (skyscrapercenter; Wikipedia). Massing = the OSM parts of w46594815: the
+// long slab w591619207 (OSM colour #c1ccd3, metal) on a 30 m base whose lower 10 m is open between four 10-30 m blocks; OSM heights
+// above 30 m (to 140 m) scaled to the verified 129 m. Window grid and colours of glazing are estimates.
+LANDMARKS.sgritzcarlton = {zh:'丽思卡尔顿美年酒店', en:'The Ritz-Carlton, Millenia Singapore', cat:'new', r:DK('sgritzcarlton').r, h:129,
+  lt:{m:1, c:'#fff0d6', k:0.55, fh:3.6, cw:2.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), Y = y => y <= 30 ? y : 30 + (y - 30)*(129 - 30)/(140 - 30);
+    const W = {c:'#c8d1d6', m:0, lk:0.3}, WIN = {c:'#3b4851', m:1, fh:3.6, cw:2.6}, TR = '#e3e8ea', LOB = {c:'#7e9098', glow:'#ffe6c2', gk:0.85};
+    for (const p of DK('sgritzcarlton').p){
+      if (p[0] >= 30) partB(B, p, {kind:'punch', wall:W, win:WIN, fh:3.6, bay:2.6, ww:1.5, wh:2.0, sill:0.9, band:TR, roof:'#9aa3a8', par:1.4, parC:TR, plant:'#8b9296'}, Y);
+      else if (p[0] >= 10) partB(B, p, {kind:'ribbon', wall:W, win:WIN, fh:4.0, sill:1.0, wh:2.0, roof:'#9aa3a8', par:0.6}, Y);
+      else if (p[1] <= 10){ foundP(B, p[2], 0, '#8f8b84'); prismP(B.p(LOB), offP(p[2], 2.0), 0, 10, false); for (const [x, z] of alongP(p[2], 7)) boxP(B.p(TR), 1.0, 10, 1.0, x, 0, z); capP(B.p(W), p[2], 10); }
+      else { prismP(B.p(W), p[2], 10, 30, false); bandP(B.p(TR), p[2], 29.2, 0.8, 0.3); }
+    }
+    B.flush(g); return g;
+  }};
+placeK('sgritzcarlton');
+// cap of a plan polygon with one hole (courtyard)
+function capH(o, P, H, y){ const V = P.concat(H); for (const [a, b, c] of THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), [H.map(p => new THREE.Vector2(p[0], p[1]))])) o.push(V[a][0], y, V[a][1], V[b][0], y, V[b][1], V[c][0], y, V[c][1]); }
+// shophouse-rhythm front on every edge of P: pilasters every `bay`, louvred upper windows, shopfront arcade, cornice
+function shopP(B, P, y0, nf, fh, bay, C){
+  const yt = y0 + nf*fh; prismP(B.p(C.WALL), P, y0, yt, false);
+  for (const E of edgesF(P)){ if (E.L < 3) continue; const k = Math.max(1, Math.round(E.L/bay));
+    for (let j = 0; j <= k; j++) slabP(B.p(C.TRIM), rectO(j*E.L/k - 0.22, j*E.L/k + 0.22, y0, yt), E.F, 0, 0.15);
+    for (let j = 0; j < k; j++){ const u = (j + 0.5)*E.L/k, hw = Math.min(1.6, E.L/k/2 - 0.5);
+      shapeP(B.p(C.SHOP), rectO(u - hw - 0.2, u + hw + 0.2, y0 + 0.2, y0 + fh - 0.8), E.F, 0.05);
+      for (let f = 1; f < nf; f++){ const v = y0 + f*fh; for (const s of [-1, 1]) shapeP(B.p(C.LOUV), rectO(u + s*hw*0.08, u + s*hw*0.92, v + 0.8, v + fh - 0.6), E.F, 0.06); } } }
+  bandP(B.p(C.TRIM), P, y0 + fh - 0.4, 0.4, 0.2); bandP(B.p(C.TRIM), P, yt - 0.6, 0.6, 0.3);
+  return yt; }
+// tiled hipped roof over a (roughly rectangular) plan: oriented along its longest edge
+// hipped roof following any plan: eaves on the plan (grown by `over`), sloping in to an inset ridge plateau
+function loftRoof(o, P, y, h, inset, over){ const A = offP(P, -(over || 0)), Q = offP(P, inset); const yE = y - (over || 0)*h/inset;
+  for (let i = 0; i < P.length; i++){ const j = (i + 1) % P.length; quadP(o, [A[i][0], yE, A[i][1]], [A[j][0], yE, A[j][1]], [Q[j][0], y + h, Q[j][1]], [Q[i][0], y + h, Q[i][1]]); }
+  capP(o, Q, y + h); }
+function hipOn(g, P, y, h, col, over){ { let mnx = 1e9, mxx = -1e9; const A = Math.abs(sArea(P)); let best = 0;
+    for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], ang = Math.atan2(b[1] - a[1], b[0] - a[0]), d = [Math.cos(ang), Math.sin(ang)], n = [-d[1], d[0]];
+      let s0 = 1e9, s1 = -1e9, t0 = 1e9, t1 = -1e9; for (const p of P){ const s = p[0]*d[0] + p[1]*d[1], t = p[0]*n[0] + p[1]*n[1]; s0 = Math.min(s0, s); s1 = Math.max(s1, s); t0 = Math.min(t0, t); t1 = Math.max(t1, t); }
+      best = Math.max(best, A/((s1 - s0)*(t1 - t0))); }
+    if (best < 0.93){ const o = []; let w = 1e9; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]); if (l > 2) w = Math.min(w, l); }
+      loftRoof(o, P, y, h, Math.max(1.5, Math.min(h*1.1, w*0.45)), over || 0.5); LTris(g, o, col); return; } }
+  let bi = 0, bl = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]); if (l > bl){ bl = l; bi = i; } }
+  const a = P[bi], b = P[(bi+1) % P.length], ang = Math.atan2(b[1] - a[1], b[0] - a[0]), d = [Math.cos(ang), Math.sin(ang)], n = [-d[1], d[0]];
+  let s0 = 1e9, s1 = -1e9, t0 = 1e9, t1 = -1e9; for (const p of P){ const s = p[0]*d[0] + p[1]*d[1], t = p[0]*n[0] + p[1]*n[1]; s0 = Math.min(s0, s); s1 = Math.max(s1, s); t0 = Math.min(t0, t); t1 = Math.max(t1, t); }
+  const cs = (s0 + s1)/2, ct = (t0 + t1)/2; hipRoof(g, cs*d[0] + ct*n[0], cs*d[1] + ct*n[1], s1 - s0, t1 - t0, y, h, col, -ang, over || 0.6); }
+const STD_SHOP = {c:'#47535a', glow:'#ffe0b4', gk:0.85};
+
+// ================= Bugis Junction (Design International, 1995), Victoria Street / Middle Road / North Bridge Road =================
+// Verified (Wikipedia): opened 1995; a three-floor mall that rebuilt the shophouses of Bugis, Malay and Hylam Streets and covered
+// those streets with glass (air-conditioned); with an office tower and the InterContinental hotel. Model: the mall outline
+// w172364977 (OSM 3 levels) and the office tower parts w427133450 / w427133463 (OSM levels 3-15 / 3-13, app tops 50.1 / 43.5 m).
+// The glass-covered streets inside the block are not placed (their lines are not in the data). Facade treatments are estimates.
+LANDMARKS.sgbugisjunction = {zh:'白沙浮广场', en:'Bugis Junction', cat:'new', r:DK('sgbugisjunction').r, h:50.1,
+  lt:{m:1, c:'#ffe6c4', k:0.5, fh:3.3, cw:3.0},
+  build(){
+    const g = new THREE.Group(), B = mkB(), [mall, t1, t2] = DK('sgbugisjunction').p;
+    const W = {c:'#e7dfd0', m:0, lk:0.3}, TR = '#f7f2e8', WIN = {c:'#3c4a52', m:1, fh:3.3, cw:3.0}, GL = {c:'#5d7684', m:1, fh:3.3, cw:3.0}, MUL = '#c4ccd0';
+    foundP(B, mall[2], 0, '#8f8b84');
+    shopP(B, mall[2], 0, 3, 3.7, 5.2, {WALL:W, TRIM:TR, SHOP:STD_SHOP, LOUV:WIN});
+    roofF(B, mall[2], 11.1, {wall:W, roof:'#a8a49a', par:0.9, parC:TR, plant:'#8b8d88'});
+    for (const p of [t1, t2]){ glassP(B, p[2], 11.1, p[1], {glass:GL, band:{c:'#d9dde0', m:0}, mull:MUL, fh:3.3, bh:0.8, bd:0.15, bay:1.8});
+      roofF(B, p[2], p[1], {wall:W, roof:'#9da2a4', par:1.2, parC:'#d9dde0', plant:'#8b8d88'}); }
+    B.flush(g); return g;
+  }};
+placeK('sgbugisjunction');
+
+// ================= InterContinental Singapore (1995), 80 Middle Road =================
+// Verified: 16 storeys, 406 rooms, rooms in a shophouse-style setting preserving Peranakan heritage (Frasers Hospitality); built
+// behind restored shophouses (OSM r21057404: 3 levels, 18 m, with an inner courtyard); the hotel block = OSM part w254815933
+// (levels 3-15). The low ring stops at the tower's north-east face: the app keeps its own row of shophouse pieces along that edge.
+// Estimates: tower height (16 storeys -> 52.8 m), shophouse bay width, colours.
+LANDMARKS.sgintercon = {zh:'洲际酒店', en:'InterContinental Singapore', cat:'new', r:DK('sgintercon').r, h:52.8,
+  lt:{m:1, c:'#ffe7c4', k:0.55, fh:3.3, cw:3.0},
+  build(){
+    const g = new THREE.Group(), B = mkB(), [lo, tw, inn] = DK('sgintercon').p, H = inn[2];
+    const T0 = tw[2][7], T1 = tw[2][6], dl = Math.hypot(T1[0] - T0[0], T1[1] - T0[1]), na = -(T1[1] - T0[1])/dl, nb = (T1[0] - T0[0])/dl;   // tower NE face
+    const P = clipH(lo[2], -na, -nb, -(na*T0[0] + nb*T0[1]) + 0.2);
+    const W = {c:'#efe4cf', m:0, lk:0.35}, TR = '#fbf6ec', LOUV = {c:'#4c6a5a', m:1, fh:4.5, cw:2.4}, WIN = {c:'#3d4a52', m:1, fh:3.3, cw:3.0}, TW = {c:'#e9dcc6', m:0, lk:0.25};
+    foundP(B, P, 0, '#8f8b84');
+    // the shophouse ring round the courtyard: three storeys, pilasters, louvred windows, cornice; tiled roofs on the street ranges
+    shopP(B, P, 0, 3, 4.5, 4.8, {WALL:W, TRIM:TR, SHOP:STD_SHOP, LOUV});
+    wallP(B.p(W), H.slice().reverse(), 0, 13.5); capH(B.p('#a9a59c'), P, H, 13.5); parP(B.p(TR), P, 13.5, 14.3, 0.25);
+    for (const E of edgesF(P)){ if (E.L < 12) continue; const a = E.F(0.5, 0, -3.2), b = E.F(E.L - 0.5, 0, -3.2), c = [(a[0] + b[0])/2, (a[2] + b[2])/2];
+      hipRoof(g, c[0], c[1], E.L - 1.2, 6.0, 14.3, 3.6, '#9b5a44', -E.ang, 0.4); }
+    // the hotel block: cream walls, punched windows, a band per floor, parapet
+    punchP(B, tw[2], 14.3, tw[1], {wall:TW, win:WIN, fh:3.3, bay:3.0, ww:1.6, wh:1.9, sill:0.9, band:TR});
+    roofF(B, tw[2], tw[1], {wall:TW, roof:'#9f9b92', par:1.2, parC:TR, plant:'#8b8d88'});
+     B.flush(g); return g;
+  }};
+placeK('sgintercon');
+
+// ================= Funan (2019 redevelopment), 107 North Bridge Road =================
+// Verified: mall on North Bridge Road, reopened 2019 with offices and serviced apartments (target note). Model = the OSM parts of w432515092 with their OSM levels, colours and materials: a 3-level base
+// (#B08366), a metal-clad podium (#B6BBBF, levels 3-6), two office blocks (#405165, levels 6-12) and two small metal blocks (levels
+// 6-10) plus the serviced-apartment block lyf Funan (OSM w699175606, levels 3-12) that rises from the podium. The north-east wing is the
+// unlabelled sub-key sgfunan2 so the main plan hull leaves the Peninsula Hotel tower next to it alone. Facade patterns are estimates.
+const funanB = k => () => {
+    const g = new THREE.Group(), B = mkB();
+    const GL = {c:'#425a72', m:1, fh:3.4, cw:3.0}, WIN = {c:'#3a4650', m:1, fh:3.4, cw:3.0};
+    for (const p of DK(k).p){
+      const c = oCol(p, '#b6bbbf'), W = {c, m:0, lk:0.3}, P = p[2];
+      if (p[0] < 0.5){ foundP(B, P, 0, '#8f8b84'); prismP(B.p(W), P, 0, p[1], false);
+        for (const E of edgesF(P)){ if (E.L < 5) continue; shapeP(B.p(STD_SHOP), rectO(0.8, E.L - 0.8, 0.4, 4.4), E.F, 0.05); shapeP(B.p(WIN), rectO(1.2, E.L - 1.2, 5.8, 8.8), E.F, 0.05); }
+        capP(B.p(W), P, p[1]); }
+      else if (c === '#405165') glassP(B, P, p[0], p[1], {glass:GL, band:{c:'#2c3846', m:0}, mull:'#8d9aa8', fh:3.4, bh:0.7, bay:1.6});
+      else { prismP(B.p(W), P, p[0], p[1], false);   // perforated metal cladding: fine vertical louvres
+        for (const E of edgesF(P)){ if (E.L < 3) continue; const k = Math.round(E.L/0.9); for (let j = 1; j < k; j++) slabP(B.p('#cfd3d6'), rectO(j*E.L/k - 0.06, j*E.L/k + 0.06, p[0] + 0.3, p[1] - 0.3), E.F, 0, 0.25);
+          shapeP(B.p(WIN), rectO(0.6, E.L - 0.6, p[0] + 1.2, p[0] + 2.6), E.F, 0.04); } }
+      if (p[0] >= 0.5 || p[1] > 12) roofF(B, P, p[1], {wall:W, roof:(p[4] && p[4].rc) || '#a3a7aa', par:1.0, parC:'#d6dadc', plant:'#8b8d88'});
+    }
+    B.flush(g); return g; };
+LANDMARKS.sgfunan = {zh:'福南', en:'Funan', cat:'new', r:DK('sgfunan').r, h:40.2, lt:{m:1, c:'#e6efff', k:0.5, fh:3.4, cw:3.0}, build:funanB('sgfunan')};
+LANDMARKS.sgfunan2 = {zh:'福南', en:'Funan', cat:'new', label:false, r:DK('sgfunan2').r, h:20.4, lt:{m:1, c:'#e6efff', k:0.5, fh:3.4, cw:3.0}, build:funanB('sgfunan2')};
+placeK('sgfunan'); placeK('sgfunan2');
+
+// ================= Peninsula Plaza (Alfred Wong Partnership, 1979-80), 111 North Bridge Road =================
+// Verified (docomomo Singapore): a five-storey rectilinear retail podium round a central atrium, capped at 18 m; three-dimensional
+// arches of fibreglass clad in mosaic tiles; a square office tower set back on one side with a three-storey block between them
+// ("wedding cake"); precast concrete ribs wrap the building and rise upward; sun-shading fins. OSM parts (lightgrey concrete): podium
+// w1075234631 (5 levels), low block w257193900, tower w257193902 (OSM height 111 m, 30 levels - not verified). Rib spacing, arch
+// size and the tile colour are estimates.
+LANDMARKS.sgpeninsula = {zh:'半岛广场', en:'Peninsula Plaza', cat:'new', r:DK('sgpeninsula').r, h:111,
+  lt:{m:1, c:'#ffe9cc', k:0.5, fh:3.6, cw:2.4},
+  build(){
+    const g = new THREE.Group(), B = mkB(), k = 'sgpeninsula';
+    const W = {c:'#cbc8c0', m:0, lk:0.3}, RIB = '#dedbd3', WIN = {c:'#33404a', m:1, fh:3.6, cw:2.4}, TILE = '#b9a58c', ROOF = '#9e9b94';
+    const pod = byO(k, 'w1075234631')[0], low = byO(k, 'w257193900')[0], tw = byO(k, 'w257193902')[0], ex = byO(k, '-')[0];
+    foundP(B, pod[2], 0, '#8f8b84');
+    prismP(B.p(W), pod[2], 0, 17.1, false); prismP(B.p(W), ex[2], 4.2, 17.1, false);
+    // podium: the tiled three-dimensional arches along every long face, glazed shopfronts under them
+    for (const E of edgesF(pod[2])){ if (E.L < 10) continue; const n = Math.max(1, Math.round(E.L/12));
+      for (let j = 0; j < n; j++){ const u = (j + 0.5)*E.L/n, hw = E.L/n/2 - 0.8;
+        shapeP(B.p(STD_SHOP), rectO(u - hw + 0.4, u + hw - 0.4, 0.4, 4.6), E.F, 0.05);
+        slabP(B.p(TILE), mv(rArchO(hw, 14.5, 10), u, 2.5), E.F, 0, 0.3);
+        shapeP(B.p(WIN), mv(rArchO(hw - 1.2, 12.5, 10), u, 4.8), E.F, 0.32); } }
+    roofF(B, pod[2], 17.1, {wall:W, roof:ROOF, par:1.0, parC:RIB});
+    // the three-storey block and the square tower: precast ribs rising up the faces, window strips between them
+    for (const [p, y1] of [[low, 20.4], [tw, 111]]){
+      prismP(B.p(W), p[2], 17.1, y1, false);
+      for (const E of edgesF(p[2])){ if (E.L < 3) continue; const n = Math.round(E.L/1.5);
+        for (let j = 0; j <= n; j++) slabP(B.p(RIB), rectO(j*E.L/n - 0.18, j*E.L/n + 0.18, 17.1, y1 + 0.6), E.F, 0, 0.55);
+        for (let y = 18.2; y < y1 - 2; y += 3.6) shapeP(B.p(WIN), rectO(0.3, E.L - 0.3, y, y + 2.0), E.F, 0.05); }
+      roofF(B, p[2], y1, {wall:W, roof:ROOF, par:1.2, parC:RIB, plant:'#8b8d88'}); }
+    B.flush(g); return g;
+  }};
+placeK('sgpeninsula');
+
+// ================= Church of Our Lady of Lourdes (1886-88; national monument), Ophir Road =================
+// Verified (roots.gov.sg; Wikipedia): neo-Gothic, resembling the sanctuary at Lourdes; an eight-petalled rose window on the front
+// facade; an angel statue above the porch; lancet windows; a three-aisled nave; the octagonal sanctuary (extended 1998). Footprint
+// w191010560 (unnamed, under the church POI): entrance on the Ophir Road (south-west) side, polygonal apse to the north-east.
+// Estimates: heights (eaves 9.5 m, front tower and spire to 30 m), the front tower itself, colours.
+LANDMARKS.sglourdes = {zh:'露德圣母堂', en:'Church of Our Lady of Lourdes', cat:'old', r:DK('sglourdes').r, h:30,
+  lt:{m:0, c:'#fff1d8', k:0.65, e:0.6, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), P = PK('sglourdes', 0)[2], A = -42.5, ry = -A*PI/180;
+    const W = {c:'#f1ebdf', m:0}, TR = '#fbf8f2', DK_ = '#2c2a29', GLS = {c:'#5a5371', glow:'#ffd9a0', gk:0.55}, ROOF = '#6f6b68', SP = '#c9c4ba';
+    const S = (s, t, y) => { const q = stXZ(A, s, t); return [q[0], y, q[1]]; };
+    let s0 = 1e9, s1 = -1e9, t0 = 1e9, t1 = -1e9; const [d, n] = axisD(A); for (const p of P){ const s = p[0]*d[0] + p[1]*d[1], t = p[0]*n[0] + p[1]*n[1]; s0 = Math.min(s0, s); s1 = Math.max(s1, s); t0 = Math.min(t0, t); t1 = Math.max(t1, t); }
+    foundP(B, P, 0, '#a59e92');
+    const body = band(P, A, s0 + 3.6, s1, t0 - 1, t1 + 1), front = band(P, A, s0 - 1, s0 + 3.6, t0 - 1, t1 + 1);
+    prismP(B.p(W), body, 0, 9.5, false); prismP(B.p(W), front, 0, 9.5, false);
+    bandP(B.p(TR), body, 8.9, 0.6, 0.25); bandP(B.p(TR), body, 0, 0.8, 0.15);
+    const Fr = frm(A*PI/180), tm = (t0 + t1)/2, hw = (t1 - t0)/2;
+    gableR(B.p(ROOF), Fr, s0 + 3.4, s1 - 4, tm - hw + 0.4, tm + hw - 0.4, 9.5, 6.5, 0.6, B.p(W), 'u', 0.04);
+    { const c = S(s1 - 4.5, tm, 0); LCyl(g, 0, 4.6, 5.0, c[0], 9.5, c[2], ROOF, 8, ry); }      // the polygonal apse roof
+    for (const E of edgesF(body)){ if (E.L < 5) continue; const k = Math.max(1, Math.round(E.L/3.6));
+      for (let j = 0; j < k; j++){ const u = (j + 0.5)*E.L/k; shapeP(B.p(GLS), mv(pArch(0.7, 5.4, 5), u, 2.0), E.F, 0.04); }
+      for (let j = 0; j <= k; j++) slabP(B.p(TR), rectO(j*E.L/k - 0.3, j*E.L/k + 0.3, 0, 9.0), E.F, 0, 0.45); }
+    // west front: gable, rose window, lancet doors, a central tower with a spire over the porch
+    const Ff = (u, v, w) => S(s0 + 0.3 - (w || 0), t0 + u, v), L = t1 - t0;
+    shapeP(B.p(W), [[0, 9.5], [L, 9.5], [L/2, 16.5]], Ff, 0.05);
+    shapeP(B.p(TR), mv(circ(2.0, 16), L/2, 7.6), Ff, 0.1); shapeP(B.p(GLS), mv(circ(1.7, 16), L/2, 7.6), Ff, 0.14);
+    for (let i = 0; i < 8; i++){ const a = i/8*TAU; shapeP(B.p(TR), mv(circ(0.32, 8), L/2 + Math.cos(a)*1.0, 7.6 + Math.sin(a)*1.0), Ff, 0.16); }
+    for (const u of [L*0.2, L*0.8]) shapeP(B.p(DK_), mv(pArch(0.8, 4.0, 5), u, 0.3), Ff, 0.08);
+    const tc = S(s0 - 0.6, tm, 0);
+    LBox(g, 3.6, 18.5, 3.6, tc[0], 0, tc[2], TR, ry);
+    for (const y of [3.2, 12.5]){ const q = S(s0 - 2.45, tm, 0); LBox(g, 1.3, y < 5 ? 3.4 : 2.6, 0.2, q[0], y < 5 ? 0.3 : 13.6, q[2], DK_, ry); }
+    LCone(g, 2.6, 11.5, tc[0], 18.5, tc[2], SP, 8, PI/8 + ry);
+    LBox(g, 0.16, 1.6, 0.16, tc[0], 30.0, tc[2], '#d8c27a', ry); LBox(g, 0.8, 0.16, 0.16, tc[0], 30.9, tc[2], '#d8c27a', ry);
+    B.flush(g); return g;
+  }};
+placeK('sglourdes');
+
+// ================= Textile Centre (Jalan Sultan) =================
+// Verified (Wikipedia): 25 storeys, built 1972-74; shops, offices, apartments and a carpark. OSM w173394787 with part w427139534 (a
+// 7-level podium under levels 7-25); app heights 23.1 / 83.1 m (data, not verified). Facade (punched windows, bands), colours: estimates.
+LANDMARKS.sgtextile = {zh:'纺织中心', en:'Textile Centre', cat:'new', r:DK('sgtextile').r, h:83.1,
+  lt:{m:1, c:'#ffe7c4', k:0.45, fh:3.3, cw:2.8},
+  build(){
+    const g = new THREE.Group(), B = mkB(), [up, lo] = DK('sgtextile').p;
+    const W = {c:'#d9d4c8', m:0, lk:0.3}, TR = '#ece8de', WIN = {c:'#3b4750', m:1, fh:3.3, cw:2.8};
+    foundP(B, lo[2], 0, '#8f8b84');
+    prismP(B.p(W), lo[2], 0, 23.1, false);
+    for (const E of edgesF(lo[2])){ if (E.L < 5) continue; shapeP(B.p(STD_SHOP), rectO(0.8, E.L - 0.8, 0.4, 4.2), E.F, 0.05); for (let y = 5.6; y < 22; y += 3.3) shapeP(B.p(WIN), rectO(1.0, E.L - 1.0, y + 0.8, y + 2.2), E.F, 0.05); }
+    bandP(B.p(TR), lo[2], 22.5, 0.9, 0.35);
+    punchP(B, up[2], 23.1, 83.1, {wall:W, win:WIN, fh:3.3, bay:2.8, ww:1.7, wh:1.7, sill:0.9, band:TR});
+    roofF(B, up[2], 83.1, {wall:W, roof:'#a19d94', par:1.2, parC:TR, plant:'#8b8d88'});
+    B.flush(g); return g;
+  }};
+placeK('sgtextile');
+
+// ================= Riverside Point (Merchant Road, facing Clarke Quay) =================
+// Verified (Wikipedia): opened August 1996, four storeys, by Andrew Tan Architects as a lifestyle centre keeping the old-world charm of
+// the riverside godowns it replaced. OSM w45070916 (4 levels, height 25) with seven parts (4 levels each, roof:shape gabled; app top
+// 13.8 m) along the bank. Model: each part a four-storey block under its own gabled roof, an arcade. Not modelled (position unknown):
+// the pointed walk-through gateway and the tower landmark. Colours, arcade and roof pitch are estimates.
+LANDMARKS.sgriversidepoint = {zh:'河畔坊', en:'Riverside Point', cat:'new', r:DK('sgriversidepoint').r, h:19,
+  lt:{m:0, c:'#ffe4bc', k:0.5, e:0.4},
+  build(){
+    const g = new THREE.Group(), B = mkB();
+    const W = {c:'#efe3cc', m:0, lk:0.3}, TR = '#fbf5ea', WIN = {c:'#3c4850', m:1, fh:3.3, cw:2.6}, ROOF = '#8f5a46';
+    for (const p of DK('sgriversidepoint').p){
+      const P = p[2]; foundP(B, P, 0, '#8f8b84');
+      shopP(B, P, 0, 4, 3.45, 4.2, {WALL:W, TRIM:TR, SHOP:STD_SHOP, LOUV:WIN});
+      // gable roof along the part's long axis, gable ends in wall colour
+      let bi = 0, bl = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], l = Math.hypot(b[0] - a[0], b[1] - a[1]); if (l > bl){ bl = l; bi = i; } }
+      const a = P[bi], b = P[(bi+1) % P.length], ang = Math.atan2(b[1] - a[1], b[0] - a[0]), Fr = frm(ang);
+      let s0 = 1e9, s1 = -1e9, t0 = 1e9, t1 = -1e9; for (const q of P){ const s = q[0]*Math.cos(ang) + q[1]*Math.sin(ang), t = -q[0]*Math.sin(ang) + q[1]*Math.cos(ang); s0 = Math.min(s0, s); s1 = Math.max(s1, s); t0 = Math.min(t0, t); t1 = Math.max(t1, t); }
+      gableR(B.p(ROOF), Fr, s0, s1, t0, t1, 13.8, Math.min(5.2, (t1 - t0)*0.28), 0.6, B.p(W), 'u', 0.02);
+    }
+    B.flush(g); return g;
+  }};
+placeK('sgriversidepoint');
+
+// ================= Prinsep Street Presbyterian Church (C.J. Stephens of Swan & Maclaren, 1930; national monument 2000) =================
+// Verified (Wikipedia / roots): Romanesque style; deep red brick; lightly modelled brickwork rising in a gable at the front following
+// the roof; raised brickwork on the tower and belfry. Footprint w172596749 (T-plan: the hall on axis 39 deg and a narrow range across
+// its Prinsep Street (south-east) end; the hall's gable rises over the range). Not placed (position not verified): the tower and belfry. Estimates: heights, roof colour, window rhythm.
+LANDMARKS.sgprinsep = {zh:'布连拾街长老会', en:'Prinsep Street Presbyterian Church', cat:'old', r:DK('sgprinsep').r, h:16.5,
+  lt:{m:0, c:'#ffe6c8', k:0.6, e:0.6, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), P = PK('sgprinsep', 0)[2], A = 39.0;
+    const BR = {c:'#8e3b2b', m:0}, BR2 = '#a54a36', TR = '#e6dccb', GLS = {c:'#4d4a5c', glow:'#ffd9a0', gk:0.5}, ROOF = '#6d4d42';
+    foundP(B, P, 0, '#8f8b84');
+    const hall = band(P, A, -30, 5.4, -30, 30), range = band(P, A, 5.4, 30, -30, 30);   // the hall and the range across its Prinsep Street end
+    prismP(B.p(BR), hall, 0, 9.0, false); prismP(B.p(BR), range, 0, 7.0, false);
+    bandP(B.p(BR2), hall, 8.4, 0.6, 0.15); bandP(B.p(BR2), range, 6.4, 0.6, 0.15); bandP(B.p(TR), hall, 0, 0.7, 0.1); bandP(B.p(TR), range, 0, 0.7, 0.1);
+    const Fr = frm(A*PI/180); let t0 = 1e9, t1 = -1e9, s0 = 1e9; const [d, n] = axisD(A); for (const p of hall){ const t = p[0]*n[0] + p[1]*n[1], s = p[0]*d[0] + p[1]*d[1]; t0 = Math.min(t0, t); t1 = Math.max(t1, t); s0 = Math.min(s0, s); }
+    gableR(B.p(ROOF), Fr, s0, 5.6, t0, t1, 9.0, 5.6, 0.5, B.p(BR), 'u', 0.03);
+    hipOn(g, range, 7.0, 2.4, ROOF, 0.5);
+    // round-arched windows with brick surrounds along the hall and the range; buttress piers on the hall
+    for (const [Q, yt] of [[hall, 8.4], [range, 6.4]]) for (const E of edgesF(Q)){ if (E.L < 8) continue; const k = Math.round(E.L/3.4);
+      for (let j = 0; j < k; j++){ const u = (j + 0.5)*E.L/k, h = yt > 7 ? 4.6 : 3.4; slabP(B.p(BR2), mv(rArchO(0.85, h, 8), u, 1.8), E.F, 0, 0.12); shapeP(B.p(GLS), mv(rArchO(0.62, h - 0.3, 8), u, 1.95), E.F, 0.14); }
+      if (yt > 7) for (let j = 0; j <= k; j++) slabP(B.p(BR2), rectO(j*E.L/k - 0.35, j*E.L/k + 0.35, 0, 8.4), E.F, 0, 0.35); }
+    // the hall's front gable rising over the range: raised brick courses following the roof slope, a round-arched window
+    { const L = t1 - t0, F = (u, v, w) => { const q = stXZ(A, 5.6 + (w || 0), t0 + u); return [q[0], v, q[1]]; };
+      for (let i = 0; i < 6; i++){ const y = 9 + i*0.93, h = L/2*(1 - (i + 1)/6.2); slabP(B.p(BR2), rectO(L/2 - h, L/2 + h, y, y + 0.93), F, 0, 0.2); }
+      slabP(B.p(BR2), mv(rArchO(1.2, 3.6, 10), L/2, 9.4), F, 0, 0.3); shapeP(B.p(GLS), mv(rArchO(0.95, 3.3, 10), L/2, 9.55), F, 0.32);
+      for (const u of [L/2 - 4.5, L/2 + 4.5]) slabP(B.p(BR2), rectO(u - 0.4, u + 0.4, 7.0, 9.0 + 4.6*(1 - Math.abs(u - L/2)/(L/2))), F, 0, 0.4); }
+    B.flush(g); return g;
+  }};
+placeK('sgwesley');
+
+// ================= PARKROYAL on Beach Road and The Plaza tower (1979), 7500 Beach Road =================
+// Verified (Wikipedia, The Plaza): completed 1979; a 30-storey residential / commercial tower of "triangular prism" design with concave
+// faces, and an adjoining 8-storey building housing the hotel. Hotel = OSM w47134224 (OSM 6 levels; modelled with the verified 8
+// storeys); tower = OSM w190945737 (OSM 32 levels, app 106.8 m - not verified), as the unlabelled sub-key sgparkroyalbeach2.
+// Facade patterns and colours are estimates.
+LANDMARKS.sgparkroyalbeach = {zh:'海滩路皇家公园酒店', en:'PARKROYAL on Beach Road', cat:'new', r:DK('sgparkroyalbeach').r, h:25,
+  lt:{m:1, c:'#ffe7c4', k:0.5, fh:3.1, cw:2.8},
+  build(){
+    const g = new THREE.Group(), B = mkB();
+    const W = {c:'#e3ddd1', m:0, lk:0.3}, TR = '#f3efe6', WIN = {c:'#3c4850', m:1, fh:3.1, cw:2.8};
+    for (const p of DK('sgparkroyalbeach').p){
+      const P = p[2]; if (p[0] < 0.5) foundP(B, P, 0, '#8f8b84');
+      const y0 = p[0] > 0.5 ? 4.2 : 0; prismP(B.p(W), P, y0, 24.8, false);
+      if (p[3] === 'w47134224') for (const E of edgesF(P)){ if (E.L < 4) continue; shapeP(B.p(STD_SHOP), rectO(0.6, E.L - 0.6, 0.4, 4.0), E.F, 0.05);
+        for (let f = 1; f < 8; f++){ const v = f*3.1; shapeP(B.p(WIN), rectO(0.6, E.L - 0.6, v + 0.8, v + 2.3), E.F, 0.05); slabP(B.p(TR), rectO(0, E.L, v, v + 0.3), E.F, 0, 0.5); } }
+      roofF(B, P, 24.8, {wall:W, roof:'#a3a097', par:1.0, parC:TR, plant:'#8b8d88'});
+    }
+    B.flush(g); return g;
+  }};
+LANDMARKS.sgparkroyalbeach2 = {zh:'海滩路皇家公园酒店', en:'PARKROYAL on Beach Road', cat:'new', label:false, r:DK('sgparkroyalbeach2').r, h:106.8,
+  lt:{m:1, c:'#ffe7c4', k:0.5, fh:3.3, cw:2.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), P = PK('sgparkroyalbeach2', 0)[2];
+    const W = {c:'#e6e0d4', m:0, lk:0.3}, TR = '#f5f1e8', WIN = {c:'#3c4850', m:1, fh:3.3, cw:2.6};
+    foundP(B, P, 0, '#8f8b84');
+    prismP(B.p(W), P, 0, 106.8, false);
+    for (const E of edgesF(P)){ if (E.L < 3) continue; shapeP(B.p(STD_SHOP), rectO(0.5, E.L - 0.5, 0.4, 4.0), E.F, 0.05);
+      for (let y = 6.6; y < 105; y += 3.3){ shapeP(B.p(WIN), rectO(0.5, E.L - 0.5, y + 0.9, y + 2.4), E.F, 0.05); slabP(B.p(TR), rectO(0, E.L, y, y + 0.35), E.F, 0, 0.7); } }
+    roofF(B, P, 106.8, {wall:W, roof:'#a3a097', par:1.4, parC:TR, plant:'#8b8d88'});
+    B.flush(g); return g;
+  }};
+placeK('sgparkroyalbeach'); placeK('sgparkroyalbeach2');
+
+// ================= Golden Landmark (1983) and Village Hotel Bugis (1988), Victoria Street / Arab Street =================
+// Verified: shopping complex completed 1983, the hotel 1988 (Wikipedia); the hotel has 19 storeys and 400 rooms; hotel and complex
+// share a mix of Arabic, Asian and Western influences (roots.gov.sg). OSM: podium w47134068 (3 levels), hotel w190945731 (levels 3-20,
+// app top 67.2 m). Estimates: the pointed-arch motif used for the Arabic influence, colours.
+LANDMARKS.sggoldenlandmark = {zh:'金色地标', en:'Golden Landmark', cat:'new', r:DK('sggoldenlandmark').r, h:67.2,
+  lt:{m:1, c:'#ffe2b0', k:0.55, fh:3.0, cw:2.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), k = 'sggoldenlandmark';
+    const W = {c:'#e2cfa7', m:0, lk:0.35}, TR = {c:'#c9a35a', m:0, lk:0.6}, WIN = {c:'#3d4850', m:1, fh:3.0, cw:2.6}, DKA = '#3a3633';
+    for (const p of DK(k).p){
+      const P = p[2];
+      if (p[3] === 'w190945731'){ punchP(B, P, 11.1, 67.2, {wall:W, win:WIN, fh:3.0, bay:3.0, ww:1.5, wh:1.8, sill:0.8});
+        for (const E of edgesF(P)){ if (E.L < 4) continue; const n = Math.max(1, Math.round(E.L/3.0)); for (let j = 0; j < n; j++){ const u = (j + 0.5)*E.L/n; shapeP(B.p(DKA), mv(pArch(0.9, 3.2, 4), u, 63.0), E.F, 0.06); } }
+        bandP(B.p(TR), P, 62.4, 0.5, 0.3); roofF(B, P, 67.2, {wall:W, roof:'#a8a091', par:1.4, parC:TR}); }
+      else { if (p[0] < 0.5) foundP(B, P, 0, '#8f8b84'); prismP(B.p(W), P, p[0], 11.1, false);
+        for (const E of edgesF(P)){ if (E.L < 6) continue; const n = Math.max(1, Math.round(E.L/4.6));
+          for (let j = 0; j < n; j++){ const u = (j + 0.5)*E.L/n; if (p[0] < 0.5) shapeP(B.p(STD_SHOP), mv(pArch(1.6, 4.4, 5), u, 0.3), E.F, 0.05); shapeP(B.p(WIN), mv(pArch(1.2, 3.4, 5), u, 6.0), E.F, 0.05); } }
+        bandP(B.p(TR), P, 10.3, 0.8, 0.3); roofF(B, P, 11.1, {wall:W, roof:'#a8a091', par:0.9, parC:TR}); }
+    }
+    B.flush(g); return g;
+  }};
+placeK('sggoldenlandmark');
+
+// ================= Hotel Grand Pacific, 101 Victoria Street =================
+// Verified: none beyond OSM. OSM w172596704 (height 68) with parts w429681542 (16 levels, 68 m) and w429681543 (4 levels, 13.8 m).
+// Facade and colours are estimates.
+LANDMARKS.sghotelgp = {zh:'大太平洋酒店', en:'Hotel Grand Pacific', cat:'new', r:DK('sghotelgp').r, h:68,
+  lt:{m:1, c:'#ffe7c4', k:0.5, fh:3.6, cw:2.8},
+  build(){
+    const g = new THREE.Group(), B = mkB(), [lo, tw] = DK('sghotelgp').p;
+    const W = {c:'#e4ded2', m:0, lk:0.3}, TR = '#f4f0e8', WIN = {c:'#3c4850', m:1, fh:3.6, cw:2.8};
+    foundP(B, lo[2], 0, '#8f8b84'); foundP(B, tw[2], 0, '#8f8b84');
+    prismP(B.p(W), lo[2], 0, 13.8, false); for (const E of edgesF(lo[2])){ if (E.L < 4) continue; shapeP(B.p(STD_SHOP), rectO(0.6, E.L - 0.6, 0.4, 4.2), E.F, 0.05); shapeP(B.p(WIN), rectO(1, E.L - 1, 6.2, 12.0), E.F, 0.05); }
+    roofF(B, lo[2], 13.8, {wall:W, roof:'#a3a097', par:1.0, parC:TR});
+    prismP(B.p(W), tw[2], 0, 13.8, false); for (const E of edgesF(tw[2])) if (E.L > 4) shapeP(B.p(STD_SHOP), rectO(0.6, E.L - 0.6, 0.4, 4.2), E.F, 0.05);
+    punchP(B, tw[2], 13.8, 68, {wall:W, win:WIN, fh:3.6, bay:3.2, ww:2.0, wh:1.9, sill:0.9, band:TR});
+    roofF(B, tw[2], 68, {wall:W, roof:'#a3a097', par:1.4, parC:TR, plant:'#8b8d88'});
+    xtraB(B, 'sghotelgp'); B.flush(g); return g;
+  }};
+placeK('sghotelgp');
+
+// ================= Aliwal Arts Centre (former Chong Cheng Boys' and Chong Pun Girls' School, late 1930s), 28 Aliwal Street =================
+// Verified (URA conservation portal): an integrated Chinese boys' and girls' school of the late 1930s - two wings sharing a common
+// school hall; Art Deco with clean geometric lines and a flag post. OSM w190944927 (app 12.7 m) + the small block w190945113.
+// Not placed: the flag post. Estimates: storeys (3), colours, window rhythm.
+LANDMARKS.sgaliwal = {zh:'阿里华艺术中心', en:'Aliwal Arts Centre', cat:'old', r:DK('sgaliwal').r, h:13.5,
+  lt:{m:0, c:'#fff0d8', k:0.55, e:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB();
+    const W = {c:'#f1ede2', m:0}, TR = '#ffffff', WIN = {c:'#3e5048', m:1, fh:4.0, cw:2.4}, ROOF = '#a6a29a';
+    for (const p of DK('sgaliwal').p){
+      const P = p[2], yt = p[1]; foundP(B, P, 0, '#8f8b84');
+      prismP(B.p(W), P, 0, yt, false);
+      const nf = Math.max(1, Math.round(yt/4.1));
+      for (const E of edgesF(P)){ if (E.L < 3) continue; for (let f = 0; f < nf; f++){ const v = f*4.1; shapeP(B.p(WIN), rectO(0.6, E.L - 0.6, v + 1.2, v + 3.0), E.F, 0.05); slabP(B.p(TR), rectO(0, E.L, v + 3.25, v + 3.6), E.F, 0, 0.6); }
+        const k = Math.round(E.L/3.4); for (let j = 1; j < k; j++) slabP(B.p(TR), rectO(j*E.L/k - 0.15, j*E.L/k + 0.15, 0.6, yt), E.F, 0, 0.25); }
+      roofF(B, P, yt, {wall:W, roof:ROOF, par:0.9, parC:TR});
+    }
+    B.flush(g); return g;
+  }};
+placeK('sgaliwal');
+
+// ================= Children's Museum Singapore (former Anglo-Chinese School building, 1906), 23B Coleman Street =================
+// Verified (Wikipedia): the building was part of the Anglo-Chinese School, completed 1906; later the Methodist Book Room and the
+// Singapore Philatelic Museum; the Children's Museum (2022). Footprint w172368089 (OSM height 20 m). Estimates: the colonial
+// treatment (arcaded verandah, louvred windows, hipped tiled roof), storeys and colours.
+LANDMARKS.sgchildrensmuseum = {zh:'新加坡儿童博物馆', en:"Children's Museum Singapore", cat:'old', r:DK('sgchildrensmuseum').r, h:20,
+  lt:{m:0, c:'#fff0d8', k:0.6, e:0.5, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), P = PK('sgchildrensmuseum', 0)[2];
+    const W = {c:'#f2ead8', m:0}, TR = '#fffdf6', LOUV = {c:'#5b6f58', m:1, fh:5, cw:2.4}, DK2 = '#3b3936', TILE = '#9b5a44';
+    foundP(B, P, 0, '#a59e92');
+    prismP(B.p(W), P, 0, 15, false); bandP(B.p(TR), P, 4.6, 0.4, 0.25); bandP(B.p(TR), P, 9.6, 0.4, 0.25); bandP(B.p(TR), P, 14.4, 0.6, 0.35);
+    for (const E of edgesF(P)){ if (E.L < 4) continue; const k = Math.max(1, Math.round(E.L/3.6));
+      for (let j = 0; j < k; j++){ const u = (j + 0.5)*E.L/k, hw = Math.min(1.25, E.L/k/2 - 0.35);
+        shapeP(B.p(DK2), mv(rArchO(hw, 3.9, 8), u, 0.3), E.F, 0.05);
+        for (const y0 of [5.6, 10.6]) shapeP(B.p(LOUV), rectO(u - hw*0.7, u + hw*0.7, y0, y0 + 2.8), E.F, 0.05); }
+      for (let j = 0; j <= k; j++) slabP(B.p(TR), rectO(j*E.L/k - 0.3, j*E.L/k + 0.3, 0, 14.4), E.F, 0, 0.22); }
+    hipOn(g, P, 15, 4.8, TILE, 0.8);
+    B.flush(g); return g;
+  }};
+placeK('sgchildrensmuseum');
+
+// ================= Raffles Hospital (opened 2002 in the retrofitted Blanco Court), 585 North Bridge Road =================
+// Verified (Wikipedia): 13 floors, L-shaped, retrofitted from the Blanco Court office-and-shopping block keeping its superstructure;
+// opened 2002. OSM parts of w47134077 with OSM colours / materials: stone podium #d3bba3 (0-20.4 m), the L-shaped stone block
+// #d6cec4 (levels 6-14, to 46.8 m) and a dark-green glass block #455241 (20 levels, 66.6 m). Window patterns are estimates.
+LANDMARKS.sgrafflesh = {zh:'莱佛士医院', en:'Raffles Hospital', cat:'new', r:DK('sgrafflesh').r, h:66.6,
+  lt:{m:1, c:'#eef6ff', k:0.5, fh:3.4, cw:2.8},
+  build(){
+    const g = new THREE.Group(), B = mkB(), k = 'sgrafflesh';
+    const WIN = {c:'#38454e', m:1, fh:3.4, cw:2.8}, GL = {c:'#455a4d', m:1, fh:3.4, cw:2.8};
+    const L = byO(k, 'w427133451')[0], G = byO(k, 'w560277991')[0], Pd = byO(k, 'w560277989');
+    const POD = {c:'#d3bba3', m:0, lk:0.3}, ST = {c:'#d6cec4', m:0, lk:0.3};
+    foundP(B, Pd[0][2], 0, '#8f8b84'); foundP(B, G[2], 0, '#8f8b84');
+    prismP(B.p(POD), Pd[0][2], 0, 20.4, false);
+    for (const E of edgesF(Pd[0][2])){ if (E.L < 5) continue; shapeP(B.p(STD_SHOP), rectO(0.8, E.L - 0.8, 0.4, 4.8), E.F, 0.05); for (const y of [7.6, 11.2, 14.8]) shapeP(B.p(WIN), rectO(1.0, E.L - 1.0, y, y + 1.8), E.F, 0.05); }
+    roofF(B, Pd[0][2], 20.4, {wall:POD, roof:'#b4a690', par:1.0, parC:'#e6dccd'});
+    punchP(B, L[2], 20.4, 46.8, {wall:ST, win:WIN, fh:3.3, bay:3.0, ww:2.0, wh:1.7, sill:0.9, band:'#e8e2d8'});
+    roofF(B, L[2], 46.8, {wall:ST, roof:'#b8b0a5', par:1.2, parC:'#e8e2d8', plant:'#8b8d88'});
+    glassP(B, G[2], 0, 66.6, {glass:GL, band:{c:'#2f3a33', m:0}, mull:'#8a968e', fh:3.33, bh:0.6, bay:1.6});
+    roofF(B, G[2], 66.6, {wall:{c:'#3f4c43', m:0}, roof:'#7f8780', par:1.2, parC:'#8a968e', plant:'#8b8d88'});
+    B.flush(g); return g;
+  }};
+placeK('sgrafflesh');
+}
+
 {
 /* ======================================================================================================================
    v20 add-on: aircraft + airport ground operations (Changi, Seletar)
@@ -60866,6 +62859,9 @@ HOOKS.frame.push(() => {
    traffic assignment and the flow overlay still run), so stepCars() has nothing to move; the "车辆 cars" checkbox (#showCars)
    toggles these vehicles instead. Everything lives in one group in the scene, visible only with the "network" toggle
    (showNet && moverGroup.visible); HOOKS.net (network rebuilt / reset) restarts the simulation.
+   [road50] tunnels: lines the roads module marks L.tun (hidden tunnel / underpass ways, joined to the roads at their portals) are
+   ordinary links for routing and movements; vehicles on them are not drawn and are no obstacles; nothing spawns on them (they are in
+   no tile of the zone), so vehicles enter at one portal and come out at the other.
    [nyc/nycapp] New York City (SGR_NYC, tested lazily): yellow cabs by where a car appears (Manhattan below 96th Street ~35 %, upper
    Manhattan ~8 %, by the airports ~12 %, the other boroughs ~3 %, outside the city ~0.5 %; plain taxi yellow, a plain roof light),
    fewer pickups, city speeds (25 mph streets, 30 mph major arterials, 50 mph expressways), the real OSM bus stops of the map
@@ -60923,7 +62919,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // a drivable line: classes 0-10 inside the map (no Johor / Batam context), not hidden by a landmark / repainted block
   function drivable(li){
     let v = NET.skip[li]; if (v) return v === 1;
-    const L = NET.lines[li]; let ok = L.c <= 10 && !(L.flags & 8);
+    const L = NET.lines[li]; let ok = (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8);       // [road50] tunnels: their road class
     if (ok && L.c === 10 && typeof sgrSkipLine === 'function'){ try { if (sgrSkipLine(li)) ok = false; } catch (e){} }
     NET.skip[li] = ok ? 1 : 2; return ok;
   }
@@ -60941,7 +62937,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const GS = 7;
   function geomOf(li){
     let g = NET.GEO.get(li); if (g) return g;
-    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.c, R = R_RT[c] || 0;
+    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.tun ? L.tc : L.c, R = R_RT[c] || 0;
     const j0 = J.lJO[li], j1 = J.lJO[li+1], nmMax = 16;
     const TT = new Float64Array(np), TN = new Uint8Array(np);
     for (let k = 1; k < np - 1; k++){
@@ -61059,11 +63055,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const VMAX_NY = [22.4, 15.6, 20.1, 13.4, 13.4, 11.2, 11.2, 11.2, 11.2, 11.2, 11.2];
   let DLID = 0;
   function makeDl(li, g, dir, a, b, from, to){
-    const L = NET.lines[li], c = L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
+    const L = NET.lines[li], c = L.tun ? L.tc : L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
     const dl = {id:DLID++, li, g, dir, a, b, len:b - a, from, to, c, ow, link:(L.flags & 16) !== 0, nL, lane:laneOffsets(c, ow, nL),
       vmax:(NET.nyc ? VMAX_NY : NET.us ? VMAX_US : VMAX_SG)[c], name:(L.name && L.name[0]) || L.ref || '', ref:L.ref || '', elev:g.elev,
       head:new Array(nL).fill(null), tail:new Array(nL).fill(null), exitV:new Array(nL).fill(null), cnt:0,
-      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false};
+      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false,
+      tun:!!L.tun};                                              // [road50] a hidden tunnel link (roads module: class + 32): driven, not drawn
     NET.DL.push(dl);
     return dl;
   }
@@ -62077,7 +64074,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[CULLI++]; if (!V.alive) continue;
       const dl = V.dl, m = dl.mid || [ZONE.cx, ZONE.cy], d = Math.hypot(m[0] - ZONE.cx, m[1] - ZONE.cy);
       if (!ZONE.on || d > R || (dl.act !== ZONE.stamp && d > ZONE.R - 100)){ if (!V.vis || d > R + 400) killVehicle(V); continue; }
-      if (!V.bus){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
+      if (!V.bus && !dl.tun){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
       if (V.wait > 70 && !V.vis){ killVehicle(V); continue; }
       if (!dl.tb && !V.vis){ if (tileBuilt(dl.mid)) dl.tb = true; else { killVehicle(V); continue; } }
     }
@@ -62799,6 +64796,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[i]; if (!V.alive) continue;
       const T = V.T, len = V.len;
       if (V.crash){ renderCrash(V, cx, cy, cz, lights); continue; }
+      if (V.dl.tun){ V.cd = 1e9; V.vis = false; continue; }      // [road50] underground: hidden between the portals
       // centre first (cheap) for distance and culling
       pathAt(V, V.u - len*0.5, _r);
       const dx0 = _r.x - cx, dy0 = _r.y - cy, dz0 = _r.z - cz, d2 = dx0*dx0 + dy0*dy0 + dz0*dz0;
@@ -63108,7 +65106,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // free-drive / other modules: oriented boxes of the vehicles within r of (x, y): [{x, y, hx, hy, hl, hw, z, v}]
   function obstacles(x, y, r, out){
     out = out || []; out.length = 0; const r2 = r*r; if (TRF.suspend) return out;
-    for (const V of VEH){ if (!V.alive) continue; const K = V.crash;
+    for (const V of VEH){ if (!V.alive || (V.dl && V.dl.tun && !V.crash)) continue; const K = V.crash;
       if (K){ const dx = K.x - x, dy = K.y - y; if (dx*dx + dy*dy > r2) continue;
         out.push({x:K.x, y:K.y, hx:Math.cos(K.psi), hy:Math.sin(K.psi), hl:V.len/2, hw:V.wid/2, z:K.z, v:0, vx:K.vx, vy:K.vy, w:K.w, id:V.id, m:K.m, crash:true, k:V.T.k}); continue; }
       pathAt(V, V.u - V.len*0.5, _q); const dx = _q.x - x, dy = _q.y - y; if (dx*dx + dy*dy > r2) continue;
@@ -63153,6 +65151,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
     spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
+    // [road50] test helper: every live vehicle's pose (centre of the body on its path) for the stuck / jump / off-deck checks
+    poses:() => VEH.filter(V => V.alive && !V.crash).map(V => { pathAt(V, V.u - V.len*0.5, _q); return {id:V.id, x:+_q.x.toFixed(2), y:+_q.y.toFixed(2), z:+_q.z.toFixed(2), v:+V.v.toFixed(2), wait:+V.wait.toFixed(1), li:V.dl.li, c:V.dl.c, el:V.dl.elev ? 1 : 0, ctrl:V.dl.ctrl, dEnd:+(V.dl.len - V.u).toFixed(1), tun:V.dl.tun ? 1 : 0}; }),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),
     _int:{NET, ZONE, VEH, BUS, SIG, PR, RN},

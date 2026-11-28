@@ -1,0 +1,246 @@
+{
+ "city": "gba",
+ "data": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/gbadata",
+ "views": [
+  {
+   "name": "futian",
+   "x": 304,
+   "y": -12853,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 2005,
+    "buses": 0,
+    "stopped": 593,
+    "avgSpeed": 8.4,
+    "zoneR": 1712,
+    "links": 2075,
+    "target": 2008,
+    "routes": 0,
+    "signals": 123,
+    "heads": 503,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 37594,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 1757,
+    "tod": 8.5
+   },
+   "samples": [
+    2005,
+    2007,
+    2007,
+    2004,
+    2004,
+    2008,
+    2007,
+    2003
+   ],
+   "poses": 16045,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 0,
+   "offPct": 0,
+   "offs": [],
+   "stuck": 21,
+   "stuckAt": [
+    [
+     648,
+     -12895,
+     62,
+     147904
+    ],
+    [
+     133,
+     -12918,
+     66.4,
+     147800
+    ],
+    [
+     629,
+     -12927,
+     60.4,
+     146958
+    ],
+    [
+     629,
+     -12921,
+     63.4,
+     146958
+    ],
+    [
+     626,
+     -12903,
+     61.7,
+     146958
+    ],
+    [
+     619,
+     -12902,
+     67.2,
+     147903
+    ],
+    [
+     659,
+     -13115,
+     60.2,
+     147297
+    ],
+    [
+     629,
+     -12903,
+     61.9,
+     146958
+    ],
+    [
+     622,
+     -12922,
+     63.2,
+     146958
+    ],
+    [
+     623,
+     -12903,
+     66,
+     146958
+    ]
+   ],
+   "stats": {
+    "vehicles": 2008,
+    "buses": 0,
+    "stopped": 818,
+    "avgSpeed": 6,
+    "zoneR": 1712,
+    "links": 2075,
+    "target": 2008,
+    "routes": 0,
+    "signals": 131,
+    "heads": 512,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 37978,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "ms": 5711
+  },
+  {
+   "name": "repairs",
+   "x": -2251,
+   "y": -23251,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 1161,
+    "buses": 0,
+    "stopped": 207,
+    "avgSpeed": 10.5,
+    "zoneR": 1712,
+    "links": 1493,
+    "target": 1169,
+    "routes": 0,
+    "signals": 188,
+    "heads": 241,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 18020,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 649,
+    "tod": 8.5
+   },
+   "samples": [
+    1161,
+    1170,
+    1168,
+    1164,
+    1162,
+    1168,
+    1166,
+    1166
+   ],
+   "poses": 9325,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 0,
+   "offPct": 0,
+   "offs": [],
+   "stuck": 7,
+   "stuckAt": [
+    [
+     -2037,
+     -24087,
+     60.1,
+     85100
+    ],
+    [
+     -2092,
+     -22786,
+     67.8,
+     115312
+    ],
+    [
+     -2527,
+     -22639,
+     61.6,
+     114873
+    ],
+    [
+     -2537,
+     -22632,
+     68.7,
+     114869
+    ],
+    [
+     -2632,
+     -22734,
+     66.9,
+     114895
+    ],
+    [
+     -2045,
+     -24087,
+     66.4,
+     87398
+    ],
+    [
+     -2246,
+     -23191,
+     64.7,
+     87016
+    ]
+   ],
+   "stats": {
+    "vehicles": 1167,
+    "buses": 0,
+    "stopped": 367,
+    "avgSpeed": 8.1,
+    "zoneR": 1712,
+    "links": 1493,
+    "target": 1169,
+    "routes": 0,
+    "signals": 188,
+    "heads": 244,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 18242,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "ms": 2578
+  }
+ ]
+}

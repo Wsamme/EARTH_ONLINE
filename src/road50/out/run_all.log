@@ -1,0 +1,19 @@
+sg done 0
+hk done 0
+nyc done 0
+tyo done 0
+bay done 0
+gba done 0
+sg repair 0
+sg after 0
+hk repair 0
+hk after 0
+nyc repair 0
+nyc after 0
+tyo repair 0
+./run_repair.sh: line 8: 30364 Killed                  node --max-old-space-size=2500 diag.js $c --dir "$d" --png --tag after $OD > out/${c}_after.log 2>&1
+tyo after 137
+bay repair 0
+bay after 0
+gba repair 0
+gba after 0

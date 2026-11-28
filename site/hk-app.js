@@ -15099,6 +15099,9 @@ SG_PLACES.length = 0; for (const k of Object.keys(SITES)) delete SITES[k];
 // merges / diverges, arc-smoothed centrelines, Singapore markings, kerbs + footways + planted medians, LED street
 // lighting with poles, tunnel portals, smooth ramps, and a drivable surface query (surfaceAt).
 // [lm24/roadfix] tunnel portals with a closed end also at the line ends the data marks as tunnel mouths (flags 64 start / 128 end, any class).
+// [road50] tunnels: records of class c + 32 are hidden tunnel / underpass lines (L.tun, L.c = c + 32 so other modules' class filters skip
+// them, L.tc = c): they join the junction graph only at shared vertices (portals) so traffic can drive them, and nothing of them is drawn,
+// indexed or labelled; portal ends are drawn as before.
 // v22: a US style for the San Francisco Bay Area map (right-hand traffic, US markings, cobra-head street lights, concrete sidewalks,
 // Caltrans concrete freeways), on when the global SGR_BAY is true (or SGRoads.setUS(true)); Singapore is unchanged.
 const SGRoads = (() => {
@@ -15182,7 +15185,7 @@ const SGRoads = (() => {
     const vu = () => { let v = 0, m = 1, b; do { b = u8[o++]; v += (b & 127)*m; m *= 128; } while (b & 128); return v; };
     const n = vu(), lines = new Array(n); let px = 0, py = 0;
     for (let i = 0; i < n; i++){
-      const c = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2);
+      const c0 = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2), tun = c0 >= 32 && c0 < 64, c = c0;
       for (let k = 0; k < np; k++){
         const a = vu(), b = vu();
         px += (a % 2) ? -(a + 1)/2 : a/2; py += (b % 2) ? -(b + 1)/2 : b/2;
@@ -15192,6 +15195,7 @@ const SGRoads = (() => {
       if (f & 4){ const sc = (f & 32) ? 2.5 : 5; E = new Float32Array(np); for (let k = 0; k < np; k++) E[k] = u8[o++]/sc; }
       const nm = ni && names ? names[ni] : null;
       lines[i] = {c, flags:f, name:nm ? [nm[0] || '', nm[1] || ''] : null, ref:(ri && refs) ? refs[ri] || null : null, P, E};
+      if (tun){ lines[i].tun = true; lines[i].tc = c0 - 32; }         // [road50] hidden tunnel line: c stays >= 32 (other modules skip it), tc = its road class
     }
     return lines;
   }
@@ -15238,6 +15242,7 @@ const SGRoads = (() => {
       for (let k = 0; k < P.length; k += 2){ const x = P[k], y = P[k+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       LBB[i*4] = x0; LBB[i*4+1] = y0; LBB[i*4+2] = x1; LBB[i*4+3] = y1;
       const a = tcl(x0), b = tcl(y0), c = tcl(x1), d = tcl(y1); tr[i*4] = a; tr[i*4+1] = b; tr[i*4+2] = c; tr[i*4+3] = d;
+      if (lines[i].tun){ tr[i*4] = 1; tr[i*4+2] = 0; continue; }         // [road50] tunnels: in no tile (not drawn, not indexed)
       for (let ty = b; ty <= d; ty++) for (let tx = a; tx <= c; tx++) cnt[ty*TXn + tx + 1]++;
     }
     for (let t = 0; t < NT; t++) cnt[t+1] += cnt[t];
@@ -15296,11 +15301,11 @@ const SGRoads = (() => {
     for (let nd = 0, NN = C.nodeOff.length - 1; nd < NN; nd++){
       const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; if (o1 - o0 < 2) continue;
       let cnt = 0, e0 = 0, first = -1;
-      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
+      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
       if (cnt < 2) continue;
       const L0 = lines[C.incL[first]], vx = L0.P[C.incV[first]*2], vy = L0.P[C.incV[first]*2+1];
       ev(vx, vy, e0);
-      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
+      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
     }
     TL('seeds ' + nev);
     // 2. crossings (segments registered in every 32 m cell they pass) and line ends touching another line's segment
@@ -15315,11 +15320,11 @@ const SGRoads = (() => {
         if (Math.abs(nx*(mx - ax) + ny*(my - ay)) <= r) fn(cy*NCX + cx);
       }
     };
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1;
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1;
       for (let k = 0; k + 1 < m; k++) visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { ccnt[key + 1]++; }); }
     for (let i = 0; i < NCELL; i++) ccnt[i+1] += ccnt[i];
     const cseg = new Int32Array(ccnt[NCELL]), cfill = ccnt.slice(0, NCELL);
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let k = 0; k + 1 < m; k++){ const gid = o + k; visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { cseg[cfill[key]++] = gid; }); } }
     TL('cells ' + cseg.length);
     const JT2 = JT*JT, cellOfXY = (x, y) => (Math.floor((y + HALF)/CS) + 2)*NCX + Math.floor((x + HALF)/CS) + 2;
@@ -15345,7 +15350,7 @@ const SGRoads = (() => {
     TL('crossings ' + nev);
     // line ends on another line's segment (not at one of its vertices)
     for (let i = 0; i < n; i++){
-      const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+      const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let w = 0; w < 2; w++){
         const k = w ? m - 1 : 0, qx = P[k*2], qy = P[k*2+1], e1 = L.E ? L.E[k] : 0;
         const gx0 = Math.floor((qx - JT + HALF)/CS) + 2, gx1 = Math.floor((qx + JT + HALF)/CS) + 2, gy0 = Math.floor((qy - JT + HALF)/CS) + 2, gy1 = Math.floor((qy + JT + HALF)/CS) + 2;
@@ -15443,7 +15448,7 @@ const SGRoads = (() => {
     const cfind = a => { while (cpar[a] !== a){ cpar[a] = cpar[cpar[a]]; a = cpar[a]; } return a; };
     // major arms per node (classes 0-10, no slip roads): only crossings of real roads merge into complexes
     const NM = new Uint8Array(nN);
-    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16)) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
+    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16) || L.tun) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
     const J = {nN, NX:NX.subarray(0, nN), NY:NY.subarray(0, nN), NE:NE.subarray(0, nN), NA:NA.subarray(0, nN), NM, nIO, nIL, nIS, nIP, lJO, lJS, lJN, LEN};
     C.J = J;
     for (let i = 0; i < n; i++){ for (let p = lJO[i]; p + 1 < lJO[i+1]; p++) if (internal(C, i, p)){ const a = cfind(lJN[p]), b = cfind(lJN[p+1]); if (a !== b) cpar[a] = b; } }
@@ -15480,7 +15485,7 @@ const SGRoads = (() => {
     let S = new Float32Array(1 << 18), LI = new Int32Array(1 << 15), FL = new Uint8Array(1 << 15), CL = new Uint8Array(1 << 15), SA0 = new Float32Array(1 << 15), ns = 0;
     let KP = new Int32Array(1 << 17), np2 = 0;                                // (cell key, piece) pairs; cells: key -> cell index (compact CSR)
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18)) continue;
+      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18) || L.tun) continue;
       const P = L.P, E = L.E, hw = hwOf(L), np = P.length >> 1; let sacc = 0;
       for (let k = 0; k + 1 < np; k++){
         const ax = P[k*2], ay = P[k*2+1], bx = P[k*2+2], by = P[k*2+3], ea = E ? E[k] : 0, eb = E ? E[k+1] : 0, d = hyp(bx - ax, by - ay), m = Math.max(1, Math.ceil(d/50));
@@ -15822,7 +15827,7 @@ const SGRoads = (() => {
     if (T[nd] === T[nd]) return T[nd];
     let best = 1e9, be = 0;
     for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c)) continue;
+      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c) || L.tun) continue;
       const s = J.nIS[q], Lt = J.LEN(li), end = s < 0.3 || s > Lt - 0.3, e = rawE(C, li, s), rank = L.c*4 + (end ? 1 : 0) + ((L.flags & 8) ? 2 : 0);
       if (rank < best || (rank === best && e < be)){ best = rank; be = e; }
     }
@@ -16059,7 +16064,7 @@ const SGRoads = (() => {
     const ccx = sx/nodes.length, ccy = sy/nodes.length, ce = se/nodes.length;
     for (const nd of nodes){
       for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c)) continue;
+        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c) || L.tun) continue;
         const j0 = J.lJO[li], j1 = J.lJO[li+1], p = J.nIP[q];
         const g = lineGeom(li), s = g.jS[p - j0], Lt = g.Lt;
         for (let dd = 0; dd < 2; dd++){
@@ -16105,14 +16110,15 @@ const SGRoads = (() => {
   function cxQuick(cx){
     const C = X.C, J = C.J, lines = C.lines; if (J.cxO[cx+1] - J.cxO[cx] !== 1) return null;
     const nd = J.cxN[J.cxO[cx]], q0 = J.nIO[nd], q1 = J.nIO[nd+1];
-    let major = 0, thr = -1, ends = 0;
-    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c)) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
+    let major = 0, thr = -1, ends = 0, ntun = 0; for (let q = q0; q < q1; q++) if (lines[J.nIL[q]].tun) ntun++;
+    if (ntun && q1 - q0 - ntun <= 1){ const b = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]}; b.slim = b; return b; }
+    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c) || L.tun) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
       if (end) ends++; if (L.c < 11){ major++; if (!end) thr = q; } }
     const base = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]};
     if (major === 0){ base.slim = base; return base; }
     if (major === 1 && thr >= 0 && J.NE[nd] < 0.3){ const L = lines[J.nIL[thr]]; if (SWC(L.c) && !(L.flags & 8)){ base.slim = base; return base; } }
     if (q1 - q0 === 2 && ends === 2){
-      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c)) return null;
+      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c) || La.tun || Lb.tun) return null;
       if (Math.abs(hwOf(La) - hwOf(Lb)) >= 0.3 || OFF[La.c] !== OFF[Lb.c]) return null;
       const ea = J.nIS[q0] < 0.3 ? 0 : (La.P.length >> 1) - 1, eb = J.nIS[q0+1] < 0.3 ? 0 : (Lb.P.length >> 1) - 1;
       if (!dirAt(La, ea, ea === 0 ? 1 : -1, _d1) || !dirAt(Lb, eb, eb === 0 ? 1 : -1, _d2)) return null;
@@ -16475,7 +16481,7 @@ const SGRoads = (() => {
   function capCompute(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
     const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; let others = 0, ol = -1, ov = -1;
-    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
+    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12 || C.lines[C.incL[j]].tun) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
     if (others === 0) return true;
     if (others > 1) return true;
     const M = C.lines[ol], mn = M.P.length >> 1;
@@ -17034,7 +17040,7 @@ const SGRoads = (() => {
   }
   function deadEnd(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
-    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li) return false;
+    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li && !C.lines[C.incL[j]].tun) return false;      // [road50] a tunnel beyond: still a portal
     return true;
   }
   function structures(c, hw, wd, foreign, L, li, JN){
@@ -17817,7 +17823,7 @@ const SGRoads = (() => {
           complexesIn(t, cseen);
         }
       } else {
-        for (let i = 0; i < lines.length; i++){ if (skip && skip(i)) continue; doLine(i, lines[i]); }
+        for (let i = 0; i < lines.length; i++){ if ((skip && skip(i)) || lines[i].tun) continue; doLine(i, lines[i]); }
         for (let cx = 0; cx < C.J.nC; cx++) doComplex(cx);
       }
     } finally { MB = null; }
@@ -18142,7 +18148,7 @@ const SGRoads = (() => {
     initGround();
     const by = new Map();
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i]; if (L.c > 10) continue;
+      const L = lines[i]; if (L.c > 10 || L.tun) continue;
       const en = L.name ? L.name[0] : '', key = en || L.ref; if (!key) continue;
       let g = by.get(key); if (!g) by.set(key, g = {en:en || null, zh:(L.name && L.name[1]) || null, ref:L.ref || null, cls:L.c, total:0, cand:[], foreign:(L.flags & 8) !== 0});
       if (L.c < g.cls) g.cls = L.c; if (!g.ref && L.ref) g.ref = L.ref; if (!g.zh && L.name && L.name[1]) g.zh = L.name[1];
@@ -18191,7 +18197,7 @@ const SGRoads = (() => {
   function graph(lines){
     const out = [];
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (c > 10) continue;
+      const L = lines[i], c = L.c; if (c > 10 || L.tun) continue;
       const gc = c <= 1 ? 2 : c <= 9 ? 1 : 0, P = L.P, E = L.E, np = P.length >> 1;
       for (let k = 0; k < np - 1; k++){
         const x0 = P[k*2], y0 = P[k*2+1], x1 = P[k*2+2], y1 = P[k*2+3]; if (x0 === x1 && y0 === y1) continue;
@@ -27560,6 +27566,9 @@ window.SGWx = {
    traffic assignment and the flow overlay still run), so stepCars() has nothing to move; the "车辆 cars" checkbox (#showCars)
    toggles these vehicles instead. Everything lives in one group in the scene, visible only with the "network" toggle
    (showNet && moverGroup.visible); HOOKS.net (network rebuilt / reset) restarts the simulation.
+   [road50] tunnels: lines the roads module marks L.tun (hidden tunnel / underpass ways, joined to the roads at their portals) are
+   ordinary links for routing and movements; vehicles on them are not drawn and are no obstacles; nothing spawns on them (they are in
+   no tile of the zone), so vehicles enter at one portal and come out at the other.
    [nyc/nycapp] New York City (SGR_NYC, tested lazily): yellow cabs by where a car appears (Manhattan below 96th Street ~35 %, upper
    Manhattan ~8 %, by the airports ~12 %, the other boroughs ~3 %, outside the city ~0.5 %; plain taxi yellow, a plain roof light),
    fewer pickups, city speeds (25 mph streets, 30 mph major arterials, 50 mph expressways), the real OSM bus stops of the map
@@ -27617,7 +27626,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // a drivable line: classes 0-10 inside the map (no Johor / Batam context), not hidden by a landmark / repainted block
   function drivable(li){
     let v = NET.skip[li]; if (v) return v === 1;
-    const L = NET.lines[li]; let ok = L.c <= 10 && !(L.flags & 8);
+    const L = NET.lines[li]; let ok = (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8);       // [road50] tunnels: their road class
     if (ok && L.c === 10 && typeof sgrSkipLine === 'function'){ try { if (sgrSkipLine(li)) ok = false; } catch (e){} }
     NET.skip[li] = ok ? 1 : 2; return ok;
   }
@@ -27635,7 +27644,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const GS = 7;
   function geomOf(li){
     let g = NET.GEO.get(li); if (g) return g;
-    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.c, R = R_RT[c] || 0;
+    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.tun ? L.tc : L.c, R = R_RT[c] || 0;
     const j0 = J.lJO[li], j1 = J.lJO[li+1], nmMax = 16;
     const TT = new Float64Array(np), TN = new Uint8Array(np);
     for (let k = 1; k < np - 1; k++){
@@ -27753,11 +27762,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const VMAX_NY = [22.4, 15.6, 20.1, 13.4, 13.4, 11.2, 11.2, 11.2, 11.2, 11.2, 11.2];
   let DLID = 0;
   function makeDl(li, g, dir, a, b, from, to){
-    const L = NET.lines[li], c = L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
+    const L = NET.lines[li], c = L.tun ? L.tc : L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
     const dl = {id:DLID++, li, g, dir, a, b, len:b - a, from, to, c, ow, link:(L.flags & 16) !== 0, nL, lane:laneOffsets(c, ow, nL),
       vmax:(NET.nyc ? VMAX_NY : NET.us ? VMAX_US : VMAX_SG)[c], name:(L.name && L.name[0]) || L.ref || '', ref:L.ref || '', elev:g.elev,
       head:new Array(nL).fill(null), tail:new Array(nL).fill(null), exitV:new Array(nL).fill(null), cnt:0,
-      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false};
+      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false,
+      tun:!!L.tun};                                              // [road50] a hidden tunnel link (roads module: class + 32): driven, not drawn
     NET.DL.push(dl);
     return dl;
   }
@@ -28771,7 +28781,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[CULLI++]; if (!V.alive) continue;
       const dl = V.dl, m = dl.mid || [ZONE.cx, ZONE.cy], d = Math.hypot(m[0] - ZONE.cx, m[1] - ZONE.cy);
       if (!ZONE.on || d > R || (dl.act !== ZONE.stamp && d > ZONE.R - 100)){ if (!V.vis || d > R + 400) killVehicle(V); continue; }
-      if (!V.bus){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
+      if (!V.bus && !dl.tun){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
       if (V.wait > 70 && !V.vis){ killVehicle(V); continue; }
       if (!dl.tb && !V.vis){ if (tileBuilt(dl.mid)) dl.tb = true; else { killVehicle(V); continue; } }
     }
@@ -29493,6 +29503,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[i]; if (!V.alive) continue;
       const T = V.T, len = V.len;
       if (V.crash){ renderCrash(V, cx, cy, cz, lights); continue; }
+      if (V.dl.tun){ V.cd = 1e9; V.vis = false; continue; }      // [road50] underground: hidden between the portals
       // centre first (cheap) for distance and culling
       pathAt(V, V.u - len*0.5, _r);
       const dx0 = _r.x - cx, dy0 = _r.y - cy, dz0 = _r.z - cz, d2 = dx0*dx0 + dy0*dy0 + dz0*dz0;
@@ -29802,7 +29813,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // free-drive / other modules: oriented boxes of the vehicles within r of (x, y): [{x, y, hx, hy, hl, hw, z, v}]
   function obstacles(x, y, r, out){
     out = out || []; out.length = 0; const r2 = r*r; if (TRF.suspend) return out;
-    for (const V of VEH){ if (!V.alive) continue; const K = V.crash;
+    for (const V of VEH){ if (!V.alive || (V.dl && V.dl.tun && !V.crash)) continue; const K = V.crash;
       if (K){ const dx = K.x - x, dy = K.y - y; if (dx*dx + dy*dy > r2) continue;
         out.push({x:K.x, y:K.y, hx:Math.cos(K.psi), hy:Math.sin(K.psi), hl:V.len/2, hw:V.wid/2, z:K.z, v:0, vx:K.vx, vy:K.vy, w:K.w, id:V.id, m:K.m, crash:true, k:V.T.k}); continue; }
       pathAt(V, V.u - V.len*0.5, _q); const dx = _q.x - x, dy = _q.y - y; if (dx*dx + dy*dy > r2) continue;
@@ -29847,6 +29858,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
     spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
+    // [road50] test helper: every live vehicle's pose (centre of the body on its path) for the stuck / jump / off-deck checks
+    poses:() => VEH.filter(V => V.alive && !V.crash).map(V => { pathAt(V, V.u - V.len*0.5, _q); return {id:V.id, x:+_q.x.toFixed(2), y:+_q.y.toFixed(2), z:+_q.z.toFixed(2), v:+V.v.toFixed(2), wait:+V.wait.toFixed(1), li:V.dl.li, c:V.dl.c, el:V.dl.elev ? 1 : 0, ctrl:V.dl.ctrl, dEnd:+(V.dl.len - V.u).toFixed(1), tun:V.dl.tun ? 1 : 0}; }),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),
     _int:{NET, ZONE, VEH, BUS, SIG, PR, RN},
@@ -49532,6 +49545,1022 @@ Object.assign(SITES, {hkcentralfront:{zh:'中环海滨长廊', en:'Central Harbo
     B.flush(g); return g; }}});
 }
 
+// ===== hk/hk50e: Tsim Sha Tsui (inland), Jordan, Yau Ma Tei and West Kowloon landmarks on their real footprints (City Brush lm50, Hong Kong 1:1).
+// Built from R/lm50/ref_hk50e.json (OSM footprints) + LandsD Building dataset rings (tower / podium pieces with heights); generated by SC/lm50/hk50e/gen.py.
+// Block-scoped: only LANDMARKS and SG_PLACES are touched. No text, logos or brand colours. Never Math.random (LMCTX.rng()).
+{
+const D = {"hkkbs":{"p":[[14.0,-18.5],[15.2,-2.6],[12.2,-2.4],[11.8,-7.4],[4.7,-6.8],[6.8,21.1],[-8.4,22.2],[-10.9,-10.6],[-9.5,-13.8],[-5.4,-17.1]]},"hkobservatory":{"m":[[16.7,6.6],[-14.6,6.7],[-14.6,2.9],[-19.4,3.0],[-19.5,-4.2],[-11.4,-4.2],[-11.4,-6.7],[-8.1,-6.7],[-8.1,-4.2],[-5.9,-4.2],[-5.9,-7.0],[16.6,-7.1]],"ax":[[-19.5,-12.6],[-19.6,-19.5],[-8.9,-19.7],[-9.0,-26.5],[10.3,-26.8],[10.4,-17.8],[15.6,-17.9],[15.7,-14.8],[13.4,-14.8],[13.4,-13.0]],"cen":[[20.8,-20.6],[39.8,-20.6],[39.9,3.6],[20.9,3.6]]},"hkymttinhau":{"b0":[[-14.6,-24.7],[4.9,-28.3],[5.8,-22.5],[-13.7,-18.9]],"b1":[[-13.7,-18.9],[5.8,-22.5],[7.9,-11.4],[-11.7,-7.8]],"b2":[[-11.7,-7.8],[7.9,-11.4],[10.5,1.8],[-9.0,5.4]],"b3":[[-9.0,5.4],[10.5,1.8],[12.0,9.9],[-7.5,13.5]],"b4":[[-7.5,13.5],[12.0,9.9],[13.0,15.3],[-6.5,18.9]],"b5":[[-6.5,18.9],[13.0,15.3],[14.5,23.2],[-5.0,26.8]]},"hkymttheatre":{"th":[[-12.9,-20.4],[4.7,-23.8],[12.9,20.3],[-4.9,23.7]],"rb":[[43.1,16.2],[41.0,4.2],[50.0,2.6],[52.1,14.7]]},"hkfruitmarket":{"a":[[-16.8,-35.4],[-17.3,-38.5],[-14.7,-38.9],[-15.0,-40.7],[55.7,-52.9],[55.4,-54.1],[63.9,-55.8],[74.1,-1.5],[-33.6,14.7],[-77.9,23.9],[-81.6,1.7],[-70.0,-0.6],[-73.7,-24.4]],"b":[[9.9,15.7],[75.3,3.2],[77.5,16.5],[14.2,28.3]],"c":[[-76.6,32.8],[-52.6,27.8],[-50.5,41.6],[-56.3,43.5],[-54.2,50.8],[-72.8,54.1]]},"hkymtpolice":{"main":[[-7.9,-25.8],[27.1,-31.8],[27.9,-27.9],[31.5,-24.7],[34.8,-23.8],[23.5,22.2],[10.5,18.9],[18.0,-11.1],[17.4,-11.8],[15.0,-9.7],[16.5,-8.0],[12.4,-4.1],[6.6,-10.0],[12.9,-15.9],[-5.8,-13.0]],"west":[[-35.9,-21.2],[-11.8,-24.9],[-10.3,-15.1],[-14.1,-14.6],[-13.8,-12.9],[-24.0,-11.4],[-22.5,-3.1],[-19.6,-3.6],[-16.8,13.1],[-18.6,13.4],[-17.9,17.4],[-20.8,17.8],[-20.2,22.2],[-23.5,22.6],[-24.2,18.5],[-29.5,19.2]]},"hkrosary":{"p":[[-17.6,-18.5],[-20.1,-13.3],[-23.4,-12.2],[-23.6,-11.7],[-24.0,-10.9],[-24.1,-10.6],[-24.2,-10.2],[-24.3,-9.9],[-24.2,-7.0],[-23.6,-5.8],[-23.2,-5.4],[-23.8,-4.2],[-20.4,-2.5],[-21.3,-0.3],[-1.4,8.5],[-0.2,5.6],[1.4,6.4],[1.0,7.2],[3.1,8.2],[4.0,6.2],[12.2,9.9],[13.4,7.2],[15.3,8.2],[16.6,5.2],[14.7,4.3],[16.1,1.2],[7.9,-2.4],[8.7,-4.1],[6.5,-5.0],[6.2,-4.3],[4.6,-5.0],[5.9,-7.9]],"o":[[-11.7,-12.6],[9.9,-3.8],[8.4,-0.3],[20.5,4.6],[17.8,11.1],[6.6,6.6],[5.3,9.8],[-17.2,0.7]]},"hkkuc":{"o":[[-24.3,27.6],[-30.2,11.5],[9.2,-19.7],[21.3,-28.1],[28.7,-7.0]],"k1":[[-6.7,3.7],[-8.2,4.9],[-3.6,11.4],[-1.8,10.1],[-1.0,11.0],[3.9,7.3],[3.1,6.2],[5.5,4.4],[6.2,5.4],[12.9,0.6],[9.3,-4.5],[2.7,0.1],[-3.3,-8.0],[-8.6,-4.8],[-6.7,-2.2],[-9.6,-0.1]],"k2":[[13.7,-18.8],[13.0,-19.7],[10.5,-17.9],[11.1,-17.1],[5.4,-12.7],[8.8,-8.0],[13.1,-11.0],[14.5,-9.2],[16.0,-10.3],[19.7,-5.2],[24.2,-8.5],[22.9,-10.4],[26.4,-13.0],[19.5,-22.8]],"k3":[[-3.4,11.8],[-3.6,11.4],[-10.7,1.3],[-13.9,3.5],[-16.1,0.6],[-19.3,2.9],[-17.1,5.9],[-22.8,9.9],[-24.9,6.8],[-31.2,11.3],[-28.3,15.3],[-29.6,16.3],[-27.9,18.5],[-27.8,18.9],[-27.7,19.2],[-27.3,19.8],[-27.1,20.3],[-26.7,20.7],[-26.3,21.3],[-25.1,22.1],[-27.1,23.6],[-26.4,24.7],[-27.8,25.8],[-26.5,29.2],[-23.1,26.8],[-23.6,26.1]],"k4":[[17.1,-2.9],[13.5,-8.3],[10.6,-6.3],[15.3,0.6],[20.0,-2.8],[18.9,-4.1]],"k5":[[30.1,-4.7],[28.5,-8.5],[23.2,-6.3],[24.8,-2.4]]},"hkmirador":{"p":[[33.1,27.5],[-27.6,33.2],[-33.0,-27.7],[27.7,-32.9]],"tw":[[20.1,27.9],[20.0,26.4],[21.9,26.1],[19.3,-12.7],[27.1,-13.4],[26.2,-28.8],[-22.3,-24.9],[-22.5,-28.0],[-33.1,-27.4],[-29.2,33.6]],"pod":[[-33.1,-27.4],[-29.2,33.6],[29.8,26.8],[26.0,-31.4]]},"hkmiraplace":{"pod":[[36.3,-44.2],[52.1,24.5],[-42.5,43.1],[-46.8,-26.9]],"tw":[[-28.9,-30.2],[14.7,-40.5],[17.3,-29.0],[25.3,-23.8],[31.7,11.4],[24.3,19.7],[26.5,28.7],[-13.4,37.0],[-16.1,27.3],[-24.6,20.2],[-31.1,-12.3],[-26.4,-19.7]]},"hktheone":{"site":[[47.7,-26.2],[54.6,-1.2],[-51.6,26.7],[-52.1,20.3],[-47.7,19.1],[-49.0,13.4],[-52.5,14.4],[-52.7,11.0],[-54.2,1.6]],"body":[[52.4,0.1],[50.8,-6.2],[52.0,-6.5],[47.1,-25.6],[-3.9,-12.4],[-4.4,-12.3],[-44.1,-2.0],[-54.7,0.9],[-53.9,13.0],[-50.9,12.2],[-49.2,18.3],[-53.5,19.5],[-52.9,27.5]],"top":[[-54.8,0.9],[-54.1,10.7],[-51.3,10.1],[-50.5,14.1],[-47.1,25.9],[4.9,12.4],[-1.4,-13.1],[-44.1,-2.0]]},"hkheritagedisc":{"o":[[-35.0,23.8],[-38.3,-18.1],[35.1,-23.8],[38.4,18.2]],"n":[[-42.3,-19.5],[-41.7,-10.4],[-26.4,-11.5],[-26.8,-15.9],[-22.3,-16.3],[-21.6,-8.6],[36.1,-12.8],[35.1,-25.1]],"s":[[-20.2,11.8],[-19.4,24.1],[38.5,19.8],[37.6,7.8]],"w":[[0.7,-9.2],[-29.7,-7.0],[-29.8,-8.3],[-30.7,-9.3],[-36.3,-8.9],[-37.2,-8.0],[-37.1,-6.9],[-40.5,-6.8],[-38.9,13.6],[-40.0,13.6],[-39.2,24.8],[-39.1,25.6],[-22.8,24.4],[-23.9,9.1],[2.0,7.2]],"x":[[0.7,-9.2],[2.0,7.2],[3.9,7.1],[2.8,-9.4]]},"hkklnparksports":{"p":[[30.3,-46.4],[34.4,22.7],[34.8,23.7],[-44.4,28.4],[-46.5,-6.1],[8.5,-9.3],[6.4,-45.0]],"ld":[[37.6,17.9],[34.6,-31.0],[33.2,-30.9],[33.1,-32.2],[31.3,-32.1],[30.8,-41.1],[30.7,-41.5],[30.5,-41.9],[30.3,-42.2],[30.0,-42.4],[29.6,-42.6],[29.1,-42.9],[28.6,-42.9],[28.2,-42.7],[27.8,-42.6],[27.2,-42.2],[26.9,-41.7],[26.7,-41.2],[26.6,-40.8],[26.3,-40.8],[26.2,-43.6],[6.4,-42.4],[7.2,-27.5],[6.9,-27.5],[6.4,-27.2],[6.1,-27.1],[5.7,-26.8],[5.5,-26.6],[5.0,-25.8],[4.9,-25.5],[4.9,-25.2],[4.8,-24.7],[4.9,-24.3],[5.0,-24.0],[5.3,-23.6],[5.4,-23.3],[5.6,-23.0],[5.9,-22.8],[6.1,-22.6],[6.4,-22.5],[6.8,-22.3],[7.6,-22.3],[8.6,-9.6],[-46.5,-6.2],[-44.1,31.2],[30.7,26.5],[30.7,25.4],[31.3,25.4],[31.4,26.5],[31.5,26.8],[31.7,27.2],[32.0,27.6],[32.2,27.8],[32.8,27.9],[33.1,28.0],[33.4,28.0],[33.8,27.9],[34.1,27.8],[34.5,27.5],[34.9,26.9],[35.0,26.4],[35.0,26.1],[34.5,18.0]],"pool":[[30.8,-36.9],[46.9,-37.8],[50.9,21.8],[34.4,22.7]]},"hkscoutcentre":{"pod":[[-23.1,29.2],[-26.1,-26.7],[23.2,-29.3],[26.2,26.6]],"tw":[[18.5,-33.7],[1.6,-32.6],[3.0,-9.5],[-30.5,-7.3],[-29.8,3.4],[-27.0,6.9],[-26.8,10.3],[21.0,7.2]],"in":[[6.7,-28.4],[23.2,-29.3],[25.2,7.6],[-24.1,10.4],[-25.0,-6.4],[7.9,-8.4]]},"hkdgs":{"p":[[-41.0,-70.8],[-19.3,-72.6],[-19.0,-68.9],[-14.7,-69.3],[-0.4,-57.3],[-0.2,-55.3],[6.4,-55.9],[9.7,-18.2],[26.4,-19.7],[24.6,-39.3],[36.1,-40.3],[46.1,-35.6],[47.3,-21.5],[68.0,-23.3],[68.3,-18.8],[77.8,-19.7],[82.7,-18.1],[83.1,-13.6],[93.8,-14.6],[94.8,-3.2],[69.9,-1.0],[69.1,-9.9],[18.3,-5.5],[22.1,37.4],[29.6,36.7],[29.9,40.7],[22.4,41.3],[23.0,47.5],[16.3,48.1],[17.2,58.2],[5.4,59.3],[3.6,63.7],[1.9,66.3],[-0.8,69.8],[-4.5,72.4],[-8.0,74.0],[-11.5,74.9],[-27.0,87.8]],"ch":[[96.8,-3.4],[97.6,5.6],[69.6,18.5],[67.9,-0.8]],"main":[[71.4,-2.8],[95.5,-4.9],[95.4,-6.8],[96.2,-6.8],[95.4,-16.5],[93.4,-16.4],[93.3,-17.2],[91.5,-16.9],[83.9,-16.5],[83.4,-20.6],[74.8,-23.6],[74.8,-22.6],[68.6,-22.0],[68.3,-25.7],[17.3,-21.5],[18.3,-9.2],[1.0,-7.8],[0.5,-14.9],[-3.1,-14.7],[-2.6,-8.5],[0.4,-8.7],[0.6,-6.5],[-1.2,-6.4],[0.6,16.6],[9.0,15.9],[9.0,16.8],[4.2,17.2],[4.5,20.7],[22.4,19.3],[20.0,-8.0],[70.7,-12.0]],"jr":[[-3.1,-14.7],[0.5,-14.9],[1.0,-7.8],[18.3,-9.2],[17.3,-21.5],[10.2,-20.9],[7.4,-55.3],[4.0,-55.0],[3.9,-56.8],[-3.1,-61.8],[-3.9,-61.6],[-10.4,-61.0],[-9.8,-53.6],[-6.0,-53.9],[-3.6,-21.7],[-36.0,-19.2],[-36.6,-27.0],[-40.8,-26.8],[-38.7,-4.2],[-2.5,-7.4]],"dg3":[[4.5,20.7],[6.9,51.3],[26.1,49.7],[25.5,42.9],[32.4,42.3],[31.8,36.1],[25.0,36.7],[23.7,19.2]],"pod":[[77.0,15.7],[98.0,6.1],[98.8,-15.4],[64.5,-27.1],[46.6,-25.6],[45.7,-35.5],[33.6,-41.1],[23.1,-40.2],[24.0,-28.0],[2.5,-26.2],[-0.2,-59.8],[-22.5,-75.0],[-45.0,-73.1],[-30.6,87.7],[-14.6,74.7],[-13.2,75.0],[-10.4,75.0],[-7.6,74.4],[-6.2,74.0],[-4.9,73.4],[-2.5,71.9],[-1.4,71.0],[-0.4,70.0],[0.5,68.9],[2.1,66.6],[3.2,63.9],[3.6,62.6],[3.9,61.1],[15.6,60.2],[14.7,50.6],[26.1,49.7],[25.5,42.9],[32.4,42.3],[31.8,36.1],[25.0,36.7],[23.7,19.2],[22.4,19.3],[20.0,-8.0],[70.7,-12.0],[71.4,-2.8],[68.8,-2.5],[70.6,19.2]]},"hktungwahmuseum":{"p":[[-6.0,-8.7],[-3.9,-7.2],[1.3,-14.9],[14.1,-6.3],[-0.6,15.3],[-13.3,6.8],[-8.1,-0.9],[-10.3,-2.3]]},"hkwkgov":{"n":[[-17.7,27.1],[-11.9,24.4],[-10.6,27.2],[27.9,9.1],[26.6,6.2],[30.9,4.2],[13.5,-32.9],[9.2,-30.8],[7.8,-33.7],[-30.7,-15.5],[-29.4,-12.6],[-35.1,-10.0]],"s":[[26.8,40.3],[27.9,42.9],[25.2,44.0],[31.9,58.2],[34.5,56.9],[43.1,75.2],[51.7,71.1],[54.6,77.3],[93.4,59.1],[90.5,52.8],[99.7,48.5],[85.0,17.1],[75.7,21.4],[74.2,18.0]],"on":[[-33.4,-7.5],[-27.8,-10.2],[-29.7,-13.9],[7.5,-32.3],[13.5,-33.5],[33.5,7.9],[11.3,24.2],[-7.5,33.3],[-9.7,28.8],[-14.8,31.0]],"os":[[25.7,41.3],[67.9,20.5],[88.2,26.3],[99.9,48.6],[88.8,54.4],[91.8,59.9],[51.6,80.9],[40.0,70.0]]},"hkfreespace":{"p":[[-5.6,36.1],[-16.2,29.7],[-12.4,23.3],[-36.4,8.9],[-8.9,-36.3],[36.0,-9.3],[34.7,-7.3],[37.0,-6.0],[35.7,-3.8],[35.1,-3.0],[27.9,9.0],[26.6,8.2],[13.3,30.1],[2.1,23.4]],"ld":[[-32.4,0.7],[11.5,26.9],[25.2,3.9],[23.0,2.5],[32.4,-12.5],[12.5,-24.5],[9.2,-18.9],[-12.7,-32.1]]},"hksignalhill":{"p":[[-1.3,-3.7],[2.4,-2.9],[3.9,-0.8],[3.2,2.3],[1.3,3.7],[-2.7,2.7],[-3.8,0.4],[-3.2,-2.4]],"ld":[[-1.4,7.9],[-0.6,3.8],[-0.9,3.7],[-1.3,3.0],[-1.2,2.7],[-5.5,1.8],[-5.5,2.1],[-6.3,2.7],[-6.6,2.5],[-7.4,6.6],[-7.1,6.8],[-6.7,7.4],[-6.7,7.8],[-3.2,8.6],[-2.5,8.6],[-2.5,8.3],[-1.8,7.9]]},"hkholidayinngm":{"pod":[[25.4,14.3],[-38.3,19.1],[-40.2,-12.0],[23.0,-19.5],[23.6,-11.3],[45.2,-12.8],[46.6,6.4],[25.0,7.9]],"tw":[[43.9,5.0],[42.6,-13.8],[-42.1,-8.1],[-40.9,10.9]],"ldp":[[-40.5,17.5],[-13.2,15.7],[-13.4,12.7],[25.4,9.6],[25.2,6.2],[43.9,5.0],[42.6,-13.8],[23.5,-12.7],[23.1,-19.2],[-42.4,-11.5]]},"hkgrandaustin":{"t1":[[0.6,23.6],[-7.1,47.8],[1.9,50.8],[19.5,50.9],[19.5,48.5],[22.3,48.6],[22.1,50.9],[33.5,51.0],[33.6,46.6],[31.8,46.6],[31.8,45.6],[30.4,43.5],[31.5,42.7],[15.2,18.8]],"t2":[[0.6,23.6],[4.8,22.3],[4.3,20.8],[5.4,20.5],[3.6,15.2],[7.7,13.8],[9.2,18.3],[10.3,17.8],[11.1,20.2],[15.2,18.8],[11.8,8.3],[13.7,-9.4],[10.1,-22.8],[6.9,-21.9],[4.5,-21.4],[3.7,-20.5],[6.2,-11.4],[3.6,-11.6],[3.2,-8.2],[-2.0,-5.5],[-5.7,-8.7],[-18.0,-10.2],[-21.6,-13.5],[-24.0,-13.0],[-23.8,-12.0],[-26.8,-8.6],[-2.8,13.0]],"t3":[[-21.4,-55.5],[-26.4,-53.2],[-25.7,-51.6],[-24.6,-52.2],[-24.0,-50.8],[-25.1,-50.4],[-23.4,-46.6],[-26.6,-45.1],[-28.8,-50.2],[-30.0,-49.7],[-30.7,-51.3],[-34.5,-49.5],[-29.9,-39.4],[-31.5,-26.4],[-27.5,-10.9],[-26.2,-11.2],[-25.2,-10.4],[-23.8,-12.0],[-24.0,-13.0],[-21.6,-13.5],[-22.9,-18.3],[-25.2,-17.7],[-25.9,-20.2],[-23.6,-20.8],[-24.0,-22.4],[-23.1,-22.6],[-16.1,-22.0],[-15.0,-23.4],[-14.6,-26.0],[-12.2,-26.7],[-9.8,-29.5],[-2.1,-23.7],[-1.4,-24.4],[3.7,-20.5],[4.5,-21.4],[6.9,-21.9],[6.6,-22.9],[8.6,-25.6],[-16.3,-44.2]],"o1":[[-0.1,22.1],[5.9,20.6],[5.1,24.9],[6.6,25.0],[5.4,33.3],[10.2,34.3],[17.7,29.3],[13.1,23.8],[13.1,22.6],[12.0,18.7],[17.2,16.9],[22.0,26.0],[31.4,41.5],[30.3,42.5],[31.0,45.4],[32.7,45.3],[32.6,50.8],[21.7,50.8],[21.9,47.2],[19.1,47.1],[18.9,50.8],[1.0,50.2],[-8.5,46.4],[-4.5,39.4]],"o2":[[13.5,7.1],[17.2,16.9],[12.0,18.7],[11.3,17.0],[9.0,17.6],[7.4,13.5],[5.2,14.4],[6.6,18.2],[5.2,18.8],[5.9,20.6],[-0.1,22.1],[-2.8,13.1],[-27.4,-8.4],[-21.6,-14.9],[-17.3,-11.0],[-8.0,-8.3],[-1.9,-3.1],[3.8,-6.3],[3.8,-11.9],[6.9,-11.6],[6.9,-16.6],[3.4,-21.8],[10.2,-25.4],[14.9,-11.6]],"o3":[[-16.7,-47.7],[10.2,-25.4],[3.4,-21.8],[-2.8,-26.5],[-3.7,-25.3],[-9.6,-29.3],[-12.4,-26.0],[-17.8,-25.3],[-18.3,-23.7],[-20.7,-22.6],[-23.1,-22.6],[-23.1,-19.7],[-21.6,-14.9],[-26.0,-9.9],[-26.9,-12.0],[-28.9,-11.4],[-33.0,-25.9],[-30.8,-41.4],[-35.4,-50.4],[-30.8,-52.6],[-29.2,-49.6],[-28.1,-50.2],[-26.4,-46.8],[-24.0,-47.9],[-26.9,-53.9],[-20.9,-56.7]]},"hkkwunchungmsb":{"o":[[-12.9,22.9],[-16.0,23.1],[-18.4,-32.4],[4.5,-33.3],[4.6,-29.2],[15.5,-29.6],[18.2,32.8],[-2.9,33.7],[-3.0,30.9],[-12.5,31.2]],"pod":[[8.9,-30.5],[22.5,-31.4],[22.4,-34.4],[15.2,-33.9],[13.9,-33.9],[-22.0,-31.2],[-22.7,-30.6],[-22.0,-22.5],[-21.4,-21.9],[-21.1,-19.7],[-21.7,-19.6],[-19.1,24.0],[-18.4,24.0],[-18.1,28.8],[-18.7,29.3],[-18.5,32.1],[-17.9,32.8],[4.2,31.4],[4.4,33.7],[5.0,34.2],[13.0,33.7],[13.5,33.0]],"tw":[[8.9,-30.5],[-0.8,-29.8],[-0.9,-32.8],[-22.0,-31.2],[-22.7,-30.6],[-22.0,-22.5],[-21.4,-21.9],[-21.1,-19.7],[-21.7,-19.6],[-19.1,24.0],[-18.4,24.0],[-18.1,28.8],[-18.7,29.3],[-18.5,32.1],[-17.9,32.8],[4.2,31.4],[4.4,33.7],[5.0,34.2],[13.0,33.7],[13.5,33.0]],"pod2":[[13.3,30.0],[20.2,29.7],[19.0,10.2],[25.1,9.7],[24.4,-1.4],[18.2,-1.0],[17.7,-8.3],[24.0,-8.7],[22.5,-31.4],[8.9,-30.5]]},"hkklnmethodist":{"p":[[-15.4,-10.2],[2.0,-17.5],[4.9,-12.3],[9.0,-14.7],[18.6,-6.9],[18.5,0.4],[10.2,8.5],[2.1,8.9],[2.3,7.7],[-1.4,8.1],[-0.1,22.4],[-8.9,23.0],[-10.0,10.5],[-11.4,10.6],[-11.8,7.0],[-14.0,7.2]]},"hkwardmethodist":{"o":[[-21.6,10.9],[-15.9,2.8],[-8.7,7.8],[-4.3,1.5],[-5.9,0.3],[-7.0,1.7],[-11.9,-1.7],[-7.5,-7.9],[-4.6,-5.9],[-2.4,-9.1],[-3.4,-9.8],[7.0,-24.5],[19.9,-15.5],[10.4,-2.0],[8.5,-3.4],[5.9,0.3],[10.7,3.6],[7.2,8.6],[5.0,7.0],[-0.5,14.7],[2.7,16.9],[-2.6,24.2]],"ch":[[22.8,-16.9],[10.2,-25.7],[-2.7,-7.0],[10.0,1.6]],"tw":[[-7.3,-6.6],[-10.4,-2.1],[-6.6,0.6],[-6.1,-0.3],[-3.5,1.4],[-0.9,-2.2]],"ym":[[0.7,-4.7],[-0.9,-2.2],[-8.6,8.9],[-16.0,3.9],[-20.5,10.7],[-2.1,23.4],[2.5,16.7],[0.5,15.4],[7.0,6.0],[9.0,7.3],[12.1,2.9]]},"hkallsaints":{"o":[[-16.7,-16.4],[8.9,-21.0],[23.0,13.5],[-9.0,19.6],[-10.4,12.8],[-16.1,14.0],[-20.4,-6.7],[-14.9,-7.8]],"p":[[-17.0,10.2],[-10.5,9.0],[-7.1,8.3],[-6.8,9.9],[-2.6,9.0],[-2.8,7.5],[6.0,5.9],[8.1,16.5],[22.9,13.5],[8.9,-21.0],[-16.7,-16.1],[-14.9,-7.9],[-20.4,-6.6]]},"hkymtlibrary":{"p":[[15.3,-18.2],[20.9,11.6],[-15.4,18.2],[-20.9,-11.5]]},"hkmasjidibrahim":{"p":[[-8.9,-26.1],[0.2,-27.7],[8.9,26.3],[-0.1,27.8]]}};
+// ---- shared helpers (block-scoped; copied into each of hk_c's modules)
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+const lerp = (a, b, t) => a + (b - a)*t, cl01 = t => t < 0 ? 0 : t > 1 ? 1 : t, sm = t => { t = cl01(t); return t*t*(3 - 2*t); };
+const dsS = c => typeof c === 'string' ? {c, ds:true} : Object.assign({ds:true}, c);
+// triangle batches: many parts of one colour spec become one LTris call
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+function segP(o, a, b, r, n){
+  n = n || 4; const dx = b[0]-a[0], dy = b[1]-a[1], dz = b[2]-a[2], L = Math.hypot(dx, dy, dz); if (L < 1e-4) return;
+  const d = [dx/L, dy/L, dz/L], up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let ux = d[1]*up[2]-d[2]*up[1], uy = d[2]*up[0]-d[0]*up[2], uz = d[0]*up[1]-d[1]*up[0]; const ul = Math.hypot(ux, uy, uz); ux /= ul; uy /= ul; uz /= ul;
+  const vx = d[1]*uz-d[2]*uy, vy = d[2]*ux-d[0]*uz, vz = d[0]*uy-d[1]*ux;
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+ux*c+vx*s, p[1]+uy*c+vy*s, p[2]+uz*c+vz*s]); } return R; };
+  const A = ring(a), Bq = ring(b);
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], Bq[j], Bq[i]); }
+}
+const rotQ = (cx, cz, ry) => { const c = Math.cos(ry || 0), s = Math.sin(ry || 0); return (x, y, z) => [cx + x*c + z*s, y, cz - x*s + z*c]; };
+function boxP(o, w, h, d, x, y, z, ry){
+  const R = rotQ(x, z, ry), hw = w/2, hd = d/2;
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, c, e] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[c], P[e]);
+}
+// a box from plan point a to b (width w across), y0..y1
+function wallP(o, a, b, w, y0, y1){ const dx = b[0]-a[0], dz = b[1]-a[1], L = Math.hypot(dx, dz); if (L < 1e-3) return; boxP(o, L, y1 - y0, w, (a[0]+b[0])/2, y0, (a[1]+b[1])/2, -Math.atan2(dz, dx)); }
+function loftP(o, secs, cap){
+  const n = secs[0].length;
+  for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, secs[s][i], secs[s][j], secs[s+1][j], secs[s+1][i]); }
+  if (cap){ const t = secs[secs.length - 1], c = [0, 0, 0]; for (const p of t){ c[0] += p[0]/n; c[1] += p[1]/n; c[2] += p[2]/n; } for (let i = 0; i < n; i++) o.push(...c, ...t[i], ...t[(i+1) % n]); }
+}
+// open strip loft (no wrap-around)
+function stripP(o, secs){ for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < secs[s].length - 1; i++) quadP(o, secs[s][i], secs[s][i+1], secs[s+1][i+1], secs[s+1][i]); }
+const area2 = P => { let s = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; s += a[0]*b[1] - b[0]*a[1]; } return s/2; };
+const cenP = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+const bbP = P => { let a = [1e9, 1e9, -1e9, -1e9]; for (const p of P){ a[0] = Math.min(a[0], p[0]); a[1] = Math.min(a[1], p[1]); a[2] = Math.max(a[2], p[0]); a[3] = Math.max(a[3], p[1]); } return a; };
+const shiftP = (P, dx, dz) => P.map(p => [p[0] + dx, p[1] + dz]);
+function offP(P, d){
+  const n = P.length, s = area2(P) > 0 ? 1 : -1, L = [];
+  for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; L.push([a[0] - ez/l*s*d, a[1] + ex/l*s*d, ex, ez]); }
+  const out = [];
+  for (let i = 0; i < n; i++){ const p = L[(i + n - 1) % n], q = L[i], den = p[2]*q[3] - p[3]*q[2];
+    if (Math.abs(den) < 1e-6){ out.push([q[0], q[1]]); continue; }
+    const t = ((q[0]-p[0])*q[3] - (q[1]-p[1])*q[2])/den; let x = p[0] + p[2]*t, z = p[1] + p[3]*t;
+    const ox = P[i][0], oz = P[i][1], dd = Math.hypot(x - ox, z - oz), mx = Math.abs(d)*2.5;
+    if (dd > mx){ x = ox + (x - ox)/dd*mx; z = oz + (z - oz)/dd*mx; }
+    out.push([x, z]); }
+  return out;
+}
+const outN = (P, i) => { const s = area2(P) > 0 ? 1 : -1, a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; return [ez/l*s, -ex/l*s]; };
+const inPoly = (P, x, z) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; };
+const dSeg = (x, z, a, b) => { const ex = b[0]-a[0], ez = b[1]-a[1], L2 = ex*ex + ez*ez || 1, t = cl01(((x-a[0])*ex + (z-a[1])*ez)/L2); return Math.hypot(x - a[0] - ex*t, z - a[1] - ez*t); };
+const dPoly = (P, x, z) => { let d = 1e9; for (let i = 0; i < P.length; i++) d = Math.min(d, dSeg(x, z, P[i], P[(i+1) % P.length])); return d; };
+const dLine = (L, x, z) => { let d = 1e9; for (let i = 0; i < L.length - 1; i++) d = Math.min(d, dSeg(x, z, L[i], L[i+1])); return d; };
+const triang = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+// clip a polygon to the half plane a*x + b*z + c >= 0
+function clipP(P, a, b, c){ const out = [], f = p => a*p[0] + b*p[1] + c;
+  for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], fp = f(p), fq = f(q);
+    if (fp >= 0) out.push(p); if ((fp >= 0) !== (fq >= 0)){ const t = fp/(fp - fq); out.push([p[0] + (q[0]-p[0])*t, p[1] + (q[1]-p[1])*t]); } }
+  return out; }
+// walls of a plan polygon from y0 (number or f(x, z)) up to ytop (number or f) and its top cap
+function prismP(o, P, y0, ytop, noTop, bottom){
+  const f = typeof ytop === 'function' ? ytop : () => ytop, f0 = typeof y0 === 'function' ? y0 : () => y0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; quadP(o, [a[0], f0(a[0], a[1]), a[1]], [b[0], f0(b[0], b[1]), b[1]], [b[0], f(b[0], b[1]), b[1]], [a[0], f(a[0], a[1]), a[1]]); }
+  if (!noTop) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f(p[0], p[1]), p[1]); }
+  if (bottom) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f0(p[0], p[1]), p[1]); }
+}
+const flatP = (o, P, y) => { for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], typeof y === 'function' ? y(p[0], p[1]) : y, p[1]); } };
+// floor bands round a polygon every `step` between y0 and y1
+function bandsP(o, P, y0, y1, step, bh, off, edges){
+  off = off || 0.12;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.3) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0 + step; y < y1 - 0.3; y += step) quadP(o, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, y+bh, b[1]+nz*off], [a[0]+nx*off, y+bh, a[1]+nz*off]);
+  }
+}
+// vertical strips about `sp` apart, `w` wide, `off` proud of the walls (a fin with depth when dep is given)
+function mullP(o, P, y0, y1, sp, w, off, edges, dep){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp*0.6) continue;
+    const [nx, nz] = outN(P, i), n = Math.max(1, Math.round(L/sp)), ux = ex/L, uz = ez/L;
+    for (let k = 0; k <= n; k++){
+      const t = k/n, x = a[0] + ex*t + nx*off, z = a[1] + ez*t + nz*off;
+      if (dep) { boxP(o, w, y1 - y0, dep, x + nx*dep/2, y0, z + nz*dep/2, -Math.atan2(uz, ux)); continue; }
+      const p = [x - ux*w/2, z - uz*w/2], q = [x + ux*w/2, z + uz*w/2];
+      quadP(o, [p[0], y0, p[1]], [q[0], y0, q[1]], [q[0], y1, q[1]], [p[0], y1, p[1]]); }
+  }
+}
+// window slots in bays along every edge, rows every fh
+function winsP(o, P, y0, y1, fh, sp, ww, wh, off, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp) continue;
+    const [nx, nz] = outN(P, i), n = Math.floor(L/sp), ux = ex/L, uz = ez/L, s0 = (L - n*sp)/2 + sp/2;
+    for (let y = y0; y + wh <= y1 + 0.01; y += fh) for (let k = 0; k < n; k++){
+      const s = s0 + k*sp, x = a[0] + ux*s + nx*off, z = a[1] + uz*s + nz*off;
+      quadP(o, [x - ux*ww/2, y, z - uz*ww/2], [x + ux*ww/2, y, z + uz*ww/2], [x + ux*ww/2, y + wh, z + uz*ww/2], [x - ux*ww/2, y + wh, z - uz*ww/2]); }
+  }
+}
+function lineRingP(o, P, y, r, n){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; segP(o, [a[0], y, a[1]], [b[0], y, b[1]], r, n || 3); } }
+function lineP(o, L, y, r, n){ for (let i = 0; i < L.length - 1; i++) segP(o, [L[i][0], typeof y === 'function' ? y(L[i][0], L[i][1]) : y, L[i][1]], [L[i+1][0], typeof y === 'function' ? y(L[i+1][0], L[i+1][1]) : y, L[i+1][1]], r, n || 3); }
+// railing along a polyline: posts every `sp`, top rail
+function railP(o, L, yf, h, sp, closed){
+  const Q = closed ? L.concat([L[0]]) : L;
+  for (let i = 0; i < Q.length - 1; i++){ const a = Q[i], b = Q[i+1], d = Math.hypot(b[0]-a[0], b[1]-a[1]), n = Math.max(1, Math.round(d/sp));
+    for (let k = 0; k < n; k++){ const t = k/n, x = a[0] + (b[0]-a[0])*t, z = a[1] + (b[1]-a[1])*t, y = yf(x, z); boxP(o, 0.12, h, 0.12, x, y, z, 0); }
+    const ya = yf(a[0], a[1]), yb = yf(b[0], b[1]); segP(o, [a[0], ya + h, a[1]], [b[0], yb + h, b[1]], 0.06, 3); }
+}
+function treeP(B, x, y, z, s, crown, trunk, tall){
+  const th = (tall ? 4.5 : 2.6)*s;
+  segP(B.p(trunk || '#5d4a3a'), [x, y, z], [x, y + th, z], 0.22*s, 3);
+  const c = B.p(crown || '#557f3c'), R = (tall ? 1.9 : 2.3)*s, cy = y + th + R*0.5, top = [x, cy + R*(tall ? 2.2 : 0.85), z], bot = [x, cy - R*0.6, z], ring = [];
+  for (let i = 0; i < 6; i++){ const a = i/6*TAU + s; ring.push([x + Math.cos(a)*R, cy, z + Math.sin(a)*R]); }
+  for (let i = 0; i < 6; i++){ const j = (i+1) % 6; triP(c, top, ring[j], ring[i]); triP(c, bot, ring[i], ring[j]); }
+}
+// resample a closed polygon to n points evenly by perimeter
+function resP(P, n){ const L = [0]; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; L.push(L[i] + Math.hypot(b[0]-a[0], b[1]-a[1])); }
+  const T = L[P.length], out = []; let j = 0;
+  for (let k = 0; k < n; k++){ const s = k/n*T; while (j < P.length - 1 && L[j+1] < s) j++; const a = P[j], b = P[(j+1) % P.length], t = (s - L[j])/((L[j+1] - L[j]) || 1); out.push([a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t]); }
+  return out; }
+// the polygon boundary point in direction th from c (ray cast; last hit)
+function rayP(P, c, th){ const dx = Math.cos(th), dz = Math.sin(th); let best = 0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], den = dx*ez - dz*ex; if (Math.abs(den) < 1e-9) continue;
+    const t = ((a[0]-c[0])*ez - (a[1]-c[1])*ex)/den, u = ((a[0]-c[0])*dz - (a[1]-c[1])*dx)/den; if (t > 0 && u >= 0 && u <= 1) best = Math.max(best, t); }
+  return best; }
+// ground of the app under a landmark, relative to its base (local y); rot must be 0. Falls back to flat ground outside the app/kit.
+function mkG(lat, lon){
+  try { if (typeof hC === 'function' && typeof sgXY === 'function' && LMCTX && LMCTX.u && LMCTX.u.base){ const q = sgXY(lat, lon), b = LMCTX.u.base.value; return (x, z) => hC(q[0] + x, q[1] - z) - b; } } catch (e){}
+  return () => 0;
+}
+const gMin = (G, P) => { let m = 1e9; for (const p of P) m = Math.min(m, G(p[0], p[1])); const c = cenP(P); return Math.min(m, G(c[0], c[1])); };
+const gMax = (G, P) => { let m = -1e9; for (const p of P) m = Math.max(m, G(p[0], p[1])); const c = cenP(P); return Math.max(m, G(c[0], c[1])); };
+// custom night emissive add-on for one material (vLP = local position, uTime / uNight from the kit)
+function lmPatch(spec, glsl, tag){
+  const m = lmMat(spec); if (m.userData.hkc) return m; m.userData.hkc = 1;
+  const base = m.onBeforeCompile;
+  m.onBeforeCompile = function hkcGlow(sh){
+    base(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvLP = transformed;');
+    const code = '\n{ vec3 lp = vLP; vec3 ledC = vec3(0.0);\n' + glsl + '\n totalEmissiveRadiance += ledC * uNight; }\n';
+    const fs = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;');
+    sh.fragmentShader = fs.indexOf('totalEmissiveRadiance += em * uNight;') >= 0 ? fs.replace('totalEmissiveRadiance += em * uNight;', 'totalEmissiveRadiance += em * uNight;' + code) : fs.replace('#include <aomap_fragment>', code + '#include <aomap_fragment>');
+  };
+  const ck = 'hkc|' + (tag || '') + '|' + glsl.length + '|' + String(base).length;
+  m.customProgramCacheKey = () => ck;
+  return m;
+}
+
+
+// ---- hk50e kit (block-scoped)
+const LL = (lat, lon, x, z) => ({lat:+(lat - z/110734.9).toFixed(7), lon:+(lon + x/103014.2).toFixed(7)});
+const cenA = P => { let a = 0, x = 0, z = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], c = p[0]*q[1] - q[0]*p[1]; a += c; x += (p[0] + q[0])*c; z += (p[1] + q[1])*c; } return Math.abs(a) < 1e-6 ? cenP(P) : [x/(3*a), z/(3*a)]; };
+// oriented frame of a plan polygon: u along the long side, v across; ob.p(u, v) -> plan [x, z]
+function obE(P, ang){
+  let best = null;
+  const tryA = an => { const c = Math.cos(an), s = Math.sin(an); let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+    for (const p of P){ const u = p[0]*c + p[1]*s, v = -p[0]*s + p[1]*c; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const A = (u1 - u0)*(v1 - v0); if (!best || A < best.A - 1e-6) best = {A, an, u0, u1, v0, v1}; };
+  if (ang !== undefined) tryA(ang); else for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) > 0.5) tryA(Math.atan2(b[1]-a[1], b[0]-a[0])); }
+  let {an, u0, u1, v0, v1} = best;
+  if (ang === undefined && v1 - v0 > u1 - u0){ an += HP; const t0 = u0, t1 = u1; u0 = v0; u1 = v1; v0 = -t1; v1 = -t0; }
+  const c = Math.cos(an), s = Math.sin(an), uc = (u0 + u1)/2, vc = (v0 + v1)/2, cx = uc*c - vc*s, cz = uc*s + vc*c;
+  const p = (u, v) => [cx + u*c - v*s, cz + u*s + v*c];
+  return {cx, cz, a:an, c, s, L:u1 - u0, W:v1 - v0, p, ry:-an,
+    loc:(x, z) => { const dx = x - cx, dz = z - cz; return [dx*c + dz*s, -dx*s + dz*c]; },
+    rect:(a0, a1, b0, b1) => [p(a0, b0), p(a1, b0), p(a1, b1), p(a0, b1)]};
+}
+// 3-D point in an oriented frame
+const o3 = (ob, u, y, v) => { const q = ob.p(u, v); return [q[0], y, q[1]]; };
+// box in an oriented frame (u0..u1, v0..v1, y0..y1)
+function boxO(o, ob, u0, u1, v0, v1, y0, y1){ const q = ob.p((u0 + u1)/2, (v0 + v1)/2); boxP(o, u1 - u0, y1 - y0, v1 - v0, q[0], y0, q[1], ob.ry); }
+// hip roof over the oriented rectangle u0..u1 x v0..v1 at eaves y, rise h (ridge along the longer side)
+function hipO(o, ob, u0, u1, v0, v1, y, h){
+  const du = u1 - u0, dv = v1 - v0, P = (u, v, yy) => o3(ob, u, yy, v);
+  if (du >= dv){ const k = dv/2, vc = (v0 + v1)/2, r1 = P(u0 + k, vc, y + h), r2 = P(u1 - k, vc, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, r2); triP(o, A, r2, B); triP(o, C, r2, r1); triP(o, C, r1, E); triP(o, E, r1, A); triP(o, B, r2, C); }
+  else { const k = du/2, uc = (u0 + u1)/2, r1 = P(uc, v0 + k, y + h), r2 = P(uc, v1 - k, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, B); triP(o, B, r1, r2); triP(o, B, r2, C); triP(o, C, r2, E); triP(o, E, r2, r1); triP(o, E, r1, A); }
+}
+// gable roof (ridge along u when alongU, else along v) with the two gable triangles in `og` (walls) when given
+function gableO(o, ob, u0, u1, v0, v1, y, h, alongU, og){
+  const P = (u, v, yy) => o3(ob, u, yy, v);
+  if (alongU){ const vc = (v0 + v1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(u0, vc, y + h), r2 = P(u1, vc, y + h);
+    quadP(o, A, B, r2, r1); quadP(o, C, E, r1, r2); if (og){ triP(og, A, r1, E); triP(og, B, C, r2); } }
+  else { const uc = (u0 + u1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(uc, v0, y + h), r2 = P(uc, v1, y + h);
+    quadP(o, A, r1, r2, E); quadP(o, B, C, r2, r1); if (og){ triP(og, A, B, r1); triP(og, C, E, r2); } }
+}
+// tile ribs (pan and roll tiles) down both slopes of a gable / hip whose ridge runs along u (or v)
+function ribsO(o, ob, u0, u1, v0, v1, y, h, alongU, sp){
+  sp = sp || 0.55; const P = (u, v, yy) => o3(ob, u, yy, v), e = 0.05;
+  if (alongU){ const vc = (v0 + v1)/2; for (let u = u0 + sp/2; u < u1; u += sp){ for (const vv of [v0, v1]){ const a = P(u - 0.07, vv, y + e), b = P(u + 0.07, vv, y + e), c = P(u + 0.07, vc, y + h + e), d = P(u - 0.07, vc, y + h + e); quadP(o, a, b, c, d); } } }
+  else { const uc = (u0 + u1)/2; for (let v = v0 + sp/2; v < v1; v += sp){ for (const uu of [u0, u1]){ const a = P(uu, v - 0.07, y + e), b = P(uu, v + 0.07, y + e), c = P(uc, v + 0.07, y + h + e), d = P(uc, v - 0.07, y + h + e); quadP(o, a, b, c, d); } } }
+}
+// arch head profile: height above the springing at t in [0, 1] across a clear span s (kind 'r' round, 'p' pointed, 's' segmental)
+function archF(kind, s, t){ const x = 2*t - 1;
+  if (kind === 'p'){ const R = s*0.8, ax = Math.abs(x)*s/2, c = R - s/2; return Math.sqrt(Math.max(0, R*R - (ax + c)*(ax + c))); }
+  if (kind === 's') return s*0.18*(1 - x*x);
+  return s/2*Math.sqrt(Math.max(0, 1 - x*x)); }
+// an arcade wall along plan segment a -> b (outward normal side = +n): n bays of arches between piers, from y0 to yTop,
+// openings `oh` high to the springing; spandrels and piers in oW, the dark recess behind the openings in oD (optional)
+function arcadeP(oW, oD, a, b, y0, yTop, nb, oh, pw, dep, kind){
+  const dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz); if (L < 1) return;
+  const ux = dx/L, uz = dz/L, nx = uz, nz = -ux, bay = L/nb, s = bay - pw, P = (t, y, w) => [a[0] + ux*t + nx*w, y, a[1] + uz*t + nz*w];
+  for (let i = 0; i <= nb; i++){ const t = i*bay, q = P(t, 0, 0); boxP(oW, pw, oh + (yTop - y0 - oh), dep, q[0], y0, q[2], -Math.atan2(uz, ux)); }
+  const ys = y0 + oh, N = 8;
+  for (let i = 0; i < nb; i++){ const t0 = i*bay + pw/2;
+    for (let k = 0; k < N; k++){ const ta = k/N, tb = (k + 1)/N, xa = t0 + s*ta, xb = t0 + s*tb, ha = Math.min(yTop - ys, archF(kind, s, ta)), hb = Math.min(yTop - ys, archF(kind, s, tb));
+      for (const w of [dep/2, -dep/2]) quadP(oW, P(xa, ys + ha, w), P(xb, ys + hb, w), P(xb, yTop, w), P(xa, yTop, w));
+      quadP(oW, P(xa, ys + ha, dep/2), P(xa, ys + ha, -dep/2), P(xb, ys + hb, -dep/2), P(xb, ys + hb, dep/2)); }
+    if (oD){ const q0 = P(t0, 0, -dep/2 - 1.6), q1 = P(t0 + s, 0, -dep/2 - 1.6); quadP(oD, [q0[0], y0, q0[2]], [q1[0], y0, q1[2]], [q1[0], yTop, q1[2]], [q0[0], yTop, q0[2]]); }
+  }
+  // top beam
+  const m = P(L/2, 0, 0); boxP(oW, L + pw, 0.35, dep + 0.1, m[0], yTop - 0.05, m[2], -Math.atan2(uz, ux));
+}
+// balustrade along a segment: rail, base, balusters every sp
+function balP(o, a, b, y, h, sp){ const L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 0.5) return; const n = Math.max(1, Math.round(L/sp));
+  wallP(o, a, b, 0.3, y, y + 0.15); wallP(o, a, b, 0.32, y + h - 0.12, y + h);
+  for (let k = 0; k <= n; k++){ const t = k/n; boxP(o, 0.13, h - 0.27, 0.13, a[0] + (b[0]-a[0])*t, y + 0.15, a[1] + (b[1]-a[1])*t, 0); } }
+// chimney stack
+function chimP(o, oc, x, z, y0, y1, w){ boxP(o, w, y1 - y0, w*0.8, x, y0, z, 0); boxP(oc, w + 0.25, 0.3, w*0.8 + 0.25, x, y1, z, 0); }
+// abstract shop signs (no letters): flat coloured panels hung off a facade edge, self-lit at night
+const SIGNC = ['#c83c32', '#e0b23a', '#2f7fb8', '#3c9a5c', '#d8d2c4', '#8a3c8c', '#e07a2e'];
+function signsP(B, a, b, y0, y1, n, out, rng){
+  const dx = b[0]-a[0], dz = b[1]-a[1], L = Math.hypot(dx, dz); if (L < 2) return; const ux = dx/L, uz = dz/L, nx = uz*out, nz = -ux*out;
+  for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*L, w = Math.min(L/n*0.8, 2.5 + rng()*3), h = 0.9 + rng()*1.4, y = y0 + rng()*(y1 - y0 - h), col = SIGNC[(rng()*SIGNC.length) | 0];
+    const x = a[0] + ux*t + nx*0.25, z = a[1] + uz*t + nz*0.25;
+    boxP(B.p({c:col, glow:col, gk:0.55}), w, h, 0.18, x, y, z, -Math.atan2(uz, ux)); }
+}
+// per-floor window bands on every edge of P: glass band in og (lit spec), spandrel in the walls
+function floorsP(og, P, y0, y1, fh, gh, off){ off = off || 0.06;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.8) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0; y + 0.5 < y1; y += fh){ const t = Math.min(y + gh, y1 - 0.1); quadP(og, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, t, b[1]+nz*off], [a[0]+nx*off, t, a[1]+nz*off]); } } }
+// a stepped AC / balcony relief on residential facades: small boxes every bay and floor (deterministic)
+function acP(o, P, y0, y1, fh, sp, rng, p){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp) continue;
+  const [nx, nz] = outN(P, i), n = Math.floor(L/sp), ux = ex/L, uz = ez/L;
+  for (let y = y0 + 1.1; y + 0.8 < y1; y += fh) for (let k = 0; k < n; k++){ if (rng() > (p || 0.45)) continue; const t = (k + 0.5)*L/n; boxP(o, 0.9, 0.6, 0.55, a[0] + ux*t + nx*0.3, y, a[1] + uz*t + nz*0.3, -Math.atan2(uz, ux)); } } }
+
+
+// =====================================================================================================================
+// ★ Former Kowloon British School (1902; Antiquities and Monuments Office): fair-faced red brick with pointed arches, wide verandahs, high
+// ceilings and pitched Chinese-tile roofs (EPD CHIA 2024, AMO). On the OSM footprint w692802859 (an L: the main wing along Nathan Road and
+// the north arm). Roof top 9.7 m above ground (LandsD); two storeys, verandah placement, chimneys and window colour (green panels,
+// localiiz) follow photos / general knowledge and are approximations.
+// =====================================================================================================================
+const KBS = {lat:22.301586, lon:114.172191};
+LANDMARKS.hkkbs = {zh:'前九龙英童学校（古物古迹办事处）', en:'Former Kowloon British School (Antiquities and Monuments Office)', cat:'old', r:26, h:12,
+  lt:{m:0, c:'#ffd6a0', k:0.95, e:0.35, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = mkG(KBS.lat, KBS.lon), P = D.hkkbs.p;
+    const gs = gMin(G, P), y0 = gs - 3, BR = '#a5503b', BR2 = '#92452f', ST = '#cfc6b4', TL = '#985a45', RIB = '#7f4635', GLW = {c:'#3f5f4a', glow:'#ffd49a', gk:0.5}, DK = '#3a2a24';
+    // the main wing and the north arm, both cut from the OSM outline
+    const MW = [[-10.9, -10.6], [-9.5, -13.8], [-5.4, -17.1], [3.9, -17.8], [6.8, 21.1], [-8.4, 22.2]], AR = [[3.9, -17.8], [14.0, -18.5], [15.2, -2.6], [12.2, -2.4], [11.8, -7.4], [4.7, -6.8]];
+    prismP(B.p(ST), offP(P, 0.2), y0, gs + 0.7);
+    const ob = obE(MW), u0 = -ob.L/2, u1 = ob.L/2, v0 = -ob.W/2, v1 = ob.W/2, VD = 2.5, yE = gs + 7.2, yF = gs + 3.9;
+    // core with the green-panelled windows (two floors), verandahs both long sides
+    const core = ob.rect(u0, u1, v0 + VD, v1 - VD);
+    prismP(B.p(BR), core, gs + 0.7, yE, true);
+    winsP(B.p(GLW), core, gs + 1.2, yE - 0.6, 3.3, 3.3, 1.3, 2.3, 0.05);
+    bandsP(B.p(ST), core, gs + 0.7, yE, 3.25, 0.25, 0.04);
+    for (const [vv, sg] of [[v0, -1], [v1, 1]]){
+      const a = ob.p(u0, vv + sg*0.2), b = ob.p(u1, vv + sg*0.2), A = sg > 0 ? a : b, Bp = sg > 0 ? b : a, nb = Math.max(4, Math.round(ob.L/3.4));
+      arcadeP(B.p(BR), null, A, Bp, gs + 0.7, yF, nb, 2.0, 0.75, 0.5, 'p');
+      arcadeP(B.p(BR2), null, A, Bp, yF + 0.3, yE, nb, 1.8, 0.7, 0.45, 'p');
+      boxO(B.p(ST), ob, u0, u1, Math.min(vv, vv + sg*VD), Math.max(vv, vv + sg*VD), yF, yF + 0.3);      // verandah floor slab
+      for (let k = 0; k < nb; k++){ const t0 = u0 + (k + 0.15)*ob.L/nb, t1 = u0 + (k + 0.85)*ob.L/nb; balP(B.p('#e9e4d8'), ob.p(t0, vv + sg*0.2), ob.p(t1, vv + sg*0.2), yF + 0.3, 1.0, 0.32); }
+    }
+    // end walls closing the verandahs at the north and south
+    for (const uu of [u0 + 0.25, u1 - 0.25]) for (const [a0, a1] of [[v0, v0 + VD], [v1 - VD, v1]]) boxO(B.p(BR), ob, uu - 0.25, uu + 0.25, a0, a1, gs + 0.7, yE);
+    // hipped Chinese-tile roof, ridge at 9.7 m
+    const OV = 0.7; hipO(B.p(TL), ob, u0 - OV, u1 + OV, v0 - OV, v1 + OV, yE, 2.5);
+    ribsO(B.p(RIB), ob, u0 - OV + ob.W/2 + OV, u1 + OV - ob.W/2 - OV, v0 - OV, v1 + OV, yE, 2.5, true, 0.6);
+    lineRingP(B.p('#e9e4d8'), ob.rect(u0 - OV, u1 + OV, v0 - OV, v1 + OV), yE - 0.15, 0.18);
+    // north arm (later classroom wing): brick block with windows and its own hip roof
+    const oa = obE(AR), ra = oa.rect(-oa.L/2, oa.L/2, -oa.W/2, oa.W/2);
+    prismP(B.p(BR), AR, gs + 0.7, yE - 0.4, true); winsP(B.p(GLW), AR, gs + 1.2, yE - 1.0, 3.3, 3.0, 1.2, 2.2, 0.05); bandsP(B.p(ST), AR, gs + 0.7, yE - 0.4, 3.25, 0.25, 0.04);
+    hipO(B.p(TL), oa, -oa.L/2 - 0.5, oa.L/2 + 0.5, -oa.W/2 - 0.5, oa.W/2 + 0.5, yE - 0.4, 2.0);
+    lineRingP(B.p('#e9e4d8'), oa.rect(-oa.L/2 - 0.5, oa.L/2 + 0.5, -oa.W/2 - 0.5, oa.W/2 + 0.5), yE - 0.55, 0.18);
+    // tall chimney stacks on the ridge
+    for (const t of [-0.3, 0.05, 0.38]){ const q = ob.p(t*ob.L, 0); chimP(B.p(BR2), B.p(ST), q[0], q[1], yE + 1.0, yE + 4.0, 1.0); }
+    { const q = oa.p(0, 0); chimP(B.p(BR2), B.p(ST), q[0], q[1], yE + 0.5, yE + 3.2, 0.9); }
+    // entrance steps on the Nathan Road side
+    { const q = ob.p(0, v0 - 0.9); boxP(B.p(ST), 3.2, 0.7, 1.4, q[0], gs, q[1], ob.ry); }
+    // garden trees in the courtyard east of the main wing
+    for (const [x, z] of [[9.5, 3], [10.5, 12]]) treeP(B, x, gs, z, 1.1);
+    B.flush(g); return g; }};
+SG_PLACES.push({type:'hkkbs', lat:KBS.lat, lon:KBS.lon, rot:0});
+
+// =====================================================================================================================
+// ★ Hong Kong Observatory, 1883 Building (declared monument): a two-storey brick building in classical revival style with Corinthian
+// columns and pilasters, arched windows, ornamental balustrades, long verandahs and hipped Chinese pan-and-roll tile roofs; the west
+// (left) wing added 1912-13 (EPD CHIA 2024; AMO: "rectangular two-storey plastered brick structure"). OSM footprint w692802873 and the
+// Annex w692802877 (single storey + flat-roofed second floor of 1955, 6.4 m LandsD). Roof 9.9 m above its base (LandsD). The real
+// building stands on Observatory Hill (base 32.7 mPD), which the page's bare-earth terrain does not have: the model sits on the page
+// ground with a low terrace. Wall colour (cream) is an approximation; the Centenary Building next to it is not part of this key.
+// =====================================================================================================================
+const HKO = {lat:22.302165, lon:114.174158};
+LANDMARKS.hkobservatory = {zh:'香港天文台（一八八三大楼）', en:'Hong Kong Observatory (1883 Building)', cat:'old', r:35, h:12,
+  lt:{m:0, c:'#fff0d6', k:0.95, e:0.4, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = mkG(HKO.lat, HKO.lon), M = D.hkobservatory.m, AX = D.hkobservatory.ax;
+    const gs = gMin(G, M) + 0.9, y0 = gMin(G, M) - 3, WL = '#e7dcc2', WL2 = '#d9ccaf', WH = '#f4efe4', TL = '#8e5a47', RIB = '#7a4a3a', GLW = {c:'#4c5a55', glow:'#ffe2b0', gk:0.55};
+    const ob = obE(M), u0 = -ob.L/2, u1 = ob.L/2, v0 = -ob.W/2, v1 = ob.W/2, uW = u0 + 8.5, VD = 2.6, yF = gs + 3.8, yE = gs + 7.4;
+    // which end is west: the 1912-13 wing
+    const westLow = ob.p(u0, 0)[0] < ob.p(u1, 0)[0];
+    const mA = westLow ? uW : u0, mB = westLow ? u1 : u1 - 8.5, wA = westLow ? u0 : u1 - 8.5, wB = westLow ? uW : u1;
+    // terrace and granite plinth
+    prismP(B.p('#a7a296'), offP(M, 2.2), y0, gs - 0.1); railP(B.p('#e9e4d8'), offP(M, 2.0), () => gs - 0.1, 0.9, 2.5, true);
+    prismP(B.p('#bdb6a6'), M, gs - 0.2, gs + 0.6);
+    // main 1883 block: core walls, two storeys of arcaded verandahs N and S with columns, pilasters and balustrades
+    const core = ob.rect(mA, mB, v0 + VD, v1 - VD);
+    prismP(B.p(WL), core, gs + 0.6, yE, true);
+    winsP(B.p(GLW), core, gs + 1.0, yE - 0.5, 3.6, 3.2, 1.3, 2.4, 0.05);
+    for (const [vv, sg] of [[v0, -1], [v1, 1]]){
+      const a = ob.p(mA, vv + sg*0.15), b = ob.p(mB, vv + sg*0.15), A = sg > 0 ? a : b, Bp = sg > 0 ? b : a, nb = Math.round((mB - mA)/3.2);
+      arcadeP(B.p(WL2), null, A, Bp, gs + 0.6, yF, nb, 2.1, 0.8, 0.55, 'r');
+      boxO(B.p(WH), ob, mA, mB, Math.min(vv, vv + sg*VD), Math.max(vv, vv + sg*VD), yF, yF + 0.35);
+      // first-floor colonnade: Corinthian columns with capitals, entablature, balustrade
+      const o = B.p(WH);
+      for (let k = 0; k <= nb; k++){ const t = mA + k*(mB - mA)/nb, q = ob.p(t, vv + sg*0.15); segP(o, [q[0], yF + 0.35, q[1]], [q[0], yE - 0.9, q[1]], 0.2, 8); boxP(o, 0.6, 0.45, 0.6, q[0], yE - 0.95, q[1], ob.ry); boxP(o, 0.55, 0.3, 0.55, q[0], yF + 0.35, q[1], ob.ry); }
+      boxO(B.p(WL2), ob, mA, mB, Math.min(vv, vv + sg*0.6) - 0.05, Math.max(vv, vv + sg*0.6) + 0.05, yE - 0.5, yE);
+      for (let k = 0; k < nb; k++){ const t0 = mA + (k + 0.12)*(mB - mA)/nb, t1 = mA + (k + 0.88)*(mB - mA)/nb; balP(B.p(WH), ob.p(t0, vv + sg*0.15), ob.p(t1, vv + sg*0.15), yF + 0.35, 1.0, 0.3); }
+      // pilasters on the core wall behind
+      for (let k = 0; k <= nb; k++){ const t = mA + k*(mB - mA)/nb; boxO(B.p(WH), ob, t - 0.25, t + 0.25, sg > 0 ? v1 - VD : v0 + VD - 0.15, sg > 0 ? v1 - VD + 0.15 : v0 + VD, gs + 0.6, yE); }
+    }
+    for (const uu of [mA + 0.25, mB - 0.25]) for (const [a0, a1] of [[v0, v0 + VD], [v1 - VD, v1]]) boxO(B.p(WL), ob, uu - 0.25, uu + 0.25, a0, a1, gs + 0.6, yE);
+    // 1912-13 west wing: narrower, arched windows, string course
+    const wing = ob.rect(wA, wB, v0 + 1.3, v1 - 1.3);
+    prismP(B.p(WL), wing, gs + 0.6, yE - 0.2, true);
+    winsP(B.p(GLW), wing, gs + 1.0, yE - 0.8, 3.6, 2.6, 1.1, 2.3, 0.05);
+    bandsP(B.p(WH), wing, gs + 0.6, yE - 0.2, 3.3, 0.3, 0.05);
+    // cornice, hipped tile roofs (ridge 9.9 m above the base)
+    const OV = 0.6;
+    boxO(B.p(WH), ob, mA - OV, mB + OV, v0 - OV, v1 + OV, yE, yE + 0.4);
+    hipO(B.p(TL), ob, mA - OV, mB + OV, v0 - OV, v1 + OV, yE + 0.4, 2.1);
+    ribsO(B.p(RIB), ob, mA - OV + ob.W/2 + OV, mB + OV - ob.W/2 - OV, v0 - OV, v1 + OV, yE + 0.4, 2.1, true, 0.6);
+    boxO(B.p(WH), ob, wA - 0.4, wB + 0.4, v0 + 0.9, v1 - 0.9, yE - 0.2, yE + 0.15);
+    hipO(B.p(TL), ob, wA - 0.4, wB + 0.4, v0 + 0.9, v1 - 0.9, yE + 0.15, 1.9);
+    // chimney stacks (fireplaces)
+    for (const t of [0.25, 0.75]){ const q = ob.p(mA + (mB - mA)*t, 0); chimP(B.p(WL2), B.p(WH), q[0], q[1], yE + 1.2, yE + 3.6, 0.9); }
+    // the Annex (north): two plain storeys with a flat roof (6.4 m) and a link bridge
+    const ga = gMin(G, AX) + 0.9; prismP(B.p('#a7a296'), AX, y0, ga); prismP(B.p(WL2), AX, ga, ga + 6.4); bandsP(B.p(WH), AX, ga, ga + 6.4, 3.2, 0.3, 0.05);
+    floorsP(B.p(GLW), AX, ga + 0.9, ga + 6.2, 3.2, 1.4, 0.06); lineRingP(B.p(WH), AX, ga + 6.4, 0.18);
+    { const a = cenA(AX), b = cenA(core); const q = [(a[0] + b[0])/2, (a[1] + b[1])/2]; wallP(B.p(WL2), [q[0], a[1] + 4], [q[0], b[1] - 4], 2.2, gs + 3.6, gs + 6.4); }
+    // lawn trees on the slope
+    for (const [x, z] of [[2, 11], [-8, 11]]) treeP(B, x, gMin(G, [[x, z]]), z, 1.1);
+    B.flush(g); return g; }};
+SG_PLACES.push({type:'hkobservatory', lat:HKO.lat, lon:HKO.lon, rot:0});
+
+// =====================================================================================================================
+// ★ Tin Hau Temple Complex, Yau Ma Tei (declared monument 2020): five Qing-vernacular buildings in a row facing west to Yung Shue Tau,
+// on their six OSM footprints (north -> south): Fook Tak Tsz (smallest, courtyard covered by a humpbacked roof), Shu Yuen north (now
+// Shing Wong Temple), Tin Hau Temple in the middle (two halls, three bays, open courtyard with humpbacked side corridors, entrance porch
+// with granite columns and drum platforms, Shiwan ceramic ridge of 1914: double dragons with a pearl, dragon fish at the ends), Kung Sor
+// with its subsidiary building on the south side, Shu Yuen south. Green-glazed tiles on timber purlins, gable walls, granite columns
+// (LegCo brief 2020 L.N. 92). Main roof 8.2 m (LandsD). Wall brick colour and hall depths are approximations.
+// =====================================================================================================================
+const THT = {lat:22.309909, lon:114.170694};
+LANDMARKS.hkymttinhau = {zh:'油麻地天后庙', en:'Tin Hau Temple (Yau Ma Tei)', cat:'old', r:40, h:10,
+  lt:{m:0, c:'#ffcf8a', k:0.9, e:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = mkG(THT.lat, THT.lon), T = D.hkymttinhau;
+    const BRK = '#8d918a', BRK2 = '#7f837c', GRN = '#4a8a58', GRN2 = '#3b7449', GRA = '#c8c1b2', RED = '#9c2a22', MUR = '#d9cfb2', DK = '#2c2622', GOLD = '#c79a3a';
+    const all = [].concat(T.b0, T.b1, T.b2, T.b3, T.b4, T.b5), gs = gMin(G, all) + 0.25, y0 = gs - 2.5;
+    // [footprint, ridge height, entrance-hall depth, courtyard depth, kind]
+    const S = [[T.b0, 6.4, 5.5, 3.5, 'covered'], [T.b1, 7.4, 6.0, 4.0, 'hall'], [T.b2, 8.2, 6.5, 4.6, 'main'], [T.b3, 7.2, 6.0, 4.0, 'hall'], [T.b4, 5.8, 0, 0, 'sub'], [T.b5, 7.2, 6.0, 4.0, 'hall']];
+    prismP(B.p(GRA), offP(all, 0.3), y0, gs + 0.35);
+    for (const [P, hR, dE, dC, kind] of S){
+      const ob = obE(P), west = ob.p(-ob.L/2, 0)[0] < ob.p(ob.L/2, 0)[0] ? -1 : 1;   // front (west) end along u
+      const U = t => west < 0 ? -ob.L/2 + t : ob.L/2 - t, v0 = -ob.W/2, v1 = ob.W/2, L = ob.L;
+      const ua = (t0, t1) => [Math.min(U(t0), U(t1)), Math.max(U(t0), U(t1))];
+      const eav = hR - (kind === 'sub' ? 1.6 : 2.4), base = gs + 0.35;
+      // gable side walls (north / south) and the rear wall, full depth
+      for (const [a0, a1] of [[v0, v0 + 0.45], [v1 - 0.45, v1]]) boxO(B.p(BRK), ob, -L/2, L/2, a0, a1, base, gs + eav + 0.2);
+      { const [r0, r1] = ua(L - 0.45, L); boxO(B.p(BRK), ob, r0, r1, v0, v1, base, gs + eav); }
+      if (kind === 'sub'){
+        // single hall with a semicircular archway at the front
+        const [f0, f1] = ua(1.0, 1.4); boxO(B.p(BRK2), ob, f0, f1, v0, v1, base, gs + eav);
+        { const q = ob.p(U(1.0) - west*0.05, 0); segP(B.p(DK), [q[0], base, q[1]], [q[0], base + 2.4, q[1]], 0.9, 6); }
+        const [r0, r1] = ua(-0.5, L); gableO(B.p(GRN), ob, r0, r1, v0 - 0.3, v1 + 0.3, gs + eav, 1.6, false, B.p(BRK)); ribsO(B.p(GRN2), ob, r0, r1, v0 - 0.3, v1 + 0.3, gs + eav, 1.6, false, 0.45);
+        continue;
+      }
+      // front: recessed facade behind the porch line, granite door frame, red doors, mural band, carved fascia
+      const porch = kind === 'main' ? 2.2 : 1.4;
+      { const [f0, f1] = ua(porch, porch + 0.5); boxO(B.p(BRK2), ob, f0, f1, v0, v1, base, gs + eav); }
+      { const q = ob.p(U(porch) - west*0.04, 0), w = Math.min(2.4, ob.W*0.3); boxP(B.p(GRA), 0.12, 3.3, w + 0.8, q[0], base, q[1], ob.ry); boxP(B.p({c:RED, glow:'#ff9a50', gk:0.25}), 0.16, 2.9, w, q[0], base, q[1], ob.ry); }
+      { const [f0, f1] = ua(porch - 0.06, porch); boxO(B.p(MUR), ob, f0, f1, v0 + 0.4, v1 - 0.4, gs + eav - 1.2, gs + eav - 0.3); }
+      { const [f0, f1] = ua(0, 0.25); boxO(B.p({c:GOLD, glow:'#ffb060', gk:0.3}), ob, f0, f1, v0, v1, gs + eav - 0.7, gs + eav - 0.25); }
+      // porch columns (granite) and drum platforms on the Tin Hau front
+      if (kind !== 'covered'){ const n = kind === 'main' ? 4 : 2; for (let k = 0; k < n; k++){ const v = v0 + (k + 0.5)*(v1 - v0)/n*(n === 2 ? 1 : 1), vv = n === 2 ? (k ? v1 - 1.2 : v0 + 1.2) : v; const q = ob.p(U(0.4), vv); segP(B.p(GRA), [q[0], base, q[1]], [q[0], gs + eav, q[1]], 0.2, 8); } }
+      if (kind === 'main') for (const vv of [v0 + 1.1, v1 - 1.1]){ const [f0, f1] = ua(0.2, porch - 0.1); boxO(B.p(GRA), ob, f0, f1, vv - 1.0, vv + 1.0, base, base + 0.75); }
+      // entrance hall roof: gable with the ridge parallel to the facade (along v)
+      const [e0, e1] = ua(-0.6, dE), hE = hR - 0.9 - (kind === 'main' ? 0.5 : 0);
+      gableO(B.p(GRN), ob, e0, e1, v0 - 0.3, v1 + 0.3, gs + eav, hE - eav, false, B.p(BRK));
+      ribsO(B.p(GRN2), ob, e0, e1, v0 - 0.3, v1 + 0.3, gs + eav, hE - eav, false, 0.45);
+      // courtyard: open (covered by a humpbacked roof in Fook Tak Tsz) with side corridors under humpbacked roofs
+      const [c0, c1] = ua(dE, dE + dC);
+      if (kind === 'covered'){ gableO(B.p(GRN), ob, c0, c1, v0, v1, gs + eav - 0.4, 1.0, true); }
+      else for (const [a0, a1] of [[v0 + 0.4, v0 + 1.6], [v1 - 1.6, v1 - 0.4]]) gableO(B.p(GRN), ob, c0, c1, a0, a1, gs + eav - 1.6, 0.7, true, B.p(BRK2));
+      if (kind !== 'covered'){ const [k0, k1] = ua(dE, dE + 0.1); boxO(B.p({c:'#8c7a5a', glow:'#ffb35c', gk:0.4}), ob, k0, k1, v0 + 1.8, v1 - 1.8, base, base + 0.05); }
+      // main (rear) hall: deeper, taller gable roof
+      const [m0, m1] = ua(dE + dC, L + 0.5);
+      boxO(B.p(BRK2), ob, ...ua(dE + dC, dE + dC + 0.35), v0, v1, base, gs + eav + 0.3);
+      gableO(B.p(GRN), ob, m0, m1, v0 - 0.3, v1 + 0.3, gs + eav + 0.3, hR - eav - 0.3, false, B.p(BRK));
+      ribsO(B.p(GRN2), ob, m0, m1, v0 - 0.3, v1 + 0.3, gs + eav + 0.3, hR - eav - 0.3, false, 0.45);
+      // ridges: plain ridge with bogu ends, or the Shiwan figurine ridge on the Tin Hau entrance hall
+      for (const [r0, r1, yr] of [[e0, e1, gs + hE], [m0, m1, gs + hR]]){ const uc = (r0 + r1)/2; boxO(B.p(GRN2), ob, uc - 0.3, uc + 0.3, v0 - 0.4, v1 + 0.4, yr - 0.1, yr + 0.35);
+        for (const vv of [v0 - 0.3, v1 + 0.3]){ const q = ob.p(uc, vv); boxP(B.p(GRN2), 0.6, 0.5, 0.6, q[0], yr + 0.3, q[1], ob.ry); } }
+      if (kind === 'main'){
+        const uc = (e0 + e1)/2, yr = gs + hE + 0.35, n = 14, cols = ['#3d6fb0', '#d9a43a', '#3f9156', '#b8432f', '#e8e2d2', '#2f8a8a'];
+        boxO(B.p('#c9b38a'), ob, uc - 0.25, uc + 0.25, v0 + 0.2, v1 - 0.2, yr, yr + 0.55);
+        for (let k = 0; k < n; k++){ const v = v0 + 0.8 + (k + 0.5)*(ob.W - 1.6)/n, q = ob.p(uc, v), col = cols[k % cols.length]; boxP(B.p(col), 0.35, 0.5 + (k % 3)*0.12, 0.42, q[0], yr + 0.55, q[1], ob.ry); }
+        // double dragons with the pearl, dragon fish at both ends
+        { const q = ob.p(uc, 0); LSph(g, 0.32, q[0], yr + 1.55, q[1], {c:'#e0b84a', glow:'#ffc860', gk:0.6}, 1, 10); }
+        for (const sg of [-1, 1]){ const a = ob.p(uc, sg*0.45), b = ob.p(uc, sg*2.4); segP(B.p('#3f9156'), [a[0], yr + 1.3, a[1]], [b[0], yr + 1.15, b[1]], 0.18, 5); segP(B.p('#3f9156'), [b[0], yr + 1.15, b[1]], [b[0], yr + 0.75, b[1]], 0.16, 5);
+          const e = ob.p(uc, sg*(ob.W/2 - 0.1)); segP(B.p('#3d6fb0'), [e[0], yr + 0.4, e[1]], [e[0], yr + 1.5, e[1]], 0.22, 6); const t = ob.p(uc, sg*(ob.W/2 - 0.6)); segP(B.p('#3d6fb0'), [e[0], yr + 1.5, e[1]], [t[0], yr + 1.9, t[1]], 0.14, 5); }
+        // qilin carving and lanterns under the front eaves
+        for (const vv of [v0 + 2.2, v1 - 2.2]){ const q = ob.p(U(0.3), vv); LSph(g, 0.35, q[0], gs + eav - 1.0, q[1], {c:'#c8352a', glow:'#ff6a3a', gk:0.9}, 1.25, 10); }
+      }
+    }
+    // incense smoke-stained forecourt pavement and the banyan trees of Yung Shue Tau in front (west)
+    { const ob2 = obE(T.b2), q = ob2.p(ob2.p(-ob2.L/2, 0)[0] < ob2.p(ob2.L/2, 0)[0] ? -ob2.L/2 - 5 : ob2.L/2 + 5, 0); flatP(B.p('#b9b2a4'), [[q[0] - 3.5, q[1] - 20], [q[0] + 3.5, q[1] - 20], [q[0] + 3.5, q[1] + 20], [q[0] - 3.5, q[1] + 20]], gs + 0.05); }
+    for (const [x, z] of [[-24, -14], [-26, 6], [-23, 22]]) treeP(B, x, gMin(G, [[x, z]]), z, 1.7, '#4f7a3a');
+    B.flush(g); return g; }};
+SG_PLACES.push({type:'hkymttinhau', lat:THT.lat, lon:THT.lon, rot:0});
+
+// =====================================================================================================================
+// ★ Yau Ma Tei Theatre (1930): the last surviving pre-war cinema in Kowloon, Neo-classical front with Art Deco influence and Dutch gable
+// walls, Chinese pitched roof on steel trusses (LCSD history page; Wikipedia), the two entrance pillars (carved with crying and laughing
+// masks, kept abstract here). OSM footprint w446811353, roof 11.0 m (LandsD); front on Waterloo Road (north). Facade colours approximate.
+// =====================================================================================================================
+const YMTT = {lat:22.312403, lon:114.169194};
+LANDMARKS.hkymttheatre = {zh:'油麻地戏院及红砖屋', en:'Yau Ma Tei Theatre and Red Brick Building', cat:'old', r:40, h:13,
+  lt:{m:0, c:'#ffd8a8', k:0.95, e:0.4, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = mkG(YMTT.lat, YMTT.lon), P = D.hkymttheatre.th;
+    const gs = gMin(G, P) + 0.2, y0 = gs - 3, WL = '#e6dccb', WL2 = '#d6cab4', TRIM = '#f3eee4', TL = '#8a5847', RIB = '#784a3b', GLW = {c:'#4a4a46', glow:'#ffd9a0', gk:0.55};
+    const ob = obE(P), north = ob.p(ob.L/2, 0)[1] < ob.p(-ob.L/2, 0)[1] ? 1 : -1, uN = north*ob.L/2, uS = -uN, v0 = -ob.W/2, v1 = ob.W/2, yE = gs + 7.6;
+    prismP(B.p('#bdb5a5'), P, y0, gs + 0.5);
+    // auditorium walls with pilaster strips and high windows
+    prismP(B.p(WL2), P, gs + 0.5, yE, true);
+    mullP(B.p(TRIM), P, gs + 0.5, yE, 4.0, 0.5, 0.08);
+    winsP(B.p(GLW), P, gs + 4.6, yE - 0.8, 10, 4.0, 1.0, 1.8, 0.05);
+    boxO(B.p(TRIM), ob, -ob.L/2 - 0.2, ob.L/2 + 0.2, v0 - 0.2, v1 + 0.2, yE - 0.1, yE + 0.3);
+    // Chinese pitched roof (ridge along the hall), ridge at 11 m
+    gableO(B.p(TL), ob, -ob.L/2 + 0.6, ob.L/2 - 0.6, v0 - 0.5, v1 + 0.5, yE + 0.3, 11.0 - 7.9, true);
+    ribsO(B.p(RIB), ob, -ob.L/2 + 0.6, ob.L/2 - 0.6, v0 - 0.5, v1 + 0.5, yE + 0.3, 11.0 - 7.9, true, 0.6);
+    // Dutch (curvilinear) gable walls at both ends; the north one is the entrance front
+    for (const uu of [uN, uS]){ const sg = Math.sign(uu), o = B.p(uu === uN ? WL : WL2), N = 12, prof = [];
+      for (let k = 0; k <= N; k++){ const t = k/N, v = v0 + (v1 - v0)*t, x = 2*t - 1, ax = Math.abs(x);
+        prof.push([v, yE + 0.3 + (ax < 0.28 ? 3.9 : ax < 0.55 ? 3.9 - (ax - 0.28)/0.27*1.6 + 0.6*Math.sin((ax - 0.28)/0.27*PI) : 2.3*(1 - (ax - 0.55)/0.45))]); }
+      for (let k = 0; k < N; k++){ const [va, ya] = prof[k], [vb, yb] = prof[k + 1];
+        for (const d of [0, -sg*0.45]){ const A = o3(ob, uu + d, yE + 0.3, va), Bq = o3(ob, uu + d, yE + 0.3, vb), C = o3(ob, uu + d, yb, vb), E = o3(ob, uu + d, ya, va); quadP(o, A, Bq, C, E); }
+        quadP(B.p(TRIM), o3(ob, uu + sg*0.05, ya, va), o3(ob, uu + sg*0.05, yb, vb), o3(ob, uu - sg*0.5, yb, vb), o3(ob, uu - sg*0.5, ya, va)); }
+    }
+    // entrance front: raised central bay with Art Deco fins, the two entrance pillars, canopy, doors
+    { const o = B.p(TRIM), uu = uN + north*0.12; for (const vv of [-4.2, -2.4, 2.4, 4.2]){ const a = o3(ob, uu, gs + 0.5, vv), b = o3(ob, uu + north*0.35, gs + 0.5, vv); boxP(o, 0.5, 9.8, 0.5, (a[0] + b[0])/2, gs + 0.5, (a[2] + b[2])/2, ob.ry); }
+      for (const vv of [-1.4, 1.4]){ const q = ob.p(uN + north*1.6, vv); segP(B.p(WL), [q[0], gs + 0.5, q[1]], [q[0], gs + 4.2, q[1]], 0.38, 10); boxP(B.p(TRIM), 1.0, 0.4, 1.0, q[0], gs + 4.2, q[1], ob.ry); }
+      boxO(B.p(TRIM), ob, Math.min(uN, uN + north*2.1), Math.max(uN, uN + north*2.1), -3.4, 3.4, gs + 4.4, gs + 4.8);
+      boxO(B.p({c:'#5a3a2a', glow:'#ffd9a0', gk:0.7}), ob, Math.min(uN, uN + north*0.1), Math.max(uN, uN + north*0.1), -2.6, 2.6, gs + 0.5, gs + 3.8);
+      boxO(B.p(GLW), ob, Math.min(uN, uN + north*0.1), Math.max(uN, uN + north*0.1), -1.6, 1.6, gs + 5.6, gs + 8.8);
+      // relief roundel on the gable (abstract, no lettering)
+      { const q = o3(ob, uN + north*0.2, gs + 10.3, 0); LSph(g, 0.8, q[0], q[1], q[2], TRIM, 1, 12); } }
+    B.flush(g); return g; }};
+SG_PLACES.push({type:'hkymttheatre', lat:YMTT.lat, lon:YMTT.lon, rot:0});
+
+// Red Brick Building (1895, Engineer's Office of the former Yau Ma Tei Pumping Station): two storeys of red brick, granite sills, lintels,
+// coping and skew corbels, a pitched roof of two layers of Chinese clay tiles with a single chimney stack, the once-open arched verandah
+// (now glazed) with its ironwork balustrade, cast-iron rainwater pipes (Wikipedia; LCSD). OSM footprint w694530940, roof 10.0 m (LandsD).
+// Secondary key of hkymttheatre (label:false); which side carries the verandah is an approximation.
+const RBB = (() => { const c = cenA(D.hkymttheatre.rb); return Object.assign(LL(YMTT.lat, YMTT.lon, c[0], c[1]), {c}); })();
+LANDMARKS.hkymttheatre_b = {zh:'红砖屋', en:'Red Brick Building', label:false, cat:'old', r:10, h:12,
+  lt:{m:0, c:'#ffd0a0', k:0.95, e:0.35, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = mkG(RBB.lat, RBB.lon), P = shiftP(D.hkymttheatre.rb, -RBB.c[0], -RBB.c[1]);
+    const gs = gMin(G, P) + 0.2, y0 = gs - 3, BR = '#a6492f', BR2 = '#93402a', GR = '#cdc6b8', TL = '#8c5442', RIB = '#76432f', GLW = {c:'#45504a', glow:'#ffd49a', gk:0.5};
+    const ob = obE(P), u0 = -ob.L/2, u1 = ob.L/2, v0 = -ob.W/2, v1 = ob.W/2, yE = gs + 7.0;
+    prismP(B.p(GR), P, y0, gs + 0.5);
+    prismP(B.p(BR), P, gs + 0.5, yE, true);
+    winsP(B.p(GLW), P, gs + 1.1, yE - 0.6, 3.5, 2.4, 1.0, 2.0, 0.05);
+    bandsP(B.p(GR), P, gs + 0.5, yE, 3.25, 0.22, 0.04);
+    // the west side: the arched verandah (glazed), two levels, ironwork balustrade above
+    const west = ob.p(0, v0)[0] < ob.p(0, v1)[0] ? v0 : v1, sg = west === v0 ? -1 : 1;
+    { const a = ob.p(u0, west + sg*0.1), b = ob.p(u1, west + sg*0.1), A = sg > 0 ? a : b, Bp = sg > 0 ? b : a;
+      arcadeP(B.p(BR2), B.p(GLW), A, Bp, gs + 0.5, gs + 3.7, 4, 1.7, 0.6, 0.4, 's'); arcadeP(B.p(BR2), B.p(GLW), A, Bp, gs + 3.9, yE, 4, 1.6, 0.6, 0.4, 's');
+      balP(B.p('#2f3a35'), ob.p(u0 + 0.4, west + sg*0.3), ob.p(u1 - 0.4, west + sg*0.3), gs + 3.9, 0.9, 0.25); }
+    // gable roof with granite coping on the gable ends and one chimney stack above the ridge
+    gableO(B.p(TL), ob, u0 - 0.15, u1 + 0.15, v0 - 0.45, v1 + 0.45, yE, 10.0 - 7.2, true, B.p(BR));
+    ribsO(B.p(RIB), ob, u0 - 0.15, u1 + 0.15, v0 - 0.45, v1 + 0.45, yE, 10.0 - 7.2, true, 0.5);
+    for (const uu of [u0, u1]){ const A = o3(ob, uu, yE, v0 - 0.45), Cq = o3(ob, uu, gs + 10.0, 0), E = o3(ob, uu, yE, v1 - 0 + 0.45); segP(B.p(GR), A, Cq, 0.2, 4); segP(B.p(GR), Cq, E, 0.2, 4); }
+    { const q = ob.p(u1*0.55, 0); chimP(B.p(BR2), B.p(GR), q[0], q[1], yE + 1.5, gs + 11.4, 0.9); }
+    // cast-iron rainwater pipes at the corners
+    for (const P0 of P){ segP(B.p('#2f3330'), [P0[0], gs + 0.5, P0[1]], [P0[0], yE, P0[1]], 0.07, 4); }
+    B.flush(g); return g; }};
+SG_PLACES.push({type:'hkymttheatre_b', lat:RBB.lat, lon:RBB.lon, rot:0});
+
+
+// ---- generic pieces for the medium-detail keys
+// a roof that slopes in from every edge of any plan (eaves y, rise h, inset ins) with a flat top: reads as a hip roof on odd plans
+function hipAny(o, P, y, h, ins){ const Q = offP(P, -ins), n = P.length;
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, [P[i][0], y, P[i][1]], [P[j][0], y, P[j][1]], [Q[j][0], y + h, Q[j][1]], [Q[i][0], y + h, Q[i][1]]); }
+  flatP(o, Q, y + h); }
+function parP(o, P, y, h, t){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; wallP(o, a, b, t || 0.25, y, y + h); } }
+// modern block: walls, glass band per floor (lit spec), optional mullions, parapet
+function blkE(B, P, y0, y1, o){
+  prismP(B.p(o.w), P, y0, y1);
+  if (o.g) floorsP(B.p(o.g), P, Math.max(y0, o.s0 !== undefined ? o.s0 : y0 + 1.0), y1 - 0.5, o.fh || 3.6, o.gh || 1.9, 0.06);
+  if (o.mull) mullP(B.p(o.mull), P, Math.max(y0, o.s0 !== undefined ? o.s0 - 1 : y0), y1, o.sp || 3, o.mw || 0.22, 0.1);
+  if (o.par) parP(B.p(o.par), P, y1, o.ph || 1.1, 0.3);
+}
+const westEdge = P => { let bi = 0, bx = 1e9; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], [nx] = outN(P, i); const L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L > 6 && nx < -0.6 && (a[0] + b[0])/2 < bx){ bx = (a[0] + b[0])/2; bi = i; } } return bi; };
+const edgeTo = (P, dx, dz, minL) => { let bi = 0, bs = -1e9; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < (minL || 5)) continue; const [nx, nz] = outN(P, i), sc = nx*dx + nz*dz + L*0.002; if (sc > bs){ bs = sc; bi = i; } } return bi; };
+const E = (P, i) => [P[i], P[(i+1) % P.length]];
+const place = (key, lat, lon) => SG_PLACES.push({type:key, lat, lon, rot:0});
+const TGT = {hkfruitmarket:[22.312085, 114.168291], hkymtpolice:[22.309523, 114.16856], hkrosary:[22.302458, 114.17646], hkkuc:[22.305683, 114.172802], hkmirador:[22.297351, 114.172632],
+  hkmiraplace:[22.30087, 114.172579], hktheone:[22.299862, 114.172687], hkheritagedisc:[22.299323, 114.169843], hkklnparksports:[22.301814, 114.169709], hkscoutcentre:[22.302555, 114.169447],
+  hkdgs:[22.306928, 114.172957], hktungwahmuseum:[22.315002, 114.171852], hkwkgov:[22.312859, 114.163045], hkfreespace:[22.299892, 114.156396], hksignalhill:[22.296268, 114.174727],
+  hkholidayinngm:[22.296803, 114.172773], hkgrandaustin:[22.30369, 114.167456], hkkwunchungmsb:[22.30454, 114.168311], hkklnmethodist:[22.30864, 114.172448], hkwardmethodist:[22.314174, 114.172545],
+  hkallsaints:[22.317428, 114.173417], hkymtlibrary:[22.309355, 114.169828], hkmasjidibrahim:[22.316511, 114.166523]};
+const G0 = k => mkG(TGT[k][0], TGT[k][1]);
+// cut a plan polygon into the strip u in [a, b] of an oriented frame
+const stripU = (P, ob, a, b) => { const n = [ob.c, ob.s]; let Q = clipP(P, n[0], n[1], -(a + ob.cx*n[0] + ob.cz*n[1])); Q = clipP(Q, -n[0], -n[1], b + ob.cx*n[0] + ob.cz*n[1]); return Q; };
+const stripV = (P, ob, a, b) => { const n = [-ob.s, ob.c]; let Q = clipP(P, n[0], n[1], -(a + ob.cx*n[0] + ob.cz*n[1])); Q = clipP(Q, -n[0], -n[1], b + ob.cx*n[0] + ob.cz*n[1]); return Q; };
+
+// =====================================================================================================================
+// Yau Ma Tei Wholesale Fruit Market (1913): rows of one- and two-storey pre-war market buildings with roller-shuttered fronts, awnings and
+// shop signs (here abstract colour panels, no lettering), on the OSM footprints w646320716, w647726274, w1134512436. Unit widths, storey
+// mix and colours are approximations; no published heights.
+// =====================================================================================================================
+LANDMARKS.hkfruitmarket = {zh:'油麻地果栏', en:'Yau Ma Tei Wholesale Fruit Market', cat:'old', r:94, h:9,
+  lt:{m:0, c:'#ffd29a', k:0.85, e:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkfruitmarket'), rng = LMCTX.rng, T = D.hkfruitmarket;
+    const WALLS = ['#d8cdb4', '#c9c2ae', '#b9c2ad', '#d4b98e', '#c7b7a3', '#a9b0a8'], SH = '#7b7d7a', AW = '#3d7a5a', TL = '#8c5a46', GLW = {c:'#4a4a44', glow:'#ffd08a', gk:0.5};
+    for (const P of [T.a, T.b, T.c]){
+      const ob = obE(P), gs = gMin(G, P) + 0.15, rows = ob.W > 22 ? 2 : 1;
+      prismP(B.p('#9b968c'), offP(P, 0.1), gs - 2.5, gs + 0.1);
+      for (let r = 0; r < rows; r++){ const va = -ob.W/2 + r*ob.W/rows, vb = va + ob.W/rows;
+        let u = -ob.L/2;
+        while (u < ob.L/2 - 0.5){ const w = Math.min(ob.L/2 - u, 4.6 + rng()*2.6), Q = stripV(stripU(P, ob, u, u + w), ob, va, vb); u += w; if (Q.length < 3 || Math.abs(area2(Q)) < 6) continue;
+          const two = rng() < 0.45, h = two ? 7.4 + rng()*0.8 : 4.2 + rng()*0.6, col = WALLS[(rng()*WALLS.length) | 0];
+          prismP(B.p(col), Q, gs + 0.1, gs + h); parP(B.p(col), Q, gs + h, 0.6, 0.2);
+          if (two) winsP(B.p(GLW), Q, gs + 4.7, gs + h - 0.6, 3.5, 2.2, 1.2, 1.6, 0.05);
+          if (rng() < 0.3){ const oq = obE(Q); hipO(B.p(TL), oq, -oq.L/2, oq.L/2, -oq.W/2, oq.W/2, gs + h, 1.4); }
+          // street fronts: shutters, awning, sign on the outer edges of the strip
+          for (let i = 0; i < Q.length; i++){ const a = Q[i], b = Q[(i+1) % Q.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 2.5 || dPoly(P, (a[0]+b[0])/2, (a[1]+b[1])/2) > 0.5) continue;
+            const [nx, nz] = outN(Q, i); quadP(B.p(SH), [a[0]+nx*0.06, gs + 0.1, a[1]+nz*0.06], [b[0]+nx*0.06, gs + 0.1, b[1]+nz*0.06], [b[0]+nx*0.06, gs + 3.0, b[1]+nz*0.06], [a[0]+nx*0.06, gs + 3.0, a[1]+nz*0.06]);
+            const m = [(a[0]+b[0])/2 + nx*0.9, (a[1]+b[1])/2 + nz*0.9]; boxP(B.p(AW), L*0.9, 0.18, 1.8, m[0], gs + 3.1, m[1], -Math.atan2(b[1]-a[1], b[0]-a[0]));
+            if (rng() < 0.75) signsP(B, a, b, gs + 3.4, gs + Math.min(h, 4.9) + 0.6, 1, -1, rng); }
+        }
+      }
+    }
+    B.flush(g); return g; }};
+place('hkfruitmarket', ...TGT.hkfruitmarket);
+
+// =====================================================================================================================
+// Former Yau Ma Tei Police Station (1922, Edwardian free style; the 1957 west wing): the Main Block (OSM w160323973) with traditional porticos
+// on Canton Road and Public Square Street and the semicircular corner portico, and the west wing (w160323971, 13.9 m LandsD). Storeys,
+// colours and roof form of the Main Block are approximations.
+// =====================================================================================================================
+LANDMARKS.hkymtpolice = {zh:'油麻地警署', en:'Former Yau Ma Tei Police Station', cat:'old', r:48, h:14,
+  lt:{m:0, c:'#ffe0b8', k:0.9, e:0.4, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkymtpolice'), M = D.hkymtpolice.main, W = D.hkymtpolice.west;
+    const WL = '#ddd1b8', TR = '#f1ece1', TL = '#8a5a46', GLW = {c:'#3f5446', glow:'#ffdcae', gk:0.5};
+    const gs = gMin(G, M.concat(W)) + 0.2;
+    prismP(B.p('#b8b0a0'), M, gs - 2.5, gs + 0.6); prismP(B.p('#b8b0a0'), W, gs - 2.5, gs + 0.3);
+    // main block: two tall storeys, string courses, arched ground-floor windows (slots), cornice, hipped tile roof
+    prismP(B.p(WL), M, gs + 0.6, gs + 9.4); bandsP(B.p(TR), M, gs + 0.6, gs + 9.4, 4.4, 0.35, 0.06);
+    winsP(B.p(GLW), M, gs + 1.4, gs + 8.6, 4.4, 3.0, 1.4, 2.6, 0.05);
+    lineRingP(B.p(TR), M, gs + 9.5, 0.3); parP(B.p(TR), M, gs + 9.4, 0.9, 0.3);
+    hipAny(B.p(TL), offP(M, -0.3), gs + 9.6, 2.0, 3.2);
+    // corner portico: the main entrance in the north-east corner (Canton Road / Public Square Street)
+    { let ci = 0, bs = -1e9; M.forEach((p, i) => { const s = p[0] - p[1]; if (s > bs){ bs = s; ci = i; } }); const c = M[ci], n = 8;
+      for (let k = 0; k <= n; k++){ const a = -HP + k/n*PI*0.9 - 0.1, x = c[0] + Math.cos(a)*3.2 - 1.4, z = c[1] + Math.sin(a)*3.2 + 1.4; segP(B.p(TR), [x, gs + 0.6, z], [x, gs + 4.4, z], 0.24, 8); }
+      LCyl(g, 3.6, 3.6, 0.6, c[0] - 1.4, gs + 4.4, c[1] + 1.4, TR, 16); }
+    // porticos on the long street fronts
+    for (const [dx, dz] of [[1, 0], [0, -1]]){ const i = edgeTo(M, dx, dz, 12), [a, b] = E(M, i), [nx, nz] = outN(M, i), m = [(a[0]+b[0])/2 + nx*1.5, (a[1]+b[1])/2 + nz*1.5], ry = -Math.atan2(b[1]-a[1], b[0]-a[0]);
+      for (const s of [-2.2, -0.8, 0.8, 2.2]){ const ux = (b[0]-a[0])/Math.hypot(b[0]-a[0], b[1]-a[1]), uz = (b[1]-a[1])/Math.hypot(b[0]-a[0], b[1]-a[1]); segP(B.p(TR), [m[0] + ux*s, gs + 0.6, m[1] + uz*s], [m[0] + ux*s, gs + 4.4, m[1] + uz*s], 0.22, 8); }
+      boxP(B.p(TR), 5.6, 0.7, 3.2, m[0], gs + 4.4, m[1], ry); }
+    // 1957 west wing: three plain storeys, flat roof
+    blkE(B, W, gs + 0.3, gs + 13.9, {w:'#e2dccd', g:GLW, fh:4.3, gh:2.0, s0:gs + 1.3, par:TR, ph:0.8});
+    B.flush(g); return g; }};
+place('hkymtpolice', ...TGT.hkymtpolice);
+
+// =====================================================================================================================
+// Rosary Church (1905): Gothic church of a basilican plan on Chatham Road South, apse to the west, entrance front and tower to the east.
+// On the OSM footprint w184758736 (the LandsD outline, roof 12.1 m, lies a few metres north-west of it).
+// Wall colour, tower and spire heights are estimates (not sourced).
+// =====================================================================================================================
+LANDMARKS.hkrosary = {zh:'玫瑰堂', en:'Rosary Church', cat:'old', r:30, h:33,
+  lt:{m:0, c:'#fff0d0', k:0.95, e:0.45, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkrosary'), P = D.hkrosary.o;
+    const WL = '#e8d7a6', TR = '#f6f1e4', TL = '#7b6a62', SG = {c:'#3c3f52', glow:'#ffcf8a', gk:0.75};
+    const gs = gMin(G, P) + 0.2, ob = obE(P), east = ob.p(ob.L/2, 0)[0] > ob.p(-ob.L/2, 0)[0] ? 1 : -1, uE = east*ob.L/2;
+    prismP(B.p('#b9b1a1'), P, gs - 3, gs + 0.6);
+    prismP(B.p(WL), P, gs + 0.6, gs + 8.4, true);
+    winsP(B.p(SG), P, gs + 2.0, gs + 7.6, 9, 3.2, 1.1, 4.6, 0.05);
+    mullP(B.p(TR), P, gs + 0.6, gs + 8.0, 3.2, 0.55, 0.15, null, 0.45);                     // buttresses
+    lineRingP(B.p(TR), P, gs + 8.4, 0.25);
+    hipAny(B.p(TL), offP(P, 0.3), gs + 8.4, 12.1 - 8.4, 4.6);
+    // east front tower with belfry openings and the spire
+    const tw = 5.6, q = ob.p(uE - east*tw/2, 0), ry = ob.ry;
+    boxP(B.p(WL), tw, 22.5, tw, q[0], gs + 0.6, q[1], ry);
+    for (let y = gs + 6; y < gs + 22; y += 5.2) boxP(B.p(TR), tw + 0.25, 0.35, tw + 0.25, q[0], y, q[1], ry);
+    for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const p = ob.p(uE - east*tw/2 + du*(tw/2 + 0.05), dv*(tw/2 + 0.05)); boxP(B.p(SG), du ? 0.1 : 1.2, 3.2, du ? 1.2 : 0.1, p[0], gs + 17.6, p[1], ry); }
+    LCone(g, tw*0.62, 10.5, q[0], gs + 23.1, q[1], TR, 8, PI/8);
+    LBeam(g, [q[0], gs + 33.4, q[1]], [q[0], gs + 35.2, q[1]], 0.08, '#d9c77a', 4); LBeam(g, [q[0] - 0.5, gs + 34.6, q[1]], [q[0] + 0.5, gs + 34.6, q[1]], 0.07, '#d9c77a', 4);
+    // pinnacles at the tower corners, entrance porch
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]){ const p = ob.p(uE - east*tw/2 + sx*tw/2, sz*tw/2); LCone(g, 0.45, 2.4, p[0], gs + 22.5, p[1], TR, 4); }
+    { const p = ob.p(uE + east*0.9, 0); boxP(B.p(TR), 1.8, 4.2, 3.4, p[0], gs + 0.6, p[1], ry); boxP(B.p({c:'#5a3a2a', glow:'#ffcf8a', gk:0.6}), 1.9, 3.0, 1.6, p[0], gs + 0.6, p[1], ry); }
+    B.flush(g); return g; }};
+place('hkrosary', ...TGT.hkrosary);
+
+// =====================================================================================================================
+// Kowloon Union Church (1931, declared monument 2017): Perpendicular Gothic, load-bearing red brick with grey granite steps and window
+// surrounds, trefoil-headed tracery, a pitched Chinese-tiled main roof, a square battlemented three-storey tower with the pointed-arch main
+// entrance, a semicircular apse at the opposite end (LegCo brief 2017 L.N. 170). On the five LandsD pieces (roofs 4.0-9.4 m) inside the OSM
+// site w457404733; tower height (3 storeys) and which piece is the tower are approximations.
+// =====================================================================================================================
+LANDMARKS.hkkuc = {zh:'九龙佑宁堂', en:'Kowloon Union Church', cat:'old', r:38, h:16,
+  lt:{m:0, c:'#ffd9a8', k:0.95, e:0.4, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkkuc'), oS = obE(D.hkkuc.o), clip = Q => stripV(stripU(Q, oS, -oS.L/2 + 0.3, oS.L/2 - 0.3), oS, -oS.W/2 + 0.3, oS.W/2 - 0.3), T = {k1:clip(D.hkkuc.k1), k2:clip(D.hkkuc.k2), k3:clip(D.hkkuc.k3), k4:clip(D.hkkuc.k4), k5:clip(D.hkkuc.k5)};
+    const BR = '#a34a35', BR2 = '#8f3f2c', GR = '#bdb9b0', TL = '#8a5a48', SG = {c:'#3d4152', glow:'#ffcf8a', gk:0.7};
+    const all = [].concat(T.k1, T.k2, T.k3, T.k4, T.k5), gs = gMin(G, all) + 0.2;
+    for (const [P, h, pitched] of [[T.k1, 7.9, true], [T.k2, 9.4, true], [T.k3, 8.5, true], [T.k5, 4.4, false]]){
+      prismP(B.p(GR), P, gs - 3, gs + 0.5); const eav = pitched ? h - 2.8 : h;
+      prismP(B.p(BR), P, gs + 0.5, gs + eav); winsP(B.p(SG), P, gs + 1.5, gs + eav - 0.6, 6, 3.0, 1.0, Math.min(3.0, eav - 2.2), 0.05);
+      winsP(B.p(GR), P, gs + 1.35, gs + eav - 0.45, 6, 3.0, 1.3, 0.12, 0.07);
+      if (pitched){ const ob = obE(P); gableO(B.p(TL), ob, -ob.L/2 - 0.3, ob.L/2 + 0.3, -ob.W/2 - 0.4, ob.W/2 + 0.4, gs + eav, 2.8, true, B.p(BR2)); ribsO(B.p('#7a4c3c'), ob, -ob.L/2 - 0.3, ob.L/2 + 0.3, -ob.W/2 - 0.4, ob.W/2 + 0.4, gs + eav, 2.8, true, 0.6); }
+      else parP(B.p(GR), P, gs + eav, 0.6, 0.25);
+    }
+    // the square battlemented tower: three storeys, stone louvres in the top stage, crenellated parapet, pointed-arch doorway
+    { const P = T.k4, c = cenA(P), ob = obE(P), w = Math.max(5.2, Math.min(ob.L, ob.W) + 0.6), H = 14.5;
+      prismP(B.p(GR), ob.rect(-w/2, w/2, -w/2, w/2), gs - 3, gs + 0.5); boxO(B.p(BR), ob, -w/2, w/2, -w/2, w/2, gs + 0.5, gs + H);
+      for (const y of [gs + 5, gs + 9.6]) boxO(B.p(GR), ob, -w/2 - 0.12, w/2 + 0.12, -w/2 - 0.12, w/2 + 0.12, y, y + 0.3);
+      for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const p = ob.p(du*(w/2 + 0.05), dv*(w/2 + 0.05)); boxP(B.p(GR), du ? 0.12 : 1.6, 3.0, du ? 1.6 : 0.12, p[0], gs + 10.4, p[1], ob.ry); }
+      const n = 3; for (let k = 0; k <= n; k++) for (const sg of [-1, 1]){ const t = -w/2 + k*w/n; for (const [a, b] of [[t, sg*w/2], [sg*w/2, t]]){ const p = ob.p(a, b); boxP(B.p(GR), 0.7, 1.0, 0.7, p[0], gs + H, p[1], ob.ry); } }
+      boxO(B.p(GR), ob, -w/2 - 0.1, w/2 + 0.1, -w/2 - 0.1, w/2 + 0.1, gs + H - 0.2, gs + H + 0.1);
+      const d = ob.p(0, -w/2 - 0.05); boxP(B.p({c:'#4a2f22', glow:'#ffcf8a', gk:0.6}), 1.6, 3.2, 0.14, d[0], gs + 0.5, d[1], ob.ry); }
+    B.flush(g); return g; }};
+place('hkkuc', ...TGT.hkkuc);
+
+// =====================================================================================================================
+// Mirador Mansion: the long composite block on Nathan Road: shop and guesthouse podium (17.9 m) and the residential block to 51.0 m (LandsD
+// podium / tower rings); window bands, air-conditioner boxes, abstract shop signs on the street front. Colours approximate.
+// =====================================================================================================================
+LANDMARKS.hkmirador = {zh:'美丽都大厦', en:'Mirador Mansion', cat:'new', r:45, h:52,
+  lt:{m:0, c:'#ffe2b8', k:0.55, e:0.3},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkmirador'), rng = LMCTX.rng, T = D.hkmirador, P = T.pod, Tw = T.tw;
+    const gs = gMin(G, P) + 0.2, GLW = {c:'#3e4a50', glow:'#ffd8a0', gk:0.45};
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+    blkE(B, P, gs + 0.2, gs + 17.9, {w:'#c9c2b4', g:GLW, fh:3.0, gh:1.5, s0:gs + 4.6});
+    { const i = westEdge(P), [a, b] = E(P, i); signsP(B, a, b, gs + 3.5, gs + 14, 9, 1, rng); }
+    blkE(B, Tw, gs + 17.9, gs + 51.0, {w:'#d6d0c3', g:GLW, fh:2.9, gh:1.45, s0:gs + 18.8, par:'#bdb6a8', ph:1.0});
+    acP(B.p('#e6e3dc'), Tw, gs + 18, gs + 50.5, 2.9, 2.6, rng, 0.35);
+    mullP(B.p('#bdb6a8'), Tw, gs + 17.9, gs + 51.0, 7.5, 0.5, 0.15, null, 0.4);
+    B.flush(g); return g; }};
+place('hkmirador', ...TGT.hkmirador);
+
+// =====================================================================================================================
+// Mira Place 1: the retail podium on its OSM site (w51256967, 17 m: Mira Place Tower A base 25.8 mPD over street 8.8 mPD) and the office tower
+// (Miramar Tower footprint w184943296) to 52.2 m (LandsD). Glazing and stone colours approximate.
+// =====================================================================================================================
+LANDMARKS.hkmiraplace = {zh:'美丽华广场', en:'Mira Place', cat:'new', r:70, h:53,
+  lt:{m:1, c:'#d6e4ff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkmiraplace'), T = D.hkmiraplace, P = T.pod, Tw = T.tw;
+    const gs = gMin(G, P) + 0.2, GL = {c:'#5b6e78', m:1}, ST = {c:'#d7d2c8', m:0};
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+    blkE(B, P, gs + 0.2, gs + 17, {w:ST, g:{c:'#3f4c54', glow:'#ffe4c0', gk:0.6}, fh:5.5, gh:3.6, s0:gs + 0.6, par:ST, ph:0.9});
+    prismP(B.p(GL), Tw, gs + 17, gs + 52.2); mullP(B.p(ST), Tw, gs + 17, gs + 52.2, 2.2, 0.3, 0.1); bandsP(B.p(ST), Tw, gs + 17, gs + 52.2, 3.8, 0.45, 0.1);
+    parP(B.p(ST), Tw, gs + 52.2, 1.4, 0.3); lineRingP(B.p({c:'#e8eef8', glow:'#cfe0ff', gk:0.6}), offP(Tw, -0.4), gs + 53.4, 0.2);
+    B.flush(g); return g; }};
+place('hkmiraplace', ...TGT.hkmiraplace);
+
+// =====================================================================================================================
+// The One (2010): the 29-storey retail and office tower on Nathan Road with its muted, shiny champagne-tiled facade (architizer), the main
+// body to 113.0 m and the western upper part to 155.0 m (LandsD podium / tower rings, roof level). Glazing pattern approximate.
+// =====================================================================================================================
+LANDMARKS.hktheone = {zh:'THE ONE', en:'The One', cat:'new', r:62, h:156,
+  lt:{m:1, c:'#ffe7c4', k:0.7},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hktheone'), T = D.hktheone, oS = obE(T.site), clip = Q => stripV(stripU(Q, oS, -oS.L/2, oS.L/2), oS, -oS.W/2, oS.W/2), P = clip(T.body), Tp = clip(T.top);
+    const gs = gMin(G, P) + 0.2, CH = {c:'#cdb894', m:0}, GL = {c:'#55626a', m:1}, GL2 = {c:'#6c7a82', m:1};
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+    // retail podium: big glass walls with fins, then the champagne-tiled body with window strips and the stepped top
+    prismP(B.p(GL2), P, gs + 0.2, gs + 24); mullP(B.p(CH), P, gs + 0.2, gs + 24, 4.5, 0.6, 0.12, null, 0.5); bandsP(B.p(CH), P, gs + 0.2, gs + 24, 6, 0.6, 0.12);
+    prismP(B.p(CH), P, gs + 24, gs + 113);
+    winsP(B.p(GL), P, gs + 25, gs + 112, 4.0, 2.4, 1.9, 2.8, 0.06);
+    bandsP(B.p('#b9a47f'), P, gs + 24, gs + 113, 12, 0.5, 0.12);
+    parP(B.p(CH), stripU(P, obE(P), -1e3, 1e3), gs + 113, 1.2, 0.3);
+    prismP(B.p(CH), Tp, gs + 113, gs + 155); winsP(B.p(GL), Tp, gs + 114, gs + 152, 4.0, 2.4, 1.9, 2.8, 0.06);
+    prismP(B.p(GL2), offP(Tp, -0.6), gs + 146, gs + 155.6, true); parP(B.p({c:'#e8dcc0', glow:'#ffe7c4', gk:0.7}), Tp, gs + 155, 1.0, 0.35);
+    B.flush(g); return g; }};
+place('hktheone', ...TGT.hktheone);
+
+// =====================================================================================================================
+// Hong Kong Heritage Discovery Centre: the former Whitfield Barracks blocks S61 and S62 (late 1890s / c.1910) in Kowloon Park, restored 2005.
+// The three LandsD pieces (roofs 10.2-10.7 m) inside the OSM outline w99150699; two-storey barracks with arcaded verandahs and pitched tile
+// roofs as on the sister blocks S4 / S58 (EPD EIA 2008); arch form and colours approximate.
+// =====================================================================================================================
+LANDMARKS.hkheritagedisc = {zh:'香港文物探知馆（前威菲路军营）', en:'Hong Kong Heritage Discovery Centre (Former Whitfield Barracks)', cat:'old', r:55, h:12,
+  lt:{m:0, c:'#ffe4c0', k:0.9, e:0.45, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkheritagedisc'), T = D.hkheritagedisc;
+    const WL = '#ece4d2', WL2 = '#ddd3bd', TL = '#8e5a46', GLW = {c:'#47584e', glow:'#ffdcae', gk:0.5};
+    for (const [P, h] of [[T.n, 10.7], [T.s, 10.2], [T.w, 10.6]]){
+      const gs = gMin(G, P) + 0.2, yE = gs + 7.6;
+      prismP(B.p('#b9b1a1'), P, gs - 3, gs + 0.6);
+      const core = offP(P, -2.2); prismP(B.p(WL), core, gs + 0.6, yE, true); winsP(B.p(GLW), core, gs + 1.2, yE - 0.5, 3.6, 3.2, 1.2, 2.4, 0.05);
+      for (let i = 0; i < P.length; i++){ const [a, b] = E(P, i), L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 7) continue; const nb = Math.max(2, Math.round(L/3.6));
+        arcadeP(B.p(WL2), null, a, b, gs + 0.6, gs + 3.9, nb, 2.1, 0.7, 0.45, 'r'); arcadeP(B.p(WL2), null, a, b, gs + 4.1, yE, nb, 2.0, 0.65, 0.45, 'r');
+        balP(B.p('#f4efe4'), a, b, gs + 4.1, 1.0, 0.4); }
+      prismP(B.p(WL2), offP(P, -0.1), gs + 3.8, gs + 4.1, false);
+      hipAny(B.p(TL), offP(P, 0.5), yE, h - 7.6 - 0.2, Math.min(5.5, obE(P).W/2 - 0.5));
+    }
+    { const P = T.x, gs = gMin(G, P) + 0.2; prismP(B.p({c:'#6d8792', glow:'#ffe4c0', gk:0.45}), P, gs + 0.6, gs + 7.4); }
+    for (const [x, z] of [[-6, 4], [8, 2], [18, -2]]) treeP(B, x, gMin(G, [[x, z]]), z, 1.4);
+    B.flush(g); return g; }};
+place('hkheritagedisc', ...TGT.hkheritagedisc);
+
+// =====================================================================================================================
+// Kowloon Park Sports Centre (16.7 m, LandsD) on its OSM footprint w99149401 and the hall beside it (w650032010). Tiled walls, high glazing
+// bands, roof plant; colours and the hall height (12 m) are approximations.
+// =====================================================================================================================
+LANDMARKS.hkklnparksports = {zh:'九龙公园体育馆及游泳池', en:'Kowloon Park Sports Centre and Swimming Pool', cat:'new', r:70, h:18,
+  lt:{m:0, c:'#e6efff', k:0.7, e:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkklnparksports'), T = D.hkklnparksports, P = T.p, Q = T.pool;
+    const gs = gMin(G, P) + 0.2, TI = '#d9d3c6', TI2 = '#c7c0b1', GL = {c:'#4d6470', glow:'#e6efff', gk:0.5};
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.3);
+    blkE(B, P, gs + 0.3, gs + 16.7, {w:TI, par:TI2, ph:1.0});
+    bandsP(B.p(GL), P, gs + 0.3, gs + 3.6, 99, 0.01, 0.06); floorsP(B.p(GL), P, gs + 0.8, gs + 3.4, 99, 2.4); floorsP(B.p(GL), P, gs + 11.5, gs + 15.6, 99, 3.2);
+    mullP(B.p(TI2), P, gs + 0.3, gs + 16.7, 5.0, 0.6, 0.1);
+    { const ob = obE(P); for (const t of [-0.25, 0.2]){ const q = ob.p(t*ob.L, 0); boxP(B.p(TI2), 8, 2.4, 5, q[0], gs + 16.7, q[1], ob.ry); } }
+    const gq = gMin(G, Q) + 0.2; prismP(B.p('#9e998f'), Q, gq - 3, gq + 0.3);
+    blkE(B, Q, gq + 0.3, gq + 12, {w:TI2, par:TI, ph:0.8}); floorsP(B.p(GL), Q, gq + 6.5, gq + 11.2, 99, 4.2);
+    B.flush(g); return g; }};
+place('hkklnparksports', ...TGT.hkklnparksports);
+
+// =====================================================================================================================
+// Hong Kong Scout Centre: the main block (OSM w457398005) to 42.8 m (LandsD podium top 49.5 mPD over 6.7 mPD) with its top part to 55.0 m
+// (LandsD tower ring); the lower wing over the rest of the OSM footprint w184573794 (12 m, estimate). Colours approximate.
+// =====================================================================================================================
+LANDMARKS.hkscoutcentre = {zh:'香港童军中心', en:'Hong Kong Scout Centre', cat:'new', r:42, h:56,
+  lt:{m:1, c:'#e8f0ff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkscoutcentre'), T = D.hkscoutcentre;
+    const gs = gMin(G, T.pod) + 0.2, W1 = {c:'#e1ddd3', m:0}, GL = {c:'#4c5c66', m:1};
+    prismP(B.p('#9e998f'), T.pod, gs - 3, gs + 0.2);
+    blkE(B, T.pod, gs + 0.2, gs + 12, {w:W1, g:{c:'#4c5c66', glow:'#ffe4c0', gk:0.5}, fh:3.8, gh:2.0, s0:gs + 1.0, par:W1, ph:0.9});
+    prismP(B.p(W1), T.in, gs + 0.2, gs + 42.8); floorsP(B.p(GL), T.in, gs + 13, gs + 42.3, 3.4, 1.9); mullP(B.p(W1), T.in, gs + 12, gs + 42.8, 3.2, 0.35, 0.12);
+    prismP(B.p(W1), T.tw, gs + 42.8, gs + 55); floorsP(B.p(GL), T.tw, gs + 43.6, gs + 54.4, 3.4, 2.0);
+    parP(B.p({c:'#f0ece4', glow:'#e8f0ff', gk:0.5}), T.tw, gs + 55, 1.2, 0.3);
+    B.flush(g); return g; }};
+place('hkscoutcentre', ...TGT.hkscoutcentre);
+
+// =====================================================================================================================
+// Diocesan Girls' School (Jordan Road): the campus on the OSM footprint w694338402 from the LandsD pieces - podium 16.3 m, main block 32.0 m,
+// junior school 30.8 m, block 20.6 m - and the chapel w694338403 (gabled; 12 m estimate). Colours and window rhythm approximate.
+// =====================================================================================================================
+LANDMARKS.hkdgs = {zh:'拔萃女书院', en:"Diocesan Girls' School", cat:'new', r:102, h:33,
+  lt:{m:0, c:'#fff0d8', k:0.6, e:0.4},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkdgs'), T = D.hkdgs;
+    const gs = gMin(G, T.pod) + 0.2, W1 = '#e4dccb', W2 = '#cfc4ae', GLW = {c:'#47565e', glow:'#ffe2b8', gk:0.45};
+    prismP(B.p('#9e998f'), T.p, gs - 3, gs + 0.2);
+    blkE(B, T.pod, gs + 0.2, gs + 16.3, {w:W2, g:GLW, fh:3.8, gh:1.9, s0:gs + 1.2, par:W1, ph:1.0});
+    for (const [P, h] of [[T.main, 32.0], [T.jr, 30.8], [T.dg3, 20.6]]){ blkE(B, P, gs + 16.3, gs + h, {w:W1, g:GLW, fh:3.8, gh:1.9, s0:gs + 17.2, par:W2, ph:1.1}); mullP(B.p(W2), P, gs + 16.3, gs + h, 6, 0.5, 0.12, null, 0.4); }
+    { const P = T.ch, ob = obE(P), gc = gMin(G, P) + 0.2; prismP(B.p('#b9b1a1'), P, gc - 3, gc + 0.5); prismP(B.p('#b65a42'), P, gc + 0.5, gc + 7.5, true);
+      winsP(B.p({c:'#3c4152', glow:'#ffcf8a', gk:0.7}), P, gc + 1.8, gc + 6.8, 9, 2.8, 0.9, 4.0, 0.05);
+      gableO(B.p('#7a5a4c'), ob, -ob.L/2 - 0.3, ob.L/2 + 0.3, -ob.W/2 - 0.4, ob.W/2 + 0.4, gc + 7.5, 4.5, true, B.p('#b65a42'));
+      const q = ob.p(ob.L/2, 0); LBeam(g, [q[0], gc + 12, q[1]], [q[0], gc + 14, q[1]], 0.1, '#e8e2d2', 4); LBeam(g, [q[0], gc + 13.3, q[1] - 0.6], [q[0], gc + 13.3, q[1] + 0.6], 0.09, '#e8e2d2', 4); }
+    B.flush(g); return g; }};
+place('hkdgs', ...TGT.hkdgs);
+
+// =====================================================================================================================
+// Tung Wah Museum (Kwong Wah Hospital Main Hall, 1911; declared monument): symmetrical main hall flanked by two side chambers (raised to two
+// storeys in 1919), green brick walls on a granite platform with granite steps, pitched roofs of green glazed tiles, the ridge (rebuilt
+// 1991) with a central pearl and two dragon fish, carved eaves along the verandah, red window frames, bull's-eye and segmental arched windows
+// on the sides (LegCo brief 2010 L.N. 149). OSM footprint w100768015, roof 10.1 m (LandsD). Front toward Waterloo Road (south-east): approximate.
+// =====================================================================================================================
+LANDMARKS.hktungwahmuseum = {zh:'东华三院文物馆（广华医院）', en:'Tung Wah Museum (Kwong Wah Hospital)', cat:'old', r:18, h:12,
+  lt:{m:0, c:'#ffcf8a', k:0.9, e:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hktungwahmuseum'), P = D.hktungwahmuseum.p;
+    const gs = gMin(G, P) + 0.2, BRK = '#878d86', GR = '#c9c2b2', GRN = '#4a8a58', GRN2 = '#3b7449', RED = '#a3302a', GLW = {c:RED, glow:'#ffcf8a', gk:0.45};
+    const ob = obE(P), fr = ob.p(0, ob.W/2)[0] + ob.p(0, ob.W/2)[1] > ob.p(0, -ob.W/2)[0] + ob.p(0, -ob.W/2)[1] ? 1 : -1, vF = fr*ob.W/2, vB = -vF, u0 = -ob.L/2, u1 = ob.L/2, s = ob.L*0.27;
+    prismP(B.p(GR), offP(P, 0.6), gs - 3, gs + 1.1);
+    { const q = ob.p(0, vF + fr*1.4); boxP(B.p(GR), 6, 0.55, 1.6, q[0], gs, q[1], ob.ry); }
+    const vlo = Math.min(vF - fr*2.4, vB), vhi = Math.max(vF - fr*2.4, vB);
+    // side chambers (two storeys) and the main hall behind its verandah
+    for (const [a0, a1, eav, rid] of [[u0, u0 + s, 6.6, 9.0], [u1 - s, u1, 6.6, 9.0], [u0 + s, u1 - s, 6.8, 10.1]]){
+      const main = rid > 9.5; boxO(B.p(BRK), ob, a0, a1, main ? vlo : Math.min(vF, vB), main ? vhi : Math.max(vF, vB), gs + 1.1, gs + eav);
+      gableO(B.p(GRN), ob, a0 - 0.2, a1 + 0.2, Math.min(vF, vB) - 0.6, Math.max(vF, vB) + 0.6, gs + eav, rid - eav, true, B.p(BRK));
+      ribsO(B.p(GRN2), ob, a0 - 0.2, a1 + 0.2, Math.min(vF, vB) - 0.6, Math.max(vF, vB) + 0.6, gs + eav, rid - eav, true, 0.45);
+      if (!main){ for (const y of [gs + 2.0, gs + 4.6]) for (const t of [0.3, 0.7]){ const q = ob.p(a0 + (a1 - a0)*t, vF + fr*0.05); boxP(B.p(GLW), 1.0, 1.6, 0.12, q[0], y, q[1], ob.ry); }
+        const e = ob.p(a0 < 0 ? u0 - 0.05 : u1 + 0.05, 0); segP(B.p(GR), [e[0], gs + 5.2, e[1]], [e[0] + 0.01, gs + 5.2, e[1] + 0.01], 0.6, 10); }
+    }
+    // verandah: red timber columns on carved granite bases, carved eaves board, red doors and windows on the recessed front wall
+    for (let k = 0; k <= 4; k++){ const t = u0 + s + k*(ob.L - 2*s)/4, q = ob.p(t, vF - fr*0.4); boxP(B.p(GR), 0.6, 0.6, 0.6, q[0], gs + 1.1, q[1], ob.ry); segP(B.p(RED), [q[0], gs + 1.7, q[1]], [q[0], gs + 6.8, q[1]], 0.17, 8); }
+    { const a = ob.p(u0 + s, vF - fr*0.4), b = ob.p(u1 - s, vF - fr*0.4); wallP(B.p({c:'#c79a3a', glow:'#ffb060', gk:0.3}), a, b, 0.2, gs + 6.0, gs + 6.6); }
+    { const q = ob.p(0, vF - fr*2.45); boxP(B.p({c:'#7d2520', glow:'#ffb060', gk:0.4}), 2.4, 3.4, 0.14, q[0], gs + 1.1, q[1], ob.ry); for (const t of [-3.0, 3.0]){ const w = ob.p(t, vF - fr*2.45); boxP(B.p(GLW), 1.2, 2.0, 0.14, w[0], gs + 2.2, w[1], ob.ry); } }
+    // main ridge: pearl and two dragon fish
+    { const q = ob.p(0, (vF + vB)/2), y = gs + 10.1; boxO(B.p(GRN2), ob, u0 + s - 0.2, u1 - s + 0.2, -0.3, 0.3, y - 0.1, y + 0.4); LSph(g, 0.35, q[0], y + 0.85, q[1], {c:'#d9b04a', glow:'#ffc860', gk:0.6}, 1, 10);
+      for (const sg of [-1, 1]){ const e = ob.p(sg*(ob.L/2 - s - 0.1), 0); segP(B.p('#3d6fb0'), [e[0], y + 0.3, e[1]], [e[0], y + 1.3, e[1]], 0.2, 6); const t = ob.p(sg*(ob.L/2 - s - 0.6), 0); segP(B.p('#3d6fb0'), [e[0], y + 1.3, e[1]], [t[0], y + 1.7, t[1]], 0.13, 5); } }
+    B.flush(g); return g; }};
+place('hktungwahmuseum', ...TGT.hktungwahmuseum);
+
+// =====================================================================================================================
+// West Kowloon Government Offices (2017): North Tower 61.7 m and South Tower 69.7 m (LandsD rings) with a grid of light frames, glazing and
+// vertical green planting strips; the South Tower is the secondary key hkwkgov_b (label:false). Facade pattern approximate.
+// =====================================================================================================================
+function wkgoTower(B, P, gs, h){
+  const FR = {c:'#e6e6e1', m:0}, GL = {c:'#56707a', m:1}, GRN = {c:'#4f7d45', m:0};
+  prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+  prismP(B.p(GL), P, gs + 0.2, gs + h); mullP(B.p(FR), P, gs + 0.2, gs + h, 1.6, 0.25, 0.1); bandsP(B.p(FR), P, gs + 0.2, gs + h, 4.2, 0.55, 0.12);
+  mullP(B.p(GRN), P, gs + 6, gs + h - 3, 9.0, 1.1, 0.3, null, 0.5);
+  parP(B.p(FR), P, gs + h, 1.6, 0.35); prismP(B.p('#b7b9b4'), offP(P, -3), gs + h, gs + h + 3.2);
+}
+LANDMARKS.hkwkgov = {zh:'西九龙政府合署', en:'West Kowloon Government Offices', cat:'new', r:70, h:66,
+  lt:{m:1, c:'#e2ecff', k:0.6},
+  build(){ const g = new THREE.Group(), B = mkB(), G = G0('hkwkgov'), P = D.hkwkgov.n; wkgoTower(B, P, gMin(G, P) + 0.2, 61.7); B.flush(g); return g; }};
+place('hkwkgov', ...TGT.hkwkgov);
+const WKS = (() => { const c = cenA(D.hkwkgov.s); return Object.assign(LL(TGT.hkwkgov[0], TGT.hkwkgov[1], c[0], c[1]), {c}); })();
+LANDMARKS.hkwkgov_b = {zh:'西九龙政府合署南座', en:'West Kowloon Government Offices South Tower', label:false, cat:'new', r:42, h:74,
+  lt:{m:1, c:'#e2ecff', k:0.6},
+  build(){ const g = new THREE.Group(), B = mkB(), G = mkG(WKS.lat, WKS.lon), P = shiftP(D.hkwkgov.s, -WKS.c[0], -WKS.c[1]); wkgoTower(B, P, gMin(G, P) + 0.2, 69.7); B.flush(g); return g; }};
+place('hkwkgov_b', WKS.lat, WKS.lon);
+
+// =====================================================================================================================
+// Freespace (2019, West Kowloon Cultural District): the black-box performance venue (DLN Architects) on its OSM footprint w549702816, 12.1 m
+// (LandsD). Dark panelled box with vertical ribs and a glazed foyer edge; cladding colour and foyer side are approximations.
+// =====================================================================================================================
+LANDMARKS.hkfreespace = {zh:'自由空间', en:'Freespace (West Kowloon)', cat:'new', r:42, h:14,
+  lt:{m:0, c:'#d8e2ff', k:0.6, e:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkfreespace'), P = D.hkfreespace.p;
+    const gs = gMin(G, P) + 0.2, DKc = '#3b3e42', RIB = '#55595e';
+    prismP(B.p('#8f8c86'), P, gs - 3, gs + 0.3);
+    prismP(B.p(DKc), P, gs + 0.3, gs + 12.1); mullP(B.p(RIB), P, gs + 4.5, gs + 12.1, 1.2, 0.18, 0.08);
+    { const i = edgeTo(P, 0, 1, 10), [a, b] = E(P, i), [nx, nz] = outN(P, i); quadP(B.p({c:'#6f8a96', glow:'#ffe6c4', gk:0.7}), [a[0]+nx*0.1, gs + 0.3, a[1]+nz*0.1], [b[0]+nx*0.1, gs + 0.3, b[1]+nz*0.1], [b[0]+nx*0.1, gs + 4.4, b[1]+nz*0.1], [a[0]+nx*0.1, gs + 4.4, a[1]+nz*0.1]);
+      boxP(B.p('#d9d9d6'), Math.hypot(b[0]-a[0], b[1]-a[1]), 0.4, 3.0, (a[0]+b[0])/2 + nx*1.5, gs + 4.4, (a[1]+b[1])/2 + nz*1.5, -Math.atan2(b[1]-a[1], b[0]-a[0])); }
+    parP(B.p(RIB), P, gs + 12.1, 0.6, 0.2); { const ob = obE(P), q = ob.p(0, 0); boxP(B.p('#6a6d70'), 12, 2.2, 8, q[0], gs + 12.1, q[1], ob.ry); }
+    B.flush(g); return g; }};
+place('hkfreespace', ...TGT.hkfreespace);
+
+// =====================================================================================================================
+// Signal Hill Tower (Blackhead Point, 1907): Edwardian red-brick signal tower, three storeys (12.8 m) raised to four storeys (18.9 m) in 1927
+// with round windows in the added storey, square windows below, and the light green dome that replaced the flat roof (Wikipedia, Signal Hill
+// Garden). On the OSM octagon w642477553; the 1908-33 time-ball mast is gone and not modelled. Dressing colour approximate.
+// =====================================================================================================================
+LANDMARKS.hksignalhill = {zh:'讯号山公园（大包米讯号塔）', en:'Signal Hill Garden (Blackhead Point Tower)', cat:'old', r:15, h:20,
+  lt:{m:0, c:'#ffd6a0', k:1.0, e:0.3, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hksignalhill'), P = D.hksignalhill.p;
+    const gs = gMax(G, P) + 0.1, y0 = gMin(G, P) - 4, c = cenA(P), BR = '#a64a33', ST = '#e3dccb', DK = {c:'#2e2c2a', glow:'#ffd6a0', gk:0.4};
+    prismP(B.p('#a9a397'), offP(P, 1.6), y0, gs + 0.4); railP(B.p('#3a3a38'), offP(P, 1.5), () => gs + 0.4, 1.0, 1.2, true);
+    prismP(B.p(BR), P, gs + 0.4, gs + 16.4);
+    for (const y of [gs + 4.4, gs + 8.4, gs + 12.6]) bandsP(B.p(ST), P, y - 0.3, y + 0.01, 99, 0.35, 0.08), lineRingP(B.p(ST), offP(P, 0.05), y, 0.15, 4);
+    for (const y of [gs + 1.6, gs + 5.6, gs + 9.6]) winsP(B.p(DK), P, y, y + 1.6, 9, 2.2, 0.9, 1.4, 0.05);
+    for (let i = 0; i < P.length; i++){ const [a, b] = E(P, i), [nx, nz] = outN(P, i), m = [(a[0]+b[0])/2 + nx*0.06, (a[1]+b[1])/2 + nz*0.06]; segP(B.p(DK), [m[0], gs + 14.3, m[1]], [m[0] + nx*0.05, gs + 14.3, m[1] + nz*0.05], 0.5, 10); }
+    lineRingP(B.p(ST), offP(P, 0.2), gs + 16.4, 0.3, 4);
+    LDome(g, Math.max(2.6, rayP(P, c, 0)*0.9), c[0], gs + 16.5, c[1], '#9fc9a6', 0.85, 16);
+    LCyl(g, 0.12, 0.18, 1.0, c[0], gs + 18.5, c[1], '#5a6a5e', 6);
+    B.flush(g); return g; }};
+place('hksignalhill', ...TGT.hksignalhill);
+
+// =====================================================================================================================
+// Holiday Inn Golden Mile: the hotel podium on its OSM footprint w254652838 (11.9 m) and the slab tower to 52.9 m (LandsD podium / tower
+// rings); kept to its own footprint next to Chungking Mansions. Facade colours approximate.
+// =====================================================================================================================
+LANDMARKS.hkholidayinngm = {zh:'香港金域假日酒店', en:'Holiday Inn Golden Mile', cat:'new', r:49, h:54,
+  lt:{m:1, c:'#ffe6c4', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkholidayinngm'), rng = LMCTX.rng, T = D.hkholidayinngm;
+    const gs = gMin(G, T.pod) + 0.2, W1 = {c:'#d8d2c6', m:0}, GL = {c:'#46545c', m:1};
+    prismP(B.p('#9e998f'), T.pod, gs - 3, gs + 0.2);
+    blkE(B, T.pod, gs + 0.2, gs + 11.9, {w:W1, g:{c:'#3f4a50', glow:'#ffe2b8', gk:0.55}, fh:5.5, gh:3.4, s0:gs + 0.8, par:W1, ph:0.8});
+    { const i = westEdge(T.pod), [a, b] = E(T.pod, i); signsP(B, a, b, gs + 4.5, gs + 10.5, 3, 1, rng); }
+    prismP(B.p(W1), T.tw, gs + 11.9, gs + 52.9); floorsP(B.p(GL), T.tw, gs + 12.6, gs + 52.3, 2.9, 1.6); mullP(B.p(W1), T.tw, gs + 11.9, gs + 52.9, 3.6, 0.4, 0.12, null, 0.35);
+    parP(B.p(W1), T.tw, gs + 52.9, 1.2, 0.3); { const ob = obE(T.tw), q = ob.p(ob.L*0.3, 0); boxP(B.p('#b9b4aa'), 7, 3.5, ob.W*0.6, q[0], gs + 52.9, q[1], ob.ry); }
+    B.flush(g); return g; }};
+place('hkholidayinngm', ...TGT.hkholidayinngm);
+
+// =====================================================================================================================
+// Grand Austin (2019): Towers 1, 2 and 3 on their OSM footprints, on the 13.9 m station podium level (tower base 19.6 mPD over 5.7 mPD) up to
+// 105.8 m (T1) and 109.3 m (T2, T3) above the street (LandsD). Glazing with light frames and balcony bands; pattern approximate.
+// =====================================================================================================================
+LANDMARKS.hkgrandaustin = {zh:'Grand Austin', en:'Grand Austin', cat:'new', r:80, h:110,
+  lt:{m:1, c:'#e4ecff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkgrandaustin'), T = D.hkgrandaustin;
+    const FR = {c:'#ecebe6', m:0}, GL = {c:'#5d7480', m:1}, POD = {c:'#c9c4b9', m:0};
+    for (const [P, top] of [[T.o1, 105.8], [T.o2, 109.3], [T.o3, 109.3]]){
+      const gs = gMin(G, P) + 0.2; prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+      prismP(B.p(POD), P, gs + 0.2, gs + 13.9); bandsP(B.p(FR), P, gs + 0.2, gs + 13.9, 4.6, 0.5, 0.1);
+      prismP(B.p(GL), offP(P, -0.3), gs + 13.9, gs + top); bandsP(B.p(FR), P, gs + 13.9, gs + top, 3.15, 0.35, 0.05); mullP(B.p(FR), P, gs + 13.9, gs + top, 3.4, 0.3, 0.06);
+      parP(B.p(FR), P, gs + top, 2.2, 0.3); prismP(B.p({c:'#dfe5ee', glow:'#e4ecff', gk:0.5}), offP(P, -2.5), gs + top, gs + top + 3.5);
+    }
+    B.flush(g); return g; }};
+place('hkgrandaustin', ...TGT.hkgrandaustin);
+
+// =====================================================================================================================
+// Kwun Chung Municipal Services Building: market podium 15.2 m and the block above to 54.4 m (library / sports centre levels), from the
+// LandsD podium and tower rings; the low market wing on the east (15.3 m). Tile colours and window bands approximate.
+// =====================================================================================================================
+LANDMARKS.hkkwunchungmsb = {zh:'官涌市政大厦', en:'Kwun Chung Municipal Services Building', cat:'new', r:42, h:56,
+  lt:{m:0, c:'#eef3ff', k:0.6, e:0.4},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkkwunchungmsb'), T = D.hkkwunchungmsb;
+    const gs = gMin(G, T.pod) + 0.2, W1 = '#d9cfb9', W2 = '#c3b7a0', GLW = {c:'#45525a', glow:'#eaf0ff', gk:0.45};
+    prismP(B.p('#9e998f'), T.pod, gs - 3, gs + 0.2); prismP(B.p('#9e998f'), T.pod2, gs - 3, gs + 0.2);
+    blkE(B, T.pod, gs + 0.2, gs + 15.2, {w:W2, g:GLW, fh:5, gh:2.2, s0:gs + 1.2});
+    blkE(B, T.pod2, gs + 0.2, gs + 15.3, {w:W2, g:GLW, fh:5, gh:2.2, s0:gs + 1.2, par:W1, ph:0.9});
+    blkE(B, T.tw, gs + 15.2, gs + 54.4, {w:W1, g:GLW, fh:4.4, gh:1.9, s0:gs + 16.5, par:W2, ph:1.2}); mullP(B.p(W2), T.tw, gs + 15.2, gs + 54.4, 6, 0.6, 0.12, null, 0.4);
+    B.flush(g); return g; }};
+place('hkkwunchungmsb', ...TGT.hkkwunchungmsb);
+
+// =====================================================================================================================
+// Kowloon Methodist Church (Gascoigne Road): the church building on its OSM / LandsD footprint w694500934, top 25.2 m (LandsD) taken by the
+// tower on the narrow south wing; the main block (16 m), colours and cross are approximations.
+// =====================================================================================================================
+LANDMARKS.hkklnmethodist = {zh:'循道卫理联合教会九龙堂', en:'Kowloon Methodist Church', cat:'new', r:25, h:27,
+  lt:{m:0, c:'#fff0d8', k:0.8, e:0.4},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkklnmethodist'), P = D.hkklnmethodist.p;
+    const gs = gMin(G, P) + 0.2, W1 = '#e6e0d4', W2 = '#cfc6b6', SG = {c:'#3f4458', glow:'#ffd9a0', gk:0.6};
+    const S = clipP(P, 0, 1, -4), N = clipP(P, 0, -1, 4);                // the narrow south wing (z > 4) and the main block
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+    blkE(B, N, gs + 0.2, gs + 16, {w:W1, par:W2, ph:1.0}); winsP(B.p(SG), N, gs + 2, gs + 14.5, 99, 2.6, 1.1, 11.5, 0.05);
+    blkE(B, S, gs + 0.2, gs + 25.2, {w:W2, par:W1, ph:0.8}); winsP(B.p(SG), S, gs + 3, gs + 22, 99, 2.4, 0.8, 18, 0.05);
+    { const c = cenA(S); LBeam(g, [c[0], gs + 26, c[1]], [c[0], gs + 30, c[1]], 0.14, '#f3efe6', 4); LBeam(g, [c[0] - 1.1, gs + 28.7, c[1]], [c[0] + 1.1, gs + 28.7, c[1]], 0.13, '#f3efe6', 4); }
+    B.flush(g); return g; }};
+place('hkklnmethodist', ...TGT.hkklnmethodist);
+
+// =====================================================================================================================
+// The Ward Memorial Methodist Church (Waterloo Road): church hall 16.6 m, tower 22.7 m and the Yang Memorial Methodist Social Service block
+// 23.9 m, from the three LandsD pieces inside the OSM footprint w695039113. Brick colour, gable and window forms are approximations.
+// =====================================================================================================================
+LANDMARKS.hkwardmethodist = {zh:'循道卫理联合教会安素堂', en:'The Ward Memorial Methodist Church', cat:'old', r:30, h:25,
+  lt:{m:0, c:'#ffd9a8', k:0.9, e:0.4, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkwardmethodist'), T = D.hkwardmethodist;
+    const gs = gMin(G, T.o) + 0.2, BR = '#a24c38', GR = '#d3ccbe', SG = {c:'#3d4152', glow:'#ffcf8a', gk:0.7};
+    prismP(B.p('#9e998f'), T.o, gs - 3, gs + 0.2);
+    { const P = T.ch, ob = obE(P); prismP(B.p(BR), P, gs + 0.2, gs + 11.4, true); winsP(B.p(SG), P, gs + 2.2, gs + 10.4, 99, 3.2, 1.2, 6.5, 0.05); mullP(B.p(GR), P, gs + 0.2, gs + 10.2, 3.2, 0.5, 0.12, null, 0.4);
+      gableO(B.p('#7d5a4a'), ob, -ob.L/2 - 0.3, ob.L/2 + 0.3, -ob.W/2 - 0.4, ob.W/2 + 0.4, gs + 11.4, 16.6 - 11.4, true, B.p(BR)); }
+    { const P = T.tw; prismP(B.p(BR), P, gs + 0.2, gs + 22.7); winsP(B.p(SG), P, gs + 15, gs + 19.5, 99, 1.6, 0.8, 3.2, 0.05); bandsP(B.p(GR), P, gs + 0.2, gs + 22.7, 7.4, 0.35, 0.06);
+      const ob = obE(P); for (const [du, dv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]){ const q = ob.p(du*(ob.L/2 - 0.3), dv*(ob.W/2 - 0.3)); boxP(B.p(GR), 0.7, 1.2, 0.7, q[0], gs + 22.7, q[1], ob.ry); } parP(B.p(GR), P, gs + 22.7, 0.6, 0.3); }
+    blkE(B, T.ym, gs + 0.2, gs + 23.9, {w:'#e2dccf', g:{c:'#45525a', glow:'#ffe2b8', gk:0.45}, fh:3.6, gh:1.8, s0:gs + 1.2, par:'#cfc6b6', ph:1.0});
+    B.flush(g); return g; }};
+place('hkwardmethodist', ...TGT.hkwardmethodist);
+
+// =====================================================================================================================
+// S.K.H. All Saints' Cathedral (1928): Neo-Gothic with a bell tower and spire, lancet windows and external buttresses; front hall and south
+// extension of 1970, exterior re-tiled in 2005 (gwulo; Wikipedia). On the LandsD footprint (roof 22.8 m) within OSM w695857082. Tower position,
+// spire height, nave height and tile colour are approximations.
+// =====================================================================================================================
+LANDMARKS.hkallsaints = {zh:'香港圣公会诸圣座堂', en:"All Saints' Cathedral (Mong Kok)", cat:'old', r:36, h:31,
+  lt:{m:0, c:'#fff0d0', k:0.9, e:0.45, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkallsaints'), P = D.hkallsaints.p;
+    const gs = gMin(G, P) + 0.2, WL = '#d8c7a4', TR = '#efe8d8', TL = '#7c6a60', SG = {c:'#3c3f52', glow:'#ffcf8a', gk:0.75};
+    const ob = obE(P);
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.4);
+    prismP(B.p(WL), P, gs + 0.4, gs + 10.5, true); winsP(B.p(SG), P, gs + 2.0, gs + 9.6, 99, 3.4, 1.0, 5.2, 0.05); mullP(B.p(TR), P, gs + 0.4, gs + 9.4, 3.4, 0.5, 0.15, null, 0.4);
+    lineRingP(B.p(TR), P, gs + 10.5, 0.25); hipAny(B.p(TL), offP(P, 0.3), gs + 10.5, 4.5, 6.0);
+    // bell tower and spire at the north-west corner
+    let ci = 0, bs = 1e9; P.forEach((p, i) => { const s = p[0] + p[1]; if (s < bs){ bs = s; ci = i; } }); const c0 = P[ci], q = [c0[0] + 2.9, c0[1] + 2.9], w = 5.2;
+    boxP(B.p(WL), w, 22.4, w, q[0], gs + 0.4, q[1], ob.ry); for (const y of [gs + 10.5, gs + 16.5]) boxP(B.p(TR), w + 0.3, 0.35, w + 0.3, q[0], y, q[1], ob.ry);
+    for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const R = rotQ(q[0], q[1], ob.ry), p = R(du*(w/2 + 0.05), 0, dv*(w/2 + 0.05)); boxP(B.p(SG), du ? 0.1 : 1.1, 3.0, du ? 1.1 : 0.1, p[0], gs + 18, p[2], ob.ry); }
+    LCone(g, w*0.6, 8.2, q[0], gs + 22.8, q[1], TR, 8, PI/8);
+    LBeam(g, [q[0], gs + 31, q[1]], [q[0], gs + 32.6, q[1]], 0.08, '#d9c77a', 4); LBeam(g, [q[0] - 0.45, gs + 32.0, q[1]], [q[0] + 0.45, gs + 32.0, q[1]], 0.07, '#d9c77a', 4);
+    B.flush(g); return g; }};
+place('hkallsaints', ...TGT.hkallsaints);
+
+// =====================================================================================================================
+// Yau Ma Tei Public Library: the four-storey civic block on Shanghai Street / Public Square Street, OSM footprint w930598310, 21.0 m (LandsD).
+// Tiles and window bands approximate.
+// =====================================================================================================================
+LANDMARKS.hkymtlibrary = {zh:'油麻地公共图书馆', en:'Yau Ma Tei Public Library', cat:'new', r:25, h:23,
+  lt:{m:0, c:'#eef3ff', k:0.6, e:0.4},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkymtlibrary'), P = D.hkymtlibrary.p;
+    const gs = gMin(G, P) + 0.2, W1 = '#ddd5c4', W2 = '#c5baa5';
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+    blkE(B, P, gs + 0.2, gs + 21.0, {w:W1, g:{c:'#45525a', glow:'#eaf0ff', gk:0.5}, fh:5.0, gh:2.4, s0:gs + 1.2, par:W2, ph:1.0}); mullP(B.p(W2), P, gs + 0.2, gs + 21, 4.5, 0.5, 0.12, null, 0.4);
+    B.flush(g); return g; }};
+place('hkymtlibrary', ...TGT.hkymtlibrary);
+
+// =====================================================================================================================
+// Masjid Ibrahim (Yau Ma Tei; new building completed 2020): a mosque for about 500 worshippers with one dome (Wikipedia). On the OSM
+// footprint w785852481; height (three storeys, 12 m), colours and arched windows are estimates (no published height).
+// =====================================================================================================================
+LANDMARKS.hkmasjidibrahim = {zh:'亚伯拉罕清真寺', en:'Masjid Ibrahim', cat:'new', r:30, h:18,
+  lt:{m:0, c:'#f0fff4', k:0.7, e:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), G = G0('hkmasjidibrahim'), P = D.hkmasjidibrahim.p;
+    const gs = gMin(G, P) + 0.2, W1 = '#efede6', TR = '#c9d9cc', GLW = {c:'#3f5248', glow:'#e8ffe8', gk:0.5};
+    prismP(B.p('#9e998f'), P, gs - 3, gs + 0.2);
+    blkE(B, P, gs + 0.2, gs + 12, {w:W1, par:TR, ph:0.9}); winsP(B.p(GLW), P, gs + 1.2, gs + 11, 3.8, 3.0, 1.2, 2.4, 0.05);
+    const c = cenA(P); LCyl(g, 3.2, 3.2, 1.6, c[0], gs + 12, c[1], W1, 20); LDome(g, 3.2, c[0], gs + 13.6, c[1], '#5f9a72', 1.05, 20); LCyl(g, 0.08, 0.12, 1.4, c[0], gs + 16.9, c[1], '#d9c77a', 6);
+    B.flush(g); return g; }};
+place('hkmasjidibrahim', ...TGT.hkmasjidibrahim);
+
+}
+
 // ===== hk/hkv41e (City Brush v41): east Hong Kong Island towers and the Academy for Performing Arts on their real footprints.
 // Footprints and heights: the app's own building data (hk_bld0, OSM-derived), decoded by hk/hkv41e/dec.js + prep.js; every plan
 // below is that footprint ring (local metres round its bbox centre, +x east, +z south, rot 0). Heights = the data heights, set so
@@ -58241,11 +59270,16 @@ float hkWin = 0.0, hkFr = 0.0, hkY = 0.0, hkU = 0.0, hkV = 0.0;
   // glTF-Transform quantises positions / normals / UVs to normalised integers; three r128 denormalises them on the GPU but not in
   // BufferAttribute.getX, which the page's own code (hull outlines, lmMerge, vehGeo colour sampling) uses: turn them into floats
   function dequant(root){
+    // quantised glTF (KHR_mesh_quantization): normalised integer attributes, often interleaved (vec3 int16 padded to 8-byte strides),
+    // become plain float attributes so CPU-side reads (bounds, hulls, merges) see real values
     root.traverse(o => { if (!o.isMesh) return; const g = o.geometry;
-      for (const name of Object.keys(g.attributes)){ const a = g.attributes[name]; if (!a.normalized || a.array instanceof Float32Array) continue;
-        const A = a.array, k = A instanceof Int8Array ? 127 : A instanceof Uint8Array ? 255 : A instanceof Int16Array ? 32767 : A instanceof Uint16Array ? 65535 : 1;
-        const F = new Float32Array(A.length); for (let i = 0; i < A.length; i++) F[i] = Math.max(-1, A[i]/k);
-        g.setAttribute(name, new THREE.BufferAttribute(F, a.itemSize, false)); } });
+      for (const name of Object.keys(g.attributes)){ const a = g.attributes[name]; const il = !!a.isInterleavedBufferAttribute, A = il ? a.data.array : a.array;
+        if (A instanceof Float32Array && !il) continue;
+        const C = A.constructor, k = !a.normalized ? 1 : C === Int8Array ? 127 : C === Uint8Array ? 255 : C === Int16Array ? 32767 : C === Uint16Array ? 65535 : 1;
+        const n = a.count, s = a.itemSize, st = il ? a.data.stride : s, off = il ? a.offset : 0, F = new Float32Array(n*s);
+        for (let i = 0; i < n; i++) for (let c = 0; c < s; c++) F[i*s + c] = Math.max(-1, A[i*st + off + c]/k);
+        if (!a.normalized) for (let i = 0; i < F.length; i++) F[i] = A[Math.floor(i/s)*st + off + i%s];
+        g.setAttribute(name, new THREE.BufferAttribute(F, s, false)); } });
   }
   function load(key){
     if (cache.has(key)) return cache.get(key);

@@ -1,0 +1,9 @@
+[0.4s] hk lines 128993
+[4.0s] R3 pass 0 conflicts 2039 fixed 845
+[6.9s] R3 pass 1 conflicts 1141 fixed 261
+[9.5s] R3 pass 2 conflicts 857 fixed 72
+[9.5s] R3: conflicts 2039 fixed 1178 flagged 753
+[12.0s] R1/R2: dead ends 4365 joined 72 inserted vertices 14 flagged 621
+[12.3s] R4: low crossings 88 raised bridges 0 flagged 88
+[12.3s] R5: steep lines 22 re-graded 12 flagged 10
+[12.7s] {"city":"hk","src":"/home/claude/earth_online/site/hkdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/.tmp_hkdata","lines":128993,"changedLines":2153,"changes":{"R3":2782,"R1":72,"R5":12},"flagged":{"R3: bridge decks share a node mid#span":3,"R3: # % ramp spreads over > # lines":302,"R3: # % ramp makes a new junction (c#)":50,"R3: # % ramp would change a sourced deck (>= # m)":177,"R3: # % ramp lifts a dead end":37,"R3: # % ramp loses junction (c#)":78,"R3: # % ramp low clearance over c#":49,"R3: # % ramp loses junction (c#b)":13,"R3: # % ramp makes a new junction (c#b)":24,"R3: # % ramp low clearance over c#b":19,"R3: # % ramp breaks a deck step join":1,"R1: level #":579,"R1: classes #/#":2,"R1: level #, bridge / ground":24,"R1: level #, classes #/#, bridge / ground":7,"R1: level #, classes #/#":4,"R1: bridge / ground":5,"R4: bridge too short to clear the road below with <= # % ramps":88,"R5: jump next to a fixed junction / line end":10},"rules":["R1","R2","R3","R4","R5"],"gap":6}

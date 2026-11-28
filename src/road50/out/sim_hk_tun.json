@@ -1,0 +1,376 @@
+{
+ "city": "hk",
+ "data": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/hkdata",
+ "views": [
+  {
+   "name": "central",
+   "x": 4636,
+   "y": -6312,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 1345,
+    "buses": 0,
+    "stopped": 461,
+    "avgSpeed": 6.8,
+    "zoneR": 1712,
+    "links": 1831,
+    "target": 1342,
+    "routes": 0,
+    "signals": 181,
+    "heads": 665,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 44542,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 2840,
+    "tod": 8.5
+   },
+   "samples": [
+    1345,
+    1340,
+    1344,
+    1342,
+    1336,
+    1342,
+    1340,
+    1337
+   ],
+   "poses": 10726,
+   "tunnelPoses": 388,
+   "tunnelVehicles": 96,
+   "outOfTunnel": 39,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 26,
+   "offPct": 0.24,
+   "offs": [
+    [
+     3863,
+     -6993,
+     6.96,
+     13.38,
+     97332
+    ],
+    [
+     3412,
+     -6888,
+     1.51,
+     0.06,
+     105167
+    ],
+    [
+     3419,
+     -6874,
+     1.09,
+     6.17,
+     105167
+    ],
+    [
+     3831,
+     -7001,
+     10.65,
+     12.9,
+     97332
+    ],
+    [
+     3407,
+     -6894,
+     1.65,
+     3.74,
+     105167
+    ],
+    [
+     3417,
+     -6858,
+     4.62,
+     7.8,
+     105167
+    ],
+    [
+     3887,
+     -6993,
+     3.96,
+     13.38,
+     97332
+    ],
+    [
+     3877,
+     -6991,
+     5.25,
+     13.38,
+     97332
+    ],
+    [
+     3842,
+     -6999,
+     9.62,
+     6.52,
+     97332
+    ],
+    [
+     3413,
+     -6887,
+     1.49,
+     0.06,
+     105167
+    ]
+   ],
+   "stuck": 6,
+   "stuckAt": [
+    [
+     4505,
+     -6542,
+     62.4,
+     49050
+    ],
+    [
+     5615,
+     -6576,
+     60.6,
+     49081
+    ],
+    [
+     5598,
+     -6590,
+     63.4,
+     49083
+    ],
+    [
+     4508,
+     -6540,
+     60.9,
+     49050
+    ],
+    [
+     5950,
+     -7197,
+     68.6,
+     107081
+    ],
+    [
+     2844,
+     -6269,
+     62.7,
+     66672
+    ]
+   ],
+   "stats": {
+    "vehicles": 1342,
+    "buses": 0,
+    "stopped": 544,
+    "avgSpeed": 5.9,
+    "zoneR": 1712,
+    "links": 1831,
+    "target": 1341,
+    "routes": 0,
+    "signals": 188,
+    "heads": 675,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 44968,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "buildErr": "ReferenceError: matLamp is not defined\n    at meshOf (roads.js:2688:47)\n    at add (roads.js:2738:17)\n    at Object.build (roads.js:2754:39)\n    at Object.<anonymous> (/home/claude/earth_online/src/road50/simtest.js:50:27)\n    at Module._compile (node:internal/modules/cjs/loader:1781:14)\n    at Object..js (node:internal/modules/cjs/loader:1913:10)\n    at Module.load (node:internal/modules/cjs/loader:1505:32)\n    at Function._load (node:internal/modules/cjs/loader:1309:12)\n    at wrapModuleLoad (",
+   "ms": 8570
+  },
+  {
+   "name": "kowloon",
+   "x": 6747,
+   "y": -3754,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 1621,
+    "buses": 0,
+    "stopped": 591,
+    "avgSpeed": 7.4,
+    "zoneR": 1712,
+    "links": 1667,
+    "target": 1628,
+    "routes": 0,
+    "signals": 338,
+    "heads": 500,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 37430,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 1473,
+    "tod": 8.5
+   },
+   "samples": [
+    1621,
+    1628,
+    1627,
+    1621,
+    1617,
+    1627,
+    1623,
+    1621
+   ],
+   "poses": 12985,
+   "tunnelPoses": 352,
+   "tunnelVehicles": 104,
+   "outOfTunnel": 19,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 1,
+   "offPct": 0.01,
+   "offs": [
+    [
+     6595,
+     -4168,
+     8.66,
+     null,
+     97411
+    ]
+   ],
+   "stuck": 4,
+   "stuckAt": [
+    [
+     6734,
+     -3419,
+     60.4,
+     111975
+    ],
+    [
+     5833,
+     -3111,
+     65,
+     45242
+    ],
+    [
+     5814,
+     -3115,
+     70,
+     104733
+    ],
+    [
+     5809,
+     -3089,
+     65.8,
+     111865
+    ]
+   ],
+   "stats": {
+    "vehicles": 1628,
+    "buses": 0,
+    "stopped": 649,
+    "avgSpeed": 6.5,
+    "zoneR": 1712,
+    "links": 1667,
+    "target": 1627,
+    "routes": 0,
+    "signals": 346,
+    "heads": 500,
+    "near": 0,
+    "far": 12,
+    "glows": 0,
+    "calls": 6,
+    "tris": 37728,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "buildErr": "ReferenceError: matLamp is not defined\n    at meshOf (roads.js:2688:47)\n    at add (roads.js:2738:17)\n    at Object.build (roads.js:2754:39)\n    at Object.<anonymous> (/home/claude/earth_online/src/road50/simtest.js:50:27)\n    at Module._compile (node:internal/modules/cjs/loader:1781:14)\n    at Object..js (node:internal/modules/cjs/loader:1913:10)\n    at Module.load (node:internal/modules/cjs/loader:1505:32)\n    at Function._load (node:internal/modules/cjs/loader:1309:12)\n    at wrapModuleLoad (",
+   "ms": 5137
+  },
+  {
+   "name": "harbour_east",
+   "x": 10301,
+   "y": -5537,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 755,
+    "buses": 0,
+    "stopped": 162,
+    "avgSpeed": 10.7,
+    "zoneR": 1712,
+    "links": 825,
+    "target": 755,
+    "routes": 0,
+    "signals": 412,
+    "heads": 236,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 17656,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 355,
+    "tod": 8.5
+   },
+   "samples": [
+    755,
+    751,
+    751,
+    751,
+    756,
+    750,
+    751,
+    755
+   ],
+   "poses": 6020,
+   "tunnelPoses": 214,
+   "tunnelVehicles": 49,
+   "outOfTunnel": 18,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 0,
+   "offPct": 0,
+   "offs": [],
+   "stuck": 2,
+   "stuckAt": [
+    [
+     10277,
+     -6119,
+     60.2,
+     96599
+    ],
+    [
+     10271,
+     -6115,
+     66,
+     96599
+    ]
+   ],
+   "stats": {
+    "vehicles": 754,
+    "buses": 0,
+    "stopped": 235,
+    "avgSpeed": 7.5,
+    "zoneR": 1712,
+    "links": 825,
+    "target": 754,
+    "routes": 0,
+    "signals": 415,
+    "heads": 243,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 18178,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "buildErr": "ReferenceError: matLamp is not defined\n    at meshOf (roads.js:2688:47)\n    at add (roads.js:2738:17)\n    at Object.build (roads.js:2754:39)\n    at Object.<anonymous> (/home/claude/earth_online/src/road50/simtest.js:50:27)\n    at Module._compile (node:internal/modules/cjs/loader:1781:14)\n    at Object..js (node:internal/modules/cjs/loader:1913:10)\n    at Module.load (node:internal/modules/cjs/loader:1505:32)\n    at Function._load (node:internal/modules/cjs/loader:1309:12)\n    at wrapModuleLoad (",
+   "ms": 2014
+  }
+ ]
+}

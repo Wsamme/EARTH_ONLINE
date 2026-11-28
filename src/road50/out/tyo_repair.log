@@ -1,0 +1,9 @@
+[0.8s] tyo lines 393687
+[39.1s] R3 pass 0 conflicts 12300 fixed 4186
+[72.6s] R3 pass 1 conflicts 7642 fixed 1771
+[107.1s] R3 pass 2 conflicts 5651 fixed 605
+[107.1s] R3: conflicts 12300 fixed 6562 flagged 4540
+[136.8s] R1/R2: dead ends 49538 joined 750 inserted vertices 346 flagged 3789
+[142.4s] R4: low crossings 338 raised bridges 4 flagged 307
+[142.6s] R5: steep lines 446 re-graded 250 flagged 196
+[145.4s] {"city":"tyo","src":"/home/claude/earth_online/site/tyodata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/.tmp_tyodata","lines":393687,"changedLines":12579,"changes":{"R3":16623,"R1":750,"R4":4,"R5":250},"flagged":{"R3: bridge decks share a node mid#span":8,"R3: # % ramp spreads over > # lines":2611,"R3: # % ramp makes a new junction (c#)":150,"R3: # % ramp loses junction (c#)":740,"R3: # % ramp lifts a dead end":372,"R3: # % ramp would change a sourced deck (>= # m)":413,"R3: # % ramp loses junction (c#b)":40,"R3: # % ramp low clearance over c#":91,"R3: # % ramp breaks a deck step join":44,"R3: # % ramp makes a new junction (c#b)":50,"R3: # % ramp low clearance over c#b":21,"R1: level #":3433,"R1: level #, bridge / ground":242,"R1: bridge / ground":44,"R1: level #, classes #/#":20,"R1: classes #/#":26,"R1: level #, classes #/#, bridge / ground":20,"R1: the join would cross another road":4,"R4: bridge too short to clear the road below with <= # % ramps":295,"R4: raising: low clearance over c#b":12,"R5: jump next to a fixed junction / line end":195,"R5: re#grading: makes a new junction (c#)":1},"rules":["R1","R2","R3","R4","R5"],"gap":6}

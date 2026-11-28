@@ -1,0 +1,297 @@
+{
+ "city": "tyo",
+ "data": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/tyodata",
+ "views": [
+  {
+   "name": "chiyoda",
+   "x": 905,
+   "y": 2330,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 2062,
+    "buses": 9,
+    "stopped": 1006,
+    "avgSpeed": 5.5,
+    "zoneR": 1712,
+    "links": 3915,
+    "target": 2064,
+    "routes": 30,
+    "signals": 297,
+    "heads": 1263,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 6,
+    "tris": 75766,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 1672,
+    "tod": 8.5
+   },
+   "samples": [
+    2062,
+    2059,
+    2062,
+    2063,
+    2067,
+    2067,
+    2064,
+    2059
+   ],
+   "poses": 16503,
+   "tunnelPoses": 0,
+   "tunnelVehicles": 0,
+   "outOfTunnel": 0,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 42,
+   "offPct": 0.25,
+   "offs": [
+    [
+     538,
+     3550,
+     18.43,
+     13.98,
+     359536
+    ],
+    [
+     695,
+     3513,
+     15.23,
+     20.58,
+     355265
+    ],
+    [
+     697,
+     3521,
+     15.79,
+     20.58,
+     355265
+    ],
+    [
+     -370,
+     2150,
+     6.18,
+     13.98,
+     358787
+    ],
+    [
+     -370,
+     2143,
+     5.92,
+     13.98,
+     358787
+    ],
+    [
+     675,
+     3532,
+     18.67,
+     20.58,
+     355265
+    ],
+    [
+     536,
+     3649,
+     17.84,
+     20.58,
+     355267
+    ],
+    [
+     -340,
+     2135,
+     2.08,
+     0.18,
+     358787
+    ],
+    [
+     -332,
+     2129,
+     0.86,
+     13.98,
+     358787
+    ],
+    [
+     2280,
+     2658,
+     9.17,
+     20.58,
+     358504
+    ]
+   ],
+   "stuck": 53,
+   "stuckAt": [
+    [
+     543,
+     1851,
+     60.1,
+     358396
+    ],
+    [
+     -352,
+     2159,
+     62.3,
+     390666
+    ],
+    [
+     555,
+     1878,
+     60.8,
+     393057
+    ],
+    [
+     550,
+     1881,
+     63.5,
+     393057
+    ],
+    [
+     1341,
+     1967,
+     60.1,
+     385926
+    ],
+    [
+     869,
+     1677,
+     61,
+     390865
+    ],
+    [
+     871,
+     1670,
+     66.9,
+     390865
+    ],
+    [
+     869,
+     1667,
+     67,
+     390865
+    ],
+    [
+     873,
+     1672,
+     65.3,
+     390865
+    ],
+    [
+     531,
+     1843,
+     64.5,
+     359311
+    ]
+   ],
+   "stats": {
+    "vehicles": 2066,
+    "buses": 12,
+    "stopped": 1016,
+    "avgSpeed": 5.1,
+    "zoneR": 1712,
+    "links": 3915,
+    "target": 2063,
+    "routes": 30,
+    "signals": 316,
+    "heads": 1276,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 6,
+    "tris": 76292,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "build": {
+    "tiles": 9,
+    "tris": 544059,
+    "ms": 864
+   },
+   "ms": 6919
+  },
+  {
+   "name": "haneda",
+   "x": 2716,
+   "y": -12205,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 613,
+    "buses": 0,
+    "stopped": 47,
+    "avgSpeed": 13.9,
+    "zoneR": 1712,
+    "links": 260,
+    "target": 620,
+    "routes": 0,
+    "signals": 335,
+    "heads": 49,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 3662,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 489,
+    "tod": 8.5
+   },
+   "samples": [
+    613,
+    620,
+    618,
+    618,
+    607,
+    618,
+    616,
+    610
+   ],
+   "poses": 4920,
+   "tunnelPoses": 0,
+   "tunnelVehicles": 0,
+   "outOfTunnel": 0,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 0,
+   "offPct": 0,
+   "offs": [],
+   "stuck": 1,
+   "stuckAt": [
+    [
+     2836,
+     -11534,
+     62.1,
+     101606
+    ]
+   ],
+   "stats": {
+    "vehicles": 619,
+    "buses": 0,
+    "stopped": 140,
+    "avgSpeed": 10.2,
+    "zoneR": 1712,
+    "links": 260,
+    "target": 620,
+    "routes": 0,
+    "signals": 338,
+    "heads": 49,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 4,
+    "tris": 3662,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "build": {
+    "tiles": 9,
+    "tris": 203936,
+    "ms": 127
+   },
+   "ms": 1406
+  }
+ ]
+}

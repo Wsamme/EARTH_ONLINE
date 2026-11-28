@@ -1,0 +1,10 @@
+[0.8s] hk lines 128993
+[1.7s] R6 tunnels {"ways":1819,"kept":336,"portals":427,"snapped":35,"mouths":306,"km":118.2,"extended":6}
+[6.7s] R3 pass 0 conflicts 2039 fixed 845
+[10.5s] R3 pass 1 conflicts 1141 fixed 261
+[14.0s] R3 pass 2 conflicts 857 fixed 72
+[14.0s] R3: conflicts 2039 fixed 1178 flagged 753
+[17.2s] R1/R2: dead ends 3985 joined 66 inserted vertices 10 flagged 612
+[17.7s] R4: low crossings 88 raised bridges 0 flagged 88
+[17.7s] R5: steep lines 22 re-graded 12 flagged 10
+[18.3s] {"city":"hk","src":"/home/claude/earth_online/site/hkdata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/hkdata","lines":129329,"tunnels":{"ways":1819,"kept":336,"portals":427,"snapped":35,"mouths":306,"km":118.2,"extended":6},"changedLines":2758,"changes":{"R6":331,"R6b":5,"R3":2782,"R1":66,"R5":12},"flagged":{"R3: bridge decks share a node mid#span":3,"R3: # % ramp spreads over > # lines":302,"R3: # % ramp makes a new junction (c#)":50,"R3: # % ramp would change a sourced deck (>= # m)":177,"R3: # % ramp lifts a dead end":37,"R3: # % ramp loses junction (c#)":78,"R3: # % ramp low clearance over c#":49,"R3: # % ramp loses junction (c#b)":13,"R3: # % ramp makes a new junction (c#b)":24,"R3: # % ramp low clearance over c#b":19,"R3: # % ramp breaks a deck step join":1,"R1: level #":579,"R1: level #, bridge / ground":21,"R1: level #, classes #/#, bridge / ground":5,"R1: level #, classes #/#":2,"R1: bridge / ground":5,"R4: bridge too short to clear the road below with <= # % ramps":88,"R5: jump next to a fixed junction / line end":10},"rules":["R6","R1","R2","R3","R4","R5"],"gap":6}

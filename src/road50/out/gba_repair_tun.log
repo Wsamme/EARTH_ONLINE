@@ -1,10 +1,10 @@
 [0.9s] gba lines 268387
-[3.0s] R6 tunnels {"ways":1819,"kept":1083,"portals":1814,"snapped":107,"mouths":1484,"km":431.4}
-[54.8s] R3 pass 0 conflicts 7331 fixed 3330
-[80.1s] R3 pass 1 conflicts 3704 fixed 1003
-[107.6s] R3 pass 2 conflicts 2588 fixed 223
-[107.6s] R3: conflicts 7331 fixed 4556 flagged 2272
-[119.2s] R1/R2: dead ends 16048 joined 1028 inserted vertices 652 flagged 1806
-[123.2s] R4: low crossings 218 raised bridges 0 flagged 218
-[123.4s] R5: steep lines 43 re-graded 28 flagged 15
-[124.7s] {"city":"gba","src":"/home/claude/earth_online/site/gbadata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/gbadata","lines":269470,"tunnels":{"ways":1819,"kept":1083,"portals":1814,"snapped":107,"mouths":1484,"km":431.4},"changedLines":11870,"changes":{"R6":1083,"R3":10400,"R1":1028,"R5":28},"flagged":{"R3: bridge decks share a node mid#span":4,"R3: # % ramp makes a new junction (c#)":145,"R3: # % ramp spreads over > # lines":994,"R3: # % ramp loses junction (c#)":273,"R3: # % ramp would change a sourced deck (>= # m)":440,"R3: # % ramp lifts a dead end":136,"R3: # % ramp low clearance over c#b":27,"R3: # % ramp loses junction (c#b)":19,"R3: # % ramp low clearance over c#":141,"R3: # % ramp makes a new junction (c#b)":84,"R3: # % ramp breaks a deck step join":9,"R1: bridge / ground":16,"R1: level #":1691,"R1: level #, bridge / ground":85,"R1: level #, classes #/#":3,"R1: level #, classes #/#, bridge / ground":8,"R1: classes #/#":3,"R4: bridge too short to clear the road below with <= # % ramps":218,"R5: jump next to a fixed junction / line end":15},"rules":["R6","R1","R2","R3","R4","R5"],"gap":6}
+[6.5s] R6 tunnels {"ways":1819,"kept":1106,"portals":1846,"snapped":107,"mouths":1499,"km":439.7,"extended":18}
+[58.8s] R3 pass 0 conflicts 7331 fixed 3330
+[83.3s] R3 pass 1 conflicts 3704 fixed 1003
+[110.1s] R3 pass 2 conflicts 2588 fixed 223
+[110.1s] R3: conflicts 7331 fixed 4556 flagged 2272
+[126.4s] R1/R2: dead ends 16027 joined 1028 inserted vertices 652 flagged 1803
+[129.3s] R4: low crossings 218 raised bridges 0 flagged 218
+[129.3s] R5: steep lines 43 re-graded 28 flagged 15
+[130.0s] {"city":"gba","src":"/home/claude/earth_online/site/gbadata","out":"/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/gbadata","lines":269493,"tunnels":{"ways":1819,"kept":1106,"portals":1846,"snapped":107,"mouths":1499,"km":439.7,"extended":18},"changedLines":11906,"changes":{"R6":1089,"R6b":17,"R3":10400,"R1":1028,"R5":28},"flagged":{"R3: bridge decks share a node mid#span":4,"R3: # % ramp makes a new junction (c#)":145,"R3: # % ramp spreads over > # lines":994,"R3: # % ramp loses junction (c#)":273,"R3: # % ramp would change a sourced deck (>= # m)":440,"R3: # % ramp lifts a dead end":136,"R3: # % ramp low clearance over c#b":27,"R3: # % ramp loses junction (c#b)":19,"R3: # % ramp low clearance over c#":141,"R3: # % ramp makes a new junction (c#b)":84,"R3: # % ramp breaks a deck step join":9,"R1: bridge / ground":16,"R1: level #":1691,"R1: level #, bridge / ground":85,"R1: level #, classes #/#":1,"R1: level #, classes #/#, bridge / ground":7,"R1: classes #/#":3,"R4: bridge too short to clear the road below with <= # % ramps":218,"R5: jump next to a fixed junction / line end":15},"rules":["R6","R1","R2","R3","R4","R5"],"gap":6}

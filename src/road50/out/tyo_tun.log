@@ -8,3 +8,614 @@
 [109.1s] routes {"pairs":2000,"ok":1975,"fail":25,"failIsland":12,"failOneway":13,"detourMed":1.15,"detour3":2,"far":1971,"okPct":98.8}
 [109.9s] movements {"moves":2235776,"zjump1_5":178,"zjump5":166,"xyFar":0}
 [109.9s] tunnels {"portals":7,"pairs":0,"unmatched":7}
+[283.5s] regions {"chiyoda>shinjuku":{"pairs":100,"ok":99,"okPct":99,"meanKm":8.53},"chiyoda>haneda":{"pairs":100,"ok":93,"okPct":93,"meanKm":19.91},"chiyoda>kawasaki":{"pairs":100,"ok":100,"okPct":100,"meanKm":20.23},"shinjuku>chiyoda":{"pairs":100,"ok":94,"okPct":94,"meanKm":7.11},"shinjuku>haneda":{"pairs":100,"ok":95,"okPct":95,"meanKm":21.86},"shinjuku>kawasaki":{"pairs":100,"ok":100,"okPct":100,"meanKm":20.75},"haneda>chiyoda":{"pairs":100,"ok":99,"okPct":99,"meanKm":18.78},"haneda>shinjuku":{"pairs":100,"ok":76,"okPct":76,"meanKm":21.45},"haneda>kawasaki":{"pairs":100,"ok":99,"okPct":99,"meanKm":12.07},"kawasaki>chiyoda":{"pairs":100,"ok":99,"okPct":99,"meanKm":20.09},"kawasaki>shinjuku":{"pairs":100,"ok":99,"okPct":99,"meanKm":21.19},"kawasaki>haneda":{"pairs":100,"ok":97,"okPct":97,"meanKm":10.06}}
+[283.5s] tunnel lines {"lines":1745,"km":299.7,"links":2752}
+{
+ "city": "tyo",
+ "tag": "tun",
+ "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/tyodata",
+ "lines": 395432,
+ "drivableKm": 45028.6,
+ "links": 1096542,
+ "nodes": 409497,
+ "junctionNodes": 520525,
+ "weakComponents": 1337,
+ "mainWeakPct": 99.49,
+ "otherComponentsOver1km": 26,
+ "otherKm": 228.3,
+ "mainSccPctApp": 91.17,
+ "mainSccPct": 98.57,
+ "closedOnewaySets": 20,
+ "closedOnewayKm": 6.86,
+ "sinkLinksInMain": 663,
+ "sourceLinksInMain": 1556,
+ "deadEnds": {
+  "total": 46516,
+  "tunnelopen": 26,
+  "tunnel": 7,
+  "edge": 1610,
+  "chunk": 0,
+  "gap3": 231,
+  "gap6": 4,
+  "gap12": 1074,
+  "levelgap": 3549,
+  "service": 7446,
+  "deckend": 219,
+  "water": 183,
+  "culdesac": 32167,
+  "oneway": 1538
+ },
+ "onewaySinks": 74,
+ "onewaySources": 932,
+ "crossings": {
+  "falsejunc": 210,
+  "lowclear": 1708,
+  "missedjunc": 2408,
+  "overpass": 7771,
+  "atgrade": 120352
+ },
+ "levels": {
+  "step1_3": 149,
+  "step3_15": 1290,
+  "step15": 218,
+  "steep": 565,
+  "inwater": 397,
+  "inwaterM": 48466,
+  "shortdeck": 0
+ },
+ "movements": {
+  "moves": 2235776,
+  "zjump1_5": 178,
+  "zjump5": 166,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1975,
+  "fail": 25,
+  "failIsland": 12,
+  "failOneway": 13,
+  "detourMed": 1.15,
+  "detour3": 2,
+  "far": 1971,
+  "okPct": 98.8
+ },
+ "tunnels": {
+  "portals": 7,
+  "pairs": 0,
+  "unmatched": 7
+ },
+ "tunnelLines": {
+  "lines": 1745,
+  "km": 299.7,
+  "links": 2752
+ },
+ "regions": {
+  "chiyoda>shinjuku": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 8.53
+  },
+  "chiyoda>haneda": {
+   "pairs": 100,
+   "ok": 93,
+   "okPct": 93,
+   "meanKm": 19.91
+  },
+  "chiyoda>kawasaki": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 20.23
+  },
+  "shinjuku>chiyoda": {
+   "pairs": 100,
+   "ok": 94,
+   "okPct": 94,
+   "meanKm": 7.11
+  },
+  "shinjuku>haneda": {
+   "pairs": 100,
+   "ok": 95,
+   "okPct": 95,
+   "meanKm": 21.86
+  },
+  "shinjuku>kawasaki": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 20.75
+  },
+  "haneda>chiyoda": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 18.78
+  },
+  "haneda>shinjuku": {
+   "pairs": 100,
+   "ok": 76,
+   "okPct": 76,
+   "meanKm": 21.45
+  },
+  "haneda>kawasaki": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 12.07
+  },
+  "kawasaki>chiyoda": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 20.09
+  },
+  "kawasaki>shinjuku": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 21.19
+  },
+  "kawasaki>haneda": {
+   "pairs": 100,
+   "ok": 97,
+   "okPct": 97,
+   "meanKm": 10.06
+  }
+ },
+ "problemCounts": {
+  "island": 26,
+  "oneway_trap": 20,
+  "oneway_noentry": 6,
+  "dead_levelgap": 3549,
+  "source": 932,
+  "sink": 74,
+  "dead_deckend": 219,
+  "dead_edge": 1610,
+  "dead_gap3": 231,
+  "dead_water": 183,
+  "dead_gap12": 1074,
+  "dead_tunnel": 7,
+  "dead_gap6": 4,
+  "dead_tunnelopen": 26,
+  "missedjunc": 2408,
+  "lowclear": 1708,
+  "falsejunc": 210,
+  "step": 1657,
+  "inwater": 397,
+  "steep": 565,
+  "zjump": 178,
+  "tunnel_unpaired": 7
+ },
+ "topIslands": [
+  {
+   "len": 7916,
+   "x": 4814,
+   "y": 6026,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 6 Mukojima Line",
+    "Metropolitan Expressway Route 6 Mukojima Line",
+    "Mukojima Route"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 4302,
+    "y": 5156,
+    "e": 12.4,
+    "e2": 0,
+    "li": 111747,
+    "to": 348323
+   }
+  },
+  {
+   "len": 6850,
+   "x": 4421,
+   "y": 4917,
+   "cls": 0,
+   "names": [
+    "Metropolitan Expressway Route 6 Mukojima Line",
+    "Shuto Expressway Route 6 Mukojima Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 6387,
+    "y": 9232,
+    "e": 27,
+    "e2": 13.8,
+    "li": 377406,
+    "to": 119486
+   }
+  },
+  {
+   "len": 6471,
+   "x": -1740,
+   "y": -1554,
+   "cls": 0,
+   "names": [
+    "Route 2 Meguro Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -894,
+    "y": -507,
+    "e": 0.4,
+    "e2": 13.8,
+    "li": 119404,
+    "to": 119393
+   }
+  },
+  {
+   "len": 6064,
+   "x": 4953,
+   "y": 3480,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 7 Komatsugawa Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 3602,
+    "y": 3152,
+    "e": 13.8,
+    "e2": 27,
+    "li": 377421,
+    "to": 377449
+   }
+  },
+  {
+   "len": 4456,
+   "x": 2639,
+   "y": 4623,
+   "cls": 0,
+   "names": [
+    "Route 1 Ueno Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 3072,
+    "y": 6662,
+    "e": 19.6,
+    "e2": 0,
+    "li": 376830,
+    "to": 374835
+   }
+  },
+  {
+   "len": 4399,
+   "x": 2679,
+   "y": 5580,
+   "cls": 0,
+   "names": [
+    "Route 1 Ueno Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 3059,
+    "y": 6614,
+    "e": 22.4,
+    "e2": 0,
+    "li": 376829,
+    "to": 387610
+   }
+  },
+  {
+   "len": 4293,
+   "x": -13019,
+   "y": 19309,
+   "cls": 8,
+   "names": [],
+   "gap": {
+    "d": 0.6,
+    "x": -13463,
+    "y": 19715,
+    "e": 6.6,
+    "e2": 6.6,
+    "li": 105557,
+    "to": 357938
+   }
+  },
+  {
+   "len": 4247,
+   "x": 1880,
+   "y": -2632,
+   "cls": 0,
+   "names": [
+    "Daiba Route",
+    "Daiba Route - Port of Tokyo Connector Bridge"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 2832,
+    "y": -2915,
+    "e": 60,
+    "e2": 19.8,
+    "li": 1,
+    "to": 377576
+   }
+  },
+  {
+   "len": 3753,
+   "x": 1945,
+   "y": -2619,
+   "cls": 0,
+   "names": [
+    "Daiba Route",
+    "Daiba Route - Port of Tokyo Connector Bridge"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 2753,
+    "y": -2784,
+    "e": 60.4,
+    "e2": 23.2,
+    "li": 2,
+    "to": 377582
+   }
+  },
+  {
+   "len": 3669,
+   "x": 6519,
+   "y": 11990,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 6 Misato Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 6922,
+    "y": 13780,
+    "e": 20.4,
+    "e2": 19.8,
+    "li": 377291,
+    "to": 197
+   }
+  },
+  {
+   "len": 3246,
+   "x": -19119,
+   "y": -27781,
+   "cls": 2,
+   "names": [
+    "National Highway Route 1"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -19025,
+    "y": -27658,
+    "e": 0,
+    "e2": 7.2,
+    "li": 369206,
+    "to": 388248
+   }
+  },
+  {
+   "len": 2592,
+   "x": 2856,
+   "y": 2596,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 6 Mukojima Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 3498,
+    "y": 3326,
+    "e": 27,
+    "e2": 13.8,
+    "li": 377448,
+    "to": 377420
+   }
+  },
+  {
+   "len": 2080,
+   "x": 1852,
+   "y": 2905,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Inner Circular Route"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 1014,
+    "y": 3444,
+    "e": 27,
+    "e2": 20.4,
+    "li": 358503,
+    "to": 112227
+   }
+  },
+  {
+   "len": 2064,
+   "x": 10289,
+   "y": 15065,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 0,
+    "x": 9975,
+    "y": 15047,
+    "e": 0,
+    "e2": 6.2,
+    "li": 210410,
+    "to": 383983
+   }
+  },
+  {
+   "len": 2019,
+   "x": 404,
+   "y": -8924,
+   "cls": 1,
+   "names": [
+    "Bayshore Branch"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -113,
+    "y": -10012,
+    "e": 0.4,
+    "e2": 20.4,
+    "li": 376143,
+    "to": 167590
+   }
+  },
+  {
+   "len": 1618,
+   "x": -2532,
+   "y": 23477,
+   "cls": 10,
+   "names": [
+    "美沼橋"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -2421,
+    "y": 23538,
+    "e": 6.4,
+    "e2": 0,
+    "li": 164999,
+    "to": 158514
+   }
+  },
+  {
+   "len": 1464,
+   "x": 27930,
+   "y": -17036,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1464,
+   "x": -7078,
+   "y": -27188,
+   "cls": 0,
+   "names": [
+    "南本牧はま道路"
+   ]
+  },
+  {
+   "len": 1439,
+   "x": 3706,
+   "y": -1575,
+   "cls": 0,
+   "names": [
+    "Harumi Route"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 3276,
+    "y": -998,
+    "e": 20.4,
+    "e2": 0.6,
+    "li": 377505,
+    "to": 393439
+   }
+  },
+  {
+   "len": 1249,
+   "x": 11377,
+   "y": -21757,
+   "cls": 1,
+   "names": [],
+   "gap": {
+    "d": 0.3,
+    "x": 11964,
+    "y": -22284,
+    "e": 0.6,
+    "e2": 26,
+    "li": 112305,
+    "to": 167579
+   }
+  },
+  {
+   "len": 1191,
+   "x": -5785,
+   "y": 2703,
+   "cls": 1,
+   "names": [
+    "Central Circular Route"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -5555,
+    "y": 2431,
+    "e": 26.4,
+    "e2": 6.6,
+    "li": 110863,
+    "to": 112323
+   }
+  },
+  {
+   "len": 1184,
+   "x": 132,
+   "y": -5060,
+   "cls": 0,
+   "names": [
+    "Shuto Expressway Route 1 Haneda Line"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 12349,
+    "y": 619,
+    "e": 0.4,
+    "e2": 16.8,
+    "li": 379386,
+    "to": 379384
+   }
+  },
+  {
+   "len": 1184,
+   "x": 12301,
+   "y": 698,
+   "cls": 5,
+   "names": [
+    "Kasaibashi-dori"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 12349,
+    "y": 619,
+    "e": 0.4,
+    "e2": 16.8,
+    "li": 379386,
+    "to": 379384
+   }
+  },
+  {
+   "len": 1079,
+   "x": -21719,
+   "y": 13739,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 1.6,
+    "x": -21558,
+    "y": 13870,
+    "e": 6.6,
+    "e2": 6.6,
+    "li": 165965,
+    "to": 287247
+   }
+  },
+  {
+   "len": 1068,
+   "x": -6408,
+   "y": -21734,
+   "cls": 1,
+   "names": [],
+   "gap": {
+    "d": 0,
+    "x": -6369,
+    "y": -22060,
+    "e": 0.4,
+    "e2": 20.4,
+    "li": 55,
+    "to": 375025
+   }
+  }
+ ]
+}
+[283.8s] map /home/claude/earth_online/src/road50/out/tyo_tun_chiyoda.png
+[284.2s] map /home/claude/earth_online/src/road50/out/tyo_tun_shinjuku.png
+[284.5s] map /home/claude/earth_online/src/road50/out/tyo_tun_shibuya.png

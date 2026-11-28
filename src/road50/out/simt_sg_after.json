@@ -8,38 +8,38 @@
    "y": -3428,
    "stuck100": 0,
    "warm": {
-    "vehicles": 1665,
-    "buses": 120,
-    "stopped": 736,
+    "vehicles": 1657,
+    "buses": 108,
+    "stopped": 713,
     "avgSpeed": 6.1,
     "zoneR": 1712,
     "links": 1475,
     "target": 1547,
     "routes": 257,
-    "signals": 138,
-    "heads": 566,
+    "signals": 140,
+    "heads": 569,
     "near": 0,
     "far": 0,
     "glows": 0,
     "calls": 6,
-    "tris": 60378,
+    "tris": 60506,
     "simMs": 0,
     "renderMs": 0,
     "totalMs": 0,
-    "warmMs": 1994,
+    "warmMs": 1059,
     "tod": 8.5
    },
    "samples": [
-    1665,
+    1657,
+    1655,
     1667,
-    1672,
-    1677,
-    1679,
-    1679,
-    1683,
+    1673,
+    1676,
+    1682,
+    1682,
     1686
    ],
-   "poses": 13408,
+   "poses": 13378,
    "tunnelPoses": 0,
    "tunnelVehicles": 0,
    "outOfTunnel": 0,
@@ -48,73 +48,55 @@
    "offSurface": 0,
    "offPct": 0,
    "offs": [],
-   "stuck": 9,
+   "stuck": 6,
    "stuckAt": [
+    [
+     678,
+     -3580,
+     69.5,
+     140363
+    ],
+    [
+     56,
+     -4679,
+     60.4,
+     137562
+    ],
     [
      677,
      -3584,
-     60.4,
+     69.6,
      140363
-    ],
-    [
-     1758,
-     -2614,
-     61.8,
-     140541
     ],
     [
      677,
-     -3580,
-     69.9,
+     -3587,
+     69.1,
      140363
-    ],
-    [
-     63,
-     -4677,
-     61.5,
-     137562
     ],
     [
      59,
-     -4682,
-     63.7,
+     -4681,
+     68.8,
      137562
     ],
     [
-     1206,
-     -2411,
-     68.6,
-     140093
-    ],
-    [
-     678,
-     -3587,
-     63,
-     140363
-    ],
-    [
-     1096,
+     1095,
      -4413,
-     63.9,
+     64.1,
      140505
-    ],
-    [
-     347,
-     -2764,
-     60.4,
-     140201
     ]
    ],
    "stats": {
-    "vehicles": 1687,
-    "buses": 142,
-    "stopped": 771,
-    "avgSpeed": 5.5,
+    "vehicles": 1691,
+    "buses": 143,
+    "stopped": 842,
+    "avgSpeed": 5.1,
     "zoneR": 1712,
     "links": 1475,
     "target": 1547,
     "routes": 257,
-    "signals": 143,
+    "signals": 144,
     "heads": 572,
     "near": 0,
     "far": 0,
@@ -129,9 +111,9 @@
    "build": {
     "tiles": 9,
     "tris": 339940,
-    "ms": 756
+    "ms": 387
    },
-   "ms": 7060
+   "ms": 4634
   },
   {
    "name": "kpe_mce",
@@ -139,38 +121,38 @@
    "y": -2211,
    "stuck100": 0,
    "warm": {
-    "vehicles": 1010,
-    "buses": 45,
-    "stopped": 213,
-    "avgSpeed": 11.7,
+    "vehicles": 1017,
+    "buses": 48,
+    "stopped": 216,
+    "avgSpeed": 11.8,
     "zoneR": 1712,
     "links": 913,
     "target": 969,
     "routes": 112,
-    "signals": 194,
-    "heads": 282,
+    "signals": 198,
+    "heads": 285,
     "near": 0,
     "far": 0,
     "glows": 0,
     "calls": 6,
-    "tris": 31416,
+    "tris": 31642,
     "simMs": 0,
     "renderMs": 0,
     "totalMs": 0,
-    "warmMs": 815,
+    "warmMs": 583,
     "tod": 8.5
    },
    "samples": [
-    1010,
-    1018,
-    1022,
-    1018,
-    1016,
-    1019,
+    1017,
     1021,
-    1022
+    1026,
+    1025,
+    1022,
+    1029,
+    1027,
+    1030
    ],
-   "poses": 8146,
+   "poses": 8197,
    "tunnelPoses": 0,
    "tunnelVehicles": 0,
    "outOfTunnel": 0,
@@ -179,37 +161,55 @@
    "offSurface": 0,
    "offPct": 0,
    "offs": [],
-   "stuck": 2,
+   "stuck": 5,
    "stuckAt": [
     [
+     2571,
+     -2121,
+     61.8,
+     140594
+    ],
+    [
+     2567,
+     -2124,
+     63.8,
+     140594
+    ],
+    [
      1773,
-     -2142,
-     68.5,
+     -2567,
+     63.2,
+     140544
+    ],
+    [
+     1772,
+     -2145,
+     66.8,
      139927
     ],
     [
      3683,
      -1535,
-     68.4,
+     67.4,
      140653
     ]
    ],
    "stats": {
-    "vehicles": 1021,
-    "buses": 54,
-    "stopped": 303,
-    "avgSpeed": 8.8,
+    "vehicles": 1031,
+    "buses": 64,
+    "stopped": 327,
+    "avgSpeed": 8.9,
     "zoneR": 1712,
     "links": 913,
     "target": 969,
     "routes": 112,
-    "signals": 198,
-    "heads": 288,
+    "signals": 202,
+    "heads": 286,
     "near": 0,
     "far": 0,
     "glows": 0,
     "calls": 6,
-    "tris": 31866,
+    "tris": 31716,
     "simMs": 0,
     "renderMs": 0,
     "totalMs": 0,
@@ -218,9 +218,9 @@
    "build": {
     "tiles": 9,
     "tris": 244506,
-    "ms": 668
+    "ms": 156
    },
-   "ms": 3859
+   "ms": 2095
   }
  ]
 }

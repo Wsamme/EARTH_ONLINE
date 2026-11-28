@@ -151,7 +151,7 @@ else if (RULES.has('R6') && TJ && fs.existsSync(path.join(__dirname, TJ))){
   }
   // R6b: an open tunnel end (no road at the OSM portal) whose approach the data trimmed short (e.g. bayreal/b4c_ybi.py cuts the Yerba
   // Buena approaches where they enter the 90 m terrain): joined to the dead end of the same road (same name or ref, the end of a line
-  // that nothing else joins) within 120 m, by one hidden segment; logged as R6b with the gap.
+  // that nothing else joins) within 120 m for motorway / trunk (+ links), 6 m for other roads, by one hidden segment; logged as R6b with the gap.
   const nodeUse = new Map(); for (const C of cand) for (const n of C.nodes) nodeUse.set(n[0], (nodeUse.get(n[0]) || 0) + 1);
   const ENDS = []; { const seen = new Map(); for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g); for (let k = 0; k < m; k++){ const key = g.Q[k*2] + ',' + g.Q[k*2+1]; seen.set(key, (seen.get(key) || 0) + 1); } }
     for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g); for (const k of [0, m - 1]) if (seen.get(g.Q[k*2] + ',' + g.Q[k*2+1]) === 1) ENDS.push([li, k]); } }
@@ -160,7 +160,7 @@ else if (RULES.has('R6') && TJ && fs.existsSync(path.join(__dirname, TJ))){
     for (const [ni, n] of [[0, C.nodes[0]], [C.nodes.length - 1, C.nodes[C.nodes.length - 1]]]){
       if (portal.has(n[0]) || nodeUse.get(n[0]) > 1 || (!nm && !ref)) continue;
       let best = null; const x = n[1]/4, y = n[2]/4;
-      for (const [li, k] of ENDS){ const g = G[li], d = Math.hypot(qx(g, k) - x, qy(g, k) - y); if (d > 120 || (best && d >= best.d)) continue;
+      for (const [li, k] of ENDS){ const g = G[li], d = Math.hypot(qx(g, k) - x, qy(g, k) - y); if (d > (C.c <= 3 ? 120 : 6) || (best && d >= best.d)) continue;      // 120 m: motorway / trunk approaches the pipelines trimmed; else R1's 6 m
         const L = lines[li], ln = (L.name && L.name[0]) || ''; if (!((nm && ln === nm) || (ref && L.ref && L.ref.split(';').includes(ref)))) continue;
         // direction: a one-way tunnel leaving at this end goes on into a line that starts here (and the other way round)
         if ((L.flags & 1) && (t.oneway === 'yes' || t.oneway === '1')){ const leaves = ni !== 0; if (leaves !== (k === 0)) continue; }

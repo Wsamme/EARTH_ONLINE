@@ -10,75 +10,69 @@
    "warm": {
     "vehicles": 1842,
     "buses": 0,
-    "stopped": 849,
-    "avgSpeed": 4.5,
+    "stopped": 843,
+    "avgSpeed": 4.6,
     "zoneR": 1712,
     "links": 1633,
     "target": 1841,
     "routes": 0,
-    "signals": 277,
-    "heads": 1105,
+    "signals": 276,
+    "heads": 1106,
     "near": 0,
     "far": 0,
     "glows": 0,
     "calls": 4,
-    "tris": 63050,
+    "tris": 63082,
     "simMs": 0,
     "renderMs": 0,
     "totalMs": 0,
-    "warmMs": 1879,
+    "warmMs": 1688,
     "tod": 8.5
    },
    "samples": [
     1842,
-    1843,
-    1842,
-    1839,
-    1835,
+    1838,
     1841,
     1840,
-    1840
+    1837,
+    1842,
+    1837,
+    1838
    ],
-   "poses": 14722,
-   "tunnelPoses": 305,
-   "tunnelVehicles": 67,
-   "outOfTunnel": 24,
+   "poses": 14715,
+   "tunnelPoses": 322,
+   "tunnelVehicles": 70,
+   "outOfTunnel": 28,
    "jumps": 0,
    "jumpAt": [],
    "offSurface": 0,
    "offPct": 0,
    "offs": [],
-   "stuck": 2,
+   "stuck": 1,
    "stuckAt": [
     [
-     -1577,
-     5953,
-     63.7,
-     367117
-    ],
-    [
-     -1569,
-     5951,
-     65.9,
-     863
+     -1637,
+     5809,
+     67.8,
+     253173
     ]
    ],
    "stats": {
     "vehicles": 1842,
     "buses": 0,
-    "stopped": 855,
-    "avgSpeed": 4.5,
+    "stopped": 827,
+    "avgSpeed": 4.6,
     "zoneR": 1712,
     "links": 1633,
     "target": 1841,
     "routes": 0,
-    "signals": 281,
-    "heads": 1108,
+    "signals": 282,
+    "heads": 1110,
     "near": 0,
     "far": 0,
     "glows": 0,
     "calls": 4,
-    "tris": 63166,
+    "tris": 63240,
     "simMs": 0,
     "renderMs": 0,
     "totalMs": 0,
@@ -87,9 +81,9 @@
    "build": {
     "tiles": 9,
     "tris": 379461,
-    "ms": 1125
+    "ms": 769
    },
-   "ms": 7075
+   "ms": 6663
   },
   {
    "name": "holland",
@@ -99,69 +93,63 @@
    "warm": {
     "vehicles": 500,
     "buses": 0,
-    "stopped": 184,
-    "avgSpeed": 5.3,
+    "stopped": 181,
+    "avgSpeed": 5.7,
     "zoneR": 1712,
     "links": 1233,
-    "target": 498,
+    "target": 497,
     "routes": 0,
-    "signals": 363,
-    "heads": 365,
+    "signals": 366,
+    "heads": 369,
     "near": 0,
     "far": 0,
     "glows": 0,
     "calls": 4,
-    "tris": 27312,
+    "tris": 27612,
     "simMs": 0,
     "renderMs": 0,
     "totalMs": 0,
-    "warmMs": 474,
+    "warmMs": 475,
     "tod": 8.5
    },
    "samples": [
     500,
     498,
+    498,
+    498,
+    496,
     497,
-    498,
-    495,
-    498,
-    498,
-    498
+    497,
+    496
    ],
-   "poses": 3982,
-   "tunnelPoses": 91,
-   "tunnelVehicles": 16,
-   "outOfTunnel": 3,
+   "poses": 3980,
+   "tunnelPoses": 101,
+   "tunnelVehicles": 21,
+   "outOfTunnel": 5,
    "jumps": 0,
    "jumpAt": [],
    "offSurface": 0,
    "offPct": 0,
    "offs": [],
-   "stuck": 2,
+   "stuck": 1,
    "stuckAt": [
     [
-     -4802,
-     3284,
-     69,
-     360280
-    ],
-    [
-     -4795,
-     3284,
-     65.9,
-     360280
+     -5129,
+     4138,
+     61.8,
+     359749
     ]
    ],
    "stats": {
-    "vehicles": 498,
+    "vehicles": 497,
     "buses": 0,
-    "stopped": 186,
-    "avgSpeed": 5.4,
+    "stopped": 174,
+    "avgSpeed": 5.8,
     "zoneR": 1712,
     "links": 1233,
-    "target": 498,
+    "target": 497,
     "routes": 0,
-    "signals": 375,
+    "signals": 376,
     "heads": 380,
     "near": 0,
     "far": 0,
@@ -176,9 +164,9 @@
    "build": {
     "tiles": 9,
     "tris": 391510,
-    "ms": 746
+    "ms": 463
    },
-   "ms": 3585
+   "ms": 3345
   }
  ]
 }

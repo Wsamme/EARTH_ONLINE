@@ -1,0 +1,12 @@
+sg repair 0
+sg tun 0
+hk repair 0
+hk tun 0
+nyc repair 0
+nyc tun 0
+gba repair 0
+gba tun 0
+sg sim 0
+hk sim 0
+nyc sim 0
+gba sim 0

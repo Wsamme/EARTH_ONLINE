@@ -3,7 +3,7 @@ import json, sys, collections
 r = json.load(open(f'out/{sys.argv[1]}_repair_tun.json'))
 by = collections.defaultdict(list)
 for c in r['changes']:
-    if c['rule'] == 'R6': by[c['osmName'] or '(unnamed)'].append(c)
+    if c['rule'] in ('R6', 'R6b'): by[c['osmName'] or '(unnamed)'].append(c)
 pat = sys.argv[2:] or None
 rows = sorted(by.items(), key=lambda kv: -sum(c['len'] for c in kv[1]))
 for k, L in rows:

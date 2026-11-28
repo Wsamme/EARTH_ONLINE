@@ -1,0 +1,556 @@
+[0.3s] bay lines 364573
+[5.2s] prep: junction nodes 319082
+[5.9s] traffic network: links 306963 pieces 176118 nodes 129463 movements 586249
+[8.5s] weak components 270 main 99.2% others >=1 km 35 | SCC main 98.2%
+[10.5s] dead ends {"total":26053,"tunnelopen":0,"tunnel":50,"edge":478,"chunk":0,"gap3":93,"gap6":22,"gap12":305,"levelgap":320,"service":4540,"deckend":67,"water":13,"culdesac":20165,"oneway":550} sinks 42 sources 324
+[11.5s] crossings {"falsejunc":5,"lowclear":451,"missedjunc":283,"overpass":3871,"atgrade":32494}
+[11.7s] levels / water {"step1_3":120,"step3_15":227,"step15":41,"steep":275,"inwater":27,"inwaterM":2455,"shortdeck":1}
+[19.4s] routes {"pairs":2000,"ok":1974,"fail":26,"failIsland":20,"failOneway":6,"detourMed":1.26,"detour3":65,"far":1971,"okPct":98.7}
+[19.7s] movements {"moves":586249,"zjump1_5":7,"zjump5":7,"xyFar":0}
+[29.3s] tunnels {"portals":50,"pairs":21,"unmatched":14,"routesOkPctWithTunnels":98.7}
+[56.7s] regions {"sf>oakland":{"pairs":100,"ok":97,"okPct":97,"meanKm":77.81},"sf>orinda":{"pairs":100,"ok":99,"okPct":99,"meanKm":90.27},"sf>sanjose":{"pairs":100,"ok":100,"okPct":100,"meanKm":76.9},"oakland>sf":{"pairs":100,"ok":100,"okPct":100,"meanKm":58.79},"oakland>orinda":{"pairs":100,"ok":99,"okPct":99,"meanKm":16.93},"oakland>sanjose":{"pairs":100,"ok":99,"okPct":99,"meanKm":66.05},"orinda>sf":{"pairs":100,"ok":97,"okPct":97,"meanKm":67.34},"orinda>oakland":{"pairs":100,"ok":94,"okPct":94,"meanKm":16.64},"orinda>sanjose":{"pairs":100,"ok":99,"okPct":99,"meanKm":79.6},"sanjose>sf":{"pairs":100,"ok":99,"okPct":99,"meanKm":77.32},"sanjose>oakland":{"pairs":100,"ok":98,"okPct":98,"meanKm":66.07},"sanjose>orinda":{"pairs":100,"ok":98,"okPct":98,"meanKm":79.25}}
+[56.7s] tunnel lines {"lines":0,"km":0,"links":0}
+{
+ "city": "bay",
+ "tag": "before_r",
+ "dir": "/home/claude/earth_online/site/baydata",
+ "lines": 364573,
+ "drivableKm": 23120,
+ "links": 306963,
+ "nodes": 129463,
+ "junctionNodes": 319082,
+ "weakComponents": 270,
+ "mainWeakPct": 99.19,
+ "otherComponentsOver1km": 35,
+ "otherKm": 188.2,
+ "mainSccPctApp": 81.05,
+ "mainSccPct": 98.15,
+ "closedOnewaySets": 15,
+ "closedOnewayKm": 45.62,
+ "sinkLinksInMain": 265,
+ "sourceLinksInMain": 551,
+ "deadEnds": {
+  "total": 26053,
+  "tunnelopen": 0,
+  "tunnel": 50,
+  "edge": 478,
+  "chunk": 0,
+  "gap3": 93,
+  "gap6": 22,
+  "gap12": 305,
+  "levelgap": 320,
+  "service": 4540,
+  "deckend": 67,
+  "water": 13,
+  "culdesac": 20165,
+  "oneway": 550
+ },
+ "onewaySinks": 42,
+ "onewaySources": 324,
+ "crossings": {
+  "falsejunc": 5,
+  "lowclear": 451,
+  "missedjunc": 283,
+  "overpass": 3871,
+  "atgrade": 32494
+ },
+ "levels": {
+  "step1_3": 120,
+  "step3_15": 227,
+  "step15": 41,
+  "steep": 275,
+  "inwater": 27,
+  "inwaterM": 2455,
+  "shortdeck": 1
+ },
+ "movements": {
+  "moves": 586249,
+  "zjump1_5": 7,
+  "zjump5": 7,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1974,
+  "fail": 26,
+  "failIsland": 20,
+  "failOneway": 6,
+  "detourMed": 1.26,
+  "detour3": 65,
+  "far": 1971,
+  "okPct": 98.7
+ },
+ "tunnels": {
+  "portals": 50,
+  "pairs": 21,
+  "unmatched": 14,
+  "routesOkPctWithTunnels": 98.7
+ },
+ "tunnelLines": {
+  "lines": 0,
+  "km": 0,
+  "links": 0
+ },
+ "regions": {
+  "sf>oakland": {
+   "pairs": 100,
+   "ok": 97,
+   "okPct": 97,
+   "meanKm": 77.81
+  },
+  "sf>orinda": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 90.27
+  },
+  "sf>sanjose": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 76.9
+  },
+  "oakland>sf": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 58.79
+  },
+  "oakland>orinda": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 16.93
+  },
+  "oakland>sanjose": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 66.05
+  },
+  "orinda>sf": {
+   "pairs": 100,
+   "ok": 97,
+   "okPct": 97,
+   "meanKm": 67.34
+  },
+  "orinda>oakland": {
+   "pairs": 100,
+   "ok": 94,
+   "okPct": 94,
+   "meanKm": 16.64
+  },
+  "orinda>sanjose": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 79.6
+  },
+  "sanjose>sf": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 77.32
+  },
+  "sanjose>oakland": {
+   "pairs": 100,
+   "ok": 98,
+   "okPct": 98,
+   "meanKm": 66.07
+  },
+  "sanjose>orinda": {
+   "pairs": 100,
+   "ok": 98,
+   "okPct": 98,
+   "meanKm": 79.25
+  }
+ },
+ "problemCounts": {
+  "island": 35,
+  "oneway_noentry": 3,
+  "oneway_trap": 15,
+  "dead_levelgap": 320,
+  "dead_edge": 478,
+  "source": 324,
+  "sink": 42,
+  "dead_tunnel": 50,
+  "dead_gap3": 93,
+  "dead_gap12": 305,
+  "dead_gap6": 22,
+  "dead_deckend": 66,
+  "dead_water": 13,
+  "dead_shortdeck": 1,
+  "lowclear": 451,
+  "falsejunc": 5,
+  "missedjunc": 283,
+  "step": 388,
+  "steep": 275,
+  "inwater": 27,
+  "zjump": 7,
+  "tunnel_unpaired": 14
+ },
+ "topIslands": [
+  {
+   "len": 23202,
+   "x": -15922,
+   "y": 21855,
+   "cls": 1,
+   "names": [
+    "6th Street",
+    "10th Street",
+    "Chinook Court",
+    "Gateview Avenue"
+   ],
+   "gap": {
+    "d": 0.2,
+    "x": -15137,
+    "y": 20899,
+    "e": 0.4,
+    "e2": 58.4,
+    "li": 99923,
+    "to": 316547
+   }
+  },
+  {
+   "len": 9914,
+   "x": -32600,
+   "y": 35499,
+   "cls": 10,
+   "names": [
+    "Upland Road",
+    "Madrone Way",
+    "Fern Way",
+    "Evergreen Drive"
+   ]
+  },
+  {
+   "len": 9394,
+   "x": -21222,
+   "y": 26657,
+   "cls": 10,
+   "names": [
+    "Perimeter Road",
+    "Fire Road"
+   ]
+  },
+  {
+   "len": 8623,
+   "x": -29225,
+   "y": 35693,
+   "cls": 8,
+   "names": [
+    "Scott Place",
+    "Gregory Place",
+    "Barry Way",
+    "Parkside Way"
+   ],
+   "gap": {
+    "d": 6.4,
+    "x": -29017,
+    "y": 35504,
+    "e": 0,
+    "e2": 0.4,
+    "li": 332775,
+    "to": 134621
+   }
+  },
+  {
+   "len": 6836,
+   "x": 34329,
+   "y": 33020,
+   "cls": 10,
+   "names": [
+    "Chadbourne Road"
+   ]
+  },
+  {
+   "len": 6593,
+   "x": 6309,
+   "y": -33897,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 5105,
+   "x": 35007,
+   "y": 34558,
+   "cls": 10,
+   "names": [
+    "Empire Mine Road"
+   ]
+  },
+  {
+   "len": 4416,
+   "x": 29560,
+   "y": 12899,
+   "cls": 10,
+   "names": [
+    "Palisades Drive",
+    "Oak Ridge Court",
+    "Mount Dana Drive",
+    "Mount Dana Court"
+   ]
+  },
+  {
+   "len": 4259,
+   "x": 33493,
+   "y": 31470,
+   "cls": 10,
+   "names": [
+    "Briones Valley Road"
+   ]
+  },
+  {
+   "len": 3792,
+   "x": -1884,
+   "y": -31000,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 0,
+    "x": -1490,
+    "y": -31012,
+    "e": 5.2,
+    "e2": 0,
+    "li": 267717,
+    "to": 303319
+   }
+  },
+  {
+   "len": 3426,
+   "x": 18010,
+   "y": 35922,
+   "cls": 10,
+   "names": [
+    "Barberry Court",
+    "Deerberry Court",
+    "Pitch Pine Court",
+    "River Ash Court"
+   ],
+   "gap": {
+    "d": 32.5,
+    "x": 18379,
+    "y": 35929,
+    "e": 0,
+    "e2": 0,
+    "li": 306142,
+    "to": 303879
+   }
+  },
+  {
+   "len": 2733,
+   "x": 16982,
+   "y": 35816,
+   "cls": 10,
+   "names": [
+    "Limeridge Drive",
+    "Kearsarge Court",
+    "Fair Weather Circle",
+    "Shellflower Court"
+   ]
+  },
+  {
+   "len": 2616,
+   "x": 23376,
+   "y": 11661,
+   "cls": 10,
+   "names": [
+    "Dogwood Court",
+    "Wisteria Street",
+    "Winged Foot Court",
+    "Carlisle Court"
+   ],
+   "gap": {
+    "d": 16.9,
+    "x": 23534,
+    "y": 11845,
+    "e": 0,
+    "e2": 0,
+    "li": 282305,
+    "to": 298722
+   }
+  },
+  {
+   "len": 2512,
+   "x": 26005,
+   "y": 11823,
+   "cls": 10,
+   "names": [
+    "Frog Bend Road",
+    "Albrook Road"
+   ]
+  },
+  {
+   "len": 2387,
+   "x": -35267,
+   "y": 33404,
+   "cls": 8,
+   "names": [
+    "East Ridgecrest Boulevard"
+   ]
+  },
+  {
+   "len": 2221,
+   "x": 23709,
+   "y": 17784,
+   "cls": 10,
+   "names": [
+    "Ginger Court",
+    "Elder Court",
+    "Sunflower Court",
+    "Morning Glory Court"
+   ],
+   "gap": {
+    "d": 0,
+    "x": 23481,
+    "y": 18029,
+    "e": 6.2,
+    "e2": 0,
+    "li": 301307,
+    "to": 268335
+   }
+  },
+  {
+   "len": 2195,
+   "x": -669,
+   "y": -28773,
+   "cls": 10,
+   "names": [
+    "Tierra Arboles"
+   ]
+  },
+  {
+   "len": 2174,
+   "x": 35005,
+   "y": 29880,
+   "cls": 10,
+   "names": [
+    "Sherman Drive",
+    "Helen Lane",
+    "John Marsh Road",
+    "John Marsh Drive"
+   ],
+   "gap": {
+    "d": 29.1,
+    "x": 34858,
+    "y": 29913,
+    "e": 0,
+    "e2": 0,
+    "li": 266488,
+    "to": 342045
+   }
+  },
+  {
+   "len": 1934,
+   "x": 12949,
+   "y": 35852,
+   "cls": 10,
+   "names": [
+    "Orange Street",
+    "Peach Place",
+    "Pear Drive",
+    "Apple Drive"
+   ],
+   "gap": {
+    "d": 54,
+    "x": 13047,
+    "y": 35648,
+    "e": 0,
+    "e2": 0,
+    "li": 278992,
+    "to": 304279
+   }
+  },
+  {
+   "len": 1730,
+   "x": 19087,
+   "y": -22624,
+   "cls": 10,
+   "names": [
+    "Sunrise Drive",
+    "Seaview Drive",
+    "East Channel Drive",
+    "Horizon Circle"
+   ],
+   "gap": {
+    "d": 6.8,
+    "x": -2758,
+    "y": -18332,
+    "e": 0,
+    "e2": 0,
+    "li": 320565,
+    "to": 322653
+   }
+  },
+  {
+   "len": 1730,
+   "x": -2671,
+   "y": -18124,
+   "cls": 10,
+   "names": [
+    "Sheffield Lane",
+    "Whitehall Lane",
+    "Yarborough Lane",
+    "Chatsworth Lane"
+   ],
+   "gap": {
+    "d": 6.8,
+    "x": -2758,
+    "y": -18332,
+    "e": 0,
+    "e2": 0,
+    "li": 320565,
+    "to": 322653
+   }
+  },
+  {
+   "len": 1568,
+   "x": 26728,
+   "y": 2638,
+   "cls": 10,
+   "names": [
+    "East Creek Court",
+    "Stonecliff Vista Lane",
+    "Sterling Greens Circle",
+    "Rocky Creek Place"
+   ]
+  },
+  {
+   "len": 1542,
+   "x": -18667,
+   "y": 3962,
+   "cls": 6,
+   "names": [
+    "Dubuque Avenue"
+   ],
+   "gap": {
+    "d": 0,
+    "x": -18499,
+    "y": 4150,
+    "e": 0,
+    "e2": 3.2,
+    "li": 350737,
+    "to": 133937
+   }
+  },
+  {
+   "len": 1527,
+   "x": -17761,
+   "y": -7335,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1517,
+   "x": 30393,
+   "y": -35679,
+   "cls": 10,
+   "names": [
+    "Sheridan Place",
+    "Sue Avenue",
+    "Feldspar Drive",
+    "Arctic Avenue"
+   ]
+  }
+ ]
+}

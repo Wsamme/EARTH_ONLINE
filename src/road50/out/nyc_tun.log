@@ -1,24 +1,24 @@
-[0.3s] nyc lines 371212
-[5.7s] prep: junction nodes 297050
-[6.8s] traffic network: links 359497 pieces 218620 nodes 145803 movements 717860
-[9.9s] weak components 210 main 98.9% others >=1 km 24 | SCC main 98.0%
-[12.6s] dead ends {"total":15480,"tunnelopen":5,"tunnel":5,"edge":943,"chunk":0,"gap3":26,"gap6":0,"gap12":196,"levelgap":181,"service":2438,"deckend":60,"water":77,"culdesac":11549,"oneway":532} sinks 125 sources 610
-[14.0s] crossings {"falsejunc":45,"lowclear":727,"missedjunc":575,"overpass":6565,"atgrade":53243}
-[14.2s] levels / water {"step1_3":17,"step3_15":140,"step15":25,"steep":600,"inwater":32,"inwaterM":2610,"shortdeck":0}
-[25.9s] routes {"pairs":2000,"ok":1968,"fail":32,"failIsland":20,"failOneway":12,"detourMed":1.21,"detour3":3,"far":1962,"okPct":98.4}
-[26.2s] movements {"moves":717860,"zjump1_5":6,"zjump5":6,"xyFar":0}
-[26.2s] tunnels {"portals":5,"pairs":0,"unmatched":5}
-[64.0s] regions {"manhattan>jersey":{"pairs":100,"ok":100,"okPct":100,"meanKm":11.59},"manhattan>queens":{"pairs":100,"ok":89,"okPct":89,"meanKm":10.04},"manhattan>brooklyn":{"pairs":100,"ok":100,"okPct":100,"meanKm":12.83},"jersey>manhattan":{"pairs":100,"ok":100,"okPct":100,"meanKm":11.94},"jersey>queens":{"pairs":100,"ok":99,"okPct":99,"meanKm":17.27},"jersey>brooklyn":{"pairs":100,"ok":100,"okPct":100,"meanKm":16.11},"queens>manhattan":{"pairs":100,"ok":99,"okPct":99,"meanKm":10.78},"queens>jersey":{"pairs":100,"ok":98,"okPct":98,"meanKm":18.09},"queens>brooklyn":{"pairs":100,"ok":100,"okPct":100,"meanKm":12.69},"brooklyn>manhattan":{"pairs":100,"ok":100,"okPct":100,"meanKm":11.71},"brooklyn>jersey":{"pairs":100,"ok":99,"okPct":99,"meanKm":15.66},"brooklyn>queens":{"pairs":100,"ok":99,"okPct":99,"meanKm":13.38}}
-[64.0s] tunnel lines {"lines":374,"km":55.5,"links":905}
+[0.3s] nyc lines 371221
+[5.1s] prep: junction nodes 297061
+[6.2s] traffic network: links 359515 pieces 218629 nodes 145809 movements 717890
+[9.3s] weak components 210 main 98.9% others >=1 km 24 | SCC main 98.0%
+[11.9s] dead ends {"total":15476,"tunnelopen":5,"tunnel":2,"edge":943,"chunk":0,"gap3":26,"gap6":0,"gap12":196,"levelgap":181,"service":2438,"deckend":60,"water":77,"culdesac":11548,"oneway":532} sinks 125 sources 610
+[13.1s] crossings {"falsejunc":45,"lowclear":727,"missedjunc":575,"overpass":6565,"atgrade":53243}
+[13.4s] levels / water {"step1_3":17,"step3_15":140,"step15":25,"steep":600,"inwater":32,"inwaterM":2610,"shortdeck":0}
+[26.6s] routes {"pairs":2000,"ok":1968,"fail":32,"failIsland":20,"failOneway":12,"detourMed":1.21,"detour3":3,"far":1962,"okPct":98.4}
+[26.9s] movements {"moves":717890,"zjump1_5":6,"zjump5":6,"xyFar":0}
+[26.9s] tunnels {"portals":2,"pairs":0,"unmatched":2}
+[59.7s] regions {"manhattan>jersey":{"pairs":100,"ok":100,"okPct":100,"meanKm":11.59},"manhattan>queens":{"pairs":100,"ok":89,"okPct":89,"meanKm":10.04},"manhattan>brooklyn":{"pairs":100,"ok":100,"okPct":100,"meanKm":12.83},"jersey>manhattan":{"pairs":100,"ok":100,"okPct":100,"meanKm":11.94},"jersey>queens":{"pairs":100,"ok":99,"okPct":99,"meanKm":17.27},"jersey>brooklyn":{"pairs":100,"ok":100,"okPct":100,"meanKm":16.11},"queens>manhattan":{"pairs":100,"ok":99,"okPct":99,"meanKm":10.78},"queens>jersey":{"pairs":100,"ok":98,"okPct":98,"meanKm":18.09},"queens>brooklyn":{"pairs":100,"ok":100,"okPct":100,"meanKm":12.69},"brooklyn>manhattan":{"pairs":100,"ok":100,"okPct":100,"meanKm":11.71},"brooklyn>jersey":{"pairs":100,"ok":99,"okPct":99,"meanKm":15.66},"brooklyn>queens":{"pairs":100,"ok":99,"okPct":99,"meanKm":13.38}}
+[59.7s] tunnel lines {"lines":383,"km":56.1,"links":923}
 {
  "city": "nyc",
  "tag": "tun",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/nycdata",
- "lines": 371212,
- "drivableKm": 26252.8,
- "links": 359497,
- "nodes": 145803,
- "junctionNodes": 297050,
+ "lines": 371221,
+ "drivableKm": 26253.5,
+ "links": 359515,
+ "nodes": 145809,
+ "junctionNodes": 297061,
  "weakComponents": 210,
  "mainWeakPct": 98.92,
  "otherComponentsOver1km": 24,
@@ -30,9 +30,9 @@
  "sinkLinksInMain": 341,
  "sourceLinksInMain": 786,
  "deadEnds": {
-  "total": 15480,
+  "total": 15476,
   "tunnelopen": 5,
-  "tunnel": 5,
+  "tunnel": 2,
   "edge": 943,
   "chunk": 0,
   "gap3": 26,
@@ -42,7 +42,7 @@
   "service": 2438,
   "deckend": 60,
   "water": 77,
-  "culdesac": 11549,
+  "culdesac": 11548,
   "oneway": 532
  },
  "onewaySinks": 125,
@@ -64,7 +64,7 @@
   "shortdeck": 0
  },
  "movements": {
-  "moves": 717860,
+  "moves": 717890,
   "zjump1_5": 6,
   "zjump5": 6,
   "xyFar": 0
@@ -81,14 +81,14 @@
   "okPct": 98.4
  },
  "tunnels": {
-  "portals": 5,
+  "portals": 2,
   "pairs": 0,
-  "unmatched": 5
+  "unmatched": 2
  },
  "tunnelLines": {
-  "lines": 374,
-  "km": 55.5,
-  "links": 905
+  "lines": 383,
+  "km": 56.1,
+  "links": 923
  },
  "regions": {
   "manhattan>jersey": {
@@ -173,7 +173,7 @@
   "dead_levelgap": 181,
   "sink": 125,
   "dead_edge": 943,
-  "dead_tunnel": 5,
+  "dead_tunnel": 2,
   "dead_deckend": 60,
   "dead_gap3": 26,
   "dead_water": 77,
@@ -185,7 +185,7 @@
   "steep": 600,
   "inwater": 32,
   "zjump": 6,
-  "tunnel_unpaired": 5
+  "tunnel_unpaired": 2
  },
  "topIslands": [
   {
@@ -539,6 +539,6 @@
   }
  ]
 }
-[64.3s] map /home/claude/earth_online/src/road50/out/nyc_tun_midtown.png
-[64.9s] map /home/claude/earth_online/src/road50/out/nyc_tun_downtown_bk.png
-[65.1s] map /home/claude/earth_online/src/road50/out/nyc_tun_queens.png
+[59.9s] map /home/claude/earth_online/src/road50/out/nyc_tun_midtown.png
+[60.4s] map /home/claude/earth_online/src/road50/out/nyc_tun_downtown_bk.png
+[60.6s] map /home/claude/earth_online/src/road50/out/nyc_tun_queens.png

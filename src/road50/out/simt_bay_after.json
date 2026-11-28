@@ -1,0 +1,256 @@
+{
+ "city": "bay",
+ "data": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage/baydata",
+ "views": [
+  {
+   "name": "sf",
+   "x": -18746,
+   "y": 17248,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 2001,
+    "buses": 14,
+    "stopped": 857,
+    "avgSpeed": 6.6,
+    "zoneR": 1712,
+    "links": 2455,
+    "target": 1993,
+    "routes": 21,
+    "signals": 319,
+    "heads": 1268,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 5,
+    "tris": 106828,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 1792,
+    "tod": 8.5
+   },
+   "samples": [
+    2001,
+    2002,
+    2009,
+    2009,
+    2003,
+    2006,
+    2004,
+    2004
+   ],
+   "poses": 16038,
+   "tunnelPoses": 0,
+   "tunnelVehicles": 0,
+   "outOfTunnel": 0,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 10,
+   "offPct": 0.06,
+   "offs": [
+    [
+     -19124,
+     16367,
+     9.22,
+     7.38,
+     341831
+    ],
+    [
+     -19101,
+     16283,
+     20.04,
+     7.38,
+     341831
+    ],
+    [
+     -19097,
+     16283,
+     20.18,
+     7.38,
+     341831
+    ],
+    [
+     -19121,
+     16366,
+     9.43,
+     7.38,
+     341831
+    ],
+    [
+     -19113,
+     16317,
+     15.58,
+     7.38,
+     341831
+    ],
+    [
+     -19110,
+     16310,
+     16.53,
+     7.38,
+     341831
+    ],
+    [
+     -19485,
+     17441,
+     0.18,
+     null,
+     287562
+    ],
+    [
+     -18216,
+     18670,
+     0.18,
+     null,
+     340588
+    ],
+    [
+     -18379,
+     17146,
+     1.39,
+     0.18,
+     339794
+    ],
+    [
+     -19124,
+     16368,
+     9.07,
+     7.38,
+     341831
+    ]
+   ],
+   "stuck": 3,
+   "stuckAt": [
+    [
+     -19295,
+     16505,
+     70.2,
+     133899
+    ],
+    [
+     -18485,
+     17275,
+     60.6,
+     339794
+    ],
+    [
+     -18831,
+     17226,
+     61.8,
+     348608
+    ]
+   ],
+   "stats": {
+    "vehicles": 2007,
+    "buses": 16,
+    "stopped": 873,
+    "avgSpeed": 5.6,
+    "zoneR": 1712,
+    "links": 2455,
+    "target": 1993,
+    "routes": 21,
+    "signals": 338,
+    "heads": 1282,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 5,
+    "tris": 107376,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "build": {
+    "tiles": 9,
+    "tris": 401373,
+    "ms": 662
+   },
+   "ms": 5472
+  },
+  {
+   "name": "caldecott",
+   "x": -2208,
+   "y": 25527,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 673,
+    "buses": 2,
+    "stopped": 88,
+    "avgSpeed": 11.9,
+    "zoneR": 1712,
+    "links": 718,
+    "target": 673,
+    "routes": 2,
+    "signals": 364,
+    "heads": 71,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 5,
+    "tris": 7124,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 466,
+    "tod": 8.5
+   },
+   "samples": [
+    673,
+    676,
+    670,
+    664,
+    666,
+    676,
+    671,
+    672
+   ],
+   "poses": 5368,
+   "tunnelPoses": 0,
+   "tunnelVehicles": 0,
+   "outOfTunnel": 0,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 1,
+   "offPct": 0.02,
+   "offs": [
+    [
+     -3490,
+     26092,
+     0.14,
+     null,
+     289699
+    ]
+   ],
+   "stuck": 0,
+   "stuckAt": [],
+   "stats": {
+    "vehicles": 676,
+    "buses": 2,
+    "stopped": 106,
+    "avgSpeed": 10.5,
+    "zoneR": 1712,
+    "links": 718,
+    "target": 673,
+    "routes": 2,
+    "signals": 365,
+    "heads": 71,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 5,
+    "tris": 7124,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "build": {
+    "tiles": 9,
+    "tris": 202602,
+    "ms": 166
+   },
+   "ms": 2069
+  }
+ ]
+}

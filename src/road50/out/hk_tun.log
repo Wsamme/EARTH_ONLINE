@@ -1,36 +1,36 @@
-[0.2s] hk lines 129320
-[1.7s] prep: junction nodes 61012
-[1.8s] traffic network: links 41705 pieces 30929 nodes 23780 movements 61571
-[2.1s] weak components 206 main 96.4% others >=1 km 25 | SCC main 90.1%
-[2.5s] dead ends {"total":3937,"tunnelopen":2,"tunnel":0,"edge":0,"chunk":0,"gap3":25,"gap6":0,"gap12":34,"levelgap":603,"service":893,"deckend":80,"water":12,"culdesac":2288,"oneway":609} sinks 49 sources 130
-[2.7s] crossings {"falsejunc":46,"lowclear":238,"missedjunc":188,"overpass":2453,"atgrade":3457}
+[0.1s] hk lines 129340
+[1.7s] prep: junction nodes 61034
+[1.9s] traffic network: links 41731 pieces 30949 nodes 23786 movements 61617
+[2.3s] weak components 205 main 96.4% others >=1 km 25 | SCC main 90.1%
+[2.5s] dead ends {"total":3921,"tunnelopen":2,"tunnel":0,"edge":0,"chunk":0,"gap3":25,"gap6":0,"gap12":34,"levelgap":600,"service":893,"deckend":80,"water":12,"culdesac":2275,"oneway":600} sinks 47 sources 130
+[2.8s] crossings {"falsejunc":46,"lowclear":238,"missedjunc":188,"overpass":2453,"atgrade":3457}
 [2.8s] levels / water {"step1_3":18,"step3_15":297,"step15":83,"steep":118,"inwater":46,"inwaterM":4331,"shortdeck":9}
-[3.4s] routes {"pairs":2000,"ok":1658,"fail":342,"failIsland":136,"failOneway":206,"detourMed":1.56,"detour3":50,"far":1647,"okPct":82.9}
-[3.4s] movements {"moves":61571,"zjump1_5":42,"zjump5":40,"xyFar":0}
-[3.4s] tunnels {"portals":0,"pairs":0,"unmatched":0}
-[5.2s] regions {"island>kowloon":{"pairs":100,"ok":86,"okPct":86,"meanKm":10.37},"island>lantau":{"pairs":100,"ok":90,"okPct":90,"meanKm":39.68},"island>newterr":{"pairs":100,"ok":92,"okPct":92,"meanKm":27.1},"kowloon>island":{"pairs":100,"ok":97,"okPct":97,"meanKm":10.8},"kowloon>lantau":{"pairs":100,"ok":92,"okPct":92,"meanKm":33.07},"kowloon>newterr":{"pairs":100,"ok":96,"okPct":96,"meanKm":21.1},"lantau>island":{"pairs":100,"ok":89,"okPct":89,"meanKm":40.77},"lantau>kowloon":{"pairs":100,"ok":77,"okPct":77,"meanKm":35.14},"lantau>newterr":{"pairs":100,"ok":98,"okPct":98,"meanKm":35.28},"newterr>island":{"pairs":100,"ok":99,"okPct":99,"meanKm":23.44},"newterr>kowloon":{"pairs":100,"ok":66,"okPct":66,"meanKm":14.76},"newterr>lantau":{"pairs":100,"ok":93,"okPct":93,"meanKm":33.9}}
-[5.2s] tunnel lines {"lines":327,"km":117.7,"links":399}
+[3.4s] routes {"pairs":2000,"ok":1659,"fail":341,"failIsland":136,"failOneway":205,"detourMed":1.56,"detour3":50,"far":1648,"okPct":83}
+[3.5s] movements {"moves":61617,"zjump1_5":42,"zjump5":40,"xyFar":0}
+[3.5s] tunnels {"portals":0,"pairs":0,"unmatched":0}
+[4.6s] regions {"island>kowloon":{"pairs":100,"ok":86,"okPct":86,"meanKm":10.37},"island>lantau":{"pairs":100,"ok":90,"okPct":90,"meanKm":39.68},"island>newterr":{"pairs":100,"ok":92,"okPct":92,"meanKm":27.1},"kowloon>island":{"pairs":100,"ok":97,"okPct":97,"meanKm":10.8},"kowloon>lantau":{"pairs":100,"ok":92,"okPct":92,"meanKm":33.07},"kowloon>newterr":{"pairs":100,"ok":96,"okPct":96,"meanKm":21.1},"lantau>island":{"pairs":100,"ok":89,"okPct":89,"meanKm":40.77},"lantau>kowloon":{"pairs":100,"ok":77,"okPct":77,"meanKm":35.14},"lantau>newterr":{"pairs":100,"ok":98,"okPct":98,"meanKm":35.28},"newterr>island":{"pairs":100,"ok":99,"okPct":99,"meanKm":23.44},"newterr>kowloon":{"pairs":100,"ok":66,"okPct":66,"meanKm":14.76},"newterr>lantau":{"pairs":100,"ok":93,"okPct":93,"meanKm":33.9}}
+[4.6s] tunnel lines {"lines":347,"km":118.8,"links":425}
 {
  "city": "hk",
  "tag": "tun",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/hkdata",
- "lines": 129320,
- "drivableKm": 3978.4,
- "links": 41705,
- "nodes": 23780,
- "junctionNodes": 61012,
- "weakComponents": 206,
+ "lines": 129340,
+ "drivableKm": 3979.5,
+ "links": 41731,
+ "nodes": 23786,
+ "junctionNodes": 61034,
+ "weakComponents": 205,
  "mainWeakPct": 96.39,
  "otherComponentsOver1km": 25,
- "otherKm": 143.8,
- "mainSccPctApp": 67.7,
- "mainSccPct": 90.12,
+ "otherKm": 143.5,
+ "mainSccPctApp": 67.92,
+ "mainSccPct": 90.08,
  "closedOnewaySets": 13,
  "closedOnewayKm": 8.09,
- "sinkLinksInMain": 277,
- "sourceLinksInMain": 343,
+ "sinkLinksInMain": 272,
+ "sourceLinksInMain": 339,
  "deadEnds": {
-  "total": 3937,
+  "total": 3921,
   "tunnelopen": 2,
   "tunnel": 0,
   "edge": 0,
@@ -38,14 +38,14 @@
   "gap3": 25,
   "gap6": 0,
   "gap12": 34,
-  "levelgap": 603,
+  "levelgap": 600,
   "service": 893,
   "deckend": 80,
   "water": 12,
-  "culdesac": 2288,
-  "oneway": 609
+  "culdesac": 2275,
+  "oneway": 600
  },
- "onewaySinks": 49,
+ "onewaySinks": 47,
  "onewaySources": 130,
  "crossings": {
   "falsejunc": 46,
@@ -64,21 +64,21 @@
   "shortdeck": 9
  },
  "movements": {
-  "moves": 61571,
+  "moves": 61617,
   "zjump1_5": 42,
   "zjump5": 40,
   "xyFar": 0
  },
  "routes": {
   "pairs": 2000,
-  "ok": 1658,
-  "fail": 342,
+  "ok": 1659,
+  "fail": 341,
   "failIsland": 136,
-  "failOneway": 206,
+  "failOneway": 205,
   "detourMed": 1.56,
   "detour3": 50,
-  "far": 1647,
-  "okPct": 82.9
+  "far": 1648,
+  "okPct": 83
  },
  "tunnels": {
   "portals": 0,
@@ -86,9 +86,9 @@
   "unmatched": 0
  },
  "tunnelLines": {
-  "lines": 327,
-  "km": 117.7,
-  "links": 399
+  "lines": 347,
+  "km": 118.8,
+  "links": 425
  },
  "regions": {
   "island>kowloon": {
@@ -169,12 +169,12 @@
   "oneway_trap": 13,
   "oneway_noentry": 4,
   "source": 130,
-  "dead_levelgap": 603,
+  "dead_levelgap": 600,
   "dead_gap12": 34,
   "dead_deckend": 71,
   "dead_water": 12,
   "dead_shortdeck": 9,
-  "sink": 49,
+  "sink": 47,
   "dead_gap3": 25,
   "dead_tunnelopen": 2,
   "lowclear": 238,
@@ -517,6 +517,6 @@
   }
  ]
 }
-[5.4s] map /home/claude/earth_online/src/road50/out/hk_tun_central.png
-[5.7s] map /home/claude/earth_online/src/road50/out/hk_tun_kowloon.png
-[5.8s] map /home/claude/earth_online/src/road50/out/hk_tun_shatin.png
+[4.8s] map /home/claude/earth_online/src/road50/out/hk_tun_central.png
+[5.0s] map /home/claude/earth_online/src/road50/out/hk_tun_kowloon.png
+[5.1s] map /home/claude/earth_online/src/road50/out/hk_tun_shatin.png

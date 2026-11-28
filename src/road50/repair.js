@@ -149,6 +149,24 @@ else if (RULES.has('R6') && TJ && fs.existsSync(path.join(__dirname, TJ))){
         const d = Math.hypot(ax + ex*u - x, ay + ey*u - y); if (d <= 1.0 && (!best || d < best.d)) best = {d, li:l2, j, u}; } }
     if (best) portal.set(nid, {li:best.li, seg:[best.j, best.u], d:best.d, exact:false});
   }
+  // R6b: an open tunnel end (no road at the OSM portal) whose approach the data trimmed short (e.g. bayreal/b4c_ybi.py cuts the Yerba
+  // Buena approaches where they enter the 90 m terrain): joined to the dead end of the same road (same name or ref, the end of a line
+  // that nothing else joins) within 120 m, by one hidden segment; logged as R6b with the gap.
+  const nodeUse = new Map(); for (const C of cand) for (const n of C.nodes) nodeUse.set(n[0], (nodeUse.get(n[0]) || 0) + 1);
+  const ENDS = []; { const seen = new Map(); for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g); for (let k = 0; k < m; k++){ const key = g.Q[k*2] + ',' + g.Q[k*2+1]; seen.set(key, (seen.get(key) || 0) + 1); } }
+    for (let li = 0; li < G.length; li++){ if (!drv(li)) continue; const g = G[li], m = nv(g); for (const k of [0, m - 1]) if (seen.get(g.Q[k*2] + ',' + g.Q[k*2+1]) === 1) ENDS.push([li, k]); } }
+  const ext = [];
+  for (const C of cand){ const t = C.w.tags, nm = t['name:en'] || t.name || '', ref = t.ref || '';
+    for (const [ni, n] of [[0, C.nodes[0]], [C.nodes.length - 1, C.nodes[C.nodes.length - 1]]]){
+      if (portal.has(n[0]) || nodeUse.get(n[0]) > 1 || (!nm && !ref)) continue;
+      let best = null; const x = n[1]/4, y = n[2]/4;
+      for (const [li, k] of ENDS){ const g = G[li], d = Math.hypot(qx(g, k) - x, qy(g, k) - y); if (d > 120 || (best && d >= best.d)) continue;
+        const L = lines[li], ln = (L.name && L.name[0]) || ''; if (!((nm && ln === nm) || (ref && L.ref && L.ref.split(';').includes(ref)))) continue;
+        // direction: a one-way tunnel leaving at this end goes on into a line that starts here (and the other way round)
+        if ((L.flags & 1) && (t.oneway === 'yes' || t.oneway === '1')){ const leaves = ni !== 0; if (leaves !== (k === 0)) continue; }
+        best = {d, li, k}; }
+      if (best){ const g = G[best.li]; portal.set(n[0], {li:best.li, k:best.k, X:g.Q[best.k*2], Y:g.Q[best.k*2+1], e:eAt(g, best.k), exact:true, ext:true, d:best.d}); ext.push([C.w.id, best.li, best.d]); } } }
+  TUN.extended = ext.length;
   const nPort = new Map(); cand.forEach((C, i) => { const r = fd(i); let s2 = nPort.get(r) || new Set(); for (const n of C.nodes) if (portal.has(n[0])) s2.add(n[0]); nPort.set(r, s2); });
   // snap the near portals onto their road: a vertex at the nearest point of the segment (or its vertex within 0.3 m)
   const ins = new Map();
@@ -165,21 +183,24 @@ else if (RULES.has('R6') && TJ && fs.existsSync(path.join(__dirname, TJ))){
   const portals = new Set(), mouthSet = new Set();
   cand.forEach((C, i) => {
     if (nPort.get(fd(i)).size < 2) return;
-    const t = C.w.tags, Q = [], E = [];
-    for (const [nid, X, Y] of C.nodes){ const P = portal.get(nid); if (P){ Q.push(P.X, P.Y); E.push(P.e || 0); portals.add(nid); } else { Q.push(X, Y); E.push(0); } }
+    const t = C.w.tags, Q = [], E = [], PF = []; let extd = 0;
+    for (const [ki, [nid, X, Y]] of C.nodes.entries()){ const P = portal.get(nid);
+      if (P && P.ext){ if (ki === 0){ Q.push(P.X, P.Y, X, Y); } else { Q.push(X, Y, P.X, P.Y); } E.push(P.e || 0, P.e || 0); PF.push(1, 1); portals.add(nid); extd = Math.max(extd, P.d); }
+      else if (P){ Q.push(P.X, P.Y); E.push(P.e || 0); PF.push(1); portals.add(nid); } else { Q.push(X, Y); E.push(0); PF.push(0); } }
+    const NQ = Q.length >> 1;
     // heights: portal heights at the portals, interpolated along the way between them, 0 where neither end is a portal
-    const ends = E.map((e, k) => portal.has(C.nodes[k][0]) ? e : null), s = [0]; for (let k = 1; k < C.nodes.length; k++) s.push(s[k-1] + Math.hypot(Q[k*2] - Q[k*2-2], Q[k*2+1] - Q[k*2-1])/4);
+    const ends = E.map((e, k) => PF[k] ? e : null), s = [0]; for (let k = 1; k < NQ; k++) s.push(s[k-1] + Math.hypot(Q[k*2] - Q[k*2-2], Q[k*2+1] - Q[k*2-1])/4);
     for (let k = 0; k < E.length; k++){ if (ends[k] !== null) continue; let a = -1, b = -1; for (let j = k - 1; j >= 0; j--) if (ends[j] !== null){ a = j; break; } for (let j = k + 1; j < E.length; j++) if (ends[j] !== null){ b = j; break; }
       E[k] = a >= 0 && b >= 0 ? ends[a] + (ends[b] - ends[a])*(s[k] - s[a])/(s[b] - s[a]) : 0; }
     const ow = t.oneway === 'yes' || t.oneway === '1' || t.oneway === '-1' || ((C.c === 0 || C.c === 1) && t.oneway !== 'no') || t.junction === 'roundabout';
-    if (t.oneway === '-1'){ const Q2 = []; for (let k = C.nodes.length - 1; k >= 0; k--) Q2.push(Q[k*2], Q[k*2+1]); Q.splice(0, Q.length, ...Q2); E.reverse(); }
+    if (t.oneway === '-1'){ const Q2 = []; for (let k = NQ - 1; k >= 0; k--) Q2.push(Q[k*2], Q[k*2+1]); Q.splice(0, Q.length, ...Q2); E.reverse(); }
     const nm = t['name:en'] || t.name || '', f = (ow ? 1 : 0) | (t.highway.endsWith('_link') ? 16 : 0);
     const li = G.length, rec = {c:C.c + 32, f, ni:nameIdx.get(nm) || 0, ri:refIdx.get(t.ref) || 0, Q:Int32Array.from(Q), E:null};
     REC.push(rec); G.push({Q, E:E.some(v => v > 0.05) ? E : null, dirty:true});
     lines.push({c:C.c + 32, tc:C.c, flags:f, name:nameIdx.get(nm) ? (D.base.names[nameIdx.get(nm)]) : null, ref:t.ref || null, P:Float32Array.from(Q, v => v/4), E:null, tun:true});
     let F = files[0]; if (CI.chunks){ const mx = Q[Math.floor(Q.length/4)*2]/4, my = Q[Math.floor(Q.length/4)*2+1]/4; const ch = D.base.roadChunks.find(c2 => mx >= c2.bb[0] && mx < c2.bb[2] && my >= c2.bb[1] && my < c2.bb[3]); F = files.find(F2 => ch && F2.k === ch.k) || files[0]; }
     F.recs.push(rec); TUN.kept++; TUN.km += s[s.length - 1]/1000;
-    chg('R6', li, Q[0]/4, Q[1]/4, {osm:'way/' + C.w.id, src:T.source + ' ' + T.timestamp, tunnel:t.tunnel || ('layer ' + t.layer), highway:t.highway, osmName:nm, len:Math.round(s[s.length - 1])});
+    chg(extd ? 'R6b' : 'R6', li, Q[0]/4, Q[1]/4, {extendedM:extd ? +extd.toFixed(1) : undefined, osm:'way/' + C.w.id, src:T.source + ' ' + T.timestamp, tunnel:t.tunnel || ('layer ' + t.layer), highway:t.highway, osmName:nm, len:Math.round(s[s.length - 1])});
     // tunnel mouths on the surface line ends (tunnel=yes only)
     if (t.tunnel === 'yes') for (const n of [C.nodes[0][0], C.nodes[C.nodes.length - 1][0]]){ const P = portal.get(n); if (!P) continue; const h2 = G[P.li], m2 = nv(h2); if (h2.Q[0] === P.X && h2.Q[1] === P.Y) mouthSet.add(P.li + ':0'); else if (h2.Q[m2*2-2] === P.X && h2.Q[m2*2-1] === P.Y) mouthSet.add(P.li + ':1'); }
   });

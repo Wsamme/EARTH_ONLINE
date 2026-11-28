@@ -1,52 +1,52 @@
-[0.2s] sg lines 155197
-[2.3s] prep: junction nodes 92070
-[2.5s] traffic network: links 53050 pieces 41510 nodes 28677 movements 85391
-[3.1s] weak components 63 main 98.8% others >=1 km 9 | SCC main 96.6%
-[3.5s] dead ends {"total":2783,"tunnelopen":13,"tunnel":34,"edge":0,"chunk":0,"gap3":14,"gap6":1,"gap12":24,"levelgap":9,"service":443,"deckend":6,"water":10,"culdesac":2229,"oneway":194} sinks 28 sources 172
-[3.8s] crossings {"falsejunc":9,"lowclear":25,"missedjunc":15,"overpass":1139,"atgrade":6783}
-[4.0s] levels / water {"step1_3":0,"step3_15":12,"step15":0,"steep":114,"inwater":14,"inwaterM":1173,"shortdeck":0}
-[4.7s] routes {"pairs":2000,"ok":1949,"fail":51,"failIsland":30,"failOneway":21,"detourMed":1.33,"detour3":14,"far":1932,"okPct":97.5}
-[4.7s] movements {"moves":85391,"zjump1_5":0,"zjump5":0,"xyFar":0}
-[5.3s] tunnels {"portals":34,"pairs":6,"unmatched":22,"routesOkPctWithTunnels":95.3}
-[7.1s] regions {"cbd>east":{"pairs":100,"ok":99,"okPct":99,"meanKm":14.25},"cbd>north":{"pairs":100,"ok":89,"okPct":89,"meanKm":21.52},"cbd>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":18.77},"east>cbd":{"pairs":100,"ok":96,"okPct":96,"meanKm":13.45},"east>north":{"pairs":100,"ok":99,"okPct":99,"meanKm":22.1},"east>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":29.2},"north>cbd":{"pairs":100,"ok":99,"okPct":99,"meanKm":20.35},"north>east":{"pairs":100,"ok":100,"okPct":100,"meanKm":22.04},"north>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":22.37},"west>cbd":{"pairs":100,"ok":100,"okPct":100,"meanKm":18.36},"west>east":{"pairs":100,"ok":100,"okPct":100,"meanKm":28.73},"west>north":{"pairs":100,"ok":90,"okPct":90,"meanKm":22.15}}
-[7.1s] tunnel lines {"lines":319,"km":50.3,"links":616}
+[0.1s] sg lines 155214
+[1.7s] prep: junction nodes 92091
+[1.9s] traffic network: links 53068 pieces 41528 nodes 28679 movements 85426
+[2.5s] weak components 62 main 98.9% others >=1 km 8 | SCC main 96.8%
+[2.9s] dead ends {"total":2762,"tunnelopen":6,"tunnel":22,"edge":0,"chunk":0,"gap3":14,"gap6":1,"gap12":24,"levelgap":9,"service":441,"deckend":6,"water":10,"culdesac":2229,"oneway":173} sinks 28 sources 173
+[3.1s] crossings {"falsejunc":9,"lowclear":25,"missedjunc":15,"overpass":1139,"atgrade":6783}
+[3.2s] levels / water {"step1_3":0,"step3_15":12,"step15":0,"steep":114,"inwater":14,"inwaterM":1173,"shortdeck":0}
+[4.2s] routes {"pairs":2000,"ok":1952,"fail":48,"failIsland":30,"failOneway":18,"detourMed":1.33,"detour3":14,"far":1935,"okPct":97.6}
+[4.2s] movements {"moves":85426,"zjump1_5":0,"zjump5":0,"xyFar":0}
+[5.1s] tunnels {"portals":22,"pairs":1,"unmatched":20,"routesOkPctWithTunnels":95.8}
+[7.6s] regions {"cbd>east":{"pairs":100,"ok":99,"okPct":99,"meanKm":14.25},"cbd>north":{"pairs":100,"ok":89,"okPct":89,"meanKm":21.51},"cbd>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":18.77},"east>cbd":{"pairs":100,"ok":99,"okPct":99,"meanKm":13.5},"east>north":{"pairs":100,"ok":99,"okPct":99,"meanKm":22.1},"east>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":29.2},"north>cbd":{"pairs":100,"ok":100,"okPct":100,"meanKm":20.4},"north>east":{"pairs":100,"ok":100,"okPct":100,"meanKm":22.04},"north>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":22.37},"west>cbd":{"pairs":100,"ok":100,"okPct":100,"meanKm":18.36},"west>east":{"pairs":100,"ok":100,"okPct":100,"meanKm":28.73},"west>north":{"pairs":100,"ok":90,"okPct":90,"meanKm":22.15}}
+[7.6s] tunnel lines {"lines":336,"km":53.1,"links":634}
 {
  "city": "sg",
  "tag": "tun",
  "dir": "/tmp/claude-0/-home-claude/bad1757d-5741-5c42-90f7-67ab565b955b/scratchpad/road50/stage_tun/sgdata",
- "lines": 155197,
- "drivableKm": 4838.3,
- "links": 53050,
- "nodes": 28677,
- "junctionNodes": 92070,
- "weakComponents": 63,
- "mainWeakPct": 98.83,
- "otherComponentsOver1km": 9,
- "otherKm": 56.6,
- "mainSccPctApp": 86.58,
- "mainSccPct": 96.58,
+ "lines": 155214,
+ "drivableKm": 4841.1,
+ "links": 53068,
+ "nodes": 28679,
+ "junctionNodes": 92091,
+ "weakComponents": 62,
+ "mainWeakPct": 98.91,
+ "otherComponentsOver1km": 8,
+ "otherKm": 52.8,
+ "mainSccPctApp": 86.85,
+ "mainSccPct": 96.85,
  "closedOnewaySets": 2,
  "closedOnewayKm": 3.41,
- "sinkLinksInMain": 108,
- "sourceLinksInMain": 255,
+ "sinkLinksInMain": 99,
+ "sourceLinksInMain": 250,
  "deadEnds": {
-  "total": 2783,
-  "tunnelopen": 13,
-  "tunnel": 34,
+  "total": 2762,
+  "tunnelopen": 6,
+  "tunnel": 22,
   "edge": 0,
   "chunk": 0,
   "gap3": 14,
   "gap6": 1,
   "gap12": 24,
   "levelgap": 9,
-  "service": 443,
+  "service": 441,
   "deckend": 6,
   "water": 10,
   "culdesac": 2229,
-  "oneway": 194
+  "oneway": 173
  },
  "onewaySinks": 28,
- "onewaySources": 172,
+ "onewaySources": 173,
  "crossings": {
   "falsejunc": 9,
   "lowclear": 25,
@@ -64,32 +64,32 @@
   "shortdeck": 0
  },
  "movements": {
-  "moves": 85391,
+  "moves": 85426,
   "zjump1_5": 0,
   "zjump5": 0,
   "xyFar": 0
  },
  "routes": {
   "pairs": 2000,
-  "ok": 1949,
-  "fail": 51,
+  "ok": 1952,
+  "fail": 48,
   "failIsland": 30,
-  "failOneway": 21,
+  "failOneway": 18,
   "detourMed": 1.33,
   "detour3": 14,
-  "far": 1932,
-  "okPct": 97.5
+  "far": 1935,
+  "okPct": 97.6
  },
  "tunnels": {
-  "portals": 34,
-  "pairs": 6,
-  "unmatched": 22,
-  "routesOkPctWithTunnels": 95.3
+  "portals": 22,
+  "pairs": 1,
+  "unmatched": 20,
+  "routesOkPctWithTunnels": 95.8
  },
  "tunnelLines": {
-  "lines": 319,
-  "km": 50.3,
-  "links": 616
+  "lines": 336,
+  "km": 53.1,
+  "links": 634
  },
  "regions": {
   "cbd>east": {
@@ -102,7 +102,7 @@
    "pairs": 100,
    "ok": 89,
    "okPct": 89,
-   "meanKm": 21.52
+   "meanKm": 21.51
   },
   "cbd>west": {
    "pairs": 100,
@@ -112,9 +112,9 @@
   },
   "east>cbd": {
    "pairs": 100,
-   "ok": 96,
-   "okPct": 96,
-   "meanKm": 13.45
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 13.5
   },
   "east>north": {
    "pairs": 100,
@@ -130,9 +130,9 @@
   },
   "north>cbd": {
    "pairs": 100,
-   "ok": 99,
-   "okPct": 99,
-   "meanKm": 20.35
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 20.4
   },
   "north>east": {
    "pairs": 100,
@@ -166,25 +166,25 @@
   }
  },
  "problemCounts": {
-  "island": 9,
+  "island": 8,
   "oneway_trap": 2,
-  "dead_tunnel": 34,
+  "dead_tunnel": 22,
   "dead_deckend": 6,
-  "source": 172,
+  "source": 173,
   "dead_gap12": 24,
   "dead_water": 10,
   "dead_gap3": 14,
   "sink": 28,
   "dead_gap6": 1,
   "dead_levelgap": 9,
-  "dead_tunnelopen": 13,
+  "dead_tunnelopen": 6,
   "lowclear": 25,
   "missedjunc": 15,
   "falsejunc": 9,
   "step": 12,
   "inwater": 14,
   "steep": 114,
-  "tunnel_unpaired": 22
+  "tunnel_unpaired": 20
  },
  "topIslands": [
   {
@@ -228,24 +228,6 @@
     "Lor Binkiang",
     "Sensory Trail"
    ]
-  },
-  {
-   "len": 3784,
-   "x": -6863,
-   "y": 10146,
-   "cls": 10,
-   "names": [
-    "Mandai Lake Road"
-   ],
-   "gap": {
-    "d": 1.5,
-    "x": -7236,
-    "y": 10372,
-    "e": 0,
-    "e2": 0,
-    "li": 155164,
-    "to": 145473
-   }
   },
   {
    "len": 2897,
@@ -301,6 +283,6 @@
   }
  ]
 }
-[7.3s] map /home/claude/earth_online/src/road50/out/sg_tun_cbd.png
-[7.5s] map /home/claude/earth_online/src/road50/out/sg_tun_jurong.png
-[7.8s] map /home/claude/earth_online/src/road50/out/sg_tun_tampines.png
+[7.8s] map /home/claude/earth_online/src/road50/out/sg_tun_cbd.png
+[7.9s] map /home/claude/earth_online/src/road50/out/sg_tun_jurong.png
+[8.1s] map /home/claude/earth_online/src/road50/out/sg_tun_tampines.png

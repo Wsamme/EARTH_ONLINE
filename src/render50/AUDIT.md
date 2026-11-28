@@ -94,3 +94,17 @@ EMA > 34 ms for 3 s: 2 → 1 → 0).
 
 ## 5. Screenshots and data
 (see the list at the end of this file, updated with the final run)
+
+## 6. Release (for the coordinator)
+
+- Files: `render50/water.js`, `render50/perf.js`, `render50/debug.js` (inert without `?r50dbg=1`), `render50/post_render50.py`;
+  docs `render50/AUDIT.md`, `render50/WEBGPU.md`; prototype `render50/webgpu/ocean.html` (standalone, not part of the build).
+- Wired: `sgreal/patch17.py` POSTS now ends with `'render50/post_render50.py'` (backup of the exact previous file:
+  `sgreal/patch17.py.v48.render50.bak`; the older `patch17.py.v48.bak` from 17:07 is another agent's and predates the `lm50mech` line).
+  So the normal build of index / hk / nyc / tyo / bay includes render50. `RENDER50=0` builds without it; `RENDER50_PARTS=water` or
+  `perf` builds one part.
+- Greater Bay: its build (`gbabuild/build.sh`, snapshot of 14 Nov) does not read the repo's POSTS. After building `site/gba.html`, run
+  `python3 render50/post_render50.py site/gba.html` (inserts the same block in place; refuses a page that already has it). Tested on
+  the 27 Nov `site/gba.html`.
+- Run-time switches for checking a deployed page: `?r50=0` (all off = the old rendering), `?r50water=0`, `?r50perf=0`, `?r50q=0|1|2`.
+- Nothing is downloaded at run time (the wave map and the coast texture are made in the page).

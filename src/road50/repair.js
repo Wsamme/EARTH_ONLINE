@@ -114,7 +114,8 @@ buildIdx();
 // and extract are different OSM dates). Only tunnel networks (ways joined at shared OSM nodes) with >= 2 portals are added. Heights:
 // the portal's road height at a portal, 0 inside (hidden anyway). Surface line ends at a tunnel=yes portal get the tunnel-mouth flag
 // (64 start / 128 end), so roads.js draws the portal there.
-const TJ = opt('tunnels') || ({hk:'osm/tunnels_guangdong.json', gba:'osm/tunnels_guangdong.json'})[city];
+const TJ = opt('tunnels') || ({hk:'osm/tunnels_guangdong.json', gba:'osm/tunnels_guangdong.json', sg:'osm/tunnels_singapore.json', tyo:'osm/tunnels_kanto.json',
+  nyc:'osm/tunnels_us-northeast.json', bay:'osm/tunnels_california.json'})[city];
 const TUN = {ways:0, kept:0, portals:0, snapped:0, mouths:0, km:0};
 if (lines.some(l => l.tun)) log('R6: the data has tunnel lines already: skipped');
 else if (RULES.has('R6') && TJ && fs.existsSync(path.join(__dirname, TJ))){

@@ -5,7 +5,17 @@ Measurements: section 6. Sources: section 8.
 
 ## 1. Recommendation (short)
 
-(see the end of the file; written after the measurements)
+- **Do not move the production pages to WebGPU now.** The engine's look lives in ~50-60 `onBeforeCompile` patches and ~27-31
+  `ShaderMaterial`s per city, none of which `WebGPURenderer` accepts; it first needs the r128 → current `WebGLRenderer` upgrade (colour
+  management, light units, ES modules, chunk renames). The frame cost today is draw calls, the shadow pass and labels, which render50
+  attacks inside r128 (`render50/perf.js`), and the sea look is solved in r128 too (`render50/water.js`).
+- **Do plan for it**, in stages (section 5): ES modules (small) → current `WebGLRenderer` keeping the look (large) → `WebGPURenderer`
+  behind `?gpu=1` with TSL ports of the material families (very large) → WebGPU-only wins (compute traffic, render bundles for static
+  tiles, GPU culling + indirect draws, timestamp-based quality). Start stage 1-2 when a landmark-free window opens; stage 3 only once
+  WebGPU is on by default on Linux / Android Firefox or the WebGL 2 backend of `WebGPURenderer` is proven on the same views.
+- The prototype shows the ocean ports to TSL in ~60 lines with the `reflector()` node and runs on both backends; moving 32 k vehicles
+  in a compute shader took the vehicle JavaScript off the frame (WebGL 2 backend: 1.3 ms vs 3.7 ms CPU per frame) — the clearest
+  WebGPU-era gain for this app, worth having once stage 3 exists.
 
 ## 2. Where WebGPU stands (late 2026)
 
@@ -82,7 +92,27 @@ city compared with the release, frame numbers from `SC/render50/probe.js`).
 
 ## 6. Measurements
 
-(filled in below)
+**What this machine offers.** Headless Chrome for Testing 153 here renders WebGL 2 through ANGLE on Mesa llvmpipe (software; reports
+`EXT_disjoint_timer_query_webgl2`, max texture 16384, 8 samples). `navigator.gpu` is only exposed on a secure origin; served from
+`http://127.0.0.1` with `--enable-unsafe-webgpu --unsafely-treat-insecure-origin-as-secure=...`, `WebGPURenderer` initialised its
+**WebGPU backend** (software adapter) with `timestamp-query`. Neither path says anything about a laptop GPU; the numbers are for
+comparing variants on the same machine. Probe: `SC/render50/proto.js`; screenshots `SC/render50/out/proto_*.png`.
+
+Prototype (`render50/webgpu/ocean.html`, 1280 x 800, 1600 boxes in a `BundleGroup`, 32,768 vehicles, mirror at 1/2 resolution):
+
+| Backend | Vehicles moved by | Draw calls | CPU per frame (JS + submit) | Vehicle update | GPU time (timestamp query) | fps here |
+|---|---|---|---|---|---|---|
+| WebGL 2 (fallback, `?gl=1`) | compute shader (transform feedback) | 10 | 1.27 ms | 0.13 ms | render 281 ms, compute 5.8 ms | 3.4 |
+| WebGL 2 (fallback, `?gl=1`) | JavaScript (InstancedMesh matrices) | 10 | 3.72 ms | 1.09 ms | render 301 ms | 3.0 |
+| WebGPU (software adapter) | compute shader | 8 | 392 ms* | 0.57 ms | (pending) | 0.6 |
+| WebGPU (software adapter) | JavaScript | 8 | 1589 ms* | 0.87 ms | render 1688 ms | 0.6 |
+
+\* On the software WebGPU adapter `renderer.render()` blocks on the queue, so "CPU per frame" includes GPU waiting. The headless
+screenshots of the WebGPU canvas came back black (the HUD rendered, draw calls counted, no page errors), so visual parity of the
+WebGPU backend could not be checked here; the WebGL 2 backend renders the scene as intended (`proto__gl_1_cars_32768.png`).
+What carries over: the compute path removes the per-frame vehicle loop and matrix upload from the CPU (2.4 ms of 3.7 ms per frame at
+32 k vehicles on the WebGL 2 backend); render bundles reduce JS submit cost per draw (three.js PR #28347: 23.7 → 15.9 ms per frame
+with 8,000 meshes in its author's test) but not the draw count.
 
 ## 7. Risks
 

@@ -1,0 +1,252 @@
+{
+ "city": "sg",
+ "data": "live",
+ "views": [
+  {
+   "name": "cbd",
+   "x": 668,
+   "y": -3428,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 1655,
+    "buses": 110,
+    "stopped": 821,
+    "avgSpeed": 5.6,
+    "zoneR": 1712,
+    "links": 1471,
+    "target": 1546,
+    "routes": 271,
+    "signals": 216,
+    "heads": 572,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 6,
+    "tris": 60634,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 2117,
+    "tod": 8.5
+   },
+   "samples": [
+    1655,
+    1660,
+    1665,
+    1668,
+    1667,
+    1673,
+    1674,
+    1673
+   ],
+   "poses": 13335,
+   "tunnelPoses": 0,
+   "tunnelVehicles": 0,
+   "outOfTunnel": 0,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 1,
+   "offPct": 0.01,
+   "offs": [
+    [
+     -154,
+     -2753,
+     0.14,
+     null,
+     140225
+    ]
+   ],
+   "stuck": 12,
+   "stuckAt": [
+    [
+     677,
+     -3584,
+     60.9,
+     140363
+    ],
+    [
+     677,
+     -3587,
+     61.9,
+     140363
+    ],
+    [
+     756,
+     -4198,
+     66.5,
+     140374
+    ],
+    [
+     383,
+     -3978,
+     65.3,
+     140370
+    ],
+    [
+     -109,
+     -3821,
+     67.1,
+     140372
+    ],
+    [
+     -99,
+     -3829,
+     63.4,
+     140372
+    ],
+    [
+     63,
+     -4676,
+     60.4,
+     137562
+    ],
+    [
+     59,
+     -4681,
+     63,
+     137562
+    ],
+    [
+     1568,
+     -2808,
+     63.5,
+     140542
+    ],
+    [
+     206,
+     -4515,
+     65,
+     137562
+    ]
+   ],
+   "stats": {
+    "vehicles": 1680,
+    "buses": 135,
+    "stopped": 790,
+    "avgSpeed": 5.6,
+    "zoneR": 1712,
+    "links": 1471,
+    "target": 1546,
+    "routes": 271,
+    "signals": 217,
+    "heads": 572,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 6,
+    "tris": 60634,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "build": {
+    "tiles": 9,
+    "tris": 340035,
+    "ms": 721
+   },
+   "ms": 6693
+  },
+  {
+   "name": "kpe_mce",
+   "x": 2782,
+   "y": -2211,
+   "stuck100": 0,
+   "warm": {
+    "vehicles": 1012,
+    "buses": 46,
+    "stopped": 206,
+    "avgSpeed": 11.3,
+    "zoneR": 1712,
+    "links": 909,
+    "target": 969,
+    "routes": 112,
+    "signals": 254,
+    "heads": 276,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 6,
+    "tris": 30966,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "warmMs": 561,
+    "tod": 8.5
+   },
+   "samples": [
+    1012,
+    1016,
+    1015,
+    1014,
+    1016,
+    1018,
+    1020,
+    1018
+   ],
+   "poses": 8129,
+   "tunnelPoses": 0,
+   "tunnelVehicles": 0,
+   "outOfTunnel": 0,
+   "jumps": 0,
+   "jumpAt": [],
+   "offSurface": 0,
+   "offPct": 0,
+   "offs": [],
+   "stuck": 4,
+   "stuckAt": [
+    [
+     3586,
+     -1935,
+     64.5,
+     140655
+    ],
+    [
+     1770,
+     -2142,
+     62,
+     139927
+    ],
+    [
+     1774,
+     -2148,
+     65.1,
+     139927
+    ],
+    [
+     1775,
+     -2144,
+     67.2,
+     139927
+    ]
+   ],
+   "stats": {
+    "vehicles": 1023,
+    "buses": 55,
+    "stopped": 287,
+    "avgSpeed": 9.3,
+    "zoneR": 1712,
+    "links": 909,
+    "target": 969,
+    "routes": 112,
+    "signals": 255,
+    "heads": 278,
+    "near": 0,
+    "far": 0,
+    "glows": 0,
+    "calls": 6,
+    "tris": 31116,
+    "simMs": 0,
+    "renderMs": 0,
+    "totalMs": 0,
+    "tod": 8.5
+   },
+   "build": {
+    "tiles": 9,
+    "tris": 244658,
+    "ms": 198
+   },
+   "ms": 2404
+  }
+ ]
+}

@@ -1,0 +1,12 @@
+md5 OK singapore.osm.pbf 42d71fc393cfbde1853005ee2532408e 38160394 bytes
+candidate ways 553 nodes 1866
+ways in the box 553 tunnel=yes 208
+singapore done, extract deleted
+md5 OK kanto.osm.pbf 49911d5865b30eb5ae038dc90b012f64 597912867 bytes
+candidate ways 7718 nodes 25516
+ways in the box 1852 tunnel=yes 1530
+kanto done, extract deleted
+md5 OK us-northeast.osm.pbf c658099d2cba5d973dd3d2909efbcb0c 2003599214 bytes
+candidate ways 2042 nodes 8793
+ways in the box 399 tunnel=yes 248
+us-northeast done, extract deleted

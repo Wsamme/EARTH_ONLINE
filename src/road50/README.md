@@ -165,7 +165,7 @@ Changed lines and changes per rule:
 
 ## R6 tunnels (follow-up, 28 Nov 2026)
 
-- Source: OSM, Geofabrik `guangdong.osm.pbf` (state 2026-11-27T00:47:35Z; read only from the Guangzhou agent's download folder),
+- Source: OSM, openstreetmap.fr `asia/china/guangdong.osm.pbf` (state 2026-11-27T00:47:35Z; read only from the Guangzhou agent's download folder),
   `osm_tunnels.py` -> `osm/tunnels_guangdong.json` (1 842 ways: tunnel=yes 1 593, building_passage and layer < 0 the rest; way ids,
   tags, node ids and positions). Every added line is logged with its `way/<id>` in `out/<city>_repair_tun.json` (rule R6).
 - Encoding: a hidden tunnel line is a road record of class c + 32 (no new flag bits; the flags byte is full). `roads.js` decodes it

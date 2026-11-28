@@ -1,0 +1,293 @@
+[0.1s] sg lines 154878
+[1.9s] prep: junction nodes 91608
+[2.1s] traffic network: links 52215 pieces 40738 nodes 28307 movements 83896
+[2.7s] weak components 73 main 98.8% others >=1 km 9 | SCC main 95.9%
+[3.2s] dead ends {"total":2885,"tunnelopen":0,"tunnel":102,"edge":0,"chunk":0,"gap3":45,"gap6":3,"gap12":24,"levelgap":22,"service":444,"deckend":6,"water":10,"culdesac":2229,"oneway":281} sinks 32 sources 164
+[3.5s] crossings {"falsejunc":8,"lowclear":27,"missedjunc":20,"overpass":1142,"atgrade":6778}
+[3.6s] levels / water {"step1_3":5,"step3_15":22,"step15":2,"steep":241,"inwater":14,"inwaterM":1173,"shortdeck":0}
+[4.4s] routes {"pairs":2000,"ok":1941,"fail":59,"failIsland":31,"failOneway":28,"detourMed":1.33,"detour3":13,"far":1924,"okPct":97}
+[4.5s] movements {"moves":83896,"zjump1_5":0,"zjump5":0,"xyFar":0}
+[5.3s] tunnels {"portals":102,"pairs":22,"unmatched":58,"routesOkPctWithTunnels":97.2}
+[7.5s] regions {"cbd>east":{"pairs":100,"ok":99,"okPct":99,"meanKm":14.64},"cbd>north":{"pairs":100,"ok":99,"okPct":99,"meanKm":21.63},"cbd>west":{"pairs":100,"ok":90,"okPct":90,"meanKm":18.8},"east>cbd":{"pairs":100,"ok":96,"okPct":96,"meanKm":13.45},"east>north":{"pairs":100,"ok":99,"okPct":99,"meanKm":22.1},"east>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":29.2},"north>cbd":{"pairs":100,"ok":96,"okPct":96,"meanKm":20.36},"north>east":{"pairs":100,"ok":100,"okPct":100,"meanKm":22.04},"north>west":{"pairs":100,"ok":100,"okPct":100,"meanKm":22.37},"west>cbd":{"pairs":100,"ok":99,"okPct":99,"meanKm":18.4},"west>east":{"pairs":100,"ok":100,"okPct":100,"meanKm":28.73},"west>north":{"pairs":100,"ok":90,"okPct":90,"meanKm":22.15}}
+[7.5s] tunnel lines {"lines":0,"km":0,"links":0}
+{
+ "city": "sg",
+ "tag": "before_r",
+ "dir": "/home/claude/earth_online/site/sgdata",
+ "lines": 154878,
+ "drivableKm": 4788,
+ "links": 52215,
+ "nodes": 28307,
+ "junctionNodes": 91608,
+ "weakComponents": 73,
+ "mainWeakPct": 98.8,
+ "otherComponentsOver1km": 9,
+ "otherKm": 57.5,
+ "mainSccPctApp": 85.77,
+ "mainSccPct": 95.92,
+ "closedOnewaySets": 2,
+ "closedOnewayKm": 3.41,
+ "sinkLinksInMain": 152,
+ "sourceLinksInMain": 282,
+ "deadEnds": {
+  "total": 2885,
+  "tunnelopen": 0,
+  "tunnel": 102,
+  "edge": 0,
+  "chunk": 0,
+  "gap3": 45,
+  "gap6": 3,
+  "gap12": 24,
+  "levelgap": 22,
+  "service": 444,
+  "deckend": 6,
+  "water": 10,
+  "culdesac": 2229,
+  "oneway": 281
+ },
+ "onewaySinks": 32,
+ "onewaySources": 164,
+ "crossings": {
+  "falsejunc": 8,
+  "lowclear": 27,
+  "missedjunc": 20,
+  "overpass": 1142,
+  "atgrade": 6778
+ },
+ "levels": {
+  "step1_3": 5,
+  "step3_15": 22,
+  "step15": 2,
+  "steep": 241,
+  "inwater": 14,
+  "inwaterM": 1173,
+  "shortdeck": 0
+ },
+ "movements": {
+  "moves": 83896,
+  "zjump1_5": 0,
+  "zjump5": 0,
+  "xyFar": 0
+ },
+ "routes": {
+  "pairs": 2000,
+  "ok": 1941,
+  "fail": 59,
+  "failIsland": 31,
+  "failOneway": 28,
+  "detourMed": 1.33,
+  "detour3": 13,
+  "far": 1924,
+  "okPct": 97
+ },
+ "tunnels": {
+  "portals": 102,
+  "pairs": 22,
+  "unmatched": 58,
+  "routesOkPctWithTunnels": 97.2
+ },
+ "tunnelLines": {
+  "lines": 0,
+  "km": 0,
+  "links": 0
+ },
+ "regions": {
+  "cbd>east": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 14.64
+  },
+  "cbd>north": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 21.63
+  },
+  "cbd>west": {
+   "pairs": 100,
+   "ok": 90,
+   "okPct": 90,
+   "meanKm": 18.8
+  },
+  "east>cbd": {
+   "pairs": 100,
+   "ok": 96,
+   "okPct": 96,
+   "meanKm": 13.45
+  },
+  "east>north": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 22.1
+  },
+  "east>west": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 29.2
+  },
+  "north>cbd": {
+   "pairs": 100,
+   "ok": 96,
+   "okPct": 96,
+   "meanKm": 20.36
+  },
+  "north>east": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 22.04
+  },
+  "north>west": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 22.37
+  },
+  "west>cbd": {
+   "pairs": 100,
+   "ok": 99,
+   "okPct": 99,
+   "meanKm": 18.4
+  },
+  "west>east": {
+   "pairs": 100,
+   "ok": 100,
+   "okPct": 100,
+   "meanKm": 28.73
+  },
+  "west>north": {
+   "pairs": 100,
+   "ok": 90,
+   "okPct": 90,
+   "meanKm": 22.15
+  }
+ },
+ "problemCounts": {
+  "island": 9,
+  "oneway_trap": 2,
+  "dead_tunnel": 102,
+  "dead_deckend": 6,
+  "source": 164,
+  "dead_gap3": 45,
+  "dead_gap6": 3,
+  "dead_gap12": 24,
+  "dead_water": 10,
+  "sink": 32,
+  "dead_levelgap": 22,
+  "lowclear": 27,
+  "missedjunc": 20,
+  "falsejunc": 8,
+  "step": 29,
+  "inwater": 14,
+  "steep": 241,
+  "tunnel_unpaired": 58
+ },
+ "topIslands": [
+  {
+   "len": 13418,
+   "x": 16438,
+   "y": 1351,
+   "cls": 10,
+   "names": [
+    "Tanah Merah Coast Road"
+   ],
+   "gap": {
+    "d": 28.3,
+    "x": 15635,
+    "y": 366,
+    "e": 0,
+    "e2": 0,
+    "li": 80,
+    "to": 130104
+   }
+  },
+  {
+   "len": 11261,
+   "x": 20943,
+   "y": 10045,
+   "cls": 8,
+   "names": [
+    "Tekong Highway",
+    "Ladang Avenue 1",
+    "Ladang Ring 3",
+    "Ladang Street 2"
+   ]
+  },
+  {
+   "len": 10756,
+   "x": 13644,
+   "y": 10066,
+   "cls": 10,
+   "names": [
+    "Jalan Jelutong",
+    "Jalan Pekan Ubin",
+    "Lor Binkiang",
+    "Sensory Trail"
+   ]
+  },
+  {
+   "len": 2897,
+   "x": -16250,
+   "y": 7779,
+   "cls": 10,
+   "names": [
+    "Old Lim Chu Kang Road",
+    "Lorong Rusuk",
+    "Murai Farmway"
+   ]
+  },
+  {
+   "len": 2738,
+   "x": 17467,
+   "y": 4449,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 2690,
+   "x": -55,
+   "y": -7103,
+   "cls": 10,
+   "names": [
+    "Coral Island",
+    "Ocean Drive",
+    "Paradise Island"
+   ]
+  },
+  {
+   "len": 2254,
+   "x": -6461,
+   "y": 10003,
+   "cls": 10,
+   "names": [
+    "Mandai Lake Road"
+   ]
+  },
+  {
+   "len": 1647,
+   "x": -8570,
+   "y": 9780,
+   "cls": 10,
+   "names": []
+  },
+  {
+   "len": 1470,
+   "x": -6236,
+   "y": -3033,
+   "cls": 10,
+   "names": [],
+   "gap": {
+    "d": 35.5,
+    "x": -6071,
+    "y": -3115,
+    "e": 0,
+    "e2": 0,
+    "li": 129,
+    "to": 147406
+   }
+  }
+ ]
+}

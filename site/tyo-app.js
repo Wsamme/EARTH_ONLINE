@@ -15098,6 +15098,9 @@ SG_PLACES.length = 0; for (const k of Object.keys(SITES)) delete SITES[k];
 // merges / diverges, arc-smoothed centrelines, Singapore markings, kerbs + footways + planted medians, LED street
 // lighting with poles, tunnel portals, smooth ramps, and a drivable surface query (surfaceAt).
 // [lm24/roadfix] tunnel portals with a closed end also at the line ends the data marks as tunnel mouths (flags 64 start / 128 end, any class).
+// [road50] tunnels: records of class c + 32 are hidden tunnel / underpass lines (L.tun, L.c = c + 32 so other modules' class filters skip
+// them, L.tc = c): they join the junction graph only at shared vertices (portals) so traffic can drive them, and nothing of them is drawn,
+// indexed or labelled; portal ends are drawn as before.
 // v22: a US style for the San Francisco Bay Area map (right-hand traffic, US markings, cobra-head street lights, concrete sidewalks,
 // Caltrans concrete freeways), on when the global SGR_BAY is true (or SGRoads.setUS(true)); Singapore is unchanged.
 const SGRoads = (() => {
@@ -15181,7 +15184,7 @@ const SGRoads = (() => {
     const vu = () => { let v = 0, m = 1, b; do { b = u8[o++]; v += (b & 127)*m; m *= 128; } while (b & 128); return v; };
     const n = vu(), lines = new Array(n); let px = 0, py = 0;
     for (let i = 0; i < n; i++){
-      const c = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2);
+      const c0 = u8[o++], f = u8[o++], ni = vu(), ri = vu(), np = vu(), P = new Float32Array(np*2), tun = c0 >= 32 && c0 < 64, c = c0;
       for (let k = 0; k < np; k++){
         const a = vu(), b = vu();
         px += (a % 2) ? -(a + 1)/2 : a/2; py += (b % 2) ? -(b + 1)/2 : b/2;
@@ -15191,6 +15194,7 @@ const SGRoads = (() => {
       if (f & 4){ const sc = (f & 32) ? 2.5 : 5; E = new Float32Array(np); for (let k = 0; k < np; k++) E[k] = u8[o++]/sc; }
       const nm = ni && names ? names[ni] : null;
       lines[i] = {c, flags:f, name:nm ? [nm[0] || '', nm[1] || ''] : null, ref:(ri && refs) ? refs[ri] || null : null, P, E};
+      if (tun){ lines[i].tun = true; lines[i].tc = c0 - 32; }         // [road50] hidden tunnel line: c stays >= 32 (other modules skip it), tc = its road class
     }
     return lines;
   }
@@ -15237,6 +15241,7 @@ const SGRoads = (() => {
       for (let k = 0; k < P.length; k += 2){ const x = P[k], y = P[k+1]; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       LBB[i*4] = x0; LBB[i*4+1] = y0; LBB[i*4+2] = x1; LBB[i*4+3] = y1;
       const a = tcl(x0), b = tcl(y0), c = tcl(x1), d = tcl(y1); tr[i*4] = a; tr[i*4+1] = b; tr[i*4+2] = c; tr[i*4+3] = d;
+      if (lines[i].tun){ tr[i*4] = 1; tr[i*4+2] = 0; continue; }         // [road50] tunnels: in no tile (not drawn, not indexed)
       for (let ty = b; ty <= d; ty++) for (let tx = a; tx <= c; tx++) cnt[ty*TXn + tx + 1]++;
     }
     for (let t = 0; t < NT; t++) cnt[t+1] += cnt[t];
@@ -15295,11 +15300,11 @@ const SGRoads = (() => {
     for (let nd = 0, NN = C.nodeOff.length - 1; nd < NN; nd++){
       const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; if (o1 - o0 < 2) continue;
       let cnt = 0, e0 = 0, first = -1;
-      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
+      for (let j = o0; j < o1; j++){ const L = lines[C.incL[j]]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (first < 0){ first = j; e0 = e; } if (Math.abs(e - e0) <= 1.2) cnt++; }
       if (cnt < 2) continue;
       const L0 = lines[C.incL[first]], vx = L0.P[C.incV[first]*2], vy = L0.P[C.incV[first]*2+1];
       ev(vx, vy, e0);
-      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
+      for (let j = o0; j < o1; j++){ const li = C.incL[j], L = lines[li]; if (!isJ(L.tun ? L.tc : L.c)) continue; const e = L.E ? L.E[C.incV[j]] : 0; if (Math.abs(e - e0) > 1.2) continue; inc(li, VS[vOff[li] + C.incV[j]], 1); }
     }
     TL('seeds ' + nev);
     // 2. crossings (segments registered in every 32 m cell they pass) and line ends touching another line's segment
@@ -15314,11 +15319,11 @@ const SGRoads = (() => {
         if (Math.abs(nx*(mx - ax) + ny*(my - ay)) <= r) fn(cy*NCX + cx);
       }
     };
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1;
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1;
       for (let k = 0; k + 1 < m; k++) visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { ccnt[key + 1]++; }); }
     for (let i = 0; i < NCELL; i++) ccnt[i+1] += ccnt[i];
     const cseg = new Int32Array(ccnt[NCELL]), cfill = ccnt.slice(0, NCELL);
-    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+    for (let i = 0; i < n; i++){ const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let k = 0; k + 1 < m; k++){ const gid = o + k; visit(P[k*2], P[k*2+1], P[k*2+2], P[k*2+3], key => { cseg[cfill[key]++] = gid; }); } }
     TL('cells ' + cseg.length);
     const JT2 = JT*JT, cellOfXY = (x, y) => (Math.floor((y + HALF)/CS) + 2)*NCX + Math.floor((x + HALF)/CS) + 2;
@@ -15344,7 +15349,7 @@ const SGRoads = (() => {
     TL('crossings ' + nev);
     // line ends on another line's segment (not at one of its vertices)
     for (let i = 0; i < n; i++){
-      const L = lines[i]; if (!isJ(L.c)) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
+      const L = lines[i]; if (!isJ(L.c) || L.tun) continue; const P = L.P, m = P.length >> 1, o = vOff[i];
       for (let w = 0; w < 2; w++){
         const k = w ? m - 1 : 0, qx = P[k*2], qy = P[k*2+1], e1 = L.E ? L.E[k] : 0;
         const gx0 = Math.floor((qx - JT + HALF)/CS) + 2, gx1 = Math.floor((qx + JT + HALF)/CS) + 2, gy0 = Math.floor((qy - JT + HALF)/CS) + 2, gy1 = Math.floor((qy + JT + HALF)/CS) + 2;
@@ -15442,7 +15447,7 @@ const SGRoads = (() => {
     const cfind = a => { while (cpar[a] !== a){ cpar[a] = cpar[cpar[a]]; a = cpar[a]; } return a; };
     // major arms per node (classes 0-10, no slip roads): only crossings of real roads merge into complexes
     const NM = new Uint8Array(nN);
-    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16)) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
+    for (let nd = 0; nd < nN; nd++){ let m = 0; for (let q = nIO[nd]; q < nIO[nd+1]; q++){ const L = lines[nIL[q]]; if (L.c > 10 || (L.flags & 16) || L.tun) continue; const s = nIS[q], Lt = LEN(nIL[q]); m += (s < 0.3 || s > Lt - 0.3) ? 1 : 2; } NM[nd] = m > 255 ? 255 : m; }
     const J = {nN, NX:NX.subarray(0, nN), NY:NY.subarray(0, nN), NE:NE.subarray(0, nN), NA:NA.subarray(0, nN), NM, nIO, nIL, nIS, nIP, lJO, lJS, lJN, LEN};
     C.J = J;
     for (let i = 0; i < n; i++){ for (let p = lJO[i]; p + 1 < lJO[i+1]; p++) if (internal(C, i, p)){ const a = cfind(lJN[p]), b = cfind(lJN[p+1]); if (a !== b) cpar[a] = b; } }
@@ -15479,7 +15484,7 @@ const SGRoads = (() => {
     let S = new Float32Array(1 << 18), LI = new Int32Array(1 << 15), FL = new Uint8Array(1 << 15), CL = new Uint8Array(1 << 15), SA0 = new Float32Array(1 << 15), ns = 0;
     let KP = new Int32Array(1 << 17), np2 = 0;                                // (cell key, piece) pairs; cells: key -> cell index (compact CSR)
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18)) continue;
+      const L = lines[i], c = L.c; if (!(c <= 11 || c === 13 || c === 14 || c === 15 || c === 18) || L.tun) continue;
       const P = L.P, E = L.E, hw = hwOf(L), np = P.length >> 1; let sacc = 0;
       for (let k = 0; k + 1 < np; k++){
         const ax = P[k*2], ay = P[k*2+1], bx = P[k*2+2], by = P[k*2+3], ea = E ? E[k] : 0, eb = E ? E[k+1] : 0, d = hyp(bx - ax, by - ay), m = Math.max(1, Math.ceil(d/50));
@@ -15821,7 +15826,7 @@ const SGRoads = (() => {
     if (T[nd] === T[nd]) return T[nd];
     let best = 1e9, be = 0;
     for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c)) continue;
+      const li = J.nIL[q], L = C.lines[li]; if (!isJ(L.c) || L.tun) continue;
       const s = J.nIS[q], Lt = J.LEN(li), end = s < 0.3 || s > Lt - 0.3, e = rawE(C, li, s), rank = L.c*4 + (end ? 1 : 0) + ((L.flags & 8) ? 2 : 0);
       if (rank < best || (rank === best && e < be)){ best = rank; be = e; }
     }
@@ -16058,7 +16063,7 @@ const SGRoads = (() => {
     const ccx = sx/nodes.length, ccy = sy/nodes.length, ce = se/nodes.length;
     for (const nd of nodes){
       for (let q = J.nIO[nd]; q < J.nIO[nd+1]; q++){
-        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c)) continue;
+        const li = J.nIL[q], L = lines[li]; if (!isJ(L.c) || L.tun) continue;
         const j0 = J.lJO[li], j1 = J.lJO[li+1], p = J.nIP[q];
         const g = lineGeom(li), s = g.jS[p - j0], Lt = g.Lt;
         for (let dd = 0; dd < 2; dd++){
@@ -16104,14 +16109,15 @@ const SGRoads = (() => {
   function cxQuick(cx){
     const C = X.C, J = C.J, lines = C.lines; if (J.cxO[cx+1] - J.cxO[cx] !== 1) return null;
     const nd = J.cxN[J.cxO[cx]], q0 = J.nIO[nd], q1 = J.nIO[nd+1];
-    let major = 0, thr = -1, ends = 0;
-    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c)) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
+    let major = 0, thr = -1, ends = 0, ntun = 0; for (let q = q0; q < q1; q++) if (lines[J.nIL[q]].tun) ntun++;
+    if (ntun && q1 - q0 - ntun <= 1){ const b = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]}; b.slim = b; return b; }
+    for (let q = q0; q < q1; q++){ const L = lines[J.nIL[q]]; if (!isJ(L.c) || L.tun) continue; const s = J.nIS[q], Lt = J.LEN(J.nIL[q]), end = s < 0.3 || s > Lt - 0.3;
       if (end) ends++; if (L.c < 11){ major++; if (!end) thr = q; } }
     const base = {type:'N', arms:[], ints:[], sig:false, ccx:J.NX[nd], ccy:J.NY[nd], e:J.NE[nd]};
     if (major === 0){ base.slim = base; return base; }
     if (major === 1 && thr >= 0 && J.NE[nd] < 0.3){ const L = lines[J.nIL[thr]]; if (SWC(L.c) && !(L.flags & 8)){ base.slim = base; return base; } }
     if (q1 - q0 === 2 && ends === 2){
-      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c)) return null;
+      const ia = J.nIL[q0], ib = J.nIL[q0+1], La = lines[ia], Lb = lines[ib]; if (!isJ(La.c) || !isJ(Lb.c) || La.tun || Lb.tun) return null;
       if (Math.abs(hwOf(La) - hwOf(Lb)) >= 0.3 || OFF[La.c] !== OFF[Lb.c]) return null;
       const ea = J.nIS[q0] < 0.3 ? 0 : (La.P.length >> 1) - 1, eb = J.nIS[q0+1] < 0.3 ? 0 : (Lb.P.length >> 1) - 1;
       if (!dirAt(La, ea, ea === 0 ? 1 : -1, _d1) || !dirAt(Lb, eb, eb === 0 ? 1 : -1, _d2)) return null;
@@ -16474,7 +16480,7 @@ const SGRoads = (() => {
   function capCompute(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
     const o0 = C.nodeOff[nd], o1 = C.nodeOff[nd+1]; let others = 0, ol = -1, ov = -1;
-    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
+    for (let j = o0; j < o1; j++){ if ((C.incL[j] === li && C.incV[j] === k) || C.lines[C.incL[j]].c === 12 || C.lines[C.incL[j]].tun) continue; others++; ol = C.incL[j]; ov = C.incV[j]; }
     if (others === 0) return true;
     if (others > 1) return true;
     const M = C.lines[ol], mn = M.P.length >> 1;
@@ -17033,7 +17039,7 @@ const SGRoads = (() => {
   }
   function deadEnd(li, L, k){
     const C = X.C, nd = nodeAt(C, L.P[k*2], L.P[k*2+1]); if (nd < 0) return true;
-    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li) return false;
+    for (let j = C.nodeOff[nd]; j < C.nodeOff[nd+1]; j++) if (C.incL[j] !== li && !C.lines[C.incL[j]].tun) return false;      // [road50] a tunnel beyond: still a portal
     return true;
   }
   function structures(c, hw, wd, foreign, L, li, JN){
@@ -17816,7 +17822,7 @@ const SGRoads = (() => {
           complexesIn(t, cseen);
         }
       } else {
-        for (let i = 0; i < lines.length; i++){ if (skip && skip(i)) continue; doLine(i, lines[i]); }
+        for (let i = 0; i < lines.length; i++){ if ((skip && skip(i)) || lines[i].tun) continue; doLine(i, lines[i]); }
         for (let cx = 0; cx < C.J.nC; cx++) doComplex(cx);
       }
     } finally { MB = null; }
@@ -18141,7 +18147,7 @@ const SGRoads = (() => {
     initGround();
     const by = new Map();
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i]; if (L.c > 10) continue;
+      const L = lines[i]; if (L.c > 10 || L.tun) continue;
       const en = L.name ? L.name[0] : '', key = en || L.ref; if (!key) continue;
       let g = by.get(key); if (!g) by.set(key, g = {en:en || null, zh:(L.name && L.name[1]) || null, ref:L.ref || null, cls:L.c, total:0, cand:[], foreign:(L.flags & 8) !== 0});
       if (L.c < g.cls) g.cls = L.c; if (!g.ref && L.ref) g.ref = L.ref; if (!g.zh && L.name && L.name[1]) g.zh = L.name[1];
@@ -18190,7 +18196,7 @@ const SGRoads = (() => {
   function graph(lines){
     const out = [];
     for (let i = 0; i < lines.length; i++){
-      const L = lines[i], c = L.c; if (c > 10) continue;
+      const L = lines[i], c = L.c; if (c > 10 || L.tun) continue;
       const gc = c <= 1 ? 2 : c <= 9 ? 1 : 0, P = L.P, E = L.E, np = P.length >> 1;
       for (let k = 0; k < np - 1; k++){
         const x0 = P[k*2], y0 = P[k*2+1], x1 = P[k*2+2], y1 = P[k*2+3]; if (x0 === x1 && y0 === y1) continue;
@@ -26887,6 +26893,9 @@ window.SGWx = {
    traffic assignment and the flow overlay still run), so stepCars() has nothing to move; the "车辆 cars" checkbox (#showCars)
    toggles these vehicles instead. Everything lives in one group in the scene, visible only with the "network" toggle
    (showNet && moverGroup.visible); HOOKS.net (network rebuilt / reset) restarts the simulation.
+   [road50] tunnels: lines the roads module marks L.tun (hidden tunnel / underpass ways, joined to the roads at their portals) are
+   ordinary links for routing and movements; vehicles on them are not drawn and are no obstacles; nothing spawns on them (they are in
+   no tile of the zone), so vehicles enter at one portal and come out at the other.
    [nyc/nycapp] New York City (SGR_NYC, tested lazily): yellow cabs by where a car appears (Manhattan below 96th Street ~35 %, upper
    Manhattan ~8 %, by the airports ~12 %, the other boroughs ~3 %, outside the city ~0.5 %; plain taxi yellow, a plain roof light),
    fewer pickups, city speeds (25 mph streets, 30 mph major arterials, 50 mph expressways), the real OSM bus stops of the map
@@ -26944,7 +26953,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // a drivable line: classes 0-10 inside the map (no Johor / Batam context), not hidden by a landmark / repainted block
   function drivable(li){
     let v = NET.skip[li]; if (v) return v === 1;
-    const L = NET.lines[li]; let ok = L.c <= 10 && !(L.flags & 8);
+    const L = NET.lines[li]; let ok = (L.tun ? L.tc : L.c) <= 10 && !(L.flags & 8);       // [road50] tunnels: their road class
     if (ok && L.c === 10 && typeof sgrSkipLine === 'function'){ try { if (sgrSkipLine(li)) ok = false; } catch (e){} }
     NET.skip[li] = ok ? 1 : 2; return ok;
   }
@@ -26962,7 +26971,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const GS = 7;
   function geomOf(li){
     let g = NET.GEO.get(li); if (g) return g;
-    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.c, R = R_RT[c] || 0;
+    const C = NET.C, J = NET.J, L = NET.lines[li], P = L.P, E = L.E, np = P.length >> 1, o = C.vOff[li], VS = C.VS, c = L.tun ? L.tc : L.c, R = R_RT[c] || 0;
     const j0 = J.lJO[li], j1 = J.lJO[li+1], nmMax = 16;
     const TT = new Float64Array(np), TN = new Uint8Array(np);
     for (let k = 1; k < np - 1; k++){
@@ -27080,11 +27089,12 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   const VMAX_NY = [22.4, 15.6, 20.1, 13.4, 13.4, 11.2, 11.2, 11.2, 11.2, 11.2, 11.2];
   let DLID = 0;
   function makeDl(li, g, dir, a, b, from, to){
-    const L = NET.lines[li], c = L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
+    const L = NET.lines[li], c = L.tun ? L.tc : L.c, ow = (L.flags & 1) !== 0, ln = R_LANES[c][ow ? 1 : 0], nL = Math.max(1, ow ? ln : ln >> 1);
     const dl = {id:DLID++, li, g, dir, a, b, len:b - a, from, to, c, ow, link:(L.flags & 16) !== 0, nL, lane:laneOffsets(c, ow, nL),
       vmax:(NET.nyc ? VMAX_NY : NET.us ? VMAX_US : VMAX_SG)[c], name:(L.name && L.name[0]) || L.ref || '', ref:L.ref || '', elev:g.elev,
       head:new Array(nL).fill(null), tail:new Array(nL).fill(null), exitV:new Array(nL).fill(null), cnt:0,
-      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false};
+      outs:null, ins:null, ctrl:0, stopD:0, cxe:false, internal:false, sigG:-1, sigC:null, act:0, tgt:0, fall:1, src:false, mid:null, stops:null, nodeOK:false,
+      tun:!!L.tun};                                              // [road50] a hidden tunnel link (roads module: class + 32): driven, not drawn
     NET.DL.push(dl);
     return dl;
   }
@@ -28098,7 +28108,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[CULLI++]; if (!V.alive) continue;
       const dl = V.dl, m = dl.mid || [ZONE.cx, ZONE.cy], d = Math.hypot(m[0] - ZONE.cx, m[1] - ZONE.cy);
       if (!ZONE.on || d > R || (dl.act !== ZONE.stamp && d > ZONE.R - 100)){ if (!V.vis || d > R + 400) killVehicle(V); continue; }
-      if (!V.bus){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
+      if (!V.bus && !dl.tun){ const gi = roadGroup(dl.c); if (dl.cnt > dl.tgt*1.3 + 1 && !V.vis && NG[gi] > TG[gi]*1.08 + 3 && rnd() < 0.5){ killVehicle(V); NG[gi]--; continue; } }
       if (V.wait > 70 && !V.vis){ killVehicle(V); continue; }
       if (!dl.tb && !V.vis){ if (tileBuilt(dl.mid)) dl.tb = true; else { killVehicle(V); continue; } }
     }
@@ -28820,6 +28830,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
       const V = VEH[i]; if (!V.alive) continue;
       const T = V.T, len = V.len;
       if (V.crash){ renderCrash(V, cx, cy, cz, lights); continue; }
+      if (V.dl.tun){ V.cd = 1e9; V.vis = false; continue; }      // [road50] underground: hidden between the portals
       // centre first (cheap) for distance and culling
       pathAt(V, V.u - len*0.5, _r);
       const dx0 = _r.x - cx, dy0 = _r.y - cy, dz0 = _r.z - cz, d2 = dx0*dx0 + dy0*dy0 + dz0*dz0;
@@ -29129,7 +29140,7 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
   // free-drive / other modules: oriented boxes of the vehicles within r of (x, y): [{x, y, hx, hy, hl, hw, z, v}]
   function obstacles(x, y, r, out){
     out = out || []; out.length = 0; const r2 = r*r; if (TRF.suspend) return out;
-    for (const V of VEH){ if (!V.alive) continue; const K = V.crash;
+    for (const V of VEH){ if (!V.alive || (V.dl && V.dl.tun && !V.crash)) continue; const K = V.crash;
       if (K){ const dx = K.x - x, dy = K.y - y; if (dx*dx + dy*dy > r2) continue;
         out.push({x:K.x, y:K.y, hx:Math.cos(K.psi), hy:Math.sin(K.psi), hl:V.len/2, hw:V.wid/2, z:K.z, v:0, vx:K.vx, vy:K.vy, w:K.w, id:V.id, m:K.m, crash:true, k:V.T.k}); continue; }
       pathAt(V, V.u - V.len*0.5, _q); const dx = _q.x - x, dy = _q.y - y; if (dx*dx + dy*dy > r2) continue;
@@ -29174,6 +29185,8 @@ const TRF_BUS = {"sg":{"stops":"ixrfgAGuAjqAAjCyA7ACLl2vBZQCjwvnBKQGnQFOggStCYgE
     taxiShare:(x, y) => NET.nyc ? nyTaxiShare(x, y) : null,
     spawnLog:(on) => { if (on !== undefined){ SPLOG.on = !!on; SPLOG.a = []; } return SPLOG.a.slice(); },
     vehicles:() => VEH.filter(V => V.alive).map(V => ({id:V.id, k:V.T.k, v:+V.v.toFixed(1), c:V.dl.c, ln:V.ln, nL:V.dl.nL, bus:V.bus ? V.bus.R.no : null})),
+    // [road50] test helper: every live vehicle's pose (centre of the body on its path) for the stuck / jump / off-deck checks
+    poses:() => VEH.filter(V => V.alive && !V.crash).map(V => { pathAt(V, V.u - V.len*0.5, _q); return {id:V.id, x:+_q.x.toFixed(2), y:+_q.y.toFixed(2), z:+_q.z.toFixed(2), v:+V.v.toFixed(2), wait:+V.wait.toFixed(1), li:V.dl.li, c:V.dl.c, el:V.dl.elev ? 1 : 0, ctrl:V.dl.ctrl, dEnd:+(V.dl.len - V.u).toFixed(1), tun:V.dl.tun ? 1 : 0}; }),
     signals:() => [...SIG.values()].filter(Boolean).map(S => ({cx:S.cx, x:Math.round(S.x), y:Math.round(S.y), arms:S.arms.length, cycle:S.cyc, phases:S.ph.map(p => p.g + ':' + p.mode + ':' + p.dur).join(' '),
       dirs:S.arms.map(a => [+a.ux.toFixed(3), +a.uy.toFixed(3), a.c, a.dl ? a.dl.nL : 0])})),
     _int:{NET, ZONE, VEH, BUS, SIG, PR, RN},
@@ -52323,6 +52336,2544 @@ LANDMARKS.tysumitomo = {zh:'新宿住友大厦', en:'Shinjuku Sumitomo Building'
 place('tytmg1'); place('tytmg2'); place('tycocoon'); place('typarktower'); place('tysumitomo');
 
 // v39 integration: the v37 SITE tygyoen was removed here; tyo/tyx_west/tyx_west.js defines it now.
+}
+
+// ===== tyo/ty50a: Marunouchi, Ōtemachi, Nihonbashi, Yaesu and Kyōbashi landmarks on their real footprints (City Brush lm50, Tokyo 1:1).
+// Footprints from R/lm50/ref_ty50a.json (the page's own map data + current OSM), local metres around each anchor (+x east, +z south), rot 0.
+// Block-scoped: only LANDMARKS and SG_PLACES are touched. No text, logos or brand colours. Never Math.random. Assembled by SC/lm50/ty50a/build.sh.
+{
+const D = {"tygrannorth":{"a":[35.681559,139.768993],"g":10.6,"o":[[21.7,24.1],[-37.3,59.0],[-38.6,58.6],[-40.8,57.9],[-50.1,55.1],[-47.2,46.2],[-34.8,6.7],[-17.2,-49.7],[-15.8,-54.3],[40.7,-36.9],[40.0,-34.4],[39.3,-32.3],[47.1,-29.9],[42.4,-14.7],[52.9,-11.6],[36.7,19.0],[32.2,17.9],[29.5,26.5]],"p":[[0.0,210.0,[[-34.8,6.8],[29.5,26.5],[47.2,-30.0],[-17.3,-49.7]]],[0.0,74.0,[[-50.0,55.0],[-37.3,59.0],[21.7,24.0],[40.7,-37.0],[-15.8,-54.2]]],[0.0,23.0,[[32.2,17.8],[36.7,19.0],[53.0,-11.7],[42.5,-14.7]]],[0.0,3.5,[[-9.0,-13.5],[13.2,-7.0],[19.2,-27.5],[-3.0,-33.7]]]]},"tygransouth":{"a":[35.678637,139.767374],"g":7.9,"o":[[-35.2,24.3],[1.8,43.1],[36.3,-23.7],[-1.0,-42.7],[-12.5,-19.9],[-16.0,-21.7],[-26.2,-1.4],[-23.0,0.3]]},"tymidyaesu":{"a":[35.679265,139.769097],"g":11.2,"o":[[-56.0,23.3],[9.8,56.3],[28.8,26.0],[37.8,7.0],[45.5,-14.2],[50.5,-32.0],[4.5,-54.7],[1.3,-49.2],[-29.5,-27.7]],"lr":[[11.3,56.0],[41.8,71.3],[67.5,23.8],[37.8,9.0],[28.8,27.5]]},"tymitsuihonkan":{"a":[35.686327,139.773138],"g":16.1,"o":[[-54.9,-0.4],[-41.4,37.8],[57.6,3.6],[43.9,-35.4],[12.4,-24.4],[10.9,-28.9],[-50.1,-7.9],[-48.4,-2.7]]},"tymitsukoshi":{"a":[35.685634,139.773436],"g":16.0,"o":[[-64.1,-19.8],[-36.9,55.9],[64.1,19.9],[36.6,-56.1]]},"tytakashimaya":{"a":[35.680767,139.773525],"g":12.3,"o":[[-65.2,-1.8],[-63.2,3.7],[36.1,56.4],[66.3,-3.8],[-33.9,-53.8],[-38.9,-52.6]]},"tytakamitsui":{"a":[35.681317,139.773826],"g":12.5,"o":[[-61.4,-4.1],[40.6,45.9],[61.3,4.2],[-40.7,-45.8]]},"tymeijiseimei":{"a":[35.67898,139.761613],"g":15.1,"o":[[12.4,-45.1],[11.2,-40.9],[8.7,-41.6],[7.9,-38.7],[12.5,-37.5],[33.6,-31.8],[14.2,37.5],[11.1,48.6],[-32.0,36.7],[-30.4,31.0],[-31.4,30.7],[-10.5,-44.1],[-9.4,-43.7],[-7.5,-50.6]],"p":[[0.0,37.0,[[-18.5,26.4],[-12.8,27.9],[-7.5,9.9],[-12.8,8.4],[-8.5,-7.4],[-3.3,-5.9],[3.2,-28.4],[-2.8,-30.1],[-4.0,-25.6],[-5.5,-26.1],[-9.3,-12.6],[-14.0,-13.9],[-15.3,-8.9],[-11.5,-7.9],[-17.3,13.1],[-15.0,13.6]]],[0.0,39.0,[[5.2,40.9],[12.0,42.6],[13.7,35.6],[7.0,33.9]]],[0.0,38.0,[[-4.0,-25.6],[2.0,-24.1],[3.2,-28.4],[-2.8,-30.1]]]]},"tyichigokan":{"a":[35.678411,139.763222],"g":8.5,"o":[[-36.5,11.8],[11.0,24.0],[25.8,-33.0],[13.0,-36.2],[1.8,6.0],[-32.5,-3.0]]},"tymarupark":{"a":[35.679004,139.763077],"g":8.3,"o":[[-44.4,27.5],[-4.9,39.0],[-0.9,39.0],[6.6,38.3],[12.4,36.0],[17.1,33.8],[16.6,32.5],[24.4,27.0],[33.9,24.3],[47.4,-23.2],[-25.6,-42.7]]},"tytse":{"a":[35.682667,139.778796],"g":8.4,"o":[[-26.3,-47.5],[8.1,-28.7],[19.7,-22.2],[52.8,45.2],[46.8,50.8],[-16.9,16.6],[-51.3,-2.3],[-38.8,-24.8]],"p":[[0.0,22.5,[[-17.0,16.7],[46.8,50.7],[52.8,45.2],[19.8,-22.3],[8.0,-28.5]]],[0.0,25.6,[[-51.5,-2.3],[-17.0,16.7],[8.0,-28.5],[-26.2,-47.5]]]]},"tyotemachitower":{"a":[35.685513,139.765435],"g":8.1,"o":[[-37.6,44.2],[14.4,56.2],[38.1,-43.0],[-15.6,-55.8],[-26.6,-12.0],[-23.6,-11.5]]},"tyotemachione":{"a":[35.687664,139.76325],"g":7.7,"o":[[-35.5,43.9],[-32.5,44.4],[-33.3,48.1],[12.7,57.1],[13.5,54.1],[16.2,54.6],[35.5,-43.6],[32.2,-44.1],[33.0,-48.4],[-13.0,-57.1],[-13.5,-54.4],[-16.3,-54.9]]},"typlacewest":{"a":[35.686843,139.767181],"g":8.4,"o":[[-59.0,24.8],[57.8,38.3],[60.0,19.6],[53.3,18.6],[55.0,2.3],[52.3,1.8],[55.5,-25.7],[42.8,-27.2],[42.8,-28.2],[-51.7,-38.9]]},"typlaceeast":{"a":[35.68711,139.768072],"g":5.4,"o":[[-36.4,1.7],[-18.7,3.4],[-19.4,10.4],[-23.2,9.9],[-24.9,28.2],[-22.2,28.4],[-24.2,45.9],[-19.2,46.4],[-20.4,59.2],[20.8,63.4],[21.8,52.4],[26.1,52.9],[35.3,-33.6],[21.1,-35.3],[22.6,-49.3],[2.1,-51.6],[2.8,-57.1],[-27.2,-60.3],[-27.9,-53.1],[-30.4,-53.3]]},"tyjabldg":{"a":[35.688672,139.762797],"g":5.4,"o":[[-23.0,30.0],[16.5,34.2],[23.0,-30.3],[-16.5,-34.0]]},"tyyomiuri":{"a":[35.687148,139.764478],"g":8.1,"o":[[-46.2,12.1],[38.0,29.1],[46.3,-12.1],[-38.0,-29.4]]},"tynikkei":{"a":[35.688737,139.762248],"g":7.2,"o":[[-23.3,27.4],[18.0,31.2],[23.5,-27.6],[-17.8,-31.3]]},"tymarutrust":{"a":[35.682454,139.769292],"g":9.7,"o":[[-30.6,36.1],[4.6,47.1],[30.6,-36.2],[-4.6,-46.9]]},"tysapia":{"a":[35.683715,139.768585],"g":7.6,"o":[[-30.6,11.5],[-21.4,14.0],[-21.9,15.5],[9.4,25.0],[9.9,23.5],[19.1,26.2],[30.9,-12.3],[-18.9,-27.3]]},"typacific":{"a":[35.677979,139.766939],"g":8.3,"o":[[-31.8,10.6],[9.7,31.8],[31.7,-10.7],[-9.8,-31.9]]},"tynihonbashitower":{"a":[35.681858,139.774323],"g":12.7,"o":[[-50.7,1.0],[29.6,41.0],[50.6,-0.8],[-29.7,-40.8]]},"tymuromachi":{"a":[35.68791,139.772462],"g":15.7,"o":[[-50.9,-14.8],[-31.4,40.4],[-27.9,38.9],[-25.2,47.7],[-18.4,45.7],[47.8,20.9],[42.3,6.4],[48.6,4.2],[29.3,-46.1],[23.1,-43.8],[22.1,-46.6],[-46.9,-20.3],[-45.4,-16.8]]},"tynihonbashimitsui":{"a":[35.686923,139.77313],"g":16.1,"o":[[20.0,-41.9],[44.4,29.9],[14.1,40.2],[12.2,34.6],[11.5,32.7],[-21.0,43.7],[-44.3,-24.8],[-31.7,-29.0],[-32.4,-31.1],[11.1,-45.8],[13.2,-39.6]],"p":[[0.0,124.8,[[-43.7,-24.3],[-20.7,42.9],[30.1,25.7],[7.3,-41.3]]]]},"tyedogrand":{"a":[35.677333,139.769606],"g":11.9,"o":[[-54.1,4.6],[-36.3,13.6],[-33.1,7.6],[-2.1,23.1],[-5.1,29.6],[35.4,48.6],[46.4,27.9],[24.2,17.1],[39.7,-13.1],[-27.6,-46.9]]},"tymuseumtower":{"a":[35.678746,139.77203],"g":12.0,"o":[[-40.3,-1.3],[25.7,31.9],[40.0,1.7],[-25.3,-31.8]]},"tysquaregarden":{"a":[35.676028,139.768777],"g":12.3,"o":[[-51.0,13.1],[26.8,51.8],[40.5,24.6],[27.5,18.1],[46.3,-19.2],[-18.5,-51.4]]},"tytoda":{"a":[35.678274,139.771693],"g":12.0,"o":[[-48.8,15.5],[16.5,48.0],[48.7,-15.7],[-16.3,-48.2]]},"tymizuho":{"a":[35.683818,139.763634],"g":8.9,"o":[[-38.0,27.2],[20.0,42.2],[38.0,-27.3],[-20.0,-42.3]]}};
+// ---- shared helpers (block-scoped; copied from hk/hk50e)
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+const lerp = (a, b, t) => a + (b - a)*t, cl01 = t => t < 0 ? 0 : t > 1 ? 1 : t, sm = t => { t = cl01(t); return t*t*(3 - 2*t); };
+const dsS = c => typeof c === 'string' ? {c, ds:true} : Object.assign({ds:true}, c);
+// triangle batches: many parts of one colour spec become one LTris call
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+function segP(o, a, b, r, n){
+  n = n || 4; const dx = b[0]-a[0], dy = b[1]-a[1], dz = b[2]-a[2], L = Math.hypot(dx, dy, dz); if (L < 1e-4) return;
+  const d = [dx/L, dy/L, dz/L], up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let ux = d[1]*up[2]-d[2]*up[1], uy = d[2]*up[0]-d[0]*up[2], uz = d[0]*up[1]-d[1]*up[0]; const ul = Math.hypot(ux, uy, uz); ux /= ul; uy /= ul; uz /= ul;
+  const vx = d[1]*uz-d[2]*uy, vy = d[2]*ux-d[0]*uz, vz = d[0]*uy-d[1]*ux;
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+ux*c+vx*s, p[1]+uy*c+vy*s, p[2]+uz*c+vz*s]); } return R; };
+  const A = ring(a), Bq = ring(b);
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], Bq[j], Bq[i]); }
+}
+const rotQ = (cx, cz, ry) => { const c = Math.cos(ry || 0), s = Math.sin(ry || 0); return (x, y, z) => [cx + x*c + z*s, y, cz - x*s + z*c]; };
+function boxP(o, w, h, d, x, y, z, ry){
+  const R = rotQ(x, z, ry), hw = w/2, hd = d/2;
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, c, e] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[c], P[e]);
+}
+// a box from plan point a to b (width w across), y0..y1
+function wallP(o, a, b, w, y0, y1){ const dx = b[0]-a[0], dz = b[1]-a[1], L = Math.hypot(dx, dz); if (L < 1e-3) return; boxP(o, L, y1 - y0, w, (a[0]+b[0])/2, y0, (a[1]+b[1])/2, -Math.atan2(dz, dx)); }
+function loftP(o, secs, cap){
+  const n = secs[0].length;
+  for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, secs[s][i], secs[s][j], secs[s+1][j], secs[s+1][i]); }
+  if (cap){ const t = secs[secs.length - 1], c = [0, 0, 0]; for (const p of t){ c[0] += p[0]/n; c[1] += p[1]/n; c[2] += p[2]/n; } for (let i = 0; i < n; i++) o.push(...c, ...t[i], ...t[(i+1) % n]); }
+}
+// open strip loft (no wrap-around)
+function stripP(o, secs){ for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < secs[s].length - 1; i++) quadP(o, secs[s][i], secs[s][i+1], secs[s+1][i+1], secs[s+1][i]); }
+const area2 = P => { let s = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; s += a[0]*b[1] - b[0]*a[1]; } return s/2; };
+const cenP = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+const bbP = P => { let a = [1e9, 1e9, -1e9, -1e9]; for (const p of P){ a[0] = Math.min(a[0], p[0]); a[1] = Math.min(a[1], p[1]); a[2] = Math.max(a[2], p[0]); a[3] = Math.max(a[3], p[1]); } return a; };
+const shiftP = (P, dx, dz) => P.map(p => [p[0] + dx, p[1] + dz]);
+function offP(P, d){
+  const n = P.length, s = area2(P) > 0 ? 1 : -1, L = [];
+  for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; L.push([a[0] - ez/l*s*d, a[1] + ex/l*s*d, ex, ez]); }
+  const out = [];
+  for (let i = 0; i < n; i++){ const p = L[(i + n - 1) % n], q = L[i], den = p[2]*q[3] - p[3]*q[2];
+    if (Math.abs(den) < 1e-6){ out.push([q[0], q[1]]); continue; }
+    const t = ((q[0]-p[0])*q[3] - (q[1]-p[1])*q[2])/den; let x = p[0] + p[2]*t, z = p[1] + p[3]*t;
+    const ox = P[i][0], oz = P[i][1], dd = Math.hypot(x - ox, z - oz), mx = Math.abs(d)*2.5;
+    if (dd > mx){ x = ox + (x - ox)/dd*mx; z = oz + (z - oz)/dd*mx; }
+    out.push([x, z]); }
+  return out;
+}
+const outN = (P, i) => { const s = area2(P) > 0 ? 1 : -1, a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; return [ez/l*s, -ex/l*s]; };
+const inPoly = (P, x, z) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; };
+const dSeg = (x, z, a, b) => { const ex = b[0]-a[0], ez = b[1]-a[1], L2 = ex*ex + ez*ez || 1, t = cl01(((x-a[0])*ex + (z-a[1])*ez)/L2); return Math.hypot(x - a[0] - ex*t, z - a[1] - ez*t); };
+const dPoly = (P, x, z) => { let d = 1e9; for (let i = 0; i < P.length; i++) d = Math.min(d, dSeg(x, z, P[i], P[(i+1) % P.length])); return d; };
+const dLine = (L, x, z) => { let d = 1e9; for (let i = 0; i < L.length - 1; i++) d = Math.min(d, dSeg(x, z, L[i], L[i+1])); return d; };
+const triang = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+// clip a polygon to the half plane a*x + b*z + c >= 0
+function clipP(P, a, b, c){ const out = [], f = p => a*p[0] + b*p[1] + c;
+  for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], fp = f(p), fq = f(q);
+    if (fp >= 0) out.push(p); if ((fp >= 0) !== (fq >= 0)){ const t = fp/(fp - fq); out.push([p[0] + (q[0]-p[0])*t, p[1] + (q[1]-p[1])*t]); } }
+  return out; }
+// walls of a plan polygon from y0 (number or f(x, z)) up to ytop (number or f) and its top cap
+function prismP(o, P, y0, ytop, noTop, bottom){
+  const f = typeof ytop === 'function' ? ytop : () => ytop, f0 = typeof y0 === 'function' ? y0 : () => y0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; quadP(o, [a[0], f0(a[0], a[1]), a[1]], [b[0], f0(b[0], b[1]), b[1]], [b[0], f(b[0], b[1]), b[1]], [a[0], f(a[0], a[1]), a[1]]); }
+  if (!noTop) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f(p[0], p[1]), p[1]); }
+  if (bottom) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f0(p[0], p[1]), p[1]); }
+}
+const flatP = (o, P, y) => { for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], typeof y === 'function' ? y(p[0], p[1]) : y, p[1]); } };
+// floor bands round a polygon every `step` between y0 and y1
+function bandsP(o, P, y0, y1, step, bh, off, edges){
+  off = off || 0.12;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.3) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0 + step; y < y1 - 0.3; y += step) quadP(o, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, y+bh, b[1]+nz*off], [a[0]+nx*off, y+bh, a[1]+nz*off]);
+  }
+}
+// vertical strips about `sp` apart, `w` wide, `off` proud of the walls (a fin with depth when dep is given)
+function mullP(o, P, y0, y1, sp, w, off, edges, dep){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp*0.6) continue;
+    const [nx, nz] = outN(P, i), n = Math.max(1, Math.round(L/sp)), ux = ex/L, uz = ez/L;
+    for (let k = 0; k <= n; k++){
+      const t = k/n, x = a[0] + ex*t + nx*off, z = a[1] + ez*t + nz*off;
+      if (dep) { boxP(o, w, y1 - y0, dep, x + nx*dep/2, y0, z + nz*dep/2, -Math.atan2(uz, ux)); continue; }
+      const p = [x - ux*w/2, z - uz*w/2], q = [x + ux*w/2, z + uz*w/2];
+      quadP(o, [p[0], y0, p[1]], [q[0], y0, q[1]], [q[0], y1, q[1]], [p[0], y1, p[1]]); }
+  }
+}
+// window slots in bays along every edge, rows every fh
+function winsP(o, P, y0, y1, fh, sp, ww, wh, off, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp) continue;
+    const [nx, nz] = outN(P, i), n = Math.floor(L/sp), ux = ex/L, uz = ez/L, s0 = (L - n*sp)/2 + sp/2;
+    for (let y = y0; y + wh <= y1 + 0.01; y += fh) for (let k = 0; k < n; k++){
+      const s = s0 + k*sp, x = a[0] + ux*s + nx*off, z = a[1] + uz*s + nz*off;
+      quadP(o, [x - ux*ww/2, y, z - uz*ww/2], [x + ux*ww/2, y, z + uz*ww/2], [x + ux*ww/2, y + wh, z + uz*ww/2], [x - ux*ww/2, y + wh, z - uz*ww/2]); }
+  }
+}
+function lineRingP(o, P, y, r, n){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; segP(o, [a[0], y, a[1]], [b[0], y, b[1]], r, n || 3); } }
+function lineP(o, L, y, r, n){ for (let i = 0; i < L.length - 1; i++) segP(o, [L[i][0], typeof y === 'function' ? y(L[i][0], L[i][1]) : y, L[i][1]], [L[i+1][0], typeof y === 'function' ? y(L[i+1][0], L[i+1][1]) : y, L[i+1][1]], r, n || 3); }
+// railing along a polyline: posts every `sp`, top rail
+function railP(o, L, yf, h, sp, closed){
+  const Q = closed ? L.concat([L[0]]) : L;
+  for (let i = 0; i < Q.length - 1; i++){ const a = Q[i], b = Q[i+1], d = Math.hypot(b[0]-a[0], b[1]-a[1]), n = Math.max(1, Math.round(d/sp));
+    for (let k = 0; k < n; k++){ const t = k/n, x = a[0] + (b[0]-a[0])*t, z = a[1] + (b[1]-a[1])*t, y = yf(x, z); boxP(o, 0.12, h, 0.12, x, y, z, 0); }
+    const ya = yf(a[0], a[1]), yb = yf(b[0], b[1]); segP(o, [a[0], ya + h, a[1]], [b[0], yb + h, b[1]], 0.06, 3); }
+}
+function treeP(B, x, y, z, s, crown, trunk, tall){
+  const th = (tall ? 4.5 : 2.6)*s;
+  segP(B.p(trunk || '#5d4a3a'), [x, y, z], [x, y + th, z], 0.22*s, 3);
+  const c = B.p(crown || '#557f3c'), R = (tall ? 1.9 : 2.3)*s, cy = y + th + R*0.5, top = [x, cy + R*(tall ? 2.2 : 0.85), z], bot = [x, cy - R*0.6, z], ring = [];
+  for (let i = 0; i < 6; i++){ const a = i/6*TAU + s; ring.push([x + Math.cos(a)*R, cy, z + Math.sin(a)*R]); }
+  for (let i = 0; i < 6; i++){ const j = (i+1) % 6; triP(c, top, ring[j], ring[i]); triP(c, bot, ring[i], ring[j]); }
+}
+// resample a closed polygon to n points evenly by perimeter
+function resP(P, n){ const L = [0]; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; L.push(L[i] + Math.hypot(b[0]-a[0], b[1]-a[1])); }
+  const T = L[P.length], out = []; let j = 0;
+  for (let k = 0; k < n; k++){ const s = k/n*T; while (j < P.length - 1 && L[j+1] < s) j++; const a = P[j], b = P[(j+1) % P.length], t = (s - L[j])/((L[j+1] - L[j]) || 1); out.push([a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t]); }
+  return out; }
+// the polygon boundary point in direction th from c (ray cast; last hit)
+function rayP(P, c, th){ const dx = Math.cos(th), dz = Math.sin(th); let best = 0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], den = dx*ez - dz*ex; if (Math.abs(den) < 1e-9) continue;
+    const t = ((a[0]-c[0])*ez - (a[1]-c[1])*ex)/den, u = ((a[0]-c[0])*dz - (a[1]-c[1])*dx)/den; if (t > 0 && u >= 0 && u <= 1) best = Math.max(best, t); }
+  return best; }
+// ground of the app under a landmark, relative to its base (local y); rot must be 0. Falls back to flat ground outside the app/kit.
+const cenA = P => { let a = 0, x = 0, z = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], c = p[0]*q[1] - q[0]*p[1]; a += c; x += (p[0] + q[0])*c; z += (p[1] + q[1])*c; } return Math.abs(a) < 1e-6 ? cenP(P) : [x/(3*a), z/(3*a)]; };
+// oriented frame of a plan polygon: u along the long side, v across; ob.p(u, v) -> plan [x, z]
+function obE(P, ang){
+  let best = null;
+  const tryA = an => { const c = Math.cos(an), s = Math.sin(an); let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+    for (const p of P){ const u = p[0]*c + p[1]*s, v = -p[0]*s + p[1]*c; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const A = (u1 - u0)*(v1 - v0); if (!best || A < best.A - 1e-6) best = {A, an, u0, u1, v0, v1}; };
+  if (ang !== undefined) tryA(ang); else for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) > 0.5) tryA(Math.atan2(b[1]-a[1], b[0]-a[0])); }
+  let {an, u0, u1, v0, v1} = best;
+  if (ang === undefined && v1 - v0 > u1 - u0){ an += HP; const t0 = u0, t1 = u1; u0 = v0; u1 = v1; v0 = -t1; v1 = -t0; }
+  const c = Math.cos(an), s = Math.sin(an), uc = (u0 + u1)/2, vc = (v0 + v1)/2, cx = uc*c - vc*s, cz = uc*s + vc*c;
+  const p = (u, v) => [cx + u*c - v*s, cz + u*s + v*c];
+  return {cx, cz, a:an, c, s, L:u1 - u0, W:v1 - v0, p, ry:-an,
+    loc:(x, z) => { const dx = x - cx, dz = z - cz; return [dx*c + dz*s, -dx*s + dz*c]; },
+    rect:(a0, a1, b0, b1) => [p(a0, b0), p(a1, b0), p(a1, b1), p(a0, b1)]};
+}
+// 3-D point in an oriented frame
+const o3 = (ob, u, y, v) => { const q = ob.p(u, v); return [q[0], y, q[1]]; };
+// box in an oriented frame (u0..u1, v0..v1, y0..y1)
+function boxO(o, ob, u0, u1, v0, v1, y0, y1){ const q = ob.p((u0 + u1)/2, (v0 + v1)/2); boxP(o, u1 - u0, y1 - y0, v1 - v0, q[0], y0, q[1], ob.ry); }
+// hip roof over the oriented rectangle u0..u1 x v0..v1 at eaves y, rise h (ridge along the longer side)
+function hipO(o, ob, u0, u1, v0, v1, y, h){
+  const du = u1 - u0, dv = v1 - v0, P = (u, v, yy) => o3(ob, u, yy, v);
+  if (du >= dv){ const k = dv/2, vc = (v0 + v1)/2, r1 = P(u0 + k, vc, y + h), r2 = P(u1 - k, vc, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, r2); triP(o, A, r2, B); triP(o, C, r2, r1); triP(o, C, r1, E); triP(o, E, r1, A); triP(o, B, r2, C); }
+  else { const k = du/2, uc = (u0 + u1)/2, r1 = P(uc, v0 + k, y + h), r2 = P(uc, v1 - k, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, B); triP(o, B, r1, r2); triP(o, B, r2, C); triP(o, C, r2, E); triP(o, E, r2, r1); triP(o, E, r1, A); }
+}
+// gable roof (ridge along u when alongU, else along v) with the two gable triangles in `og` (walls) when given
+function gableO(o, ob, u0, u1, v0, v1, y, h, alongU, og){
+  const P = (u, v, yy) => o3(ob, u, yy, v);
+  if (alongU){ const vc = (v0 + v1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(u0, vc, y + h), r2 = P(u1, vc, y + h);
+    quadP(o, A, B, r2, r1); quadP(o, C, E, r1, r2); if (og){ triP(og, A, r1, E); triP(og, B, C, r2); } }
+  else { const uc = (u0 + u1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(uc, v0, y + h), r2 = P(uc, v1, y + h);
+    quadP(o, A, r1, r2, E); quadP(o, B, C, r2, r1); if (og){ triP(og, A, B, r1); triP(og, C, E, r2); } }
+}
+// tile ribs (pan and roll tiles) down both slopes of a gable / hip whose ridge runs along u (or v)
+function ribsO(o, ob, u0, u1, v0, v1, y, h, alongU, sp){
+  sp = sp || 0.55; const P = (u, v, yy) => o3(ob, u, yy, v), e = 0.05;
+  if (alongU){ const vc = (v0 + v1)/2; for (let u = u0 + sp/2; u < u1; u += sp){ for (const vv of [v0, v1]){ const a = P(u - 0.07, vv, y + e), b = P(u + 0.07, vv, y + e), c = P(u + 0.07, vc, y + h + e), d = P(u - 0.07, vc, y + h + e); quadP(o, a, b, c, d); } } }
+  else { const uc = (u0 + u1)/2; for (let v = v0 + sp/2; v < v1; v += sp){ for (const uu of [u0, u1]){ const a = P(uu, v - 0.07, y + e), b = P(uu, v + 0.07, y + e), c = P(uc, v + 0.07, y + h + e), d = P(uc, v - 0.07, y + h + e); quadP(o, a, b, c, d); } } }
+}
+// arch head profile: height above the springing at t in [0, 1] across a clear span s (kind 'r' round, 'p' pointed, 's' segmental)
+function archF(kind, s, t){ const x = 2*t - 1;
+  if (kind === 'p'){ const R = s*0.8, ax = Math.abs(x)*s/2, c = R - s/2; return Math.sqrt(Math.max(0, R*R - (ax + c)*(ax + c))); }
+  if (kind === 's') return s*0.18*(1 - x*x);
+  return s/2*Math.sqrt(Math.max(0, 1 - x*x)); }
+// an arcade wall along plan segment a -> b (outward normal side = +n): n bays of arches between piers, from y0 to yTop,
+// openings `oh` high to the springing; spandrels and piers in oW, the dark recess behind the openings in oD (optional)
+function arcadeP(oW, oD, a, b, y0, yTop, nb, oh, pw, dep, kind){
+  const dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz); if (L < 1) return;
+  const ux = dx/L, uz = dz/L, nx = uz, nz = -ux, bay = L/nb, s = bay - pw, P = (t, y, w) => [a[0] + ux*t + nx*w, y, a[1] + uz*t + nz*w];
+  for (let i = 0; i <= nb; i++){ const t = i*bay, q = P(t, 0, 0); boxP(oW, pw, oh + (yTop - y0 - oh), dep, q[0], y0, q[2], -Math.atan2(uz, ux)); }
+  const ys = y0 + oh, N = 8;
+  for (let i = 0; i < nb; i++){ const t0 = i*bay + pw/2;
+    for (let k = 0; k < N; k++){ const ta = k/N, tb = (k + 1)/N, xa = t0 + s*ta, xb = t0 + s*tb, ha = Math.min(yTop - ys, archF(kind, s, ta)), hb = Math.min(yTop - ys, archF(kind, s, tb));
+      for (const w of [dep/2, -dep/2]) quadP(oW, P(xa, ys + ha, w), P(xb, ys + hb, w), P(xb, yTop, w), P(xa, yTop, w));
+      quadP(oW, P(xa, ys + ha, dep/2), P(xa, ys + ha, -dep/2), P(xb, ys + hb, -dep/2), P(xb, ys + hb, dep/2)); }
+    if (oD){ const q0 = P(t0, 0, -dep/2 - 1.6), q1 = P(t0 + s, 0, -dep/2 - 1.6); quadP(oD, [q0[0], y0, q0[2]], [q1[0], y0, q1[2]], [q1[0], yTop, q1[2]], [q0[0], yTop, q0[2]]); }
+  }
+  // top beam
+  const m = P(L/2, 0, 0); boxP(oW, L + pw, 0.35, dep + 0.1, m[0], yTop - 0.05, m[2], -Math.atan2(uz, ux));
+}
+// balustrade along a segment: rail, base, balusters every sp
+function balP(o, a, b, y, h, sp){ const L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 0.5) return; const n = Math.max(1, Math.round(L/sp));
+  wallP(o, a, b, 0.3, y, y + 0.15); wallP(o, a, b, 0.32, y + h - 0.12, y + h);
+  for (let k = 0; k <= n; k++){ const t = k/n; boxP(o, 0.13, h - 0.27, 0.13, a[0] + (b[0]-a[0])*t, y + 0.15, a[1] + (b[1]-a[1])*t, 0); } }
+// chimney stack
+function chimP(o, oc, x, z, y0, y1, w){ boxP(o, w, y1 - y0, w*0.8, x, y0, z, 0); boxP(oc, w + 0.25, 0.3, w*0.8 + 0.25, x, y1, z, 0); }
+// abstract shop signs (no letters): flat coloured panels hung off a facade edge, self-lit at night
+const SIGNC = ['#c83c32', '#e0b23a', '#2f7fb8', '#3c9a5c', '#d8d2c4', '#8a3c8c', '#e07a2e'];
+function signsP(B, a, b, y0, y1, n, out, rng){
+  const dx = b[0]-a[0], dz = b[1]-a[1], L = Math.hypot(dx, dz); if (L < 2) return; const ux = dx/L, uz = dz/L, nx = uz*out, nz = -ux*out;
+  for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*L, w = Math.min(L/n*0.8, 2.5 + rng()*3), h = 0.9 + rng()*1.4, y = y0 + rng()*(y1 - y0 - h), col = SIGNC[(rng()*SIGNC.length) | 0];
+    const x = a[0] + ux*t + nx*0.25, z = a[1] + uz*t + nz*0.25;
+    boxP(B.p({c:col, glow:col, gk:0.55}), w, h, 0.18, x, y, z, -Math.atan2(uz, ux)); }
+}
+// per-floor window bands on every edge of P: glass band in og (lit spec), spandrel in the walls
+function floorsP(og, P, y0, y1, fh, gh, off){ off = off || 0.06;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.8) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0; y + 0.5 < y1; y += fh){ const t = Math.min(y + gh, y1 - 0.1); quadP(og, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, t, b[1]+nz*off], [a[0]+nx*off, t, a[1]+nz*off]); } } }
+// a stepped AC / balcony relief on residential facades: small boxes every bay and floor (deterministic)
+
+// ---- generic pieces for the medium-detail keys
+// a roof that slopes in from every edge of any plan (eaves y, rise h, inset ins) with a flat top: reads as a hip roof on odd plans
+function hipAny(o, P, y, h, ins){ const Q = offP(P, -ins), n = P.length;
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, [P[i][0], y, P[i][1]], [P[j][0], y, P[j][1]], [Q[j][0], y + h, Q[j][1]], [Q[i][0], y + h, Q[i][1]]); }
+  flatP(o, Q, y + h); }
+function parP(o, P, y, h, t){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; wallP(o, a, b, t || 0.25, y, y + h); } }
+// modern block: walls, glass band per floor (lit spec), optional mullions, parapet
+function blkE(B, P, y0, y1, o){
+  prismP(B.p(o.w), P, y0, y1);
+  if (o.g) floorsP(B.p(o.g), P, Math.max(y0, o.s0 !== undefined ? o.s0 : y0 + 1.0), y1 - 0.5, o.fh || 3.6, o.gh || 1.9, 0.06);
+  if (o.mull) mullP(B.p(o.mull), P, Math.max(y0, o.s0 !== undefined ? o.s0 - 1 : y0), y1, o.sp || 3, o.mw || 0.22, 0.1);
+  if (o.par) parP(B.p(o.par), P, y1, o.ph || 1.1, 0.3);
+}
+const edgeTo = (P, dx, dz, minL) => { let bi = 0, bs = -1e9; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < (minL || 5)) continue; const [nx, nz] = outN(P, i), sc = nx*dx + nz*dz + L*0.002; if (sc > bs){ bs = sc; bi = i; } } return bi; };
+const E = (P, i) => [P[i], P[(i+1) % P.length]];
+// cut a plan polygon into the strip u in [a, b] of an oriented frame
+const stripU = (P, ob, a, b) => { const n = [ob.c, ob.s]; let Q = clipP(P, n[0], n[1], -(a + ob.cx*n[0] + ob.cz*n[1])); Q = clipP(Q, -n[0], -n[1], b + ob.cx*n[0] + ob.cz*n[1]); return Q; };
+
+// ---- ty50a kit (block-scoped). offP(P, d): d > 0 = inward. Every key is placed at its ref anchor with rot 0, so the rings above are
+// local metres (+x east, +z south) exactly as in R/lm50/ref_ty50a.json.
+const IN = (P, d) => offP(P, d), OUT = (P, d) => offP(P, -d);
+const ANC = k => D[k].a;
+const placeK = k => SG_PLACES.push({type:k, lat:D[k].a[0], lon:D[k].a[1], rot:0});
+const FND = '#6c6a65', ROOF = '#8d9296', ROOF2 = '#a3a7aa', DARKC = '#2c3034';
+const RED = {c:'#b02a20', glow:'#ff2a1a', gk:2.2};
+const LOBBY = {c:'#3b4851', glow:'#ffdcae', gk:0.65};
+const WINW = {c:'#363c42', glow:'#ffd9a0', gk:0.45};                // heritage windows (warm at night)
+const ALU = {c:'#d9dde0', m:0, lk:0.35}, ALU2 = {c:'#b9bfc4', m:0, lk:0.3}, WHT = {c:'#ecebe6', m:0, lk:0.35};
+const GL = (c, x) => Object.assign({c, m:1}, x || {});            // glass with the shader's lit office windows
+const STN = (c, lk) => ({c, m:0, lk:lk === undefined ? 0.42 : lk}); // floodlit stone / metal
+// keep the part of P on the side of `toward` at distance >= d from the line a -> b
+function sideP(P, a, b, d, toward){
+  let nx = -(b[1] - a[1]), nz = b[0] - a[0]; const l = Math.hypot(nx, nz); nx /= l; nz /= l;
+  if ((toward[0] - a[0])*nx + (toward[1] - a[1])*nz < 0){ nx = -nx; nz = -nz; }
+  return clipP(P, nx, nz, -(a[0]*nx + a[1]*nz) - d);
+}
+// foundation from y -7 to the ground floor
+const baseP = (B, P, top) => prismP(B.p(FND), P, -7, top === undefined ? 0.3 : top);
+// a hip-like roof on any plan: slopes in by ins over rise h, flat top
+function hipIn(o, P, y, h, ins){ const Q = IN(P, ins), n = P.length;
+  for (let i = 0; i < n; i++){ const j = (i + 1) % n; quadP(o, [P[i][0], y, P[i][1]], [P[j][0], y, P[j][1]], [Q[j][0], y + h, Q[j][1]], [Q[i][0], y + h, Q[i][1]]); }
+  flatP(o, Q, y + h); }
+// curtain-wall shaft: glass prism, optional floor bands (fb) and vertical fins (fin)
+function cwP(B, P, y0, y1, o){
+  prismP(B.p(o.g), P, y0, y1, !!o.open);
+  if (o.fb) bandsP(B.p(o.fb), P, y0, y1, o.fh || 4.2, o.bh || 0.55, o.bo || 0.1);
+  if (o.fin) mullP(B.p(o.fin), P, y0, y1, o.sp || 3.2, o.fw || 0.22, 0.04, null, o.fd || 0.3);
+}
+// rooftop: recessed plant screen (louvres), top band, roof, aviation lights
+function crownP(B, P, y, h, o){ o = o || {};
+  const Q = IN(P, o.ins === undefined ? 1.4 : o.ins);
+  prismP(B.p(o.c || ALU2), Q, y, y + h, true); if (o.fin !== false) mullP(B.p(o.fc || ALU), Q, y, y + h, 1.6, 0.15, 0.02);
+  if (o.band !== false) prismP(B.p(o.bc || WHT), OUT(P, 0.1), y - 0.9, y + 0.2, true);
+  flatP(B.p(ROOF), Q, y + h); flatP(B.p(ROOF2), P, y + 0.05);
+  if (o.avi !== false) aviP(B, Q, y + h);
+}
+function aviP(B, P, y){ const c = cenP(P); let best = [];
+  for (const p of P) best.push([Math.hypot(p[0] - c[0], p[1] - c[1]), p]);
+  best.sort((a, b) => b[0] - a[0]); for (const [, p] of best.slice(0, 4)){ const x = p[0] + (c[0] - p[0])*0.04, z = p[1] + (c[1] - p[1])*0.04; boxP(B.p(RED), 0.5, 0.6, 0.5, x, y, z, 0); } }
+// podium: stone (or glass) walls with window bands, lobby glass at the street, a parapet line
+function podP(B, P, y0, y1, o){ o = o || {};
+  prismP(B.p(o.w || STN('#cfc6b6')), P, y0, y1, !!o.open);
+  if (o.win !== false) floorsP(B.p(o.wg || WINW), P, y0 + (o.lob || 5.2), y1 - 1.0, o.fh || 4.2, o.gh || 2.3, 0.06);
+  if (o.lob !== 0) floorsP(B.p(LOBBY), P, y0 + 0.3, y0 + (o.lob || 5.2) - 0.6, 99, (o.lob || 5.2) - 1.0, 0.07);
+  if (o.mull) mullP(B.p(o.mull), P, y0, y1, o.sp || 3.6, o.mw || 0.4, 0.08, null, o.md || 0.3);
+  prismP(B.p(o.cor || WHT), OUT(P, 0.25), y1 - 0.7, y1, true);
+  if (o.roof !== false) flatP(B.p(ROOF2), P, y1 - 0.05);
+}
+const TOWER_LT = {m:1, c:'#e6efff', k:0.6};
+// the standard medium-detail tower: podium (optional), shaft, crown
+function stdTower(B, o){
+  const P = o.P, T = o.T || P, pod = o.pod || 0;
+  baseP(B, OUT(o.podP || P, 0.05));
+  if (pod > 0) podP(B, o.podP || P, 0.3, pod, o.po);
+  cwP(B, T, pod > 0 ? pod - 0.5 : 0.3, o.h - (o.ch || 6), o);
+  if (pod <= 0) floorsP(B.p(LOBBY), T, 0.5, 5.5, 99, 4.8, 0.08);
+  crownP(B, T, o.h - (o.ch || 6), o.ch || 6, o.cr);
+}
+const defT = (key, zh, en, h, r, lt, fn) => { LANDMARKS[key] = {zh, en, cat:'new', r, h, lt:lt || TOWER_LT, build(){ const g = new THREE.Group(), B = mkB(); fn(B, D[key], g); B.flush(g); return g; }}; placeK(key); };
+const defH = (key, zh, en, h, r, lt, fn) => { LANDMARKS[key] = {zh, en, cat:'old', r, h, lt:lt || {m:0, c:'#ffd6a0', k:0.95, e:0.4, anim:'breathe'}, build(){ const g = new THREE.Group(), B = mkB(); fn(B, D[key], g); B.flush(g); return g; }}; placeK(key); };
+// a giant order of round columns (shaft radius r) along plan segment a -> b, n columns, out = metres in front of the wall
+function colonnadeP(B, a, b, n, y0, y1, r, out, cSpec, capSpec, inset){
+  const dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz), ux = dx/L, uz = dz/L, nx = uz, nz = -ux, e = inset || 0;
+  const oc = B.p(cSpec), ok = B.p(capSpec || cSpec);
+  for (let i = 0; i < n; i++){ const t = e + (L - 2*e)*(n === 1 ? 0.5 : i/(n - 1)), x = a[0] + ux*t + nx*out, z = a[1] + uz*t + nz*out;
+    boxP(ok, r*2.6, 1.1, r*2.6, x, y0, z, -Math.atan2(uz, ux));                         // base / plinth
+    segP(oc, [x, y0 + 1.1, z], [x, y1 - 1.6, z], r, 10);                                 // fluted-looking shaft (10 sides)
+    boxP(ok, r*2.2, 1.0, r*2.2, x, y1 - 1.6, z, -Math.atan2(uz, ux));                    // capital block
+    boxP(ok, r*2.9, 0.6, r*2.9, x, y1 - 0.6, z, -Math.atan2(uz, ux)); }                  // abacus
+}
+// edge index of P whose outward normal points most along (dx, dz)
+const edgeDir = (P, dx, dz, minL) => edgeTo(P, dx, dz, minL);
+const EP = (P, i) => [P[i], P[(i + 1) % P.length]];
+// shift a segment outward by d along its outward normal in P
+const segOut = (P, i, d) => { const [a, b] = EP(P, i), [nx, nz] = outN(P, i); return [[a[0] + nx*d, a[1] + nz*d], [b[0] + nx*d, b[1] + nz*d]]; };
+
+// =====================================================================================================================
+// ★ GranTokyo North Tower (2007; 205 m, 43 floors — Wikipedia list). Murphy/Jahn with Nikken Sekkei. On the OSM building:part set of
+// relation r3818454: the 210 m tower part (modelled to the verified 205 m), the 74 m lower block that wraps it on the station
+// (west) and south sides (the department store floors), the 23 m east wing. Glass "sail" read: a light, finely gridded curtain wall
+// with white horizontal bands, a sheer glass screen that rises past the roof and is cut at a slant (crown form from photos; approximate).
+// =====================================================================================================================
+defT('tygrannorth', 'GranTokyo北塔', 'GranTokyo North Tower', 205, 78, {m:1, c:'#e8f1ff', k:0.65}, (B, d) => {
+  const [pT, pL, pE] = d.p, T = pT[2], L = pL[2], E = pE[2];
+  const GLN = GL('#93a8b6', {fh:4.4}), FR = {c:'#e9eef0', m:0, lk:0.3};
+  baseP(B, OUT(d.o, 0.05));
+  // the lower block (74 m): white metal panels and glass, bands every floor, a deep recessed lobby at the street
+  prismP(B.p(GL('#a7b6c0', {fh:5.2})), L, 0.3, 74);
+  bandsP(B.p(FR), L, 6, 74, 5.2, 1.4, 0.12); mullP(B.p(FR), L, 6, 74, 6.4, 0.35, 0.05, null, 0.45);
+  floorsP(B.p(LOBBY), L, 0.5, 6.0, 99, 5.3, 0.1);
+  prismP(B.p(WHT), OUT(L, 0.3), 73.2, 74.6, true); flatP(B.p(ROOF2), L, 74.5);
+  // east wing (23 m)
+  podP(B, E, 0.3, 23, {w:STN('#d5d6d2'), wg:GL('#8fa0aa'), fh:4.6, gh:3.0});
+  // tower shaft to 196 m: fine vertical grid + white floor bands
+  const yS = 190, ob = obE(T);
+  cwP(B, T, 74, yS, {g:GLN, fb:FR, fh:4.4, bh:0.45, fin:ALU, sp:3.2, fw:0.16, fd:0.35});
+  // corner fins: full-height white blades at the four corners
+  for (const p of T){ const c = cenP(T), dx = p[0] - c[0], dz = p[1] - c[1], l = Math.hypot(dx, dz); boxP(B.p(FR), 1.1, yS - 74 + 4, 1.1, p[0] + dx/l*0.5, 74, p[1] + dz/l*0.5, 0); }
+  // roof plant behind the screen
+  const Q = IN(T, 3.5); prismP(B.p(ALU2), Q, yS, yS + 5, true); flatP(B.p(ROOF), Q, yS + 5); flatP(B.p(ROOF2), T, yS + 0.1);
+  // the slanted glass crown screen: the curtain wall carried above the roof on all four faces, cut on a slope (high at the north end)
+  const sl = (x, z) => { const [u] = ob.loc(x, z), nN = ob.p(1, 0)[1] < ob.p(-1, 0)[1] ? 1 : -1; return yS + 8.5 + 6.5*(nN*u/(ob.L/2)); };
+  const Tc = IN(T, 0.05);
+  for (let i = 0; i < Tc.length; i++){ const a = Tc[i], b = Tc[(i + 1) % Tc.length], n = 6;
+    for (let k = 0; k < n; k++){ const p = [a[0] + (b[0] - a[0])*k/n, a[1] + (b[1] - a[1])*k/n], q = [a[0] + (b[0] - a[0])*(k + 1)/n, a[1] + (b[1] - a[1])*(k + 1)/n];
+      quadP(B.p({c:'#b9cbd6', m:0, lk:0.5, glow:'#d9e8ff', gk:0.35}), [p[0], yS, p[1]], [q[0], yS, q[1]], [q[0], sl(q[0], q[1]), q[1]], [p[0], sl(p[0], p[1]), p[1]]); } }
+  lineRingP(B.p(FR), Tc, yS, 0.25, 4);
+  for (let i = 0; i < Tc.length; i++){ const a = Tc[i], b = Tc[(i + 1) % Tc.length]; segP(B.p(FR), [a[0], sl(a[0], a[1]), a[1]], [b[0], sl(b[0], b[1]), b[1]], 0.3, 4); }
+  aviP(B, Q, yS + 5);
+});
+
+// =====================================================================================================================
+// GranTokyo South Tower (2007; 205 m, 42 floors — Wikipedia list), OSM w95274405: the twin glass prism at the south end of the Yaesu
+// frontage, same family as the North Tower (white floor bands, fine grid, slanted glass crown screen; form approximate).
+// =====================================================================================================================
+defT('tygransouth', 'GranTokyo南塔', 'GranTokyo South Tower', 205, 48, {m:1, c:'#e8f1ff', k:0.65}, (B, d) => {
+  const P = d.o, GLN = GL('#93a8b6', {fh:4.4}), FR = {c:'#e9eef0', m:0, lk:0.3}, yS = 190, ob = obE(P);
+  baseP(B, OUT(P, 0.05));
+  podP(B, P, 0.3, 12, {w:GL('#a7b6c0'), wg:GL('#7f929f'), fh:5.5, gh:3.6, cor:FR});
+  cwP(B, P, 11.5, yS, {g:GLN, fb:FR, fh:4.4, bh:0.45, fin:ALU, sp:3.2, fw:0.16, fd:0.35});
+  const Q = IN(P, 3.5); prismP(B.p(ALU2), Q, yS, yS + 5, true); flatP(B.p(ROOF), Q, yS + 5); flatP(B.p(ROOF2), P, yS + 0.1);
+  const sl = (x, z) => { const [u] = ob.loc(x, z), nS = ob.p(1, 0)[1] > ob.p(-1, 0)[1] ? 1 : -1; return yS + 8.5 + 6.5*(nS*u/(ob.L/2)); };
+  const Pc = IN(P, 0.05);
+  for (let i = 0; i < Pc.length; i++){ const a = Pc[i], b = Pc[(i + 1) % Pc.length], n = Math.max(1, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1])/8));
+    for (let k = 0; k < n; k++){ const p = [a[0] + (b[0] - a[0])*k/n, a[1] + (b[1] - a[1])*k/n], q = [a[0] + (b[0] - a[0])*(k + 1)/n, a[1] + (b[1] - a[1])*(k + 1)/n];
+      quadP(B.p({c:'#b9cbd6', m:0, lk:0.5, glow:'#d9e8ff', gk:0.35}), [p[0], yS, p[1]], [q[0], yS, q[1]], [q[0], sl(q[0], q[1]), q[1]], [p[0], sl(p[0], p[1]), p[1]]); } }
+  for (let i = 0; i < Pc.length; i++){ const a = Pc[i], b = Pc[(i + 1) % Pc.length]; segP(B.p(FR), [a[0], sl(a[0], a[1]), a[1]], [b[0], sl(b[0], b[1]), b[1]], 0.3, 4); }
+  aviP(B, Q, yS + 5);
+});
+
+// =====================================================================================================================
+// ★ Tokyo Midtown Yaesu — Yaesu Central Tower (2022; 240 m, 45 floors; hotel on floors 40-45 — Wikipedia; design Pickard Chilton:
+// "at the north-east corner the tower engages the ground", a gently curved glass facade and a curved podium that echoes it —
+// pickardchilton.com). The map data draws only 35 m on the OSM outline w1116244124 (no building:part data): the tower is placed on
+// the east / north-east part of that outline (its curved south-east face is the outline's curved edge); the 41 m low-rise block is a
+// separate OSM building (w1139277064) and is left as the app draws it. Podium height (31 m) and the tower's exact plan are estimates.
+// =====================================================================================================================
+defT('tymidyaesu', '东京中城八重洲', 'Tokyo Midtown Yaesu', 240, 86, {m:1, c:'#eef3ff', k:0.65}, (B, d) => {
+  const P = d.o, A = [-56.0, 23.3], Bq = [4.5, -54.7];               // the Sotobori-dōri (station) side of the block
+  const T = sideP(P, A, Bq, 24, [45, -14]);                          // tower: everything >= 24 m back from the station side
+  const GLM = GL('#9fb3c2', {fh:4.5}), FR = {c:'#dfe5e8', m:0, lk:0.3}, yS = 226;
+  baseP(B, OUT(P, 0.05));
+  // curved podium on the station side (retail): glass with horizontal sunshade bands, planted roof terrace edge
+  const PD = sideP(P, A, Bq, -1, [45, -14]);
+  prismP(B.p(GL('#8ea3b1', {fh:5.0})), PD, 0.3, 31);
+  bandsP(B.p(FR), PD, 0.3, 31, 5.0, 1.2, 0.25); floorsP(B.p(LOBBY), PD, 0.5, 6.5, 99, 5.8, 0.1);
+  prismP(B.p(WHT), OUT(PD, 0.3), 30.4, 31.6, true); flatP(B.p('#7f9a6a'), IN(PD, 2), 31.1); flatP(B.p(ROOF2), PD, 31.0);
+  // the tower: curtain wall with slim vertical fins, a darker hotel band at the top, a crown screen carried past the roof
+  cwP(B, T, 0.3, 192, {g:GLM, fin:FR, sp:2.4, fw:0.14, fd:0.45, fb:{c:'#cdd6db', m:0, lk:0.25}, fh:4.5, bh:0.3});
+  floorsP(B.p(LOBBY), T, 0.5, 9.0, 99, 8.2, 0.12);                   // tall glass entrance hall at the north-east corner
+  cwP(B, T, 192, yS, {g:GL('#6f8596', {fh:4.0}), fin:FR, sp:2.4, fw:0.14, fd:0.45});
+  prismP(B.p(FR), OUT(T, 0.2), 191.4, 192.4, true);
+  const Q = IN(T, 4); prismP(B.p(ALU2), Q, yS, yS + 9, true); flatP(B.p(ROOF), Q, yS + 9); flatP(B.p(ROOF2), T, yS + 0.1);
+  prismP(B.p({c:'#c7d6df', m:0, lk:0.5, glow:'#e6f0ff', gk:0.45}), IN(T, 0.1), yS, 240, true);   // glass crown screen to 240 m
+  prismP(B.p(FR), OUT(T, 0.1), 239.2, 240, true);
+  aviP(B, Q, yS + 9);
+  // the 41 m, 7-storey low-rise block on the south-east (school on floors 1-4; Wikipedia), OSM w1139277064: louvred facade, planted balconies
+  const LR = d.lr; baseP(B, OUT(LR, 0.05));
+  prismP(B.p(WHT), LR, 0.3, 41, true); floorsP(B.p(GL('#8ea3b1', {fh:5.0})), LR, 1.0, 40, 5.6, 3.6, 0.06);
+  mullP(B.p(FR), LR, 5.6, 40.4, 1.2, 0.12, 0.25, null, 0.5);                // vertical louvres
+  bandsP(B.p('#7f9a6a'), LR, 5.6, 34, 5.6, 0.7, 0.6);                                                 // planter edges of the balconies
+  floorsP(B.p(LOBBY), LR, 0.5, 5.4, 99, 4.6, 0.12); prismP(B.p(WHT), OUT(LR, 0.3), 40.3, 41.4, true); flatP(B.p('#7f9a6a'), IN(LR, 1.5), 41.0); flatP(B.p(ROOF2), LR, 40.9);
+});
+
+// =====================================================================================================================
+// ★ Mitsui Main Building (1929; Trowbridge & Livingston, New York; national Important Cultural Property; 5 storeys + mezzanine + 2
+// basements, steel-framed reinforced concrete — Chūō City). OSM w1178732428. A granite neoclassical block: rusticated base, a giant
+// Corinthian order on the two street fronts (Chūō-dōri to the east, the street facing Mitsukoshi to the south), full entablature,
+// attic storey and cornice. The north side meets the Nihonbashi Mitsui Tower podium (ty50a tynihonbashimitsui). Height 31 m and the
+// column count / spacing are estimates from photos (no published height).
+// =====================================================================================================================
+defH('tymitsuihonkan', '三井本馆', 'Mitsui Main Building', 31, 62, {m:0, c:'#ffe2b8', k:0.95, e:0.45, anim:'breathe'}, (B, d) => {
+  const P = d.o, GR = STN('#d8cfbd', 0.5), GR2 = STN('#c4baa6', 0.45), GR3 = STN('#e6dfd0', 0.5), yB = 6.2, yC = 24.5, yA = 29.0, yT = 31;
+  baseP(B, OUT(P, 0.05));
+  prismP(B.p(GR2), OUT(P, 0.2), 0.3, yB);                                    // rusticated base
+  bandsP(B.p(GR), OUT(P, 0.2), 0.3, yB, 1.2, 0.18, 0.05);
+  prismP(B.p(GR), P, yB, yT, true);
+  winsP(B.p(WINW), P, 1.2, yB - 1.2, 99, 5.0, 2.2, 3.4, 0.25);
+  winsP(B.p(WINW), P, yB + 1.2, yC - 1.2, 4.3, 5.0, 2.0, 2.6, 0.06);
+  winsP(B.p(WINW), P, yC + 1.6, yA - 0.6, 9, 5.0, 1.8, 2.0, 0.06);
+  // entablature + cornice + attic parapet
+  prismP(B.p(GR3), OUT(P, 0.6), yC, yC + 1.6, true); prismP(B.p(GR2), OUT(P, 0.9), yC + 1.6, yC + 2.1, true);
+  prismP(B.p(GR3), OUT(P, 1.1), yT - 1.0, yT - 0.4, true); prismP(B.p(GR), OUT(P, 0.3), yT - 0.4, yT + 0.6, true);
+  flatP(B.p(ROOF), IN(P, 0.3), yT - 0.1);
+  // giant Corinthian order (east and south fronts), pilasters on the other walls
+  const iE = edgeDir(P, 1, -0.35, 20), iS = edgeDir(P, 0.3, 1, 40);
+  for (const [i, n] of [[iE, 9], [iS, 21]]){ const [a, b] = segOut(P, i, 1.4); colonnadeP(B, a, b, n, yB, yC, 0.85, 0, GR3, GR3, 2.4); }
+  mullP(B.p(GR3), P, yB, yC, 5.0, 1.1, 0.0, i => i !== iE && i !== iS, 0.35);
+  // light-court roof glazing over the banking hall (inset)
+  flatP(B.p({c:'#9aa6ad', glow:'#ffe2b8', gk:0.25}), IN(P, 12), yT + 0.65);
+});
+
+// =====================================================================================================================
+// ★ Nihonbashi Mitsukoshi Main Store (1914, enlarged and rebuilt in stages to 1935; national Important Cultural Property). OSM
+// w172599549 (本館) inside the store relation r7872611 — confirmed as the main building: the full block west of Chūō-dōri, south of
+// the Mitsui Main Building. Pale stone-and-terracotta Renaissance revival: a two-storey rusticated base with the main entrance on
+// Chūō-dōri (east), pilasters through the middle floors, a heavy cornice, a recessed top storey and roof garden pavilion. No names or
+// lions' signage. Heights (cornice 31 m, top 37 m) and the rooftop pavilion are estimates (OSM: 8 levels).
+// =====================================================================================================================
+defH('tymitsukoshi', '日本桥三越本店', 'Nihonbashi Mitsukoshi Main Store', 38, 72, {m:0, c:'#ffe4c0', k:0.95, e:0.45, anim:'breathe'}, (B, d) => {
+  const P = d.o, W1 = STN('#e1d8c6', 0.5), W2 = STN('#cbbfa8', 0.45), W3 = STN('#efe9dc', 0.5), yB = 8.2, yC = 30.5, yT = 31.6;
+  baseP(B, OUT(P, 0.05));
+  prismP(B.p(W2), OUT(P, 0.15), 0.3, yB); bandsP(B.p(W1), OUT(P, 0.15), 0.3, yB, 1.4, 0.2, 0.05);
+  prismP(B.p(W1), P, yB, yT, true);
+  winsP(B.p({c:'#3d454b', glow:'#ffe0b0', gk:0.7}), P, 0.9, 6.2, 99, 6.0, 4.2, 4.8, 0.2);          // show windows
+  winsP(B.p(WINW), P, yB + 1.0, yC - 2.4, 4.1, 3.9, 1.7, 2.5, 0.06);
+  mullP(B.p(W3), P, yB, yC - 1.2, 7.8, 1.0, 0.0, null, 0.45);                                       // pilasters
+  bandsP(B.p(W3), P, yB, yC, 4.1*5, 0.5, 0.15);
+  prismP(B.p(W3), OUT(P, 0.5), yB - 0.4, yB + 0.3, true);                                           // string course over the base
+  prismP(B.p(W3), OUT(P, 1.2), yC - 1.2, yC, true); prismP(B.p(W2), OUT(P, 1.5), yC, yT - 0.6, true); // cornice
+  prismP(B.p(W1), OUT(P, 0.2), yT - 0.6, yT + 0.8, true);                                           // parapet
+  flatP(B.p(ROOF), P, yT - 0.2);
+  // recessed top storey and the roof garden pavilion (towards the Chūō-dōri side)
+  const T1 = IN(P, 6); prismP(B.p(W1), T1, yT, yT + 4.2, true); winsP(B.p(WINW), T1, yT + 0.8, yT + 3.6, 99, 4.0, 2.0, 2.4, 0.05);
+  prismP(B.p(W3), OUT(T1, 0.4), yT + 4.2, yT + 4.8, true); flatP(B.p(ROOF2), T1, yT + 4.7);
+  flatP(B.p('#7d9b6a'), IN(P, 2.2), yT + 0.05);
+  // main entrance portico on the east front: four columns, entablature, canopy
+  const iE = edgeDir(P, 1, -0.3, 40), [a, b] = segOut(P, iE, 0.2), m = [(a[0] + b[0])/2, (a[1] + b[1])/2], ux = (b[0] - a[0])/Math.hypot(b[0] - a[0], b[1] - a[1]), uz = (b[1] - a[1])/Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const pa = [m[0] - ux*13, m[1] - uz*13], pb = [m[0] + ux*13, m[1] + uz*13];
+  { const [nx, nz] = outN(P, iE), sh = (p, o) => [p[0] + nx*o, p[1] + nz*o];
+    colonnadeP(B, sh(pa, 2.0), sh(pb, 2.0), 6, 0.3, yB, 0.8, 0, W3, W3, 0.6);
+    wallP(B.p(W3), sh(pa, 1.6), sh(pb, 1.6), 3.6, yB, yB + 1.3); }
+});
+
+// =====================================================================================================================
+// Nihonbashi Takashimaya (main building, 1933; Takahashi Sadatarō; Important Cultural Property). OSM w187643809. Western classical
+// masonry with Japanese motifs: rusticated base, pale stone walls with a regular window grid, a deep bracketed cornice and a
+// set-back penthouse. Heights (cornice 31 m) estimates (OSM: 8 levels). No names on the model.
+// =====================================================================================================================
+defH('tytakashimaya', '日本桥高岛屋（本馆）', 'Nihonbashi Takashimaya (main building)', 38, 72, null, (B, d) => {
+  const P = d.o, W1 = STN('#dacfb5', 0.5), W2 = STN('#bdae92', 0.45), W3 = STN('#ece4d2', 0.5), yB = 7.4, yC = 30.8;
+  baseP(B, OUT(P, 0.05));
+  prismP(B.p(W2), OUT(P, 0.15), 0.3, yB); bandsP(B.p(W1), OUT(P, 0.15), 0.3, yB, 1.3, 0.2, 0.05);
+  winsP(B.p({c:'#3d454b', glow:'#ffe0b0', gk:0.7}), P, 0.9, 5.6, 99, 6.5, 4.4, 4.4, 0.2);
+  prismP(B.p(W1), P, yB, yC, true);
+  winsP(B.p(WINW), P, yB + 1.0, yC - 2.0, 3.9, 3.6, 1.6, 2.4, 0.06);
+  mullP(B.p(W3), P, yB, yC - 1, 7.2, 0.8, 0, null, 0.3);
+  prismP(B.p(W3), OUT(P, 0.5), yB - 0.3, yB + 0.3, true);
+  // bracketed cornice (a row of small brackets under a deep projecting slab)
+  prismP(B.p(W2), OUT(P, 0.6), yC - 1.6, yC - 0.6, true); prismP(B.p(W3), OUT(P, 1.6), yC - 0.6, yC + 0.2, true);
+  mullP(B.p(W2), OUT(P, 0.6), yC - 1.6, yC - 0.6, 1.4, 0.3, 0, null, 0.9);
+  prismP(B.p(W1), OUT(P, 0.1), yC + 0.2, yC + 1.2, true); flatP(B.p(ROOF), P, yC);
+  const T1 = IN(P, 7); prismP(B.p(W1), T1, yC, yC + 4.5, true); winsP(B.p(WINW), T1, yC + 1, yC + 3.8, 99, 4.0, 2.0, 2.3, 0.05);
+  hipIn(B.p('#6f7a74'), OUT(T1, 0.6), yC + 4.5, 1.8, 3.0);
+  flatP(B.p('#7d9b6a'), IN(P, 2.0), yC + 0.05);
+});
+
+// =====================================================================================================================
+// Nihonbashi Takashimaya Mitsui Building (2018; 174.66 m, 31 floors — Wikipedia list). OSM w449619430 behind the old store: a stone
+// podium that keeps the store's cornice line (31 m) and a glass office tower above, set back from the podium face.
+// =====================================================================================================================
+defT('tytakamitsui', '日本桥高岛屋三井大厦', 'Nihonbashi Takashimaya Mitsui Building', 174.7, 66, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 3.5), pod:31, po:{w:STN('#d6ccb6'), mull:STN('#ece4d2'), sp:6.0}, h:174.7, g:GL('#7d909d'), fin:ALU, sp:3.2, fw:0.2, fd:0.4, fb:ALU2, fh:4.4, bh:0.35, ch:6.5});
+});
+
+// =====================================================================================================================
+// Meiji Seimei Kan (1934; Okada Shin'ichirō; Important Cultural Property). OSM relation r8048114 (building:part pieces 37 / 38 / 39 m).
+// Granite classical block facing the palace moat across Hibiya-dōri: a giant Corinthian colonnade on the moat (west) front over a
+// granite base, attic storey and cornice. Column count and floor lines approximate. The Meiji Yasuda tower behind it is not part of it.
+// =====================================================================================================================
+defH('tymeijiseimei', '明治生命馆', 'Meiji Seimei Kan', 38, 56, null, (B, d) => {
+  const P = d.o, GR = STN('#d3c9b4', 0.5), GR2 = STN('#b8ad97', 0.45), GR3 = STN('#e5ddcc', 0.5), yB = 6.0, yC = 30.5, yT = 37;
+  baseP(B, OUT(P, 0.05));
+  prismP(B.p(GR2), OUT(P, 0.15), 0.3, yB); bandsP(B.p(GR), OUT(P, 0.15), 0.3, yB, 1.2, 0.18, 0.05);
+  prismP(B.p(GR), P, yB, yT, true);
+  winsP(B.p(WINW), P, 1.3, yB - 1.2, 99, 4.6, 2.0, 3.2, 0.2);
+  winsP(B.p(WINW), P, yB + 1.0, yC - 1.0, 4.1, 4.6, 1.8, 2.6, 0.06);
+  winsP(B.p(WINW), P, yC + 2.0, yT - 1.5, 99, 4.6, 1.6, 2.2, 0.06);
+  prismP(B.p(GR3), OUT(P, 0.6), yC, yC + 1.8, true); prismP(B.p(GR2), OUT(P, 1.0), yC + 1.8, yC + 2.3, true);
+  prismP(B.p(GR3), OUT(P, 0.9), yT - 1.0, yT - 0.3, true); prismP(B.p(GR), OUT(P, 0.2), yT - 0.3, yT + 0.6, true);
+  flatP(B.p(ROOF), P, yT - 0.1);
+  const iW = edgeDir(P, -1, 0, 50), [a, b] = segOut(P, iW, 1.6);
+  colonnadeP(B, a, b, 10, yB, yC, 1.0, 0, GR3, GR3, 4.0);
+});
+
+// =====================================================================================================================
+// Mitsubishi Ichigokan (Mitsubishi Ichigokan Museum): the 2009-10 reconstruction of Josiah Conder's 1894 red-brick office building,
+// three storeys under steep slate roofs with stepped gables, dormers and chimneys. Current OSM outline w306116935 (gabled roof tag); the
+// app draws a 10.1 m block on the same L-shaped outline (no OSM match in the map data) — this model replaces it. Heights (eaves 15 m,
+// ridges 21 m) and the gable placing are estimates from photos; the garden (Ichigokan Hiroba) is left to the map.
+// =====================================================================================================================
+defH('tyichigokan', '三菱一号馆', 'Mitsubishi Ichigokan', 22, 46, {m:0, c:'#ffd29a', k:0.95, e:0.45, anim:'breathe'}, (B, d) => {
+  const P = d.o, BR = STN('#9c4a34', 0.45), BR2 = STN('#8a3f2c', 0.4), ST = STN('#ddd3bf', 0.5), SL = '#4a4f55', yE = 15.0;
+  baseP(B, OUT(P, 0.05));
+  prismP(B.p(ST), OUT(P, 0.15), 0.3, 1.4);
+  prismP(B.p(BR), P, 1.4, yE, true);
+  winsP(B.p({c:'#2f3438', glow:'#ffdcae', gk:0.55}), P, 2.0, yE - 1.0, 4.4, 3.2, 1.3, 2.9, 0.06);
+  bandsP(B.p(ST), P, 1.4, yE, 4.4, 0.3, 0.06);
+  mullP(B.p(ST), P, 1.4, 1.4 + 4.4, 3.2, 0.4, 0.02);                                  // stone quoins / window dressings at the ground floor
+  prismP(B.p(ST), OUT(P, 0.35), yE - 0.5, yE, true);
+  // two wings of the L: each with its own steep roof; the ridges along the long axis of each wing
+  const W1 = [[-36.5, 11.8], [11.0, 24.0], [13.6, 14.0], [-32.5, -3.0]], W2 = [[11.0, 24.0], [25.8, -33.0], [13.0, -36.2], [-0.4, 14.5]];
+  for (const W of [W1, W2]){ const ob = obE(W); hipO(B.p(SL), ob, -ob.L/2 - 0.5, ob.L/2 + 0.5, -ob.W/2 - 0.5, ob.W/2 + 0.5, yE, 6.0); }
+  // stepped gables, dormers and chimneys along the street fronts
+  const ob1 = obE(W1), ob2 = obE(W2);
+  for (const [ob, n] of [[ob1, 4], [ob2, 5]]){
+    for (let k = 0; k < n; k++){ const u = -ob.L/2 + (k + 0.5)*ob.L/n;
+      for (const sg of [-1, 1]){ const v = sg*(ob.W/2 + 0.3);
+        boxO(B.p(BR2), ob, u - 1.6, u + 1.6, v - 0.35, v + 0.35, yE, yE + 3.2);
+        const A = o3(ob, u - 1.6, yE + 3.2, v), Bq = o3(ob, u + 1.6, yE + 3.2, v), C = o3(ob, u, yE + 5.0, v); triP(B.p(BR2), A, Bq, C);
+        const q = ob.p(u, v); boxP(B.p({c:'#2f3438', glow:'#ffdcae', gk:0.4}), 1.1, 1.6, 0.2, q[0], yE + 0.8, q[1], ob.ry); }
+      if (k % 2 === 0){ const q = ob.p(u + ob.L/(2*n), 0); chimP(B.p(BR2), B.p(ST), q[0], q[1], yE + 3, yE + 8.2, 1.2); } } }
+});
+
+// =====================================================================================================================
+// Marunouchi Park Building (2009; 171.09 m, 34 floors — Wikipedia list). OSM w363563886, behind Ichigokan: a stone podium on the
+// Marunouchi 31 m line, glass tower above with stone-coloured vertical frames. Tower setback and colours approximate.
+// =====================================================================================================================
+defT('tymarupark', '丸之内公园大厦', 'Marunouchi Park Building', 171.1, 57, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 4), pod:31, po:{w:STN('#c9bda8'), mull:STN('#ddd3c1'), sp:4.0}, h:171.1, g:GL('#7c8b95'), fin:STN('#c8c0b2', 0.25), sp:3.0, fw:0.45, fd:0.5, ch:7});
+});
+
+// =====================================================================================================================
+// Tokyo Stock Exchange (Kabutochō). OSM w181926037 drawn as two building:part pieces (22.5 / 25.6 m). Granite-clad exchange building on
+// the Nihonbashi River side; a dark-glazed recessed ground floor, regular window bays. Heights from the OSM parts (unverified).
+// =====================================================================================================================
+defT('tytse', '东京证券交易所', 'Tokyo Stock Exchange', 26, 74, {m:0, c:'#fff0d8', k:0.8, e:0.4}, (B, d) => {
+  const [p1, p2] = d.p;
+  baseP(B, OUT(d.o, 0.05));
+  for (const [, top, R] of [p1, p2]){
+    podP(B, R, 0.3, top, {w:STN('#b9b0a2', 0.45), wg:{c:'#3a4147', glow:'#fff0d8', gk:0.45}, fh:4.4, gh:2.4, mull:STN('#cfc7ba', 0.45), sp:4.4, mw:0.7, md:0.4, cor:STN('#d8d1c4', 0.45)});
+  }
+});
+
+// =====================================================================================================================
+// Otemachi Tower (2013; 200 m, 38 floors — Wikipedia list). OSM w145397129. Dark glass shaft with a grid of slim vertical fins, a
+// recessed hotel crown (the top floors; form approximate). The planted "Otemachi Forest" lies outside the building outline (map).
+// =====================================================================================================================
+defT('tyotemachitower', '大手町塔', 'Otemachi Tower', 200, 63, {m:1, c:'#ffe9c8', k:0.6}, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:0, h:200, g:GL('#55636e'), fin:ALU2, sp:2.8, fw:0.16, fd:0.5, fb:{c:'#6c7a84', m:1}, fh:4.3, bh:0.4, ch:8, cr:{ins:2.5, c:GL('#3f4a52'), fc:ALU2}});
+});
+
+// =====================================================================================================================
+// Otemachi One Tower (2020; 200 m, 40 floors — Wikipedia list). OSM w145397142 (rectangle with notched corners) beside the moat.
+// Light glass with white vertical fins and white floor lines; notched corners carried up the full height.
+// =====================================================================================================================
+defT('tyotemachione', 'Otemachi One 塔', 'Otemachi One Tower', 200, 63, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:0, h:200, g:GL('#8a9eab'), fin:WHT, sp:3.0, fw:0.25, fd:0.55, fb:ALU, fh:4.4, bh:0.35, ch:7});
+});
+
+// =====================================================================================================================
+// Otemachi Place West Tower (2018; 178 m, 35 floors — Wikipedia list). OSM w669247538: the large-plate west tower of the Otemachi
+// Place pair; grey glass with fine vertical fins, a low glazed base.
+// =====================================================================================================================
+defT('typlacewest', '大手町Place西塔', 'Otemachi Place West Tower', 178, 74, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:12, po:{w:GL('#7c8f9b'), wg:GL('#6a7d8a'), fh:6, gh:4}, T:IN(P, 1.5), h:178, g:GL('#7f8f99'), fin:ALU, sp:3.0, fw:0.18, fd:0.45, fb:ALU2, fh:4.4, bh:0.3, ch:7});
+});
+
+// =====================================================================================================================
+// Otemachi Place East Tower (2018). OSM w145397155, height 163 m and 32 levels from OSM tags (not independently verified). The east
+// tower of the pair, same family as the West Tower.
+// =====================================================================================================================
+defT('typlaceeast', '大手町Place东塔', 'Otemachi Place East Tower', 163, 71, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:12, po:{w:GL('#7c8f9b'), wg:GL('#6a7d8a'), fh:6, gh:4}, T:IN(P, 1.5), h:163, g:GL('#7f8f99'), fin:ALU, sp:3.0, fw:0.18, fd:0.45, fb:ALU2, fh:4.4, bh:0.3, ch:7});
+});
+
+// =====================================================================================================================
+// JA Building (2009; 180 m, 37 floors — Wikipedia list). OSM relation r4251456. Glass tower on a stone-faced podium (31 m line),
+// stone-coloured vertical frames on the shaft. Podium height approximate.
+// =====================================================================================================================
+defT('tyjabldg', 'JA大厦', 'JA Building', 180, 43, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 1.2), pod:31, po:{w:STN('#c9c0b1'), mull:STN('#ddd5c6'), sp:4.0}, h:180, g:GL('#738591'), fin:STN('#cfc8bb', 0.25), sp:3.2, fw:0.4, fd:0.45, ch:7});
+});
+
+// =====================================================================================================================
+// Yomiuri Shimbun Building (2013; 200 m, 33 floors — Wikipedia list). OSM w145397143; the map data draws it at 94 m (OSM height tag
+// wrong): modelled to the verified 200 m on the same outline. Light stone-grey frame grid with deep glass, a crown with a lit edge.
+// =====================================================================================================================
+defT('tyyomiuri', '读卖新闻大厦', 'Yomiuri Shimbun Building', 200, 52, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:0, h:200, g:GL('#6d7d88', {fh:5.8}), fin:STN('#d4d3cf', 0.3), sp:3.2, fw:0.6, fd:0.6, fb:STN('#d4d3cf', 0.3), fh:5.8, bh:0.8, ch:9, cr:{ins:2.0}});
+});
+
+// =====================================================================================================================
+// Nikkei Building (2009). OSM w315961694 named 日本経済新聞社, height 155 m from the OSM tag (not independently verified). The outline
+// is the Nikkei tower itself (the Keidanren Kaikan of the same redevelopment is a separate OSM building to the east of the JA
+// Building and is not touched). Glass with dark vertical frames.
+// =====================================================================================================================
+defT('tynikkei', '日经大厦', 'Nikkei Building', 155, 42, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 1.0), pod:20, po:{w:STN('#bfb6a6'), mull:STN('#d4ccbd'), sp:4.0}, h:155, g:GL('#6e808b'), fin:{c:'#4e5860', m:0, lk:0.2}, sp:3.2, fw:0.35, fd:0.45, ch:6});
+});
+
+// =====================================================================================================================
+// Marunouchi Trust Tower Main (2008; 178 m, 37 floors — Wikipedia list). OSM w145412771 north of the Yaesu exit. Slim glass slab with a
+// stone base and a crown with a horizontal lit edge.
+// =====================================================================================================================
+defT('tymarutrust', '丸之内信托塔本馆', 'Marunouchi Trust Tower Main', 178, 52, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 0.8), pod:12, po:{w:STN('#bdb4a5'), wg:GL('#6c7e8a'), fh:6, gh:4}, h:178, g:GL('#8496a2'), fin:ALU, sp:3.0, fw:0.18, fd:0.35, fb:ALU2, fh:4.2, bh:0.4, ch:7});
+});
+
+// =====================================================================================================================
+// Sapia Tower (2007). OSM w91264848, height 169 m from the OSM tag (not independently verified). Slim office / hotel tower at the
+// Nihonbashi exit of Tokyo Station: glass with dense white vertical lines.
+// =====================================================================================================================
+defT('tysapia', 'Sapia塔', 'Sapia Tower', 169, 38, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:0, h:169, g:GL('#8fa2ae'), fin:WHT, sp:1.8, fw:0.18, fd:0.35, ch:6});
+});
+
+// =====================================================================================================================
+// Pacific Century Place Marunouchi (2001; 150 m — Wikipedia list note). OSM w95274368. Square glass tower at Yaesu with a light frame grid
+// and a glazed top.
+// =====================================================================================================================
+defT('typacific', '太平洋世纪广场丸之内', 'Pacific Century Place Marunouchi', 150, 38, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, pod:0, h:150, g:GL('#869aa6'), fin:ALU, sp:3.0, fw:0.3, fd:0.4, fb:ALU, fh:4.0, bh:0.5, ch:7, cr:{c:{c:'#c3d2db', m:0, lk:0.5, glow:'#e1ecff', gk:0.4}, ins:0.6}});
+});
+
+// =====================================================================================================================
+// Tokyo Nihonbashi Tower (2015; 180 m, 35 floors — Wikipedia list). OSM w690082401. Glass tower with a tall glazed atrium at its foot
+// on the long south-west side (atrium form approximate).
+// =====================================================================================================================
+defT('tynihonbashitower', '东京日本桥塔', 'Tokyo Nihonbashi Tower', 180, 55, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 1.5), pod:14, po:{w:GL('#9fb2bd'), wg:GL('#8399a6'), fh:7, gh:5.5, lob:0}, h:180, g:GL('#7d8f9b'), fin:ALU, sp:3.0, fw:0.2, fd:0.4, fb:ALU2, fh:4.4, bh:0.3, ch:7});
+});
+
+// =====================================================================================================================
+// Nihonbashi Muromachi Mitsui Tower (2019; 142 m — Wikipedia list note; OSM height 141.16, 26 levels). OSM w449621789 over the
+// COREDO Muromachi Terrace podium on Chūō-dōri. Stone podium (31 m line), glass tower with pale fins. No shop names.
+// =====================================================================================================================
+defT('tymuromachi', '日本桥室町三井塔', 'Nihonbashi Muromachi Mitsui Tower', 142, 59, null, (B, d) => {
+  const P = d.o, T = IN(P, 5); stdTower(B, {P, T, pod:31, po:{w:STN('#d0c6b4'), mull:STN('#e2dacb'), sp:4.0}, h:142, g:GL('#7f919c'), fin:ALU, sp:3.0, fw:0.22, fd:0.45, ch:7});
+});
+
+// =====================================================================================================================
+// Nihonbashi Mitsui Tower (2005; 195 m, 39 floors — Wikipedia list; Pelli Clarke Pelli). OSM w187748880 (5-level podium) and the tower
+// part w449621767 (40 levels; the map data draws it as a 125 m part): the podium keeps the Mitsui Main Building's cornice line in
+// granite, the glass tower rises behind it on the part outline to the verified 195 m. Crown form approximate.
+// =====================================================================================================================
+defT('tynihonbashimitsui', '日本桥三井塔', 'Nihonbashi Mitsui Tower', 195, 58, null, (B, d) => {
+  const P = d.o, T = d.p[0][2], GR = STN('#d8cfbd', 0.5), GR3 = STN('#e6dfd0', 0.5);
+  baseP(B, OUT(P, 0.05));
+  podP(B, P, 0.3, 31, {w:GR, mull:GR3, sp:5.0, mw:1.0, md:0.4, fh:4.3, gh:2.6, cor:GR3});
+  prismP(B.p(GR3), OUT(P, 0.8), 24.5, 26.0, true);                    // entablature line matching the Main Building
+  cwP(B, T, 30.5, 186, {g:GL('#8ba0ad'), fin:ALU, sp:3.0, fw:0.18, fd:0.4, fb:ALU2, fh:4.4, bh:0.3});
+  floorsP(B.p(LOBBY), T, 31, 37, 99, 5.5, 0.08);
+  const Q = IN(T, 2.2); prismP(B.p({c:'#c0d0da', m:0, lk:0.5, glow:'#e3edff', gk:0.4}), Q, 186, 195, true); flatP(B.p(ROOF), Q, 195);
+  prismP(B.p(WHT), OUT(T, 0.1), 185.2, 186.2, true); flatP(B.p(ROOF2), T, 186.1); aviP(B, Q, 195);
+});
+
+// =====================================================================================================================
+// Kyobashi Edogrand (2016; 170.37 m, 32 floors — Wikipedia list). Tower record w855400419 (the target site w855400420 also takes in the
+// preserved 1933 Meijiya Kyobashi Building, OSM w145412759, which stays as the map draws it and is kept outside this hull). Glass
+// tower over a low annex on the south-east; podium and plan split approximate.
+// =====================================================================================================================
+defT('tyedogrand', '京桥Edogrand', 'Kyobashi Edogrand', 170.4, 66, null, (B, d) => {
+  const P = d.o, T = [[-54.1, 4.6], [-27.6, -46.9], [39.7, -13.1], [24.2, 17.1], [-2.1, 23.1], [-33.1, 7.6], [-36.3, 13.6]];
+  const T2 = IN(T, 2.0);
+  baseP(B, OUT(P, 0.05));
+  podP(B, P, 0.3, 20, {w:STN('#cdc3b1'), mull:STN('#dfd7c8'), sp:4.0});
+  cwP(B, T2, 19.5, 163, {g:GL('#7d909d'), fin:ALU, sp:3.0, fw:0.2, fd:0.4, fb:ALU2, fh:4.4, bh:0.3});
+  crownP(B, T2, 163, 7.4);
+});
+
+// =====================================================================================================================
+// Museum Tower Kyobashi (2019). OSM w187797448, height 149.56 m / 23 levels from OSM tags (not independently verified). The art museum
+// occupies its lower floors: a tall stone-and-glass base, glass office shaft above.
+// =====================================================================================================================
+defT('tymuseumtower', '京桥博物馆塔', 'Museum Tower Kyobashi', 149.6, 45, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 1.0), pod:28, po:{w:STN('#d9d4ca'), mull:STN('#efebe3'), sp:2.4, mw:0.3, wg:GL('#7a8c97'), fh:7, gh:4.5}, h:149.6, g:GL('#8597a3'), fin:ALU, sp:3.0, fw:0.2, fd:0.35, fb:ALU2, fh:4.5, bh:0.3, ch:6.5});
+});
+
+// =====================================================================================================================
+// Tokyo Square Garden (2013; 124.4 m, 26 floors — CTBUH Skyscraper Center; the map's 80 m OSM tag is wrong). OSM w406737276 at the
+// Kyōbashi 3-chōme crossing: planted terraces stepping up the lower floors on the corner, a glass office tower above. Terrace
+// layout approximate.
+// =====================================================================================================================
+defT('tysquaregarden', '东京广场花园', 'Tokyo Square Garden', 124.4, 63, null, (B, d) => {
+  const P = d.o, GRN = '#6f9654', PL = STN('#d2cdc2', 0.4);
+  baseP(B, OUT(P, 0.05));
+  // stepped terraces: three tiers getting smaller towards the north-east, each with a planted edge
+  const A = [-51.0, 13.1], Bq = [-18.5, -51.4], tiers = [[0.3, 9, 0], [9, 17, 6], [17, 25, 12]];
+  for (const [y0, y1, cut] of tiers){ const Q = sideP(P, A, Bq, cut, [40, 24]); prismP(B.p(PL), Q, y0, y1, true); floorsP(B.p(GL('#6f828e')), Q, y0 + 0.8, y1 - 0.6, 4.2, 2.8, 0.06); flatP(B.p(GRN), Q, y1 + 0.05);
+    const Qe = sideP(P, A, Bq, cut + 6, [40, 24]); }
+  floorsP(B.p(LOBBY), P, 0.5, 6.0, 99, 5.2, 0.12);
+  const T = sideP(P, A, Bq, 18, [40, 24]);
+  cwP(B, T, 25, 117, {g:GL('#7f929e'), fin:ALU, sp:3.0, fw:0.2, fd:0.4, fb:ALU2, fh:4.3, bh:0.35});
+  crownP(B, T, 117, 7.4);
+  for (let k = 0; k < 9; k++){ const t = (k + 0.5)/9, x = A[0] + (Bq[0] - A[0])*t + 3.5, z = A[1] + (Bq[1] - A[1])*t + 2.0; treeP(B, x, 9.05, z, 0.8, '#5c8a47'); }
+});
+
+// =====================================================================================================================
+// TODA Building (2024; 173 m, 28 floors — CTBUH Skyscraper Center; OSM tag 165). OSM w1322157808 in Kyōbashi, the arts centre in its
+// podium: a stone-coloured lower block with large openings, a glass tower with vertical frames above. Proportions approximate.
+// =====================================================================================================================
+defT('tytoda', 'TODA大厦', 'TODA Building', 173, 56, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 3.0), pod:32, po:{w:STN('#d4cec2'), wg:GL('#73868f'), fh:8, gh:5.5, mull:STN('#e6e1d6'), sp:8, mw:0.8}, h:173, g:GL('#8698a3'), fin:STN('#dcd8cf', 0.3), sp:3.2, fw:0.35, fd:0.5, ch:7});
+});
+
+// =====================================================================================================================
+// Mizuho Marunouchi Tower (2014). OSM w878611928, height 149.7 m / 29 levels from OSM tags (not independently verified); the Ginkō Kaikan
+// (Tokyo Ginko Kyokai Building, OSM w878611927) beside it stays as the map draws it. Stone podium on the 31 m line, glass tower.
+// =====================================================================================================================
+defT('tymizuho', '瑞穗丸之内塔', 'Mizuho Marunouchi Tower', 149.7, 51, null, (B, d) => {
+  const P = d.o; stdTower(B, {P, T:IN(P, 2.5), pod:31, po:{w:STN('#c8bca8'), mull:STN('#dcd2c0'), sp:4.0}, h:149.7, g:GL('#76878f'), fin:ALU, sp:3.0, fw:0.25, fd:0.45, ch:6.5});
+});
+}
+
+// ===== tyo/ty50b: Hibiya, Ginza, Shimbashi, Shiodome, Takeshiba, Hamamatsuchō, Kachidoki, Tsukishima and Toyosu landmarks on their real
+// footprints (City Brush lm50, Tokyo 1:1). Footprints (D) are the outlines / building:part rings of R/lm50/ref_ty50b.json in the key's
+// local metres (+x east, +z south, origin = the anchor); generated by SC/lm50/ty50b/gen.py, builds hand-written.
+// Block-scoped: only LANDMARKS and SG_PLACES are touched. No text, logos or brand colours. Never Math.random (LMCTX.rng()).
+{
+const D = {"tymidhibiya":{"o":[[26.9,51.3],[-58.5,14.1],[-60.2,11.9],[-60.2,9.5],[-59.5,7.8],[-57.3,6.7],[-52.0,7.3],[-49.4,10.3],[-45.0,14.0],[-41.5,14.2],[-33.7,12.0],[-29.2,9.5],[-26.8,6.5],[-27.6,2.0],[-29.6,-4.4],[-37.6,-9.7],[-40.4,-14.1],[-43.3,-19.0],[-42.5,-22.9],[-18.3,-53.7],[-14.7,-55.3],[-11.0,-53.8],[-9.9,-53.4],[-6.0,-49.9],[33.9,-14.2],[48.0,-7.1],[49.3,-4.6],[48.8,-1.3],[47.3,3.2],[40.1,11.6],[38.1,16.0],[36.4,25.2],[35.7,38.4],[32.7,46.4]],"p0":{"b":0.0,"t":31.0,"r":[[-60.2,11.9],[-58.5,14.1],[26.8,51.4],[32.8,46.4],[35.8,38.4],[36.3,25.1],[38.0,15.9],[40.0,11.6],[47.3,3.1],[49.3,-4.6],[48.0,-7.1],[34.0,-14.1],[-10.0,-53.4],[-14.7,-55.4],[-18.5,-53.6],[-42.5,-22.9],[-43.2,-19.1],[-37.7,-9.9],[-29.5,-4.4],[-26.7,6.4],[-29.2,9.4],[-33.7,12.1],[-41.5,14.1],[-45.0,13.9],[-49.5,10.4],[-52.0,7.4],[-57.2,6.6],[-59.5,7.9],[-60.2,9.4]]},"p1":{"b":32.0,"t":191.5,"r":[[-43.2,-19.1],[-37.7,-9.9],[19.8,28.4],[23.5,28.1],[26.3,25.4],[47.3,3.1],[48.8,-1.4],[49.3,-4.6],[48.0,-7.1],[34.0,-14.1],[-10.0,-53.4],[-14.7,-55.4],[-18.5,-53.6],[-42.5,-22.9]]},"nb":[{"osm":"w734887842","h":11.0,"r":[[-18.5,-53.6],[-14.7,-55.4],[-10.0,-53.4],[-6.0,-49.9],[6.5,-65.4],[-2.7,-72.9]]}]},"tyimperial":{"o":[[-82.0,4.4],[-76.2,6.9],[-67.5,-12.1],[-54.7,-6.4],[-66.2,19.1],[-47.2,27.6],[-42.2,16.4],[-29.2,22.4],[-29.7,23.4],[-4.7,34.6],[-9.5,45.4],[-4.7,47.6],[-5.0,48.4],[1.8,51.4],[2.3,50.4],[7.8,52.9],[12.8,42.4],[35.8,52.6],[35.3,54.1],[41.8,56.9],[42.5,55.4],[44.8,56.4],[74.3,-8.9],[-32.2,-56.6],[-47.0,-24.4],[-58.7,-29.6],[-50.7,-47.4],[-57.2,-50.1]]},"tyimperialtower":{"o":[[-39.1,40.7],[3.4,60.0],[40.1,-21.5],[32.6,-25.0],[39.1,-39.8],[30.1,-44.0],[28.1,-39.8],[8.6,-48.5],[10.6,-52.8],[0.6,-57.3],[-2.1,-50.8],[-10.9,-54.8],[-16.9,-41.5],[-13.6,-40.3],[-19.9,-26.8],[-22.9,-28.0],[-29.9,-12.8],[-26.9,-11.5],[-32.4,1.0],[-23.1,5.2]]},"tyshizuoka":{"o":[[-7.1,7.2],[-3.9,10.2],[8.4,-2.1],[-0.1,-10.8]]},"tystluke":{"o":[[-33.1,-6.6],[-14.6,29.7],[-6.1,32.7],[29.4,15.9],[26.9,9.2],[32.7,5.9],[14.9,-29.6],[6.4,-32.6],[-29.6,-15.8],[-26.6,-9.3]],"nb":[{"osm":"r20439997","h":18.0,"r":[[-47.3,61.9],[-32.1,94.4],[-1.6,79.4],[-3.6,75.2],[13.4,23.4],[29.4,15.9],[26.9,9.2],[32.7,5.9],[14.9,-29.6],[6.4,-32.6],[-29.6,-15.8],[-26.6,-9.3],[-33.1,-6.6],[-27.3,4.9],[-43.1,59.9]]},{"osm":"w309526541","h":27.5,"r":[[-43.1,59.9],[-20.1,48.7],[-14.6,50.9],[-3.6,75.2],[13.4,23.4],[-6.1,32.7],[-14.6,29.7],[-27.3,4.9]]},{"osm":"w119563864","h":17.0,"r":[[-47.3,61.9],[-32.1,94.4],[-1.6,79.4],[-14.6,50.9],[-20.1,48.7]]}]},"tynissay":{"o":[[-46.0,8.2],[18.0,38.0],[40.2,-14.8],[-10.3,-36.0]]},"tytakarazuka":{"o":[[-37.9,13.6],[15.3,37.1],[38.1,-13.6],[-15.4,-37.1]]},"tymatsuya":{"o":[[-53.5,29.2],[-17.3,59.0],[52.7,-33.8],[22.2,-59.3]]},"tyginzasix":{"o":[[-69.0,19.7],[-13.7,66.7],[71.8,-13.1],[6.5,-68.8]]},"tyginzaplaza":{"o":[[-48.4,31.2],[-25.7,50.7],[-22.2,50.7],[44.6,-27.3],[44.1,-37.3],[24.1,-52.3]]},"tymarion":{"o":[[-48.3,10.5],[-40.1,19.0],[-33.3,23.3],[-18.6,29.8],[-6.3,33.3],[12.7,35.5],[19.7,35.3],[25.9,34.3],[36.9,31.3],[40.2,29.0],[41.4,25.0],[42.2,18.0],[49.9,-20.0],[-37.6,-39.2]]},"tyoldshimbashi":{"o":[[-20.3,-2.1],[-16.2,-8.2],[-3.3,-27.2],[6.6,-20.6],[3.9,-16.6],[14.2,-9.7],[16.9,-13.7],[26.0,-7.5],[25.2,-6.4],[27.4,-4.9],[23.4,1.0],[21.2,-0.4],[13.1,11.5],[9.0,17.6],[-1.6,10.4],[-9.1,5.4]],"p0":{"b":0.0,"t":25.0,"r":[[-16.1,-8.2],[-6.4,-1.5],[6.6,-20.5],[-3.4,-27.2]]},"p1":{"b":0.0,"t":14.5,"r":[[3.9,5.5],[13.1,11.5],[26.1,-7.5],[16.9,-13.7]]},"p2":{"b":0.0,"t":23.5,"r":[[-20.4,-2.2],[8.9,17.5],[13.1,11.5],[3.9,5.5],[14.1,-9.7],[3.9,-16.7],[-6.4,-1.5],[-16.1,-8.2]]},"p3":{"b":0.0,"t":6.5,"r":[[21.1,-0.5],[23.4,1.0],[27.4,-5.0],[25.1,-6.5]]}},"tymediatower":{"o":[[-26.0,-12.9],[-12.0,26.1],[-9.3,29.1],[-4.3,29.9],[-0.0,27.9],[13.5,12.6],[26.5,-3.4],[27.5,-7.6],[32.7,-9.4],[33.0,-8.4],[40.5,-10.6],[38.7,-16.4],[31.2,-13.9],[31.7,-12.6],[26.5,-10.9],[26.0,-12.4],[22.0,-14.1],[-18.8,-21.6],[-22.8,-20.4],[-26.0,-17.4]]},"tyshiodomebldg":{"o":[[-71.8,-1.4],[-67.6,25.9],[-52.1,23.6],[-51.1,29.6],[64.4,11.4],[62.9,1.4],[63.9,1.4],[63.7,0.1],[69.7,-0.9],[65.9,-24.1],[58.7,-23.1],[57.4,-30.9],[-57.8,-12.6],[-56.6,-3.9]]},"tyshiodomesumi":{"o":[[-49.8,36.3],[-13.3,60.0],[49.9,-36.2],[13.4,-60.0]]},"tyacty":{"o":[[5.9,-32.3],[22.7,-29.3],[22.2,1.2],[18.8,32.6],[-0.3,33.1],[-20.7,29.9],[-22.7,14.9],[-23.4,-0.9],[-20.8,-16.8],[-16.9,-31.8],[0.4,-32.7],[0.6,-35.5],[6.0,-35.2]],"p0":{"b":10.8,"t":36.4,"r":[[-19.0,-0.6],[-18.5,12.6],[-17.0,26.4],[16.8,28.6],[19.5,15.1],[21.0,1.1],[21.3,-11.4],[20.3,-25.9],[-13.5,-27.9],[-17.2,-14.1]]},"p1":{"b":0.0,"t":10.8,"r":[[-23.5,-0.9],[-22.7,14.9],[-20.7,29.9],[-0.2,33.1],[18.8,32.6],[22.3,1.1],[22.8,-29.4],[5.8,-32.4],[6.0,-35.1],[0.5,-35.6],[0.5,-32.6],[-17.0,-31.9],[-20.7,-16.9]]},"p2":{"b":36.4,"t":170.8,"r":[[-19.0,-0.6],[-18.5,12.6],[-17.5,22.6],[-12.5,22.9],[-12.5,26.6],[12.8,28.4],[13.0,24.1],[17.8,24.4],[19.5,15.1],[21.0,1.1],[21.3,-11.4],[20.5,-20.6],[15.3,-20.9],[15.5,-26.1],[-9.5,-27.6],[-9.7,-22.1],[-15.0,-22.4],[-17.2,-14.1]]},"p3":{"b":170.8,"t":183.6,"r":[[-17.0,16.6],[-11.7,16.9],[-12.5,26.6],[12.8,28.4],[13.0,18.6],[17.8,18.9],[19.5,-15.9],[15.0,-16.1],[15.5,-26.1],[-9.5,-27.6],[-9.7,-17.6],[-14.7,-17.9]]},"p4":{"b":183.6,"t":190.0,"r":[[-5.7,-10.9],[10.0,-9.9],[9.5,-20.9],[6.8,-21.1],[7.0,-26.4],[-0.7,-26.9],[-0.7,-21.6],[-3.5,-21.6]]},"p5":{"b":183.6,"t":190.0,"r":[[-6.5,22.9],[-5.0,27.9],[-1.5,30.6],[1.0,30.6],[4.3,28.6],[6.5,23.6],[6.5,18.9],[5.8,17.4],[6.0,11.9],[-4.5,11.1],[-4.7,16.4],[-6.2,18.4]]}},"typortcity":{"o":[[-47.5,-79.6],[-41.9,-86.1],[73.5,-5.4],[29.7,57.8],[14.2,80.2],[-47.0,38.2]],"p0":{"b":0.0,"t":19.4,"r":[[-24.0,39.6],[-16.2,44.9],[-14.2,44.4],[1.3,22.1],[2.3,17.4],[12.5,2.9],[16.3,0.6],[19.5,-4.1],[22.3,-2.1],[27.8,-10.1],[28.0,-11.4],[27.3,-26.4],[23.5,-28.9]]},"p1":{"b":0.0,"t":16.3,"r":[[-24.0,39.6],[-11.7,47.9],[-10.2,47.4],[-3.5,38.1],[0.0,40.6],[1.3,38.4],[1.3,30.9],[11.8,15.1],[16.0,12.9],[29.5,-6.6],[28.8,-25.4],[23.5,-28.9]]},"p2":{"b":0.0,"t":13.2,"r":[[-24.0,39.6],[1.8,57.4],[3.8,56.9],[15.0,40.4],[14.8,18.4],[19.0,18.1],[19.3,12.9],[32.5,-6.4],[33.0,-21.9],[32.5,-22.6],[23.5,-28.9]]},"p3":{"b":0.0,"t":10.1,"r":[[-46.7,-78.4],[-34.0,-69.4],[-43.2,-55.4],[-43.0,-46.1],[-29.5,-66.4],[23.5,-28.9],[-24.0,39.6],[8.5,62.1],[10.3,59.4],[13.5,61.6],[14.5,61.6],[41.0,23.1],[40.8,9.6],[40.0,8.6],[33.5,3.9],[40.0,-6.1],[39.3,-24.9],[-22.7,-68.4],[-26.5,-73.1],[-40.0,-82.4]]},"p4":{"b":0.0,"t":7.0,"r":[[-46.7,-78.4],[-34.0,-69.4],[-43.2,-55.4],[-43.0,-46.1],[-29.5,-66.4],[23.5,-28.9],[-24.0,39.6],[15.5,66.9],[17.8,65.6],[38.8,34.9],[36.3,33.1],[41.3,25.6],[48.8,23.1],[53.8,15.4],[52.8,7.4],[40.5,-1.6],[40.0,-2.4],[39.3,-24.9],[-22.7,-68.4],[-26.5,-73.1],[-40.0,-82.4]]},"p5":{"b":0.0,"t":22.5,"r":[[-43.0,16.9],[-42.7,26.4],[-24.0,39.6],[-19.5,32.6]]},"p6":{"b":0.0,"t":208.0,"r":[[-44.0,-44.6],[-43.0,16.9],[-19.5,32.6],[23.5,-28.9],[-29.5,-66.4]]}},"tywtcsouth":{"o":[[-34.2,12.7],[31.8,20.9],[34.8,-3.8],[27.6,-4.8],[28.8,-14.3],[-29.9,-21.3]]},"tytoshiba":{"o":[[-41.4,15.6],[17.6,40.4],[41.3,-15.4],[-17.7,-40.4]],"p0":{"b":145.0,"t":165.9,"r":[[-41.4,15.6],[17.6,40.4],[41.3,-15.4],[-17.7,-40.4]]},"hb":[[-41.4,15.6],[17.6,40.4],[25.8,21.1],[16.8,17.6],[24.8,-0.9],[33.6,2.9],[41.3,-15.4],[-17.7,-40.4],[-25.7,-21.6],[-17.2,-18.1],[-25.2,0.6],[-33.7,-2.9]]},"tyginzamitsukoshi":{"o":[[-50.1,-14.4],[-49.9,-2.6],[-42.4,4.4],[-31.1,-8.4],[-16.6,4.4],[-18.6,6.9],[-2.6,19.9],[-12.9,31.9],[17.6,60.6],[49.1,23.1],[9.9,-8.9],[24.6,-26.4],[-12.6,-57.4]],"nb":[{"osm":"w723855286","h":11.0,"r":[[-21.9,22.4],[-19.1,24.6],[-11.6,15.9],[-14.1,13.6]]},{"osm":"w723855287","h":13.0,"r":[[-27.4,17.4],[-23.6,20.9],[-15.4,12.1],[-19.1,8.6]]},{"osm":"w723855288","h":10.0,"r":[[-39.4,5.6],[-28.9,15.1],[-19.6,5.1],[-30.1,-4.4]]}]},"typeninsula":{"o":[[-36.5,-11.2],[-30.5,-6.7],[-31.0,-6.0],[-27.5,-3.0],[-29.5,-0.7],[12.2,35.0],[18.2,34.0],[30.5,-11.2],[24.5,-13.0],[25.0,-14.7],[-15.0,-25.7],[-15.5,-23.2],[-20.3,-25.2],[-20.3,-24.2],[-27.3,-26.5],[-30.0,-19.7]]},"tykachiview":{"o":[[-25.1,28.2],[-38.9,11.0],[-47.9,-0.8],[-46.8,-1.9],[-50.8,-7.1],[-36.4,-19.4],[-35.5,-23.0],[-5.5,-48.6],[-2.4,-48.6],[14.3,-27.6],[15.4,-28.8],[28.9,-12.6],[26.1,-10.4],[27.1,-9.4],[29.5,-9.0],[29.4,-6.4],[51.2,20.6],[54.0,26.6],[50.5,27.9],[52.0,34.1],[37.2,35.7],[34.7,37.7],[25.4,37.2],[25.0,35.3],[24.3,33.0],[23.1,31.8],[21.4,30.5],[19.5,30.1],[19.7,25.3],[15.4,29.1],[15.5,30.9]],"p0":{"b":0.0,"t":192.2,"r":[[-28.5,16.2],[-24.2,20.7],[10.5,23.2],[15.8,18.2],[18.8,-15.8],[13.3,-21.5],[-20.2,-24.0],[-25.2,-19.5]]}},"tytowersmid":{"o":[[-44.9,-2.9],[-6.2,44.4],[44.8,2.9],[6.3,-44.4]]},"tytowerssea":{"o":[[-49.3,-2.7],[-4.8,49.1],[49.5,2.6],[5.0,-48.9]]},"tycenturypark":{"o":[[-21.3,-25.8],[-21.1,26.7],[-20.3,28.2],[-18.6,28.9],[17.9,28.7],[20.2,27.4],[20.7,26.2],[21.7,-25.8],[20.9,-27.1],[18.4,-28.3],[-18.8,-28.3],[-20.6,-27.3]],"hole":[[-6.8,-6.3],[-6.8,-15.1],[6.4,-15.1],[6.4,-6.1]]},"tycapitalgate":{"o":[[-31.5,-4.6],[-0.0,31.7],[31.2,4.2],[0.5,-31.6]]},"tytoyosucenter":{"o":[[-29.2,0.3],[-7.2,28.3],[1.1,29.1],[16.3,18.1],[28.3,6.8],[29.1,-1.2],[6.8,-28.2],[-0.9,-29.2],[-16.7,-18.2],[-28.4,-6.9]],"hole":[[-7.4,-0.7],[0.8,-7.2],[7.3,1.1],[-0.9,7.6]]},"tybaysidecross":{"o":[[-48.8,-9.9],[-0.5,49.6],[48.7,9.9],[1.0,-49.6]]}};
+// ---- shared helpers (block-scoped; copied from hk/hk50e)
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+const lerp = (a, b, t) => a + (b - a)*t, cl01 = t => t < 0 ? 0 : t > 1 ? 1 : t, sm = t => { t = cl01(t); return t*t*(3 - 2*t); };
+const dsS = c => typeof c === 'string' ? {c, ds:true} : Object.assign({ds:true}, c);
+// triangle batches: many parts of one colour spec become one LTris call
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+function segP(o, a, b, r, n){
+  n = n || 4; const dx = b[0]-a[0], dy = b[1]-a[1], dz = b[2]-a[2], L = Math.hypot(dx, dy, dz); if (L < 1e-4) return;
+  const d = [dx/L, dy/L, dz/L], up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let ux = d[1]*up[2]-d[2]*up[1], uy = d[2]*up[0]-d[0]*up[2], uz = d[0]*up[1]-d[1]*up[0]; const ul = Math.hypot(ux, uy, uz); ux /= ul; uy /= ul; uz /= ul;
+  const vx = d[1]*uz-d[2]*uy, vy = d[2]*ux-d[0]*uz, vz = d[0]*uy-d[1]*ux;
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+ux*c+vx*s, p[1]+uy*c+vy*s, p[2]+uz*c+vz*s]); } return R; };
+  const A = ring(a), Bq = ring(b);
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], Bq[j], Bq[i]); }
+}
+const rotQ = (cx, cz, ry) => { const c = Math.cos(ry || 0), s = Math.sin(ry || 0); return (x, y, z) => [cx + x*c + z*s, y, cz - x*s + z*c]; };
+function boxP(o, w, h, d, x, y, z, ry){
+  const R = rotQ(x, z, ry), hw = w/2, hd = d/2;
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, c, e] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[c], P[e]);
+}
+// a box from plan point a to b (width w across), y0..y1
+function wallP(o, a, b, w, y0, y1){ const dx = b[0]-a[0], dz = b[1]-a[1], L = Math.hypot(dx, dz); if (L < 1e-3) return; boxP(o, L, y1 - y0, w, (a[0]+b[0])/2, y0, (a[1]+b[1])/2, -Math.atan2(dz, dx)); }
+function loftP(o, secs, cap){
+  const n = secs[0].length;
+  for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, secs[s][i], secs[s][j], secs[s+1][j], secs[s+1][i]); }
+  if (cap){ const t = secs[secs.length - 1], c = [0, 0, 0]; for (const p of t){ c[0] += p[0]/n; c[1] += p[1]/n; c[2] += p[2]/n; } for (let i = 0; i < n; i++) o.push(...c, ...t[i], ...t[(i+1) % n]); }
+}
+// open strip loft (no wrap-around)
+function stripP(o, secs){ for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < secs[s].length - 1; i++) quadP(o, secs[s][i], secs[s][i+1], secs[s+1][i+1], secs[s+1][i]); }
+const area2 = P => { let s = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; s += a[0]*b[1] - b[0]*a[1]; } return s/2; };
+const cenP = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+const bbP = P => { let a = [1e9, 1e9, -1e9, -1e9]; for (const p of P){ a[0] = Math.min(a[0], p[0]); a[1] = Math.min(a[1], p[1]); a[2] = Math.max(a[2], p[0]); a[3] = Math.max(a[3], p[1]); } return a; };
+const shiftP = (P, dx, dz) => P.map(p => [p[0] + dx, p[1] + dz]);
+function offP(P, d){
+  const n = P.length, s = area2(P) > 0 ? 1 : -1, L = [];
+  for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; L.push([a[0] - ez/l*s*d, a[1] + ex/l*s*d, ex, ez]); }
+  const out = [];
+  for (let i = 0; i < n; i++){ const p = L[(i + n - 1) % n], q = L[i], den = p[2]*q[3] - p[3]*q[2];
+    if (Math.abs(den) < 1e-6){ out.push([q[0], q[1]]); continue; }
+    const t = ((q[0]-p[0])*q[3] - (q[1]-p[1])*q[2])/den; let x = p[0] + p[2]*t, z = p[1] + p[3]*t;
+    const ox = P[i][0], oz = P[i][1], dd = Math.hypot(x - ox, z - oz), mx = Math.abs(d)*2.5;
+    if (dd > mx){ x = ox + (x - ox)/dd*mx; z = oz + (z - oz)/dd*mx; }
+    out.push([x, z]); }
+  return out;
+}
+const outN = (P, i) => { const s = area2(P) > 0 ? 1 : -1, a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; return [ez/l*s, -ex/l*s]; };
+const inPoly = (P, x, z) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; };
+const dSeg = (x, z, a, b) => { const ex = b[0]-a[0], ez = b[1]-a[1], L2 = ex*ex + ez*ez || 1, t = cl01(((x-a[0])*ex + (z-a[1])*ez)/L2); return Math.hypot(x - a[0] - ex*t, z - a[1] - ez*t); };
+const dPoly = (P, x, z) => { let d = 1e9; for (let i = 0; i < P.length; i++) d = Math.min(d, dSeg(x, z, P[i], P[(i+1) % P.length])); return d; };
+const dLine = (L, x, z) => { let d = 1e9; for (let i = 0; i < L.length - 1; i++) d = Math.min(d, dSeg(x, z, L[i], L[i+1])); return d; };
+const triang = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+// clip a polygon to the half plane a*x + b*z + c >= 0
+function clipP(P, a, b, c){ const out = [], f = p => a*p[0] + b*p[1] + c;
+  for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], fp = f(p), fq = f(q);
+    if (fp >= 0) out.push(p); if ((fp >= 0) !== (fq >= 0)){ const t = fp/(fp - fq); out.push([p[0] + (q[0]-p[0])*t, p[1] + (q[1]-p[1])*t]); } }
+  return out; }
+// walls of a plan polygon from y0 (number or f(x, z)) up to ytop (number or f) and its top cap
+function prismP(o, P, y0, ytop, noTop, bottom){
+  const f = typeof ytop === 'function' ? ytop : () => ytop, f0 = typeof y0 === 'function' ? y0 : () => y0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; quadP(o, [a[0], f0(a[0], a[1]), a[1]], [b[0], f0(b[0], b[1]), b[1]], [b[0], f(b[0], b[1]), b[1]], [a[0], f(a[0], a[1]), a[1]]); }
+  if (!noTop) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f(p[0], p[1]), p[1]); }
+  if (bottom) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f0(p[0], p[1]), p[1]); }
+}
+const flatP = (o, P, y) => { for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], typeof y === 'function' ? y(p[0], p[1]) : y, p[1]); } };
+// floor bands round a polygon every `step` between y0 and y1
+function bandsP(o, P, y0, y1, step, bh, off, edges){
+  off = off || 0.12;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.3) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0 + step; y < y1 - 0.3; y += step) quadP(o, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, y+bh, b[1]+nz*off], [a[0]+nx*off, y+bh, a[1]+nz*off]);
+  }
+}
+// vertical strips about `sp` apart, `w` wide, `off` proud of the walls (a fin with depth when dep is given)
+function mullP(o, P, y0, y1, sp, w, off, edges, dep){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp*0.6) continue;
+    const [nx, nz] = outN(P, i), n = Math.max(1, Math.round(L/sp)), ux = ex/L, uz = ez/L;
+    for (let k = 0; k <= n; k++){
+      const t = k/n, x = a[0] + ex*t + nx*off, z = a[1] + ez*t + nz*off;
+      if (dep) { boxP(o, w, y1 - y0, dep, x + nx*dep/2, y0, z + nz*dep/2, -Math.atan2(uz, ux)); continue; }
+      const p = [x - ux*w/2, z - uz*w/2], q = [x + ux*w/2, z + uz*w/2];
+      quadP(o, [p[0], y0, p[1]], [q[0], y0, q[1]], [q[0], y1, q[1]], [p[0], y1, p[1]]); }
+  }
+}
+// window slots in bays along every edge, rows every fh
+function winsP(o, P, y0, y1, fh, sp, ww, wh, off, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp) continue;
+    const [nx, nz] = outN(P, i), n = Math.floor(L/sp), ux = ex/L, uz = ez/L, s0 = (L - n*sp)/2 + sp/2;
+    for (let y = y0; y + wh <= y1 + 0.01; y += fh) for (let k = 0; k < n; k++){
+      const s = s0 + k*sp, x = a[0] + ux*s + nx*off, z = a[1] + uz*s + nz*off;
+      quadP(o, [x - ux*ww/2, y, z - uz*ww/2], [x + ux*ww/2, y, z + uz*ww/2], [x + ux*ww/2, y + wh, z + uz*ww/2], [x - ux*ww/2, y + wh, z - uz*ww/2]); }
+  }
+}
+function lineRingP(o, P, y, r, n){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; segP(o, [a[0], y, a[1]], [b[0], y, b[1]], r, n || 3); } }
+function lineP(o, L, y, r, n){ for (let i = 0; i < L.length - 1; i++) segP(o, [L[i][0], typeof y === 'function' ? y(L[i][0], L[i][1]) : y, L[i][1]], [L[i+1][0], typeof y === 'function' ? y(L[i+1][0], L[i+1][1]) : y, L[i+1][1]], r, n || 3); }
+// railing along a polyline: posts every `sp`, top rail
+function railP(o, L, yf, h, sp, closed){
+  const Q = closed ? L.concat([L[0]]) : L;
+  for (let i = 0; i < Q.length - 1; i++){ const a = Q[i], b = Q[i+1], d = Math.hypot(b[0]-a[0], b[1]-a[1]), n = Math.max(1, Math.round(d/sp));
+    for (let k = 0; k < n; k++){ const t = k/n, x = a[0] + (b[0]-a[0])*t, z = a[1] + (b[1]-a[1])*t, y = yf(x, z); boxP(o, 0.12, h, 0.12, x, y, z, 0); }
+    const ya = yf(a[0], a[1]), yb = yf(b[0], b[1]); segP(o, [a[0], ya + h, a[1]], [b[0], yb + h, b[1]], 0.06, 3); }
+}
+function treeP(B, x, y, z, s, crown, trunk, tall){
+  const th = (tall ? 4.5 : 2.6)*s;
+  segP(B.p(trunk || '#5d4a3a'), [x, y, z], [x, y + th, z], 0.22*s, 3);
+  const c = B.p(crown || '#557f3c'), R = (tall ? 1.9 : 2.3)*s, cy = y + th + R*0.5, top = [x, cy + R*(tall ? 2.2 : 0.85), z], bot = [x, cy - R*0.6, z], ring = [];
+  for (let i = 0; i < 6; i++){ const a = i/6*TAU + s; ring.push([x + Math.cos(a)*R, cy, z + Math.sin(a)*R]); }
+  for (let i = 0; i < 6; i++){ const j = (i+1) % 6; triP(c, top, ring[j], ring[i]); triP(c, bot, ring[i], ring[j]); }
+}
+// resample a closed polygon to n points evenly by perimeter
+function resP(P, n){ const L = [0]; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; L.push(L[i] + Math.hypot(b[0]-a[0], b[1]-a[1])); }
+  const T = L[P.length], out = []; let j = 0;
+  for (let k = 0; k < n; k++){ const s = k/n*T; while (j < P.length - 1 && L[j+1] < s) j++; const a = P[j], b = P[(j+1) % P.length], t = (s - L[j])/((L[j+1] - L[j]) || 1); out.push([a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t]); }
+  return out; }
+// the polygon boundary point in direction th from c (ray cast; last hit)
+function rayP(P, c, th){ const dx = Math.cos(th), dz = Math.sin(th); let best = 0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], den = dx*ez - dz*ex; if (Math.abs(den) < 1e-9) continue;
+    const t = ((a[0]-c[0])*ez - (a[1]-c[1])*ex)/den, u = ((a[0]-c[0])*dz - (a[1]-c[1])*dx)/den; if (t > 0 && u >= 0 && u <= 1) best = Math.max(best, t); }
+  return best; }
+// ground of the app under a landmark, relative to its base (local y); rot must be 0. Falls back to flat ground outside the app/kit.
+function mkG(lat, lon){
+  try { if (typeof hC === 'function' && typeof sgXY === 'function' && LMCTX && LMCTX.u && LMCTX.u.base){ const q = sgXY(lat, lon), b = LMCTX.u.base.value; return (x, z) => hC(q[0] + x, q[1] - z) - b; } } catch (e){}
+  return () => 0;
+}
+const gMin = (G, P) => { let m = 1e9; for (const p of P) m = Math.min(m, G(p[0], p[1])); const c = cenP(P); return Math.min(m, G(c[0], c[1])); };
+const gMax = (G, P) => { let m = -1e9; for (const p of P) m = Math.max(m, G(p[0], p[1])); const c = cenP(P); return Math.max(m, G(c[0], c[1])); };
+// custom night emissive add-on for one material (vLP = local position, uTime / uNight from the kit)
+function lmPatch(spec, glsl, tag){
+  const m = lmMat(spec); if (m.userData.hkc) return m; m.userData.hkc = 1;
+  const base = m.onBeforeCompile;
+  m.onBeforeCompile = function hkcGlow(sh){
+    base(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvLP = transformed;');
+    const code = '\n{ vec3 lp = vLP; vec3 ledC = vec3(0.0);\n' + glsl + '\n totalEmissiveRadiance += ledC * uNight; }\n';
+    const fs = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;');
+    sh.fragmentShader = fs.indexOf('totalEmissiveRadiance += em * uNight;') >= 0 ? fs.replace('totalEmissiveRadiance += em * uNight;', 'totalEmissiveRadiance += em * uNight;' + code) : fs.replace('#include <aomap_fragment>', code + '#include <aomap_fragment>');
+  };
+  const ck = 'hkc|' + (tag || '') + '|' + glsl.length + '|' + String(base).length;
+  m.customProgramCacheKey = () => ck;
+  return m;
+}
+
+
+// ---- frames (from hk/hk50e)
+const cenA = P => { let a = 0, x = 0, z = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], c = p[0]*q[1] - q[0]*p[1]; a += c; x += (p[0] + q[0])*c; z += (p[1] + q[1])*c; } return Math.abs(a) < 1e-6 ? cenP(P) : [x/(3*a), z/(3*a)]; };
+// oriented frame of a plan polygon: u along the long side, v across; ob.p(u, v) -> plan [x, z]
+function obE(P, ang){
+  let best = null;
+  const tryA = an => { const c = Math.cos(an), s = Math.sin(an); let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+    for (const p of P){ const u = p[0]*c + p[1]*s, v = -p[0]*s + p[1]*c; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const A = (u1 - u0)*(v1 - v0); if (!best || A < best.A - 1e-6) best = {A, an, u0, u1, v0, v1}; };
+  if (ang !== undefined) tryA(ang); else for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) > 0.5) tryA(Math.atan2(b[1]-a[1], b[0]-a[0])); }
+  let {an, u0, u1, v0, v1} = best;
+  if (ang === undefined && v1 - v0 > u1 - u0){ an += HP; const t0 = u0, t1 = u1; u0 = v0; u1 = v1; v0 = -t1; v1 = -t0; }
+  const c = Math.cos(an), s = Math.sin(an), uc = (u0 + u1)/2, vc = (v0 + v1)/2, cx = uc*c - vc*s, cz = uc*s + vc*c;
+  const p = (u, v) => [cx + u*c - v*s, cz + u*s + v*c];
+  return {cx, cz, a:an, c, s, L:u1 - u0, W:v1 - v0, p, ry:-an,
+    loc:(x, z) => { const dx = x - cx, dz = z - cz; return [dx*c + dz*s, -dx*s + dz*c]; },
+    rect:(a0, a1, b0, b1) => [p(a0, b0), p(a1, b0), p(a1, b1), p(a0, b1)]};
+}
+// 3-D point in an oriented frame
+const o3 = (ob, u, y, v) => { const q = ob.p(u, v); return [q[0], y, q[1]]; };
+// box in an oriented frame (u0..u1, v0..v1, y0..y1)
+function boxO(o, ob, u0, u1, v0, v1, y0, y1){ const q = ob.p((u0 + u1)/2, (v0 + v1)/2); boxP(o, u1 - u0, y1 - y0, v1 - v0, q[0], y0, q[1], ob.ry); }
+// hip roof over the oriented rectangle u0..u1 x v0..v1 at eaves y, rise h (ridge along the longer side)
+function hipO(o, ob, u0, u1, v0, v1, y, h){
+  const du = u1 - u0, dv = v1 - v0, P = (u, v, yy) => o3(ob, u, yy, v);
+  if (du >= dv){ const k = dv/2, vc = (v0 + v1)/2, r1 = P(u0 + k, vc, y + h), r2 = P(u1 - k, vc, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, r2); triP(o, A, r2, B); triP(o, C, r2, r1); triP(o, C, r1, E); triP(o, E, r1, A); triP(o, B, r2, C); }
+  else { const k = du/2, uc = (u0 + u1)/2, r1 = P(uc, v0 + k, y + h), r2 = P(uc, v1 - k, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, B); triP(o, B, r1, r2); triP(o, B, r2, C); triP(o, C, r2, E); triP(o, E, r2, r1); triP(o, E, r1, A); }
+}
+// gable roof (ridge along u when alongU, else along v) with the two gable triangles in `og` (walls) when given
+function gableO(o, ob, u0, u1, v0, v1, y, h, alongU, og){
+  const P = (u, v, yy) => o3(ob, u, yy, v);
+  if (alongU){ const vc = (v0 + v1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(u0, vc, y + h), r2 = P(u1, vc, y + h);
+    quadP(o, A, B, r2, r1); quadP(o, C, E, r1, r2); if (og){ triP(og, A, r1, E); triP(og, B, C, r2); } }
+  else { const uc = (u0 + u1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(uc, v0, y + h), r2 = P(uc, v1, y + h);
+    quadP(o, A, r1, r2, E); quadP(o, B, C, r2, r1); if (og){ triP(og, A, B, r1); triP(og, C, E, r2); } }
+}
+// tile ribs (pan and roll tiles) down both slopes of a gable / hip whose ridge runs along u (or v)
+function ribsO(o, ob, u0, u1, v0, v1, y, h, alongU, sp){
+  sp = sp || 0.55; const P = (u, v, yy) => o3(ob, u, yy, v), e = 0.05;
+  if (alongU){ const vc = (v0 + v1)/2; for (let u = u0 + sp/2; u < u1; u += sp){ for (const vv of [v0, v1]){ const a = P(u - 0.07, vv, y + e), b = P(u + 0.07, vv, y + e), c = P(u + 0.07, vc, y + h + e), d = P(u - 0.07, vc, y + h + e); quadP(o, a, b, c, d); } } }
+  else { const uc = (u0 + u1)/2; for (let v = v0 + sp/2; v < v1; v += sp){ for (const uu of [u0, u1]){ const a = P(uu, v - 0.07, y + e), b = P(uu, v + 0.07, y + e), c = P(uc, v + 0.07, y + h + e), d = P(uc, v - 0.07, y + h + e); quadP(o, a, b, c, d); } } }
+}
+
+
+// ---- ty50b kit (block-scoped). NB offP(P, +d) insets, offP(P, -d) grows.
+// per-floor window bands on every edge of P: glass band in og (lit spec), spandrel in the walls
+function floorsP(og, P, y0, y1, fh, gh, off){ off = off || 0.06;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.8) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0; y + 0.5 < y1; y += fh){ const t = Math.min(y + gh, y1 - 0.1); quadP(og, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, t, b[1]+nz*off], [a[0]+nx*off, t, a[1]+nz*off]); } } }
+const PLACE = (key, lat, lon) => SG_PLACES.push({type:key, lat, lon, rot:0});
+const sclP = (P, c, s) => P.map(p => [c[0] + (p[0] - c[0])*s, c[1] + (p[1] - c[1])*s]);
+// cut every corner of a polygon by c metres (chamfer)
+function chamP(P, c){ const out = [], n = P.length;
+  for (let i = 0; i < n; i++){ const a = P[(i + n - 1) % n], b = P[i], d = P[(i + 1) % n], l1 = Math.hypot(b[0]-a[0], b[1]-a[1]), l2 = Math.hypot(d[0]-b[0], d[1]-b[1]);
+    if (l1 < 0.5 || l2 < 0.5){ out.push(b); continue; }
+    const k1 = Math.min(c, l1*0.45)/l1, k2 = Math.min(c, l2*0.45)/l2; out.push([b[0] + (a[0]-b[0])*k1, b[1] + (a[1]-b[1])*k1], [b[0] + (d[0]-b[0])*k2, b[1] + (d[1]-b[1])*k2]); }
+  return out; }
+// round every corner (radius c, n segments per corner; quadratic Bezier through the corner)
+function roundP(P, c, n){ const out = [], m = P.length; n = n || 4;
+  for (let i = 0; i < m; i++){ const a = P[(i + m - 1) % m], b = P[i], d = P[(i + 1) % m], l1 = Math.hypot(b[0]-a[0], b[1]-a[1]), l2 = Math.hypot(d[0]-b[0], d[1]-b[1]);
+    if (l1 < 0.5 || l2 < 0.5){ out.push(b); continue; }
+    const k1 = Math.min(c, l1*0.45)/l1, k2 = Math.min(c, l2*0.45)/l2, p0 = [b[0] + (a[0]-b[0])*k1, b[1] + (a[1]-b[1])*k1], p2 = [b[0] + (d[0]-b[0])*k2, b[1] + (d[1]-b[1])*k2];
+    for (let k = 0; k <= n; k++){ const t = k/n, u = 1 - t; out.push([u*u*p0[0] + 2*u*t*b[0] + t*t*p2[0], u*u*p0[1] + 2*u*t*b[1] + t*t*p2[1]]); } }
+  return out; }
+// clip a polygon to a convex polygon C (Sutherland-Hodgman, any winding of C)
+function clipC(P, C){ const s = area2(C) > 0 ? 1 : -1; let Q = P;
+  for (let i = 0; i < C.length && Q.length > 2; i++){ const a = C[i], b = C[(i + 1) % C.length]; Q = clipP(Q, -(b[1]-a[1])*s, (b[0]-a[0])*s, ((b[1]-a[1])*a[0] - (b[0]-a[0])*a[1])*s); }
+  return Q; }
+// outward band quads along the edges of P from y0 to y1 (a parapet / railing skin `off` proud)
+function skinP(o, P, y0, y1, off, edges){ off = off || 0;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue; const a = P[i], b = P[(i + 1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.2) continue; const [nx, nz] = outN(P, i);
+    quadP(o, [a[0]+nx*off, y0, a[1]+nz*off], [b[0]+nx*off, y0, b[1]+nz*off], [b[0]+nx*off, y1, b[1]+nz*off], [a[0]+nx*off, y1, a[1]+nz*off]); } }
+// curtain-wall shaft: glass prism, mullions every ms (fins of depth dep when given), spandrel bands every fh
+function shaftCW(B, P, y0, y1, o){
+  prismP(B.p(o.g), P, y0, y1, true);
+  if (o.ms) mullP(B.p(o.f), P, y0, y1, o.ms, o.mw || 0.3, 0.06, o.edges, o.dep);
+  if (o.fh) bandsP(B.p(o.sp || o.f), P, y0 - (o.sb0 || 0), y1, o.fh, o.sb || 0.7, 0.08, o.edges);
+}
+// solid shaft with punched windows (rows every fh, bays every sp)
+function shaftPW(B, P, y0, y1, o){ prismP(B.p(o.w), P, y0, y1, true); winsP(B.p(o.g), P, y0 + (o.wy || 0.9), y1 - 0.3, o.fh, o.sp, o.ww, o.wh, 0.05, o.edges); }
+// residential shaft: wall prism, per floor a slab edge (white) proud by d and a dark railing band above it
+function shaftRes(B, P, y0, y1, o){
+  prismP(B.p(o.w), P, y0, y1, true);
+  const Q = offP(P, -(o.d || 1.2)), fh = o.fh;
+  for (let y = y0 + fh; y < y1 - 0.8; y += fh){ skinP(B.p(o.s), Q, y - 0.35, y, 0, o.edges); skinP(B.p(o.r), Q, y, y + 1.05, 0, o.edges); }
+  if (o.ms) mullP(B.p(o.s), Q, y0 + fh - 0.35, y1 - fh*0.5, o.ms, 0.45, 0.02, o.edges);
+}
+// flat roof with parapet, optional plant / screen box inset by pl
+function roofF(B, P, y, o){
+  flatP(B.p(o.r), P, y); const ph = o.ph === undefined ? 1.2 : o.ph;
+  if (ph > 0) for (let i = 0; i < P.length; i++) wallP(B.p(o.pc || o.r), P[i], P[(i + 1) % P.length], 0.35, y, y + ph);
+  if (o.pl){ const Q = offP(P, o.pl); prismP(B.p(o.plc || o.r), Q, y, y + (o.plh || 4)); if (o.lv) bandsP(B.p(o.lv), Q, y, y + (o.plh || 4), 0.9, 0.18, 0.06); }
+}
+// foundation block (to y0 below the base)
+const footP = (B, col, P, y0, y1) => prismP(B.p(col), P, y0, y1 === undefined ? 0.2 : y1, false);
+// loft of a plan scaled about c by s(t) (t 0..1 over y0..y1) in `ns` sections; returns the sections
+function loftS(o, P, c, y0, y1, ns, s, cap){
+  const secs = []; for (let k = 0; k <= ns; k++){ const t = k/ns, y = y0 + (y1 - y0)*t, f = s(t); secs.push(P.map(p => [c[0] + (p[0]-c[0])*f, y, c[1] + (p[1]-c[1])*f])); }
+  loftP(o, secs, cap); return secs;
+}
+// plain neighbour block kept under a hull (real outline, app height): wall prism, window rows, parapet
+function plainB(B, P, h, wall, glass, roof){ prismP(B.p(wall), P, -5, h, true); if (h > 5) winsP(B.p(glass), P, 1.0, h - 0.8, 3.3, 2.6, 1.5, 1.8, 0.05); roofF(B, P, h, {r:roof, pc:wall, ph:0.8}); }
+
+
+// =====================================================================================================================
+// ★ Tokyo Midtown Hibiya (Hibiya Mitsui Tower, 2018; Hopkins Architects with Nikken Sekkei / Kajima): 192 m (Wikipedia list), 35 storeys
+// (OSM). OSM building:parts w734887844 (podium, 0-31 m) and w734887845 (tower, 32-191.5 m) on the outline w847361874. Hopkins: a stone base
+// with tactile detail scaled to the Hibiya buildings, glazed upper levels with "gentle glazed curves" ("Dancing Tower"), a sixth-floor
+// terraced garden facing Hibiya Park. Approximations: the tower's curvature is modelled as a slight widening at mid-height (never beyond
+// the OSM tower ring), fin spacing, glass and stone colours, and the roof screen.
+// =====================================================================================================================
+LANDMARKS.tymidhibiya = {zh:'东京中城日比谷', en:'Tokyo Midtown Hibiya', cat:'new', r:74, h:192,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tymidhibiya, POD = E.p0.r, TW = E.p1.r;
+    const ST = '#cfc2ab', ST2 = '#b3a58c', GLP = {c:'#5f7484', m:1, fh:5.0, cw:3.2}, GL = {c:'#9db3c3', m:1, fh:4.6, cw:1.6}, FIN = '#e8ebec', SP = '#bfcad1',
+      RF = '#8d908f', LAWN = '#71894f', DK = '#2f3940', CR = {c:'#dfe6ea', m:1, fh:30, cw:30};
+    footP(B, ST2, POD, -6);
+    // stone podium: piers over recessed glazing, six storeys of floor bands, the garden on its roof at 31 m
+    prismP(B.p(GLP), offP(POD, 0.85), 0.2, 31, true);
+    mullP(B.p(ST), POD, 0.2, 30.2, 3.3, 1.0, -0.85, null, 0.85);
+    bandsP(B.p(ST), POD, 0.2, 31, 5.1, 1.1, 0.03);
+    skinP(B.p(ST2), POD, 30.0, 31.2, 0.04);
+    flatP(B.p(LAWN), POD, 31.0);
+    skinP(B.p(FIN), POD, 31.2, 32.3, 0.0);
+    // garden trees on the terrace (west of the tower, facing Hibiya Park)
+    { const bb = bbP(POD), TWo = offP(TW, -3); let n = 0;
+      for (let x = bb[0] + 5; x < bb[2] - 4 && n < 34; x += 8.5) for (let z = bb[1] + 5; z < bb[3] - 4 && n < 34; z += 8.5){
+        if (!inPoly(POD, x, z) || inPoly(TWo, x, z) || dPoly(POD, x, z) < 3.5) continue; treeP(B, x, 31.0, z, 1.0 + ((x*7 + z*3) & 3)*0.08, '#5e7f3e'); n++; } }
+    // tower: the OSM tower ring resampled, lofted with a slight mid-height swell; glass, white vertical fins, spandrels per floor
+    const P = resP(TW, 72), c = cenA(TW), y0 = 32, yR = 185.5, yT = 191.5, sF = t => 0.955 + 0.045*Math.sin(PI*t), sY = y => sF(cl01((y - y0)/(yR - y0)));
+    prismP(B.p(DK), sclP(P, c, sF(0)*0.97), 31, y0 + 1.5, true);
+    const secs = loftS(B.p(GL), P, c, y0 + 1.5, yR, 22, t => sF(t));
+    { const o = B.p(FIN), n = P.length;
+      for (let i = 0; i < n; i++){ const S = [];
+        for (const sec of secs){ const p = sec[i], dx = p[0] - c[0], dz = p[2] - c[1], l = Math.hypot(dx, dz) || 1, nx = dx/l, nz = dz/l;
+          S.push([[p[0] + nx*0.03, p[1], p[2] + nz*0.03], [p[0] + nx*0.5, p[1], p[2] + nz*0.5]]); }
+        stripP(o, S); } }
+    { const o = B.p(SP);
+      for (let y = y0 + 1.5 + 4.6; y < yR - 1; y += 4.6){ const f = sY(y), Q = sclP(P, c, f), R2 = offP(Q, -0.08); skinP(o, R2, y - 0.6, y, 0); } }
+    // roof: plant level and a glass screen to the 191.5 m top
+    const PT = sclP(P, c, sF(1));
+    flatP(B.p(RF), PT, yR);
+    prismP(B.p(RF), offP(PT, 7), yR, yR + 4.5);
+    skinP(B.p(CR), PT, yR, yT, 0);
+    mullP(B.p(FIN), PT, yR, yT, 3.2, 0.3, 0.05);
+    // the small 11 m block at the north tip of the site (OSM w734887842, app height), kept under the hull
+    for (const nb of E.nb) plainB(B, nb.r, nb.h, ST, GLP, RF);
+    B.flush(g); return g; }};
+PLACE('tymidhibiya', 35.673613, 139.759177);
+
+// =====================================================================================================================
+// ★ Imperial Hotel Tokyo, main building (third main building, opened 10 March 1970; 17 storeys - Wikipedia, OSM building:levels=17) on its
+// OSM outline w145403144. The main building stays open while the 1983 Tower next door awaits demolition. Verified: storeys, outline.
+// Approximations (no plan or elevation source could be checked): a 4-storey base over the whole outline and the 17-storey guest-room mass
+// over the main body of the outline; top at 53.5 m (the app's height, = 17 levels); pale cream facade with a dense grid of small windows,
+// the glazed top-floor band, the porte-cochère canopy on the Hibiya-dōri side. No names on the model.
+// =====================================================================================================================
+LANDMARKS.tyimperial = {zh:'帝国饭店本馆', en:'Imperial Hotel Tokyo (main building)', cat:'new', r:84, h:56,
+  lt:{m:1, c:'#fff0d8', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyimperial.o, ob = obE(O, -155.9*PI/180);
+    const WL = '#e3dccb', WL2 = '#cfc6b1', BS = '#a89c86', GLW = {c:'#4e5a63', m:1, fh:3.15, cw:2.1}, GLB = {c:'#56636c', m:1, fh:4.2, cw:3}, RF = '#8f8d87', CAN = '#d9d4c8', LT = {c:'#7d8b92', m:1, fh:3.4, cw:1.2};
+    footP(B, BS, O, -6);
+    // base: four storeys over the whole outline (ground floor glazed, stone-coloured base)
+    prismP(B.p(BS), O, 0.2, 5.2, true);
+    winsP(B.p(GLB), O, 0.6, 4.6, 6, 4.2, 3.2, 3.6, 0.05);
+    prismP(B.p(WL2), O, 5.2, 17.0, true);
+    winsP(B.p(GLW), O, 6.2, 16.6, 3.9, 3.0, 1.6, 2.2, 0.05);
+    bandsP(B.p(WL), O, 5.2, 17.4, 3.9, 0.35, 0.05);
+    roofF(B, O, 17.0, {r:RF, pc:WL, ph:1.0});
+    // guest-room mass over the main body of the outline, 13 more storeys of small windows, a glazed top-floor band, roof plant
+    const T = ob.rect(-64.5, 44.0, -25.5, 38.3), W = ob.rect(52.0, 66.0, -30.0, 22.0);
+    for (const [P, top] of [[T, 50.0], [W, 30.0]]){
+      prismP(B.p(WL), P, 17.0, top, true);
+      winsP(B.p(GLW), P, 17.8, top - 0.6, 3.05, 2.35, 1.25, 1.9, 0.05);
+      bandsP(B.p(WL2), P, 17.0, top, 3.05, 0.22, 0.07);
+      mullP(B.p(WL2), P, 17.0, top, 9.4, 0.7, 0.05, null, 0.4); }
+    prismP(B.p(LT), offP(T, 0.6), 50.0, 52.4, true);
+    mullP(B.p(WL), T, 50.0, 52.4, 2.4, 0.25, -0.55);
+    roofF(B, T, 52.4, {r:RF, pc:WL, ph:1.1, pl:9, plc:WL2, plh:2.6, lv:'#9a9890'});
+    roofF(B, W, 30.0, {r:RF, pc:WL, ph:1.0});
+    // porte-cochère canopy on the Hibiya-dori (west-north-west) end
+    { const q = ob.p(70.5, 4); boxP(B.p(CAN), 7, 0.7, 26, q[0], 5.0, q[1], ob.ry); for (const v of [-10, 0, 10]){ const r = ob.p(72.5, 4 + v); boxP(B.p(WL2), 0.6, 5.0, 0.6, r[0], 0.2, r[1], 0); } }
+    B.flush(g); return g; }};
+PLACE('tyimperial', 35.672326, 139.758321);
+
+// =====================================================================================================================
+// ★ Shizuoka Press and Broadcasting Center (Kenzō Tange, 1967): 57 m, 12 storeys, a central core column 7.7 m in diameter with 13 office
+// units attached asymmetrically; the space between the clusters was left for growth that never came (Wikipedia). OSM w149380577 (147 m2;
+// the site is triangular, 189 m2). Verified: height, storeys, core diameter, cantilevered units. Approximations: the floors and sides each
+// unit sits on, their size (kept inside the OSM outline), the claddings' colours (grey core, aluminium units with ribbon windows).
+// =====================================================================================================================
+LANDMARKS.tyshizuoka = {zh:'静冈新闻静冈放送大楼', en:'Shizuoka Press and Broadcasting Center', cat:'new', r:15, h:57,
+  lt:{m:1, c:'#ffe6c4', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyshizuoka.o, ob = obE(O), C = [0.6, -0.3];
+    const CORE = '#5d5f5e', CR2 = '#4c4e4e', AL = '#b7b9b6', AL2 = '#9a9d9b', GLB = {c:'#2f3b44', m:1, fh:3.6, cw:1.5}, GLG = {c:'#43515a', m:1, fh:4, cw:2};
+    // the core column, from the foundations to the roof, with a slightly wider cap
+    const ring = (r, n) => { const R = []; for (let i = 0; i < n; i++){ const a = i/n*TAU; R.push([C[0] + Math.cos(a)*r, C[1] + Math.sin(a)*r]); } return R; };
+    prismP(B.p(CORE), ring(3.85, 28), -5, 57.0, false);
+    bandsP(B.p(CR2), ring(3.85, 28), -5, 57, 3.6, 0.18, 0.03);
+    prismP(B.p(CR2), ring(4.05, 28), 55.6, 57.0, false);
+    // ground floor: glazed lobby wrapped round the core
+    const IN = offP(O, 1.2); prismP(B.p(GLG), clipC(ob.rect(-5, 6, -4.8, 4.8), IN), 0, 4.2, false);
+    // the office units: two-storey boxes cantilevered from the core on alternating sides (13 units), clipped to the OSM outline
+    const U = [ // [u0, u1, v0, v1, floor of the box bottom, storeys]
+      [ 1.5, 8.8, -5.6, 2.4, 2, 2], [-8.8, -2.0, -2.5, 5.6, 3, 2],
+      [ 0.5, 8.8, -1.0, 5.6, 5, 2], [-8.8, -1.5, -5.6, 1.2, 6, 1],
+      [ 1.5, 8.8, -5.6, 2.4, 7, 2], [-8.8, -2.0, -2.5, 5.6, 8, 2],
+      [ 0.5, 8.8, -1.0, 5.6, 10, 1], [-8.8, -1.5, -5.6, 1.2, 10, 2],
+      [ 1.5, 8.8, -5.6, 2.4, 11, 1]];
+    const FL = f => 4.2 + (f - 2)*3.75;
+    for (const [u0, u1, v0, v1, f, n] of U){
+      const P = clipC(ob.rect(u0, u1, v0, v1), O); if (P.length < 3) continue;
+      const y0 = FL(f), y1 = y0 + n*3.75 - 0.2;
+      prismP(B.p(AL), P, y0, y1, false, true);
+      floorsP(B.p(GLB), P, y0 + 1.1, y1 - 0.5, 3.75, 1.5, 0.05);
+      bandsP(B.p(AL2), P, y0 - 3.75 + 0.6, y1, 3.75, 0.25, 0.06);
+      skinP(B.p(AL2), P, y1 - 0.5, y1 + 0.3, 0.05); }
+    // roof cap on the core: plant room drum
+    prismP(B.p(AL2), ring(2.6, 20), 57.0, 59.0, false);
+    B.flush(g); return g; }};
+PLACE('tyshizuoka', 35.668717, 139.758908);
+
+// =====================================================================================================================
+// ★ St. Luke's Tower (St. Luke's Garden, Akashichō, 1994): 220.6 m to the tip (CTBUH), 47 storeys (OSM; CTBUH lists 51), on OSM w119563859
+// (square plan with two chamfered and two notched corners). Its 146 m / 38-storey twin (St. Luke's Residences) is not in this group, so the
+// sky bridge between them is left out. Approximations: light warm-grey precast piers and vertical window strips, the stepped top floors,
+// the pyramidal crown and needle (the overall 220.6 m is kept), the 4-storey base.
+// =====================================================================================================================
+LANDMARKS.tystluke = {zh:'圣路加塔', en:"St. Luke's Tower", cat:'new', r:100, h:221,
+  lt:{m:1, c:'#e6eeff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tystluke.o, c = cenA(O);
+    const PC = '#d8d3c7', PC2 = '#c4bead', GL = {c:'#5b7182', m:1, fh:4.0, cw:1.5}, GLB = {c:'#4c5b66', m:1, fh:4.5, cw:3}, RF = '#a29e95', CRN = '#bdc3c6', SPI = '#d9dcdc';
+    footP(B, PC2, O, -7);
+    // base (4 storeys, recessed glazing behind piers)
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 17.5, true);
+    mullP(B.p(PC2), O, 0.2, 17.5, 4.5, 1.1, -1.0, null, 1.0);
+    skinP(B.p(PC2), O, 17.0, 18.0, 0.03);
+    // shaft: glazing behind precast piers every 1.8 m, floor bands every 4 m
+    const y1 = 186;
+    prismP(B.p(GL), offP(O, 0.25), 18, y1, true);
+    mullP(B.p(PC), O, 18, y1, 1.8, 0.7, -0.25, null, 0.25);
+    bandsP(B.p(PC), O, 18, y1, 4.0, 0.9, 0.03);
+    // corner piers run the full height (vertical emphasis)
+    for (let i = 0; i < O.length; i++){ const p = O[i]; boxP(B.p(PC2), 1.6, y1 - 18, 1.6, p[0], 18, p[1], 0); }
+    // stepped top floors and the crown
+    const S1 = sclP(O, c, 0.86), S2 = sclP(O, c, 0.7);
+    prismP(B.p(GL), offP(S1, 0.25), y1, 194, true); mullP(B.p(PC), S1, y1, 194, 1.8, 0.7, -0.25, null, 0.25);
+    roofF(B, O, y1, {r:RF, pc:PC, ph:1.4});
+    prismP(B.p(PC), S2, 194, 199, true); roofF(B, S1, 194, {r:RF, pc:PC, ph:1.2});
+    { const P = resP(S2, 40), top = [c[0], 211, c[1]]; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; triP(B.p(CRN), [a[0], 199, a[1]], [b[0], 199, b[1]], top); } }
+    segP(B.p(SPI), [c[0], 209, c[1]], [c[0], 220.6, c[1]], 0.45, 6);
+    // the St. Luke's Garden low-rise wing round the tower's foot (OSM r20439997, w309526541, w119563864; the app's estimated heights 18 / 27.5 / 17 m), kept under the hull
+    for (const nb of D.tystluke.nb){ prismP(B.p(PC2), nb.r, -7, nb.h, true); floorsP(B.p(GLB), nb.r, 1.0, nb.h - 0.8, 4.4, 2.0, 0.05); roofF(B, nb.r, nb.h, {r:RF, pc:PC, ph:1.0}); }
+    B.flush(g); return g; }};
+PLACE('tystluke', 35.666989, 139.77864);
+
+
+// =====================================================================================================================
+// Imperial Hotel Tower (1983): 129.2 m, 31 storeys (CTBUH; four floors of shops, 14 of offices, 12 of hotel rooms - Wikipedia). Closed since
+// 2024; its demolition was postponed by six years (Impress Watch headline, 31 March 2026), so it still stands. On OSM w145403151 (the
+// stepped plan). Approximations: warm brown-grey cladding with ribbon windows, the glazed 4-storey shop base, the roof plant.
+// =====================================================================================================================
+LANDMARKS.tyimperialtower = {zh:'帝国饭店塔楼', en:'Imperial Hotel Tower', cat:'new', r:62, h:130,
+  lt:{m:1, c:'#fff0d8', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyimperialtower.o;
+    const WL = '#8f8377', WL2 = '#7b7065', GL = {c:'#3d4a53', m:1, fh:3.95, cw:2.2}, GLB = {c:'#55636c', m:1, fh:4.6, cw:3}, RF = '#7c7a74';
+    footP(B, WL2, O, -6);
+    prismP(B.p(GLB), offP(O, 0.8), 0.2, 18.6, true); mullP(B.p(WL2), O, 0.2, 18.6, 6.0, 0.9, -0.8, null, 0.8); bandsP(B.p(WL2), O, 0.2, 18.6, 4.6, 0.6, 0.03);
+    prismP(B.p(WL), O, 18.6, 125.4, true);
+    floorsP(B.p(GL), O, 19.6, 125.0, 3.95, 1.75, 0.05);
+    mullP(B.p(WL2), O, 18.6, 125.4, 4.2, 0.35, 0.08);
+    roofF(B, O, 125.4, {r:RF, pc:WL2, ph:1.4, pl:8, plc:WL2, plh:3.8, lv:'#6c655e'});
+    B.flush(g); return g; }};
+PLACE('tyimperialtower', 35.671782, 139.759386);
+
+// =====================================================================================================================
+// Nissay Theatre / Nippon Life Hibiya Building (Murano Tōgo, 1963): façade of Mannari granite, bush-hammered (BELCA citation). OSM
+// w145402348, building:levels=8. Approximations: height (8 storeys, 31 m), the pinkish-grey stone colour, the deep window grid, the
+// recessed ground-floor colonnade.
+// =====================================================================================================================
+LANDMARKS.tynissay = {zh:'日生剧场 / 日本生命日比谷大楼', en:'Nissay Theatre (Nippon Life Hibiya Building)', cat:'old', r:50, h:33,
+  lt:{m:0, c:'#ffe2b8', k:0.7, e:0.3},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tynissay.o;
+    const GR = '#b39b8d', GR2 = '#9f877a', DW = {c:'#3a3734', glow:'#ffd9a8', gk:0.35}, GLB = {c:'#4c4842', glow:'#ffd9a8', gk:0.5}, RF = '#827c76';
+    footP(B, GR2, O, -6);
+    prismP(B.p(GLB), offP(O, 2.4), 0.2, 4.6, true);
+    mullP(B.p(GR2), offP(O, 0.6), 0.2, 4.6, 5.8, 1.1, 0, null, 1.1);
+    prismP(B.p(GR), O, 4.6, 31.0, true);
+    winsP(B.p(DW), O, 6.0, 30.4, 3.55, 2.15, 1.25, 1.75, 0.04);
+    skinP(B.p(GR2), O, 4.4, 5.0, 0.05);
+    roofF(B, O, 31.0, {r:RF, pc:GR2, ph:0.9, pl:14, plc:GR2, plh:2.5});
+    B.flush(g); return g; }};
+PLACE('tynissay', 35.67317, 139.758468);
+
+// =====================================================================================================================
+// Tokyo Takarazuka Building (theatre and offices, Takenaka, 2000): 118 m, 19 storeys (Structurae). OSM w145402338. Approximations: a theatre
+// podium over the whole outline (≈ 30 m) and the office tower set back 3 m above it, cladding colours, the roof screen. No names.
+// =====================================================================================================================
+LANDMARKS.tytakarazuka = {zh:'东京宝塚剧场', en:'Tokyo Takarazuka Theater', cat:'new', r:44, h:118,
+  lt:{m:1, c:'#fff0dc', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytakarazuka.o, T = offP(O, 3);
+    const ST = '#d7cdbb', ST2 = '#bfb39d', GL = {c:'#6f8696', m:1, fh:4.1, cw:1.8}, GLB = {c:'#4d5a63', m:1, fh:5, cw:3}, FR = '#d5d8d8', RF = '#8a8a86';
+    footP(B, ST2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 6.5, true); mullP(B.p(ST2), O, 0.2, 6.5, 4.8, 0.9, -1.0, null, 1.0);
+    prismP(B.p(ST), O, 6.5, 30.0, true); winsP(B.p(GLB), O, 9.0, 29.0, 6.5, 6.0, 3.6, 3.6, 0.05); bandsP(B.p(ST2), O, 6.5, 30, 6.5, 0.4, 0.04);
+    roofF(B, O, 30.0, {r:RF, pc:ST2, ph:1.1});
+    shaftCW(B, T, 30.0, 113.0, {g:GL, f:FR, ms:1.8, mw:0.25, fh:4.1, sb:0.9});
+    roofF(B, T, 113.0, {r:RF, pc:FR, ph:5.0, pl:6, plc:ST2, plh:3.6});
+    B.flush(g); return g; }};
+PLACE('tytakarazuka', 35.672964, 139.759099);
+
+// =====================================================================================================================
+// Matsuya Ginza (department store on Chūō-dōri, 1925, recased): OSM w103509470, building:levels=8. Approximations: height (8 storeys,
+// 35 m), the white screen façade as a fine white grid over glass that glows white at night, the roof plant. No names or logos.
+// =====================================================================================================================
+LANDMARKS.tymatsuya = {zh:'松屋银座', en:'Matsuya Ginza', cat:'new', r:66, h:39,
+  lt:{m:1, c:'#ffffff', k:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tymatsuya.o;
+    const SC = {c:'#eef0ee', glow:'#f6f3ea', gk:0.42}, GR = '#d9dcdb', GLB = {c:'#3f4a50', m:1, fh:4.3, cw:3}, RF = '#8f908c', WL = '#cfd1cf';
+    footP(B, WL, O, -6);
+    prismP(B.p(GLB), offP(O, 1.2), 0.2, 5.0, true); mullP(B.p(WL), O, 0.2, 5.0, 7.5, 0.8, -1.2, null, 1.2);
+    prismP(B.p(SC), O, 5.0, 35.0, true);
+    mullP(B.p(GR), O, 5.0, 35.0, 1.5, 0.12, 0.1);
+    bandsP(B.p(GR), O, 5.0, 35.0, 1.5, 0.1, 0.12);
+    skinP(B.p(WL), O, 34.4, 35.6, 0.15);
+    roofF(B, O, 35.0, {r:RF, pc:WL, ph:1.1, pl:12, plc:WL, plh:3.8, lv:'#a9aaa6'});
+    B.flush(g); return g; }};
+PLACE('tymatsuya', 35.672282, 139.766668);
+
+// =====================================================================================================================
+// Ginza Six (Yoshio Taniguchi, 2017) on Chūō-dōri: OSM w488225309, height=66, building:levels=13 (OSM / PLATEAU, not verified). Approximations:
+// the stacked eaves (hisashi) and vertical fins of the shopping floors, the office floors above set back 2 m, the roof garden and trees.
+// =====================================================================================================================
+LANDMARKS.tyginzasix = {zh:'银座六', en:'Ginza Six', cat:'new', r:76, h:66,
+  lt:{m:1, c:'#fff2dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyginzasix.o, T = offP(O, 2.0);
+    const GLS = {c:'#55626a', m:1, fh:5.6, cw:2.4}, GL = {c:'#7f93a1', m:1, fh:4.2, cw:1.6}, EV = '#e7e3d8', FN = '#cfc7b5', FR = '#d7dad9', RF = '#8d8d88', LAWN = '#6f8b4c';
+    footP(B, FN, O, -6);
+    prismP(B.p(GLS), offP(O, 0.6), 0.2, 34.0, true);
+    mullP(B.p(FN), O, 0.2, 33.0, 1.6, 0.18, -0.6, null, 0.6);
+    for (const y of [5.6, 11.2, 16.8, 22.4, 28.0, 33.6]){ const Q = offP(O, -1.6); prismP(B.p(EV), Q, y - 0.45, y, false, true); }
+    shaftCW(B, T, 34.0, 61.5, {g:GL, f:FR, ms:1.6, mw:0.2, fh:4.2, sb:0.8});
+    flatP(B.p(LAWN), T, 61.5); skinP(B.p(FR), T, 61.5, 62.7, 0);
+    { const bb = bbP(T); let n = 0; for (let x = bb[0] + 8; x < bb[2] - 6 && n < 30; x += 12) for (let z = bb[1] + 8; z < bb[3] - 6 && n < 30; z += 12){ if (!inPoly(T, x, z) || dPoly(T, x, z) < 5) continue; treeP(B, x, 61.5, z, 1.0, '#5f8040'); n++; } }
+    prismP(B.p(RF), offP(T, 30), 61.5, 66.0);
+    B.flush(g); return g; }};
+PLACE('tyginzasix', 35.669562, 139.764053);
+
+// =====================================================================================================================
+// Tokyu Plaza Ginza (2016) at Sukiyabashi: OSM w149167543, height=66, building:levels=11 (OSM / PLATEAU, not verified). Approximations: the
+// faceted "kiriko" glass of the street fronts as a diamond lattice over the glass up to 45 m, the upper floors and the roof terrace.
+// No names.
+// =====================================================================================================================
+LANDMARKS.tyginzaplaza = {zh:'东急广场银座', en:'Tokyu Plaza Ginza', cat:'new', r:61, h:66,
+  lt:{m:1, c:'#e8f2ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyginzaplaza.o;
+    const GL = {c:'#8aa3b3', m:1, fh:5.0, cw:1.6}, GLU = {c:'#6c818f', m:1, fh:4.4, cw:2}, LAT = '#dfe5e8', FR = '#cdd2d4', RF = '#8b8c88', LAWN = '#6e8a4b';
+    footP(B, FR, O, -6);
+    prismP(B.p(GL), O, 0.2, 45.0, true);
+    // diamond lattice on every long edge
+    { const o = B.p(LAT); for (let i = 0; i < O.length; i++){ const a = O[i], b = O[(i + 1) % O.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < 20) continue;
+        const [nx, nz] = outN(O, i), ux = ex/L, uz = ez/L, sp = 5.0, hgt = 45, P3 = (t, y) => [a[0] + ux*t + nx*0.15, y, a[1] + uz*t + nz*0.15];
+        for (const dir of [1, -1]) for (let t0 = dir > 0 ? -hgt : 0; t0 <= (dir > 0 ? L : L + hgt); t0 += sp){
+          const ya = Math.max(0.5, dir > 0 ? 0.5 - t0 : 0.5 + t0 - L), yb = Math.min(hgt + 0.5, dir > 0 ? 0.5 + L - t0 : 0.5 + t0);
+          if (yb - ya > 1) segP(o, P3(t0 + dir*(ya - 0.5), ya), P3(t0 + dir*(yb - 0.5), yb), 0.2, 3); } } }
+    skinP(B.p(FR), O, 44.4, 45.6, 0.1);
+    shaftCW(B, offP(O, 1.5), 45.0, 63.0, {g:GLU, f:FR, ms:2.4, mw:0.25, fh:4.4, sb:0.7});
+    flatP(B.p(LAWN), offP(O, 1.5), 63.0); skinP(B.p(FR), offP(O, 1.5), 63.0, 64.2, 0);
+    prismP(B.p(RF), offP(O, 12), 63.0, 66.0);
+    B.flush(g); return g; }};
+PLACE('tyginzaplaza', 35.672183, 139.762459);
+
+// =====================================================================================================================
+// Yurakucho Marion (Yūrakuchō Center Building, Takenaka, 1984) at Sukiyabashi: OSM w39169051 (the curved north-west front). Approximations:
+// height (14 storeys, 57 m - not verified), the curved glass front, the two stone-coloured blocks with ribbon windows, the roof plant.
+// The big clock is left out (its exact place not verified). No names.
+// =====================================================================================================================
+LANDMARKS.tymarion = {zh:'有乐町Marion', en:'Yurakucho Marion', cat:'new', r:58, h:57,
+  lt:{m:1, c:'#fff2dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tymarion.o;
+    const WL = '#d2c9b9', WL2 = '#bdb3a2', GL = {c:'#405058', m:1, fh:3.9, cw:2.2}, GLC = {c:'#7d93a2', m:1, fh:3.9, cw:1.5}, FR = '#d9dcdc', RF = '#8a8985';
+    footP(B, WL2, O, -6);
+    const curved = i => i < 12;                          // the curved front (vertices 0..12)
+    prismP(B.p(WL), O, 0.2, 54.0, true);
+    for (let i = 0; i < O.length; i++){ const a = O[i], b = O[(i + 1) % O.length];
+      if (curved(i)){ const [nx, nz] = outN(O, i); quadP(B.p(GLC), [a[0]+nx*0.1, 0.4, a[1]+nz*0.1], [b[0]+nx*0.1, 0.4, b[1]+nz*0.1], [b[0]+nx*0.1, 53.6, b[1]+nz*0.1], [a[0]+nx*0.1, 53.6, a[1]+nz*0.1]); } }
+    mullP(B.p(FR), O, 0.4, 53.6, 1.6, 0.18, 0.14, curved);
+    bandsP(B.p(FR), O, 0.2, 54, 3.9, 0.35, 0.16, curved);
+    floorsP(B.p(GL), O, 1.0, 53.0, 3.9, 1.6, 0.06);
+    roofF(B, O, 54.0, {r:RF, pc:WL2, ph:1.2, pl:10, plc:WL2, plh:3.0});
+    B.flush(g); return g; }};
+PLACE('tymarion', 35.673585, 139.762734);
+
+// =====================================================================================================================
+// Ginza Mitsukoshi (department store at the Ginza 4-chōme crossing): OSM w117923435, building:levels=8. Approximations: height (8 storeys,
+// 37 m), the light stone-coloured walls with window rows, the roof garden. No names or logos.
+// =====================================================================================================================
+LANDMARKS.tyginzamitsukoshi = {zh:'银座三越', en:'Ginza Mitsukoshi', cat:'new', r:67, h:40,
+  lt:{m:1, c:'#fff0d8', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyginzamitsukoshi.o;
+    const WL = '#ddd4c3', WL2 = '#c6bca9', GL = {c:'#4a565e', m:1, fh:4.4, cw:2.4}, FR = '#e0e2e1', RF = '#8b8a86', LAWN = '#6f8a4c';
+    footP(B, WL2, O, -6);
+    prismP(B.p(GL), offP(O, 1.0), 0.2, 5.2, true); mullP(B.p(WL2), O, 0.2, 5.2, 7.0, 0.9, -1.0, null, 1.0);
+    prismP(B.p(WL), O, 5.2, 36.5, true);
+    winsP(B.p(GL), O, 6.6, 36.0, 4.4, 4.0, 2.4, 2.6, 0.05);
+    skinP(B.p(WL2), O, 36.0, 37.2, 0.05);
+    flatP(B.p(LAWN), O, 36.5);
+    { const bb = bbP(O); let n = 0; for (let x = bb[0] + 8; x < bb[2] - 6 && n < 16; x += 13) for (let z = bb[1] + 8; z < bb[3] - 6 && n < 16; z += 13){ if (!inPoly(O, x, z) || dPoly(O, x, z) < 6) continue; treeP(B, x, 36.5, z, 0.9, '#5f8040'); n++; } }
+    prismP(B.p(RF), offP(O, 18), 36.5, 40.0);
+    // the three small shop buildings in the notch of the outline (OSM w723855286 / 87 / 88, app heights), kept under the hull
+    for (const nb of D.tyginzamitsukoshi.nb) plainB(B, nb.r, nb.h, '#c9c3b8', GL, RF);
+    B.flush(g); return g; }};
+PLACE('tyginzamitsukoshi', 35.671202, 139.765899);
+
+// =====================================================================================================================
+// The Peninsula Tokyo (2007) at the Hibiya crossing: 111.3 m, 24 storeys (CTBUH). OSM w145394376. Approximations: the warm stone base and
+// stone-coloured piers, the bronze-toned glass, the glazed lantern-like top lit warm at night. No names.
+// =====================================================================================================================
+LANDMARKS.typeninsula = {zh:'东京半岛酒店', en:'The Peninsula Tokyo', cat:'new', r:42, h:111,
+  lt:{m:1, c:'#ffe0b0', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.typeninsula.o, T = offP(O, 1.5);
+    const ST = '#c9b89c', ST2 = '#b09e82', GL = {c:'#5d5a52', m:1, fh:4.0, cw:1.8}, GLB = {c:'#4f4b44', m:1, fh:5, cw:3}, LAN = {c:'#e6d7b8', glow:'#ffcf8a', gk:0.75}, RF = '#85827b', FR = '#a8957a';
+    footP(B, ST2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 12.0, true); mullP(B.p(ST), O, 0.2, 12.0, 4.0, 1.0, -1.0, null, 1.0); skinP(B.p(ST2), O, 11.4, 12.6, 0.05);
+    prismP(B.p(GL), offP(T, 0.3), 12.0, 100.0, true);
+    mullP(B.p(ST), T, 12.0, 100.0, 2.0, 0.7, -0.3, null, 0.3);
+    bandsP(B.p(FR), T, 12.0, 100.0, 4.0, 0.5, 0.02);
+    roofF(B, T, 100.0, {r:RF, pc:ST, ph:0.9});
+    const L = offP(T, 4); prismP(B.p(LAN), L, 100.0, 109.0, true); mullP(B.p(FR), L, 100.0, 109.0, 2.4, 0.3, 0.05);
+    roofF(B, L, 109.0, {r:RF, pc:FR, ph:2.3});
+    B.flush(g); return g; }};
+PLACE('typeninsula', 35.674682, 139.760641);
+
+// =====================================================================================================================
+// Old Shimbashi Station (reconstruction, 2003, of the 1872 terminus): the app draws it as
+// four building:part pieces (w151481803, inside OSM r7826097). Approximations: two storeys of pale stone with tall windows (10 m to the
+// eaves), hipped slate roofs over the main block, the wing at the same eaves height with a flat roof behind a parapet, the platform with a
+// canopy. The parts' 25 / 23.5 / 14.5 m heights in the data are not used (the reconstruction is a two-storey house).
+// =====================================================================================================================
+LANDMARKS.tyoldshimbashi = {zh:'旧新桥停车场', en:'Old Shimbashi Station', cat:'old', r:30, h:14,
+  lt:{m:0, c:'#ffe2b8', k:0.85, anim:'breathe'},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyoldshimbashi;
+    const STN = '#d6cdb8', ST2 = '#bfb49b', SL = '#4f5559', GLW = {c:'#3d4448', glow:'#ffd9a0', gk:0.45}, PL = '#a9a397', CAN = '#6e6a63';
+    footP(B, ST2, E.o, -6);
+    for (const [P, top] of [[E.p0.r, 10.0], [E.p2.r, 10.0], [E.p3.r, 4.0]]){
+      prismP(B.p(STN), P, 0.2, top, true);
+      if (top > 5){ winsP(B.p(GLW), P, 1.0, top - 0.8, 4.6, 2.6, 1.3, 3.0, 0.05); bandsP(B.p(ST2), P, 0.2, top, 4.6, 0.35, 0.05); skinP(B.p(ST2), P, top - 0.6, top + 0.2, 0.15); }
+      prismP(B.p(ST2), offP(P, -0.25), 0.0, 0.9, false); }
+    // hipped slate roofs: main block and the wing's flat roof
+    { const ob = obE(E.p0.r); hipO(B.p(SL), ob, -ob.L/2 - 0.5, ob.L/2 + 0.5, -ob.W/2 - 0.5, ob.W/2 + 0.5, 10.2, 3.8); }
+    roofF(B, E.p2.r, 10.0, {r:'#8a8679', pc:ST2, ph:0.9});
+    { const ob = obE(E.p2.r); const q = ob.p(0, 0); boxP(B.p(SL), Math.min(ob.L, 18), 2.6, Math.min(ob.W, 8), q[0], 10.0, q[1], ob.ry); }
+    // platform (stone edge) with a canopy on posts
+    { const P = E.p1.r, ob = obE(P); prismP(B.p(PL), P, 0.0, 1.0, false);
+      for (let u = -ob.L/2 + 1.5; u <= ob.L/2 - 1.4; u += 4.4){ const q = ob.p(u, 0); boxP(B.p(CAN), 0.3, 3.8, 0.3, q[0], 1.0, q[1], 0); }
+      boxO(B.p(CAN), ob, -ob.L/2 + 0.3, ob.L/2 - 0.3, -ob.W/2 + 1.2, ob.W/2 - 1.2, 4.8, 5.1); }
+    B.flush(g); return g; }};
+PLACE('tyoldshimbashi', 35.665933, 139.761448);
+
+
+// =====================================================================================================================
+// Shiodome Media Tower (2003; news agency offices and a hotel above): 172.6 m, 34 storeys (Wikipedia list). OSM w151481857 (the app draws
+// only 112 m). Approximations: blue-grey glass with fine mullions and floor bands, the glazed lobby, the roof screen. No names.
+// =====================================================================================================================
+LANDMARKS.tymediatower = {zh:'汐留Media塔', en:'Shiodome Media Tower', cat:'new', r:45, h:173,
+  lt:{m:1, c:'#e2ecff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tymediatower.o;
+    const GL = {c:'#7e97a8', m:1, fh:4.3, cw:1.6}, GLB = {c:'#4f6370', m:1, fh:6, cw:3}, FR = '#d8dde0', FR2 = '#b9c2c7', RF = '#878a89';
+    footP(B, FR2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 12.0, true); mullP(B.p(FR2), O, 0.2, 12.0, 4.5, 0.7, -1.0, null, 1.0);
+    shaftCW(B, O, 12.0, 166.0, {g:GL, f:FR, ms:1.6, mw:0.22, fh:4.3, sb:0.75, sp:FR2});
+    roofF(B, O, 166.0, {r:RF, pc:FR, ph:6.6, pl:7, plc:FR2, plh:4.0});
+    B.flush(g); return g; }};
+PLACE('tymediatower', 35.663205, 139.759553);
+
+// =====================================================================================================================
+// Tokyo Shiodome Building (2005; offices below a hotel on the top floors): 173.2 m, 37 storeys (Wikipedia list). ⚠ anchor resolved: the OSM
+// outline w151481753 is the building itself (named, wikidata Q7883397, the hotel POI at its centre); only its height is under-reported in
+// the app data (91 m drawn), so the model stands on that outline at the verified 173.2 m. Approximations: vertical white fins on blue glass,
+// the 3-storey glazed base, the slightly different glass of the hotel floors, the roof screen.
+// =====================================================================================================================
+LANDMARKS.tyshiodomebldg = {zh:'东京汐留大厦', en:'Tokyo Shiodome Building', cat:'new', r:74, h:173,
+  lt:{m:1, c:'#e2ecff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyshiodomebldg.o;
+    const GL = {c:'#86a0b2', m:1, fh:4.2, cw:1.5}, GLH = {c:'#6f8797', m:1, fh:3.7, cw:1.5}, GLB = {c:'#4f6370', m:1, fh:5, cw:3}, FR = '#e3e7e9', FR2 = '#bcc5ca', RF = '#878a89';
+    footP(B, FR2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.2), 0.2, 14.0, true); mullP(B.p(FR2), O, 0.2, 14.0, 6.0, 0.9, -1.2, null, 1.2);
+    shaftCW(B, O, 14.0, 128.0, {g:GL, f:FR, ms:1.5, mw:0.25, dep:0.45, fh:4.2, sb:0.5, sp:FR2});
+    skinP(B.p(FR2), O, 128.0, 129.4, 0.1);
+    shaftCW(B, O, 129.4, 167.0, {g:GLH, f:FR, ms:1.5, mw:0.25, dep:0.45, fh:3.7, sb:0.4, sp:FR2});
+    roofF(B, O, 167.0, {r:RF, pc:FR, ph:6.2, pl:6, plc:FR2, plh:4.0});
+    B.flush(g); return g; }};
+PLACE('tyshiodomebldg', 35.662989, 139.761227);
+
+// =====================================================================================================================
+// Shiodome Sumitomo Building (2004; offices and a hotel with a tall atrium): 126.4 m, 25 storeys (CTBUH). OSM w151481808.
+// Approximations: grey-blue glass with horizontal spandrels, the glazed atrium strip across the middle of the slab, the roof plant.
+// =====================================================================================================================
+LANDMARKS.tyshiodomesumi = {zh:'汐留住友大厦', en:'Shiodome Sumitomo Building', cat:'new', r:64, h:127,
+  lt:{m:1, c:'#e2ecff', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyshiodomesumi.o, ob = obE(O);
+    const GL = {c:'#71899a', m:1, fh:4.6, cw:1.8}, GLA = {c:'#9cb3c2', m:1, fh:9, cw:2}, FR = '#c9d0d4', FR2 = '#aab3b8', RF = '#86898a';
+    footP(B, FR2, O, -6);
+    shaftCW(B, O, 0.2, 121.5, {g:GL, f:FR, ms:3.2, mw:0.3, fh:4.6, sb:1.2, sp:FR2});
+    for (const s of [-1, 1]){ const a = ob.p(-4, s*(ob.W/2 + 0.12)), b = ob.p(4, s*(ob.W/2 + 0.12)); quadP(B.p(GLA), [a[0], 18, a[1]], [b[0], 18, b[1]], [b[0], 121, b[1]], [a[0], 121, a[1]]); }
+    roofF(B, O, 121.5, {r:RF, pc:FR, ph:4.9, pl:6, plc:FR2, plh:3.5});
+    B.flush(g); return g; }};
+PLACE('tyshiodomesumi', 35.662159, 139.760106);
+
+// =====================================================================================================================
+// Acty Shiodome (2004, residential): 190.25 m, 56 storeys (Wikipedia list). Massing from the six OSM building:parts of w151480064: the
+// 10.8 m base, the 36.4 m podium, the shaft to 170.8 m with notched corners, the 183.6 m top and the two 190 m roof pieces.
+// Approximations: white slab edges and dark glass railings per floor, colours.
+// =====================================================================================================================
+LANDMARKS.tyacty = {zh:'Acty汐留', en:'Acty Shiodome', cat:'new', r:41, h:190,
+  lt:{m:1, c:'#fff0dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyacty;
+    const WL = '#c9ccc9', SL = '#eeefec', RL = {c:'#46525a', m:1, fh:3.05, cw:2.4}, GLB = {c:'#4c5a63', m:1, fh:5.4, cw:3}, RF = '#8a8b88', FR = '#b5b8b5';
+    footP(B, FR, E.p1.r, -7);
+    prismP(B.p(GLB), offP(E.p1.r, 0.8), 0.2, 10.8, true); mullP(B.p(FR), E.p1.r, 0.2, 10.8, 5.0, 0.8, -0.8, null, 0.8);
+    roofF(B, E.p1.r, 10.8, {r:RF, pc:FR, ph:1.0});
+    shaftRes(B, E.p0.r, 10.8, 36.4, {w:WL, s:SL, r:RL, fh:3.2, d:0.9});
+    roofF(B, E.p0.r, 36.4, {r:RF, pc:SL, ph:1.1});
+    shaftRes(B, E.p2.r, 36.4, 170.8, {w:WL, s:SL, r:RL, fh:3.05, d:1.0, ms:6.5});
+    roofF(B, E.p2.r, 170.8, {r:RF, pc:SL, ph:1.2});
+    prismP(B.p(FR), E.p3.r, 170.8, 183.6, true); bandsP(B.p(SL), E.p3.r, 170.8, 183.6, 3.2, 0.4, 0.05); roofF(B, E.p3.r, 183.6, {r:RF, pc:SL, ph:1.0});
+    for (const k of ['p4', 'p5']){ prismP(B.p(WL), E[k].r, 183.6, 190.0, true); bandsP(B.p(SL), E[k].r, 183.6, 190.0, 1.6, 0.3, 0.05); }
+    B.flush(g); return g; }};
+PLACE('tyacty', 35.65814, 139.758843);
+
+// =====================================================================================================================
+// Tokyo PortCity Takeshiba Office Tower (2020): 209 m, 39 storeys (Wikipedia list; OSM height 208.83). Massing from the seven OSM
+// building:parts of w436096964: the tower (0-208 m) and the terraces stepping down from 22.5 / 19.4 m to 7 m along its north-east side.
+// Approximations: planted terrace edges and trees, glass with white vertical fins, the roof screen. No names.
+// =====================================================================================================================
+LANDMARKS.typortcity = {zh:'东京PortCity竹芝办公塔', en:'Tokyo PortCity Takeshiba Office Tower', cat:'new', r:96, h:209,
+  lt:{m:1, c:'#e2ecff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.typortcity, T = E.p6.r;
+    const GL = {c:'#88a2b3', m:1, fh:4.4, cw:1.6}, GLT = {c:'#5d7180', m:1, fh:3.5, cw:2}, FR = '#e4e8ea', FR2 = '#b8c1c6', RF = '#878a89', LAWN = '#6b8a49', PLT = '#cfcac0';
+    footP(B, FR2, E.o, -10);
+    // terraces, from the lowest (widest) up: glazed edges, planted roofs, trees
+    let n = 0;
+    for (const k of ['p4', 'p3', 'p2', 'p1', 'p0', 'p5']){ const P = E[k].r, top = E[k].t;
+      prismP(B.p(GLT), offP(P, 0.6), 0.2, top - 0.9, true); skinP(B.p(PLT), P, top - 1.2, top + 0.9, 0.0);
+      flatP(B.p(LAWN), P, top - 0.2);
+      const bb = bbP(P); for (let x = bb[0] + 3; x < bb[2] && n < 70; x += 7) for (let z = bb[1] + 3; z < bb[3] && n < 70; z += 7){ if (!inPoly(P, x, z) || inPoly(offP(T, -1), x, z) || dPoly(P, x, z) < 1.8) continue; treeP(B, x, top - 0.2, z, 0.8, '#5c8040'); n++; } }
+    shaftCW(B, T, 0.2, 200.5, {g:GL, f:FR, ms:1.6, mw:0.25, dep:0.4, fh:4.4, sb:0.55, sp:FR2});
+    roofF(B, T, 200.5, {r:RF, pc:FR, ph:7.5, pl:6, plc:FR2, plh:4.0});
+    B.flush(g); return g; }};
+PLACE('typortcity', 35.65499, 139.760925);
+
+// =====================================================================================================================
+// World Trade Center Building South Tower (2021) at Hamamatsuchō: 197 m, 39 storeys (Wikipedia list). OSM w882217709.
+// Approximations: glass with vertical white fins, the 4-storey glazed base, the roof screen. No names.
+// =====================================================================================================================
+LANDMARKS.tywtcsouth = {zh:'世界贸易中心大厦南馆', en:'World Trade Center Building South Tower', cat:'new', r:42, h:197,
+  lt:{m:1, c:'#e2ecff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tywtcsouth.o;
+    const GL = {c:'#7f9bae', m:1, fh:4.4, cw:1.5}, GLB = {c:'#4f6370', m:1, fh:5, cw:3}, FR = '#e6eaec', FR2 = '#b9c2c7', RF = '#878a89';
+    footP(B, FR2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 18.0, true); mullP(B.p(FR2), O, 0.2, 18.0, 4.5, 0.8, -1.0, null, 1.0);
+    shaftCW(B, O, 18.0, 189.0, {g:GL, f:FR, ms:1.5, mw:0.22, dep:0.5, fh:4.4, sb:0.45, sp:FR2});
+    roofF(B, O, 189.0, {r:RF, pc:FR, ph:8.3, pl:5, plc:FR2, plh:4.5});
+    B.flush(g); return g; }};
+PLACE('tywtcsouth', 35.654745, 139.756264);
+
+// =====================================================================================================================
+// Hamamatsucho Building (the former Toshiba headquarters, 1984): 165.9 m (OSM; Scraperbase 167 m), 40 storeys. OSM w111594582 with the
+// building:part w312552797 (to 145 m) and the top part 145-165.9 m on the same outline. Approximations: dark bronze-grey glass and
+// spandrels, the louvred top storeys, the glazed base. No names.
+// =====================================================================================================================
+LANDMARKS.tytoshiba = {zh:'浜松町大厦', en:'Hamamatsucho Building', cat:'new', r:48, h:166,
+  lt:{m:1, c:'#fff0dc', k:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytoshiba.o;
+    const GL = {c:'#33383b', m:1, fh:3.9, cw:1.6}, SP = '#4a4c4c', FR = '#5d6061', GLB = {c:'#3f474c', m:1, fh:5, cw:3}, LV = '#6d6f6e', RF = '#7a7b79';
+    footP(B, FR, O, -9);
+    prismP(B.p(GLB), offP(O, 1.2), 0.2, 9.0, true); mullP(B.p(FR), O, 0.2, 9.0, 6.0, 1.0, -1.2, null, 1.2);
+    shaftCW(B, O, 9.0, 145.0, {g:GL, f:FR, ms:1.6, mw:0.3, fh:3.9, sb:1.3, sp:SP});
+    prismP(B.p(LV), O, 145.0, 165.9, true); bandsP(B.p(FR), O, 145.0, 165.9, 0.9, 0.25, 0.06);
+    roofF(B, O, 165.9, {r:RF, pc:FR, ph:0});
+    B.flush(g); return g; }};
+PLACE('tytoshiba', 35.651671, 139.757782);
+
+
+// =====================================================================================================================
+// Kachidoki View Tower (2010, residential, over Kachidoki Station): 193 m, 55 storeys (Wikipedia list). The app draws the tower as the
+// building:part (0-192.2 m, octagonal plan) inside the outline w340113388. Approximations: a 3-storey base on the outline (12 m), white
+// slab edges with dark glass railings per floor, the roof crown.
+// =====================================================================================================================
+LANDMARKS.tykachiview = {zh:'胜哄View塔', en:'Kachidoki View Tower', cat:'new', r:64, h:193,
+  lt:{m:1, c:'#fff0dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tykachiview, T = E.p0.r;
+    const WL = '#cdd0ce', SL = '#f0f1ee', RL = {c:'#45525a', m:1, fh:3.3, cw:2.4}, GLB = {c:'#4c5a63', m:1, fh:4.5, cw:3}, RF = '#8a8b88', FR = '#b5b8b5';
+    footP(B, FR, E.o, -6);
+    prismP(B.p(GLB), offP(E.o, 0.8), 0.2, 12.0, true); mullP(B.p(FR), E.o, 0.2, 12.0, 5.0, 0.8, -0.8, null, 0.8);
+    roofF(B, E.o, 12.0, {r:RF, pc:FR, ph:1.1});
+    shaftRes(B, offP(T, 1.0), 12.0, 186.0, {w:WL, s:SL, r:RL, fh:3.3, d:1.0, ms:7});
+    prismP(B.p(FR), offP(T, 2.5), 186.0, 193.0, true); bandsP(B.p(SL), offP(T, 2.5), 186.0, 193.0, 1.4, 0.3, 0.05);
+    roofF(B, offP(T, 1.0), 186.0, {r:RF, pc:SL, ph:1.2});
+    B.flush(g); return g; }};
+PLACE('tykachiview', 35.659628, 139.776673);
+
+// =====================================================================================================================
+// The Tokyo Towers, Mid Tower and Sea Tower (2008, residential twins at Kachidoki): 193.5 m, 58 storeys each (Wikipedia list). On their OSM
+// outlines w197996777 / w197996776 (the app draws 180.6 m). Approximations: corners cut 5 m, white slab edges with dark glass railings per
+// floor, the 2-storey glazed base, the crown of plant screens.
+// =====================================================================================================================
+const tyTwins = (key, zh, en, r) => {
+  LANDMARKS[key] = {zh, en, cat:'new', r, h:194,
+    lt:{m:1, c:'#fff0dc', k:0.5},
+    build(){
+      const g = new THREE.Group(), B = mkB(), O = D[key].o, P = chamP(O, 5);
+      const WL = '#c8ccca', SL = '#f1f2ef', RL = {c:'#44515a', m:1, fh:3.15, cw:2.4}, GLB = {c:'#4c5a63', m:1, fh:4.5, cw:3}, RF = '#8a8b88', FR = '#b5b8b5';
+      footP(B, FR, O, -6);
+      prismP(B.p(GLB), offP(P, 1.5), 0.2, 9.0, true); mullP(B.p(FR), offP(P, 0.7), 0.2, 9.0, 5.0, 0.8, -0.8, null, 0.8);
+      shaftRes(B, offP(P, 1.0), 9.0, 186.5, {w:WL, s:SL, r:RL, fh:3.05, d:1.0, ms:8});
+      roofF(B, offP(P, 1.0), 186.5, {r:RF, pc:SL, ph:1.2});
+      const C = offP(P, 6); prismP(B.p(FR), C, 186.5, 193.5, true); bandsP(B.p(SL), C, 186.5, 193.5, 1.2, 0.3, 0.05);
+      B.flush(g); return g; }};
+};
+tyTwins('tytowersmid', '东京Towers Mid塔', 'The Tokyo Towers Mid Tower', 47);
+PLACE('tytowersmid', 35.655659, 139.773561);
+tyTwins('tytowerssea', '东京Towers Sea塔', 'The Tokyo Towers Sea Tower', 52);
+PLACE('tytowerssea', 35.654931, 139.774523);
+
+// =====================================================================================================================
+// Century Park Tower (River City 21, 1999, residential): 180.1 m, 54 storeys (Wikipedia list). On OSM r9150245 (rounded rectangle).
+// Approximations: white slab edges and railings per floor, the vertical corner piers, the 3-storey base, the crown frame.
+// =====================================================================================================================
+LANDMARKS.tycenturypark = {zh:'世纪公园塔', en:'Century Park Tower', cat:'new', r:38, h:180,
+  lt:{m:1, c:'#fff0dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tycenturypark.o, P = roundP(O, 4, 3);
+    const WL = '#d3d2cb', SL = '#f2f1ec', RL = {c:'#4b5458', m:1, fh:3.2, cw:2.4}, GLB = {c:'#4c5a63', m:1, fh:4.5, cw:3}, RF = '#8a8b88', FR = '#bdbcb5';
+    footP(B, FR, O, -6);
+    prismP(B.p(GLB), offP(P, 1.4), 0.2, 10.0, true); mullP(B.p(FR), offP(P, 0.6), 0.2, 10.0, 5.0, 0.8, -0.8, null, 0.8);
+    shaftRes(B, offP(P, 1.0), 10.0, 173.0, {w:WL, s:SL, r:RL, fh:3.05, d:1.0, ms:6});
+    roofF(B, offP(P, 1.0), 173.0, {r:RF, pc:SL, ph:1.2});
+    const C = offP(P, 5); prismP(B.p(FR), C, 173.0, 180.1, true); bandsP(B.p(SL), C, 173.0, 180.1, 1.4, 0.3, 0.05);
+    B.flush(g); return g; }};
+PLACE('tycenturypark', 35.670515, 139.785763);
+
+// =====================================================================================================================
+// Capital Gate Place The Tower (2015, residential, Tsukishima): 187 m, 53 storeys (Wikipedia list). OSM w463203575.
+// Approximations: corners cut 3 m, white slab edges and glass railings, vertical piers, the 2-storey base, the crown screen.
+// =====================================================================================================================
+LANDMARKS.tycapitalgate = {zh:'Capital Gate Place', en:'Capital Gate Place The Tower', cat:'new', r:34, h:187,
+  lt:{m:1, c:'#fff0dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tycapitalgate.o, P = chamP(O, 3);
+    const WL = '#c3c6c4', SL = '#eeefec', RL = {c:'#3f4c55', m:1, fh:3.3, cw:2.4}, GLB = {c:'#4c5a63', m:1, fh:4.5, cw:3}, RF = '#8a8b88', FR = '#a9adab';
+    footP(B, FR, O, -6);
+    prismP(B.p(GLB), offP(P, 1.4), 0.2, 8.0, true); mullP(B.p(FR), offP(P, 0.6), 0.2, 8.0, 4.5, 0.8, -0.8, null, 0.8);
+    shaftRes(B, offP(P, 1.0), 8.0, 180.0, {w:WL, s:SL, r:RL, fh:3.25, d:0.9, ms:5.5});
+    roofF(B, offP(P, 1.0), 180.0, {r:RF, pc:SL, ph:1.2});
+    const C = offP(P, 4); prismP(B.p(FR), C, 180.0, 187.0, true); bandsP(B.p(SL), C, 180.0, 187.0, 1.3, 0.3, 0.05);
+    B.flush(g); return g; }};
+PLACE('tycapitalgate', 35.664204, 139.783819);
+
+// =====================================================================================================================
+// Toyosu Center Building (1992): 165 m, 37 storeys (Scraperbase). Re-anchored: the target's OSM way w22918543 is now a 201 m2 fragment of a
+// PLATEAU re-import; the app draws the tower as one v37 outline with a central light well (no current OSM match, 2135 m2, 162 m) whose
+// centroid is 30 m north-east of the old anchor - the model stands on that outline (SC/lm50/ty50b/ref_ty50b_toyo.json).
+// Approximations: grey stone-coloured spandrels and blue glass bands, the stepped crown, the glazed base. No names.
+// =====================================================================================================================
+LANDMARKS.tytoyosucenter = {zh:'丰洲中心大厦', en:'Toyosu Center Building', cat:'new', r:33, h:165,
+  lt:{m:1, c:'#e2ecff', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytoyosucenter.o;
+    const WL = '#b9b6ae', WL2 = '#a29f97', GL = {c:'#5c7383', m:1, fh:4.1, cw:1.8}, GLB = {c:'#4c5a63', m:1, fh:5, cw:3}, RF = '#85868a';
+    footP(B, WL2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 10.0, true); mullP(B.p(WL2), O, 0.2, 10.0, 5.0, 0.9, -1.0, null, 1.0);
+    prismP(B.p(WL), O, 10.0, 155.0, true);
+    floorsP(B.p(GL), O, 11.0, 154.5, 4.1, 2.1, 0.05);
+    mullP(B.p(WL2), O, 10.0, 155.0, 3.6, 0.3, 0.1);
+    roofF(B, O, 155.0, {r:RF, pc:WL2, ph:1.2});
+    const C = offP(O, 4); prismP(B.p(WL), C, 155.0, 161.5, true); floorsP(B.p(GL), C, 156.0, 161.0, 4.1, 2.0, 0.05); roofF(B, C, 161.5, {r:RF, pc:WL2, ph:3.5});
+    B.flush(g); return g; }};
+PLACE('tytoyosucenter', 35.655873, 139.796303);
+
+// =====================================================================================================================
+// Toyosu Bayside Cross Tower (2020; offices, a hotel on the top floors): 180 m, 36 storeys (Wikipedia list; OSM height 177.51). OSM
+// w929171294. Approximations: glass with white vertical fins, the 5-storey glazed base, the hotel floors' bands, the roof screen. No names.
+// =====================================================================================================================
+LANDMARKS.tybaysidecross = {zh:'丰洲Bayside Cross塔', en:'Toyosu Bayside Cross Tower', cat:'new', r:53, h:180,
+  lt:{m:1, c:'#e2ecff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tybaysidecross.o, T = chamP(O, 2);
+    const GL = {c:'#82a0b3', m:1, fh:4.4, cw:1.5}, GLH = {c:'#6b8697', m:1, fh:3.6, cw:1.5}, GLB = {c:'#4f6370', m:1, fh:5, cw:3}, FR = '#e5e9eb', FR2 = '#b9c2c7', RF = '#878a89';
+    footP(B, FR2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 22.0, true); mullP(B.p(FR2), O, 0.2, 22.0, 4.5, 0.8, -1.0, null, 1.0);
+    shaftCW(B, offP(T, 1.0), 22.0, 138.0, {g:GL, f:FR, ms:1.5, mw:0.25, dep:0.45, fh:4.4, sb:0.5, sp:FR2});
+    skinP(B.p(FR2), offP(T, 1.0), 138.0, 139.4, 0.1);
+    shaftCW(B, offP(T, 1.0), 139.4, 173.5, {g:GLH, f:FR, ms:1.5, mw:0.25, dep:0.45, fh:3.6, sb:0.4, sp:FR2});
+    roofF(B, offP(T, 1.0), 173.5, {r:RF, pc:FR, ph:6.5, pl:6, plc:FR2, plh:4.0});
+    B.flush(g); return g; }};
+PLACE('tybaysidecross', 35.654893, 139.79449);
+
+}
+
+// ===== tyo/ty50d: Nishi-Shinjuku, Shinjuku, Kabukichō, Kagurazaka, Iidabashi and Waseda landmarks on their real footprints
+// (City Brush lm50, Tokyo 1:1). Footprints (D) are the outlines / building:part rings of R/lm50/ref_ty50d.json in each key's local metres
+// (+x east, +z south, origin = the ref anchor; rot 0), generated by SC/lm50/ty50d/gen.py; the builds are hand-written (SC/lm50/ty50d/parts).
+// Block-scoped: only LANDMARKS and SG_PLACES are touched. No text, logos or brand colours. Deterministic (no random numbers).
+{
+const D = {"tykabukicho":{"a":[35.695879,139.700641],"o":[[12.8,36.3],[6.2,34.6],[-8.7,30.5],[-9.4,32.8],[-22.4,29.3],[-22.0,26.9],[-27.2,25.2],[-24.3,14.4],[-25.3,14.1],[-28.0,13.4],[-14.8,-33.5],[-12.9,-35.4],[28.0,-26.1],[30.2,-22.9],[20.4,10.4],[19.5,13.8],[15.7,26.8],[13.3,34.8]],"p":[[0.0,225.0,[[-21.8,4.6],[-18.6,24.9],[-17.6,26.4],[-0.3,30.6],[1.9,29.1],[12.9,-10.1],[10.4,-27.6],[9.4,-29.6],[-7.6,-33.9],[-11.3,-31.6]]]]},"tysompo":{"a":[35.692688,139.696124],"o":[[-19.9,22.9],[-33.6,18.5],[-14.7,-35.4],[-0.8,-30.4],[3.4,-39.0],[10.0,-36.7],[8.8,-33.1],[13.5,-31.6],[14.6,-35.0],[21.6,-32.6],[19.4,-23.5],[33.7,-18.6],[14.6,35.4],[0.7,30.0],[-3.5,39.0],[-10.0,36.8],[-9.1,33.1],[-13.8,31.3],[-15.1,34.8],[-22.0,32.4]],"p":[[0.0,193.0,[[-24.1,21.1],[-19.6,22.6],[-16.3,16.1],[2.7,22.6],[0.7,29.6],[5.2,31.3],[23.2,-21.2],[18.9,-22.7],[15.9,-15.9],[-2.8,-22.4],[-0.8,-29.7],[-5.8,-31.4]]],[0.0,150.0,[[-33.6,18.6],[14.7,35.3],[33.7,-18.7],[-14.8,-35.4]]],[0.0,150.0,[[-22.1,32.3],[-15.1,34.8],[-13.8,31.3],[-9.1,33.1],[-10.1,36.8],[-3.6,39.1],[0.7,30.1],[19.4,-23.4],[21.7,-32.7],[14.7,-34.9],[13.4,-31.7],[8.7,-33.2],[9.9,-36.7],[3.4,-38.9],[-0.8,-30.4],[-19.8,22.8]]],[0.0,200.0,[[-20.8,28.1],[-13.6,30.8],[-13.3,30.3],[-8.8,32.1],[-8.8,32.6],[-1.8,34.8],[0.7,29.6],[2.7,22.6],[-16.3,16.1],[-19.6,22.6]]],[0.0,200.0,[[-2.8,-22.4],[15.9,-15.9],[18.9,-22.7],[20.7,-28.7],[13.4,-30.9],[13.2,-30.7],[1.7,-35.2],[-0.8,-29.7]]]]},"tycenterbldg":{"a":[35.691712,139.695468],"o":[[30.6,15.1],[31.4,15.6],[31.1,16.0],[30.3,15.4],[29.2,17.0],[27.6,15.8],[26.5,17.4],[24.9,16.3],[23.8,17.9],[22.2,16.7],[21.1,18.3],[19.5,17.2],[18.4,18.7],[16.8,17.6],[15.7,19.2],[14.1,18.0],[13.0,19.6],[11.4,18.5],[10.3,20.0],[8.7,18.9],[7.6,20.5],[6.0,19.4],[4.8,20.9],[3.3,19.8],[2.1,21.4],[0.6,20.2],[-0.6,21.8],[-2.2,20.7],[-3.3,22.3],[-4.9,21.1],[-6.0,22.7],[-7.6,21.6],[-8.7,23.1],[-10.3,22.0],[-11.4,23.6],[-13.0,22.4],[-14.1,24.0],[-15.7,22.9],[-16.8,24.5],[-18.4,23.3],[-19.5,24.9],[-21.1,23.8],[-22.2,25.3],[-23.8,24.2],[-24.4,25.0],[-24.7,24.8],[-24.1,24.0],[-26.2,22.5],[-26.7,23.3],[-27.1,23.1],[-26.5,22.3],[-28.1,21.2],[-26.9,19.6],[-28.5,18.5],[-27.4,16.9],[-28.9,15.8],[-27.8,14.2],[-29.4,13.1],[-28.3,11.5],[-29.8,10.4],[-28.7,8.8],[-30.3,7.7],[-29.1,6.1],[-30.7,5.0],[-29.6,3.4],[-31.2,2.3],[-30.0,0.7],[-31.6,-0.4],[-30.5,-2.0],[-32.0,-3.1],[-30.9,-4.6],[-32.5,-5.8],[-31.4,-7.3],[-32.9,-8.5],[-31.8,-10.0],[-33.4,-11.2],[-32.2,-12.7],[-33.0,-13.3],[-32.8,-13.6],[-32.0,-13.1],[-30.6,-15.1],[-31.3,-15.6],[-31.1,-16.0],[-30.3,-15.4],[-29.2,-17.0],[-27.6,-15.8],[-26.5,-17.4],[-24.9,-16.3],[-23.8,-17.8],[-22.2,-16.7],[-21.1,-18.3],[-19.5,-17.2],[-18.4,-18.7],[-16.8,-17.6],[-15.6,-19.2],[-14.1,-18.0],[-12.9,-19.6],[-11.4,-18.5],[-10.2,-20.0],[-8.7,-18.9],[-7.5,-20.5],[-5.9,-19.4],[-4.8,-20.9],[-3.2,-19.8],[-2.1,-21.4],[-0.5,-20.2],[0.6,-21.8],[2.2,-20.7],[3.3,-22.2],[4.9,-21.1],[6.0,-22.7],[7.6,-21.6],[8.7,-23.1],[10.3,-22.0],[11.4,-23.6],[13.0,-22.4],[14.1,-24.0],[15.7,-22.9],[16.9,-24.4],[18.4,-23.3],[19.6,-24.9],[21.1,-23.8],[22.3,-25.3],[23.8,-24.2],[24.4,-25.0],[24.7,-24.8],[24.2,-24.0],[26.2,-22.5],[26.7,-23.3],[27.1,-23.1],[26.5,-22.3],[28.1,-21.2],[27.0,-19.6],[28.5,-18.5],[27.4,-16.9],[29.0,-15.8],[27.8,-14.2],[29.4,-13.1],[28.3,-11.5],[29.9,-10.4],[28.7,-8.8],[30.3,-7.7],[29.2,-6.1],[30.7,-5.0],[29.6,-3.4],[31.2,-2.3],[30.1,-0.7],[31.6,0.4],[30.5,2.0],[32.1,3.1],[30.9,4.7],[32.5,5.8],[31.4,7.4],[33.0,8.5],[31.8,10.1],[33.4,11.2],[32.3,12.7],[33.1,13.3],[32.8,13.6],[32.0,13.1]],"p":[[0.0,223.0,[[-33.4,-11.2],[-31.7,-10.0],[-32.9,-8.5],[-31.4,-7.5],[-32.4,-5.7],[-30.9,-4.7],[-31.9,-3.0],[-30.4,-2.0],[-31.7,-0.5],[-29.9,0.8],[-31.2,2.3],[-29.7,3.5],[-30.7,5.0],[-29.2,6.0],[-30.2,7.8],[-28.7,8.8],[-29.9,10.3],[-28.2,11.5],[-29.4,13.0],[-27.9,14.3],[-28.9,15.8],[-27.4,17.0],[-28.4,18.5],[-26.9,19.5],[-28.2,21.3],[-26.4,22.3],[-27.2,23.0],[-26.7,23.3],[-26.2,22.5],[-24.2,24.0],[-24.7,24.8],[-24.4,25.0],[-23.9,24.3],[-22.2,25.3],[-21.2,23.8],[-19.4,24.8],[-18.4,23.3],[-16.9,24.5],[-15.7,22.8],[-14.2,24.0],[-12.9,22.5],[-11.4,23.5],[-10.2,22.0],[-8.7,23.0],[-7.7,21.5],[-5.9,22.8],[-4.9,21.0],[-3.2,22.3],[-2.2,20.8],[-0.7,21.8],[0.6,20.3],[2.1,21.3],[3.3,19.8],[4.8,21.0],[6.1,19.3],[7.6,20.5],[8.6,19.0],[10.3,20.0],[11.3,18.5],[13.1,19.5],[14.1,18.0],[15.6,19.3],[16.8,17.5],[18.3,18.8],[19.6,17.3],[21.1,18.3],[22.3,16.8],[23.8,17.8],[24.8,16.3],[26.6,17.5],[27.6,15.8],[29.3,17.0],[30.3,15.3],[31.1,16.0],[31.3,15.5],[30.6,15.0],[32.1,13.0],[32.8,13.5],[33.1,13.3],[32.3,12.8],[33.3,11.3],[31.8,10.0],[33.1,8.5],[31.3,7.3],[32.6,5.8],[30.8,4.8],[32.1,3.0],[30.6,2.0],[31.6,0.3],[30.1,-0.7],[31.1,-2.2],[29.6,-3.5],[30.8,-5.0],[29.1,-6.2],[30.3,-7.7],[28.8,-8.7],[29.8,-10.5],[28.3,-11.5],[29.3,-13.0],[27.8,-14.2],[29.1,-15.7],[27.3,-17.0],[28.6,-18.5],[27.1,-19.7],[28.1,-21.2],[26.6,-22.2],[27.1,-23.0],[26.8,-23.2],[26.1,-22.5],[24.1,-24.0],[24.8,-24.7],[24.3,-25.0],[23.8,-24.2],[22.3,-25.2],[21.1,-23.7],[19.6,-25.0],[18.3,-23.2],[16.8,-24.5],[15.8,-23.0],[14.1,-24.0],[13.1,-22.5],[11.3,-23.5],[10.3,-22.0],[8.8,-23.2],[7.6,-21.5],[6.1,-22.7],[4.8,-21.2],[3.3,-22.2],[2.1,-20.7],[0.6,-21.7],[-0.4,-20.2],[-2.2,-21.5],[-3.2,-19.7],[-4.9,-21.0],[-5.9,-19.5],[-7.4,-20.5],[-8.7,-19.0],[-10.2,-20.0],[-11.4,-18.5],[-12.9,-19.7],[-14.2,-18.0],[-15.7,-19.2],[-16.7,-17.7],[-18.4,-18.7],[-19.4,-17.2],[-21.2,-18.2],[-22.2,-16.7],[-23.7,-17.7],[-24.9,-16.2],[-26.4,-17.5],[-27.7,-15.7],[-29.2,-17.0],[-30.4,-15.5],[-31.2,-16.0],[-31.4,-15.7],[-30.7,-15.0],[-31.9,-13.0],[-32.7,-13.7],[-32.9,-13.2],[-32.2,-12.7]]],[0.0,228.0,[[11.1,-7.0],[12.8,3.0],[26.6,0.8],[25.1,-9.2]]],[0.0,228.0,[[-26.7,-0.7],[-24.9,9.0],[-11.2,6.8],[-12.7,-3.0]]]]},"tyokuma":{"a":[35.708906,139.721579],"o":[[-23.5,6.0],[14.7,21.5],[17.0,15.8],[21.0,12.3],[23.2,7.3],[23.7,2.8],[22.2,-0.5],[19.2,-2.2],[19.7,-5.2],[-9.8,-16.7],[-5.8,-26.7],[-13.5,-29.7],[-16.5,-22.0],[-13.0,-20.5]]},"tynomura":{"a":[35.692993,139.695378],"o":[[4.1,-26.2],[5.0,-28.6],[8.3,-27.5],[14.8,-25.2],[14.0,-22.9],[24.6,-19.3],[7.3,30.3],[-3.5,26.4],[-4.4,28.9],[-14.3,25.5],[-13.4,23.0],[-24.6,19.0],[-7.5,-30.1]],"p":[[0.0,209.9,[[-15.0,16.2],[0.7,21.4],[14.2,-18.3],[-1.3,-23.6]]]]},"tyiland":{"a":[35.693149,139.69314],"o":[[-2.0,50.5],[-9.0,46.9],[-31.3,35.6],[-38.5,31.9],[-30.4,16.6],[-33.1,12.0],[-34.3,6.6],[-33.5,1.2],[-31.3,-3.3],[-27.8,-6.8],[-23.3,-9.2],[-18.4,-10.0],[-16.5,-9.9],[5.2,-51.1],[11.6,-47.7],[34.4,-36.0],[40.9,-32.6],[30.9,-12.0],[9.5,29.3]],"p":[[0.0,189.4,[[-31.4,35.5],[-8.9,47.0],[34.4,-36.0],[11.6,-47.8]]],[0.0,173.7,[[-38.4,32.0],[-2.1,50.5],[40.9,-32.5],[5.1,-51.0]]]]},"tymonolith":{"a":[35.688631,139.694636],"o":[[-36.1,-10.1],[-29.3,23.2],[-27.3,22.9],[-26.8,24.9],[34.2,12.7],[33.9,10.7],[35.9,10.2],[29.4,-23.3],[27.2,-22.8],[26.7,-24.8],[-34.3,-12.8],[-33.8,-10.6]]},"tysquaretower":{"a":[35.694075,139.687728],"o":[[-20.6,-3.8],[-17.1,-2.0],[-20.1,3.2],[-17.6,4.5],[-18.8,6.7],[-14.1,10.0],[-15.8,13.5],[6.9,26.2],[20.2,3.2],[18.2,2.2],[20.2,-3.3],[17.9,-4.8],[19.2,-7.3],[13.9,-10.5],[15.7,-13.8],[-7.6,-26.0]]},"tyoaktower":{"a":[35.693917,139.690562],"o":[[-10.5,-39.3],[18.7,-24.9],[15.2,-17.7],[18.9,-15.9],[19.4,-17.4],[22.8,-13.0],[24.5,-9.7],[26.0,-5.2],[25.6,2.2],[24.3,1.4],[22.4,4.4],[29.7,8.3],[15.9,37.6],[-28.3,15.2],[-26.9,12.1],[-30.6,10.1],[-29.1,6.7],[-31.5,5.0]],"p":[[0.0,170.7,[[-31.4,4.9],[-29.2,6.7],[-30.7,10.2],[-26.9,12.2],[-28.2,15.2],[15.8,37.7],[29.6,8.4],[8.1,-2.8],[18.8,-24.8],[-10.4,-39.3]]],[180.0,183.8,[[-14.7,1.9],[-13.2,6.7],[-10.4,10.7],[-6.4,13.7],[-1.7,15.2],[3.3,15.2],[8.1,13.7],[11.8,10.9],[14.8,6.4],[16.1,-2.6],[14.8,-6.6],[12.1,-10.8],[10.1,-12.6],[6.6,-14.6],[2.8,-15.6],[-0.7,-15.6],[-5.4,-14.3],[-9.7,-11.6],[-12.9,-7.8],[-14.4,-3.1]]],[55.8,69.0,[[8.1,-2.8],[22.6,4.4],[24.3,1.4],[25.6,2.2],[26.1,-5.3],[24.6,-9.8],[19.3,-17.3],[18.8,-15.8],[15.3,-17.8]]],[0.0,180.0,[[-30.7,10.2],[12.6,32.4],[20.8,15.2],[11.8,10.9],[15.8,1.2],[8.1,-2.8],[12.1,-10.8],[2.8,-15.6],[7.1,-24.6],[-9.7,-32.8]]]]},"tyshinjukugrand":{"a":[35.695937,139.690394],"o":[[-24.1,48.0],[-22.7,44.2],[-32.6,40.1],[-29.8,33.4],[-34.4,31.8],[1.2,-56.5],[4.8,-55.2],[6.1,-58.6],[17.2,-54.4],[13.9,-46.0],[24.8,-41.6],[29.1,-40.1],[36.3,-37.1],[19.3,5.9],[-1.4,56.9],[-16.4,50.9]],"p":[[0.0,195.2,[[-34.5,31.8],[-29.7,33.3],[-32.5,40.1],[-22.7,44.3],[17.3,-54.4],[6.0,-58.7],[4.8,-55.2],[1.3,-56.4]]]]},"tyhilton":{"a":[35.692677,139.691022],"o":[[-29.5,1.9],[-24.5,25.5],[-23.8,25.5],[-22.2,-10.2],[-39.1,-19.4],[-19.8,-56.8],[2.5,-46.4],[6.3,-44.6],[52.0,-22.3],[52.1,-20.9],[61.7,-15.9],[65.5,7.4],[46.4,10.8],[39.8,22.9],[24.6,25.5],[21.0,33.5],[17.0,37.4],[4.8,39.7],[-6.6,41.8],[-10.1,48.0],[-31.9,52.5],[-45.5,43.5],[-48.2,29.7],[-52.7,6.3],[-39.1,-18.3],[-23.6,-9.8]],"p":[[0.0,130.2,[[-14.3,38.1],[-6.6,41.9],[-3.8,35.6],[4.9,39.6],[12.9,23.1],[13.9,17.6],[13.7,11.9],[10.4,-6.1],[10.2,-12.1],[11.4,-18.1],[19.4,-34.1],[4.4,-41.4],[-5.3,-23.6],[-7.6,-17.1],[-7.8,-10.6],[-4.6,7.1],[-4.3,14.1],[-6.8,23.9]]],[0.0,28.7,[[-52.6,6.4],[-48.1,29.6],[-24.3,25.6],[-29.6,1.9],[-23.6,-9.9],[-39.1,-18.1]]],[0.0,19.4,[[-48.1,29.6],[-45.6,43.6],[-31.8,52.6],[-10.1,48.1],[-6.6,41.9],[-14.3,38.1],[-6.8,23.9],[-4.3,14.1],[-4.6,7.1],[-7.8,-10.6],[-7.6,-17.1],[-5.3,-23.6],[-2.1,-29.4],[-5.1,-30.9],[2.4,-46.4],[-19.8,-56.9],[-39.1,-19.4],[-22.1,-10.1],[-23.8,25.4]]]]},"tywashington":{"a":[35.686838,139.693135],"o":[[-44.7,-9.5],[0.3,-18.2],[1.9,-22.3],[3.4,-23.5],[25.6,-27.4],[29.1,-27.3],[35.6,-25.6],[41.2,-21.1],[45.4,-15.9],[46.8,-9.3],[46.8,-5.8],[45.3,-3.8],[42.7,-2.5],[44.9,7.8],[5.0,15.3],[-4.4,22.1],[-25.0,36.5],[-38.4,17.0],[-39.5,8.5],[-40.3,2.5],[-42.2,2.5],[-43.9,2.3],[-46.0,1.4],[-47.6,-0.7],[-48.5,-3.7],[-47.8,-6.1],[-46.6,-8.3]],"p":[[0.0,78.3,[[-48.4,-3.8],[-47.7,-0.8],[-45.9,1.2],[-42.2,2.5],[-10.4,-4.3],[-7.4,-3.5],[-1.4,4.7],[1.8,5.2],[42.8,-2.5],[45.3,-3.8],[46.8,-5.8],[46.8,-9.3],[45.3,-12.5],[41.1,-14.5],[28.1,-12.5],[24.8,-13.3],[22.3,-15.3],[19.8,-20.8],[18.3,-21.8],[-44.7,-9.5],[-46.7,-8.3]]],[0.0,22.5,[[-39.4,8.5],[-38.4,17.0],[-24.9,36.5],[-4.4,22.2],[-19.7,1.0],[-33.2,3.5]]]]},"tymiraina":{"a":[35.68878,139.701903],"o":[[-27.6,-24.3],[-15.9,32.7],[27.9,23.7],[17.9,-25.8],[2.9,-31.8]]},"tytimessq":{"a":[35.687564,139.702293],"o":[[4.0,92.2],[-4.2,93.5],[-6.2,93.8],[-8.3,94.1],[-12.9,94.8],[-14.3,86.4],[-39.2,-65.1],[-41.5,-79.3],[-25.5,-82.1],[1.6,-86.8],[3.6,-87.2],[8.6,-57.2],[30.2,-28.0],[35.5,-20.8],[43.6,31.3]],"p":[[0.0,44.2,[[-39.2,-65.2],[-14.2,86.3],[-2.9,84.6],[-3.9,77.6],[3.8,76.3],[2.8,70.1],[5.1,69.6],[4.3,65.6],[7.1,65.1],[12.1,65.6],[16.8,63.6],[20.1,61.3],[21.6,59.3],[22.8,57.1],[23.3,53.8],[28.1,53.8],[27.8,45.8],[26.6,41.8],[23.3,37.6],[20.8,35.6],[27.8,34.3],[28.1,35.8],[38.1,34.1],[29.1,-20.2],[6.1,-16.2],[-3.4,-71.4],[-23.9,-67.7],[-23.4,-65.7],[-29.2,-64.7],[-29.4,-66.7]]]]},"tyisetan":{"a":[35.691647,139.704613],"o":[[-68.0,19.5],[-67.4,18.1],[-67.1,17.5],[-64.7,12.6],[-64.4,12.0],[-61.9,6.9],[-61.6,6.2],[-59.1,1.0],[-58.8,0.4],[-57.1,1.3],[-53.8,2.9],[-53.2,3.3],[-52.5,1.9],[-53.2,1.6],[-54.4,0.9],[-54.9,0.6],[-21.0,-63.9],[-18.0,-63.0],[22.7,-49.6],[23.0,-50.1],[35.9,-43.4],[64.5,-28.6],[63.7,-27.1],[65.4,-26.2],[25.7,57.9],[22.6,60.7],[18.9,62.9],[15.1,64.3],[10.9,65.5],[-6.2,56.3],[-5.8,55.6],[-14.0,51.2],[-19.8,48.2],[-39.4,37.9],[-61.7,26.2],[-64.3,24.8],[-64.9,24.5],[-66.6,23.6]],"p":[[30.0,35.0,[[7.5,-40.4],[16.3,-35.7],[18.5,-39.9],[9.8,-44.7]]],[30.8,32.0,[[6.0,15.6],[11.3,18.3],[14.0,13.3],[8.8,10.6]]],[30.0,37.5,[[-3.0,-39.2],[2.5,-36.2],[4.0,-38.9],[-1.5,-41.9]]],[40.0,42.0,[[-7.5,-35.4],[-2.2,-32.7],[-1.2,-34.7],[-6.5,-37.4]]],[37.5,39.0,[[6.0,-15.9],[9.0,-14.4],[10.3,-16.9],[7.5,-18.4]]],[40.0,45.0,[[23.3,-23.9],[30.0,-20.2],[31.8,-23.2],[24.8,-26.9]]],[30.0,32.5,[[17.8,-36.4],[26.3,-32.2],[28.3,-35.9],[19.8,-40.4]]],[30.0,32.5,[[31.3,-14.7],[32.0,-14.2],[34.0,-17.9],[33.3,-18.4]]],[40.0,45.0,[[14.0,-28.7],[21.0,-24.9],[22.8,-28.7],[16.0,-32.2]]],[44.0,45.0,[[12.5,-17.9],[14.3,-17.2],[18.8,-26.2],[17.3,-26.9]]],[37.5,50.1,[[-11.7,-36.9],[-10.0,-36.2],[-8.5,-38.4],[-10.2,-39.4]]],[30.8,32.8,[[18.5,6.3],[22.3,8.3],[24.3,4.8],[20.5,2.6]]],[30.0,35.0,[[-59.5,8.8],[-58.0,11.3],[-55.2,11.8],[-53.7,10.6],[-53.2,7.6],[-54.5,6.1],[-57.2,5.6],[-59.0,6.8]]],[30.0,38.0,[[30.0,27.3],[36.0,30.3],[41.8,19.6],[35.8,16.3]]],[30.8,33.0,[[-22.2,43.8],[-18.5,45.8],[-16.5,41.8],[-20.2,39.8]]],[30.8,34.0,[[-20.2,34.1],[-15.7,36.6],[-15.5,40.8],[-10.2,43.6],[-6.7,41.3],[-4.0,42.6],[7.5,20.6],[-7.2,12.8],[-7.5,13.6],[-10.0,12.3],[-19.5,30.3]]],[30.0,30.8,[[14.5,11.8],[28.5,19.1],[34.0,8.3],[20.3,1.1]]],[30.0,32.0,[[4.8,15.3],[5.3,17.3],[10.5,19.8],[10.8,19.3],[5.8,16.8],[5.3,15.3],[8.5,9.3],[15.5,13.1],[9.3,24.6],[10.0,25.1],[16.3,12.8],[8.3,8.6]]],[30.0,36.0,[[-45.5,5.6],[-39.7,8.6],[-36.2,1.8],[-41.7,-1.2]]],[30.0,32.5,[[-46.7,4.6],[-45.5,5.6],[-41.7,-1.2],[-30.7,4.8],[-27.5,-1.4],[-40.0,-8.2]]],[30.0,30.8,[[-12.7,48.8],[-7.0,51.8],[-3.5,45.1],[-7.5,42.8],[-10.0,43.8]]],[30.0,38.5,[[-45.5,5.6],[-34.2,11.6],[-30.5,4.8],[-36.2,1.8],[-39.7,8.6]]],[30.0,38.5,[[-32.0,7.3],[-26.7,10.1],[-25.7,8.6],[-23.0,10.1],[-24.0,11.6],[-19.0,14.3],[-29.0,33.1],[-22.7,36.3],[-28.7,33.1],[-18.5,14.3],[-23.5,11.6],[-22.7,9.8],[-25.7,8.1],[-26.7,9.8]]],[30.0,30.8,[[-39.0,37.1],[-19.5,47.6],[-18.5,45.8],[-25.0,42.3],[-25.2,41.3],[-22.7,36.3],[-29.0,33.1],[-29.7,34.3],[-35.7,31.3]]],[0.0,37.0,[[-19.7,48.1],[-14.0,51.3],[-10.5,44.8],[-16.5,41.8]]],[30.0,32.5,[[-38.7,18.6],[-31.7,22.3],[-28.5,16.3],[-35.5,12.6]]],[30.0,38.5,[[-35.7,31.3],[-29.7,34.3],[-19.0,14.3],[-24.0,11.6],[-23.0,10.1],[-25.7,8.6],[-26.7,10.1],[-32.0,7.3],[-34.2,11.6],[-27.2,15.3]]],[0.0,30.0,[[-67.0,19.1],[-66.2,18.6],[-63.5,20.1],[-65.5,23.3],[-39.0,37.1],[-27.2,15.3],[-30.7,13.6],[-31.2,14.8],[-35.5,12.6],[-36.0,13.3],[-58.5,1.6]]],[30.0,33.0,[[-17.7,-42.2],[-14.2,-40.2],[-10.0,-47.9],[-13.5,-49.7]]],[30.0,33.5,[[40.8,12.3],[44.5,14.3],[45.0,13.1],[41.3,11.3]]],[30.0,37.0,[[27.0,32.8],[33.0,35.8],[36.0,30.3],[30.0,27.3]]],[30.0,34.0,[[30.5,40.8],[33.0,35.8],[27.0,32.8],[27.5,31.8],[25.5,30.8],[22.5,36.8]]],[30.0,30.8,[[-20.5,37.3],[-20.2,39.8],[-10.5,44.8],[-10.0,43.8],[-7.5,42.8],[-5.0,44.3],[5.5,24.6],[4.8,24.1],[7.0,19.8],[11.0,21.3],[15.5,13.1],[8.5,9.3],[5.3,15.3],[5.8,16.8],[10.8,19.3],[10.5,19.8],[5.3,17.3],[4.8,15.3],[-8.0,8.6],[-22.5,36.1]]],[27.0,30.0,[[9.8,60.8],[8.5,63.3],[11.0,64.6],[18.5,62.3],[22.3,60.1],[25.0,57.3],[32.3,41.8],[22.0,36.6],[14.5,50.6],[14.0,50.1],[9.8,58.1],[10.3,58.3],[9.3,60.6]]],[29.9,30.8,[[-13.5,50.6],[-4.7,55.3],[-1.7,49.3],[-3.5,48.3],[6.8,28.6],[22.5,36.8],[23.3,35.3],[7.5,27.1],[5.8,27.6],[-7.0,51.8],[-12.7,48.8]]],[30.0,37.5,[[-15.0,-38.7],[-9.5,-35.9],[-15.0,-25.7],[9.5,-12.9],[13.0,-19.4],[29.3,-10.9],[36.0,-23.9],[15.0,-34.9],[11.5,-28.4],[1.3,-33.7],[2.3,-35.7],[-4.7,-39.2],[-5.7,-37.2],[-6.2,-37.7],[-2.0,-45.7],[-9.2,-49.4]]],[37.5,40.0,[[-15.0,-25.7],[-1.7,-18.9],[1.8,-25.4],[29.3,-10.9],[36.0,-23.9],[15.0,-34.9],[11.5,-28.4],[-8.2,-38.7]]],[40.0,48.0,[[8.0,-21.9],[29.3,-10.9],[36.0,-23.9],[15.0,-34.9]]],[30.0,39.0,[[43.8,-3.2],[51.3,0.8],[54.8,-5.7],[47.3,-9.7]]],[16.0,20.0,[[-68.0,19.6],[-66.2,20.3],[-66.0,19.6],[-64.7,20.3],[-66.5,23.6],[-19.7,48.1],[-16.5,41.8],[-10.5,44.8],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[15.0,64.3],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[63.8,-27.2],[64.5,-28.7],[35.8,-43.4],[34.0,-39.7],[28.5,-42.4],[-21.0,-58.9],[-53.2,1.6],[-30.7,13.6],[-31.2,14.8],[-58.7,0.3]]],[20.0,27.0,[[-68.0,19.6],[-66.2,20.3],[-66.0,19.6],[-64.7,20.3],[-66.5,23.6],[-19.7,48.1],[-16.5,41.8],[-10.5,44.8],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[15.0,64.3],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[63.8,-27.2],[64.5,-28.7],[35.8,-43.4],[32.8,-37.7],[26.3,-40.9],[-22.2,-56.9],[-53.2,1.6],[-30.7,13.6],[-31.2,14.8],[-58.7,0.3]]],[29.9,31.0,[[-53.2,1.6],[-47.2,4.8],[-46.7,4.1],[-52.0,1.3],[-21.7,-55.9],[26.0,-40.2],[33.0,-36.4],[36.3,-42.4],[63.5,-28.2],[62.8,-26.7],[64.3,-25.9],[25.0,57.3],[22.3,60.1],[18.5,62.3],[11.0,64.6],[-5.2,56.1],[-4.7,55.3],[-13.5,50.6],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[15.0,64.3],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[63.8,-27.2],[64.5,-28.7],[35.8,-43.4],[32.8,-37.7],[26.3,-40.9],[-22.2,-56.9]]],[5.0,10.0,[[-68.0,19.6],[-66.5,23.6],[-19.7,48.1],[-16.5,41.8],[-10.5,44.8],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[15.0,64.3],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[63.8,-27.2],[64.5,-28.7],[23.0,-50.2],[22.8,-49.7],[-21.0,-63.9],[-55.0,0.6],[-30.7,13.6],[-31.2,14.8],[-58.7,0.3]]],[0.0,5.0,[[-61.7,26.1],[-19.7,48.1],[-16.5,41.8],[-10.5,44.8],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[30.5,-44.2],[-19.2,-60.4],[-52.5,1.8],[-30.7,13.6],[-31.2,14.8],[-53.7,2.8],[-61.2,17.6],[-58.0,19.6]]],[10.0,16.0,[[-68.0,19.6],[-66.2,20.3],[-66.0,19.6],[-64.7,20.3],[-66.5,23.6],[-19.7,48.1],[-16.5,41.8],[-10.5,44.8],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[15.0,64.3],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[63.8,-27.2],[64.5,-28.7],[35.8,-43.4],[35.0,-41.9],[30.5,-44.2],[-21.5,-61.2],[-54.5,0.8],[-30.7,13.6],[-31.2,14.8],[-58.7,0.3]]],[27.0,29.9,[[-68.0,19.6],[-66.2,20.3],[-66.0,19.6],[-64.7,20.3],[-66.5,23.6],[-19.7,48.1],[-16.5,41.8],[-10.5,44.8],[-14.0,51.3],[-5.7,55.6],[-6.2,56.3],[11.0,65.6],[15.0,64.3],[19.0,62.8],[22.5,60.8],[25.8,57.8],[65.5,-26.2],[63.8,-27.2],[64.5,-28.7],[35.8,-43.4],[32.8,-37.7],[26.3,-40.9],[-22.2,-56.9],[-53.2,1.6],[-30.7,13.6],[-31.2,14.8],[-58.7,0.3]]]]},"tytoho":{"a":[35.695351,139.702016],"o":[[-39.8,31.0],[-37.3,36.0],[15.7,51.0],[28.9,5.0],[31.2,5.8],[41.9,-31.5],[23.4,-36.7],[23.9,-38.2],[11.9,-41.5],[12.4,-43.2],[-16.8,-51.5],[-18.8,-44.2],[-18.3,-44.0]],"p":[[24.8,117.0,[[-5.1,18.5],[2.9,21.0],[12.2,-11.7],[4.2,-14.0]]],[24.8,130.2,[[-3.3,43.3],[11.4,47.5],[32.7,-27.2],[17.9,-31.2]]]]},"tytower60":{"a":[35.693812,139.686626],"o":[[-25.5,10.0],[-24.5,15.8],[3.5,30.0],[8.0,28.0],[24.0,-7.7],[23.5,-17.5],[-0.3,-29.7],[-10.5,-22.2]]},"tytomihisa":{"a":[35.691922,139.713884],"o":[[-29.5,14.8],[-25.7,20.8],[17.3,27.8],[23.0,23.3],[28.5,-10.4],[16.8,-24.9],[-9.2,-28.9],[-24.0,-17.2]]},"tynishimitsui":{"a":[35.694968,139.688981],"o":[[-9.1,-32.2],[9.5,-21.2],[12.3,-22.2],[13.0,-19.2],[31.8,-8.2],[21.3,9.9],[21.9,12.7],[19.0,13.6],[8.7,32.0],[-9.6,21.3],[-12.2,21.9],[-12.9,19.3],[-31.5,9.1],[-21.2,-9.8],[-22.0,-12.4],[-19.4,-13.2]],"p":[[0.0,112.0,[[-21.3,-9.7],[-13.0,19.3],[-10.3,18.5],[-9.5,21.3],[19.0,13.5],[18.2,10.5],[21.2,9.8],[13.0,-19.2],[10.2,-18.2],[9.5,-21.2],[-19.3,-13.2],[-18.5,-10.5]]]]},"tycityhall":{"a":[35.693887,139.703436],"o":[[-26.7,18.6],[-25.7,20.9],[5.8,32.6],[8.1,31.6],[27.3,-20.9],[-7.7,-32.6]]},"tydaijingu":{"a":[35.699998,139.746874],"o":[[-16.9,-0.4],[-15.2,-0.1],[-15.9,7.1],[-14.7,7.4],[-14.9,9.6],[-11.7,9.9],[-11.4,8.1],[-10.2,8.4],[-10.4,9.1],[-4.2,9.9],[-4.7,12.1],[4.6,13.4],[5.1,8.6],[12.1,9.4],[14.1,-6.9],[8.8,-7.6],[9.6,-14.1],[-1.4,-15.4],[-1.9,-9.9],[-5.4,-10.4],[-6.4,-2.9],[-16.4,-4.1]]},"tyakagi":{"a":[35.704951,139.736108],"o":[[-9.6,6.2],[6.7,9.2],[9.7,-6.1],[-6.6,-9.3]]},"tyns":{"a":[35.688087,139.69345],"o":[[-43.7,-35.7],[-40.7,-18.9],[-38.4,-19.2],[-37.2,-14.2],[-39.7,-13.7],[-25.4,50.6],[-10.2,46.6],[-11.2,42.1],[-5.9,41.1],[-4.9,45.8],[43.6,36.3],[40.1,19.6],[37.8,19.8],[36.8,14.8],[39.1,14.1],[26.3,-49.7],[23.1,-48.9],[22.6,-50.4],[21.1,-51.4],[13.3,-49.9],[12.6,-48.4],[12.8,-47.2],[9.3,-46.2],[10.6,-40.9],[5.6,-39.9],[4.6,-45.2]],"p":[[121.4,133.6,[[-32.9,-28.4],[-19.4,38.8],[32.1,28.6],[19.6,-38.2]]]]},"tykddi":{"a":[35.68794,139.694835],"o":[[-32.2,-21.5],[21.3,-32.0],[25.4,-12.6],[27.2,-4.5],[28.9,4.3],[32.3,21.4],[-21.4,32.2],[-25.1,14.1],[-26.8,5.3],[-28.7,-2.9]],"p":[[0.0,164.7,[[-11.9,-5.2],[-10.4,1.0],[-7.6,0.5],[-5.9,9.5],[9.9,6.8],[6.9,-9.0]]]]},"tyfronttower":{"a":[35.696074,139.689402],"o":[[-7.2,-43.3],[2.7,-39.8],[35.3,-28.3],[26.5,-5.1],[8.3,42.7],[-34.9,28.6],[-28.8,13.6],[-31.0,12.7],[-23.4,-7.8],[-21.0,-6.9],[-15.8,-21.1]],"p":[[0.0,160.7,[[-34.9,28.5],[8.3,42.8],[26.6,-5.0],[-15.7,-21.2],[-20.9,-7.0],[-23.4,-7.7],[-30.9,12.8],[-28.9,13.5]]],[0.0,163.4,[[-20.9,12.5],[-11.2,16.0],[-6.4,3.0],[-16.2,-0.5]]]]},"tytsubouchi":{"a":[35.709954,139.719539],"o":[[-15.3,-4.5],[-10.8,12.5],[15.7,5.8],[11.0,-11.5],[5.2,-10.0],[4.7,-12.0],[-10.5,-8.0],[-10.0,-6.0]]},"tyltower":{"a":[35.692244,139.697416],"o":[[-32.2,-27.0],[-23.2,-27.5],[-18.2,-27.8],[-17.6,-22.2],[-10.7,-22.6],[-11.0,-28.2],[7.3,-29.3],[7.7,-23.3],[13.3,-23.6],[13.9,-17.8],[20.0,-18.1],[20.5,-12.1],[26.3,-12.4],[26.8,-6.6],[32.5,-7.0],[32.9,-1.3],[39.3,-1.4],[40.9,22.7],[34.5,23.2],[34.1,18.0],[22.8,18.3],[23.0,21.4],[-29.3,25.5],[-29.7,20.2]],"p":[[0.0,124.0,[[-32.3,-26.9],[-29.3,25.6],[22.9,21.3],[21.9,6.1],[15.7,6.3],[14.9,0.1],[-2.6,1.3],[-3.6,-12.7],[-9.8,-12.2],[-10.8,-22.7],[-17.6,-22.2],[-18.1,-27.9]]],[0.0,84.0,[[-3.6,-12.7],[-2.6,1.3],[3.7,0.8],[2.4,-13.2]]],[0.0,44.0,[[2.4,-13.2],[3.7,0.8],[9.7,0.6],[8.9,-13.7]]]]}};
+// ---- shared helpers (block-scoped; copied from hk/hk50e)
+const PI = Math.PI, HP = PI/2, TAU = PI*2;
+const lerp = (a, b, t) => a + (b - a)*t, cl01 = t => t < 0 ? 0 : t > 1 ? 1 : t, sm = t => { t = cl01(t); return t*t*(3 - 2*t); };
+const dsS = c => typeof c === 'string' ? {c, ds:true} : Object.assign({ds:true}, c);
+// triangle batches: many parts of one colour spec become one LTris call
+const mkB = () => { const M = new Map(); return {
+  p(col){ const k = typeof col === 'string' ? col : JSON.stringify(col); let e = M.get(k); if (!e){ e = {col, a:[]}; M.set(k, e); } return e.a; },
+  flush(g){ for (const e of M.values()) if (e.a.length) LTris(g, e.a, e.col); M.clear(); } }; };
+const quadP = (o, a, b, c, d) => o.push(...a, ...b, ...c, ...a, ...c, ...d);
+const triP = (o, a, b, c) => o.push(...a, ...b, ...c);
+function segP(o, a, b, r, n){
+  n = n || 4; const dx = b[0]-a[0], dy = b[1]-a[1], dz = b[2]-a[2], L = Math.hypot(dx, dy, dz); if (L < 1e-4) return;
+  const d = [dx/L, dy/L, dz/L], up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+  let ux = d[1]*up[2]-d[2]*up[1], uy = d[2]*up[0]-d[0]*up[2], uz = d[0]*up[1]-d[1]*up[0]; const ul = Math.hypot(ux, uy, uz); ux /= ul; uy /= ul; uz /= ul;
+  const vx = d[1]*uz-d[2]*uy, vy = d[2]*ux-d[0]*uz, vz = d[0]*uy-d[1]*ux;
+  const ring = p => { const R = []; for (let i = 0; i < n; i++){ const t = (i + 0.5)/n*TAU, c = Math.cos(t)*r, s = Math.sin(t)*r; R.push([p[0]+ux*c+vx*s, p[1]+uy*c+vy*s, p[2]+uz*c+vz*s]); } return R; };
+  const A = ring(a), Bq = ring(b);
+  for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, A[i], A[j], Bq[j], Bq[i]); }
+}
+const rotQ = (cx, cz, ry) => { const c = Math.cos(ry || 0), s = Math.sin(ry || 0); return (x, y, z) => [cx + x*c + z*s, y, cz - x*s + z*c]; };
+function boxP(o, w, h, d, x, y, z, ry){
+  const R = rotQ(x, z, ry), hw = w/2, hd = d/2;
+  const P = [R(-hw, y, -hd), R(hw, y, -hd), R(hw, y, hd), R(-hw, y, hd), R(-hw, y+h, -hd), R(hw, y+h, -hd), R(hw, y+h, hd), R(-hw, y+h, hd)];
+  for (const [a, b, c, e] of [[0,1,2,3],[4,7,6,5],[0,4,5,1],[1,5,6,2],[2,6,7,3],[3,7,4,0]]) quadP(o, P[a], P[b], P[c], P[e]);
+}
+// a box from plan point a to b (width w across), y0..y1
+function wallP(o, a, b, w, y0, y1){ const dx = b[0]-a[0], dz = b[1]-a[1], L = Math.hypot(dx, dz); if (L < 1e-3) return; boxP(o, L, y1 - y0, w, (a[0]+b[0])/2, y0, (a[1]+b[1])/2, -Math.atan2(dz, dx)); }
+function loftP(o, secs, cap){
+  const n = secs[0].length;
+  for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < n; i++){ const j = (i+1) % n; quadP(o, secs[s][i], secs[s][j], secs[s+1][j], secs[s+1][i]); }
+  if (cap){ const t = secs[secs.length - 1], c = [0, 0, 0]; for (const p of t){ c[0] += p[0]/n; c[1] += p[1]/n; c[2] += p[2]/n; } for (let i = 0; i < n; i++) o.push(...c, ...t[i], ...t[(i+1) % n]); }
+}
+// open strip loft (no wrap-around)
+function stripP(o, secs){ for (let s = 0; s < secs.length - 1; s++) for (let i = 0; i < secs[s].length - 1; i++) quadP(o, secs[s][i], secs[s][i+1], secs[s+1][i+1], secs[s+1][i]); }
+const area2 = P => { let s = 0; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; s += a[0]*b[1] - b[0]*a[1]; } return s/2; };
+const cenP = P => { let x = 0, z = 0; for (const p of P){ x += p[0]; z += p[1]; } return [x/P.length, z/P.length]; };
+const bbP = P => { let a = [1e9, 1e9, -1e9, -1e9]; for (const p of P){ a[0] = Math.min(a[0], p[0]); a[1] = Math.min(a[1], p[1]); a[2] = Math.max(a[2], p[0]); a[3] = Math.max(a[3], p[1]); } return a; };
+const shiftP = (P, dx, dz) => P.map(p => [p[0] + dx, p[1] + dz]);
+function offP(P, d){
+  const n = P.length, s = area2(P) > 0 ? 1 : -1, L = [];
+  for (let i = 0; i < n; i++){ const a = P[i], b = P[(i+1) % n], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; L.push([a[0] - ez/l*s*d, a[1] + ex/l*s*d, ex, ez]); }
+  const out = [];
+  for (let i = 0; i < n; i++){ const p = L[(i + n - 1) % n], q = L[i], den = p[2]*q[3] - p[3]*q[2];
+    if (Math.abs(den) < 1e-6){ out.push([q[0], q[1]]); continue; }
+    const t = ((q[0]-p[0])*q[3] - (q[1]-p[1])*q[2])/den; let x = p[0] + p[2]*t, z = p[1] + p[3]*t;
+    const ox = P[i][0], oz = P[i][1], dd = Math.hypot(x - ox, z - oz), mx = Math.abs(d)*2.5;
+    if (dd > mx){ x = ox + (x - ox)/dd*mx; z = oz + (z - oz)/dd*mx; }
+    out.push([x, z]); }
+  return out;
+}
+const outN = (P, i) => { const s = area2(P) > 0 ? 1 : -1, a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; return [ez/l*s, -ex/l*s]; };
+const inPoly = (P, x, z) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++){ const a = P[i], b = P[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0]-a[0])*(z-a[1])/(b[1]-a[1]) + a[0]) c = !c; } return c; };
+const dSeg = (x, z, a, b) => { const ex = b[0]-a[0], ez = b[1]-a[1], L2 = ex*ex + ez*ez || 1, t = cl01(((x-a[0])*ex + (z-a[1])*ez)/L2); return Math.hypot(x - a[0] - ex*t, z - a[1] - ez*t); };
+const dPoly = (P, x, z) => { let d = 1e9; for (let i = 0; i < P.length; i++) d = Math.min(d, dSeg(x, z, P[i], P[(i+1) % P.length])); return d; };
+const dLine = (L, x, z) => { let d = 1e9; for (let i = 0; i < L.length - 1; i++) d = Math.min(d, dSeg(x, z, L[i], L[i+1])); return d; };
+const triang = P => THREE.ShapeUtils.triangulateShape(P.map(p => new THREE.Vector2(p[0], p[1])), []);
+// clip a polygon to the half plane a*x + b*z + c >= 0
+function clipP(P, a, b, c){ const out = [], f = p => a*p[0] + b*p[1] + c;
+  for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], fp = f(p), fq = f(q);
+    if (fp >= 0) out.push(p); if ((fp >= 0) !== (fq >= 0)){ const t = fp/(fp - fq); out.push([p[0] + (q[0]-p[0])*t, p[1] + (q[1]-p[1])*t]); } }
+  return out; }
+// walls of a plan polygon from y0 (number or f(x, z)) up to ytop (number or f) and its top cap
+function prismP(o, P, y0, ytop, noTop, bottom){
+  const f = typeof ytop === 'function' ? ytop : () => ytop, f0 = typeof y0 === 'function' ? y0 : () => y0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; quadP(o, [a[0], f0(a[0], a[1]), a[1]], [b[0], f0(b[0], b[1]), b[1]], [b[0], f(b[0], b[1]), b[1]], [a[0], f(a[0], a[1]), a[1]]); }
+  if (!noTop) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f(p[0], p[1]), p[1]); }
+  if (bottom) for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], f0(p[0], p[1]), p[1]); }
+}
+const flatP = (o, P, y) => { for (const t of triang(P)) for (const k of t){ const p = P[k]; o.push(p[0], typeof y === 'function' ? y(p[0], p[1]) : y, p[1]); } };
+// floor bands round a polygon every `step` between y0 and y1
+function bandsP(o, P, y0, y1, step, bh, off, edges){
+  off = off || 0.12;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.3) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0 + step; y < y1 - 0.3; y += step) quadP(o, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, y+bh, b[1]+nz*off], [a[0]+nx*off, y+bh, a[1]+nz*off]);
+  }
+}
+// vertical strips about `sp` apart, `w` wide, `off` proud of the walls (a fin with depth when dep is given)
+function mullP(o, P, y0, y1, sp, w, off, edges, dep){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp*0.6) continue;
+    const [nx, nz] = outN(P, i), n = Math.max(1, Math.round(L/sp)), ux = ex/L, uz = ez/L;
+    for (let k = 0; k <= n; k++){
+      const t = k/n, x = a[0] + ex*t + nx*off, z = a[1] + ez*t + nz*off;
+      if (dep) { boxP(o, w, y1 - y0, dep, x + nx*dep/2, y0, z + nz*dep/2, -Math.atan2(uz, ux)); continue; }
+      const p = [x - ux*w/2, z - uz*w/2], q = [x + ux*w/2, z + uz*w/2];
+      quadP(o, [p[0], y0, p[1]], [q[0], y0, q[1]], [q[0], y1, q[1]], [p[0], y1, p[1]]); }
+  }
+}
+// window slots in bays along every edge, rows every fh
+function winsP(o, P, y0, y1, fh, sp, ww, wh, off, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp) continue;
+    const [nx, nz] = outN(P, i), n = Math.floor(L/sp), ux = ex/L, uz = ez/L, s0 = (L - n*sp)/2 + sp/2;
+    for (let y = y0; y + wh <= y1 + 0.01; y += fh) for (let k = 0; k < n; k++){
+      const s = s0 + k*sp, x = a[0] + ux*s + nx*off, z = a[1] + uz*s + nz*off;
+      quadP(o, [x - ux*ww/2, y, z - uz*ww/2], [x + ux*ww/2, y, z + uz*ww/2], [x + ux*ww/2, y + wh, z + uz*ww/2], [x - ux*ww/2, y + wh, z - uz*ww/2]); }
+  }
+}
+function lineRingP(o, P, y, r, n){ for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; segP(o, [a[0], y, a[1]], [b[0], y, b[1]], r, n || 3); } }
+function lineP(o, L, y, r, n){ for (let i = 0; i < L.length - 1; i++) segP(o, [L[i][0], typeof y === 'function' ? y(L[i][0], L[i][1]) : y, L[i][1]], [L[i+1][0], typeof y === 'function' ? y(L[i+1][0], L[i+1][1]) : y, L[i+1][1]], r, n || 3); }
+// railing along a polyline: posts every `sp`, top rail
+function railP(o, L, yf, h, sp, closed){
+  const Q = closed ? L.concat([L[0]]) : L;
+  for (let i = 0; i < Q.length - 1; i++){ const a = Q[i], b = Q[i+1], d = Math.hypot(b[0]-a[0], b[1]-a[1]), n = Math.max(1, Math.round(d/sp));
+    for (let k = 0; k < n; k++){ const t = k/n, x = a[0] + (b[0]-a[0])*t, z = a[1] + (b[1]-a[1])*t, y = yf(x, z); boxP(o, 0.12, h, 0.12, x, y, z, 0); }
+    const ya = yf(a[0], a[1]), yb = yf(b[0], b[1]); segP(o, [a[0], ya + h, a[1]], [b[0], yb + h, b[1]], 0.06, 3); }
+}
+function treeP(B, x, y, z, s, crown, trunk, tall){
+  const th = (tall ? 4.5 : 2.6)*s;
+  segP(B.p(trunk || '#5d4a3a'), [x, y, z], [x, y + th, z], 0.22*s, 3);
+  const c = B.p(crown || '#557f3c'), R = (tall ? 1.9 : 2.3)*s, cy = y + th + R*0.5, top = [x, cy + R*(tall ? 2.2 : 0.85), z], bot = [x, cy - R*0.6, z], ring = [];
+  for (let i = 0; i < 6; i++){ const a = i/6*TAU + s; ring.push([x + Math.cos(a)*R, cy, z + Math.sin(a)*R]); }
+  for (let i = 0; i < 6; i++){ const j = (i+1) % 6; triP(c, top, ring[j], ring[i]); triP(c, bot, ring[i], ring[j]); }
+}
+// resample a closed polygon to n points evenly by perimeter
+function resP(P, n){ const L = [0]; for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; L.push(L[i] + Math.hypot(b[0]-a[0], b[1]-a[1])); }
+  const T = L[P.length], out = []; let j = 0;
+  for (let k = 0; k < n; k++){ const s = k/n*T; while (j < P.length - 1 && L[j+1] < s) j++; const a = P[j], b = P[(j+1) % P.length], t = (s - L[j])/((L[j+1] - L[j]) || 1); out.push([a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t]); }
+  return out; }
+// the polygon boundary point in direction th from c (ray cast; last hit)
+function rayP(P, c, th){ const dx = Math.cos(th), dz = Math.sin(th); let best = 0;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], den = dx*ez - dz*ex; if (Math.abs(den) < 1e-9) continue;
+    const t = ((a[0]-c[0])*ez - (a[1]-c[1])*ex)/den, u = ((a[0]-c[0])*dz - (a[1]-c[1])*dx)/den; if (t > 0 && u >= 0 && u <= 1) best = Math.max(best, t); }
+  return best; }
+// ground of the app under a landmark, relative to its base (local y); rot must be 0. Falls back to flat ground outside the app/kit.
+function mkG(lat, lon){
+  try { if (typeof hC === 'function' && typeof sgXY === 'function' && LMCTX && LMCTX.u && LMCTX.u.base){ const q = sgXY(lat, lon), b = LMCTX.u.base.value; return (x, z) => hC(q[0] + x, q[1] - z) - b; } } catch (e){}
+  return () => 0;
+}
+const gMin = (G, P) => { let m = 1e9; for (const p of P) m = Math.min(m, G(p[0], p[1])); const c = cenP(P); return Math.min(m, G(c[0], c[1])); };
+const gMax = (G, P) => { let m = -1e9; for (const p of P) m = Math.max(m, G(p[0], p[1])); const c = cenP(P); return Math.max(m, G(c[0], c[1])); };
+// custom night emissive add-on for one material (vLP = local position, uTime / uNight from the kit)
+function lmPatch(spec, glsl, tag){
+  const m = lmMat(spec); if (m.userData.hkc) return m; m.userData.hkc = 1;
+  const base = m.onBeforeCompile;
+  m.onBeforeCompile = function hkcGlow(sh){
+    base(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvLP = transformed;');
+    const code = '\n{ vec3 lp = vLP; vec3 ledC = vec3(0.0);\n' + glsl + '\n totalEmissiveRadiance += ledC * uNight; }\n';
+    const fs = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLP;');
+    sh.fragmentShader = fs.indexOf('totalEmissiveRadiance += em * uNight;') >= 0 ? fs.replace('totalEmissiveRadiance += em * uNight;', 'totalEmissiveRadiance += em * uNight;' + code) : fs.replace('#include <aomap_fragment>', code + '#include <aomap_fragment>');
+  };
+  const ck = 'hkc|' + (tag || '') + '|' + glsl.length + '|' + String(base).length;
+  m.customProgramCacheKey = () => ck;
+  return m;
+}
+
+
+// ---- frames (from hk/hk50e)
+const cenA = P => { let a = 0, x = 0, z = 0; for (let i = 0; i < P.length; i++){ const p = P[i], q = P[(i+1) % P.length], c = p[0]*q[1] - q[0]*p[1]; a += c; x += (p[0] + q[0])*c; z += (p[1] + q[1])*c; } return Math.abs(a) < 1e-6 ? cenP(P) : [x/(3*a), z/(3*a)]; };
+// oriented frame of a plan polygon: u along the long side, v across; ob.p(u, v) -> plan [x, z]
+function obE(P, ang){
+  let best = null;
+  const tryA = an => { const c = Math.cos(an), s = Math.sin(an); let u0 = 1e9, u1 = -1e9, v0 = 1e9, v1 = -1e9;
+    for (const p of P){ const u = p[0]*c + p[1]*s, v = -p[0]*s + p[1]*c; u0 = Math.min(u0, u); u1 = Math.max(u1, u); v0 = Math.min(v0, v); v1 = Math.max(v1, v); }
+    const A = (u1 - u0)*(v1 - v0); if (!best || A < best.A - 1e-6) best = {A, an, u0, u1, v0, v1}; };
+  if (ang !== undefined) tryA(ang); else for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) > 0.5) tryA(Math.atan2(b[1]-a[1], b[0]-a[0])); }
+  let {an, u0, u1, v0, v1} = best;
+  if (ang === undefined && v1 - v0 > u1 - u0){ an += HP; const t0 = u0, t1 = u1; u0 = v0; u1 = v1; v0 = -t1; v1 = -t0; }
+  const c = Math.cos(an), s = Math.sin(an), uc = (u0 + u1)/2, vc = (v0 + v1)/2, cx = uc*c - vc*s, cz = uc*s + vc*c;
+  const p = (u, v) => [cx + u*c - v*s, cz + u*s + v*c];
+  return {cx, cz, a:an, c, s, L:u1 - u0, W:v1 - v0, p, ry:-an,
+    loc:(x, z) => { const dx = x - cx, dz = z - cz; return [dx*c + dz*s, -dx*s + dz*c]; },
+    rect:(a0, a1, b0, b1) => [p(a0, b0), p(a1, b0), p(a1, b1), p(a0, b1)]};
+}
+// 3-D point in an oriented frame
+const o3 = (ob, u, y, v) => { const q = ob.p(u, v); return [q[0], y, q[1]]; };
+// box in an oriented frame (u0..u1, v0..v1, y0..y1)
+function boxO(o, ob, u0, u1, v0, v1, y0, y1){ const q = ob.p((u0 + u1)/2, (v0 + v1)/2); boxP(o, u1 - u0, y1 - y0, v1 - v0, q[0], y0, q[1], ob.ry); }
+// hip roof over the oriented rectangle u0..u1 x v0..v1 at eaves y, rise h (ridge along the longer side)
+function hipO(o, ob, u0, u1, v0, v1, y, h){
+  const du = u1 - u0, dv = v1 - v0, P = (u, v, yy) => o3(ob, u, yy, v);
+  if (du >= dv){ const k = dv/2, vc = (v0 + v1)/2, r1 = P(u0 + k, vc, y + h), r2 = P(u1 - k, vc, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, r2); triP(o, A, r2, B); triP(o, C, r2, r1); triP(o, C, r1, E); triP(o, E, r1, A); triP(o, B, r2, C); }
+  else { const k = du/2, uc = (u0 + u1)/2, r1 = P(uc, v0 + k, y + h), r2 = P(uc, v1 - k, y + h), A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y);
+    triP(o, A, r1, B); triP(o, B, r1, r2); triP(o, B, r2, C); triP(o, C, r2, E); triP(o, E, r2, r1); triP(o, E, r1, A); }
+}
+// gable roof (ridge along u when alongU, else along v) with the two gable triangles in `og` (walls) when given
+function gableO(o, ob, u0, u1, v0, v1, y, h, alongU, og){
+  const P = (u, v, yy) => o3(ob, u, yy, v);
+  if (alongU){ const vc = (v0 + v1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(u0, vc, y + h), r2 = P(u1, vc, y + h);
+    quadP(o, A, B, r2, r1); quadP(o, C, E, r1, r2); if (og){ triP(og, A, r1, E); triP(og, B, C, r2); } }
+  else { const uc = (u0 + u1)/2, A = P(u0, v0, y), B = P(u1, v0, y), C = P(u1, v1, y), E = P(u0, v1, y), r1 = P(uc, v0, y + h), r2 = P(uc, v1, y + h);
+    quadP(o, A, r1, r2, E); quadP(o, B, C, r2, r1); if (og){ triP(og, A, B, r1); triP(og, C, E, r2); } }
+}
+// tile ribs (pan and roll tiles) down both slopes of a gable / hip whose ridge runs along u (or v)
+function ribsO(o, ob, u0, u1, v0, v1, y, h, alongU, sp){
+  sp = sp || 0.55; const P = (u, v, yy) => o3(ob, u, yy, v), e = 0.05;
+  if (alongU){ const vc = (v0 + v1)/2; for (let u = u0 + sp/2; u < u1; u += sp){ for (const vv of [v0, v1]){ const a = P(u - 0.07, vv, y + e), b = P(u + 0.07, vv, y + e), c = P(u + 0.07, vc, y + h + e), d = P(u - 0.07, vc, y + h + e); quadP(o, a, b, c, d); } } }
+  else { const uc = (u0 + u1)/2; for (let v = v0 + sp/2; v < v1; v += sp){ for (const uu of [u0, u1]){ const a = P(uu, v - 0.07, y + e), b = P(uu, v + 0.07, y + e), c = P(uc, v + 0.07, y + h + e), d = P(uc, v - 0.07, y + h + e); quadP(o, a, b, c, d); } } }
+}
+
+
+// ---- ty50b kit (block-scoped). NB offP(P, +d) insets, offP(P, -d) grows.
+// per-floor window bands on every edge of P: glass band in og (lit spec), spandrel in the walls
+function floorsP(og, P, y0, y1, fh, gh, off){ off = off || 0.06;
+  for (let i = 0; i < P.length; i++){ const a = P[i], b = P[(i+1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.8) continue; const [nx, nz] = outN(P, i);
+    for (let y = y0; y + 0.5 < y1; y += fh){ const t = Math.min(y + gh, y1 - 0.1); quadP(og, [a[0]+nx*off, y, a[1]+nz*off], [b[0]+nx*off, y, b[1]+nz*off], [b[0]+nx*off, t, b[1]+nz*off], [a[0]+nx*off, t, a[1]+nz*off]); } } }
+const PLACE = (key, lat, lon) => SG_PLACES.push({type:key, lat, lon, rot:0});
+const sclP = (P, c, s) => P.map(p => [c[0] + (p[0] - c[0])*s, c[1] + (p[1] - c[1])*s]);
+// cut every corner of a polygon by c metres (chamfer)
+function chamP(P, c){ const out = [], n = P.length;
+  for (let i = 0; i < n; i++){ const a = P[(i + n - 1) % n], b = P[i], d = P[(i + 1) % n], l1 = Math.hypot(b[0]-a[0], b[1]-a[1]), l2 = Math.hypot(d[0]-b[0], d[1]-b[1]);
+    if (l1 < 0.5 || l2 < 0.5){ out.push(b); continue; }
+    const k1 = Math.min(c, l1*0.45)/l1, k2 = Math.min(c, l2*0.45)/l2; out.push([b[0] + (a[0]-b[0])*k1, b[1] + (a[1]-b[1])*k1], [b[0] + (d[0]-b[0])*k2, b[1] + (d[1]-b[1])*k2]); }
+  return out; }
+// round every corner (radius c, n segments per corner; quadratic Bezier through the corner)
+function roundP(P, c, n){ const out = [], m = P.length; n = n || 4;
+  for (let i = 0; i < m; i++){ const a = P[(i + m - 1) % m], b = P[i], d = P[(i + 1) % m], l1 = Math.hypot(b[0]-a[0], b[1]-a[1]), l2 = Math.hypot(d[0]-b[0], d[1]-b[1]);
+    if (l1 < 0.5 || l2 < 0.5){ out.push(b); continue; }
+    const k1 = Math.min(c, l1*0.45)/l1, k2 = Math.min(c, l2*0.45)/l2, p0 = [b[0] + (a[0]-b[0])*k1, b[1] + (a[1]-b[1])*k1], p2 = [b[0] + (d[0]-b[0])*k2, b[1] + (d[1]-b[1])*k2];
+    for (let k = 0; k <= n; k++){ const t = k/n, u = 1 - t; out.push([u*u*p0[0] + 2*u*t*b[0] + t*t*p2[0], u*u*p0[1] + 2*u*t*b[1] + t*t*p2[1]]); } }
+  return out; }
+// clip a polygon to a convex polygon C (Sutherland-Hodgman, any winding of C)
+function clipC(P, C){ const s = area2(C) > 0 ? 1 : -1; let Q = P;
+  for (let i = 0; i < C.length && Q.length > 2; i++){ const a = C[i], b = C[(i + 1) % C.length]; Q = clipP(Q, -(b[1]-a[1])*s, (b[0]-a[0])*s, ((b[1]-a[1])*a[0] - (b[0]-a[0])*a[1])*s); }
+  return Q; }
+// outward band quads along the edges of P from y0 to y1 (a parapet / railing skin `off` proud)
+function skinP(o, P, y0, y1, off, edges){ off = off || 0;
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue; const a = P[i], b = P[(i + 1) % P.length]; if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 0.2) continue; const [nx, nz] = outN(P, i);
+    quadP(o, [a[0]+nx*off, y0, a[1]+nz*off], [b[0]+nx*off, y0, b[1]+nz*off], [b[0]+nx*off, y1, b[1]+nz*off], [a[0]+nx*off, y1, a[1]+nz*off]); } }
+// curtain-wall shaft: glass prism, mullions every ms (fins of depth dep when given), spandrel bands every fh
+function shaftCW(B, P, y0, y1, o){
+  prismP(B.p(o.g), P, y0, y1, true);
+  if (o.ms) mullP(B.p(o.f), P, y0, y1, o.ms, o.mw || 0.3, 0.06, o.edges, o.dep);
+  if (o.fh) bandsP(B.p(o.sp || o.f), P, y0 - (o.sb0 || 0), y1, o.fh, o.sb || 0.7, 0.08, o.edges);
+}
+// solid shaft with punched windows (rows every fh, bays every sp)
+function shaftPW(B, P, y0, y1, o){ prismP(B.p(o.w), P, y0, y1, true); winsP(B.p(o.g), P, y0 + (o.wy || 0.9), y1 - 0.3, o.fh, o.sp, o.ww, o.wh, 0.05, o.edges); }
+// residential shaft: wall prism, per floor a slab edge (white) proud by d and a dark railing band above it
+function shaftRes(B, P, y0, y1, o){
+  prismP(B.p(o.w), P, y0, y1, true);
+  const Q = offP(P, -(o.d || 1.2)), fh = o.fh;
+  for (let y = y0 + fh; y < y1 - 0.8; y += fh){ skinP(B.p(o.s), Q, y - 0.35, y, 0, o.edges); skinP(B.p(o.r), Q, y, y + 1.05, 0, o.edges); }
+  if (o.ms) mullP(B.p(o.s), Q, y0 + fh - 0.35, y1 - fh*0.5, o.ms, 0.45, 0.02, o.edges);
+}
+// flat roof with parapet, optional plant / screen box inset by pl
+function roofF(B, P, y, o){
+  flatP(B.p(o.r), P, y); const ph = o.ph === undefined ? 1.2 : o.ph;
+  if (ph > 0) for (let i = 0; i < P.length; i++) wallP(B.p(o.pc || o.r), P[i], P[(i + 1) % P.length], 0.35, y, y + ph);
+  if (o.pl){ const Q = offP(P, o.pl); prismP(B.p(o.plc || o.r), Q, y, y + (o.plh || 4)); if (o.lv) bandsP(B.p(o.lv), Q, y, y + (o.plh || 4), 0.9, 0.18, 0.06); }
+}
+// foundation block (to y0 below the base)
+const footP = (B, col, P, y0, y1) => prismP(B.p(col), P, y0, y1 === undefined ? 0.2 : y1, false);
+// loft of a plan scaled about c by s(t) (t 0..1 over y0..y1) in `ns` sections; returns the sections
+function loftS(o, P, c, y0, y1, ns, s, cap){
+  const secs = []; for (let k = 0; k <= ns; k++){ const t = k/ns, y = y0 + (y1 - y0)*t, f = s(t); secs.push(P.map(p => [c[0] + (p[0]-c[0])*f, y, c[1] + (p[1]-c[1])*f])); }
+  loftP(o, secs, cap); return secs;
+}
+// plain neighbour block kept under a hull (real outline, app height): wall prism, window rows, parapet
+function plainB(B, P, h, wall, glass, roof){ prismP(B.p(wall), P, -5, h, true); if (h > 5) winsP(B.p(glass), P, 1.0, h - 0.8, 3.3, 2.6, 1.5, 1.8, 0.05); roofF(B, P, h, {r:roof, pc:wall, ph:0.8}); }
+
+// ---- ty50d kit (block-scoped)
+const PL = PLACE;
+// corrugated ring: P resampled to n points (n even), every odd point pushed out by amp (folded facade panels)
+function zigR(P, n, amp){ const Q = resP(P, n), s = area2(P) > 0 ? 1 : -1;
+  return Q.map((p, i) => { if (i % 2 === 0) return p; const a = Q[(i + n - 1) % n], b = Q[(i + 1) % n], ex = b[0]-a[0], ez = b[1]-a[1], l = Math.hypot(ex, ez) || 1; return [p[0] + ez/l*s*amp, p[1] - ex/l*s*amp]; }); }
+// convex hull of plan points (monotone chain)
+function hullP(P){ const Q = P.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), cr = (o, a, b) => (a[0]-o[0])*(b[1]-o[1]) - (a[1]-o[1])*(b[0]-o[0]), L = [], U = [];
+  for (const p of Q){ while (L.length > 1 && cr(L[L.length-2], L[L.length-1], p) <= 0) L.pop(); L.push(p); }
+  for (let i = Q.length - 1; i >= 0; i--){ const p = Q[i]; while (U.length > 1 && cr(U[U.length-2], U[U.length-1], p) <= 0) U.pop(); U.push(p); }
+  U.pop(); L.pop(); return L.concat(U); }
+// facade styles on a plan ring P between y0 and y1 (no top cap):
+//  cw: glass + mullions + spandrels; lat: deep frame lattice over recessed glass; pw: punched windows; res: balcony slabs; band: ribbon windows
+function facade(B, P, y0, y1, st, C){
+  if (st === 'cw') shaftCW(B, P, y0, y1, {g:C.g, f:C.f, ms:C.ms || 1.8, mw:C.mw || 0.22, fh:C.fh || 4, sb:C.sb || 0.9, sp:C.sp || C.f, dep:C.dep});
+  else if (st === 'lat'){ prismP(B.p(C.g), offP(P, C.rc || 0.5), y0, y1, true); mullP(B.p(C.f), P, y0, y1, C.ms || 3.2, C.mw || 0.6, -(C.rc || 0.5), null, C.rc || 0.5); bandsP(B.p(C.f), P, y0, y1, C.fh || 4, C.sb || 0.6, 0.02); }
+  else if (st === 'pw') shaftPW(B, P, y0, y1, {w:C.w, g:C.g, fh:C.fh || 3.6, sp:C.sp || 2.4, ww:C.ww || 1.5, wh:C.wh || 1.8});
+  else if (st === 'res') shaftRes(B, P, y0, y1, {w:C.w, s:C.s, r:C.r, fh:C.fh || 3.1, d:C.d || 1.3, ms:C.ms});
+  else if (st === 'band'){ prismP(B.p(C.w), P, y0, y1, true); floorsP(B.p(C.g), P, y0 + (C.wy || 1.0), y1 - 0.4, C.fh || 3.8, C.gh || 1.9, 0.06); if (C.ms) mullP(B.p(C.w), P, y0, y1, C.ms, 0.35, 0.08); }
+}
+// ring of a plan polygon at height y as 3-D points
+const ring3 = (P, y) => P.map(p => [p[0], y, p[1]]);
+// a "roof by inset": sections of P inset by d[i] at heights y[i] (hip roofs that follow curved plans); top cap
+function insetRoof(o, P, ys, ds){ const n = P.length, secs = ys.map((y, i) => ring3(ds[i] ? resP(offP(P, ds[i]), n) : resP(P, n), y)); loftP(o, secs, true); return secs; }
+// plain neighbour / annex block: walls, window rows, parapet
+function annexB(B, P, y0, h, wall, glass, roof, fh){ prismP(B.p(wall), P, y0, h, true); if (h - y0 > 5) floorsP(B.p(glass), P, y0 + 1.0, h - 0.8, fh || 4.2, 2.0, 0.05); roofF(B, P, h, {r:roof, pc:wall, ph:0.9}); }
+// trees along the outside of an outline edge set (deterministic spacing)
+function streetTrees(B, P, d, sp, edges){ for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue; const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]), [nx, nz] = outN(P, i), n = Math.floor(L/sp);
+  for (let k = 1; k < n; k++){ const t = k/n; treeP(B, a[0] + (b[0]-a[0])*t + nx*d, 0, a[1] + (b[1]-a[1])*t + nz*d, 0.9 + ((i*3 + k*5) % 4)*0.07, '#56793c'); } } }
+
+// =====================================================================================================================
+// ★ Tokyu Kabukicho Tower (2023; exterior design Yuko Nagayama & Associates, with Kume Sekkei): 225 m, 48 storeys + 5 basements
+// (Wikipedia list / ArchDaily). Verified: height, storeys, the concept (a giant fountain, an homage to the fountain of Cine City Plaza;
+// the upper section suggests water rising toward the sky), >4000 ceramic-printed glass panels set in a folded / corrugated pattern
+// with dot and wave prints grading across the surface; a low-rise base at the height of the former Tokyu Milano building, clad in
+// cast aluminium with a lace-like wave pattern, reddish brown (a tribute to the old Milano-za) turning whitish toward its top; the main
+// entrance with a grand staircase / stage facing Cine City Plaza (east). Footprint: OSM outline w852000385 (base) and its tower part.
+// Approximations (no elevation drawing checked): the base height (46 m), the main roof (211 m) and the crown screen above it, whose
+// splash-like top edge peaks on the long faces; fold depth; glass tints; the staircase size; the plaza screen (abstract colour only).
+// =====================================================================================================================
+LANDMARKS.tykabukicho = {zh:'东急歌舞伎町塔', en:'Tokyu Kabukicho Tower', cat:'new', r:44, h:225,
+  lt:{m:1, c:'#e6efff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tykabukicho, O = E.o, T = E.p[0][2], c = cenA(T);
+    const P1 = '#6e3a2d', P2 = '#8a5444', P3 = '#b48f80', P4 = '#ddd3cc', LACE = '#5a2e24', GLB = {c:'#39424a', m:1, fh:5, cw:3},
+      G1 = {c:'#7891a6', m:1, fh:4.1, cw:1.4}, G2 = {c:'#98afc0', m:1, fh:4.1, cw:1.4}, G3 = {c:'#bccbd6', m:1, fh:4.1, cw:1.4},
+      FR = '#eef3f6', RIB = '#f4f6f7', RF = '#8c9094', CR = {c:'#e4ecf1', glow:'#cfe0ff', gk:0.35}, SCR = {c:'#3c4a63', glow:'#5b7fd6', gk:0.8};
+    const yP = 46, yR = 211, yT = 225;
+    footP(B, P1, O, -6);
+    // ---- base: recessed glazed ground floor, then the cast-aluminium skin in four tones (reddish brown below, whitish at the top)
+    prismP(B.p(GLB), offP(O, 0.9), 0.2, 6.0, true);
+    mullP(B.p(P1), O, 0.2, 6.0, 6.0, 0.9, -0.9, null, 0.9);
+    const tones = [[6, 17, P1], [17, 28, P2], [28, 38, P3], [38, yP, P4]];
+    for (const [y0, y1, col] of tones) prismP(B.p(col), O, y0, y1, true);
+    // lace: wave-pattern ribs (two out-of-phase sine strips per course) on the base skin
+    { const o = B.p(P1);
+      for (let i = 0; i < O.length; i++){ const a = O[i], b = O[(i + 1) % O.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 2) continue;
+        const [nx, nz] = outN(O, i), n = Math.max(2, Math.round(L/1.6));
+        for (let y = 8; y < yP - 1.5; y += 2.6) for (const ph of [0, PI]){
+          let prev = null;
+          for (let k = 0; k <= n; k++){ const t = k/n, yy = y + 0.55*Math.sin(t*n*PI*0.5 + ph), x = a[0] + (b[0]-a[0])*t + nx*0.06, z = a[1] + (b[1]-a[1])*t + nz*0.06;
+            if (prev) quadP(o, [prev[0], prev[1], prev[2]], [x, yy, z], [x, yy + 0.22, z], [prev[0], prev[1] + 0.22, prev[2]]);
+            prev = [x, yy, z]; } } } }
+    roofF(B, O, yP, {r:RF, pc:P4, ph:1.2});
+    // roof terrace planting on the base around the tower
+    { const bb = bbP(O), To = offP(T, -4); let n = 0;
+      for (let x = bb[0] + 4; x < bb[2] - 3; x += 7) for (let z = bb[1] + 4; z < bb[3] - 3; z += 7){
+        if (n > 18 || !inPoly(O, x, z) || inPoly(To, x, z) || dPoly(O, x, z) < 3) continue; treeP(B, x, yP, z, 0.8, '#5a7d40'); n++; } }
+    // ---- grand staircase (a stage) and the plaza screen on the east face, toward Cine City Plaza (entrances at the east outline vertices)
+    { const a = O[13], b = O[14], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez), ux = ex/L, uz = ez/L, [nx, nz] = outN(O, 13), ST = B.p(P4);
+      for (let s = 0; s < 8; s++){ const t0 = 0.40, t1 = 0.86, w = (t1 - t0)*L, d = 1.0 + s*0.0, inn = 7.5 - s*0.9;   // tiers stepping up into the base
+        const cx = a[0] + ux*(t0 + t1)/2*L - nx*inn, cz = a[1] + uz*(t0 + t1)/2*L - nz*inn; boxP(ST, w, 0.75*(s + 1), d, cx, 0, cz, -Math.atan2(uz, ux)); }
+      const q = [a[0] + ux*0.63*L + nx*0.15, a[1] + uz*0.63*L + nz*0.15];
+      boxP(B.p(SCR), L*0.44, 12, 0.3, q[0], 12, q[1], -Math.atan2(uz, ux)); }
+    streetTrees(B, O, 2.2, 7.5, i => i === 13 || i === 10 || i === 11);
+    // ---- tower: folded glass on the tower part ring, three tint zones (denser white print higher up), white fold ribs, floor lines
+    const Z = zigR(T, 132, 0.6);
+    prismP(B.p(P4), offP(T, 1.5), yP, yP + 1.2, true);
+    for (const [y0, y1, col] of [[yP, 112, G1], [112, 168, G2], [168, yR, G3]]) prismP(B.p(col), Z, y0, y1, true);
+    { const o = B.p(FR); for (let i = 1; i < Z.length; i += 2){ const p = Z[i]; boxP(o, 0.22, yR - yP, 0.22, p[0], yP, p[1], 0); } }
+    bandsP(B.p(FR), Z, yP, yR, 4.1, 0.28, 0.04);
+    // arch-shaped print bands over the lowest tower floors (the finer gradation arch): a scalloped white band
+    { const o = B.p(FR);
+      for (let i = 0; i < Z.length; i++){ const a = Z[i], b = Z[(i + 1) % Z.length], [nx, nz] = outN(Z, i), k = Math.sin(((i % 12) + 0.5)/12*PI);
+        quadP(o, [a[0]+nx*0.05, yP + 1.2, a[1]+nz*0.05], [b[0]+nx*0.05, yP + 1.2, b[1]+nz*0.05], [b[0]+nx*0.05, yP + 9 - 5*k, b[1]+nz*0.05], [a[0]+nx*0.05, yP + 9 - 5*k, a[1]+nz*0.05]); } }
+    // ---- crown: the folded screen rises past the main roof; its top edge sprays up highest at the middle of the two long faces
+    flatP(B.p(RF), T, yR);
+    prismP(B.p(G3), offP(T, 6), yR, yR + 6.5);                    // top-floor restaurant atrium volume inside the screen
+    { const ob = obE(T), o = B.p(CR), oi = B.p(FR), n = Z.length;
+      const top = i => { const p = Z[i], [u, v] = ob.loc(p[0], p[1]), f = 1 - Math.min(1, Math.abs(u)/(ob.L*0.5)), jit = ((i*7) % 5)/5;
+        return Math.min(yT, yR + 3.5 + 8.5*f*f + 4.5*f*(0.55 + 0.45*jit)); };
+      for (let i = 0; i < n; i++){ const j = (i + 1) % n, a = Z[i], b = Z[j], ta = top(i), tb = top(j);
+        quadP(o, [a[0], yR, a[1]], [b[0], yR, b[1]], [b[0], tb, b[1]], [a[0], ta, a[1]]);
+        if (i % 2 === 1) boxP(oi, 0.22, ta - yR, 0.22, a[0], yR, a[1], 0); } }
+    B.flush(g); return g; }};
+PL('tykabukicho', 35.695879, 139.700641);
+
+// =====================================================================================================================
+// ★ Sompo Japan Building (head office, 1976; Taisei Corporation / Yoshikazu Uchida): 193 m to the roof, 200 m overall, 43 storeys +
+// 6 basements (Wikipedia, CTBUH). Its flared base widens toward the ground in a soft curve, likened to a skirt. Footprint: the OSM outline
+// w137626285 and its building:parts — the 51 x 57 m rectangle at ground (the skirt), the 31 m wide slab (to 193 m) and the two end
+// cores (OSM part tops 200 m, mapper values). Approximations: the skirt's height (48 m) and curve, the cladding colour (warm
+// grey-brown precast) and the ribbon-window rhythm, the roof plant. The 2020 museum beside it (its own OSM outline) is not modelled.
+// =====================================================================================================================
+LANDMARKS.tysompo = {zh:'损保日本总部大厦', en:'Sompo Japan Building', cat:'new', r:43, h:200,
+  lt:{m:1, c:'#fff0dc', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tysompo, O = E.o, RECT = E.p[1][2], SL = E.p[0][2], CO = [E.p[3][2], E.p[4][2]];
+    const WL = '#8a7b6c', WL2 = '#77695c', CORE = '#6f6255', GL = {c:'#3a4147', m:1, fh:4.15, cw:1.8}, GLB = {c:'#2f373d', m:1, fh:5, cw:3}, RF = '#7f7a74';
+    const ob = obE(RECT), W2 = ob.W/2, L2 = ob.L/2;
+    let v0 = 1e9, v1 = -1e9, u0 = 1e9, u1 = -1e9; for (const p of SL){ const [u, v] = ob.loc(p[0], p[1]); v0 = Math.min(v0, v); v1 = Math.max(v1, v); u0 = Math.min(u0, u); u1 = Math.max(u1, u); }
+    u0 = Math.max(u0, -L2); u1 = Math.min(u1, L2);
+    const ySk = 48, yR = 193, fh = 4.15, f = y => y >= ySk ? 0 : Math.pow(1 - y/ySk, 1.55);
+    const secAt = (y, d) => { const t = f(y), a = lerp(v0, -W2, t) - (d || 0), b = lerp(v1, W2, t) + (d || 0); return ob.rect(u0, u1, a, b).map(q => [q[0], y, q[1]]); };
+    footP(B, WL2, O, -6);
+    // the skirt: lofted from the ground rectangle to the slab, concave flare on the two long faces
+    { const ys = [0.2, 1.5, 3.5, 6, 9, 12.5, 16.5, 21, 26, 31.5, 37.5, 43, ySk]; loftP(B.p(WL), ys.map(y => secAt(y)), false);
+      // ribbon windows following each floor over the curve
+      const o = B.p(GL);
+      for (let y = 5.0; y < ySk - 0.5; y += fh){ const s0 = secAt(y, 0.06), s1 = secAt(y + 1.7, 0.06); loftP(o, [s0, s1], false); }
+      const oo = B.p(GLB); loftP(oo, [secAt(0.25, 0.05), secAt(4.4, 0.05)], false); }
+    // the slab above the skirt: ribbon windows on precast spandrels
+    const S = ob.rect(u0, u1, v0, v1);
+    facade(B, S, ySk, yR, 'band', {w:WL, g:GL, fh, gh:1.75, wy:0.9});
+    mullP(B.p(WL2), S, ySk, yR, 7.2, 0.35, 0.06);
+    roofF(B, S, yR, {r:RF, pc:WL, ph:1.4, pl:6, plc:WL2, plh:3.5, lv:'#8d8780'});
+    // the two end cores, solid panels to the OSM part top, with recessed vertical joints
+    for (const C of CO){ prismP(B.p(CORE), C, -6, 200, false); mullP(B.p(WL2), C, 0.2, 199, 3.0, 0.25, 0.05); bandsP(B.p(WL2), C, 0.2, 200, 8.3, 0.4, 0.05); }
+    // entrance canopies at the two short ends (glass)
+    for (const s of [-1, 1]){ const q = ob.p(s > 0 ? u1 - 1 : u0 + 1, (v0 + v1)/2 + 14); boxP(B.p('#9aa3a8'), 3, 0.5, 9, q[0], 4.5, q[1], ob.ry); }
+    B.flush(g); return g; }};
+PL('tysompo', 35.692688, 139.696124);
+
+// =====================================================================================================================
+// ★ Shinjuku Center Building (1979; Taisei Corporation): 222.8 m, 54 storeys + 4 basements, all-steel (CTBUH); main roof 709 ft = 216 m
+// (SkyscraperPage). Footprint: the OSM outline w312900232 (one tower part 0-223 m): a rounded rectangle whose whole perimeter is
+// folded into ~1.9 m saw-teeth — the tower's ribbed silhouette. Verified: height, storeys, plan. Approximations: dark brown colour of
+// the cladding and bronze glass (from photos, not a cited source), ~4 m floors, the 9 m two-storey recessed lobby behind piers, the
+// two rooftop plant houses (OSM parts; kept at the 222.8 m top, not the 228 m mapper value).
+// =====================================================================================================================
+LANDMARKS.tycenterbldg = {zh:'新宿中心大厦', en:'Shinjuku Center Building', cat:'new', r:40, h:223,
+  lt:{m:1, c:'#ffe7c6', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tycenterbldg, P = E.p[0][2], c = cenA(P);
+    const BR = '#4b3b31', BR2 = '#5d4b3f', BR3 = '#3c2f27', GL = {c:'#2c2724', m:1, fh:3.98, cw:1.9}, GLB = {c:'#2a3036', m:1, fh:4.5, cw:3}, RF = '#6b625a';
+    // the inner (valley) and outer (tip) points of the saw-teeth
+    const dc = p => Math.hypot(p[0] - c[0], p[1] - c[1]); let ev = 0, od = 0; P.forEach((p, i) => { if (i % 2) od += dc(p); else ev += dc(p); });
+    const tipPar = ev > od ? 0 : 1, IN = P.filter((p, i) => i % 2 !== tipPar), TIP = P.filter((p, i) => i % 2 === tipPar);
+    const yL = 9.0, yR = 216, yT = 222.8, fh = (yR - yL)/52;
+    footP(B, BR2, P, -6);
+    // lobby: glazing set back behind the tooth tips, piers at every second tip
+    prismP(B.p(GLB), offP(IN, 1.2), 0.2, yL, true);
+    TIP.forEach((p, i) => { if (i % 2 === 0) boxP(B.p(BR3), 0.8, yL - 0.2, 0.8, p[0], 0.2, p[1], 0); });
+    { const Q = offP(IN, 1.2); flatP(B.p(BR3), offP(P, -0.2), yL - 0.05); }
+    // shaft: the folded perimeter, a glass band and a brown spandrel each floor
+    prismP(B.p(BR), P, yL, yR, true);
+    floorsP(B.p(GL), P, yL + 1.0, yR - 0.3, fh, 2.05, 0.04);
+    { const o = B.p(BR3); for (const p of TIP) boxP(o, 0.3, yR - yL, 0.3, p[0], yL, p[1], 0); }
+    // mechanical floor band two-thirds up (a darker solid course every 18 floors)
+    for (const y of [yL + fh*18, yL + fh*36]) skinP(B.p(BR3), P, y - 0.2, y + 1.6, 0.06);
+    // crown: parapet band, roof, the two rooftop plant houses (OSM parts), a perimeter gantry rail
+    skinP(B.p(BR2), P, yR, yR + 2.6, 0.0);
+    flatP(B.p(RF), P, yR + 0.1);
+    for (const X of [E.p[1][2], E.p[2][2]]){ prismP(B.p(BR2), X, yR, yT, false); bandsP(B.p(BR3), X, yR, yT, 1.2, 0.2, 0.05); }
+    lineRingP(B.p('#8f8a84'), offP(IN, 1.5), yR + 3.4, 0.12, 3);
+    B.flush(g); return g; }};
+PL('tycenterbldg', 35.691712, 139.695468);
+
+// =====================================================================================================================
+// ★ Okuma Auditorium, Waseda University (completed 1927; Kōichi Satō and Takeo Satō, engineer Tachū Naitō; Tudor Gothic): clock
+// tower 37.5 m (125 shaku), seven storeys, standing to the left of the hall; main hall 1,123 seats on three floors, basement hall
+// (Wikipedia). Footprint: OSM w94117018 — the hall (front facing the main gate, west), its rounded east end and the 8.3 m square tower
+// at the north-west corner. The app draws only 13 m there: this model replaces it with the tower at its real height. Approximations
+// (no drawings checked): eaves 15.5 m and roof 21 m, brick and stone colours, the window rhythm, the tower stages (clock stage at
+// 25-29 m, belfry, corner pinnacles and the pyramidal top), the oval roof lights (11 of them, after the Sun, Moon and nine planets).
+// =====================================================================================================================
+LANDMARKS.tyokuma = {zh:'早稻田大学大隈讲堂', en:'Okuma Auditorium (Waseda University)', cat:'old', r:36, h:38,
+  lt:{m:0, c:'#ffe2b8', k:0.7},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyokuma.o;
+    const BRK = '#8e4e3a', BRK2 = '#7a4231', ST = '#d9cdb5', ST2 = '#c4b699', RF = '#55595a', RF2 = '#474b4c', GLW = {c:'#3a3f44', m:1, fh:5, cw:2.4},
+      DK = '#2b2a2a', CLK = {c:'#f2ead6', glow:'#fff1cf', gk:0.9}, HAND = '#2a2a28';
+    // plan: the tower square at the north-west corner and the hall (the rest of the outline)
+    const TW = [[-16.5, -22.0], [-13.5, -29.7], [-5.8, -26.7], [-8.8, -19.0]];
+    const HALL = [[-23.5, 6.0], [14.7, 21.5], [17.0, 15.8], [21.0, 12.3], [23.2, 7.3], [23.7, 2.8], [22.2, -0.5], [19.7, -5.2], [-9.8, -16.7], [-13.0, -20.5]];
+    const ob = obE(HALL, 21.3*PI/180), yE = 15.5, yRf = 21;
+    footP(B, ST2, O, -5);
+    // hall walls: stone plinth, brick, stone string courses and coping
+    prismP(B.p(ST2), HALL, 0.2, 1.4, true);
+    prismP(B.p(BRK), HALL, 1.4, yE, true);
+    for (const y of [5.6, 10.6]) skinP(B.p(ST), HALL, y, y + 0.45, 0.06);
+    skinP(B.p(ST), HALL, yE - 0.2, yE + 1.1, 0.04);
+    // buttresses and pointed windows along the walls (two tiers), skipping the front wall (entrances there)
+    { const ob2 = B.p(BRK2), ow = B.p(GLW), os = B.p(ST);
+      for (let i = 0; i < HALL.length; i++){ const a = HALL[i], b = HALL[(i + 1) % HALL.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 3.5 || i === HALL.length - 1) continue;
+        const [nx, nz] = outN(HALL, i), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L, n = Math.max(1, Math.round(L/4.6)), ry = -Math.atan2(uz, ux);
+        for (let k = 0; k <= n; k++){ const t = k/n, x = a[0] + (b[0]-a[0])*t, z = a[1] + (b[1]-a[1])*t;
+          boxP(ob2, 0.9, yE - 1.0, 0.8, x + nx*0.4, 0.2, z + nz*0.4, ry);
+          if (k < n){ const s = (k + 0.5)/n, wx = a[0] + (b[0]-a[0])*s + nx*0.05, wz = a[1] + (b[1]-a[1])*s + nz*0.05;
+            for (const [y0, hh, w] of [[2.2, 2.8, 1.3], [6.6, 7.2, 1.9]]){
+              const p0 = [wx - ux*w/2, wz - uz*w/2], p1 = [wx + ux*w/2, wz + uz*w/2];
+              quadP(ow, [p0[0], y0, p0[1]], [p1[0], y0, p1[1]], [p1[0], y0 + hh, p1[1]], [p0[0], y0 + hh, p0[1]]);
+              triP(ow, [p0[0], y0 + hh, p0[1]], [p1[0], y0 + hh, p1[1]], [wx, y0 + hh + w*0.7, wz]);
+              segP(os, [p0[0], y0 + hh, p0[1]], [wx, y0 + hh + w*0.75, wz], 0.1, 3); segP(os, [wx, y0 + hh + w*0.75, wz], [p1[0], y0 + hh, p1[1]], 0.1, 3); } } } } }
+    // front (west) wall: three pointed entrance arches in a stone surround, a big pointed window above
+    { const a = HALL[HALL.length - 1], b = HALL[0], L = Math.hypot(b[0]-a[0], b[1]-a[1]), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L, [nx, nz] = outN(HALL, HALL.length - 1), ry = -Math.atan2(uz, ux);
+      const at = (s, off) => [a[0] + ux*s + nx*off, a[1] + uz*s + nz*off], mid = L*0.52;
+      { const q = at(mid, 0.6); boxP(B.p(ST), 14, 7.4, 1.2, q[0], 0.2, q[1], ry); }
+      for (const ds of [-4.2, 0, 4.2]){ const q = at(mid + ds, 1.25), o = B.p(DK); const p0 = [q[0] - ux*1.4, q[1] - uz*1.4], p1 = [q[0] + ux*1.4, q[1] + uz*1.4];
+        quadP(o, [p0[0], 0.4, p0[1]], [p1[0], 0.4, p1[1]], [p1[0], 4.6, p1[1]], [p0[0], 4.6, p0[1]]); triP(o, [p0[0], 4.6, p0[1]], [p1[0], 4.6, p1[1]], [q[0], 6.5, q[1]]); }
+      { const q = at(mid, 0.07), o = B.p(GLW), p0 = [q[0] - ux*2.6, q[1] - uz*2.6], p1 = [q[0] + ux*2.6, q[1] + uz*2.6];
+        quadP(o, [p0[0], 8.4, p0[1]], [p1[0], 8.4, p1[1]], [p1[0], 12.6, p1[1]], [p0[0], 12.6, p0[1]]); triP(o, [p0[0], 12.6, p0[1]], [p1[0], 12.6, p1[1]], [q[0], 14.8, q[1]]); }
+      // stepped Tudor gable parapet over the entrance bay
+      const og = B.p(BRK); for (let s = 0; s < 4; s++){ const q = at(mid, 0.0), w = 15 - s*3.4; boxP(og, w, 1.3, 1.0, q[0] - nx*0.5, yE + 1.1 + s*1.3, q[1] - nz*0.5, ry); }
+      { const q = at(mid, 0.0); boxP(B.p(ST), 2.0, 0.6, 1.2, q[0] - nx*0.5, yE + 1.1 + 4*1.3, q[1] - nz*0.5, ry); } }
+    // roof: hipped, following the rounded east end (inset loft over the convex plan), slate grey; eleven oval roof lights
+    const H = hullP(HALL);
+    insetRoof(B.p(RF), H, [yE + 1.1, yE + 3.8, yRf], [0, 3.6, 8.5]);
+    { const o = B.p({c:'#e6dcc2', glow:'#ffe6b0', gk:0.6}), Hc = cenA(H), Hm = offP(H, 3.0), n = 11;
+      for (let k = 0; k < n; k++){ const th = k/n*TAU + 0.3, rr = rayP(Hm, Hc, th), x = Hc[0] + Math.cos(th)*rr, z = Hc[1] + Math.sin(th)*rr, nx = Math.cos(th), nz = Math.sin(th);
+        const y = yE + 3.0, ring = []; for (let j = 0; j < 8; j++){ const a = j/8*TAU, cu = Math.cos(a)*0.75, sv = Math.sin(a)*0.5; ring.push([x - nz*cu + nx*0.15, y + 0.55 + sv, z + nx*cu + nz*0.15]); }
+        const cc = [x + nx*0.2, y + 0.55, z + nz*0.2]; for (let j = 0; j < 8; j++) triP(o, cc, ring[j], ring[(j + 1) % 8]); } }
+    // ---- the clock tower (8.3 m square): brick shaft with stepped corner buttresses, clock stage, belfry, pinnacles, pyramid top
+    const tc = cenA(TW), obT = obE(TW), h2 = 4.15;
+    prismP(B.p(BRK), TW, -5, 25, false);
+    prismP(B.p(ST2), offP(TW, -0.12), 0.2, 1.4, true);
+    for (const y of [5.6, 10.6, 15.8, 20.6]) skinP(B.p(ST), TW, y, y + 0.4, 0.06);
+    { const o = B.p(BRK2); for (const [su, sv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) for (const [y0, y1, d] of [[0.2, 12, 1.3], [12, 24.5, 0.9], [24.5, 31.5, 0.6]]){ const q = obT.p(su*(h2 - d*0.3), sv*(h2 - d*0.3)); boxP(o, d, y1 - y0, d, q[0], y0, q[1], obT.ry); } }
+    // narrow lancet windows up the shaft on the four faces
+    { const o = B.p(DK); for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) for (const [y0, hh] of [[7.0, 2.6], [12.2, 2.8], [17.2, 2.8]]){
+        const q = obT.p(du*(h2 + 0.06), dv*(h2 + 0.06)), ux = dv !== 0 ? 1 : 0, vx = du !== 0 ? 1 : 0, p0 = obT.p(du*(h2 + 0.06) - ux*0.45, dv*(h2 + 0.06) - vx*0.45), p1 = obT.p(du*(h2 + 0.06) + ux*0.45, dv*(h2 + 0.06) + vx*0.45);
+        quadP(o, [p0[0], y0, p0[1]], [p1[0], y0, p1[1]], [p1[0], y0 + hh, p1[1]], [p0[0], y0 + hh, p0[1]]); triP(o, [p0[0], y0 + hh, p0[1]], [p1[0], y0 + hh, p1[1]], [q[0], y0 + hh + 0.6, q[1]]); } }
+    // clock stage: stone band with a round clock face on each side (white dial, dark hands, no numerals)
+    prismP(B.p(ST), offP(TW, -0.15), 25, 29.5, false);
+    { for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]){ const q = obT.p(du*(h2 + 0.22), dv*(h2 + 0.22)), nx = obT.p(du, dv), c0 = obT.p(0, 0), ex = nx[0] - c0[0], ez = nx[1] - c0[1];
+        const tx = -ez, tz = ex, ring = [], R = 1.55, yc = 27.25, o = B.p(CLK); for (let j = 0; j < 20; j++){ const a = j/20*TAU; ring.push([q[0] + tx*Math.cos(a)*R, yc + Math.sin(a)*R, q[1] + tz*Math.cos(a)*R]); }
+        for (let j = 0; j < 20; j++) triP(o, [q[0], yc, q[1]], ring[j], ring[(j + 1) % 20]);
+        const oh = B.p(HAND), q2 = [q[0] + ex*0.05, q[1] + ez*0.05]; segP(oh, [q2[0], yc, q2[1]], [q2[0] + tx*0.2, yc + 1.15, q2[1] + tz*0.2], 0.07, 3); segP(oh, [q2[0], yc, q2[1]], [q2[0] + tx*0.75, yc - 0.35, q2[1] + tz*0.75], 0.08, 3); } }
+    // belfry: brick with tall pointed openings, a stone cornice
+    prismP(B.p(BRK), TW, 29.5, 33.4, true);
+    { const o = B.p(DK); for (const [du, dv] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) for (const s of [-1.6, 1.6]){
+        const ux = dv !== 0 ? 1 : 0, vx = du !== 0 ? 1 : 0, b0 = obT.p(du*(h2 + 0.05) + ux*(s - 0.6), dv*(h2 + 0.05) + vx*(s - 0.6)), b1 = obT.p(du*(h2 + 0.05) + ux*(s + 0.6), dv*(h2 + 0.05) + vx*(s + 0.6)), tp = obT.p(du*(h2 + 0.05) + ux*s, dv*(h2 + 0.05) + vx*s);
+        quadP(o, [b0[0], 30.0, b0[1]], [b1[0], 30.0, b1[1]], [b1[0], 32.4, b1[1]], [b0[0], 32.4, b0[1]]); triP(o, [b0[0], 32.4, b0[1]], [b1[0], 32.4, b1[1]], [tp[0], 33.1, tp[1]]); } }
+    prismP(B.p(ST), offP(TW, -0.3), 33.4, 34.1, false);
+    // corner pinnacles and the pyramidal top
+    { const o = B.p(ST2); for (const [su, sv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]){ const q = obT.p(su*(h2 - 0.2), sv*(h2 - 0.2)); boxP(o, 0.9, 1.4, 0.9, q[0], 34.1, q[1], obT.ry);
+        const t0 = [q[0], 35.5, q[1]], pk = [q[0], 36.6, q[1]], R = [[-0.45, -0.45], [0.45, -0.45], [0.45, 0.45], [-0.45, 0.45]].map(([a, b]) => { const r = obT.p(su*(h2 - 0.2) + a, sv*(h2 - 0.2) + b); return [r[0], 35.5, r[1]]; });
+        for (let j = 0; j < 4; j++) triP(o, pk, R[j], R[(j + 1) % 4]); } }
+    { const o = B.p(RF2), R = [[-2.6, -2.6], [2.6, -2.6], [2.6, 2.6], [-2.6, 2.6]].map(([a, b]) => { const r = obT.p(a, b); return [r[0], 34.1, r[1]]; }), pk = [tc[0], 37.2, tc[1]];
+      for (let j = 0; j < 4; j++) triP(o, pk, R[j], R[(j + 1) % 4]); segP(B.p(ST2), pk, [tc[0], 37.5, tc[1]], 0.08, 4); }
+    B.flush(g); return g; }};
+PL('tyokuma', 35.708906, 139.721579);
+
+// =====================================================================================================================
+// Nishi-Shinjuku skyscraper district (medium detail on the real footprints; heights as stated per key, OSM / PLATEAU values labelled)
+// =====================================================================================================================
+
+// Shinjuku Nomura Building (1978): 209 m, 50 storeys (Wikipedia list). Tower on the OSM outline w137626356 (notched mid-sides; the
+// OSM tower part is only a 16 m core strip, the floor area needs the whole outline). Dark frame lattice over recessed dark glass, a
+// recessed two-storey glazed base. Approximations: lattice spacing, colours, roof plant.
+LANDMARKS.tynomura = {zh:'新宿野村大厦', en:'Shinjuku Nomura Building', cat:'new', r:36, h:209,
+  lt:{m:1, c:'#fff0d8', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tynomura.o;
+    const FR = '#35383c', FR2 = '#2a2d31', GL = {c:'#222b33', m:1, fh:4.0, cw:1.6}, GLB = {c:'#33404a', m:1, fh:4.5, cw:3}, RF = '#666a6e';
+    footP(B, FR2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.4), 0.2, 9.0, true); mullP(B.p(FR), O, 0.2, 9.0, 5.0, 0.9, -1.4, null, 1.4);
+    facade(B, O, 9.0, 203, 'lat', {g:GL, f:FR, ms:2.0, mw:0.45, fh:4.0, sb:0.55, rc:0.45});
+    skinP(B.p(FR2), O, 203, 209, 0.0); flatP(B.p(RF), O, 203.2);
+    prismP(B.p(FR), offP(O, 6), 203, 207.5); bandsP(B.p(FR2), offP(O, 6), 203, 207.5, 1.0, 0.2, 0.05);
+    B.flush(g); return g; }};
+PL('tynomura', 35.692993, 139.695378);
+
+// Shinjuku i-Land Tower (1995): 189.4 m, 44 storeys (Wikipedia list). OSM w137626254: the 40 x 93 m tower part (0-173.7 m, mapper) with
+// its central 25 m spine part rising to 189.4 m, and the outline's rounded west side over the sunken plaza (a low glass atrium here).
+// Approximations: the 12 m atrium, silver-grey curtain wall rhythm, the spine's glazed crown.
+LANDMARKS.tyiland = {zh:'新宿i-Land塔', en:'Shinjuku i-Land Tower', cat:'new', r:56, h:189,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyiland, O = E.o, SP = E.p[0][2], TW = E.p[1][2];
+    const MT = '#c3c8cc', MT2 = '#a6acb1', GL = {c:'#6f8293', m:1, fh:4.0, cw:1.5}, AT = {c:'#8fa6b5', m:1, fh:6, cw:3}, RF = '#80858a';
+    // the outline overlaps the i-Land North Building (w569007265) by ~50 m2 in OSM: the atrium stops at that building's south-east wall
+    const OA = clipP(O, 35.2, 18.5, 998.5);
+    footP(B, MT2, OA, -6);
+    prismP(B.p(AT), OA, 0.2, 12, false); mullP(B.p(MT), OA, 0.2, 12, 3.0, 0.25, 0.04); bandsP(B.p(MT), OA, 0.2, 12, 4.0, 0.3, 0.05);
+    facade(B, TW, 0.2, 173.7, 'cw', {g:GL, f:MT, ms:1.8, fh:4.0, sb:1.0, sp:MT2});
+    roofF(B, TW, 173.7, {r:RF, pc:MT, ph:1.2});
+    facade(B, SP, 173.7, 186, 'cw', {g:GL, f:MT, ms:1.8, fh:4.0, sb:1.0, sp:MT2});
+    skinP(B.p(MT), SP, 186, 189.4, 0); flatP(B.p(RF), SP, 186.2); mullP(B.p(MT2), SP, 186, 189.4, 1.6, 0.25, 0.04);
+    B.flush(g); return g; }};
+PL('tyiland', 35.693149, 139.69314);
+
+// Shinjuku Monolith (1990, Nihon Sekkei): 123.4 m, 30 storeys (CTBUH). OSM outline w95793048 (notched corners). Stone-clad grid of
+// punched windows; the two top storeys set back (approximation, not verified), warm grey granite colour (approximation).
+LANDMARKS.tymonolith = {zh:'新宿Monolith大厦', en:'Shinjuku Monolith', cat:'new', r:41, h:124,
+  lt:{m:1, c:'#fff0d8', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tymonolith.o;
+    const ST = '#a89c90', ST2 = '#928679', GL = {c:'#2f3a43', m:1, fh:3.9, cw:1.6}, GLB = {c:'#33414b', m:1, fh:5, cw:3}, RF = '#7a756f';
+    footP(B, ST2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.2), 0.2, 8, true); mullP(B.p(ST2), O, 0.2, 8, 4.8, 1.0, -1.2, null, 1.2);
+    facade(B, O, 8, 115.6, 'pw', {w:ST, g:GL, fh:3.9, sp:3.2, ww:2.2, wh:2.0});
+    mullP(B.p(ST2), O, 8, 115.6, 9.6, 0.6, 0.05, null, 0.35);
+    const S1 = offP(O, 3.0); facade(B, S1, 115.6, 123.4, 'pw', {w:ST, g:GL, fh:3.9, sp:3.2, ww:2.2, wh:2.0});
+    roofF(B, O, 115.6, {r:RF, pc:ST, ph:1.1}); roofF(B, S1, 123.4, {r:RF, pc:ST, ph:0, pl:5, plc:ST2, plh:0.1});
+    B.flush(g); return g; }};
+PL('tymonolith', 35.688631, 139.694636);
+
+// Shinjuku Square Tower (1994): OSM w143327356 height 123.4 m, 31 levels (mapper / PLATEAU values, not verified). Stepped-corner plan;
+// glass and light metal band facade, plant screen on the roof (approximations).
+LANDMARKS.tysquaretower = {zh:'新宿Square塔', en:'Shinjuku Square Tower', cat:'new', r:31, h:124,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tysquaretower.o;
+    const MT = '#c9ccc8', MT2 = '#aeb2ae', GL = {c:'#56707e', m:1, fh:3.9, cw:1.5}, RF = '#80847f';
+    footP(B, MT2, O, -6);
+    facade(B, O, 0.2, 119, 'band', {w:MT, g:GL, fh:3.9, gh:2.1, wy:1.2, ms:3.2});
+    roofF(B, O, 119, {r:RF, pc:MT, ph:1.0}); const S = offP(O, 4); prismP(B.p(MT2), S, 119, 123.4, false); mullP(B.p(MT), S, 119, 123.4, 1.4, 0.25, 0.04);
+    B.flush(g); return g; }};
+PL('tysquaretower', 35.694075, 139.687728);
+
+// Shinjuku Oak Tower (2002): 184 m, 38 storeys (Wikipedia list). OSM w569341996 parts: the L-shaped tower (0-170.7 m), its higher
+// wing (0-180 m), the round crown drum (180-183.8 m), a low annex wedge and the outline as a 12 m podium. Blue-grey curtain wall
+// with white mullions (approximation).
+LANDMARKS.tyoaktower = {zh:'新宿Oak塔', en:'Shinjuku Oak Tower', cat:'new', r:44, h:184,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyoaktower, O = E.o, A = E.p[0][2], CRW = E.p[1][2], AN = E.p[2][2], W = E.p[3][2];
+    const MT = '#dfe3e5', MT2 = '#b7bec2', GL = {c:'#5d7487', m:1, fh:4.3, cw:1.5}, GLB = {c:'#3f4c56', m:1, fh:5, cw:3}, RF = '#818689';
+    footP(B, MT2, O, -6);
+    prismP(B.p(GLB), O, 0.2, 12, false); mullP(B.p(MT2), O, 0.2, 12, 3.2, 0.3, 0.04); roofF(B, O, 12, {r:RF, pc:MT2, ph:1.0});
+    facade(B, A, 12, 170.7, 'cw', {g:GL, f:MT, ms:1.6, fh:4.3, sb:1.0, sp:MT2}); roofF(B, A, 170.7, {r:RF, pc:MT, ph:1.2});
+    facade(B, W, 12, 180, 'cw', {g:GL, f:MT, ms:1.6, fh:4.3, sb:1.0, sp:MT2}); roofF(B, W, 180, {r:RF, pc:MT, ph:0.6});
+    prismP(B.p(MT2), AN, 55.8, 69.0, false, true); floorsP(B.p(GL), AN, 57, 68.5, 4.3, 2.2, 0.05);
+    prismP(B.p(MT), CRW, 180, 183.8, false); mullP(B.p(MT2), CRW, 180, 183.8, 2.0, 0.3, 0.05);
+    B.flush(g); return g; }};
+PL('tyoaktower', 35.693917, 139.690562);
+
+// Sumitomo Fudosan Shinjuku Grand Tower (2011): 195 m, 40 storeys (Wikipedia list). OSM w306095927: the slab (tower part) and the
+// rest of the outline as a podium (16 m, approximation). Glass with white vertical fins (approximation).
+LANDMARKS.tyshinjukugrand = {zh:'住友不动产新宿Grand塔', en:'Sumitomo Fudosan Shinjuku Grand Tower', cat:'new', r:62, h:195,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyshinjukugrand, O = E.o, T = E.p[0][2];
+    const FN = '#e6e9ea', FN2 = '#c3c9cc', GL = {c:'#53697a', m:1, fh:4.3, cw:1.5}, GLB = {c:'#3c4954', m:1, fh:5, cw:3}, RF = '#7f8487';
+    footP(B, FN2, O, -6);
+    prismP(B.p(GLB), O, 0.2, 16, false); mullP(B.p(FN2), O, 0.2, 16, 3.6, 0.35, 0.04); bandsP(B.p(FN2), O, 0.2, 16, 5.3, 0.6, 0.05); roofF(B, O, 16, {r:RF, pc:FN2, ph:1.0});
+    facade(B, T, 0.2, 190, 'cw', {g:GL, f:FN, ms:2.4, mw:0.3, fh:4.3, sb:0.8, sp:FN2, dep:0.7});
+    skinP(B.p(FN), T, 190, 195, 0); flatP(B.p(RF), T, 190.2); prismP(B.p(FN2), offP(T, 5), 190, 193.5);
+    B.flush(g); return g; }};
+PL('tyshinjukugrand', 35.695937, 139.690394);
+
+// Hilton Tokyo (1984): the S-curved guest-room slab (OSM part 0-130.2 m; OSM building:levels 37 — mapper values, not verified), its
+// two podium wings (OSM parts 28.7 / 19.4 m) and the rest of the outline as a 9 m podium (approximation). White precast grid of small
+// windows, darker podium (approximations). No names.
+LANDMARKS.tyhilton = {zh:'东京希尔顿', en:'Hilton Tokyo', cat:'new', r:69, h:130,
+  lt:{m:1, c:'#fff0d8', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyhilton, O = E.o, S = E.p[0][2], W1 = E.p[1][2], W2 = E.p[2][2];
+    const WH = '#e4e0d6', WH2 = '#cdc8bc', BS = '#8f8a82', GL = {c:'#3d4850', m:1, fh:3.3, cw:2.0}, GLB = {c:'#36424b', m:1, fh:5, cw:3}, RF = '#85827b';
+    footP(B, BS, O, -6);
+    annexB(B, O, 0.2, 9, BS, GLB, RF, 4.4);
+    annexB(B, W1, 0.2, 28.7, WH2, GLB, RF, 4.6);
+    annexB(B, W2, 0.2, 19.4, WH2, GLB, RF, 4.6);
+    facade(B, S, 0.2, 126, 'pw', {w:WH, g:GL, fh:3.3, sp:2.0, ww:1.25, wh:1.6});
+    mullP(B.p(WH2), S, 9, 126, 4.0, 0.3, 0.05, null, 0.3);
+    roofF(B, S, 126, {r:RF, pc:WH, ph:0.8}); prismP(B.p(WH2), offP(S, 3), 126, 130.2); bandsP(B.p(BS), offP(S, 3), 126, 130.2, 1.0, 0.2, 0.05);
+    B.flush(g); return g; }};
+PL('tyhilton', 35.692677, 139.691022);
+
+// Shinjuku Washington Hotel, main building (1983): the curved-ended slab (OSM part, app height 78.3 m — not verified), the 22.5 m wing
+// (OSM part) and the rest of the outline as a 12 m podium (approximation). White wall with a dense grid of small square windows.
+LANDMARKS.tywashington = {zh:'新宿华盛顿酒店', en:'Shinjuku Washington Hotel', cat:'new', r:52, h:78,
+  lt:{m:1, c:'#fff2dc', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tywashington, O = E.o, S = E.p[0][2], W = E.p[1][2];
+    const WH = '#ecebe6', WH2 = '#d2d1cb', GL = {c:'#3a444c', m:1, fh:2.9, cw:1.9}, GLB = {c:'#3b4851', m:1, fh:5, cw:3}, RF = '#8a8a86';
+    footP(B, WH2, O, -6);
+    annexB(B, O, 0.2, 12, WH2, GLB, RF, 4.5);
+    annexB(B, W, 0.2, 22.5, WH2, GLB, RF, 4.4);
+    facade(B, S, 0.2, 76.5, 'pw', {w:WH, g:GL, fh:2.9, sp:1.9, ww:1.05, wh:1.05});
+    roofF(B, S, 76.5, {r:RF, pc:WH, ph:1.8});
+    B.flush(g); return g; }};
+PL('tywashington', 35.686838, 139.693135);
+
+// The Parkhouse Nishi-Shinjuku Tower 60 (2017): 209 m, 60 storeys (Wikipedia list). OSM w568802787. Residential: white slab edges and
+// glass balustrades on every floor, a crown screen (approximations).
+LANDMARKS.tytower60 = {zh:'西新宿The Parkhouse Tower 60', en:'The Parkhouse Nishi-Shinjuku Tower 60', cat:'new', r:34, h:209,
+  lt:{m:1, c:'#fff0d8', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytower60.o;
+    const WL = '#c8ccce', SL = '#eef0f0', RL = {c:'#7f939f', m:1, fh:3.3, cw:2.5}, GLB = {c:'#3b4851', m:1, fh:5, cw:3}, RF = '#85898c';
+    footP(B, WL, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 8, true); mullP(B.p(WL), O, 0.2, 8, 4.5, 0.8, -1.0, null, 1.0);
+    facade(B, O, 8, 200, 'res', {w:WL, s:SL, r:RL, fh:3.2, d:1.3, ms:7.5});
+    skinP(B.p(SL), offP(O, -0.6), 200, 209, 0); flatP(B.p(RF), O, 200.2); prismP(B.p(WL), offP(O, 6), 200, 205);
+    B.flush(g); return g; }};
+PL('tytower60', 35.693812, 139.686626);
+
+// Nishi-Shinjuku Mitsui Building (1999): OSM w158191290 height 111 m, 27 levels (mapper / PLATEAU values, not verified). The square
+// tower (OSM part) turned against the diamond-shaped base outline (a 10 m podium here, approximation); light grey grid (approximation).
+LANDMARKS.tynishimitsui = {zh:'西新宿三井大厦', en:'Nishi-Shinjuku Mitsui Building', cat:'new', r:37, h:111,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tynishimitsui, O = E.o, T = E.p[0][2];
+    const MT = '#cfd2d2', MT2 = '#aeb3b4', GL = {c:'#4f6574', m:1, fh:4.0, cw:1.6}, GLB = {c:'#3d4a54', m:1, fh:5, cw:3}, RF = '#82868a';
+    footP(B, MT2, O, -6);
+    annexB(B, O, 0.2, 10, MT2, GLB, RF, 5);
+    facade(B, T, 0.2, 107, 'cw', {g:GL, f:MT, ms:3.2, mw:0.5, fh:4.0, sb:1.2, sp:MT2});
+    roofF(B, T, 107, {r:RF, pc:MT, ph:1.0}); prismP(B.p(MT2), offP(T, 4), 107, 111); mullP(B.p(MT), offP(T, 4), 107, 111, 1.4, 0.25, 0.04);
+    B.flush(g); return g; }};
+PL('tynishimitsui', 35.694968, 139.688981);
+
+// Shinjuku NS Building (1982, Nikken Sekkei): 133.8 m architectural, 121.6 m occupied, 30 storeys (CTBUH). OSM w45763022; its crown part
+// (121.4-133.6 m) is the glass roof over the full-height atrium (here a hipped glass roof). Reddish-brown ribbon facade (approximation).
+LANDMARKS.tyns = {zh:'新宿NS大厦', en:'Shinjuku NS Building', cat:'new', r:60, h:134,
+  lt:{m:1, c:'#fff0d8', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyns, O = E.o, C = E.p[0][2];
+    const RB = '#7d4e3f', RB2 = '#683f33', GL = {c:'#2d3439', m:1, fh:4.0, cw:1.8}, GLR = {c:'#a9bcc6', glow:'#ffe7c0', gk:0.25}, RF = '#6d625c';
+    footP(B, RB2, O, -6);
+    prismP(B.p(GL), offP(O, 1.2), 0.2, 8, true); mullP(B.p(RB2), O, 0.2, 8, 5.4, 1.0, -1.2, null, 1.2);
+    facade(B, O, 8, 121.6, 'band', {w:RB, g:GL, fh:4.0, gh:1.8, wy:1.0});
+    roofF(B, O, 121.6, {r:RF, pc:RB, ph:1.2});
+    insetRoof(B.p(GLR), C, [121.6, 133.6], [0, 12]);
+    { const o = B.p(RB2), cc = cenA(C); for (const p of resP(C, 24)) segP(o, [p[0], 121.6, p[1]], [cc[0] + (p[0]-cc[0])*0.45, 133.6, cc[1] + (p[1]-cc[1])*0.45], 0.15, 3); }
+    B.flush(g); return g; }};
+PL('tyns', 35.688087, 139.69345);
+
+// KDDI Building (1974): OSM w95793043 height 153.6 m, 32 levels (mapper / PLATEAU values, not verified); the OSM crown part (to 164.7 m)
+// carries the antenna structure. Light concrete with vertical slot windows (approximation). No names.
+LANDMARKS.tykddi = {zh:'KDDI大厦', en:'KDDI Building', cat:'new', r:42, h:165,
+  lt:{m:1, c:'#fff0d8', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tykddi, O = E.o, C = E.p[0][2];
+    const WL = '#d4d1c9', WL2 = '#b9b5ac', GL = {c:'#33404a', m:1, fh:4.2, cw:1.4}, ST = '#9aa0a3', RF = '#86837d', RED = {c:'#c8c8c8', glow:'#ff4030', gk:1.0};
+    footP(B, WL2, O, -6);
+    prismP(B.p(GL), offP(O, 1.5), 0.2, 8.4, true); mullP(B.p(WL2), O, 0.2, 8.4, 6.0, 1.2, -1.5, null, 1.5);
+    prismP(B.p(WL), O, 8.4, 153.6, true);
+    { const o = B.p(GL); for (let i = 0; i < O.length; i++){ const a = O[i], b = O[(i + 1) % O.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 4) continue;
+        const [nx, nz] = outN(O, i), n = Math.floor(L/2.6), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L;
+        for (let k = 0; k < n; k++){ const s = (k + 0.5)*L/n, x = a[0] + ux*s + nx*0.05, z = a[1] + uz*s + nz*0.05; quadP(o, [x - ux*0.6, 9.5, z - uz*0.6], [x + ux*0.6, 9.5, z + uz*0.6], [x + ux*0.6, 150.5, z + uz*0.6], [x - ux*0.6, 150.5, z - uz*0.6]); } } }
+    bandsP(B.p(WL2), O, 8.4, 153.6, 4.2, 0.6, 0.08);
+    roofF(B, O, 153.6, {r:RF, pc:WL, ph:1.4});
+    prismP(B.p(WL2), C, 153.6, 158, false);
+    { const o = B.p(ST), cc = cenA(C), R = resP(C, 8); for (const p of R) segP(o, [p[0], 158, p[1]], [cc[0] + (p[0]-cc[0])*0.4, 164.2, cc[1] + (p[1]-cc[1])*0.4], 0.25, 4);
+      lineRingP(o, R, 161, 0.15, 3); segP(B.p(RED), [cc[0], 158, cc[1]], [cc[0], 164.7, cc[1]], 0.35, 6); }
+    B.flush(g); return g; }};
+PL('tykddi', 35.68794, 139.694835);
+
+// Shinjuku Front Tower (2011): OSM w306097616 height 163.4 m, 35 levels (mapper / PLATEAU values, not verified). The tower part
+// (0-160.7 m) with its core crown (163.4 m) and the north rest of the outline as a 12 m podium (approximation). White frame grid.
+LANDMARKS.tyfronttower = {zh:'新宿Front塔', en:'Shinjuku Front Tower', cat:'new', r:49, h:163,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyfronttower, O = E.o, T = E.p[0][2], CC = E.p[1][2];
+    const FN = '#e7e9e9', FN2 = '#c2c7c9', GL = {c:'#5c7383', m:1, fh:4.3, cw:1.6}, GLB = {c:'#3c4954', m:1, fh:5, cw:3}, RF = '#7f8487';
+    footP(B, FN2, O, -6);
+    annexB(B, O, 0.2, 12, FN2, GLB, RF, 5.5);
+    facade(B, T, 0.2, 160.7, 'lat', {g:GL, f:FN, ms:3.2, mw:0.5, fh:4.3, sb:0.7, rc:0.4});
+    roofF(B, T, 160.7, {r:RF, pc:FN, ph:1.2});
+    prismP(B.p(FN2), CC, 160.7, 163.4, false);
+    B.flush(g); return g; }};
+PL('tyfronttower', 35.696074, 139.689402);
+
+// Shinjuku L Tower (1989): 124 m, 31 storeys + 5 basements (CTBUH). OSM w116596176: the tower part (0-124 m), its two lower parts (84 /
+// 44 m) and the outline's stepped north-east side as a 14 m podium (approximation); the tower's north-east corner rounded
+// (approximation from the recognition note). Silver-grey metal and glass bands.
+LANDMARKS.tyltower = {zh:'新宿L塔', en:'Shinjuku L Tower', cat:'new', r:50, h:124,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyltower, O = E.o, T = roundP(E.p[0][2], 6, 5), P1 = E.p[1][2], P2 = E.p[2][2];
+    const MT = '#c4c9cc', MT2 = '#a3aaae', GL = {c:'#506676', m:1, fh:3.9, cw:1.5}, GLB = {c:'#3c4954', m:1, fh:5, cw:3}, RF = '#7f8487';
+    footP(B, MT2, O, -6);
+    annexB(B, O, 0.2, 14, MT2, GLB, RF, 4.6);
+    facade(B, T, 0.2, 119.5, 'band', {w:MT, g:GL, fh:3.9, gh:2.0, wy:1.0, ms:3.6});
+    roofF(B, T, 119.5, {r:RF, pc:MT, ph:1.0}); prismP(B.p(MT2), offP(T, 5), 119.5, 124); bandsP(B.p(MT), offP(T, 5), 119.5, 124, 1.1, 0.2, 0.05);
+    for (const [P, h] of [[P1, 84], [P2, 44]]){ facade(B, P, 0.2, h, 'band', {w:MT2, g:GL, fh:3.9, gh:1.9, wy:1.0}); roofF(B, P, h, {r:RF, pc:MT2, ph:0.8}); }
+    B.flush(g); return g; }};
+PL('tyltower', 35.692244, 139.697416);
+
+// =====================================================================================================================
+// Shinjuku Station east and south, Kabukichō, Tomihisa, Kagurazaka, Iidabashi and Waseda (medium detail on the real footprints)
+// =====================================================================================================================
+
+// JR Shinjuku Miraina Tower (2016): OSM w535427342 height 168.16 m, 33 levels (mapper / PLATEAU values, not verified), over the new
+// south exit and the bus-terminal deck. Glass with white vertical fins, a glazed crown screen (approximations).
+LANDMARKS.tymiraina = {zh:'JR新宿Miraina塔', en:'JR Shinjuku Miraina Tower', cat:'new', r:40, h:168,
+  lt:{m:1, c:'#e8f0ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tymiraina.o;
+    const FN = '#eceeee', FN2 = '#c7ccce', GL = {c:'#5f788a', m:1, fh:4.4, cw:1.5}, GLB = {c:'#3c4954', m:1, fh:5.5, cw:3}, RF = '#7f8487';
+    footP(B, FN2, O, -6);
+    prismP(B.p(GLB), O, 0.2, 22, false); mullP(B.p(FN2), O, 0.2, 22, 4.2, 0.5, 0.04); bandsP(B.p(FN2), O, 0.2, 22, 5.5, 0.9, 0.05);
+    facade(B, O, 22, 161, 'cw', {g:GL, f:FN, ms:2.2, mw:0.3, fh:4.4, sb:0.6, sp:FN2, dep:0.8});
+    roofF(B, O, 161, {r:RF, pc:FN, ph:0}); skinP(B.p(GL), O, 161, 168.16, 0); mullP(B.p(FN), O, 161, 168.16, 2.2, 0.3, 0.05);
+    B.flush(g); return g; }};
+PL('tymiraina', 35.68878, 139.701903);
+
+// Takashimaya Times Square (1996): ⚠ OSM holds it as relation r7754186 (type=building) whose members are the outline w541875192
+// (height 68.6 m, mapper / PLATEAU value, not verified) and the building:part w116709671 (the main mass; the app draws only this part,
+// 44 m). Modelled: the part at 68.6 m and the rest of the outline (the street-side strip) at 12 m (approximation); warm beige stone
+// with ribbon windows, roof plant (approximations). No names.
+LANDMARKS.tytimessq = {zh:'高岛屋时代广场', en:'Takashimaya Times Square', cat:'new', r:96, h:69,
+  lt:{m:1, c:'#fff0d8', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tytimessq, O = E.o, M = E.p[0][2];
+    const ST = '#c8b9a0', ST2 = '#ad9e86', GL = {c:'#3a454d', m:1, fh:4.6, cw:2.2}, GLB = {c:'#3a4650', m:1, fh:5.5, cw:3}, RF = '#85827c';
+    footP(B, ST2, O, -6);
+    annexB(B, O, 0.2, 12, ST2, GLB, RF, 5.5);
+    prismP(B.p(GLB), offP(M, 0.8), 0.2, 6, true);
+    facade(B, M, 6, 66, 'band', {w:ST, g:GL, fh:4.6, gh:1.6, wy:1.4, ms:6.5});
+    roofF(B, M, 66, {r:RF, pc:ST, ph:1.4, pl:12, plc:ST2, plh:2.6, lv:'#99958c'});
+    B.flush(g); return g; }};
+PL('tytimessq', 35.687564, 139.702293);
+
+// Isetan Shinjuku, main building (1933, Art Deco): OSM relation r16543147 (height 50.1 m, 7 levels — mapper / PLATEAU values, not
+// verified) is drawn by the app as its 46 building:parts: the floor-by-floor outlines up to 31 m and the roof-top pieces up to 50 m.
+// Modelled on those parts: cream stone, Art Deco piers and slot windows on the main block, glazed show windows at the ground, roof-top
+// pieces in lighter render (colours approximations). No names.
+LANDMARKS.tyisetan = {zh:'伊势丹新宿店本馆', en:'Isetan Shinjuku (main building)', cat:'old', r:74, h:50,
+  lt:{m:0, c:'#ffe6c0', k:0.65},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyisetan, O = E.o;
+    const ST = '#d8ccb2', ST2 = '#c2b498', DK = {c:'#3e3a34', m:1, fh:5, cw:1.4}, GLB = {c:'#4a5056', m:1, fh:5, cw:3}, RT = '#cfcac0', RF = '#8d8a83';
+    footP(B, ST2, O, -6);
+    // the two-level link bridge to the men's building (r16543204, app parts 10-14 / 22-26 m) and a 2.5 m kiosk (w1218085143): both fall
+    // under this model's hull, so they are kept here on their app outlines
+    { const LB = [[-20.7, -56.4], [-14.0, -54.2], [-6.7, -67.9], [-13.5, -69.9]], KS = [[-54.7, -7.7], [-51.5, -6.2], [-47.0, -14.2], [-50.2, -15.9]];
+      for (const [a, b] of [[10, 14], [22, 26]]){ prismP(B.p(ST2), LB, a, b, false, true); floorsP(B.p(GLB), LB, a + 0.8, b - 0.6, 4, 2.4, 0.05); }
+      prismP(B.p(ST2), KS, 0, 2.5, false); }
+    for (const [y0, y1, P] of E.p){
+      if (y0 < 0.1 && y1 <= 5.1){ prismP(B.p(GLB), offP(P, 0.6), 0.2, y1, false); mullP(B.p(ST2), P, 0.2, y1, 6, 0.9, -0.6, null, 0.6); flatP(B.p(ST2), P, y1); continue; }
+      const main = y1 <= 31.1 && P.length > 10 && area2(P)*Math.sign(area2(P)) > 3000;
+      prismP(B.p(main ? ST : (y0 >= 29.9 ? RT : ST)), P, y0 < 0.1 ? 0.2 : y0, y1, false);
+      if (main && y1 - y0 > 3.5){ winsP(B.p(DK), P, y0 + 0.9, y1 - 0.5, y1 - y0, 3.1, 1.3, Math.max(2.0, y1 - y0 - 1.6), 0.05); mullP(B.p(ST2), P, y0, y1, 3.1, 0.55, 0.05, null, 0.45); }
+      if (y0 >= 29.9 && y1 - y0 > 3) bandsP(B.p(ST2), P, y0, y1, 2.5, 0.3, 0.05);
+    }
+    B.flush(g); return g; }};
+PL('tyisetan', 35.691647, 139.704613);
+
+// Shinjuku Toho Building (2015): OSM w170267549 (8 levels, mapper value) drawn as a 24.8 m podium with two tower parts to 117 and
+// 130.2 m (app heights: OSM / PLATEAU values, not verified). Dark podium (cinemas) and a light grey grid tower (hotel); the giant
+// monster head on its terrace is left out (no character likeness). No names.
+LANDMARKS.tytoho = {zh:'新宿东宝大厦', en:'Shinjuku Toho Building', cat:'new', r:58, h:130,
+  lt:{m:1, c:'#fff0d8', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tytoho, O = E.o, T0 = E.p[0][2], T1 = E.p[1][2];
+    const PD = '#45464a', PD2 = '#36373a', WL = '#d6d6d2', WL2 = '#b9bab6', GL = {c:'#3b464f', m:1, fh:3.3, cw:1.8}, GLB = {c:'#343f48', m:1, fh:5, cw:3}, RF = '#7f807c', SCR = {c:'#3a4458', glow:'#7a5fd0', gk:0.6};
+    footP(B, PD2, O, -6);
+    prismP(B.p(GLB), offP(O, 0.8), 0.2, 6, true);
+    prismP(B.p(PD), O, 6, 24.8, true); bandsP(B.p(PD2), O, 6, 24.8, 3.2, 0.4, 0.05); mullP(B.p(PD2), O, 6, 24.8, 2.4, 0.3, 0.05);
+    roofF(B, O, 24.8, {r:RF, pc:PD, ph:1.2});
+    { const a = O[11], b = O[12], q = [(a[0] + b[0])/2, (a[1] + b[1])/2], [nx, nz] = outN(O, 11); boxP(B.p(SCR), Math.hypot(b[0]-a[0], b[1]-a[1])*0.55, 10, 0.3, q[0] + nx*0.2, 9, q[1] + nz*0.2, -Math.atan2(b[1]-a[1], b[0]-a[0])); }
+    facade(B, T1, 24.8, 126, 'pw', {w:WL, g:GL, fh:3.3, sp:2.2, ww:1.4, wh:1.7}); mullP(B.p(WL2), T1, 24.8, 126, 6.6, 0.5, 0.05, null, 0.3);
+    roofF(B, T1, 126, {r:RF, pc:WL, ph:0.8}); prismP(B.p(WL2), offP(T1, 2.5), 126, 130.2);
+    facade(B, T0, 24.8, 117, 'pw', {w:WL2, g:GL, fh:3.3, sp:2.2, ww:1.4, wh:1.7}); roofF(B, T0, 117, {r:RF, pc:WL2, ph:0.8});
+    B.flush(g); return g; }};
+PL('tytoho', 35.695351, 139.702016);
+
+// Tomihisa Cross Comfort Tower (2015): 191 m, 55 storeys (Wikipedia list). OSM w386132594 (octagon). Residential: white slab edges and
+// glass balustrades per floor, a crown frame (approximations).
+LANDMARKS.tytomihisa = {zh:'富久Cross Comfort塔', en:'Tomihisa Cross Comfort Tower', cat:'new', r:37, h:191,
+  lt:{m:1, c:'#fff0d8', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytomihisa.o;
+    const WL = '#bfc3c4', SL = '#efefec', RL = {c:'#7a8f9b', m:1, fh:3.3, cw:2.5}, GLB = {c:'#3b4851', m:1, fh:5, cw:3}, RF = '#85898c';
+    footP(B, WL, O, -6);
+    prismP(B.p(GLB), offP(O, 1.0), 0.2, 8, true); mullP(B.p(WL), O, 0.2, 8, 4.5, 0.8, -1.0, null, 1.0);
+    facade(B, O, 8, 183, 'res', {w:WL, s:SL, r:RL, fh:3.18, d:1.4, ms:8});
+    skinP(B.p(SL), offP(O, -0.7), 183, 191, 0); flatP(B.p(RF), O, 183.2); prismP(B.p(WL), offP(O, 7), 183, 188);
+    B.flush(g); return g; }};
+PL('tytomihisa', 35.691922, 139.713884);
+
+// Shinjuku City Office, main building (1966): OSM w137626248 height 44.7 m, 8 levels (mapper / PLATEAU values, not verified).
+// Concrete frame with deep vertical fins and ribbon windows, roof-top plant (approximations).
+LANDMARKS.tycityhall = {zh:'新宿区役所', en:'Shinjuku City Office', cat:'new', r:38, h:45,
+  lt:{m:1, c:'#fff2dc', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tycityhall.o;
+    const CN = '#bdb8ad', CN2 = '#a39e93', GL = {c:'#3c4750', m:1, fh:4.3, cw:1.6}, GLB = {c:'#3a4650', m:1, fh:5, cw:3}, RF = '#827e77';
+    footP(B, CN2, O, -6);
+    prismP(B.p(GLB), offP(O, 1.4), 0.2, 5.0, true); mullP(B.p(CN2), O, 0.2, 5.0, 4.8, 0.8, -1.4, null, 1.4);
+    facade(B, O, 5.0, 38.5, 'band', {w:CN, g:GL, fh:4.2, gh:2.0, wy:1.0});
+    mullP(B.p(CN2), O, 5.0, 38.5, 1.6, 0.25, 0.05, null, 0.7);
+    roofF(B, O, 38.5, {r:RF, pc:CN, ph:1.1, pl:7, plc:CN2, plh:5.4, lv:'#98948c'});
+    B.flush(g); return g; }};
+PL('tycityhall', 35.693887, 139.703436);
+
+// Tokyo Daijingu (shrine; moved to Iidabashi in 1928): the worship and main hall on the OSM outline w144430257 (app height 8 m, an
+// estimate). Architecture only, respectfully: stone base, unpainted timber walls with lattice, a gabled copper roof with crossed
+// gable finials and ridge logs in the shinmei manner (form and colours approximations; no drawings checked).
+LANDMARKS.tydaijingu = {zh:'东京大神宫', en:'Tokyo Daijingu', cat:'old', r:21, h:10,
+  lt:{m:0, c:'#ffe8c4', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tydaijingu.o, ob = obE(O, 6.74*PI/180), U = u => u + 1.8, V = v => v + 1.15;
+    const STN = '#a9a294', TM = '#b8986c', TM2 = '#8f7350', RF = '#5f6f66', RF2 = '#4c5a52', GLD = '#c9a95a';
+    footP(B, STN, O, -5, 0.9);
+    const W = offP(O, 0.9); prismP(B.p(TM), W, 0.9, 4.4, true);
+    mullP(B.p(TM2), W, 0.9, 4.4, 1.8, 0.22, 0.06, null, 0.2); bandsP(B.p(TM2), W, 0.9, 4.4, 1.2, 0.12, 0.06);
+    // roofs: the long central hall (ridge along the hall), lower gables over the two wings, a flat link (frame coordinates from the outline)
+    const R = B.p(RF), Gw = B.p(TM), yE = 4.5, rise = 4.6, u0 = U(-3.1), u1 = U(7.9), v0 = V(-15.1), v1 = V(12.7);
+    gableO(R, ob, u0, u1, v0, v1, yE, rise, false, Gw);
+    gableO(R, ob, U(7.9), U(13.1), V(-8.4), V(7.8), 4.2, 2.3, false, Gw);
+    gableO(R, ob, U(-16.7), U(-3.1), V(-2.0), V(10.2), 4.2, 2.6, true, Gw);
+    boxO(B.p(RF2), ob, U(-6.6), U(-3.1), V(-9.6), V(-2.1), 4.2, 4.6);
+    { const uc = (u0 + u1)/2; boxO(B.p(RF2), ob, uc - 0.35, uc + 0.35, v0, v1, yE + rise - 0.15, yE + rise + 0.45); }
+    // crossed finials (chigi) at both gable ends and ridge logs (katsuogi) on the central hall
+    { const o = B.p(TM2), y = yE + rise, uc = (u0 + u1)/2;
+      for (const vv of [v0, v1]){ const a = o3(ob, uc, y - 0.3, vv), l = o3(ob, uc - 1.3, y + 2.0, vv + Math.sign(vv - (v0 + v1)/2)*0.3), r = o3(ob, uc + 1.3, y + 2.0, vv + Math.sign(vv - (v0 + v1)/2)*0.3); segP(o, a, l, 0.12, 4); segP(o, a, r, 0.12, 4); }
+      for (let k = -3; k <= 3; k++){ const v = (v0 + v1)/2 + k*(v1 - v0)/8, a = o3(ob, uc - 0.9, y + 0.6, v), b = o3(ob, uc + 0.9, y + 0.6, v); segP(B.p(GLD), a, b, 0.2, 6); } }
+    B.flush(g); return g; }};
+PL('tydaijingu', 35.699998, 139.746874);
+
+// Akagi Shrine, Kagurazaka (rebuilt 2010 by Kengo Kuma & Associates). ⚠ Anchor: the resolver picked w143362624 (unnamed, 257 m2), the
+// largest building in precinct w143516722. Kept: it stands at the north end of the precinct, where the sloped approach from the south
+// ends; the unnamed w988498347 (196 m2) directly in front of it (south) is taken as the worship hall and w143362624 behind it as the
+// inner hall — an interpretation from position and size (no site plan checked); both are modelled here as one hall group (the small
+// sub-shrine w988498346 beside the approach is left as the app draws it). KKAA: a shrine "composed solely of a roof and columns",
+// unpainted square hinoki lattice (renji-goshi) set corner-forward, a yamato-buki roof of folded steel sheet. Architecture only.
+// Approximations: heights (worship hall eaves 5.2 m / ridge 9.6 m, inner hall lower; the app's 11 / 13.5 m are estimates), the glass
+// behind the lattice, the closed timber inner hall, the stone platform.
+LANDMARKS.tyakagi = {zh:'赤城神社', en:'Akagi Shrine', cat:'new', r:25, h:10,
+  lt:{m:0, c:'#ffe8c4', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), INN = D.tyakagi.o, HAI = [[-10.1, 19.9], [3.9, 22.7], [6.7, 9.2], [-7.6, 6.4]], an = 10.4*PI/180;
+    const STN = '#b5afa5', HN = '#d2b48a', HN2 = '#bf9f74', GLS = {c:'#6b7b80', m:1, fh:5, cw:2}, RF = '#5c6063', RF2 = '#4a4e51', CL = '#cbb08a';
+    footP(B, STN, INN, -5, 1.2); footP(B, STN, HAI, -5, 0.8);
+    // worship hall: glass behind the corner-forward hinoki lattice, columns, folded steel gable roof (ridge parallel to the front)
+    { const ob = obE(HAI, an), hu = ob.L/2, hv = ob.W/2, IN = ob.rect(-hu + 1.4, hu - 1.4, -hv + 1.4, hv - 1.4);
+      prismP(B.p(GLS), IN, 0.8, 5.2, true);
+      const o = B.p(HN); for (let i = 0; i < 4; i++){ const a = IN[i], b = IN[(i + 1) % 4], L = Math.hypot(b[0]-a[0], b[1]-a[1]), n = Math.round(L/0.32), [nx, nz] = outN(IN, i);
+        for (let k = 0; k <= n; k++){ const t = k/n, x = a[0] + (b[0]-a[0])*t + nx*0.12, z = a[1] + (b[1]-a[1])*t + nz*0.12; boxP(o, 0.1, 4.4, 0.1, x, 0.8, z, PI/4 - ob.a); } }
+      const oc = B.p(CL); for (const [u, v] of [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]]){ const q = ob.p(u*(hu - 1.0), v*(hv - 1.0)); boxP(oc, 0.35, 4.6, 0.35, q[0], 0.8, q[1], ob.ry); }
+      gableO(B.p(RF), ob, -hu + 0.1, hu - 0.1, -hv + 0.1, hv - 0.1, 5.2, 4.4, true, B.p(HN));
+      ribsO(B.p(RF2), ob, -hu + 0.1, hu - 0.1, -hv + 0.1, hv - 0.1, 5.2, 4.4, true, 0.9);
+      boxO(B.p(RF2), ob, -hu + 0.1, hu - 0.1, -0.3, 0.3, 9.45, 9.65); }
+    // inner hall: raised on its platform, closed unpainted timber walls with vertical boards, a lower folded steel gable roof
+    { const ob = obE(INN, an), hu = ob.L/2, hv = ob.W/2, W = ob.rect(-hu + 2.0, hu - 2.0, -hv + 2.0, hv - 2.0);
+      prismP(B.p(HN2), W, 1.2, 5.0, true); mullP(B.p(HN), W, 1.2, 5.0, 0.6, 0.12, 0.04); bandsP(B.p(CL), W, 1.2, 5.0, 1.9, 0.2, 0.05);
+      gableO(B.p(RF), ob, -hu + 0.6, hu - 0.6, -hv + 0.6, hv - 0.6, 5.0, 3.6, true, B.p(HN2));
+      ribsO(B.p(RF2), ob, -hu + 0.6, hu - 0.6, -hv + 0.6, hv - 0.6, 5.0, 3.6, true, 0.9);
+      boxO(B.p(RF2), ob, -hu + 0.6, hu - 0.6, -0.3, 0.3, 8.45, 8.65); }
+    B.flush(g); return g; }};
+PL('tyakagi', 35.704951, 139.736108);
+
+// Tsubouchi Memorial Theatre Museum, Waseda (1928): built after an Elizabethan playhouse front (recognition note; Fortune Theatre
+// model not verified here). OSM w94117009 (app height 14 m, an estimate). White render with dark half-timbering, a steep gabled tile
+// roof and a projecting central bay (form and heights approximations).
+LANDMARKS.tytsubouchi = {zh:'坪内博士纪念演剧博物馆', en:'Tsubouchi Memorial Theatre Museum', cat:'old', r:20, h:16,
+  lt:{m:0, c:'#ffe6c0', k:0.65},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytsubouchi.o, ob = obE(O);
+    const WR = '#ece6d8', TB = '#3e2f26', RF = '#4d4c4a', GL = {c:'#384047', m:1, fh:3.4, cw:1.4}, ST = '#a59c8c';
+    footP(B, ST, O, -5, 0.7);
+    const yE = 10.2; prismP(B.p(WR), O, 0.7, yE, true);
+    mullP(B.p(TB), O, 0.7, yE, 1.5, 0.22, 0.05); bandsP(B.p(TB), O, 0.7, yE, 3.2, 0.28, 0.06);
+    // diagonal braces in every second bay
+    { const o = B.p(TB); for (let i = 0; i < O.length; i++){ const a = O[i], b = O[(i + 1) % O.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]); if (L < 4) continue;
+        const [nx, nz] = outN(O, i), n = Math.round(L/3.0);
+        for (let k = 0; k < n; k += 2) for (let f = 0; f < 3; f++){ const t0 = k/n, t1 = (k + 1)/n, y0 = 0.9 + f*3.2, y1 = y0 + 3.0;
+          segP(o, [a[0] + (b[0]-a[0])*t0 + nx*0.07, y0, a[1] + (b[1]-a[1])*t0 + nz*0.07], [a[0] + (b[0]-a[0])*t1 + nx*0.07, y1, a[1] + (b[1]-a[1])*t1 + nz*0.07], 0.1, 3); } } }
+    winsP(B.p(GL), O, 1.4, yE - 0.6, 3.2, 3.0, 1.0, 1.7, 0.08);
+    const hu = ob.L/2, hv = ob.W/2;
+    gableO(B.p(RF), ob, -hu, hu, -hv, hv, yE, 5.6, true, B.p(WR));
+    // projecting central bay (gabled) on the long south side
+    { const v1 = hv + 0.5; boxO(B.p(WR), ob, -3.6, 3.6, hv - 2.5, v1, 0.7, yE + 1.2); gableO(B.p(RF), ob, -3.9, 3.9, hv - 2.5, v1 + 0.2, yE + 1.2, 3.4, false, B.p(WR));
+      mullP(B.p(TB), ob.rect(-3.6, 3.6, hv - 2.5, v1), 0.7, yE + 1.2, 1.2, 0.2, 0.05); }
+    B.flush(g); return g; }};
+PL('tytsubouchi', 35.709954, 139.719539);
+
 }
 
 // ===== City Brush v38 — Tokyo landmarks and a site: central Tokyo (tyx_central): the Tokyo International Forum, the Bank of

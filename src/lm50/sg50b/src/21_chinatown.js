@@ -54,13 +54,18 @@ K50('sgchinatownpoint', '唐城坊', 'Chinatown Point', d0.A, C0, {r:85, h:118, 
 }
 // ---- Hong Lim Complex, Upper Cross Street (sghonglim): OSM r2304417 "Hong Lim Complex" (4 levels / 16 m podium, 1978) with the four
 // HDB slab blocks w326926571-574 (20 levels, from level 4, height 56). Podium plans from the app footprints inside the relation.
+// The Chinatown MRT exit F canopy (w172596763) in the podium's re-entrant corner is modelled too (it falls under the hull).
 // Colours (white render, grey corridor bands, red-brown accents) are estimates.
 {
-const C0 = pcen(D.hlrel.r), PE = shP(D.hlpe.r, C0[0], C0[1]), PW = shP(D.hlpw.r, C0[0], C0[1]), SL = [D.hl571, D.hl572, D.hl573, D.hl574].map(q => shP(q.r, C0[0], C0[1]));
-K50('sghonglim', '芳林苑', 'Hong Lim Complex', D.hlrel.A, C0, {r:92, h:56, lt:{m:1, c:'#fff2dc', k:0.45}, build(){
+const C0 = pcen(D.hlrel.r), sh = q => shP(q.r, C0[0], C0[1]), PE = sh(D.hlpe), PW = sh(D.hlpw), SL = [D.hl571, D.hl572, D.hl573, D.hl574].map(sh),
+  P14 = sh(D.hlp1401), PUP = [D.hlp510, D.hlp17, D.hlp33].map(sh), MRT = sh(D.hlmrt);
+K50('sghonglim', '芳林苑', 'Hong Lim Complex', D.hlrel.A, C0, {r:93, h:56, lt:{m:1, c:'#fff2dc', k:0.45}, build(){
   const g = new THREE.Group(), B = mkB();
   const POD = STs('#d8d3c8', 0.35), WH = STs('#ecebe6', 0.4), COR = STs('#9da2a3', 0.3), ACC = STs('#a45a45', 0.3), GL = GLs('#55636a', 2.8, 1.8);
-  for (const P of [PE, PW]){ foundP(B.p(FOUND50), P); lobby50(B, P, 0.3, 4.2, 1.0); capP(B.p(ROOF50), offP(P, 1), 4.2); wallP(B.p(POD), P, 4.2, 16); capP(B.p(ROOF50), P, 16);
+  for (const P of PUP){ wallP(B.p(POD), P, 4.2, 16); capP(B.p(ROOF50), P, 16); capP(B.p(POD), P, 4.2); }
+  // the Chinatown MRT entrance (exit F) in the podium's corner (app footprint w172596763, 6 m): a plain canopy on columns
+  { const T = offP(MRT, 0.3); capP(B.p(STs('#8d9496', 0.3)), T, 6); wallP(B.p(STs('#8d9496', 0.3)), T, 5.2, 6); for (const p of T) segP(B.p(COR), [p[0], 0.3, p[1]], [p[0], 5.2, p[1]], 0.2, 6); wallP(B.p(LOB50), offP(MRT, 2), 0.3, 3.2); }
+  for (const P of [PE, PW, P14]){ foundP(B.p(FOUND50), P); lobby50(B, P, 0.3, 4.2, 1.0); capP(B.p(ROOF50), offP(P, 1), 4.2); wallP(B.p(POD), P, 4.2, 16); capP(B.p(ROOF50), P, 16);
     winP(B, P, 5, 15.5, 3.9, 3.4, 2.4, 1.8, GL, {minL:4}); bandAtP(B.p(ACC), P, 15.2, 0.8, 0.15); }
   for (const P of SL){ slab50(B, P, 16, 56, {wall:WH, gl:GL, ledge:COR, fh:2.8, ld:0.6}); finsP(B.p(ACC), P, 16, 57, 9, 0.4, 0.5); }
   B.flush(g); return g; }});
@@ -73,6 +78,8 @@ K50('sgppcentre', '珍珠坊', "People's Park Centre", d0.A, C0, {r:75, h:99, lt
   const g = new THREE.Group(), B = mkB();
   const POD = STs('#cfcac0', 0.35), WH = STs('#e6e4de', 0.4), COR = STs('#a3a7a7', 0.3), BEI = STs('#d9c9a8', 0.35), RED = STs('#a8483a', 0.3), GL = GLs('#4f5e66', 3.0, 1.8);
   const P = d.p[2].r, S = d.p[1].r, O = d.p[0].r;
+  // the MRT exit canopy against the south-west side (app footprint w173132986, 5 m) falls under the hull: a plain canopy on posts
+  { const T = shP(D.ppcmrt.r, C0[0], C0[1]); capP(B.p(STs('#8d9496', 0.3)), T, 5); wallP(B.p(STs('#8d9496', 0.3)), T, 4.3, 5); for (const p of T) segP(B.p(COR), [p[0], 0.3, p[1]], [p[0], 4.3, p[1]], 0.2, 6); }
   foundP(B.p(FOUND50), P); lobby50(B, P, 0.3, 4.5, 1.0); capP(B.p(ROOF50), offP(P, 1), 4.5); wallP(B.p(POD), P, 4.5, 17.1); capP(B.p(ROOF50), P, 17.1);
   winP(B, P, 5.5, 16.5, 3.8, 3.6, 2.6, 2.0, GL, {minL:4});
   slab50(B, S, 17.1, 99, {wall:WH, gl:GL, ledge:COR, fh:3.0, ld:0.7});

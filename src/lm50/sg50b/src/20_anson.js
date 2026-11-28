@@ -12,7 +12,7 @@ K50('sgmasbldg', '金融管理局大厦', 'MAS Building', d0.A, C0, {r:58, h:102
   const ST = STs('#b9ab9f'), ST2 = STs('#a99b8f', 0.3), GL = GLs('#3d4c56', 3.6, 2.2);
   foundP(B.p(FOUND50), d.r); lobby50(B, d.r, 0.3, 5.5, 1.5); wallP(B.p(ST), d.r, 5.5, 13.8); capP(B.p(ROOF50), d.r, 13.8); capP(B.p(ROOF50), offP(d.r, 1.5), 5.5);
   bandAtP(B.p(ST2), d.r, 13.0, 0.8, 0.2); winP(B, d.r, 6.2, 13, 3.6, 3.2, 2.2, 2.2, GL, {minL:4});
-  for (const q of [d.p[6], d.p[5]]) tw50(B, q.r, 13.8, 102, {sty:'rib', gl:GL, fr:ST, fh:3.6, sh:1.5, bay:1.8, mul:ST2, par:2.2});
+  for (const q of [d.p[6]]) tw50(B, q.r, 13.8, 102, {sty:'rib', gl:GL, fr:ST, fh:3.6, sh:1.5, bay:1.8, mul:ST2, par:2.2});
   blkP(B, scP(d.p[6].r, 0.45), 102, 106, MECH50, ROOF50); lavP(B.p(LAV50), d.p[6].r.filter((p, i) => i % 4 === 0), 104.2);
   B.flush(g); return g; }});
 }

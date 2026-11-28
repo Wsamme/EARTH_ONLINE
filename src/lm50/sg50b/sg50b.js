@@ -322,8 +322,15 @@ D.hl572 = {"A":[1.284568,103.845697],"r":[[-60.3,-21.5],[-61.6,-19.7],[-62.6,-20
 D.hl573 = {"A":[1.284568,103.845697],"r":[[76.4,18.3],[81.7,9.5],[36.4,-18.5],[30.4,-9.0],[39.9,-3.0],[41.2,-4.7],[43.7,-3.0],[42.9,-1.7],[63.9,10.5],[65.2,8.8],[67.4,10.5],[66.2,12.5]],"p":[]};
 D.hl574 = {"A":[1.284568,103.845697],"r":[[12.4,-19.7],[13.7,-21.5],[14.9,-20.7],[20.9,-30.2],[-35.3,-64.7],[-40.6,-55.2],[-40.1,-54.7],[-41.1,-52.2],[-31.6,-46.2],[-30.3,-48.7],[-27.6,-46.2],[-28.6,-44.5],[0.7,-27.2],[1.7,-29.2],[4.7,-27.2],[3.7,-25.0]],"p":[]};
 D.hlpe = {"A":[1.284568,103.845697],"r":[[32.2,-30.0],[29.2,-25.0],[33.9,-22.0],[16.2,8.3],[10.7,4.8],[6.4,11.8],[11.9,14.8],[2.9,29.0],[-2.1,25.8],[-3.6,28.3],[1.7,31.3],[-9.6,50.3],[21.4,68.8],[30.9,53.3],[49.7,64.5],[87.2,3.0]],"p":[]};
+D.hlmrt = {"A":[1.284568,103.845697],"r":[[-32.3,23.8],[-38.3,33.3],[-20.8,43.8],[-14.8,33.8]],"p":[]};
+D.hlp17 = {"A":[1.284568,103.845697],"r":[[-3.6,28.3],[-2.1,25.8],[-7.1,22.8],[-8.6,25.5]],"p":[]};
+D.hlp33 = {"A":[1.284568,103.845697],"r":[[27.2,-32.7],[24.2,-28.0],[29.2,-25.0],[32.2,-30.0]],"p":[]};
+D.hlp510 = {"A":[1.284568,103.845697],"r":[[-55.1,-51.7],[13.9,-11.2],[-1.1,13.3],[-0.6,13.5],[2.4,9.5],[6.4,11.8],[10.7,4.8],[6.7,2.3],[17.9,-17.7],[16.9,-16.0],[-52.1,-56.5]],"p":[]};
+D.hlp1401 = {"A":[1.284568,103.845697],"r":[[-52.1,-56.5],[16.9,-16.0],[18.4,-18.5],[15.4,-20.2],[21.4,-29.7],[24.2,-28.0],[27.2,-32.7],[-32.8,-68.7],[-41.8,-54.7],[-50.1,-60.0]],"p":[]};
 D.hlpw = {"A":[1.284568,103.845697],"r":[[-8.6,25.5],[-7.1,22.8],[-9.6,21.3],[-3.6,11.8],[-1.1,13.3],[13.9,-11.2],[-55.1,-51.7],[-89.1,4.0],[-46.6,29.5],[-35.8,11.8],[-13.1,25.5],[-11.8,23.8]],"p":[]};
 D.ppc = {"A":[1.285777,103.843982],"r":[[-62.1,26.2],[-60.4,24.7],[-63.8,21.7],[-57.6,14.9],[-44.3,0.1],[15.3,-68.0],[56.7,-32.2],[65.8,-24.4],[55.8,-13.0],[6.1,43.7],[-15.8,67.5],[-63.2,27.4]],"p":[{"r":[[14.0,9.7],[42.3,-23.6],[13.5,-46.6],[-14.0,-13.6]],"b":16.5,"t":40.2},{"r":[[-15.7,67.7],[6.3,43.4],[-44.5,0.2],[-64.0,21.4],[-60.5,24.4],[-63.5,27.4]],"b":16.5,"t":99.0},{"r":[[-15.7,67.7],[65.5,-24.1],[15.3,-68.1],[-64.0,21.4],[-60.5,24.4],[-63.5,27.4]],"b":0.0,"t":17.1}]};
+D.ppcmrt = {"A":[1.285777,103.843982],"r":[[-38.5,49.4],[-42.0,53.4],[-21.0,71.9],[-17.5,67.7],[-18.2,63.7]],"p":[]};
+D.acadx = {"A":[1.281681,103.835538],"r":[[22.0,26.5],[30.3,31.3],[40.5,13.3],[29.8,7.5],[27.3,12.3],[29.0,13.3]],"p":[]};
 D.maxch = {"A":[1.277281,103.846378],"r":[[-8.9,19.8],[-7.1,32.0],[18.6,29.8],[17.9,24.5],[26.4,23.8],[28.6,19.8],[28.6,15.0],[25.1,9.0],[-12.6,-37.2],[-31.1,-24.2],[-0.6,16.8],[6.6,16.0],[6.6,18.0]],"p":[]};
 D.mnd = {"A":[1.27881,103.84586],"r":[[-22.5,-46.5],[-40.4,-32.4],[-11.2,4.0],[18.5,41.2],[36.3,27.2],[44.9,20.4],[36.0,9.3],[27.4,16.1],[11.3,-4.0],[19.4,-10.4],[14.6,-16.4],[8.3,-24.2],[0.3,-17.9]],"p":[{"r":[[19.5,-10.4],[8.0,-24.2],[0.3,-17.7],[-22.2,-46.7],[-40.2,-32.4],[18.3,41.1],[36.3,27.3],[11.0,-3.9]],"b":6.6,"t":66.6},{"r":[[-22.2,-46.7],[-40.2,-32.4],[18.3,40.8],[36.0,27.3],[11.0,-3.9],[19.3,-10.4],[19.3,-10.7],[8.3,-23.9],[0.3,-17.7]],"b":0.0,"t":6.6}]};
 D.mndb = {"A":[1.278875,103.846509],"r":[[-19.4,-3.5],[-21.7,0.3],[-9.4,18.5],[7.6,17.5],[15.8,10.3],[20.1,-5.2],[5.1,-24.0]],"p":[]};
@@ -608,7 +615,7 @@ K50('sgmasbldg', '金融管理局大厦', 'MAS Building', d0.A, C0, {r:58, h:102
   const ST = STs('#b9ab9f'), ST2 = STs('#a99b8f', 0.3), GL = GLs('#3d4c56', 3.6, 2.2);
   foundP(B.p(FOUND50), d.r); lobby50(B, d.r, 0.3, 5.5, 1.5); wallP(B.p(ST), d.r, 5.5, 13.8); capP(B.p(ROOF50), d.r, 13.8); capP(B.p(ROOF50), offP(d.r, 1.5), 5.5);
   bandAtP(B.p(ST2), d.r, 13.0, 0.8, 0.2); winP(B, d.r, 6.2, 13, 3.6, 3.2, 2.2, 2.2, GL, {minL:4});
-  for (const q of [d.p[6], d.p[5]]) tw50(B, q.r, 13.8, 102, {sty:'rib', gl:GL, fr:ST, fh:3.6, sh:1.5, bay:1.8, mul:ST2, par:2.2});
+  for (const q of [d.p[6]]) tw50(B, q.r, 13.8, 102, {sty:'rib', gl:GL, fr:ST, fh:3.6, sh:1.5, bay:1.8, mul:ST2, par:2.2});
   blkP(B, scP(d.p[6].r, 0.45), 102, 106, MECH50, ROOF50); lavP(B.p(LAV50), d.p[6].r.filter((p, i) => i % 4 === 0), 104.2);
   B.flush(g); return g; }});
 }
@@ -684,6 +691,259 @@ K50('sgtwentyanson', '安顺路20号', 'Twenty Anson', d0.A, C0, {r:45, h:68, lt
   foundP(B.p(FOUND50), T); lobby50(B, T, 0.3, 6, 1.2); capP(B.p(ROOF50), offP(T, 1.2), 6);
   tw50(B, T, 6, 68, {sty:'fin', gl:GL, fr:FR, fh:3.4, bay:1.6, fd:0.45, fw:0.14, par:2.5});
   blkP(B, scP(T, 0.5), 68, 71, MECH50, ROOF50);
+  B.flush(g); return g; }});
+}
+// ================= Chinatown, Pearl's Hill and Maxwell Road (medium detail on the real OSM plans) =================
+
+// ---- One Pearl Bank (sgonepearlbank): twin curved residential towers, 178 m, 39 floors, 2024 (Wikipedia list). OSM r15649684
+// (no name; inside landuse w295892200 "One Pearl Bank"): tower parts w1157560454 / w1157560455 (white concrete, 39 levels, height
+// 178, grass roofs) and the two top-level links w1157560448 / -449 (levels 38-39). Anchor confirmed by the OSM landuse name and parts.
+// Floor rhythm 178/39 m; balcony ledges and planting are generic.
+{
+const d0 = D.opb, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgonepearlbank', '珍珠山一号', 'One Pearl Bank', d0.A, C0, {r:60, h:178, lt:{m:1, c:'#fff0da', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WH = STs('#eeeeea', 0.4), GL = GLs('#647c86', 4.56, 2.2), GRN = {c:'#5f8a45', m:0, lk:0.1};
+  for (const i of [0, 3]){ const T = d.p[i].r;
+    foundP(B.p(FOUND50), T); wallP(B.p(GL), offP(T, 1.2), 0.3, 176); lobby50(B, T, 0.3, 5, 1.6);
+    ledgeP(B.p(WH), offP(T, 0.4), 4.56, 176, 4.56, 0.8, 0.35);
+    for (let y = 4.56*3; y < 176; y += 4.56*3) bandAtP(B.p(GRN), offP(T, -0.3), y + 0.35, 0.6, 0.05);
+    wallP(B.p(WH), T, 176, 178); capP(B.p(GRN), T, 178); }
+  for (const i of [1, 2]){ const P = d.p[i].r; wallP(B.p(GL), P, 172.5, 178); capP(B.p(GRN), P, 178); capP(B.p(WH), P, 172.5); bandAtP(B.p(WH), P, 172.3, 0.8, 0.1); }
+  lavP(B.p(LAV50), [d.p[0].r[16], d.p[3].r[40]], 178.4);
+  B.flush(g); return g; }});
+}
+// ---- Yue Hwa Building, 70 Eu Tong Sen Street (sgyuehwa): OSM w47298664 (alt name Nam Tin Building, 1927); part w462577213
+// (concrete #bfbcb3, levels to 6 with a tiled mansard roof #965a2f) over the 3-level part w462577214 filling the corner plot.
+// Window rhythm and trim are generic. No signs.
+{
+const d0 = D.yh1, C0 = pcen(D.yh2.r), d = PREP(d0, C0), d2 = PREP(D.yh2, C0);
+K50('sgyuehwa', '裕华国货大厦', 'Yue Hwa Building', d0.A, C0, {r:30, h:20.4, lt:{m:0, c:'#ffe6c2', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WL = STs('#cdc9bf', 0.55), TR = STs('#e2ded4', 0.55), ROOF = '#965a2f', WIN = {c:'#3f4a52', m:0, glow:'#ffd9a0', gk:0.7}, SHOP = {c:'#b6c2c4', m:0, glow:'#ffe2b8', gk:0.85};
+  const F = d2.r, M = d.p[1].r;
+  foundP(B.p(FOUND50), F); wallP(B.p(SHOP), offP(F, 0.8), 0.3, 4.2); capP(B.p(ROOF50), offP(F, 0.8), 4.2);
+  wallP(B.p(WL), F, 4.2, 10.5); capP(B.p(ROOF50), F, 10.5); bandAtP(B.p(TR), F, 4.0, 0.6, 0.25); bandAtP(B.p(TR), F, 9.8, 0.7, 0.25);
+  winP(B, F, 4.6, 10, 2.9, 2.6, 1.2, 1.9, WIN, {minL:3});
+  wallP(B.p(WL), M, 10.5, 16.5); bandAtP(B.p(TR), M, 15.8, 0.7, 0.3); winP(B, M, 10.8, 16, 2.9, 2.6, 1.2, 1.9, WIN, {minL:3});
+  finsP(B.p(TR), M, 4.2, 16.5, 5.2, 0.25, 0.5);
+  // mansard: the wall line drawn in 2 m as it rises 3.9 m, dormers
+  const S0 = M.map(p => [p[0], 16.5, p[1]]), S1 = offP(M, 2.0).map(p => [p[0], 20.4, p[1]]);
+  loftP(B.p(ROOF), [S0, S1]); capP(B.p(ROOF50), offP(M, 2.0), 20.4);
+  for (const e of edgesF(offP(M, 0.9))) if (e.L > 5) for (let u = 2.2; u < e.L - 1.5; u += 4.4) slabP(B.p(TR), rectO(u - 0.6, u + 0.6, 17.0, 19.0), e.F, 0, 0.6);
+  B.flush(g); return g; }});
+}
+// ---- Chinatown Point, 133 New Bridge Road (sgchinatownpoint): OSM w125836966 (5 levels, height 28, colour #6d6e66, 1990) with the
+// tower part w326926547 (25 levels, min level 5, height 118, colour #9e9d99). The app drew only the tower part; the mall is added.
+{
+const d0 = D.ctp, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgchinatownpoint', '唐城坊', 'Chinatown Point', d0.A, C0, {r:85, h:118, lt:{m:1, c:'#ffeccc', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const MALL = STs('#767870', 0.3), MALL2 = STs('#8b8d85', 0.3), GL = GLs('#4c5c64', 3.4, 2.2), TW = STs('#a6a5a1', 0.35), T = d.p[0].r;
+  foundP(B.p(FOUND50), d.r); lobby50(B, d.r, 0.3, 5.5, 0.8); capP(B.p(ROOF50), offP(d.r, 0.8), 5.5);
+  wallP(B.p(MALL), d.r, 5.5, 28); capP(B.p(ROOF50), d.r, 28); ribP(B.p(MALL2), d.r, 10, 28, 5.6, 1.4, 0.06);
+  bandAtP(B.p(GL), d.r, 12, 2.2, 0.03); bandAtP(B.p(GL), d.r, 20.5, 2.2, 0.03);
+  tw50(B, T, 28, 118, {sty:'punch', fr:TW, gl:GL, fh:3.4, bay:2.4, ww:1.6, wh:1.7, par:1.5});
+  blkP(B, scP(T, 0.5), 118, 121, MECH50, ROOF50);
+  B.flush(g); return g; }});
+}
+// ---- Hong Lim Complex, Upper Cross Street (sghonglim): OSM r2304417 "Hong Lim Complex" (4 levels / 16 m podium, 1978) with the four
+// HDB slab blocks w326926571-574 (20 levels, from level 4, height 56). Podium plans from the app footprints inside the relation.
+// The Chinatown MRT exit F canopy (w172596763) in the podium's re-entrant corner is modelled too (it falls under the hull).
+// Colours (white render, grey corridor bands, red-brown accents) are estimates.
+{
+const C0 = pcen(D.hlrel.r), sh = q => shP(q.r, C0[0], C0[1]), PE = sh(D.hlpe), PW = sh(D.hlpw), SL = [D.hl571, D.hl572, D.hl573, D.hl574].map(sh),
+  P14 = sh(D.hlp1401), PUP = [D.hlp510, D.hlp17, D.hlp33].map(sh), MRT = sh(D.hlmrt);
+K50('sghonglim', '芳林苑', 'Hong Lim Complex', D.hlrel.A, C0, {r:93, h:56, lt:{m:1, c:'#fff2dc', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const POD = STs('#d8d3c8', 0.35), WH = STs('#ecebe6', 0.4), COR = STs('#9da2a3', 0.3), ACC = STs('#a45a45', 0.3), GL = GLs('#55636a', 2.8, 1.8);
+  for (const P of PUP){ wallP(B.p(POD), P, 4.2, 16); capP(B.p(ROOF50), P, 16); capP(B.p(POD), P, 4.2); }
+  // the Chinatown MRT entrance (exit F) in the podium's corner (app footprint w172596763, 6 m): a plain canopy on columns
+  { const T = offP(MRT, 0.3); capP(B.p(STs('#8d9496', 0.3)), T, 6); wallP(B.p(STs('#8d9496', 0.3)), T, 5.2, 6); for (const p of T) segP(B.p(COR), [p[0], 0.3, p[1]], [p[0], 5.2, p[1]], 0.2, 6); wallP(B.p(LOB50), offP(MRT, 2), 0.3, 3.2); }
+  for (const P of [PE, PW, P14]){ foundP(B.p(FOUND50), P); lobby50(B, P, 0.3, 4.2, 1.0); capP(B.p(ROOF50), offP(P, 1), 4.2); wallP(B.p(POD), P, 4.2, 16); capP(B.p(ROOF50), P, 16);
+    winP(B, P, 5, 15.5, 3.9, 3.4, 2.4, 1.8, GL, {minL:4}); bandAtP(B.p(ACC), P, 15.2, 0.8, 0.15); }
+  for (const P of SL){ slab50(B, P, 16, 56, {wall:WH, gl:GL, ledge:COR, fh:2.8, ld:0.6}); finsP(B.p(ACC), P, 16, 57, 9, 0.4, 0.5); }
+  B.flush(g); return g; }});
+}
+// ---- People's Park Centre, 101 Upper Cross Street (sgppcentre): OSM r16125339 (1976): podium part (0-17.1 m), the long slab
+// (to 99 m in the data) and the office block w326926553 (levels 5-12, beige, red roof edge). Heights from the data (not verified).
+{
+const d0 = D.ppc, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgppcentre', '珍珠坊', "People's Park Centre", d0.A, C0, {r:75, h:99, lt:{m:1, c:'#fff0d8', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const POD = STs('#cfcac0', 0.35), WH = STs('#e6e4de', 0.4), COR = STs('#a3a7a7', 0.3), BEI = STs('#d9c9a8', 0.35), RED = STs('#a8483a', 0.3), GL = GLs('#4f5e66', 3.0, 1.8);
+  const P = d.p[2].r, S = d.p[1].r, O = d.p[0].r;
+  // the MRT exit canopy against the south-west side (app footprint w173132986, 5 m) falls under the hull: a plain canopy on posts
+  { const T = shP(D.ppcmrt.r, C0[0], C0[1]); capP(B.p(STs('#8d9496', 0.3)), T, 5); wallP(B.p(STs('#8d9496', 0.3)), T, 4.3, 5); for (const p of T) segP(B.p(COR), [p[0], 0.3, p[1]], [p[0], 4.3, p[1]], 0.2, 6); }
+  foundP(B.p(FOUND50), P); lobby50(B, P, 0.3, 4.5, 1.0); capP(B.p(ROOF50), offP(P, 1), 4.5); wallP(B.p(POD), P, 4.5, 17.1); capP(B.p(ROOF50), P, 17.1);
+  winP(B, P, 5.5, 16.5, 3.8, 3.6, 2.6, 2.0, GL, {minL:4});
+  slab50(B, S, 17.1, 99, {wall:WH, gl:GL, ledge:COR, fh:3.0, ld:0.7});
+  tw50(B, O, 17.1, 40.2, {sty:'punch', fr:BEI, gl:GL, fh:3.6, bay:2.8, ww:2.0, wh:1.8}); wallP(B.p(RED), O, 40.2, 41.4);
+  B.flush(g); return g; }});
+}
+// ---- Kreta Ayer People's Theatre, 30A Kreta Ayer Road (sgkretaayer): OSM w47298582 (1969, height 15, gabled tiled roof along the
+// long axis). Wall height, colours and the entrance placement are estimates.
+{
+const d0 = D.kreta, C0 = pcen(d0.r), [RG] = shAll([d0.r], C0), AX = Math.atan2(24.2, 43.0);
+K50('sgkretaayer', '牛车水人民剧场', "Kreta Ayer People's Theatre", d0.A, C0, {r:30, h:15, lt:{m:0, c:'#ffe6c2', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB(), f = frame(0, 0, AX);
+  const WL = STs('#e3dccd', 0.5), TR = STs('#c9c1b0', 0.45), ROOF = '#9b5a3e', GL = {c:'#6f7d84', m:0, glow:'#ffe0b0', gk:0.8};
+  foundP(B.p(FOUND50), RG); wallP(B.p(WL), RG, 0.3, 10.5); bandAtP(B.p(TR), RG, 10.0, 0.6, 0.2); bandAtP(B.p(TR), RG, 0.3, 1.0, 0.1);
+  hipF(B.p(ROOF), f, -24.6, 24.6, -12.8, 12.8, 10.5, 4.5, 0.6, true);
+  for (const s of [-1, 1]){ const F = (t, y, w) => f(24.65*s + s*(w || 0), y, t); slabP(B.p(WL), [[-13.4, 10.5], [13.4, 10.5], [0, 15.0]], F, -0.1, 0.05);
+    shapeP(B.p(GL), rectO(-4.5, 4.5, 0.6, 3.6), F, 0.06); slabP(B.p(TR), rectO(-5.5, 5.5, 3.6, 4.2), F, 0, 1.6); }
+  for (const s of [-1, 1]){ const F = (t, y, w) => f(t, y, 12.8*s + s*(w || 0)); for (let u = -20; u <= 20; u += 5) slabP(B.p(TR), rectO(u - 0.4, u + 0.4, 0.3, 10.2), F, 0, 0.3); }
+  B.flush(g); return g; }});
+}
+// ---- Maxwell Chambers, 32 Maxwell Road (sgmaxwellch): OSM w393100846 (4 levels, start date 1932: the former Customs House).
+// Height 14.4 m from the data; pale render with pilasters, cornice and parapet (estimates).
+{
+const d0 = D.maxch, C0 = pcen(d0.r), [RG] = shAll([d0.r], C0);
+K50('sgmaxwellch', '麦士威仲裁中心', 'Maxwell Chambers', d0.A, C0, {r:42, h:15.6, lt:{m:0, c:'#ffe8c6', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WL = STs('#ece8de', 0.55), TR = STs('#d9d3c5', 0.5), WIN = {c:'#3c4851', m:0, glow:'#ffdcaa', gk:0.75};
+  foundP(B.p(FOUND50), RG); wallP(B.p(WL), RG, 0.3, 14.4); capP(B.p(ROOF50), RG, 14.4); wallP(B.p(WL), RG, 14.4, 15.6);
+  bandAtP(B.p(TR), RG, 0.3, 1.2, 0.15); bandAtP(B.p(TR), RG, 4.2, 0.4, 0.15); bandAtP(B.p(TR), RG, 13.4, 1.0, 0.35);
+  winP(B, RG, 1.2, 13.2, 3.1, 3.0, 1.3, 2.0, WIN, {minL:3}); finsP(B.p(TR), RG, 1.5, 13.4, 6.0, 0.3, 0.7);
+  B.flush(g); return g; }});
+}
+// ---- MND Building, 5 Maxwell Road (sgmnd): Nominatim / OSM put the "MND Complex" address and the Ministry of National Development
+// POI on w47345222 (2-level podium, metal #949899, 1970) with its 20-level slab part w508994095 - the main block (66.6 m in the data,
+// not verified); reref SC/lm50/sg50b/ref_sg50b_3.json. The target row's footprint w117058629 "MND Building (Annexe B)" (5 levels)
+// is the secondary key sgmndannexb (label:false). Window ribbons and colours are generic.
+{
+const d0 = D.mnd, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgmnd', '国家发展部大厦', 'MND Building', d0.A, C0, {r:56, h:66.6, lt:{m:1, c:'#fff0d8', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const MET = STs('#9a9ea0', 0.35), BAND = STs('#7d8285', 0.3), GL = GLs('#46545c', 3.0, 2.0);
+  foundP(B.p(FOUND50), d.r); lobby50(B, d.r, 0.3, 6.6, 1.2); capP(B.p(ROOF50), d.r, 6.6); wallP(B.p(MET), offP(d.r, -0.1), 5.6, 6.6);
+  const T = d.p[0].r; wallP(B.p(MET), T, 6.6, 66.6); capP(B.p(ROOF50), T, 66.6); ribP(B.p(GL), T, 7.6, 66, 3.0, 1.5, 0.04); ribP(B.p(BAND), T, 6.6, 66.6, 3.0, 0.3, 0.12);
+  wallP(B.p(MET), offP(T, -0.1), 66.6, 68); blkP(B, scP(T, 0.4), 66.6, 70, MECH50, ROOF50);
+  B.flush(g); return g; }});
+}
+{
+const d0 = D.mndb, C0 = pcen(d0.r), [RG] = shAll([d0.r], C0);
+K50('sgmndannexb', '国家发展部大厦附楼B', 'MND Building (Annexe B)', d0.A, C0, {label:false, r:27, h:17.7, lt:{m:1, c:'#fff0d8', k:0.45}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WL = STs('#c9c9c2', 0.4), GL = GLs('#46545c', 3.4, 2.0);
+  foundP(B.p(FOUND50), RG); lobby50(B, RG, 0.3, 4, 1.0); capP(B.p(ROOF50), offP(RG, 1), 4);
+  wallP(B.p(WL), RG, 4, 17.7); capP(B.p(ROOF50), RG, 17.7); ribP(B.p(GL), RG, 4.8, 17.2, 3.4, 1.6, 0.04); wallP(B.p(WL), offP(RG, -0.1), 17.7, 18.6);
+  B.flush(g); return g; }});
+}
+// ================= Outram (SGH campus) and Tiong Bahru (medium detail on the real OSM plans) =================
+// Heights from the app / OSM levels data (not verified) unless noted; colours from the OSM building:colour tags.
+
+// ---- Academia, 20 College Road (sgsghacademia): OSM w172268002 "Academia" with parts w1065816809 "Diagnostics Tower" and
+// w1065816810 "Discovery Tower" (white, 13 levels, 43.5 m), the teal glass centre w1065816807 (5 levels at the base, to 39.6 m
+// plus a 43.5 m roof piece), the white link w1065816808 (16.5-23.7 m), the orange 2-level link w1065816806. The east canopy w1065816805 is left out (its hull would hide a neighbour).
+{
+const d0 = D.acad, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgsghacademia', '新加坡中央医院学术大楼', 'Academia (SGH Campus)', d0.A, C0, {r:68, h:43.5, lt:{m:1, c:'#f0f6ff', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WH = STs('#eeefec', 0.4), GL = GLs('#5f7680', 3.3, 1.6), TEAL = GLs('#3f8a88', 3.3, 2.0), OR = STs('#d98a3d', 0.35), GR = STs('#9a9d9c', 0.3);
+  for (const q of d.p) foundP(B.p(FOUND50), q.r);
+  for (const i of [0, 8]){ const T = d.p[i].r; tw50(B, T, 0.3, 43.5, {sty:'fin', gl:GL, fr:WH, fh:3.3, bay:1.6, fd:0.6, fw:0.2, par:1.2}); lobby50(B, T, 0.3, 4.5, -0.05); }
+  { const q = d.p[6]; tw50(B, q.r, 0.3, 39.6, {sty:'cw', gl:TEAL, fr:WH, fh:3.3, bay:2.4}); const q2 = d.p[4]; wallP(B.p(TEAL), q2.r, 39.6, 43.5); capP(B.p(ROOF50), q2.r, 43.5); }
+  { const q = d.p[3]; wallP(B.p(WH), q.r, q.b, q.t); capP(B.p(ROOF50), q.r, q.t); capP(B.p(WH), q.r, q.b); ribP(B.p(GL), q.r, q.b + 1, q.t - 0.5, 3.6, 2.0, 0.04); }
+  // the small campus block in the notch east of the towers (app footprint, 18.2 m in the data, unnamed) falls under the hull: plain block
+  { const T = shP(D.acadx.r, C0[0], C0[1]); foundP(B.p(FOUND50), T); low50(B, T, 0.3, 18.2, {wall:STs('#d9d9d4', 0.35), gl:GL, fh:3.6, par:0.8}); }
+  { const q = d.p[1]; wallP(B.p(OR), q.r, 3.3, 7.2); capP(B.p(ROOF50), q.r, 7.2); wallP(B.p(LOB50), d.p[2].r, 0.3, 3.3); }
+  B.flush(g); return g; }});
+}
+// ---- National Heart Centre Singapore, 5 Hospital Drive (sgnhcs): OSM w463203749 with parts w463203746 (12 levels, metal,
+// crimson, 40.2 m), the glazed slot between it and the north block, w463203747 (7 levels, concrete #bfbebb) and w463203748 (7 levels,
+// glass #38474a), both 23.7 m.
+{
+const d0 = D.nhcs, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgnhcs', '国家心脏中心', 'National Heart Centre Singapore', d0.A, C0, {r:66, h:40.2, lt:{m:1, c:'#fff0e0', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const RED = STs('#a3363b', 0.35), GL = GLs('#4f6068', 3.3, 1.8), CON = STs('#c2c1bd', 0.35), DG = GLs('#3a494c', 3.3, 2.0);
+  for (const q of d.p) foundP(B.p(FOUND50), q.r);
+  { const T = d.p[0].r; wallP(B.p(RED), T, 0.3, 40.2); capP(B.p(ROOF50), T, 40.2); ribP(B.p(GL), T, 4.6, 39.5, 3.3, 1.7, 0.05); lobby50(B, T, 0.3, 4.4, -0.05); wallP(B.p(RED), offP(T, -0.1), 40.2, 41.4); }
+  for (const i of [1, 2]){ const q = d.p[i]; wallP(B.p(GLs('#7d939b', 3.3, 3)), q.r, q.b || 0.3, q.t); capP(B.p(ROOF50), q.r, q.t); }
+  { const T = d.p[3].r; tw50(B, T, 0.3, 23.7, {sty:'punch', fr:CON, gl:GL, fh:3.3, bay:2.6, ww:1.8, wh:1.7, par:1}); }
+  { const T = d.p[4].r; tw50(B, T, 0.3, 23.7, {sty:'cw', gl:DG, fr:STs('#5b6a6d', 0.3), fh:3.3, bay:2.0, par:1}); }
+  B.flush(g); return g; }});
+}
+// ---- National Cancer Centre Singapore, 30 Hospital Boulevard (sgnccs): NCCS moved into its new 24-storey building in 2023
+// (nccs.com.sg, 19 May 2023: "its new 24-storey home", "ample glass cladding"); the old six-storey building at 11 Hospital Crescent
+// (the target row's w47415661) is not the current centre and is left to the app. Anchor: OSM w513237970 (Nominatim "National Cancer
+// Centre Singapore, 30 Hospital Boulevard"; reref SC/lm50/sg50b/ref_sg50b_2.json) with parts w1065816882 (24 levels, metal, orange),
+// w1065816881 (21 levels, glass, teal) and w1065816880 (11 levels, orange). Heights are the app's (79.8 / 69.9 / 36.9 m, from the
+// OSM levels) - the real height is not published in the sources found (estimate).
+{
+const d0 = D.nccs, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgnccs', '国家癌症中心', 'National Cancer Centre Singapore', d0.A, C0, {r:66, h:79.8, lt:{m:1, c:'#fff0e0', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const OR = STs('#cf7d3c', 0.35), OR2 = STs('#b86a30', 0.3), TEAL = GLs('#3d7f86', 3.3, 1.6), GL = GLs('#58707a', 3.3, 1.8);
+  for (const q of d.p) foundP(B.p(FOUND50), q.r);
+  for (const i of [1, 2]){ const q = d.p[i]; wallP(B.p(GL), q.r, Math.max(0.3, q.b), q.t); capP(B.p(ROOF50), q.r, q.t);
+    finsP(B.p(OR), q.r, Math.max(4.2, q.b), q.t, 1.4, 0.7, 0.45); ribP(B.p(OR2), q.r, 4.2, q.t, 3.3, 0.5, 0.08); }
+  lobby50(B, d.p[1].r, 0.3, 4.2, 0.8); wallP(B.p(OR), offP(d.p[1].r, -0.1), 79.8, 82);
+  { const q = d.p[3]; tw50(B, q.r, 0.3, 69.9, {sty:'cw', gl:TEAL, fr:STs('#a8c4c6', 0.3), fh:3.3, bay:1.6, par:1.5}); lobby50(B, q.r, 0.3, 4.4, -0.05); }
+  for (const i of [0, 4]){ const q = d.p[i]; wallP(B.p(GL), q.r, Math.max(0.3, q.b), q.t); capP(B.p({c:'#6f8f55', m:0, lk:0.1}), q.r, q.t); finsP(B.p(OR), q.r, Math.max(4.2, q.b), q.t, 1.6, 0.6, 0.4); }
+  B.flush(g); return g; }});
+}
+// ---- Tiong Bahru Market, 30 Seng Poh Road (sgtbmarket): OSM r21297472 "Tiong Bahru Market" (building=retail, amenity=marketplace):
+// outer w172241893 round an open inner court w172241921. The app has no footprint here (open ground) - nothing to hide. Two storeys
+// (wet market below, food centre above); wall heights and the pitched roof ring are estimates.
+{
+const d0 = D.tbm, C0 = pcen(d0.r), [OUT, HOLE] = shAll([d0.r, d0.h], C0);
+K50('sgtbmarket', '中峇鲁市场', 'Tiong Bahru Market', d0.A, C0, {r:68, h:13.5, lt:{m:0, c:'#ffe6c2', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WL = STs('#e6e2d8', 0.5), COL = STs('#d2cdc2', 0.45), DARK = {c:'#4a5157', m:0, glow:'#ffe0b0', gk:0.8}, ROOF = '#9e5a42', FL = STs('#bdb7ab', 0.4);
+  foundP(B.p(FOUND50), OUT, 0.3); capHoleP(B.p(FL), OUT, [HOLE], 0.32);
+  // ground floor: open market behind columns; upper floor: food centre with a parapet band; same on the court side
+  for (const P of [OUT, HOLE]){ const Q = P === OUT ? offP(P, 1.8) : offP(P, -1.8);
+    wallP(B.p(DARK), Q, 0.3, 9.6); for (const [x, z] of alongP(P, 5.5)) segP(B.p(COL), [x, 0.3, z], [x, 9.6, z], 0.3, 6);
+    bandAtP(B.p(WL), P, 4.4, 1.3, 0.05); bandAtP(B.p(WL), P, 8.8, 0.9, 0.05); }
+  capHoleP(B.p(FL), OUT, [HOLE], 4.4);
+  // roof: pitched ring from both edges up to a flat crown strip
+  const O2 = offP(OUT, 7), H2 = offP(HOLE, -5);
+  loftP(B.p(ROOF), [offP(OUT, -0.8).map(p => [p[0], 9.4, p[1]]), O2.map(p => [p[0], 13.5, p[1]])]);
+  loftP(B.p(ROOF), [offP(HOLE, 0.8).map(p => [p[0], 9.4, p[1]]), H2.map(p => [p[0], 13.5, p[1]])]);
+  capHoleP(B.p(ROOF), O2, [H2], 13.5);
+  B.flush(g); return g; }});
+}
+// ---- Tiong Bahru Plaza, 302 Tiong Bahru Road (sgtbplaza): OSM w172117296 with parts w509205036 (mall, 4 levels, stone #C4CED3,
+// 13.8 m), w509205035 / w509205037 (2 levels, 7.2 m) and the office tower parts w509205039 (to 60 m) and w509205038 / w509210375
+// (to 53.4 m; stone #958D82, levels 2-18) - heights from the data.
+{
+const d0 = D.tbp, C0 = pcen(d0.r), d = PREP(d0, C0);
+K50('sgtbplaza', '中峇鲁广场', 'Tiong Bahru Plaza', d0.A, C0, {r:108, h:60, lt:{m:1, c:'#ffeccc', k:0.5}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const MALL = STs('#c9d1d5', 0.35), MALL2 = STs('#b3bcc1', 0.3), TW = STs('#9b9389', 0.35), GL = GLs('#4c5d66', 3.3, 2.0), GL2 = GLs('#5e7480', 3.6, 2.6);
+  for (const q of d.p) foundP(B.p(FOUND50), q.r);
+  for (const i of [5, 4, 1]){ const q = d.p[i]; lobby50(B, q.r, 0.3, 5, 0.8); capP(B.p(ROOF50), offP(q.r, 0.8), 5); wallP(B.p(i === 1 ? MALL2 : MALL), q.r, 5, q.t); capP(B.p(ROOF50), q.r, q.t);
+    bandAtP(B.p(GL2), q.r, 6.5, 2.4, 0.03); }
+  for (const i of [2, 0, 3]){ const q = d.p[i]; tw50(B, q.r, 7.2, q.t, {sty:'rib', gl:GL, fr:TW, fh:3.0, sh:1.1, bay:2.0, mul:STs('#857e75', 0.3), par:1.5}); }
+  blkP(B, scP(d.p[2].r, 0.5), 60, 63, MECH50, ROOF50);
+  B.flush(g); return g; }});
+}
+// ---- Qi Tian Gong (Monkey God) Temple, 44 Eng Hoon Street (sgqitiangong): Wikipedia / roots.gov.sg - founded 1920, at this address
+// since 1938 in a shophouse unit bought by the trustees in 1985, renovated 1992-93. The OSM place_of_worship node lies in the rounded
+// west end of the unnamed block w172241932, which is modelled as a whole: a plain three-storey Tiong Bahru block (storey count,
+// height and colours are estimates; the neighbouring pre-war blocks are tagged 3 levels, #E6EBEB) with the temple front on the
+// ground floor of the west end - red columns and doors, a tiled canopy, warm light. Kept simple and respectful; no figures, no text.
+{
+const d0 = D.qtg, C0 = pcen(d0.r), [RG] = shAll([d0.r], C0), POI = [-24.8 - C0[0], -10.5 - C0[1]];
+K50('sgqitiangong', '齐天宫', 'Qi Tian Gong Temple', d0.A, C0, {r:36, h:12, lt:{m:0, c:'#ffdcae', k:0.55}, build(){
+  const g = new THREE.Group(), B = mkB();
+  const WL = STs('#e6ebeb', 0.5), TR = STs('#d3d8d8', 0.45), GL = {c:'#3e4a52', m:0, glow:'#ffdcaa', gk:0.7}, SHOP = {c:'#b8c3c5', m:0, glow:'#ffe2b8', gk:0.8},
+    RED = {c:'#a3241e', m:0, lk:0.4}, GOLD = {c:'#c9a04a', m:0, lk:0.5}, TILE = '#8f3a28', DOORG = {c:'#8a2a20', m:0, glow:'#ffb870', gk:0.9};
+  foundP(B.p(FOUND50), RG); wallP(B.p(WL), RG, 4.0, 11.2); capP(B.p(ROOF50), RG, 11.2); wallP(B.p(WL), offP(RG, -0.1), 11.2, 12.0);
+  bandAtP(B.p(TR), RG, 3.8, 0.5, 0.25); bandAtP(B.p(TR), RG, 7.5, 0.25, 0.1); bandAtP(B.p(TR), RG, 11.0, 0.4, 0.15);
+  ribP(B.p(GL), RG, 4.9, 11, 3.6, 1.3, 0.04);
+  // ground floor: shop units, except the temple at the west end (points within 8 m of the POI)
+  const nearT = (x, z) => Math.hypot(x - POI[0], z - POI[1]) < 8.5;
+  wallP(B.p(SHOP), offP(RG, 1.0), 0.3, 3.8); capP(B.p(ROOF50), offP(RG, 1.0), 3.8);
+  for (const [x, z, a] of alongP(RG, 3.2)) if (!nearT(x, z)) segP(B.p(TR), [x, 0.3, z], [x, 3.8, z], 0.18, 4);
+  for (const [x, z, a] of alongP(RG, 1.6)) if (nearT(x, z)){
+    const F = fA(x, z, a); slabP(B.p(DOORG), rectO(-0.7, 0.7, 0.3, 3.0), F, 0.95, 0.9);   // (fA's +w points into this ring)
+    segP(B.p(RED), [x, 0.3, z], [x, 3.6, z], 0.16, 8); slabP(B.p(GOLD), rectO(-0.8, 0.8, 3.0, 3.35), F, 0.95, 0.85);
+    // canopy: a short tiled lean-to from the recessed front out past the columns
+    const p0 = F(-0.8, 3.75, 0.95), p1 = F(0.8, 3.75, 0.95), q0 = F(-0.8, 3.45, -0.9), q1 = F(0.8, 3.45, -0.9);
+    quadP(B.p(TILE), p0, p1, q1, q0); }
   B.flush(g); return g; }});
 }
 }

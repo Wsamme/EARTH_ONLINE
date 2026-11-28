@@ -9,6 +9,8 @@ const SGR_PATH = 'sgdata/', SGR_TEX = window.CB_MOBILE ? 2048 : 4096;
 const SGR_LRT = new Set(['BP', 'SE', 'SW', 'PE', 'PW']);
 
 /* ---------- loading ---------- */
+// v48: road files changed under the same name but are served 'immutable': a version query makes browsers fetch the new ones
+function sgrBinV(stem){ return /_roads$/.test(stem) ? '?v=48' : ''; }
 async function sgrFetch(name, label){
   // Raw gzip (.bin) first, then the old base64 .txt.
   // A phone downloads one file at a time. Three large files together, unpacked in a
@@ -18,7 +20,7 @@ async function sgrFetch(name, label){
   if (window.CB_MOBILE){
     let err = null;
     for (let a = 0; a < 3 && !buf; a++){
-      try { buf = await sgrReadBody(SGR_PATH + stem + '.bin', label); }
+      try { buf = await sgrReadBody(SGR_PATH + stem + '.bin' + sgrBinV(stem), label); }
       catch (e){
         err = e;
         if (/\s40[14]/.test(String(e && e.message || e))) break;
@@ -27,7 +29,7 @@ async function sgrFetch(name, label){
     }
     if (!buf && err && !/\s40[14]/.test(String(err && err.message || err))) throw err;
   } else {
-    const bin = await fetch(SGR_PATH + stem + '.bin');
+    const bin = await fetch(SGR_PATH + stem + '.bin' + sgrBinV(stem));
     if (bin.ok) buf = await bin.arrayBuffer();
   }
   if (!buf){

@@ -253,6 +253,7 @@ if 'sgrBoot' not in _code: raise SystemExit('extracted script is not the app')
 _jp = os.path.join(os.path.dirname(os.path.abspath(sys.argv[2])), _js)
 if os.path.exists(_jp): os.remove(_jp)   # never write through a hard link
 open(_jp, 'w').write(_code.lstrip('\n'))
-src = src[:_i] + '<script src="%s" defer></script>\n' % _js + src[_j + len('</script>'):]
+import hashlib   # v48: the script URL carries a hash of its content, so a new build is never hidden by a cached old script
+src = src[:_i] + '<script src="%s?v=%s" defer></script>\n' % (_js, hashlib.md5(_code.encode()).hexdigest()[:10]) + src[_j + len('</script>'):]
 open(sys.argv[2], 'w').write(src)
 print('ok', len(src), 'js', len(_code))

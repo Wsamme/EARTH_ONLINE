@@ -281,13 +281,22 @@ def emit_mesh(wt, polys):
 ww = W(); ww.raw(b'SGW1')
 print('sea', emit_mesh(ww, polys_of(sea)), flush=True)
 bodies = collections.defaultdict(list)
-for g, lv in zip(F['sig'], F['siglv']): bodies[lv].append(g.simplify(0.5))       # (b2: each body's level)
+if FRAME == 'gz':      # outside the core cities and the October square only water bodies >= 1 km2 get a 3D surface (ground.webp paints the rest):
+    _KW = prep(L['core'].buffer(1000).union(box(-OLD_HALF, -OLD_HALF, OLD_HALF, OLD_HALF)))      # the delta's fish ponds were 20 of the 28 MB
+    _nw = collections.Counter()
+    _OB = box(-OLD_HALF, -OLD_HALF, OLD_HALF, OLD_HALF)
+    def _keepw(g):          # (and outside the October square, Guangzhou's ponds under 4000 m2)
+        c = g.representative_point(); k = g.area >= 1e6 or (_KW.contains(c) and (g.area >= 4000 or _OB.contains(c))); _nw['kept' if k else 'dropped'] += 1; return k
+else: _keepw = lambda g: True
+for g, lv in zip(F['sig'], F['siglv']):
+    if _keepw(g): bodies[lv].append(g.simplify(0.5))       # (b2: each body's level)
+if FRAME == 'gz': print('water bodies (far context < 1 km2 dropped)', dict(_nw), flush=True)
 ww.vu(len(bodies))
 for lv, gs in bodies.items():
     ww.raw(struct.pack('<f', lv)); emit_mesh(ww, [p for g in gs for p in polys_of(g.buffer(0))])
 LUi = load('landuse.pkl')
 piers = [g for pr, na, k, g in LUi if k == 'pier']
-flat = [(1, g) for g in F['flat']] + [(2, g) for g in L['pools']] + [(3, g) for g in piers]
+flat = [(1, g) for g in F['flat'] if FRAME != 'gz' or _KW.contains(g.representative_point())] + [(2, g) for g in L['pools']] + [(3, g) for g in piers]
 ww.vu(3)
 for kind in (1, 2, 3):
     gs = [p for k, g in flat if k == kind for p in polys_of(g.buffer(0).simplify(0.3))]
@@ -309,7 +318,7 @@ stats = {'n':ST['n'], 'gfa':round(ST['gfa']), 'pop':round(ST['pop']), 'jobs':rou
          'od':[[k[2], round(o[0]), round(o[1]/o[0]), round(o[2]/o[0])] for k, o in OD.items() if o[0] > 2000]}
 base = {'v':2, 'city':'gba', 'pa16':1, 'hkDX':HK_DX, 'hkDY':HK_DY, 'demGap':T2.get('gapTiles', []), 'demPh':T2.get('ph'), 'lon0':LON0, 'lat0':LAT0, 'MX':MX, 'MY':MY, 'HALF':HALF, 'CELL':CELL, 'N':N, 'TS':TS, 'TN':TN, 'TILE':T, 'bldParts':len(parts),
         'codes':rle(codes), 'lu':rle(lu), 'pa':rle(pa), 'H':base64.b64encode(Hq.tobytes()).decode(),
-        'names':names, 'refs':refs, 'stats':stats, 'capP':3000 if FRAME != 'gz' else 4600, 'capI':3500 if FRAME != 'gz' else 5200, **{k: M[k] for k in ('PAS', 'REGS', 'places', 'pois', 'waters', 'mrt', 'stations', 'f1', 'runways', 'stands', 'palines', 'ropes')}}
+        'names':names, 'refs':refs, 'stats':stats, 'capP':3000 if FRAME != 'gz' else 3800, 'capI':3500 if FRAME != 'gz' else 4400, **{k: M[k] for k in ('PAS', 'REGS', 'places', 'pois', 'waters', 'mrt', 'stations', 'f1', 'runways', 'stands', 'palines', 'ropes')}}
 if FRAME == 'gz':       # the released rail (MTR with its deck heights / Peak Tram fix, Shenzhen Metro), stations and the ropeway: world x / y unchanged
     gzm = [m for m in base['mrt'] if m['code'].startswith('G')]; gzs = [s_ for s_ in base['stations'] if s_['codes'] and all(c_.startswith('G') for c_ in s_['codes'])]
     for k in ('mrt', 'stations', 'ropes'): base[k] = OB[k]

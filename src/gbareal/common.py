@@ -23,7 +23,7 @@ if FRAME == 'gz':
     BD = ROOT + 'hkdata/'; OUT = GZ + 'out/'; DATA = GZ + 'data/'; DEM = GZ + 'dl/terrain/'
     PBF = DATA + 'gba.osm.pbf'
     PBFS = [GZ + 'dl/osm/hong_kong.osm.pbf', GZ + 'dl/osm/macau.osm.pbf', GZ + 'dl/osm/guangdong.osm.pbf']   # openstreetmap.fr extracts
-    HALF = 147000; CELL = int(_os.environ.get('GZ_CELL', '100')); N = 2*HALF//CELL      # GZ_CELL=140: N 2100, 4.41 M cells (fewer than October's 6.35 M)
+    HALF = 147000; CELL = int(_os.environ.get('GZ_CELL', '140')); N = 2*HALF//CELL      # 140 m: N 2100, 4.41 M cells (fewer than October's 6.35 M); GZ_CELL=100 was the first try (heap +250 MB)
     TS, TN = 140, 2101
     TILE = 2000; TXN = 2*HALF//TILE      # 147 x 147 tiles
     R12 = 50

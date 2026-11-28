@@ -286,6 +286,730 @@ function annexB(B, P, y0, h, wall, glass, roof, fh){ prismP(B.p(wall), P, y0, h,
 // trees along the outside of an outline edge set (deterministic spacing)
 function streetTrees(B, P, d, sp, edges){ for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue; const a = P[i], b = P[(i+1) % P.length], L = Math.hypot(b[0]-a[0], b[1]-a[1]), [nx, nz] = outN(P, i), n = Math.floor(L/sp);
   for (let k = 1; k < n; k++){ const t = k/n; treeP(B, a[0] + (b[0]-a[0])*t + nx*d, 0, a[1] + (b[1]-a[1])*t + nz*d, 0.9 + ((i*3 + k*5) % 4)*0.07, '#56793c'); } } }
-// keys
+
+// ---- ty50e kit (block-scoped)
+// polygon clipped to the oriented rectangle u0..u1 x v0..v1 of frame ob
+const clipR = (P, ob, u0, u1, v0, v1) => clipC(P, ob.rect(u0, u1, v0, v1));
+// circular arc through three plan points a, m, b (n segments), returns the points from a to b (a and b included)
+function arc3(a, m, b, n){
+  const ax = a[0], az = a[1], bx = m[0], bz = m[1], cx = b[0], cz = b[1], d = 2*(ax*(bz - cz) + bx*(cz - az) + cx*(az - bz));
+  if (Math.abs(d) < 1e-6) return [a, b];
+  const ux = ((ax*ax + az*az)*(bz - cz) + (bx*bx + bz*bz)*(cz - az) + (cx*cx + cz*cz)*(az - bz))/d, uz = ((ax*ax + az*az)*(cx - bx) + (bx*bx + bz*bz)*(ax - cx) + (cx*cx + cz*cz)*(bx - ax))/d;
+  const r = Math.hypot(ax - ux, az - uz); let t0 = Math.atan2(az - uz, ax - ux), t1 = Math.atan2(cz - uz, cx - ux), tm = Math.atan2(bz - uz, bx - ux);
+  const norm = t => { while (t < t0) t += TAU; while (t >= t0 + TAU) t -= TAU; return t; }; t1 = norm(t1); tm = norm(tm);
+  if (tm > t1) t1 -= TAU;
+  const out = []; for (let k = 0; k <= n; k++){ const t = t0 + (t1 - t0)*k/n; out.push([ux + Math.cos(t)*r, uz + Math.sin(t)*r]); } return out;
+}
+// diagonal "mesh" bars on the edges of P: in each bay of width sp and band of height bh, one bar from corner to corner, direction
+// flipping by a deterministic pattern (bay index, band index) -> a zig-zag lattice
+function meshP(o, P, y0, y1, sp, bh, w, off, edges){
+  for (let i = 0; i < P.length; i++){ if (edges && !edges(i)) continue;
+    const a = P[i], b = P[(i + 1) % P.length], ex = b[0]-a[0], ez = b[1]-a[1], L = Math.hypot(ex, ez); if (L < sp*0.8) continue;
+    const [nx, nz] = outN(P, i), n = Math.max(1, Math.round(L/sp)), ux = ex/L, uz = ez/L, s = L/n;
+    for (let y = y0, j = 0; y + bh <= y1 + 0.01; y += bh, j++) for (let k = 0; k < n; k++){
+      const f = ((k + Math.floor(j/2)) % 3 === 0) !== ((j + k) % 2 === 0), p0 = s*k, p1 = s*(k + 1);
+      const A = [a[0] + ux*p0 + nx*off, f ? y : y + bh, a[1] + uz*p0 + nz*off], Bq = [a[0] + ux*p1 + nx*off, f ? y + bh : y, a[1] + uz*p1 + nz*off];
+      quadP(o, [A[0] - ux*w/2, A[1], A[2] - uz*w/2], [Bq[0] - ux*w/2, Bq[1], Bq[2] - uz*w/2], [Bq[0] + ux*w/2, Bq[1], Bq[2] + uz*w/2], [A[0] + ux*w/2, A[1], A[2] + uz*w/2]); } }
+}
+
+// =====================================================================================================================
+// ★ Shibuya Hikarie (2012; Nikken Sekkei / Tokyu Architects & Engineers JV, on the former Tokyu Bunka Kaikan site): 182.48 m, 34 floors
+// above ground + 4 below (Wikipedia list; AFPBB 2012). Verified: height, floors and the floor uses — B3-5F the ShinQs shops, 6-7F cafés and
+// restaurants, 8F the "8/" creative floor, 9-10F Hikarie Hall, 11-16F Tokyu Theatre Orb (2,000-seat musical theatre), 17-34F offices —
+// and the form: boxes of different sizes stacked on top of one another (AFPBB), the tower soaring to several roofs. Footprint: the OSM
+// outline w204091879 (the app part = the tower ring) and the 9-storey east part w521569265 (current OSM). The thin strip running east
+// from the outline's north-east corner (unknown height) is not modelled. Approximations (no section checked): the storey heights of each
+// box, their plan offsets, the facade treatments (white horizontal bands on the shop box, solid panels on the hall and theatre boxes,
+// white mullion grid on the office glass), the split office crown.
+// =====================================================================================================================
+LANDMARKS.tyhikarie = {zh:'涩谷Hikarie', en:'Shibuya Hikarie', cat:'new', r:76, h:183,
+  lt:{m:1, c:'#eef4ff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyhikarie, T = E.p[0][2], EP = E.E;
+    const WH = '#eceeee', WH2 = '#dfe2e3', GR = '#b9bfc3', DK = '#3b4249', RF = '#8f9497',
+      G1 = {c:'#5d6e7c', m:1, fh:5.6, cw:2.4}, G2 = {c:'#6f8291', m:1, fh:4.4, cw:1.5}, G3 = {c:'#7f93a3', m:1, fh:4.9, cw:1.5}, GJ = {c:'#2c3238', m:1, fh:2.2, cw:3};
+    const ob = obE(T), L2 = ob.L/2, W2 = ob.W/2;
+    footP(B, GR, T, -6); footP(B, GR, EP, -6);
+    // box 1 (B3-5F shops, to 31 m): the tower ring; glass with white horizontal bands (two per storey) and white corner frames
+    prismP(B.p(G1), offP(T, 0.4), 0.2, 31, true);
+    bandsP(B.p(WH), T, 0, 31, 2.8, 0.9, 0.05);
+    mullP(B.p(WH), T, 0.2, 31, 9.0, 0.7, 0.06);
+    // the 9-storey east part: lower, solid light panels with ribbon windows, roof terrace
+    facade(B, EP, 0.2, 41, 'band', {w:WH2, g:G1, fh:4.5, gh:1.7, wy:1.2});
+    roofF(B, EP, 41, {r:RF, pc:WH2, ph:1.1, pl:4, plc:GR, plh:2.5});
+    // joint 1 (recessed dark band), box 2 (6-8F restaurants and the creative floor), shifted toward the station (west)
+    const J = (y0, y1, P) => { prismP(B.p(GJ), offP(P, 2.0), y0, y1, true); flatP(B.p(DK), P, y0 + 0.02); };
+    J(31, 33, T);
+    const B2 = shiftP(clipR(T, ob, -L2, L2*0.86, -W2, W2*0.9), -1.2, 0);
+    prismP(B.p(G2), offP(B2, 0.3), 33, 47, true); bandsP(B.p(WH), B2, 33, 47, 4.6, 0.65, 0.05); mullP(B.p(WH2), B2, 33, 47, 3.0, 0.22, 0.06);
+    flatP(B.p(RF), clipR(T, ob, -L2, L2, -W2, W2), 33.0);
+    // box 3 (9-10F hall): smaller, solid white panels with a few deep slots
+    J(47, 49, B2);
+    const B3 = clipR(T, ob, -L2*0.92, L2*0.78, -W2*0.88, W2*0.82);
+    prismP(B.p(WH), B3, 49, 59, true); bandsP(B.p(WH2), B3, 49, 59, 2.5, 0.25, 0.04); winsP(B.p(G2), B3, 52, 57, 10, 6.0, 2.4, 3.2, 0.05);
+    flatP(B.p(RF), B2, 47.0);
+    // box 4 (11-16F theatre): the big solid box, light grey panels with fine vertical joints, projecting west again
+    J(59, 61, B3);
+    const B4 = shiftP(clipR(T, ob, -L2, L2*0.82, -W2*0.96, W2*0.9), -0.8, 0);
+    prismP(B.p(WH2), B4, 61, 89, true); mullP(B.p(GR), B4, 61, 89, 1.8, 0.14, 0.04); bandsP(B.p(GR), B4, 61, 89, 7.0, 0.3, 0.05);
+    flatP(B.p(RF), B3, 59.0); flatP(B.p(RF), B4, 89.0);
+    // boxes 5 and 6 (17-34F offices): two glass boxes side by side to different roofs, white mullion grid, floor lines
+    J(89, 92, B4);
+    const O5 = clipR(T, ob, -L2*0.86, L2*0.05, -W2*0.86, W2*0.78), O6 = clipR(T, ob, L2*0.05, L2*0.74, -W2*0.78, W2*0.70);
+    const yR5 = 179.5, yR6 = 168.5, fh = (yR5 - 92)/18;
+    for (const [P, y1] of [[O5, yR5], [O6, yR6]]){
+      prismP(B.p(G3), P, 92, y1, true); mullP(B.p(WH), P, 92, y1, 1.6, 0.16, 0.05); bandsP(B.p(WH), P, 92, y1, fh, 0.55, 0.06);
+      mullP(B.p(WH), P, 92, y1, 9.6, 0.55, 0.07); }
+    // roofs: parapet screens and plant (main roof to 182.48 m), the lower roof terrace
+    roofF(B, O5, yR5, {r:RF, pc:WH, ph:3.0, pl:5, plc:GR, plh:2.6, lv:'#a4aaae'});
+    roofF(B, O6, yR6, {r:RF, pc:WH, ph:1.4, pl:6, plc:GR, plh:2.4});
+    flatP(B.p(RF), offP(B4, 0), 89.05);
+    // ground level: deep canopy along the station side (west) and the urban core glass at the north-west corner
+    { const P = clipR(T, ob, -L2, -L2 + 6, -W2, W2); prismP(B.p(GJ), offP(P, 1.5), 0.2, 6, true); }
+    B.flush(g); return g; }};
+PL('tyhikarie', ...D.tyhikarie.a);
+
+// =====================================================================================================================
+// ★ Shibuya Stream (2018; Tokyu Architects & Engineers with Kazuhiro Kojima + Kazuko Akamatsu / CAt): B-1 building 35 floors above
+// ground, 4 below, 3 rooftop floors (Nikkenren BCS award sheet), 179.95 m (Wikipedia list). Verified: height, floors, uses — about 30
+// shops on the low floors, a hotel in the middle, offices above (Panasonic lighting report); the plan follows the curve of the former
+// Tōyoko Line tracks, with the 2F through passage and the Shibuya River promenade at its foot. Footprint: OSM w521438304. Approximations
+// (no elevation checked): the floor bands (shops to 18 m, hotel 18-60 m, offices above), the slimmer tower above the podium, the white
+// zig-zag mesh of the office facade (its pattern is drawn schematically), the stepped terraces at the river end, the crown screen.
+// =====================================================================================================================
+LANDMARKS.tystream = {zh:'涩谷Stream', en:'Shibuya Stream', cat:'new', r:66, h:180,
+  lt:{m:1, c:'#f2f6ff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tystream.o;
+    const WH = '#f1f2f0', WH2 = '#dcdfde', GR = '#a9afb2', RF = '#8d9295', GS = {c:'#66788a', m:1, fh:4.6, cw:2.4}, GH = {c:'#5c6a78', m:1, fh:3.4, cw:1.8},
+      GO = {c:'#6e8396', m:1, fh:4.3, cw:1.8}, GD = {c:'#323a42', m:1, fh:3, cw:3}, WOOD = '#9a7a58';
+    const ob = obE(O), L2 = ob.L/2, W2 = ob.W/2;
+    // the tower drops the narrow south-east tip (river end) where the podium steps down in terraces
+    const TW = clipR(offP(O, 1.2), ob, -L2, L2*0.55, -W2, W2);
+    footP(B, GR, O, -6);
+    // podium (shops 1-4F) on the full outline: glass, white floor slabs, the 2F through passage as a dark recess
+    prismP(B.p(GS), offP(O, 0.5), 0.2, 18, true); bandsP(B.p(WH), O, 0, 18, 4.5, 0.8, 0.05); mullP(B.p(WH2), O, 0.2, 18, 3.6, 0.2, 0.06);
+    { const P = clipR(O, ob, -L2*0.15, L2*0.05, -W2 - 2, W2 + 2); prismP(B.p(GD), offP(P, -0.05), 4.6, 9.0, true); }
+    // terraces at the river end: three steps, planted
+    const tip = clipR(O, ob, L2*0.55, L2 + 1, -W2 - 1, W2 + 1);
+    for (const [k, y] of [[0, 18], [1, 22.5], [2, 27]]){ const P = clipR(O, ob, L2*0.55, L2*(0.92 - k*0.13), -W2 - 1, W2 + 1); if (P.length < 3) continue;
+      prismP(B.p(GH), offP(P, 0.4), y - 4.5 + (k ? 0 : 4.5), y, true); flatP(B.p(WH2), P, y); skinP(B.p(GR), P, y, y + 1.1, 0);
+      const c = cenA(P); for (let t = 0; t < 3; t++){ const a = t*2.1 + k; treeP(B, c[0] + Math.cos(a)*4, y, c[1] + Math.sin(a)*4, 0.6, '#5f8a44'); } }
+    roofF(B, tip, 18, {r:RF, pc:WH, ph:1.0});
+    // hotel floors (18-60 m): punched windows in white panels
+    const yH = 60, yR = 172, yT = 179.95;
+    facade(B, TW, 18, yH, 'pw', {w:WH, g:GH, fh:3.5, sp:2.2, ww:1.5, wh:2.0});
+    skinP(B.p(GD), offP(TW, 0.2), 18, 20, 0);
+    // offices (60-172 m): glass with white floor slabs and the zig-zag mesh of white bars (two storeys per band)
+    prismP(B.p(GO), TW, yH, yR, true);
+    bandsP(B.p(WH), TW, yH, yR, 4.3, 0.5, 0.06);
+    meshP(B.p(WH), TW, yH, yR, 4.6, 8.6, 0.42, 0.18);
+    mullP(B.p(WH), TW, yH, yR, 13.8, 0.7, 0.2);
+    // crown: a white screen around the plant floors to the top, open lattice top edge
+    const C = offP(TW, 2.5);
+    skinP(B.p(WH), TW, yR, yR + 1.2, 0.1);
+    prismP(B.p(GR), C, yR, yT - 1.5, false);
+    meshP(B.p(WH), TW, yR + 1.2, yT, 4.6, yT - yR - 1.2, 0.5, 0.15);
+    lineRingP(B.p(WH), TW, yT, 0.25, 3);
+    // river promenade edge: a timber deck strip along the south-west foot (toward the Shibuya River)
+    { const a = O[O.length - 1], b = O[0], [nx, nz] = outN(O, O.length - 1); }
+    B.flush(g); return g; }};
+PL('tystream', ...D.tystream.a);
+
+// =====================================================================================================================
+// ★ Cerulean Tower (2001; developer Tokyu Land / Tokyu Construction): 184 m to the roof, 41 floors (Wikipedia list) — Wikipedia's
+// floor table: 4-16F offices, 19-37F hotel guest rooms (414), 38F residential, 39F salon, 40F restaurant and bar, roof heliport
+// (emergency); lobby, banquet halls and the Noh theatre in the podium and basements. Footprint: OSM outline w55441040 (podium) and its
+// tower part (app ring 0-143 m; OSM 46 levels — the app's 143 m is under-reported). The tower plan has a bowed north face (drawn as an
+// arc through the part's three north vertices). Approximations: podium height (22 m, two tiers), the plant floors at 17-18F, the colour
+// (pale silver-grey panels, blue-grey glass), the vertical pier rhythm, the crown frame above the 40F restaurant and the heliport ring.
+// =====================================================================================================================
+LANDMARKS.tycerulean = {zh:'蔚蓝塔', en:'Cerulean Tower', cat:'new', r:66, h:184,
+  lt:{m:1, c:'#fff4e2', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tycerulean, O = E.o, TP = E.p[0][2];
+    const SV = '#d4d8da', SV2 = '#c1c6c9', GR = '#9aa1a5', RF = '#878c90', GL = {c:'#4f6f8a', m:1, fh:4.05, cw:1.6}, GLH = {c:'#56738c', m:1, fh:3.6, cw:1.6},
+      GB = {c:'#34414c', m:1, fh:5, cw:3}, CRG = {c:'#7f9bb3', m:1, fh:4.5, cw:2};
+    // tower plan: part ring with the north face (TP[3] -> TP[4] -> TP[0]) drawn as an arc
+    const north = arc3(TP[3], TP[4], TP[0], 10), T = [TP[0], TP[1], TP[2]].concat(north.slice(0, -1));
+    const yP = 22, yO = 72, yM = 80, yR = 176, yT = 184;
+    footP(B, SV2, O, -6);
+    // podium: two tiers, glazed lobby floor, stone-like panels with ribbon windows; tower ring kept out of the podium roof
+    prismP(B.p(GB), offP(O, 1.0), 0.2, 7, true);
+    mullP(B.p(SV2), O, 0.2, 7, 6.0, 0.8, -1.0, null, 1.0);
+    facade(B, O, 7, 15, 'band', {w:SV, g:GL, fh:4.0, gh:1.6, wy:0.8});
+    roofF(B, O, 15, {r:RF, pc:SV, ph:1.0});
+    const O2 = offP(O, 6); prismP(B.p(SV), O2, 15, yP, true); floorsP(B.p(GL), O2, 16, yP - 0.6, 3.6, 1.5); roofF(B, O2, yP, {r:RF, pc:SV, ph:1.0});
+    { const bb = bbP(O2); let n = 0; for (let x = bb[0] + 5; x < bb[2] - 4; x += 8) for (let z = bb[1] + 5; z < bb[3] - 4; z += 8){ if (n > 10 || !inPoly(O2, x, z) || inPoly(offP(T, -3), x, z) || dPoly(O2, x, z) < 3) continue; treeP(B, x, yP, z, 0.7, '#5a7f41'); n++; } }
+    // tower: offices (to 72 m), plant floors, hotel (80-170 m); silver piers every ~3.2 m over blue-grey glass, white floor lines
+    footP(B, SV2, T, -6, yP);
+    prismP(B.p(GL), offP(T, 0.3), yP, yO, true); floorsP(B.p(SV), T, yP + 2.6, yO, 4.05, 1.1, 0.04);
+    prismP(B.p(SV2), T, yO, yM, true); bandsP(B.p(GR), T, yO, yM, 0.8, 0.2, 0.05);
+    prismP(B.p(GLH), offP(T, 0.3), yM, yR, true); floorsP(B.p(SV), T, yM + 2.4, yR, 3.6, 0.9, 0.04);
+    mullP(B.p(SV), T, yP, yR, 3.2, 0.55, 0.04, null, 0.5);
+    // the four corners read as solid silver piers
+    for (const p of [TP[0], TP[1], TP[2], TP[3]]) boxP(B.p(SV), 2.4, yR - yP, 2.4, p[0], yP, p[1], 0);
+    // top: 39-40F glazed salon / restaurant band, crown frame with open bays, heliport roof
+    prismP(B.p(CRG), offP(T, 0.8), yR, yR + 4.5, true); mullP(B.p(SV), T, yR, yR + 4.5, 4.5, 0.4, 0.04);
+    const Tc = offP(T, 0.0); prismP(B.p(SV2), offP(T, 3.0), yR + 4.5, yT - 0.5, false);
+    skinP(B.p(SV), Tc, yT - 3.0, yT, 0.05); mullP(B.p(SV), Tc, yR + 4.5, yT, 6.4, 0.8, 0.05, null, 0.6);
+    { const c = cenA(T), o = B.p('#e5e7e6'), ring = []; for (let k = 0; k < 24; k++){ const a = k/24*TAU; ring.push([c[0] + Math.cos(a)*9, c[1] + Math.sin(a)*9]); }
+      prismP(B.p(RF), offP(T, 3.0), yT - 0.5, yT - 0.45, false); lineRingP(o, ring, yT - 0.35, 0.25, 3); }
+    B.flush(g); return g; }};
+PL('tycerulean', ...D.tycerulean.a);
+
+// =====================================================================================================================
+// ★ Spiral (Wacoal Art Center, 1985; Fumihiko Maki): Aoyama-dōri. Verified: architect, opening 1985, aluminium and glass facade that
+// reflects the jumbled streetscape, an undulating volume and overlapping geometric shapes (cube, cone, hemisphere) on the front, white
+// finish (Wikipedia; architecture-tokyo); the 15 m spiral ramp round the rear gallery climbing to 2F (inside, not modelled). Footprint:
+// OSM w140087598; the front is the north-west edge on Aoyama-dōri. Height not verified: the main volume uses the app's 29 m.
+// Approximations (from the front composition only): the square glass grid panel, the cone at the top of the left bay, the stepped
+// right bay with its terraces, the half-drum on the roof, the recessed glazed ground floor and the thin top frame.
+// =====================================================================================================================
+LANDMARKS.tyspiral = {zh:'Spiral大厦', en:'Spiral', cat:'new', r:40, h:33,
+  lt:{m:0, c:'#fff3dc', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyspiral.o;
+    const AL = '#e8eaea', AL2 = '#d2d6d8', GR = '#a8aeb1', RF = '#8d9294', GL = {c:'#46586a', m:1, fh:4.2, cw:2}, GLB = {c:'#2f3a44', m:1, fh:5, cw:3}, CN = '#c9cdd0';
+    const yM = 29;
+    // the front edge (Aoyama-dōri): O[7] -> O[0]; u along it (0 at O[7]), the inward normal
+    const a = O[7], b = O[0], L = Math.hypot(b[0]-a[0], b[1]-a[1]), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L, [nx, nz] = outN(O, 7);
+    const F = (u, d) => [a[0] + ux*u - nx*d, a[1] + uz*u - nz*d], ry = -Math.atan2(uz, ux);
+    const pan = (o, u0, u1, y0, y1, d) => { const p = F(u0, d), q = F(u1, d); quadP(o, [p[0], y0, p[1]], [q[0], y0, q[1]], [q[0], y1, q[1]], [p[0], y1, p[1]]); };
+    footP(B, AL2, O, -5);
+    // main body behind the front (set back 3 m), white panels with ribbon windows on the side walls
+    const body = clipP(O, -nx, -nz, (a[0]*nx + a[1]*nz) - 3.0);
+    facade(B, body, 0.2, yM, 'band', {w:AL, g:GL, fh:4.2, gh:1.4, wy:1.2});
+    roofF(B, body, yM, {r:RF, pc:AL, ph:1.0, pl:6, plc:AL2, plh:2.6});
+    // ground floor: glazed entrance zone recessed under the front, slender columns
+    { const P = [F(0, 0), F(L, 0), F(L, 3.0), F(0, 3.0)]; prismP(B.p(GLB), offP(P, 0.3), 0.2, 5.4, true); for (let k = 0; k <= 6; k++){ const q = F(L*k/6, 0.3); boxP(B.p(AL), 0.45, 5.2, 0.45, q[0], 0.2, q[1], 0); } }
+    const slab = (u0, u1, y0, y1, d0, d1) => { const P = [F(u0, d0), F(u1, d0), F(u1, d1), F(u0, d1)]; prismP(B.p(AL), P, y0, y1, false); };
+    // left bay (u 0-12): the big square glass grid (4 x 4 squares) framed in aluminium, the cone above it
+    slab(0, 12.5, 5.4, 26.5, 0, 3.0);
+    pan(B.p(GL), 1.2, 11.3, 8.0, 24.0, -0.05);
+    { const o = B.p(AL2); for (let k = 0; k <= 4; k++){ const u = 1.2 + k*(10.1/4), p = F(u, -0.12); boxP(o, 0.35, 16.0, 0.3, p[0], 8.0, p[1], ry); }
+      for (let k = 0; k <= 4; k++){ const y = 8.0 + k*4.0, p = F(6.25, -0.12); boxP(o, 10.4, 0.35, 0.3, p[0], y - 0.17, p[1], ry); } }
+    { const c = F(6.2, 1.6), o = B.p(CN), n = 18, R = 3.3, y0 = 26.5, y1 = 33; const ring = []; for (let k = 0; k < n; k++){ const t = k/n*TAU; ring.push([c[0] + Math.cos(t)*R, y0, c[1] + Math.sin(t)*R]); }
+      for (let k = 0; k < n; k++) triP(o, [c[0], y1, c[1]], ring[(k + 1) % n], ring[k]); }
+    // middle bay (u 12.5-19): the tall white plane with the strip window, stepped forward
+    slab(12.5, 19.5, 5.4, yM + 1.5, -0.6, 3.0); pan(B.p(GL), 14.8, 17.2, 7.0, yM - 1.0, -0.65);
+    // right bay (u 19.5-L): three terraces stepping up and back, glazed walls under white parapets
+    for (const [k, y0, y1, d] of [[0, 5.4, 13.5, 0], [1, 13.5, 20.5, 2.6], [2, 20.5, 27.0, 5.2]]){
+      const P = [F(19.5, d), F(L, d), F(L, 9), F(19.5, 9)]; prismP(B.p(GL), offP(P, 0.25), y0, y1 - 1.1, true); skinP(B.p(AL), P, y1 - 1.1, y1, 0); flatP(B.p(AL2), P, y1);
+      skinP(B.p(GR), [F(19.5, d - 0.2), F(L, d - 0.2), F(L, d + 0.2), F(19.5, d + 0.2)], y1, y1 + 1.0, 0); }
+    // half-drum on the roof (a vaulted top-light toward the street) and the thin top frame along the front
+    { const o = B.p(AL2), c0 = F(20, 9), c1 = F(L - 1, 9), R = 3.2, n = 10; const secs = [];
+      for (const c of [c0, c1]){ const s = []; for (let k = 0; k <= n; k++){ const t = k/n*PI; s.push([c[0] - nx*Math.cos(t)*R, yM + Math.sin(t)*R, c[1] - nz*Math.cos(t)*R]); } secs.push(s); }
+      stripP(o, secs); }
+    { const o = B.p(AL); const p = F(L/2, 1.0); boxP(o, L, 0.4, 0.4, p[0], yM + 2.8, p[1], ry); for (const u of [0.3, L - 0.3]){ const q = F(u, 1.0); boxP(o, 0.4, 3.2, 0.4, q[0], yM - 0.4, q[1], 0); } }
+    B.flush(g); return g; }};
+PL('tyspiral', ...D.tyspiral.a);
+
+// =====================================================================================================================
+// Shibuya Fukuras (2019, Tokyu Land): OSM height 103.96 m, 18 levels (mapper values, not verified). Office floors over the shop floors,
+// a rooftop garden (target note). Footprint OSM w55588118. Approximations: podium / office split at 44 m, louvre bands, the rooftop
+// terrace pavilion and planting.
+LANDMARKS.tyfukuras = {zh:'涩谷Fukuras', en:'Shibuya Fukuras', cat:'new', r:46, h:104,
+  lt:{m:1, c:'#f1f5ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyfukuras.o;
+    const WH = '#eeefee', GR = '#a9aeb1', RF = '#8b9093', GP = {c:'#5f7181', m:1, fh:5.2, cw:2.4}, GO = {c:'#6c8193', m:1, fh:4.2, cw:1.8};
+    footP(B, GR, O, -6);
+    prismP(B.p(GP), offP(O, 0.4), 0.2, 44, true); bandsP(B.p(WH), O, 0, 44, 2.6, 0.55, 0.08); mullP(B.p(WH), O, 0.2, 44, 10, 0.6, 0.1);
+    const T = offP(O, 1.5);
+    prismP(B.p(GO), T, 44, 96, true); mullP(B.p(WH), T, 44, 96, 1.5, 0.22, 0.12, null, 0.5); bandsP(B.p(GR), T, 44, 96, 4.2, 0.45, 0.06);
+    skinP(B.p(WH), O, 43, 45, 0.1);
+    // roof garden: glass balustrade, a small pavilion and trees
+    flatP(B.p('#6f8a5a'), T, 96.05); skinP(B.p({c:'#b9c8d2', m:0}), T, 96, 97.3, 0);
+    { const P = sclP(T, cenA(T), 0.45); prismP(B.p(GO), P, 96, 103.96, false); }
+    { const c = cenA(T); for (let k = 0; k < 8; k++){ const a = k/8*TAU + 0.3, rr = 14; treeP(B, c[0] + Math.cos(a)*rr, 96, c[1] + Math.sin(a)*rr, 0.7, '#5d8743'); } }
+    B.flush(g); return g; }};
+PL('tyfukuras', ...D.tyfukuras.a);
+
+// =====================================================================================================================
+// Shibuya Mark City (opened 7 Apr 2000; Tokyu): the 25-storey hotel tower (EAST, over the Keio Inokashira Line station) and the 23-storey
+// office tower (WEST) on a long podium climbing Dōgenzaka (Tokyu history). Footprints: current OSM parts of r7544706 — west podium
+// w54500467, east podium w87250190, the link w355250632 (from level 1), west tower w521569274, east tower w521569271. Heights not
+// verified: estimates from the storey counts (podium 22 m; west tower 92 m, east tower 88 m). Colours / facade rhythm approximate.
+LANDMARKS.tymarkcity = {zh:'涩谷Mark City', en:'Shibuya Mark City', cat:'new', r:150, h:92,
+  lt:{m:1, c:'#fff2de', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tymarkcity, G = mkG(...E.a);
+    const BE = '#cfc8bb', BE2 = '#b9b1a3', GR = '#9a9a96', RF = '#86888a', GL = {c:'#55626e', m:1, fh:3.9, cw:1.8}, GH = {c:'#5a6470', m:1, fh:3.4, cw:1.6}, GB = {c:'#323a42', m:1, fh:4.5, cw:3};
+    const yP = 22;
+    for (const P of [E.WP, E.EP]){ footP(B, BE2, P, gMin(G, P) - 4); prismP(B.p(GB), offP(P, 0.6), 0.2, 5, true); facade(B, P, 5, yP, 'band', {w:BE, g:GL, fh:4.2, gh:1.7, wy:1.0}); roofF(B, P, yP, {r:RF, pc:BE, ph:1.0}); }
+    // the link over the street (from level 1)
+    prismP(B.p(BE), E.MP, 5.5, yP, false); floorsP(B.p(GL), E.MP, 6.5, yP - 0.6, 4.2, 2.2);
+    // west office tower: long slab, ribbon windows with vertical piers; east hotel tower: punched windows
+    const WT = offP(E.WT, 1.0), ET = offP(E.ET, 0.6);
+    facade(B, WT, yP, 92, 'band', {w:BE, g:GL, fh:3.9, gh:1.9, wy:0.9}); mullP(B.p(BE2), WT, yP, 92, 7.2, 0.6, 0.08);
+    roofF(B, WT, 92, {r:RF, pc:BE, ph:1.4, pl:5, plc:BE2, plh:3.5, lv:GR});
+    facade(B, ET, yP, 88, 'pw', {w:BE, g:GH, fh:3.3, sp:2.3, ww:1.4, wh:1.8}); mullP(B.p(BE2), ET, yP, 88, 9.0, 0.7, 0.08);
+    roofF(B, ET, 88, {r:RF, pc:BE, ph:1.4, pl:5, plc:BE2, plh:3.5, lv:GR});
+    B.flush(g); return g; }};
+PL('tymarkcity', ...D.tymarkcity.a);
+
+// =====================================================================================================================
+// Miyashita Park (opened 28 Jul 2020): a long, low shopping building along the Yamanote Line with the public park on its roof (OSM:
+// 3 levels, flat roof); the hotel tower at the north end (OSM w1243122188 "sequence MIYASHITA PARK", app 75.1 m, 18 floors — mapper
+// values). Footprint: OSM r19370681 (outer and inner rings). The app draws only a small piece of it today. Approximations: 4 m storeys,
+// the planting, lawn and sports-court areas on the roof, the parapet screen; the hotel facade.
+LANDMARKS.tymiyashita = {zh:'Miyashita Park', en:'Miyashita Park', cat:'new', r:176, h:75,
+  lt:{m:1, c:'#fff3df', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tymiyashita, O = E.o, SQ = E.SQ, G = mkG(...E.a);
+    const WH = '#e7e6e1', GR = '#a3a5a3', RF = '#8a8d8e', LAWN = '#76925a', DECK = '#9d8c74', GL = {c:'#5b6a77', m:1, fh:4.2, cw:2.2}, GB = {c:'#323a42', m:1, fh:4.5, cw:3};
+    const yR = 13.5;
+    footP(B, GR, O, gMin(G, O) - 4);
+    prismP(B.p(GL), offP(O, 0.5), 0.2, yR - 1.5, true); bandsP(B.p(WH), O, 0, yR, 4.3, 0.9, 0.06); mullP(B.p(WH), O, 0.2, yR, 6.0, 0.35, 0.08);
+    prismP(B.p(GB), E.IN, 0.2, yR, true);
+    // rooftop park: deck, lawns, trees, glass balustrade
+    flatP(B.p(DECK), O, yR); skinP(B.p({c:'#c2ced6', m:0}), O, yR, yR + 1.2, 0); skinP(B.p(WH), O, yR - 1.5, yR, 0.05);
+    { const ob = obE(O), o = B.p(LAWN); for (const [u0, u1] of [[-0.42, -0.28], [-0.2, -0.05], [0.08, 0.22], [0.3, 0.4]]){ const P = clipC(offP(O, 3), ob.rect(ob.L*u0, ob.L*u1, -ob.W, ob.W)); if (P.length > 2) flatP(o, P, yR + 0.08); }
+      for (let k = 0; k < 26; k++){ const u = -0.45 + k*0.035, q = ob.p(ob.L*u, (k % 2 ? 1 : -1)*3.5); if (inPoly(offP(O, 2.5), q[0], q[1])) treeP(B, q[0], yR, q[1], 0.75, '#5b8642'); } }
+    // the hotel at the north end
+    facade(B, SQ, yR, 75.1, 'pw', {w:'#d8d4cc', g:{c:'#56616c', m:1, fh:3.3, cw:1.6}, fh:3.3, sp:2.2, ww:1.4, wh:1.8});
+    roofF(B, SQ, 75.1, {r:RF, pc:'#d8d4cc', ph:1.2, pl:3, plc:GR, plh:2.5});
+    B.flush(g); return g; }};
+PL('tymiyashita', ...D.tymiyashita.a);
+
+// =====================================================================================================================
+// Shibuya Solasta (2019): OSM height 106.90 m, 21 levels (mapper values). Office tower at Dōgenzaka with stepped terraces (target note).
+// Footprint OSM w680254745 (96 x 27 m). Approximations: the terraces' side (west end) and count, louvre rhythm, crown.
+LANDMARKS.tysolasta = {zh:'涩谷Solasta', en:'Shibuya Solasta', cat:'new', r:51, h:107,
+  lt:{m:1, c:'#f1f5ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tysolasta.o, ob = obE(O), L2 = ob.L/2, W2 = ob.W/2;
+    const WH = '#ecedeb', GR = '#a5aaad', RF = '#8a8f92', GO = {c:'#647a8c', m:1, fh:4.6, cw:1.8}, GB = {c:'#323a42', m:1, fh:5, cw:3};
+    footP(B, GR, O, -6);
+    prismP(B.p(GB), offP(O, 1.0), 0.2, 7, true); mullP(B.p(WH), O, 0.2, 7, 6.4, 0.7, -1.0, null, 1.0);
+    const yR = 101, steps = [[0.62, 101], [0.70, 88], [0.80, 74], [0.90, 60], [1.0, 46]];
+    const side = ob.p(1, 0)[0] < ob.p(-1, 0)[0] ? 1 : -1;   // the terraces step down toward the west end
+    const rr = (f0, f1) => side > 0 ? ob.rect(L2 - ob.L*f1, L2 - ob.L*f0, -W2, W2) : ob.rect(-L2 + ob.L*f0, -L2 + ob.L*f1, -W2, W2);
+    steps.forEach(([f, y1], i) => { const Q = clipC(O, rr(0, f)); if (Q.length < 3) return;
+      prismP(B.p(GO), Q, 7, y1, true); mullP(B.p(WH), Q, 7, y1, 1.6, 0.2, 0.06, null, 0.4); bandsP(B.p(WH), Q, 7, y1, 4.6, 0.5, 0.06);
+      if (!i) return; const S = clipC(O, rr(steps[i - 1][0], f)); if (S.length < 3) return;
+      flatP(B.p('#6c8a56'), S, y1 + 0.02); skinP(B.p({c:'#c1cdd5', m:0}), S, y1, y1 + 1.1, 0);
+      const c = cenA(S); for (let k = -1; k <= 1; k++){ const q = [c[0] - ob.s*k*8, c[1] + ob.c*k*8]; treeP(B, q[0], y1, q[1], 0.6, '#5a8442'); } });
+    { const Q = clipC(O, side > 0 ? ob.rect(L2 - ob.L*0.62, L2, -W2, W2) : ob.rect(-L2, -L2 + ob.L*0.62, -W2, W2)); prismP(B.p(GR), offP(Q, 4), yR, 106.9, false); skinP(B.p(WH), Q, yR, yR + 4, 0.05); }
+    B.flush(g); return g; }};
+PL('tysolasta', ...D.tysolasta.a);
+
+// =====================================================================================================================
+// Shibuya Sakura Stage (completed 30 Nov 2023 per OSM start_date): the SHIBUYA Tower (OSM w1200029947: 179.97 m, 39 levels — mapper
+// values; the app already draws it as a plain 180 m block) and the Central Building (OSM w1238520570: 90 m, 17 levels, the target row's
+// anchor; secondary key tysakurastage_b, unlabelled). Re-anchored on the SHIBUYA Tower (see report). The SAKURA Tower (133 m) and the
+// low buildings of the scheme are not modelled. Approximations: podium height, facade fins and their warm light grey, the crowns.
+LANDMARKS.tysakurastage = {zh:'涩谷Sakura Stage', en:'Shibuya Sakura Stage', cat:'new', r:64, h:180,
+  lt:{m:1, c:'#f4f2ff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tysakurastage.o;
+    const WH = '#ebe7e2', WH2 = '#d9d3cc', GR = '#a7a7a4', RF = '#8b8d8e', GP = {c:'#5d6c79', m:1, fh:5, cw:2.4}, GO = {c:'#6a7f91', m:1, fh:4.3, cw:1.8};
+    const yP = 30, yR = 172, yT = 179.97;
+    footP(B, GR, O, -6);
+    prismP(B.p(GP), offP(O, 0.5), 0.2, yP, true); bandsP(B.p(WH), O, 0, yP, 5.0, 1.0, 0.06); mullP(B.p(WH2), O, 0.2, yP, 4.5, 0.3, 0.08);
+    roofF(B, O, yP, {r:RF, pc:WH, ph:1.1});
+    const ob = obE(O), T = clipC(offP(O, 2.0), ob.rect(-ob.L*0.5, ob.L*0.36, -ob.W, ob.W));
+    prismP(B.p(GO), T, yP, yR, true); mullP(B.p(WH), T, yP, yR, 1.8, 0.28, 0.06, null, 0.6); bandsP(B.p(WH2), T, yP, yR, 4.3, 0.4, 0.06);
+    mullP(B.p(WH), T, yP, yR, 10.8, 0.9, 0.08, null, 0.9);
+    skinP(B.p(WH), T, yR, yT, 0.08); prismP(B.p(GR), offP(T, 3), yR, yT - 1.5, false); flatP(B.p(RF), T, yR + 0.1);
+    B.flush(g); return g; }};
+PL('tysakurastage', ...D.tysakurastage.a);
+LANDMARKS.tysakurastage_b = {zh:'涩谷Sakura Stage 中央楼', en:'Shibuya Sakura Stage Central Building', cat:'new', r:74, h:90, label:false,
+  lt:{m:1, c:'#f4f2ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tysakurastage_b.o;
+    const WH = '#ebe7e2', GR = '#a7a7a4', RF = '#8b8d8e', GO = {c:'#677c8e', m:1, fh:4.4, cw:1.8}, GB = {c:'#323a42', m:1, fh:5, cw:3};
+    footP(B, GR, O, -6);
+    prismP(B.p(GB), offP(O, 1.0), 0.2, 6, true);
+    prismP(B.p(GO), O, 6, 86, true); bandsP(B.p(WH), O, 6, 86, 4.4, 0.7, 0.06); mullP(B.p(WH), O, 6, 86, 3.6, 0.25, 0.08, null, 0.5);
+    roofF(B, O, 86, {r:RF, pc:WH, ph:1.4, pl:4, plc:GR, plh:4.0, lv:'#9ca1a3'});
+    B.flush(g); return g; }};
+PL('tysakurastage_b', ...D.tysakurastage_b.a);
+
+// =====================================================================================================================
+// NHK Hall (1973): concert hall beside Yoyogi Park with its sloping roof (target note). OSM height 30.7 m, 4 levels (mapper values).
+// Footprint OSM w102123743. Approximations: the stage house (fly tower) at the south-west, the roof slope over the auditorium falling
+// to the north-east, brown tile walls with a few slots, the glazed foyer along the north-west front.
+LANDMARKS.tynhkhall = {zh:'NHK礼堂', en:'NHK Hall', cat:'old', r:67, h:31,
+  lt:{m:0, c:'#ffe9c9', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tynhkhall.o, ob = obE(O), L2 = ob.L/2, W2 = ob.W/2;
+    const TL = '#7d6555', TL2 = '#6b5446', CN = '#a39d94', RF = '#5e6062', GF = {c:'#3c4650', m:1, fh:4.5, cw:2.5};
+    footP(B, TL2, O, -5);
+    // walls to 14 m round the whole outline, the foyer glass band
+    prismP(B.p(TL), O, 0.2, 14, true); bandsP(B.p(TL2), O, 0, 14, 1.2, 0.08, 0.04);
+    prismP(B.p(GF), offP(O, 0.8), 0.2, 5.0, true); mullP(B.p(CN), O, 0.2, 5.0, 5.0, 0.6, -0.8, null, 0.8);
+    flatP(B.p(RF), O, 14);
+    // the auditorium block with the sloping roof (high toward the stage), the fly tower to 30.7 m
+    const A = clipC(offP(O, 4), ob.rect(-L2*0.55, L2, -W2, W2)), S = clipC(offP(O, 5), ob.rect(-L2, -L2*0.55, -W2*0.75, W2*0.75));
+    const yA = (x, z) => { const [u] = ob.loc(x, z); return 26 - 10*cl01((u + L2*0.55)/(L2*1.55)); };
+    prismP(B.p(TL), A, 14, yA, false); bandsP(B.p(TL2), A, 14, 25, 2.2, 0.1, 0.04);
+    if (S.length > 2){ prismP(B.p(TL2), S, 14, 30.7, false); mullP(B.p(TL), S, 14, 30.7, 3.2, 0.25, 0.05); }
+    B.flush(g); return g; }};
+PL('tynhkhall', ...D.tynhkhall.a);
+
+// =====================================================================================================================
+// NHK Broadcasting Center: the broadcaster's headquarters by Yoyogi Park — the 23-storey main tower (OSM w544210710: 102 m, mapper value)
+// and the long studio / office blocks around it (app outlines and app heights: w102123543 28 m, w102123698 35 m, w544210711 28.5 m,
+// w544210713 15 m, w102123697 15.5 m, w544210712 8.5 m). The site is being rebuilt in phases; this follows the refs (app data, Oct 2026).
+// Approximations: facade (dark tile spandrels and ribbon windows), the tower's crown and antenna masts (not verified, kept small).
+LANDMARKS.tynhkcenter = {zh:'NHK放送中心', en:'NHK Broadcasting Center', cat:'old', r:200, h:102,
+  lt:{m:1, c:'#fff0d8', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tynhkcenter, G = mkG(...E.a);
+    const TL = '#8a8378', TL2 = '#77706a', RF = '#7f8183', GL = {c:'#46525d', m:1, fh:4.0, cw:2.0};
+    const blk = (P, h, fh) => { footP(B, TL2, P, gMin(G, P) - 4); facade(B, P, 0.2, h, 'band', {w:TL, g:GL, fh:fh || 4.2, gh:1.6, wy:1.2}); roofF(B, P, h, {r:RF, pc:TL, ph:1.0, pl: h > 20 ? 6 : 0, plc:TL2, plh:2.5}); };
+    blk(E.o, 28); blk(E.A, 35); blk(E.B, 28.5); blk(E.N, 15); blk(E.S, 15.5); blk(E.C, 8.5);
+    // main tower
+    const T = E.T; footP(B, TL2, T, -5);
+    facade(B, T, 0.2, 98, 'band', {w:TL, g:GL, fh:4.1, gh:1.8, wy:1.0}); mullP(B.p(TL2), T, 0.2, 98, 6.0, 0.6, 0.08);
+    roofF(B, T, 98, {r:RF, pc:TL, ph:4.0, pl:6, plc:TL2, plh:3});
+    { const c = cenA(T); for (const d of [-5, 5]) segP(B.p('#b9bcbf'), [c[0] + d, 101, c[1]], [c[0] + d, 112, c[1]], 0.35, 4); }
+    B.flush(g); return g; }};
+PL('tynhkcenter', ...D.tynhkcenter.a);
+
+// =====================================================================================================================
+// Shibuya Public Hall (rebuilt 2019): OSM height 28.4 m, 6 levels (mapper values); footprint OSM w397183780.
+// Approximations: the hall's light panel walls with fine vertical fins, the glazed foyer at the front, roof plant.
+LANDMARKS.tyshibuyahall = {zh:'涩谷公会堂', en:'Shibuya Public Hall', cat:'new', r:39, h:28,
+  lt:{m:0, c:'#fff0dc', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyshibuyahall.o;
+    const WH = '#e4e3df', GR = '#a8aaa8', RF = '#8a8d8f', GF = {c:'#45525e', m:1, fh:4.6, cw:2.4};
+    footP(B, GR, O, -5);
+    prismP(B.p(GF), offP(O, 1.0), 0.2, 9.0, true); mullP(B.p(WH), O, 0.2, 9.0, 4.0, 0.5, -1.0, null, 1.0);
+    prismP(B.p(WH), O, 9, 28.4, true); mullP(B.p(GR), O, 9, 28.4, 1.1, 0.12, 0.05, null, 0.25); skinP(B.p(GR), O, 9, 9.6, 0.06);
+    roofF(B, O, 28.4, {r:RF, pc:WH, ph:1.0, pl:6, plc:GR, plh:2.4});
+    B.flush(g); return g; }};
+PL('tyshibuyahall', ...D.tyshibuyahall.a);
+
+// =====================================================================================================================
+// Shibuya City Office (2018) on Kōen-dōri: OSM height 70.46 m, 15 levels (mapper values); footprint OSM w665207881 (the low wing to the
+// east is part of it). Approximations: the glass front with horizontal louvres, the 3-storey low wing (14 m), the roof plant.
+LANDMARKS.tyshibuyaward = {zh:'涩谷区役所', en:'Shibuya City Office', cat:'new', r:51, h:70,
+  lt:{m:1, c:'#f2f6ff', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyshibuyaward.o;
+    const WH = '#e9eaea', GR = '#a5aaad', RF = '#8a8f92', GO = {c:'#5f7486', m:1, fh:4.4, cw:1.8}, GB = {c:'#323a42', m:1, fh:5, cw:3};
+    footP(B, GR, O, -5);
+    const T = [O[0], O[1], O[2], O[3], O[6], O[7]], W = [O[3], O[4], O[5], O[6]];
+    prismP(B.p(GB), offP(O, 0.8), 0.2, 6, true);
+    prismP(B.p(GO), T, 6, 66, true); bandsP(B.p(WH), T, 6, 66, 4.3, 0.35, 0.35); bandsP(B.p(WH), T, 8.1, 66, 4.3, 0.12, 0.6); mullP(B.p(GR), T, 6, 66, 9, 0.5, 0.1);
+    roofF(B, T, 66, {r:RF, pc:WH, ph:1.5, pl:5, plc:GR, plh:4.4, lv:'#9ca1a3'});
+    facade(B, W, 6, 14, 'band', {w:WH, g:GO, fh:4.0, gh:1.8, wy:0.8}); roofF(B, W, 14, {r:'#6f8a5a', pc:WH, ph:1.0});
+    B.flush(g); return g; }};
+PL('tyshibuyaward', ...D.tyshibuyaward.a);
+
+// =====================================================================================================================
+// Harajuku Station (new station building, 2020; the 1924 timber station was taken down): OSM 2 levels; app 7 m. Footprint OSM w823006849
+// (the hall at the south end by Jingū-bashi and the long concourse strip north of it along the tracks). Approximations: the hall's glass walls and
+// light frames (12 m), the deck's height (8.5 m), the flat roof with deep eaves.
+LANDMARKS.tyharajukustn = {zh:'原宿站', en:'Harajuku Station', cat:'new', r:86, h:12,
+  lt:{m:0, c:'#f4f7ff', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyharajukustn.o;
+    const WH = '#ecedec', GR = '#a7abad', RF = '#9a9ea0', GF = {c:'#5d6f7f', m:1, fh:5, cw:2.4};
+    footP(B, GR, O, -5, 0.2);
+    // north hall: two storeys of glass under a white roof slab with deep eaves
+    const HALL = clipP(O, 0, 1, -6.0);      // z >= 6: the station hall at the south end (Jingū-bashi side)
+    const DECK = clipP(O, 0, -1, 6.0);      // z <= 6: the long concourse strip north of it
+    if (HALL.length > 2){ prismP(B.p(GF), offP(HALL, 0.4), 0.2, 11, true); mullP(B.p(WH), HALL, 0.2, 11, 3.0, 0.3, 0.08); bandsP(B.p(WH), HALL, 0.2, 11, 5.4, 0.5, 0.08);
+      prismP(B.p(WH), offP(HALL, -1.6), 11, 12, false); }
+    if (DECK.length > 2){ prismP(B.p(GF), offP(DECK, 0.6), 1.5, 8.0, true); mullP(B.p(WH), DECK, 1.5, 8.0, 3.0, 0.3, 0.08);
+      prismP(B.p(WH), offP(DECK, -1.2), 8.0, 9.0, false); flatP(B.p(RF), offP(DECK, -1.2), 9.05);
+      const bb = bbP(DECK); for (let z = bb[1] + 4; z < bb[3] - 2; z += 9){ for (let x = bb[0] + 2; x < bb[2]; x += 6) if (inPoly(DECK, x, z)) boxP(B.p(GR), 0.7, 1.4, 0.7, x, 0.1, z, 0); } }
+    B.flush(g); return g; }};
+PL('tyharajukustn', ...D.tyharajukustn.a);
+
+// =====================================================================================================================
+// Tōgō Shrine — the main hall (honden) near Takeshita-dōri; architecture only, no people or signs. App height 8 m (estimate); footprint
+// OSM w373388728 (the hall group: worship hall, link and main hall). Approximations (no drawings checked): stone plinth, white walls with
+// dark timber posts, the copper roofs (gabled, ridges along the long axis) with deep eaves, eave height 4.5 m.
+LANDMARKS.tytogo = {zh:'东乡神社', en:'Tōgō Shrine', cat:'old', r:34, h:9,
+  lt:{m:0, c:'#ffe7c2', k:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tytogo.o;
+    const ST = '#b9b2a6', WL = '#e8e3d8', TB = '#4b3a2e', CU = '#5e8a7a', CU2 = '#4f7769';
+    footP(B, ST, O, -4, 0.8);
+    // the hall group: walls (white with dark posts), roofs per rectangle of the plan (bounding frames of three blocks)
+    const ob = obE(O), L2 = ob.L/2, W2 = ob.W/2;
+    const blocks = [[-L2, -L2*0.30, W2*0.95, 4.2, 3.2], [-L2*0.30, L2*0.18, W2*0.55, 3.8, 2.4], [L2*0.18, L2, W2*0.80, 4.8, 3.6]];
+    for (const [u0, u1, hw, ye, rh] of blocks){
+      const P = clipC(O, ob.rect(u0, u1, -hw, hw)); if (P.length < 3) continue;
+      prismP(B.p(WL), offP(P, 0.6), 0.8, ye, true); mullP(B.p(TB), offP(P, 0.6), 0.8, ye, 1.8, 0.25, 0.04);
+      skinP(B.p(TB), offP(P, 0.6), ye - 0.5, ye, 0.06);
+      const bb = (() => { let a = 1e9, b = -1e9, c = 1e9, d = -1e9; for (const p of P){ const [u, v] = ob.loc(p[0], p[1]); a = Math.min(a, u); b = Math.max(b, u); c = Math.min(c, v); d = Math.max(d, v); } return [a, b, c, d]; })();
+      gableO(B.p(CU), ob, bb[0] - 1.0, bb[1] + 1.0, bb[2] - 1.2, bb[3] + 1.2, ye, rh, true, B.p(WL));
+      boxO(B.p(CU2), ob, bb[0] - 1.1, bb[1] + 1.1, (bb[2] + bb[3])/2 - 0.3, (bb[2] + bb[3])/2 + 0.3, ye + rh - 0.1, ye + rh + 0.35);
+    }
+    B.flush(g); return g; }};
+PL('tytogo', ...D.tytogo.a);
+
+// =====================================================================================================================
+// Tokyu Plaza Omotesando Harajuku "Omokado" (2012): OSM 7 levels; app 22.5 m. The faceted mirror entrance at the Jingūmae crossing and
+// the rooftop terrace trees (target note). Footprint OSM w139043543. Approximations: the mirror facets' size and count, the stepped
+// glass bands, roof terrace (planting) at 22.5 m with a pavilion.
+LANDMARKS.tyomokado = {zh:'东急广场表参道原宿', en:'Tokyu Plaza Omotesando Harajuku', cat:'new', r:38, h:27,
+  lt:{m:1, c:'#fff3e2', k:0.6},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyomokado.o;
+    const WH = '#e8e8e6', GR = '#9aa0a3', MR = {c:'#a9b7c2', m:0}, MR2 = {c:'#8fa0ad', m:0}, GF = {c:'#4c5c6a', m:1, fh:3.8, cw:2.0}, RF = '#7b8a6a';
+    footP(B, GR, O, -5);
+    prismP(B.p(GF), O, 0.2, 22.5, true); bandsP(B.p(WH), O, 0.2, 22.5, 3.2, 0.5, 0.06); mullP(B.p(GR), O, 0.2, 22.5, 2.6, 0.12, 0.07);
+    // faceted mirror funnel at the crossing corner (north-west, O[0]-O[1]): a band of tilted mirror facets, rows stepping in
+    { const a = O[0], b = O[1], L = Math.hypot(b[0]-a[0], b[1]-a[1]), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L, [nx, nz] = outN(O, 0);
+      for (let r = 0; r < 6; r++) for (let k = 0; k < 7; k++){ const s0 = L*k/7, s1 = L*(k + 1)/7, y0 = 3 + r*3.2, y1 = y0 + 3.2, d0 = ((k + r) % 3)*0.35, d1 = ((k + r + 1) % 3)*0.35;
+        const P0 = [a[0] + ux*s0 + nx*(0.2 + d0), y0, a[1] + uz*s0 + nz*(0.2 + d0)], P1 = [a[0] + ux*s1 + nx*(0.2 + d1), y0, a[1] + uz*s1 + nz*(0.2 + d1)],
+          P2 = [a[0] + ux*s1 + nx*(0.2 + d0), y1, a[1] + uz*s1 + nz*(0.2 + d0)], P3 = [a[0] + ux*s0 + nx*(0.2 + d1), y1, a[1] + uz*s0 + nz*(0.2 + d1)];
+        const o = B.p((k + r) % 2 ? MR : MR2); triP(o, P0, P1, P2); triP(o, P0, P2, P3); } }
+    // roof terrace: planting and trees, a glass pavilion
+    flatP(B.p(RF), O, 22.55); skinP(B.p({c:'#c0ccd4', m:0}), O, 22.5, 23.7, 0);
+    { const c = cenA(O); prismP(B.p(GF), sclP(O, c, 0.35), 22.5, 27, false); for (let k = 0; k < 9; k++){ const a = k/9*TAU, rr = 13; if (inPoly(offP(O, 2), c[0] + Math.cos(a)*rr, c[1] + Math.sin(a)*rr)) treeP(B, c[0] + Math.cos(a)*rr, 22.5, c[1] + Math.sin(a)*rr, 0.75, '#567f3e'); } }
+    B.flush(g); return g; }};
+PL('tyomokado', ...D.tyomokado.a);
+
+// =====================================================================================================================
+// Omotesando Hills (2006; Tadao Andō): the long, low block along the zelkova avenue. App height 28.5 m (estimate or OSM); the Zelkova
+// Terrace East residential part (OSM w621796035, inside the outline) and the Zelkova Terrace West block (OSM w139070531, 17.5 m; secondary
+// key tyomohills_b, unlabelled). The old Dōjunkai apartment form at one end is not modelled separately. Approximations: exposed concrete
+// and glass storeys (6 above ground to 28.5 m, the avenue slopes), the glass parapet, roof planting.
+LANDMARKS.tyomohills = {zh:'表参道之丘', en:'Omotesando Hills', cat:'new', r:150, h:29,
+  lt:{m:1, c:'#fff2de', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyomohills, O = E.o, G = mkG(...E.a);
+    const CO = '#b3b0aa', CO2 = '#9f9c97', RF = '#7f8f6c', GF = {c:'#4d5a66', m:1, fh:4.4, cw:2.2};
+    footP(B, CO2, O, gMin(G, O) - 4);
+    prismP(B.p(GF), offP(O, 0.5), 0.2, 24, true); bandsP(B.p(CO), O, 0.2, 24, 4.6, 1.3, 0.06); mullP(B.p(CO), O, 0.2, 24, 7.2, 0.5, 0.08);
+    roofF(B, O, 24, {r:RF, pc:CO, ph:1.0});
+    prismP(B.p(CO), E.ZE, 24, 28.5, false); floorsP(B.p(GF), E.ZE, 24.8, 28, 3.2, 1.8); roofF(B, E.ZE, 28.5, {r:RF, pc:CO, ph:0.8});
+    { const ob = obE(O); for (let k = 0; k < 14; k++){ const q = ob.p(-ob.L*0.45 + k*ob.L*0.065, 0); if (inPoly(offP(O, 3), q[0], q[1]) && !inPoly(E.ZE, q[0], q[1])) treeP(B, q[0], 24, q[1], 0.7, '#5a8240'); } }
+    B.flush(g); return g; }};
+PL('tyomohills', ...D.tyomohills.a);
+LANDMARKS.tyomohills_b = {zh:'表参道之丘 西馆', en:'Omotesando Hills Zelkova Terrace West', cat:'new', r:43, h:18, label:false,
+  lt:{m:1, c:'#fff2de', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tyomohills_b.o, G = mkG(...D.tyomohills_b.a);
+    footP(B, '#9f9c97', O, gMin(G, O) - 4);
+    facade(B, O, 0.2, 17.5, 'band', {w:'#b3b0aa', g:{c:'#4d5a66', m:1, fh:3.5, cw:2.2}, fh:3.5, gh:1.8, wy:0.8});
+    roofF(B, O, 17.5, {r:'#7f8f6c', pc:'#b3b0aa', ph:0.9});
+    B.flush(g); return g; }};
+PL('tyomohills_b', ...D.tyomohills_b.a);
+
+// =====================================================================================================================
+// United Nations University headquarters (1992; Kenzō Tange): stepped pyramid of grey blocks on Aoyama-dōri. Footprint and the steps: the
+// app's ten building:part rings of OSM w96368987 (tops 10.1-47.3 m; OSM part levels 3, 4, 7, 10, 13, 15). Approximations: the grey
+// granite-like cladding with ribbon windows, the glass at the central void, the roof edges.
+LANDMARKS.tyunu = {zh:'联合国大学', en:'United Nations University', cat:'new', r:57, h:47,
+  lt:{m:1, c:'#fff0da', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyunu;
+    const GY = '#9c9d9b', GY2 = '#858684', RF = '#76787a', GL = {c:'#3f4a54', m:1, fh:3.3, cw:2.0};
+    footP(B, GY2, E.o, -5);
+    for (const [b0, t, P] of E.p){ facade(B, P, 0.2, t, 'band', {w:GY, g:GL, fh:3.1, gh:1.3, wy:0.9}); roofF(B, P, t, {r:RF, pc:GY2, ph:0.9}); }
+    B.flush(g); return g; }};
+PL('tyunu', ...D.tyunu.a);
+
+// =====================================================================================================================
+// Nezu Museum (2009; Kengo Kuma): the big low tiled roof and the bamboo approach (target note). OSM height 14.26 m, 2 levels (mapper).
+// Footprint OSM w139972313. Approximations: one hipped roof over the hull of the plan with deep eaves (dark grey tiles), eaves at 6.5 m,
+// glass walls under it, the bamboo-lined approach along the south-west edge (schematic), the stone plinth.
+LANDMARKS.tynezu = {zh:'根津美术馆', en:'Nezu Museum', cat:'new', r:64, h:14,
+  lt:{m:0, c:'#ffe8c6', k:0.45},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tynezu.o, G = mkG(...D.tynezu.a);
+    const ST = '#8d877d', TI = '#4a4d50', TI2 = '#3d4043', GF = {c:'#3d4852', m:1, fh:4, cw:2.2}, BB = '#6f8f4a';
+    footP(B, ST, O, gMin(G, O) - 3, 0.6);
+    prismP(B.p(GF), O, 0.6, 6.5, true); mullP(B.p('#5a4a3c'), O, 0.6, 6.5, 2.2, 0.15, 0.06);
+    const H = hullP(O), Hx = offP(H, -3.0);
+    // roof: a slab of the eaves (thin edge) and a hip lofted over the hull to the ridge height
+    prismP(B.p(TI2), Hx, 6.3, 6.7, false);
+    insetRoof(B.p(TI), Hx, [6.7, 10.2, 14.26], [0, 5, 10.5]);
+    // bamboo approach along the south-west side (a hedge of thin canes)
+    { const a = O[13], b = O[0], L = Math.hypot(b[0]-a[0], b[1]-a[1]), ux = (b[0]-a[0])/L, uz = (b[1]-a[1])/L, [nx, nz] = outN(O, 13), o = B.p(BB);
+      for (let s = 2; s < L - 1; s += 1.2) for (const d of [3, 6.5]){ const x = a[0] + ux*s + nx*d, z = a[1] + uz*s + nz*d; segP(o, [x, 0, z], [x, 7.5 + ((s*7) % 3)*0.6, z], 0.12, 3); } }
+    B.flush(g); return g; }};
+PL('tynezu', ...D.tynezu.a);
+
+// ---- stadium kit: stands lofted between a field ring F and the outer ring O, by rays from the field centre
+function standsP(B, F, O, c, n, rows, col, colR, colW){
+  // rows: [[t, y]] along the ray from the field edge (t 0) to the outer ring (t 1); returns the per-angle outer points
+  const sec = rows.map(() => []), outer = [];
+  for (let k = 0; k < n; k++){ const th = k/n*TAU, r0 = rayP(F, c, th), r1 = rayP(O, c, th) - 0.6, cs = Math.cos(th), sn = Math.sin(th);
+    rows.forEach(([t, y], i) => { const r = lerp(r0, r1, t); sec[i].push([c[0] + cs*r, y, c[1] + sn*r]); }); outer.push([c[0] + cs*r1, c[1] + sn*r1]); }
+  for (let i = 0; i < rows.length - 1; i++) loftP(B.p(i % 2 ? colR : col), [sec[i], sec[i + 1]], false);
+  return {sec, outer};
+}
+
+// =====================================================================================================================
+// Chichibunomiya Rugby Stadium (1947): rugby stadium in the Jingū Gaien with the covered main stand (target note). Still in use in
+// Nov 2026: the new rugby stadium is being built north of it, on the former Jingū No.2 ground (construction began 3 Feb 2026, opening
+// planned 2030, then this stadium is demolished — StadiumDB). Footprint: the app outline (the OSM multipolygon r9080615 outer ring) and
+// its inner ring (the pitch). App height 12.5 m. Approximations: the stand heights (main stand 15 m on the west side with its roof,
+// the others 6-9 m), the raking, colours, floodlight masts (four, schematic).
+LANDMARKS.tychichibunomiya = {zh:'秩父宫橄榄球场', en:'Chichibunomiya Rugby Stadium', cat:'old', r:118, h:24,
+  lt:{m:0, c:'#f6f8ff', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tychichibunomiya, O = E.o, F = E.F, c = cenA(F), G = mkG(...E.a);
+    const CN = '#b8b4ab', CN2 = '#a39f96', ST = '#8e9196', ST2 = '#7c8085', RF = '#d9dcdd', GRASS = '#5f8f45', GF = {c:'#3f4a54', m:1, fh:4, cw:2.4};
+    footP(B, CN2, O, gMin(G, O) - 3, 0.2);
+    flatP(B.p(GRASS), offP(F, -2), 0.25);
+    // stands: low all round, the west main stand higher (the field frame's west side)
+    const ob = obE(F), west = ob.p(-1, 0)[0] < ob.p(1, 0)[0] ? -1 : 1;
+    const n = 96, rows = [[0, 1.2], [0.25, 3.0], [0.55, 5.4], [0.8, 7.5], [1.0, 8.8]];
+    const S = standsP(B, F, O, c, n, rows, ST, ST2);
+    // outer wall of the stands
+    { const o = B.p(CN); for (let k = 0; k < n; k++){ const a = S.outer[k], b = S.outer[(k + 1) % n]; quadP(o, [a[0], 0.2, a[1]], [b[0], 0.2, b[1]], [b[0], 8.8, b[1]], [a[0], 8.8, a[1]]); } }
+    // main stand: a block behind the west stand rising to 15 m, its cantilever roof over the seats
+    { const P = clipC(O, ob.rect(-ob.L, ob.L, west > 0 ? ob.W*0.5 + 2 : -ob.W*3, west > 0 ? ob.W*3 : -ob.W*0.5 - 2));
+      const M = P.length > 2 ? P : null;
+      if (M){ facade(B, M, 0.2, 15, 'band', {w:CN, g:GF, fh:3.8, gh:1.4, wy:1.0}); roofF(B, M, 15, {r:CN2, pc:CN, ph:0.8});
+        // the roof: a sloped plane from the back of the stand (17 m) over the seats toward the pitch (13 m)
+        const vb = west > 0 ? ob.W*0.5 + 2 : -(ob.W*0.5 + 2), vf = west > 0 ? ob.W*0.5 - 14 : -(ob.W*0.5 - 14), u0 = -ob.L*0.36, u1 = ob.L*0.36, o = B.p(RF);
+        quadP(o, o3(ob, u0, 17, vb), o3(ob, u1, 17, vb), o3(ob, u1, 13, vf), o3(ob, u0, 13, vf)); quadP(o, o3(ob, u1, 16.7, vb), o3(ob, u0, 16.7, vb), o3(ob, u0, 12.7, vf), o3(ob, u1, 12.7, vf));
+        for (let k = 0; k <= 8; k++){ const u = lerp(u0, u1, k/8); segP(B.p(ST2), o3(ob, u, 8.8, vb), o3(ob, u, 17, vb), 0.3, 4); } } }
+    // floodlight masts at the four corners of the stands
+    for (const [su, sv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]){ const q = ob.p(su*(ob.L/2 + 12), sv*(ob.W/2 + 12)); if (!inPoly(O, q[0], q[1])) continue;
+      segP(B.p('#9ea2a5'), [q[0], 0.2, q[1]], [q[0], 24, q[1]], 0.45, 6); boxP(B.p({c:'#e9eef2', glow:'#fffbe8', gk:0.9}), 3.6, 2.2, 0.5, q[0], 23, q[1], ob.ry); }
+    B.flush(g); return g; }};
+PL('tychichibunomiya', ...D.tychichibunomiya.a);
+
+// =====================================================================================================================
+// Meiji Jingu Stadium (opened 1926): baseball stadium in the Jingū Gaien — still standing and in use in Nov 2026 (the redevelopment
+// demolishes it only after the new rugby stadium opens, planned 2030; its site then becomes the central plaza — StadiumDB, Feb 2026).
+// Anchor confirmed: OSM r1720497 (building=stadium, height 31.7 — mapper value) inside the leisure=stadium precinct w15772082 "明治神宮
+// 野球場"; the app's outline (no OSM match, 31.7 m solid) is its outer ring, the field is its inner ring. Home plate at the south-west
+// apex of the field. Approximations: stand profile (lower bowl, upper deck behind home to 20 m), the brick-coloured outer walls,
+// six light towers (count and positions schematic), the scoreboard in centre field, colours.
+LANDMARKS.tyjingustadium = {zh:'明治神宫野球场', en:'Meiji Jingu Stadium', cat:'old', r:118, h:32,
+  lt:{m:0, c:'#f6f8ff', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyjingustadium, O = E.o, F = E.F, G = mkG(...E.a);
+    const BR = '#9a5a45', BR2 = '#84493a', SE = '#6f7d74', SE2 = '#5f6b63', CN = '#b5b0a7', GRASS = '#5e8f44', DIRT = '#a9784f', DK = '#2d3236';
+    footP(B, BR2, O, gMin(G, O) - 3, 0.2);
+    // field: grass with the infield dirt near home plate (the field apex)
+    flatP(B.p(GRASS), offP(F, -1), 0.25);
+    const home = [(F[14][0] + F[15][0])/2, (F[14][1] + F[15][1])/2], c = cenA(F), hx = c[0] - home[0], hz = c[1] - home[1], hl = Math.hypot(hx, hz);
+    { const ux = hx/hl, uz = hz/hl, o = B.p(DIRT), q = [home[0] + ux*28, home[1] + uz*28], P = [];
+      for (let k = 0; k < 20; k++){ const t = k/20*TAU; P.push([q[0] + Math.cos(t)*21, q[1] + Math.sin(t)*21]); } flatP(o, clipC(P, F.length > 3 ? hullP(F) : F), 0.3); }
+    // stands: the bowl from the field wall to the outer ring, higher behind home plate (south-west) than in the outfield
+    const n = 120, cen = [c[0]*0.6 + home[0]*0.4, c[1]*0.6 + home[1]*0.4];
+    const hAt = th => { const dx = Math.cos(th), dz = Math.sin(th), d = -(dx*hx + dz*hz)/hl; return 11 + 9*cl01((d + 0.15)/1.15); };
+    const sec = [[], [], [], []], outer = [];
+    for (let k = 0; k < n; k++){ const th = k/n*TAU, r0 = rayP(F, cen, th), r1 = rayP(O, cen, th) - 0.6, H = hAt(th), cs = Math.cos(th), sn = Math.sin(th);
+      [[0, 2.0], [0.45, H*0.45], [0.75, H*0.78], [1.0, H]].forEach(([t, y], i) => { const r = lerp(r0, r1, t); sec[i].push([cen[0] + cs*r, y, cen[1] + sn*r]); });
+      outer.push([cen[0] + cs*r1, H, cen[1] + sn*r1]); }
+    for (let i = 0; i < 3; i++) loftP(B.p(i === 1 ? SE2 : SE), [sec[i], sec[i + 1]], false);
+    // field wall (dark padding) and the outer wall in brick colour with window slots
+    { const o = B.p(DK); for (let k = 0; k < n; k++){ const a = sec[0][k], b = sec[0][(k + 1) % n]; quadP(o, [a[0], 0.2, a[2]], [b[0], 0.2, b[2]], [b[0], 2.0, b[2]], [a[0], 2.0, a[2]]); } }
+    { const o = B.p(BR), ow = B.p({c:'#3a3f44', m:1, fh:4, cw:2}), oc = B.p(CN);
+      for (let k = 0; k < n; k++){ const a = outer[k], b = outer[(k + 1) % n], h = Math.min(a[1], b[1]);
+        quadP(o, [a[0], 0.2, a[2]], [b[0], 0.2, b[2]], [b[0], b[1], b[2]], [a[0], a[1], a[2]]);
+        const nx = b[2] - a[2], nz = -(b[0] - a[0]), nl = Math.hypot(nx, nz) || 1, ox = -nx/nl*0.06, oz = -nz/nl*0.06;
+        if (k % 2 === 0) for (const y of [3.0, 7.5]) if (y + 2 < h) quadP(ow, [a[0] - ox, y, a[2] - oz], [b[0] - ox, y, b[2] - oz], [b[0] - ox, y + 1.8, b[2] - oz], [a[0] - ox, y + 1.8, a[2] - oz]);
+        quadP(oc, [a[0], a[1], a[2]], [b[0], b[1], b[2]], [b[0], b[1] + 0.8, b[2]], [a[0], a[1] + 0.8, a[2]]); } }
+    // scoreboard in centre field (opposite home plate), abstract dark panel only
+    { const ux = hx/hl, uz = hz/hl, r1 = rayP(O, cen, Math.atan2(uz, ux)) - 6, q = [cen[0] + ux*r1, cen[1] + uz*r1], ry = -Math.atan2(-ux, uz);
+      boxP(B.p(CN), 34, 18, 4, q[0], 0.2, q[1], ry); boxP(B.p({c:'#1e2328', glow:'#3b4f66', gk:0.4}), 30, 11, 0.4, q[0] - ux*2.1, 5.5, q[1] - uz*2.1, ry); }
+    // six light towers round the outer ring
+    for (let k = 0; k < 6; k++){ const th = Math.atan2(-hz, -hx) + (k - 2.5)*TAU/6.6, r1 = rayP(O, cen, th) - 3, q = [cen[0] + Math.cos(th)*r1, cen[1] + Math.sin(th)*r1];
+      segP(B.p('#a0a4a7'), [q[0], 0.2, q[1]], [q[0], 31, q[1]], 0.55, 6); boxP(B.p({c:'#e9eef2', glow:'#fffbe8', gk:0.9}), 6, 3.0, 0.6, q[0], 30, q[1], -th + HP); }
+    B.flush(g); return g; }};
+PL('tyjingustadium', ...D.tyjingustadium.a);
+
+// =====================================================================================================================
+// Aoyama Twin (Shin-Aoyama Building, 1-1-1 Minami-Aoyama): completed Oct 1978, 23 floors + 4 basements, steel frame (office-navi). Two
+// towers — West (OSM w109684612, this key) and East (OSM w109684614, secondary key tyaoyamatwin_b, unlabelled: a separate key keeps the
+// small building between them visible). OSM height 103 m and colour gainsboro (mapper values). Approximations: storey height, the
+// light grey panels with ribbon windows, the chamfered corners, the roof plant.
+const twinB = (O) => { const g = new THREE.Group(), B = mkB();
+  const WH = '#dcdcdc', WH2 = '#c8c9c9', RF = '#8a8d8f', GL = {c:'#424d57', m:1, fh:4.2, cw:1.8}, GB = {c:'#323a42', m:1, fh:5, cw:3};
+  footP(B, WH2, O, -6);
+  prismP(B.p(GB), offP(O, 1.0), 0.2, 7, true); mullP(B.p(WH2), O, 0.2, 7, 5.0, 0.8, -1.0, null, 1.0);
+  facade(B, O, 7, 99, 'band', {w:WH, g:GL, fh:4.0, gh:1.75, wy:1.0}); mullP(B.p(WH2), O, 7, 99, 3.2, 0.25, 0.06);
+  roofF(B, O, 99, {r:RF, pc:WH, ph:1.5, pl:5, plc:WH2, plh:4.0, lv:'#9ea2a4'});
+  B.flush(g); return g; };
+LANDMARKS.tyaoyamatwin = {zh:'青山Twin', en:'Aoyama Twin Tower', cat:'old', r:34, h:103,
+  lt:{m:1, c:'#fff0da', k:0.55}, build(){ return twinB(D.tyaoyamatwin.o); }};
+PL('tyaoyamatwin', ...D.tyaoyamatwin.a);
+LANDMARKS.tyaoyamatwin_b = {zh:'青山Twin 东楼', en:'Aoyama Twin Tower East', cat:'old', r:34, h:103, label:false,
+  lt:{m:1, c:'#fff0da', k:0.55}, build(){ return twinB(D.tyaoyamatwin_b.o); }};
+PL('tyaoyamatwin_b', ...D.tyaoyamatwin_b.a);
+
+// =====================================================================================================================
+// The Westin Tokyo (1994) at Yebisu Garden Place: European-style hotel (target note). OSM height 80 m, 21 levels (mapper values).
+// Footprint OSM w187289869. Approximations: warm beige stone-like walls with punched windows, a darker base, cornices, the copper-green
+// mansard top (2 storeys) and its dormer rhythm; the setbacks follow the plan, not elevations.
+LANDMARKS.tywestin = {zh:'东京威斯汀酒店', en:'The Westin Tokyo', cat:'new', r:63, h:80,
+  lt:{m:1, c:'#ffe6c2', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tywestin.o;
+    const BE = '#d6c4a8', BE2 = '#c1ad8f', BS = '#9c8a72', CU = '#6f8d7f', CU2 = '#5c7a6c', GL = {c:'#4a4f55', m:1, fh:3.4, cw:1.6}, GB = {c:'#33383d', m:1, fh:5, cw:3};
+    footP(B, BS, O, -6);
+    prismP(B.p(BS), O, 0.2, 9, true); winsP(B.p(GB), O, 1.2, 8.5, 9, 4.8, 3.0, 6.0, 0.05);
+    skinP(B.p(BE2), O, 9, 10, 0.25);
+    const yM = 71;
+    facade(B, O, 10, yM, 'pw', {w:BE, g:GL, fh:3.4, sp:2.4, ww:1.3, wh:1.9});
+    for (const y of [24, 48]) skinP(B.p(BE2), O, y, y + 0.7, 0.2);
+    skinP(B.p(BE2), O, yM - 1.2, yM, 0.45);
+    // mansard top: sloped copper-green roof from the cornice up to 80 m, dormers
+    const M = resP(O, 88); loftP(B.p(CU), [ring3(M, yM), ring3(resP(offP(O, 3.5), 88), 78.5)], false); flatP(B.p(CU2), offP(O, 3.5), 78.5);
+    prismP(B.p(CU2), offP(O, 9), 78.5, 80, false);
+    { const o = B.p(BE); for (let i = 0; i < M.length; i += 3){ const p = M[i], q = M[(i + 1) % M.length], [nx, nz] = [q[1] - p[1], -(q[0] - p[0])], l = Math.hypot(nx, nz) || 1; const s = area2(O) > 0 ? 1 : -1;
+      boxP(o, 1.4, 2.2, 1.4, p[0] - nx/l*s*1.2, yM + 0.6, p[1] - nz/l*s*1.2, -Math.atan2(q[1]-p[1], q[0]-p[0])); } }
+    B.flush(g); return g; }};
+PL('tywestin', ...D.tywestin.a);
+
+// =====================================================================================================================
+// Meguro Central Square (2017) at Meguro Station: OSM height 125.55 m, 27 levels (mapper values). Residential / office tower (target
+// note). Footprint OSM w591371370 (73 x 30 m). Approximations: office podium to 22 m (glass), residential floors with white balcony
+// slabs and glass rails above, the crown screen.
+LANDMARKS.tymegurocentral = {zh:'目黑Central Square', en:'Meguro Central Square', cat:'new', r:43, h:126,
+  lt:{m:1, c:'#fff1dc', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tymegurocentral.o;
+    const WH = '#ededeb', GR = '#a6aaac', RF = '#8a8e90', GO = {c:'#5f7384', m:1, fh:4.3, cw:1.8}, GRL = {c:'#8ea2b0', m:0};
+    footP(B, GR, O, -6);
+    prismP(B.p(GO), O, 0.2, 22, true); bandsP(B.p(WH), O, 0, 22, 4.4, 0.6, 0.06); mullP(B.p(WH), O, 0.2, 22, 3.0, 0.2, 0.07);
+    facade(B, offP(O, 1.2), 22, 120, 'res', {w:{c:'#56636e', m:1, fh:3.3, cw:1.8}, s:WH, r:GRL, fh:3.3, d:1.4, ms:6.0});
+    skinP(B.p(WH), O, 120, 125.55, 0.05); prismP(B.p(GR), offP(O, 4), 120, 124, false); flatP(B.p(RF), offP(O, 1.2), 120.1);
+    B.flush(g); return g; }};
+PL('tymegurocentral', ...D.tymegurocentral.a);
+
+// =====================================================================================================================
+// Hotel Gajoen Tokyo (rebuilt 1991; the 1935 timber Hyakudan Kaidan is inside, not modelled): app height 36 m (estimate or OSM),
+// footprint OSM w329610782 on the slope down to the Meguro River (ground falls ~14 m across the refs' terrain: foundations follow the
+// app ground). Approximations: warm grey panels with punched windows, a darker base, a low pitched roof cap.
+LANDMARKS.tygajoen = {zh:'雅叙园东京', en:'Hotel Gajoen Tokyo', cat:'new', r:46, h:36,
+  lt:{m:1, c:'#ffe8c6', k:0.55},
+  build(){
+    const g = new THREE.Group(), B = mkB(), O = D.tygajoen.o, G = mkG(...D.tygajoen.a);
+    const WL = '#c9c0b2', WL2 = '#b0a796', RF = '#6c6560', GL = {c:'#454c53', m:1, fh:3.5, cw:1.7};
+    const y0 = gMin(G, O);
+    footP(B, WL2, O, y0 - 3);
+    prismP(B.p(WL2), O, y0, 4, true);
+    facade(B, O, 4, 36, 'pw', {w:WL, g:GL, fh:3.5, sp:2.6, ww:1.5, wh:1.9});
+    skinP(B.p(WL2), O, 35, 36, 0.3);
+    insetRoof(B.p(RF), hullP(O), [36, 38.5], [0, 6]);
+    B.flush(g); return g; }};
+PL('tygajoen', ...D.tygajoen.a);
+
+// =====================================================================================================================
+// Hillside Terrace, Daikanyama (Fumihiko Maki, 1969-1992): the low white buildings along Kyū-Yamate-dōri. This key: Building A (OSM
+// w229018826, the anchor) with the A-wing behind it (w229020970) and Building B with its corner piece (w229018827, w229021205) and the
+// small pavilion w229021135; app heights 7-10 m (2-3 storeys). Building C and the later phases are not modelled.
+// Approximations: white render, the glazed ground floors, ribbon windows, thin flat roofs with parapets.
+LANDMARKS.tyhillside = {zh:'代官山Hillside Terrace', en:'Hillside Terrace', cat:'new', r:53, h:10,
+  lt:{m:0, c:'#fff3e0', k:0.5},
+  build(){
+    const g = new THREE.Group(), B = mkB(), E = D.tyhillside;
+    const WH = '#efefec', WH2 = '#dcdcd8', RF = '#a9aaa8', GF = {c:'#4d5a65', m:1, fh:3.4, cw:2.2};
+    for (const [P, h] of [[E.o, 7.0], [E.A2, 10.1], [E.B, 10.1], [E.B2, 10.1], [E.D, 7.5]]){
+      footP(B, WH2, P, -4);
+      prismP(B.p(GF), offP(P, 0.6), 0.2, 3.4, true); mullP(B.p(WH), P, 0.2, 3.4, 3.2, 0.3, -0.6, null, 0.6);
+      prismP(B.p(WH), P, 3.4, h, true); floorsP(B.p(GF), P, 4.4, h - 0.6, 3.3, 1.5);
+      roofF(B, P, h, {r:RF, pc:WH, ph:0.6}); }
+    B.flush(g); return g; }};
+PL('tyhillside', ...D.tyhillside.a);
 
 }
